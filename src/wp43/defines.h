@@ -1006,7 +1006,6 @@
     #define displayBugScreen(a)     { printf("\n-----------------------------------------------------------------------\n"); printf("%s\n", a); printf("\n-----------------------------------------------------------------------\n");}
     #define showHideHourGlass()     {}
     #define refreshScreen()         {}
-    #define refreshLcd(a)           {}
     #define initFontBrowser()       {}
   #endif // TESTSUITE_BUILD && !GENERATE_CATALOGS
 

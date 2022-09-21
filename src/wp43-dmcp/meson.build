@@ -10,7 +10,8 @@ dmcp_linkargs = [
   '-T' + meson.current_source_dir() + '/stm32_program.ld']
 
 wp43_dmcp_src = files(
-  'hal/audio.c')
+  'hal/audio.c',
+  'wp43-dmcp.c')
 wp43_lib = static_library(
   'libwp43',
   build_by_default    : false,

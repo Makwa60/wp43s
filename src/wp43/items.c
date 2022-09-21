@@ -122,7 +122,7 @@ void fnNop(uint16_t unusedButMandatoryParameter) {
       #if defined(DMCP_BUILD)
         lcd_refresh();
       #else // !DMCP_BUILD
-        refreshLcd(NULL);
+        refreshLcd();
       #endif // DMCP_BUILD
 
       screenUpdatingMode = SCRUPD_AUTO;
@@ -157,7 +157,7 @@ void fnNop(uint16_t unusedButMandatoryParameter) {
       updateMatrixHeightCache();
       cachedDynamicMenu = 0;
       #if defined(PC_BUILD)
-        refreshLcd(NULL);
+        refreshLcd();
       #endif // PC_BUILD
     }
   }

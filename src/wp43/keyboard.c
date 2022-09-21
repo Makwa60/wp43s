@@ -261,17 +261,17 @@
 
 
   #if defined(PC_BUILD)
-    void btnFnClicked(GtkWidget *notUsed, gpointer data) {
+    void btnFnClicked(char *data) {
       GdkEvent mouseButton;
       mouseButton.button.button = 1;
 
-      btnFnPressed(notUsed, &mouseButton, data);
-      btnFnReleased(notUsed, &mouseButton, data);
+      btnFnPressed(&mouseButton, data);
+      btnFnReleased(data);
     }
   #endif // PC_BUILD
 
   #if defined(DMCP_BUILD)
-    void btnFnClicked(void *unused, void *data) {
+    void btnFnClicked(char *data) {
       btnFnPressed(data);
       btnFnReleased(data);
     }
@@ -288,7 +288,7 @@
 
       fnTimerStart(TO_AUTO_REPEAT, key, KEY_AUTOREPEAT_PERIOD);
 
-      btnClicked(NULL, (char *)charKey);
+      btnClicked(charKey);
       screenUpdatingMode = origScreenUpdatingMode;
       //btnPressed(charKey);
       shiftF = f;
@@ -362,7 +362,7 @@
 
 
   #if defined(PC_BUILD)
-    void btnFnPressed(GtkWidget *notUsed, GdkEvent *event, gpointer data) {
+    void btnFnPressed(GdkEvent *event, char *data) {
       if(event->type == GDK_DOUBLE_BUTTON_PRESS || event->type == GDK_TRIPLE_BUTTON_PRESS) { // return unprocessed for double or triple click
         return;
       }
@@ -376,7 +376,7 @@
       }
   #endif // PC_BUILD
   #if defined(DMCP_BUILD)
-    void btnFnPressed(void *data) {
+    void btnFnPressed(char *data) {
   #endif // DMCP_BUILD
     asnKey[0] = ((uint8_t *)data)[0];
     asnKey[1] = 0;
@@ -543,12 +543,7 @@
     }
   }
 
-  #if defined(PC_BUILD)
-    void btnFnReleased(GtkWidget *notUsed, GdkEvent *event, gpointer data) {
-  #endif // PC_BUILD
-  #if defined(DMCP_BUILD)
-    void btnFnReleased(void *data) {
-  #endif // DMCP_BUILD
+  void btnFnReleased(char *data) {
     if(programRunStop == PGM_KEY_PRESSED_WHILE_PAUSED) {
       programRunStop = PGM_RESUMING;
       screenUpdatingMode &= ~SCRUPD_ONE_TIME_FLAGS;
@@ -557,7 +552,7 @@
     if(calcMode != CM_REGISTER_BROWSER && calcMode != CM_FLAG_BROWSER && calcMode != CM_FONT_BROWSER) {
       if(tam.mode == TM_KEY && !tam.keyInputFinished) {
         if(tam.digitsSoFar == 0) {
-          switch(((char *)data)[0]) {
+          switch(data[0]) {
             case '1': {
               tamProcessInput(shiftG ? ITM_1 :                  ITM_0);
               tamProcessInput(shiftG ? ITM_3 : shiftF ? ITM_7 : ITM_1);
@@ -857,38 +852,50 @@
 
 
   #if defined(PC_BUILD)
-    void btnClicked(GtkWidget *notUsed, gpointer data) {
+    void btnClicked(char *data) {
       GdkEvent mouseButton;
       mouseButton.button.button = 1;
       mouseButton.type = 0;
 
-      btnPressed(notUsed, &mouseButton, data);
-      btnReleased(notUsed, &mouseButton, data);
+      btnPressed(&mouseButton, data);
+      btnReleased(data);
   }
   #endif // PC_BUILD
 
   #if defined(DMCP_BUILD)
-    void btnClicked(void *unused, void *data) {
+    void btnClicked(char *data) {
       btnPressed(data);
       btnReleased(data);
     }
   #endif // DMCP_BUILD
 
   #if defined(PC_BUILD)
-    void btnPressed(GtkWidget *notUsed, GdkEvent *event, gpointer data) {
-      int keyCode = (*((char *)data) - '0')*10 + *(((char *)data) + 1) - '0';
+    char key[3] = {0, 0, 0};
+  #endif
 
-      asnKey[0] = ((uint8_t *)data)[0];
-      asnKey[1] = ((uint8_t *)data)[1];
-      asnKey[2] = 0;
+  #if defined(PC_BUILD)
+    void btnPressed(GdkEvent *event, char *data) {
+  #elif defined(DMCP_BUILD)
+    void btnPressed(char *data) {
+  #endif
+    int keyCode = (*data - '0')*10 + *(data + 1) - '0';
 
-      if(programRunStop == PGM_RUNNING || programRunStop == PGM_PAUSED) {
+    asnKey[0] = ((uint8_t *)data)[0];
+    asnKey[1] = ((uint8_t *)data)[1];
+    asnKey[2] = 0;
+
+    if(programRunStop == PGM_RUNNING || programRunStop == PGM_PAUSED) {
+      #if defined(PC_BUILD)
         setLastKeyCode(keyCode + 1);
-      }
-      else {
-        lastKeyCode = 0;
-      }
+      #elif defined(DMCP_BUILD)
+        lastKeyCode = keyCode;
+      #endif
+    }
+    else {
+      lastKeyCode = 0;
+    }
 
+    #if defined(PC_BUILD)
       if(event->type == GDK_DOUBLE_BUTTON_PRESS || event->type == GDK_TRIPLE_BUTTON_PRESS) { // return unprocessed for double or triple click
         return;
       }
@@ -900,9 +907,24 @@
         shiftF = false;
         shiftG = true;
       }
-      bool_t f = shiftF;
-      bool_t g = shiftG;
-      int16_t item = determineItem((char *)data);
+    #endif
+
+    bool_t f = shiftF;
+    bool_t g = shiftG;
+    #if defined(DMCP_BUILD)
+      //if(keyAutoRepeat) {
+      //  //beep(880, 50);
+      //  item = previousItem;
+      //}
+      //else {
+    #endif
+    int16_t item = determineItem(data);
+    #if defined(DMCP_BUILD)
+      //  previousItem = item;
+      //}
+    #endif
+
+    #if defined(PC_BUILD)
       if(programRunStop == PGM_RUNNING || programRunStop == PGM_PAUSED) {
         if((item == ITM_RS || item == ITM_EXIT) && !getSystemFlag(FLAG_INTING) && !getSystemFlag(FLAG_SOLVING)) {
           programRunStop = PGM_WAITING;
@@ -913,157 +935,38 @@
         }
         return;
       }
-
-      if(getSystemFlag(FLAG_USER)) {
-        int keyStateCode = (getSystemFlag(FLAG_ALPHA) ? 3 : 0) + (g ? 2 : f ? 1 : 0);
-        char *funcParam = (char *)getNthString((uint8_t *)userKeyLabel, keyCode * 6 + keyStateCode);
-        xcopy(tmpString, funcParam, stringByteLength(funcParam) + 1);
-      }
-      else {
-        *tmpString = 0;
-      }
-
-      showFunctionNameItem = 0;
-      if(item != ITM_NOP && item != ITM_NULL) {
-        processKeyAction(item);
-        if(!keyActionProcessed) {
-          showFunctionName(item, 1000); // 1000ms = 1s
-        }
-      }
-      if(calcMode == CM_ASSIGN && itemToBeAssigned != 0 && tamBuffer[0] == 0) {
-        shiftF = f;
-        shiftG = g;
-      }
-    }
-
-    char key[3] = {0, 0, 0};
-    static void convertXYToKey(int x, int y) {
-      int xMin, xMax, yMin, yMax;
-      key[0] = 0;
-      key[1] = 0;
-      key[2] = 0;
-
-      for(int i=0; i<43; i++) {
-        xMin = calcKeyboard[i].x;
-        yMin = calcKeyboard[i].y;
-        if(i == 10 && currentBezel == 2 && (tam.mode == TM_LABEL || (tam.mode == TM_SOLVE && (tam.function != ITM_SOLVE || calcMode != CM_PEM)) || (tam.mode == TM_KEY && tam.keyInputFinished))) {
-          xMax = xMin + calcKeyboard[10].width[3];
-          yMax = yMin + calcKeyboard[10].height[3];
-        }
-        else {
-          xMax = xMin + calcKeyboard[i].width[currentBezel];
-          yMax = yMin + calcKeyboard[i].height[currentBezel];
-        }
-
-        if(   xMin <= x && x <= xMax
-           && yMin <= y && y <= yMax) {
-          if(i < 6) { // Function key
-            key[0] = '1' + i;
-          }
-          else {
-            key[0] = '0' + (i - 6)/10;
-            key[1] = '0' + (i - 6)%10;
-          }
-          break;
-        }
-      }
-    }
-
-    void frmCalcMouseButtonPressed(GtkWidget *notUsed, GdkEvent *event, gpointer data) {
-      if(key[0] == 0) { // The previous click must be released
-        convertXYToKey((int)event->button.x, (int)event->button.y);
-        if(key[0] == 0) {
-          return;
-        }
-
-        if(key[1] == 0) { // Soft function key
-          btnFnPressed(NULL, event, (gpointer)key);
-        }
-        else { // Not a soft function key
-          btnPressed(NULL, event, (gpointer)key);
-        }
-      }
-    }
-
-    void frmCalcMouseButtonReleased(GtkWidget *notUsed, GdkEvent *event, gpointer data) {
-      if(key[0] == 0) {
-        return;
-      }
-
-      if(key[1] == 0) { // Soft function key
-        btnFnReleased(NULL, event, (gpointer)key);
-      }
-      else { // Not a soft function key
-        btnReleased(NULL, event, (gpointer)key);
-      }
-
-      key[0] = 0;
-    }
-  #endif // PC_BUILD
-
-
-  #if defined(DMCP_BUILD)
-    void btnPressed(void *data) {
-      int16_t item;
-      int keyCode = (*((char *)data) - '0')*10 + *(((char *)data) + 1) - '0';
-      bool_t f = shiftF;
-      bool_t g = shiftG;
-
-      asnKey[0] = ((uint8_t *)data)[0];
-      asnKey[1] = ((uint8_t *)data)[1];
-      asnKey[2] = 0;
-
-      if(programRunStop == PGM_RUNNING || programRunStop == PGM_PAUSED) {
-        lastKeyCode = keyCode;
-      }
-      else {
-        lastKeyCode = 0;
-      }
-
-      //if(keyAutoRepeat) {
-      //  //beep(880, 50);
-      //  item = previousItem;
-      //}
-      //else {
-        item = determineItem((char *)data);
-      //  previousItem = item;
-      //}
+    #elif defined(DMCP_BUILD)
       if(calcMode == CM_PEM && (item == ITM_SST || item == ITM_BST)) {
         shiftF = f;
         shiftG = g;
       }
+    #endif
 
-      if(getSystemFlag(FLAG_USER)) {
-        int keyStateCode = (getSystemFlag(FLAG_ALPHA) ? 3 : 0) + (g ? 2 : f ? 1 : 0);
-        char *funcParam = (char *)getNthString((uint8_t *)userKeyLabel, keyCode * 6 + keyStateCode);
-        xcopy(tmpString, funcParam, stringByteLength(funcParam) + 1);
-      }
-      else {
-        *tmpString = 0;
-      }
+    if(getSystemFlag(FLAG_USER)) {
+      int keyStateCode = (getSystemFlag(FLAG_ALPHA) ? 3 : 0) + (g ? 2 : f ? 1 : 0);
+      char *funcParam = (char *)getNthString((uint8_t *)userKeyLabel, keyCode * 6 + keyStateCode);
+      xcopy(tmpString, funcParam, stringByteLength(funcParam) + 1);
+    }
+    else {
+      *tmpString = 0;
+    }
 
-      showFunctionNameItem = 0;
-      if(item != ITM_NOP && item != ITM_NULL) {
-        processKeyAction(item);
-        if(!keyActionProcessed) {
-          showFunctionName(item, 1000); // 1000ms = 1s
-        }
-      }
-      if(calcMode == CM_ASSIGN && itemToBeAssigned != 0 && tamBuffer[0] == 0) {
-        shiftF = f;
-        shiftG = g;
+    showFunctionNameItem = 0;
+    if(item != ITM_NOP && item != ITM_NULL) {
+      processKeyAction(item);
+      if(!keyActionProcessed) {
+        showFunctionName(item, 1000); // 1000ms = 1s
       }
     }
-  #endif // DMCP_BUILD
+    if(calcMode == CM_ASSIGN && itemToBeAssigned != 0 && tamBuffer[0] == 0) {
+      shiftF = f;
+      shiftG = g;
+    }
+  }
 
 
 
-  #if defined(PC_BUILD)
-    void btnReleased(GtkWidget *notUsed, GdkEvent *event, gpointer data) {
-  #endif // PC_BUILD
-  #if defined(DMCP_BUILD)
-    void btnReleased(void *data) {
-  #endif // DMCP_BUILD
+  void btnReleased(char *data) {
     int16_t item;
 
     if(programRunStop == PGM_KEY_PRESSED_WHILE_PAUSED) {
@@ -1073,7 +976,7 @@
     }
 
     if(calcMode == CM_ASSIGN && itemToBeAssigned != 0 && tamBuffer[0] == 0) {
-      assignToKey((char *)data);
+      assignToKey(data);
       calcMode = previousCalcMode;
       shiftF = shiftG = false;
       refreshScreen();
@@ -1085,7 +988,7 @@
         showSoftmenu(item);
       }
       else {
-        int keyCode = (*((char *)data) - '0')*10 + *(((char *)data) + 1) - '0';
+        int keyCode = (*data - '0')*10 + *(data + 1) - '0';
         int keyStateCode = (getSystemFlag(FLAG_ALPHA) ? 3 : 0) + (shiftG ? 2 : shiftF ? 1 : 0);
         char *funcParam = (char *)getNthString((uint8_t *)userKeyLabel, keyCode * 6 + keyStateCode);
 
@@ -2461,7 +2364,7 @@ void fnKeyUp(uint16_t unusedButMandatoryParameter) {
           #if defined(DMCP_BUILD)
             lcd_refresh();
           #else // !DMCP_BUILD
-            refreshLcd(NULL);
+            refreshLcd();
           #endif // DMCP_BUILD
         }
         if(softmenu[softmenuStack[0].softmenuId].menuItem == -MNU_PLOT_LR){
