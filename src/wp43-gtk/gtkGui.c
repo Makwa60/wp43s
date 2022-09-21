@@ -19,6 +19,7 @@
 #include "charString.h"
 #include "debug.h"
 #include "error.h"
+#include "gtkScreen.h"
 #include "items.h"
 #include "keyboard.h"
 #include "timer.h"

@@ -20,6 +20,7 @@
 #include "dateTime.h"
 #include "flags.h"
 #include "fonts.h"
+#include "hal/lcd.h"
 #include "items.h"
 #include "screen.h"
 

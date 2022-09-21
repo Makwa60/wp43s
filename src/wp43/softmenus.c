@@ -19,6 +19,7 @@
 #include "calcMode.h"
 #include "charString.h"
 #include "error.h"
+#include "hal/lcd.h"
 #include "items.h"
 #include "memory.h"
 #include "programming/flash.h"
