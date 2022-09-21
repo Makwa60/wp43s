@@ -260,22 +260,10 @@
 
 
 
-  #if defined(PC_BUILD)
-    void btnFnClicked(char *data) {
-      GdkEvent mouseButton;
-      mouseButton.button.button = 1;
-
-      btnFnPressed(&mouseButton, data);
-      btnFnReleased(data);
-    }
-  #endif // PC_BUILD
-
-  #if defined(DMCP_BUILD)
-    void btnFnClicked(char *data) {
-      btnFnPressed(data);
-      btnFnReleased(data);
-    }
-  #endif // DMCP_BUILD
+  void btnFnClicked(char *data) {
+    btnFnPressed(data);
+    btnFnReleased(data);
+  }
 
 
   void execAutoRepeat(uint16_t key) {
@@ -361,23 +349,7 @@
   uint8_t asnKey[4] = {0, 0, 0, 0};
 
 
-  #if defined(PC_BUILD)
-    void btnFnPressed(GdkEvent *event, char *data) {
-      if(event->type == GDK_DOUBLE_BUTTON_PRESS || event->type == GDK_TRIPLE_BUTTON_PRESS) { // return unprocessed for double or triple click
-        return;
-      }
-      if(event->button.button == 2) { // Middle click
-        shiftF = true;
-        shiftG = false;
-      }
-      if(event->button.button == 3) { // Right click
-        shiftF = false;
-        shiftG = true;
-      }
-  #endif // PC_BUILD
-  #if defined(DMCP_BUILD)
-    void btnFnPressed(char *data) {
-  #endif // DMCP_BUILD
+  void btnFnPressed(char *data) {
     asnKey[0] = ((uint8_t *)data)[0];
     asnKey[1] = 0;
 
@@ -851,33 +823,16 @@
 
 
 
-  #if defined(PC_BUILD)
-    void btnClicked(char *data) {
-      GdkEvent mouseButton;
-      mouseButton.button.button = 1;
-      mouseButton.type = 0;
-
-      btnPressed(&mouseButton, data);
-      btnReleased(data);
+  void btnClicked(char *data) {
+    btnPressed(data);
+    btnReleased(data);
   }
-  #endif // PC_BUILD
-
-  #if defined(DMCP_BUILD)
-    void btnClicked(char *data) {
-      btnPressed(data);
-      btnReleased(data);
-    }
-  #endif // DMCP_BUILD
 
   #if defined(PC_BUILD)
     char key[3] = {0, 0, 0};
   #endif
 
-  #if defined(PC_BUILD)
-    void btnPressed(GdkEvent *event, char *data) {
-  #elif defined(DMCP_BUILD)
-    void btnPressed(char *data) {
-  #endif
+  void btnPressed(char *data) {
     int keyCode = (*data - '0')*10 + *(data + 1) - '0';
 
     asnKey[0] = ((uint8_t *)data)[0];
@@ -894,20 +849,6 @@
     else {
       lastKeyCode = 0;
     }
-
-    #if defined(PC_BUILD)
-      if(event->type == GDK_DOUBLE_BUTTON_PRESS || event->type == GDK_TRIPLE_BUTTON_PRESS) { // return unprocessed for double or triple click
-        return;
-      }
-      if(event->button.button == 2) { // Middle click
-        shiftF = true;
-        shiftG = false;
-      }
-      if(event->button.button == 3) { // Right click
-        shiftF = false;
-        shiftG = true;
-      }
-    #endif
 
     bool_t f = shiftF;
     bool_t g = shiftG;
