@@ -23,10 +23,6 @@
 
   #include "typeDefinitions.h"
   #include <stdint.h>
-  #if defined(PC_BUILD)
-    #include <gtk/gtk.h>
-    #include <gdk/gdk.h>
-  #endif // PC_BUILD
 
   void       fnScreenDump                       (uint16_t unusedButMandatoryParameter);
 
@@ -44,54 +40,10 @@
    */
   void     refreshLcd                         (void);
 
-  #if defined(PC_BUILD)
-    /**
-     * Draws the calc's screen on the PC window widget.
-     *
-     * \param[in] widget Not used
-     * \param[in] cr
-     * \param[in] data   Not used
-     */
-    gboolean drawScreen                         (GtkWidget *widget, cairo_t *cr, gpointer data);
+  void     clearScreen                        (void);
 
-    void     copyScreenToClipboard              (void);
-    void     copyRegisterXToClipboard           (void);
-    void     copyStackRegistersToClipboardString(char *clipboardString);
-    void     copyStackRegistersToClipboard      (void);
-    void     copyAllRegistersToClipboard        (void);
-    void     copyRegisterToClipboardString      (calcRegister_t regist, char *clipboardString);
-  #endif // PC_BUILD
+  void     execTimerApp                         (uint16_t timerType);
 
-  #if !defined(DMCP_BUILD)
-    void     lcd_fill_rect                      (uint32_t x, uint32_t y, uint32_t dx, uint32_t dy, int val); // clone from the DMCP function
-
-      /**
-       * Sets a black pixel on the screen.
-       *
-       * \param[in] x x coordinate from 0 (left) to 399 (right)
-       * \param[in] y y coordinate from 0 (top) to 239 (bottom)
-       * \return void
-       */
-    void     setBlackPixel                      (uint32_t x, uint32_t y);
-
-      /**
-       * Sets a white pixel on the screen.
-       *
-       * \param[in] x x coordinate from 0 (left) to 399 (right)
-       * \param[in] y y coordinate from 0 (top) to 239 (bottom)
-       */
-    void     setWhitePixel                      (uint32_t x, uint32_t y);
-
-      /**
-       * Turns a black pixel to a white pixel or vice versa on the screen.
-       *
-       * \param[in] x x coordinate from 0 (left) to 399 (right)
-       * \param[in] y y coordinate from 0 (top) to 239 (bottom)
-       */
-    void     flipPixel                          (uint32_t x, uint32_t y);
-  #endif // DMCP_BUILD
-
-    void     execTimerApp                         (uint16_t timerType);
   #if !defined(TESTSUITE_BUILD)
     void     refreshScreen                      (void);
     //void     invertPixel                        (uint32_t x, uint32_t y);

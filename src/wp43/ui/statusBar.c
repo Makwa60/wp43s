@@ -14,12 +14,13 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "statusBar.h"
+#include "ui/statusBar.h"
 
 #include "charString.h"
 #include "dateTime.h"
 #include "flags.h"
 #include "fonts.h"
+#include "hal/lcd.h"
 #include "items.h"
 #include "screen.h"
 

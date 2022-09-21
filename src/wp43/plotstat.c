@@ -24,6 +24,7 @@
 #include "error.h"
 #include "flags.h"
 #include "fonts.h"
+#include "hal/lcd.h"
 #include "items.h"
 #include "keyboard.h"
 #include "mathematics/comparisonReals.h"
@@ -36,7 +37,7 @@
 #include "solver/graph.h"
 #include "stack.h"
 #include "stats.h"
-#include "statusBar.h"
+#include "ui/statusBar.h"
 #include <math.h>
 #include <string.h>
 #include <time.h>

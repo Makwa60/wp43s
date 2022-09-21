@@ -48,10 +48,10 @@
 #include "solver/solver.h"
 #include "stack.h"
 #include "stats.h"
-#include "statusBar.h"
 #include "store.h"
 #include "stringFuncs.h"
 #include "timer.h"
+#include "ui/statusBar.h"
 #include "ui/tam.h"
 #include "ui/tone.h"
 

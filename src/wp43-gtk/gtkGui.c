@@ -19,6 +19,7 @@
 #include "charString.h"
 #include "debug.h"
 #include "error.h"
+#include "gtkScreen.h"
 #include "items.h"
 #include "keyboard.h"
 #include "timer.h"
@@ -98,11 +99,23 @@ void frmCalcMouseButtonPressed(GtkWidget *notUsed, GdkEvent *event, gpointer dat
       return;
     }
 
+    if(event->type == GDK_DOUBLE_BUTTON_PRESS || event->type == GDK_TRIPLE_BUTTON_PRESS) { // return unprocessed for double or triple click
+      return;
+    }
+    if(event->button.button == 2) { // Middle click
+      shiftF = true;
+      shiftG = false;
+    }
+    if(event->button.button == 3) { // Right click
+      shiftF = false;
+      shiftG = true;
+    }
+
     if(key[1] == 0) { // Soft function key
-      btnFnPressed(event, key);
+      btnFnPressed(key);
     }
     else { // Not a soft function key
-      btnPressed(event, key);
+      btnPressed(key);
     }
   }
 }

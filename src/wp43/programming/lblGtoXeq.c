@@ -40,10 +40,10 @@
 #include "registerValueConversions.h"
 #include "screen.h"
 #include "softmenus.h"
-#include "statusBar.h"
 #include "stack.h"
 #include "store.h"
 #include "timer.h"
+#include "ui/statusBar.h"
 #include "ui/tam.h"
 
 #include "wp43.h"

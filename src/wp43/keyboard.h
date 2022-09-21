@@ -21,10 +21,6 @@
   #define KEYBOARD_H
 
   #include <stdint.h>
-  #if defined(PC_BUILD)
-    #include <gtk/gtk.h>
-    #include <gdk/gdk.h>
-  #endif // PC_BUILD
 
   void leavePem        (void);
   void showShiftState  (void);
@@ -87,37 +83,25 @@
   void fnKeyAngle      (uint16_t unusedButMandatoryParameter);
 
   #if defined(PC_BUILD)
-    /**
-     * A calc function key was pressed.
-     *
-     * \param data pointer to a string containing the key number pressed: 00=1/x, ..., 36=EXIT
-     */
-    void btnFnPressed  (GdkEvent *event, char *data);
-
-    /**
-     * A calc button was pressed.
-     *
-     * \param data pointer to a string containing the key number pressed: 00=1/x, ..., 36=EXIT
-     */
-    void btnPressed    (GdkEvent *event, char *data);
-
     extern char key[3];
   #endif // PC_BUILD
 
   void execAutoRepeat(uint16_t key);
 
-  #if defined(DMCP_BUILD)
-    void btnFnPressed (char *data);
-    void btnPressed   (char *data);
-  #endif // DMCP_BUILD
-
   #if !defined(TESTSUITE_BUILD)
     /**
-     * A calc function key was clicked.
+     * A calc button was pressed.
      *
-     * \param data String containing the key ID
+     * \param data pointer to a string containing the key number pressed: 00=1/x, ..., 36=EXIT
      */
-    void btnFnClicked (char *data);
+    void btnPressed   (char *data);
+
+    /**
+     * A calc button was released.
+     *
+     * \param string containing the key number pressed: 00=1/x, ..., 36=EXIT
+     */
+    void btnReleased   (char *data);
 
     /**
      * A calc button was clicked.
@@ -127,6 +111,13 @@
     void btnClicked   (char *data);
 
     /**
+     * A calc function key was pressed.
+     *
+     * \param data pointer to a string containing the key number pressed: 00=1/x, ..., 36=EXIT
+     */
+    void btnFnPressed (char *data);
+
+    /**
      * A calc function key was released.
      *
      * \param string containing the key number pressed: 00=1/x, ..., 36=EXIT
@@ -134,11 +125,11 @@
     void btnFnReleased(char *data);
 
     /**
-     * A calc button was released.
+     * A calc function key was clicked.
      *
-     * \param string containing the key number pressed: 00=1/x, ..., 36=EXIT
+     * \param data String containing the key ID
      */
-    void btnReleased   (char *data);
+    void btnFnClicked (char *data);
   #endif // !TESTSUITE_BUILD
 
   void setLastKeyCode  (int key);

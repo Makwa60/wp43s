@@ -895,9 +895,6 @@
     #define LCD_EMPTY_VALUE                        255 // White (or empty) pixel
     #define TO_QSPI
   #else // DMCP_BUILD
-    #define setBlackPixel(x, y)                bitblt24(x, 1, y, 1, BLT_OR,   BLT_NONE)
-    #define setWhitePixel(x, y)                bitblt24(x, 1, y, 1, BLT_ANDN, BLT_NONE)
-    #define flipPixel(x, y)                    bitblt24(x, 1, y, 1, BLT_XOR,  BLT_NONE)
     #define beep(frequence, length)            {while(get_beep_volume() < 11) beep_volume_up(); start_buzzer_freq(frequence * 1000); sys_delay(length); stop_buzzer();}
     #define TO_QSPI                            __attribute__ ((section(".qspi")))
   #endif // !DMCP_BUILD
@@ -938,7 +935,6 @@
   #define RADIX34_MARK_CHAR                    (getSystemFlag(FLAG_DECIMP) ? '.'       : ',')
   #define RADIX34_MARK_STRING                  (getSystemFlag(FLAG_DECIMP) ? "."       : ",")
   #define PRODUCT_SIGN                         (getSystemFlag(FLAG_MULTx)  ? STD_CROSS : STD_DOT)
-  #define clearScreen()                        lcd_fill_rect(0, 0, SCREEN_WIDTH, 240, LCD_SET_VALUE)
   #define currentReturnProgramNumber           (currentSubroutineLevelData[0].returnProgramNumber)
   #define currentReturnLocalStep               (currentSubroutineLevelData[0].returnLocalStep)
   #define currentNumberOfLocalFlags            (currentSubroutineLevelData[1].numberOfLocalFlags)
