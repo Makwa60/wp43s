@@ -15,7 +15,7 @@
  */
 
 /**
- * \file statusBar.h
+ * \file ui/statusBar.h
  * Status bar management.
  */
 #if !defined(STATUSBAR_H)

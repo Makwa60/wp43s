@@ -36,10 +36,10 @@
 #include "screen.h"
 #include "softmenus.h"
 #include "solver/equation.h"
-#include "statusBar.h"
 #include "stack.h"
 #include "stats.h"
 #include "store.h"
+#include "ui/statusBar.h"
 #include "wp43.h"
 #include <math.h>
 #include <string.h>

@@ -14,7 +14,7 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "statusBar.h"
+#include "ui/statusBar.h"
 
 #include "charString.h"
 #include "dateTime.h"

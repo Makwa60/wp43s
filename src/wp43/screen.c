@@ -41,8 +41,8 @@
 #include "registers.h"
 #include "registerValueConversions.h"
 #include "softmenus.h"
-#include "statusBar.h"
 #include "timer.h"
+#include "ui/statusBar.h"
 #include "version.h"
 #include <string.h>
 
