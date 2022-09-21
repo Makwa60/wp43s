@@ -88,80 +88,58 @@
 
   #if defined(PC_BUILD)
     /**
-     * Simulate a function key click.
-     *
-     * \param notUsed The button to pass to btnFnPressed and btnFnReleased
-     * \param data String containing the key ID
-     */
-    void btnFnClicked  (GtkWidget *notUsed, gpointer data);
-
-    /**
      * A calc function key was pressed.
      *
-     * \param notUsed
      * \param data pointer to a string containing the key number pressed: 00=1/x, ..., 36=EXIT
      */
-    void btnFnPressed  (GtkWidget *notUsed, GdkEvent *event, gpointer data);
-
-    /**
-     * A calc function key was released.
-     *
-     * \param notUsed
-     * \param data pointer to a string containing the key number pressed: 00=1/x, ..., 36=EXIT
-     */
-    void btnFnReleased (GtkWidget *notUsed, GdkEvent *event, gpointer data);
-
-    /**
-     * Simulate a button click.
-     *
-     * \param notUsed The button to pass to btnPressed and btnReleased
-     * \param data String containing the key ID
-     */
-    void btnClicked    (GtkWidget *notUsed, gpointer data);
+    void btnFnPressed  (GdkEvent *event, char *data);
 
     /**
      * A calc button was pressed.
      *
-     * \param notUsed
      * \param data pointer to a string containing the key number pressed: 00=1/x, ..., 36=EXIT
      */
-    void btnPressed    (GtkWidget *notUsed, GdkEvent *event, gpointer data);
+    void btnPressed    (GdkEvent *event, char *data);
 
-    /**
-     * A calc button was released.
-     *
-     * \param notUsed
-     * \param data pointer to a string containing the key number pressed: 00=1/x, ..., 36=EXIT
-     */
-    void frmCalcMouseButtonPressed(GtkWidget *notUsed, GdkEvent *event, gpointer data);
-
-    /**
-     * A calc button was pressed.
-     *
-     * \param notUsed
-     * \param data pointer to a string containing the key number pressed: 00=1/x, ..., 36=EXIT
-     */
-    void frmCalcMouseButtonReleased(GtkWidget *notUsed, GdkEvent *event, gpointer data);
-
-    /**
-     * A calc button was released.
-     *
-     * \param notUsed
-     * \param data pointer to a string containing the key number pressed: 00=1/x, ..., 36=EXIT
-     */
-    void btnReleased   (GtkWidget *notUsed, GdkEvent *event, gpointer data);
+    extern char key[3];
   #endif // PC_BUILD
 
   void execAutoRepeat(uint16_t key);
 
   #if defined(DMCP_BUILD)
-    void btnFnClicked (void *w, void *data);
-    void btnFnPressed (void *data);
-    void btnFnReleased(void *data);
-    void btnClicked   (void *w, void *data);
-    void btnPressed   (void *data);
-    void btnReleased  (void *data);
+    void btnFnPressed (char *data);
+    void btnPressed   (char *data);
   #endif // DMCP_BUILD
+
+  #if !defined(TESTSUITE_BUILD)
+    /**
+     * A calc function key was clicked.
+     *
+     * \param data String containing the key ID
+     */
+    void btnFnClicked (char *data);
+
+    /**
+     * A calc button was clicked.
+     *
+     * \param data String containing the key ID
+     */
+    void btnClicked   (char *data);
+
+    /**
+     * A calc function key was released.
+     *
+     * \param string containing the key number pressed: 00=1/x, ..., 36=EXIT
+     */
+    void btnFnReleased(char *data);
+
+    /**
+     * A calc button was released.
+     *
+     * \param string containing the key number pressed: 00=1/x, ..., 36=EXIT
+     */
+    void btnReleased   (char *data);
+  #endif // !TESTSUITE_BUILD
 
   void setLastKeyCode  (int key);
 #endif // !KEYBOARD_H

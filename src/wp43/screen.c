@@ -1422,7 +1422,7 @@ void execTimerApp(uint16_t timerType) {
             }
 
             if(stringWidth(tmpString + 1500 + w, &standardFont, true, true) >= SCREEN_WIDTH - 8) { // 8 is the standard font cursor width
-              btnClicked(NULL, "16"); // back space
+              btnClicked("16"); // back space
             }
             else {
               showString(tmpString, &standardFont, 1, Y_POSITION_OF_NIM_LINE - 3, vmNormal, true, true);
@@ -2291,7 +2291,7 @@ void execTimerApp(uint16_t timerType) {
       }
 
       if(stringWidth(tmpString + 1500 + w, &standardFont, true, true) + wLastBaseStandard > SCREEN_WIDTH - 8) { // 8 is the standard font cursor width
-        btnClicked(NULL, "16"); // back space
+        btnClicked("16"); // back space
       }
       else {
         showString(tmpString, &standardFont, 0, Y_POSITION_OF_NIM_LINE - 3, vmNormal, true, true);

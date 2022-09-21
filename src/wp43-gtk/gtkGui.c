@@ -19,6 +19,7 @@
 #include "charString.h"
 #include "debug.h"
 #include "error.h"
+#include "items.h"
 #include "keyboard.h"
 #include "timer.h"
 #include "saveRestoreCalcState.h"
@@ -54,6 +55,71 @@ static gint destroyCalc(GtkWidget* w, GdkEventAny* e, gpointer data) {
   gtk_main_quit();
 
   return 0;
+}
+
+
+
+static void convertXYToKey(int x, int y) {
+  int xMin, xMax, yMin, yMax;
+  key[0] = 0;
+  key[1] = 0;
+  key[2] = 0;
+
+  for(int i=0; i<43; i++) {
+    xMin = calcKeyboard[i].x;
+    yMin = calcKeyboard[i].y;
+    if(i == 10 && currentBezel == 2 && (tam.mode == TM_LABEL || (tam.mode == TM_SOLVE && (tam.function != ITM_SOLVE || calcMode != CM_PEM)) || (tam.mode == TM_KEY && tam.keyInputFinished))) {
+      xMax = xMin + calcKeyboard[10].width[3];
+      yMax = yMin + calcKeyboard[10].height[3];
+    }
+    else {
+      xMax = xMin + calcKeyboard[i].width[currentBezel];
+      yMax = yMin + calcKeyboard[i].height[currentBezel];
+    }
+
+    if(   xMin <= x && x <= xMax
+       && yMin <= y && y <= yMax) {
+      if(i < 6) { // Function key
+        key[0] = '1' + i;
+      }
+      else {
+        key[0] = '0' + (i - 6)/10;
+        key[1] = '0' + (i - 6)%10;
+      }
+      break;
+    }
+  }
+}
+
+void frmCalcMouseButtonPressed(GtkWidget *notUsed, GdkEvent *event, gpointer data) {
+  if(key[0] == 0) { // The previous click must be released
+    convertXYToKey((int)event->button.x, (int)event->button.y);
+    if(key[0] == 0) {
+      return;
+    }
+
+    if(key[1] == 0) { // Soft function key
+      btnFnPressed(event, key);
+    }
+    else { // Not a soft function key
+      btnPressed(event, key);
+    }
+  }
+}
+
+void frmCalcMouseButtonReleased(GtkWidget *notUsed, GdkEvent *event, gpointer data) {
+  if(key[0] == 0) {
+    return;
+  }
+
+  if(key[1] == 0) { // Soft function key
+    btnFnReleased(key);
+  }
+  else { // Not a soft function key
+    btnReleased(key);
+  }
+
+  key[0] = 0;
 }
 
 
@@ -453,242 +519,242 @@ static gboolean keyPressed(GtkWidget *w, GdkEventKey *event, gpointer data) {
   switch(event->keyval) {
     case 65470: // F1
       //printf("key pressed: F1\n");
-      btnFnClicked(w, "1");
+      btnFnClicked("1");
       break;
 
     case 65471: // F2
       //printf("key pressed: F2\n");
-      btnFnClicked(w, "2");
+      btnFnClicked("2");
       break;
 
     case 65472: // F3
       //printf("key pressed: F3\n");
-      btnFnClicked(w, "3");
+      btnFnClicked("3");
       break;
 
     case 65473: // F4
       //printf("key pressed: F4\n");
-      btnFnClicked(w, "4");
+      btnFnClicked("4");
       break;
 
     case 65474: // F5
       //printf("key pressed: F5\n");
-      btnFnClicked(w, "5");
+      btnFnClicked("5");
       break;
 
     case 65475: // F6
       //printf("key pressed: F6\n");
-      btnFnClicked(w, "6");
+      btnFnClicked("6");
       break;
 
     case 73:  // I
     case 105: // i
       //printf("key pressed: i 1/x\n");
-      btnClicked(w, "00");
+      btnClicked("00");
       break;
 
     case 76:  // L
       //printf("key pressed: L EXP\n");
-      btnClicked(w, "01");
+      btnClicked("01");
       break;
 
     case 84:  // T
     case 116: // t
       //printf("key pressed: T TRI\n");
-      btnClicked(w, "02");
+      btnClicked("02");
       break;
 
     case 108: // l
       //printf("key pressed: l ln\n");
-      btnClicked(w, "03");
+      btnClicked("03");
       break;
 
     case 101: // e
       //printf("key pressed: e e^x\n");
-      btnClicked(w, "04");
+      btnClicked("04");
       break;
 
     case 81:  // Q
     case 113: // q
       //printf("key pressed: Q Quadrad\n");
-      btnClicked(w, "05");
+      btnClicked("05");
       break;
 
     case 83:  // S
     case 115: // s
       //printf("key pressed: s STO\n");
-      btnClicked(w, "06");
+      btnClicked("06");
       break;
 
     case 82:  // R
     case 114: // r
       //printf("key pressed: r RCL\n");
-      btnClicked(w, "07");
+      btnClicked("07");
       break;
 
     case 65366: // PgDn
       //printf("key pressed: PgDn Roll down\n");
-      btnClicked(w, "08");
+      btnClicked("08");
       break;
 
     case 67: // C
       //printf("key pressed: C CC\n");
-      btnClicked(w, "09");
+      btnClicked("09");
       break;
 
     case 70:  // F
     case 102: // f
       //printf("key pressed: f\n");
-      btnClicked(w, "10");
+      btnClicked("10");
       break;
 
     case 71:  // G
     case 103: // g
       //printf("key pressed: g\n");
-      btnClicked(w, "11");
+      btnClicked("11");
       break;
 
     case 65293: // Enter
     case 65421: // Enter numeric pad
       //printf("key pressed: ENTER\n");
-      btnClicked(w, "12");
+      btnClicked("12");
       break;
 
     case 65289: // Tab
       //printf("key pressed: Tab x<>y\n");
-      btnClicked(w, "13");
+      btnClicked("13");
       break;
 
     case 99: // c
       //printf("key pressed: c CHS +/-\n");
-      btnClicked(w, "14");
+      btnClicked("14");
       break;
 
     case 69: // E
       //printf("key pressed: E\n");
-      btnClicked(w, "15");
+      btnClicked("15");
       break;
 
     case 65288: // Backspace
       //printf("key pressed: Backspace\n");
-      btnClicked(w, "16");
+      btnClicked("16");
       break;
 
     case 47:    // /
     case 65455: // /
       //printf("key pressed: /\n");
-      btnClicked(w, "17");
+      btnClicked("17");
       break;
 
     case 55:    // 7
     case 65463: // 7
       //printf("key pressed: 7\n");
-      btnClicked(w, "18");
+      btnClicked("18");
       break;
 
     case 56:    // 8
     case 65464: // 8
       //printf("key pressed: 8\n");
-      btnClicked(w, "19");
+      btnClicked("19");
       break;
 
     case 57:    // 9
     case 65465: // 9
       //printf("key pressed: 9\n");
-      btnClicked(w, "20");
+      btnClicked("20");
       break;
 
     case 88:  // X
       //printf("key pressed: XEQ\n");
-      btnClicked(w, "21");
+      btnClicked("21");
       break;
 
     case 42:    // *
     case 65450: // *
       //printf("key pressed: *\n");
-      btnClicked(w, "22");
+      btnClicked("22");
       break;
 
     case 52:    // 4
     case 65460: // 4
       //printf("key pressed: 4\n");
-      btnClicked(w, "23");
+      btnClicked("23");
       break;
 
     case 53:    // 5
     case 65461: // 5
       //printf("key pressed: 5\n");
-      btnClicked(w, "24");
+      btnClicked("24");
       break;
 
     case 54:    // 6
     case 65462: // 6
       //printf("key pressed: 6\n");
-      btnClicked(w, "25");
+      btnClicked("25");
       break;
 
     case 65362: // up arrow
       //printf("key pressed: up\n");
-      btnClicked(w, "26");
+      btnClicked("26");
       break;
 
     case 45:    // -
     case 65453: // -
       //printf("key pressed: -\n");
-      btnClicked(w, "27");
+      btnClicked("27");
       break;
 
     case 49:    // 1
     case 65457: // 1
       //printf("key pressed: 1\n");
-      btnClicked(w, "28");
+      btnClicked("28");
       break;
 
     case 50:    // 2
     case 65458: // 2
       //printf("key pressed: 2\n");
-      btnClicked(w, "29");
+      btnClicked("29");
       break;
 
     case 51:    // 3
     case 65459: // 3
       //printf("key pressed: 3\n");
-      btnClicked(w, "30");
+      btnClicked("30");
       break;
 
     case 65364: // down arrow
       //printf("key pressed: down\n");
-      btnClicked(w, "31");
+      btnClicked("31");
       break;
 
     case 43:    // +
     case 65451: // +
       //printf("key pressed: +\n");
-      btnClicked(w, "32");
+      btnClicked("32");
       break;
 
     case 48:    // 0
     case 65456: // 0
       //printf("key pressed: 0\n");
-      btnClicked(w, "33");
+      btnClicked("33");
       break;
 
     case 44:    // ,
     case 46:    // .
     case 65454: // .
       //printf("key pressed: .\n");
-      btnClicked(w, "34");
+      btnClicked("34");
       break;
 
     case 65507: // left Ctrl
     case 65508: // right Ctrl
       //printf("key pressed: Ctrl R/S\n");
-      btnClicked(w, "35");
+      btnClicked("35");
       break;
 
     case 65307: // Esc
       //printf("key pressed: EXIT\n");
-      btnClicked(w, "36");
+      btnClicked("36");
       break;
 
     case 72:  // H
