@@ -133,6 +133,31 @@
 
 
   /**
+   * \enum calcMode_t
+   * Calculator mode (5 bits).
+   */
+  typedef enum {
+    CM_NORMAL           = 0,  // Normal operation
+    CM_AIM              = 1,  // Alpha input mode
+    CM_NIM              = 2,  // Numeric input mode
+    CM_PEM              = 3,  // Program entry mode
+    CM_ASSIGN           = 4,  // Assign mode
+    CM_REGISTER_BROWSER = 5,  // Register browser
+    CM_FLAG_BROWSER     = 6,  // Flag browser
+    CM_FONT_BROWSER     = 7,  // Font browser
+    CM_PLOT_STAT        = 8,  // Plot stats mode
+    CM_ERROR_MESSAGE    = 9,  // Error message in one of the register lines
+    CM_BUG_ON_SCREEN    = 10, // Bug message on screen
+    CM_CONFIRMATION     = 11, // Waiting for confirmation or canceling
+    CM_MIM              = 12, // Matrix imput mode tbd reorder
+    CM_EIM              = 13, // Equation imput mode
+    CM_TIMER            = 14, // Timer application
+    CM_GRAPH            = 15, // Plot graph mode
+    CM_NO_UNDO          = 16  // Running functions without undo affected
+  } calcMode_t;
+
+
+  /**
    * \struct dtConfigDescriptor_t
    * Configuration for STOCFG and RCLCFG.
    */

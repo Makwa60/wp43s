@@ -47,7 +47,7 @@
 
 #include "wp43.h"
 
-#define BACKUP_VERSION         77  // Histo Update
+#define BACKUP_VERSION         78  // calcMode changed size
 #define START_REGISTER_VALUE 1000  // was 1522, why?
 #define BACKUP               ppgm_fp // The FIL *ppgm_fp pointer is provided by DMCP
 
@@ -659,7 +659,7 @@ static uint32_t restore(void *buffer, uint32_t size, void *stream) {
         calcModeNormalGui();
       }
       else {
-        sprintf(errorMessage, "In function restoreCalc: %" PRIu8 " is an unexpected value for calcMode", calcMode);
+        sprintf(errorMessage, "In function restoreCalc: %" PRIu8 " is an unexpected value for calcMode", (uint8_t)calcMode);
         displayBugScreen(errorMessage);
       }
       if(catalog) {

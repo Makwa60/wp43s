@@ -41,25 +41,25 @@
    */
   dataBlock_t *  getRegisterDataPointer          (calcRegister_t regist);
 
-  // Helper macros to get register data in the appropriate format
-  #define REGISTER_DATA(a)                                       ((dataBlock_t *)(getRegisterDataPointer(a)))
-  #define REGISTER_REAL34_DATA(a)                                ((real34_t    *)(getRegisterDataPointer(a)))
-  #define REGISTER_IMAG34_DATA(a)                                ((real34_t    *)(getRegisterDataPointer(a) + REAL34_SIZE))
-  #define REGISTER_COMPLEX34_DATA(a)                             ((complex34_t *)(getRegisterDataPointer(a)))
+  // Helper functions to get register data in the appropriate format
+  static inline dataBlock_t          *REGISTER_DATA                        (calcRegister_t a) {return (dataBlock_t *)(getRegisterDataPointer(a));}
+  static inline real34_t             *REGISTER_REAL34_DATA                 (calcRegister_t a) {return (real34_t    *)(getRegisterDataPointer(a));}
+  static inline real34_t             *REGISTER_IMAG34_DATA                 (calcRegister_t a) {return (real34_t    *)(getRegisterDataPointer(a) + REAL34_SIZE);}
+  static inline complex34_t          *REGISTER_COMPLEX34_DATA              (calcRegister_t a) {return (complex34_t *)(getRegisterDataPointer(a));}
 
-  #define REGISTER_STRING_DATA(a)                                ((char        *)(getRegisterDataPointer(a) + 1)) // Memory pointer to the string of a register
+  static inline char                 *REGISTER_STRING_DATA                 (calcRegister_t a) {return (char        *)(getRegisterDataPointer(a) + 1);} // Memory pointer to the string of a register
 
-  #define REGISTER_CONFIG_DATA(a)                                ((dtConfigDescriptor_t *)(getRegisterDataPointer(a)))
+  static inline dtConfigDescriptor_t *REGISTER_CONFIG_DATA                 (calcRegister_t a) {return (dtConfigDescriptor_t *)(getRegisterDataPointer(a));}
 
-  #define REGISTER_REAL34_MATRIX_DBLOCK(a)                       ((dataBlock_t *)(getRegisterDataPointer(a)))
-  #define REGISTER_REAL34_MATRIX_M_ELEMENTS(a)                   ((real34_t *)((void *)getRegisterDataPointer(a) + sizeof(dataBlock_t)))
-  #define REGISTER_REAL34_MATRIX(a)                              ((real34Matrix_t *)(getRegisterDataPointer(a)))
+  static inline dataBlock_t          *REGISTER_REAL34_MATRIX_DBLOCK        (calcRegister_t a) {return (dataBlock_t *)(getRegisterDataPointer(a));}
+  static inline real34_t             *REGISTER_REAL34_MATRIX_M_ELEMENTS    (calcRegister_t a) {return (real34_t *)((void *)getRegisterDataPointer(a) + sizeof(dataBlock_t));}
+  static inline real34Matrix_t       *REGISTER_REAL34_MATRIX               (calcRegister_t a) {return (real34Matrix_t *)(getRegisterDataPointer(a));}
 
-  #define REGISTER_COMPLEX34_MATRIX_DBLOCK(a)                    ((dataBlock_t *)(getRegisterDataPointer(a)))
-  #define REGISTER_COMPLEX34_MATRIX_M_ELEMENTS(a)                ((complex34_t *)((void *)getRegisterDataPointer(a) + sizeof(dataBlock_t)))
-  #define REGISTER_COMPLEX34_MATRIX(a)                           ((complex34Matrix_t *)(getRegisterDataPointer(a)))
+  static inline dataBlock_t          *REGISTER_COMPLEX34_MATRIX_DBLOCK     (calcRegister_t a) {return (dataBlock_t *)(getRegisterDataPointer(a));}
+  static inline complex34_t          *REGISTER_COMPLEX34_MATRIX_M_ELEMENTS (calcRegister_t a) {return (complex34_t *)((void *)getRegisterDataPointer(a) + sizeof(dataBlock_t));}
+  static inline complex34Matrix_t    *REGISTER_COMPLEX34_MATRIX            (calcRegister_t a) {return (complex34Matrix_t *)(getRegisterDataPointer(a));}
 
-  #define REGISTER_SHORT_INTEGER_DATA(a)                         ((uint64_t    *)(getRegisterDataPointer(a)))
+  static inline uint64_t             *REGISTER_SHORT_INTEGER_DATA          (calcRegister_t a) {return (uint64_t    *)(getRegisterDataPointer(a));}
 
   /**
    * Returns the data information of a register.

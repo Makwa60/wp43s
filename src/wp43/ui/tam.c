@@ -1006,6 +1006,8 @@
         case CM_EIM: {
           calcModeAimGui();
           break;
+        default:
+          break;
         }
       }
     #endif // PC_BUILD && (SCREEN_800X480 == 0)
