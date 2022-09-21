@@ -775,7 +775,7 @@ void runProgram(bool_t singleStep, uint16_t menuLabel) {
       #if defined(DMCP_BUILD)
         lcd_refresh();
       #else // !DMCP_BUILD
-        refreshLcd(NULL);
+        refreshLcd();
       #endif // DMCP_BUILD
     }
 
@@ -860,7 +860,7 @@ void runProgram(bool_t singleStep, uint16_t menuLabel) {
         break;
       }
       #if defined(PC_BUILD)
-        refreshLcd(NULL);
+        refreshLcd();
       #endif // PC_BUILD
     }
 
@@ -877,7 +877,7 @@ stopProgram:
         lcd_refresh();
         fnTimerStart(TO_KB_ACTV, TO_KB_ACTV, FAST_SCREEN_REFRESH_PERIOD+50);
       #else // !DMCP_BUILD
-        refreshLcd(NULL);
+        refreshLcd();
       #endif // DMCP_BUILD
     }
     return;

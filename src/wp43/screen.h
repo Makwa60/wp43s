@@ -35,6 +35,15 @@
   void       fnPoint                            (uint16_t unusedButMandatoryParameter);
   void       fnAGraph                           (uint16_t regist);
 
+  /**
+   * Refreshes calc's screen.
+   * This function is called every SCREEN_REFRESH_PERIOD ms.
+   * - make the cursor blink if needed
+   * - refresh date and time in the status bar if needed
+   * - refresh the whole screen if needed
+   */
+  void     refreshLcd                         (void);
+
   #if defined(PC_BUILD)
     /**
      * Draws the calc's screen on the PC window widget.
@@ -51,25 +60,9 @@
     void     copyStackRegistersToClipboard      (void);
     void     copyAllRegistersToClipboard        (void);
     void     copyRegisterToClipboardString      (calcRegister_t regist, char *clipboardString);
-
-    /**
-     * Refreshes calc's screen.
-     * This function is called every SCREEN_REFRESH_PERIOD ms by a GTK timer.
-     * - make the cursor blink if needed
-     * - refresh date and time in the status bar if needed
-     * - refresh the whole screen if needed
-     *
-     * \param[in] unusedData Not used
-     * \return What will happen next?
-     *   - true  = timer will call this function again
-     *   - false = timer stops calling this function
-     */
-    gboolean refreshLcd                         (gpointer unusedData);
   #endif // PC_BUILD
 
-  #if defined(DMCP_BUILD)
-    void     refreshLcd                         (void);
-  #else // !DMCP_BUILD
+  #if !defined(DMCP_BUILD)
     void     lcd_fill_rect                      (uint32_t x, uint32_t y, uint32_t dx, uint32_t dy, int val); // clone from the DMCP function
 
       /**

@@ -88,11 +88,11 @@ void fnPause(uint16_t duration) {
         sys_delay(100);
       }
     #else // !DMCP_BUILD
-      refreshLcd(NULL);
+      refreshLcd();
       for(uint16_t i = 0; i < duration && (programRunStop == PGM_PAUSED || programRunStop == PGM_KEY_PRESSED_WHILE_PAUSED); ++i) {
         if(previousProgramRunStop != PGM_RUNNING) {
           refreshScreen();
-          refreshLcd(NULL);
+          refreshLcd();
         }
         gtk_main_iteration_do(FALSE);
         usleep(100000);
@@ -107,7 +107,7 @@ void fnPause(uint16_t duration) {
       #if defined(DMCP_BUILD)
         lcd_refresh();
       #else // !DMCP_BUILD
-        refreshLcd(NULL);
+        refreshLcd();
       #endif // DMCP_BUILD
     }
   #endif // !TESTSUITE_BUILD

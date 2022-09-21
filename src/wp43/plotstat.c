@@ -1768,7 +1768,7 @@ void fnPlotStat(uint16_t plotMode){
         #if defined(DMCP_BUILD)
           lcd_refresh();
         #else // !DMCP_BUILD
-          refreshLcd(NULL);
+          refreshLcd();
         #endif // DMCP_BUILD
 
         switch(plotMode) {

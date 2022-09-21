@@ -2461,7 +2461,7 @@ void fnKeyUp(uint16_t unusedButMandatoryParameter) {
           #if defined(DMCP_BUILD)
             lcd_refresh();
           #else // !DMCP_BUILD
-            refreshLcd(NULL);
+            refreshLcd();
           #endif // DMCP_BUILD
         }
         if(softmenu[softmenuStack[0].softmenuId].menuItem == -MNU_PLOT_LR){

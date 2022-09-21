@@ -567,10 +567,15 @@
 
     gtk_clipboard_set_text(clipboard, clipboardString, -1);
   }
+#endif
 
 
 
-  gboolean refreshLcd(gpointer unusedData) { // This function is called every SCREEN_REFRESH_PERIOD ms by a GTK timer
+#if defined(TESTSUITE_BUILD) && !defined(GENERATE_CATALOGS)
+  void refreshLcd(void) {}
+#else
+  // This function is called periodically by the main loop or a GTK timer
+  void refreshLcd(void) {
     // Cursor blinking
     static bool_t cursorBlink=true;
 
@@ -581,12 +586,18 @@
       else {
         hideCursor();
       }
-      cursorBlink = !cursorBlink;
+      #if defined(PC_BUILD)
+        cursorBlink = !cursorBlink;
+      #endif // PC_BUILD
     }
 
     // Function name display
     if(showFunctionNameCounter > 0) {
-      showFunctionNameCounter -= SCREEN_REFRESH_PERIOD;
+      #if defined(PC_BUILD)
+        showFunctionNameCounter -= SCREEN_REFRESH_PERIOD;
+      #elif defined(DMCP_BUILD)
+        showFunctionNameCounter -= FAST_SCREEN_REFRESH_PERIOD;
+      #endif // PC_BUILD DMCP_BUILD
       if(showFunctionNameCounter <= 0) {
         hideFunctionName();
         tmpString[0] = 0;
@@ -601,107 +612,69 @@
       #if (DEBUG_INSTEAD_STATUS_BAR != 1)
         showDateTime();
       #endif // (DEBUG_INSTEAD_STATUS_BAR != 1)
-    }
-
-    // If LCD has changed: update the GTK screen
-    if(screenChange) {
-      #if defined(LINUX) && (DEBUG_PANEL == 1)
-        if(programRunStop != PGM_RUNNING) {
-          refreshDebugPanel();
+      #if defined(DMCP_BUILD)
+        if(!getSystemFlag(FLAG_AUTOFF) || (nextTimerRefresh != 0)) {
+          reset_auto_off();
         }
-      #endif // defined(LINUX) && (DEBUG_PANEL == 1)
-
-      gtk_widget_queue_draw(screen);
-      while(gtk_events_pending()) {
-        gtk_main_iteration();
-      }
+        fnPollTimerApp();
+      #endif // DMCP_BUILD
     }
 
-    // Alpha selection timer
-    if(catalog && alphaSelectionTimer != 0 && (getUptimeMs() - alphaSelectionTimer) > 3000) { // More than 3 seconds elapsed since last keypress
-      resetAlphaSelectionBuffer();
-    }
+    #if defined(PC_BUILD)
+      // If LCD has changed: update the GTK screen
+      if(screenChange) {
+        #if defined(LINUX) && (DEBUG_PANEL == 1)
+          if(programRunStop != PGM_RUNNING) {
+            refreshDebugPanel();
+          }
+        #endif // defined(LINUX) && (DEBUG_PANEL == 1)
 
-    return TRUE;
-  }
-#elif defined(DMCP_BUILD)
-  void refreshLcd(void) { // This function is called roughly every SCREEN_REFRESH_PERIOD ms from the main loop
-    // Cursor blinking
-    static bool_t cursorBlink=true;
-
-    if(cursorEnabled) {
-      if(cursorBlink) {
-        showGlyph(STD_CURSOR, cursorFont, xCursor, yCursor, vmNormal, true, false);
-      }
-      else {
-        hideCursor();
-      }
-      //cursorBlink = !cursorBlink;
-    }
-
-    // Function name display
-    if(showFunctionNameCounter>0) {
-      showFunctionNameCounter -= FAST_SCREEN_REFRESH_PERIOD;
-      if(showFunctionNameCounter <= 0) {
-        hideFunctionName();
-        tmpString[0] = 0;
-        showFunctionName(ITM_NOP, 0);
-      }
-    }
-
-    // Update date and time
-    getTimeString(dateTimeString);
-    if(strcmp(dateTimeString, oldTime)) {
-      strcpy(oldTime, dateTimeString);
-      #if (DEBUG_INSTEAD_STATUS_BAR != 1)
-        showDateTime();
-      #endif // (DEBUG_INSTEAD_STATUS_BAR != 1)
-
-      if(!getSystemFlag(FLAG_AUTOFF) || (nextTimerRefresh != 0)) {
-        reset_auto_off();
-      }
-      fnPollTimerApp();
-    }
-
-    if(usb_powered() == 1) {
-      if(!getSystemFlag(FLAG_USB)) {
-        setSystemFlag(FLAG_USB);
-        clearSystemFlag(FLAG_LOWBAT);
-        showHideUsbLowBattery();
-      }
-    }
-    else {
-      if(getSystemFlag(FLAG_USB)) {
-        clearSystemFlag(FLAG_USB);
-      }
-
-      if(get_vbat() < 2000) {
-        if(!getSystemFlag(FLAG_LOWBAT)) {
-          setSystemFlag(FLAG_LOWBAT);
-          showHideUsbLowBattery();
-        }
-        SET_ST(STAT_PGM_END);
-      }
-      else if(get_vbat() < 2500) {
-        if(!getSystemFlag(FLAG_LOWBAT)) {
-          setSystemFlag(FLAG_LOWBAT);
-          showHideUsbLowBattery();
+        gtk_widget_queue_draw(screen);
+        while(gtk_events_pending()) {
+          gtk_main_iteration();
         }
       }
-      else {
-        if(getSystemFlag(FLAG_LOWBAT)) {
+    #elif defined(DMCP_BUILD)
+      if(usb_powered() == 1) {
+        if(!getSystemFlag(FLAG_USB)) {
+          setSystemFlag(FLAG_USB);
           clearSystemFlag(FLAG_LOWBAT);
           showHideUsbLowBattery();
         }
       }
-    }
+      else {
+        if(getSystemFlag(FLAG_USB)) {
+          clearSystemFlag(FLAG_USB);
+        }
+
+        if(get_vbat() < 2000) {
+          if(!getSystemFlag(FLAG_LOWBAT)) {
+            setSystemFlag(FLAG_LOWBAT);
+            showHideUsbLowBattery();
+          }
+          SET_ST(STAT_PGM_END);
+        }
+        else if(get_vbat() < 2500) {
+          if(!getSystemFlag(FLAG_LOWBAT)) {
+            setSystemFlag(FLAG_LOWBAT);
+            showHideUsbLowBattery();
+          }
+        }
+        else {
+          if(getSystemFlag(FLAG_LOWBAT)) {
+            clearSystemFlag(FLAG_LOWBAT);
+            showHideUsbLowBattery();
+          }
+        }
+      }
+    #endif // PC_BUILD DMCP_BUILD
 
     // Alpha selection timer
     if(catalog && alphaSelectionTimer != 0 && (getUptimeMs() - alphaSelectionTimer) > 3000) { // More than 3 seconds elapsed since last keypress
       resetAlphaSelectionBuffer();
     }
   }
-#endif // PC_BUILD DMCP_BUILD
+#endif // !TESTSUITE_BUILD || GENERATE_CATALOGS
 
 
 
@@ -2561,7 +2534,7 @@ void execTimerApp(uint16_t timerType) {
     }
 
     #if !defined(DMCP_BUILD)
-      refreshLcd(NULL);
+      refreshLcd();
     #endif // !DMCP_BUILD
   }
 #endif // !TESTSUITE_BUILD
