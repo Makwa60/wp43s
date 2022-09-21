@@ -611,15 +611,14 @@
   #define TI_SA                                     44
   #define TI_INACCURATE                             45
   #define TI_UNDO_DISABLED                          46
-  #define TI_VIEW                                   47
-  #define TI_SOLVER_VARIABLE                        48
-  #define TI_SOLVER_FAILED                          49
-  #define TI_ACC                                    50
-  #define TI_ULIM                                   51
-  #define TI_LLIM                                   52
-  #define TI_INTEGRAL                               53
-  #define TI_1ST_DERIVATIVE                         54
-  #define TI_2ND_DERIVATIVE                         55
+  #define TI_SOLVER_VARIABLE                        47
+  #define TI_SOLVER_FAILED                          48
+  #define TI_ACC                                    49
+  #define TI_ULIM                                   50
+  #define TI_LLIM                                   51
+  #define TI_INTEGRAL                               52
+  #define TI_1ST_DERIVATIVE                         53
+  #define TI_2ND_DERIVATIVE                         54
 
   // Register browser mode
   #define RBR_GLOBAL                                 0 // Global registers are browsed
