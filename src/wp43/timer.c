@@ -495,7 +495,7 @@ void fnUpdateTimerApp(void) {
         refreshLcd();
         lcd_refresh();
       #else // !DMCP_BUILD
-        refreshLcd(NULL);
+        refreshLcd();
       #endif // DMCP_BUILD
     }
   #endif // !TESTSUITE_BUILD

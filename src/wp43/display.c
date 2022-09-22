@@ -2179,7 +2179,7 @@ void fnShow(uint16_t unusedButMandatoryParameter) {
 void fnView(uint16_t regist) {
   if(regInRange(regist)) {
     currentViewRegister = regist;
-    temporaryInformation = TI_VIEW;
+    temporaryInformation = TI_VIEW_REGISTER;
     if(programRunStop == PGM_RUNNING) {
       refreshScreen();
       fnPause(10);

@@ -36,10 +36,10 @@
 #include "screen.h"
 #include "softmenus.h"
 #include "solver/equation.h"
-#include "statusBar.h"
 #include "stack.h"
 #include "stats.h"
 #include "store.h"
+#include "ui/statusBar.h"
 #include "wp43.h"
 #include <math.h>
 #include <string.h>
@@ -978,7 +978,7 @@ void graph_eqn(uint16_t mode) {
       #if defined(DMCP_BUILD)
         lcd_refresh();
       #else // !DMCP_BUILD
-        refreshLcd(NULL);
+        refreshLcd();
       #endif // DMCP_BUILD
 
     }
@@ -1000,7 +1000,7 @@ void graph_eqn(uint16_t mode) {
     #if defined(DMCP_BUILD)
       lcd_refresh();
     #else // !DMCP_BUILD
-      refreshLcd(NULL);
+      refreshLcd();
     #endif // DMCP_BUILD
 
     convertDoubleToReal34RegisterPush(0.0, REGISTER_X);
@@ -1048,7 +1048,7 @@ void fnEqSolvGraph (uint16_t func) {
   #if defined(DMCP_BUILD)
     lcd_refresh();
   #else // !DMCP_BUILD
-    refreshLcd(NULL);
+    refreshLcd();
   #endif // DMCP_BUILD
 
   graphVariable = currentSolverVariable;

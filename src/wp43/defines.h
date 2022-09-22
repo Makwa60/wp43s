@@ -611,15 +611,14 @@
   #define TI_SA                                     44
   #define TI_INACCURATE                             45
   #define TI_UNDO_DISABLED                          46
-  #define TI_VIEW                                   47
-  #define TI_SOLVER_VARIABLE                        48
-  #define TI_SOLVER_FAILED                          49
-  #define TI_ACC                                    50
-  #define TI_ULIM                                   51
-  #define TI_LLIM                                   52
-  #define TI_INTEGRAL                               53
-  #define TI_1ST_DERIVATIVE                         54
-  #define TI_2ND_DERIVATIVE                         55
+  #define TI_SOLVER_VARIABLE                        47
+  #define TI_SOLVER_FAILED                          48
+  #define TI_ACC                                    49
+  #define TI_ULIM                                   50
+  #define TI_LLIM                                   51
+  #define TI_INTEGRAL                               52
+  #define TI_1ST_DERIVATIVE                         53
+  #define TI_2ND_DERIVATIVE                         54
 
   // Register browser mode
   #define RBR_GLOBAL                                 0 // Global registers are browsed
@@ -896,9 +895,6 @@
     #define LCD_EMPTY_VALUE                        255 // White (or empty) pixel
     #define TO_QSPI
   #else // DMCP_BUILD
-    #define setBlackPixel(x, y)                bitblt24(x, 1, y, 1, BLT_OR,   BLT_NONE)
-    #define setWhitePixel(x, y)                bitblt24(x, 1, y, 1, BLT_ANDN, BLT_NONE)
-    #define flipPixel(x, y)                    bitblt24(x, 1, y, 1, BLT_XOR,  BLT_NONE)
     #define beep(frequence, length)            {while(get_beep_volume() < 11) beep_volume_up(); start_buzzer_freq(frequence * 1000); sys_delay(length); stop_buzzer();}
     #define TO_QSPI                            __attribute__ ((section(".qspi")))
   #endif // !DMCP_BUILD
@@ -939,7 +935,6 @@
   #define RADIX34_MARK_CHAR                    (getSystemFlag(FLAG_DECIMP) ? '.'       : ',')
   #define RADIX34_MARK_STRING                  (getSystemFlag(FLAG_DECIMP) ? "."       : ",")
   #define PRODUCT_SIGN                         (getSystemFlag(FLAG_MULTx)  ? STD_CROSS : STD_DOT)
-  #define clearScreen()                        lcd_fill_rect(0, 0, SCREEN_WIDTH, 240, LCD_SET_VALUE)
   #define currentReturnProgramNumber           (currentSubroutineLevelData[0].returnProgramNumber)
   #define currentReturnLocalStep               (currentSubroutineLevelData[0].returnLocalStep)
   #define currentNumberOfLocalFlags            (currentSubroutineLevelData[1].numberOfLocalFlags)
@@ -1007,7 +1002,6 @@
     #define displayBugScreen(a)     { printf("\n-----------------------------------------------------------------------\n"); printf("%s\n", a); printf("\n-----------------------------------------------------------------------\n");}
     #define showHideHourGlass()     {}
     #define refreshScreen()         {}
-    #define refreshLcd(a)           {}
     #define initFontBrowser()       {}
   #endif // TESTSUITE_BUILD && !GENERATE_CATALOGS
 

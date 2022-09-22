@@ -29,6 +29,7 @@
 #include "error.h"
 #include "flags.h"
 #include "fonts.h"
+#include "hal/lcd.h"
 #include "items.h"
 #include "keyboard.h"
 #include "longIntegerType.h"
@@ -41,8 +42,8 @@
 #include "registers.h"
 #include "registerValueConversions.h"
 #include "softmenus.h"
-#include "statusBar.h"
 #include "timer.h"
+#include "ui/statusBar.h"
 #include "version.h"
 #include <string.h>
 
@@ -64,513 +65,12 @@
 #endif // !TESTSUITE_BUILD
 
 
-#if defined(PC_BUILD)
-  gboolean drawScreen(GtkWidget *widget, cairo_t *cr, gpointer data) {
-    cairo_surface_t *imageSurface;
 
-    imageSurface = cairo_image_surface_create_for_data((unsigned char *)screenData, CAIRO_FORMAT_RGB24, SCREEN_WIDTH, SCREEN_HEIGHT, screenStride * 4);
-    #if defined(RASPBERRY) && (SCREEN_800X480 == 1)
-      cairo_scale(cr, 2.0, 2.0);
-    #endif // defined(RASPBERRY) && (SCREEN_800X480 == 1)
-    cairo_set_source_surface(cr, imageSurface, 0, 0);
-    cairo_surface_mark_dirty(imageSurface);
-    #if defined(RASPBERRY) && (SCREEN_800X480 == 1)
-      cairo_pattern_set_filter(cairo_get_source(cr), CAIRO_FILTER_FAST);
-    #endif // defined(RASPBERRY) && (SCREEN_800X480 == 1)
-    cairo_paint(cr);
-    cairo_surface_destroy(imageSurface);
-
-    screenChange = false;
-
-    return FALSE;
-  }
-
-
-
-  void copyScreenToClipboard(void) {
-    cairo_surface_t *imageSurface;
-    GtkClipboard *clipboard;
-
-    clipboard = gtk_clipboard_get(GDK_SELECTION_CLIPBOARD);
-    gtk_clipboard_clear(clipboard);
-    gtk_clipboard_set_text(clipboard, "", 0); //JM FOUND TIP TO PROPERLY CLEAR CLIPBOARD: https://stackoverflow.com/questions/2418487/clear-the-system-clipboard-using-the-gtk-lib-in-c/2419673#2419673
-
-    imageSurface = cairo_image_surface_create_for_data((unsigned char *)screenData, CAIRO_FORMAT_RGB24, SCREEN_WIDTH, SCREEN_HEIGHT, screenStride * 4);
-    gtk_clipboard_set_image(clipboard, gdk_pixbuf_get_from_surface(imageSurface, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
-  }
-
-
-
-  static void angularUnitToString(angularMode_t angularMode, char *string) {
-    switch(angularMode) {
-      case amRadian: {
-        strcpy(string, "r");
-        break;
-      }
-      case amMultPi: {
-        strcpy(string, STD_pi);
-        break;
-      }
-      case amGrad: {
-        strcpy(string, "g");
-        break;
-      }
-      case amDegree: {
-        strcpy(string, STD_DEGREE);
-        break;
-      }
-      case amDMS: {
-        strcpy(string, "d.ms");
-        break;
-      }
-      case amNone: {
-        break;
-      }
-      default: {
-        strcpy(string, "?");
-      }
-    }
-  }
-
-
-
-  void copyRegisterToClipboardString(calcRegister_t regist, char *clipboardString) {
-    longInteger_t lgInt;
-    int16_t base, sign, n;
-    uint64_t shortInt;
-    char string[30000];
-
-    switch(getRegisterDataType(regist)) {
-      case dtLongInteger: {
-        convertLongIntegerRegisterToLongInteger(regist, lgInt);
-        longIntegerToAllocatedString(lgInt, string, 30000);
-        longIntegerFree(lgInt);
-        break;
-      }
-
-      case dtTime: {
-        timeToDisplayString(regist, string, false);
-        break;
-      }
-
-      case dtDate: {
-        dateToDisplayString(regist, string);
-        break;
-      }
-
-      case dtString: {
-        xcopy(string, REGISTER_STRING_DATA(regist), stringByteLength(REGISTER_STRING_DATA(regist)) + 1);
-        break;
-      }
-
-      case dtReal34Matrix: {
-        dataBlock_t* dblock = REGISTER_REAL34_MATRIX_DBLOCK(regist);
-        real34_t *real34 = REGISTER_REAL34_MATRIX_M_ELEMENTS(regist);
-        real34_t reduced;
-        int rows, columns, len;
-
-        rows = dblock->matrixRows;
-        columns = dblock->matrixColumns;
-        sprintf(string, "%dx%d", rows, columns);
-
-        for(int i=0; i<rows*columns; i++) {
-          strcat(string, LINEBREAK);
-          len = strlen(string);
-
-          real34Reduce(real34++, &reduced);
-          real34ToString(&reduced, string + len);
-
-          if(strchr(string + len, '.') == NULL && strchr(string + len, 'E') == NULL) {
-            strcat(string + len, ".");
-          }
-        }
-        break;
-      }
-
-      case dtComplex34Matrix: {
-        dataBlock_t* dblock = REGISTER_COMPLEX34_MATRIX_DBLOCK(regist);
-        complex34_t *complex34 = REGISTER_COMPLEX34_MATRIX_M_ELEMENTS(regist);
-        real34_t reduced;
-        int rows, columns, len;
-
-        rows = dblock->matrixRows;
-        columns = dblock->matrixColumns;
-        sprintf(string, "%dx%d", rows, columns);
-
-        for(int i=0; i<rows*columns; i++, complex34++) {
-          strcat(string, LINEBREAK);
-          len = strlen(string);
-
-          // Real part
-          real34Reduce((real34_t *)complex34, &reduced);
-          real34ToString(&reduced, string + len);
-          if(strchr(string + len, '.') == NULL && strchr(string + len, 'E') == NULL) {
-            strcat(string + len, ".");
-          }
-          len = strlen(string);
-
-          // Imaginary part
-          real34Reduce(((real34_t *)complex34) + 1, &reduced);
-          if(real34IsNegative(&reduced)) {
-            sprintf(string + len, " - %sx", COMPLEX_UNIT);
-            len += 5;
-            real34SetPositiveSign(&reduced);
-            real34ToString(&reduced, string + len);
-          }
-          else {
-            sprintf(string + len + strlen(string + len), " + %sx", COMPLEX_UNIT);
-            len += 5;
-            real34ToString(&reduced, string + len);
-          }
-          if(strchr(string + len, '.') == NULL && strchr(string + len, 'E') == NULL) {
-            strcat(string + len, ".");
-          }
-        }
-        break;
-      }
-
-      case dtShortInteger: {
-        convertShortIntegerRegisterToUInt64(regist, &sign, &shortInt);
-        base = getRegisterShortIntegerBase(regist);
-
-        n = ERROR_MESSAGE_LENGTH - 100;
-        sprintf(errorMessage + n--, "#%d (word size = %u)", base, shortIntegerWordSize);
-
-        if(shortInt == 0) {
-          errorMessage[n--] = '0';
-        }
-        else {
-          while(shortInt != 0) {
-            errorMessage[n--] = digits[shortInt % base];
-            shortInt /= base;
-          }
-          if(sign) {
-            errorMessage[n--] = '-';
-          }
-        }
-        n++;
-
-        strcpy(string, errorMessage + n);
-        break;
-      }
-
-      case dtReal34: {
-        real34_t reduced;
-
-        real34Reduce(REGISTER_REAL34_DATA(regist), &reduced);
-        real34ToString(&reduced, string);
-        if(strchr(string, '.') == NULL && strchr(string, 'E') == NULL) {
-          strcat(string, ".");
-        }
-        angularUnitToString(getRegisterAngularMode(regist), string + strlen(string));
-        break;
-      }
-
-      case dtComplex34: {
-        real34_t reduced;
-        int len;
-        char tmpStr[100];
-
-        // Real part
-        real34Reduce(REGISTER_REAL34_DATA(regist), &reduced);
-        real34ToString(&reduced, tmpStr);
-        if(strchr(tmpStr, '.') == NULL && strchr(tmpStr, 'E') == NULL) {
-          strcat(tmpStr, ".");
-        }
-        len = strlen(tmpStr);
-
-        // Imaginary part
-        real34Reduce(REGISTER_IMAG34_DATA(regist), &reduced);
-        if(real34IsNegative(&reduced)) {
-          sprintf(string, "%s - %sx", tmpStr, COMPLEX_UNIT);
-          len += 5;
-          real34SetPositiveSign(&reduced);
-          real34ToString(&reduced, string + len);
-        }
-        else {
-          sprintf(string, "%s + %sx", tmpStr, COMPLEX_UNIT);
-          len += 5;
-          real34ToString(&reduced, string + len);
-        }
-        if(strchr(string + len, '.') == NULL && strchr(string + len, 'E') == NULL) {
-          strcat(string + len, ".");
-        }
-
-        break;
-      }
-
-      case dtConfig: {
-        xcopy(string, "Configuration data", 19);
-        break;
-      }
-
-      default: {
-        sprintf(string, "In function copyRegisterXToClipboard, the data type %" PRIu32 " is unknown! Please try to reproduce and submit a bug.", getRegisterDataType(regist));
-      }
-    }
-
-    stringToUtf8(string, (uint8_t *)clipboardString);
-  }
-
-
-
-  void copyRegisterXToClipboard(void) {
-    GtkClipboard *clipboard;
-    char clipboardString[30000];
-
-    clipboard = gtk_clipboard_get(GDK_SELECTION_CLIPBOARD);
-    gtk_clipboard_clear(clipboard);
-    gtk_clipboard_set_text(clipboard, "", 0); //JM FOUND TIP TO PROPERLY CLEAR CLIPBOARD: https://stackoverflow.com/questions/2418487/clear-the-system-clipboard-using-the-gtk-lib-in-c/2419673#2419673
-
-    copyRegisterToClipboardString(REGISTER_X, clipboardString);
-    gtk_clipboard_set_text(clipboard, clipboardString, -1);
-  }
-
-
-
-  void copyStackRegistersToClipboardString(char *clipboardString) {
-    char *ptr = clipboardString;
-
-    strcpy(ptr, "K = ");
-    ptr += 4;
-    copyRegisterToClipboardString(REGISTER_K, ptr);
-
-    ptr += strlen(ptr);
-    strcpy(ptr, LINEBREAK "J = ");
-    ptr += strlen(ptr);
-    copyRegisterToClipboardString(REGISTER_J, ptr);
-
-    ptr += strlen(ptr);
-    strcpy(ptr, LINEBREAK "I = ");
-    ptr += strlen(ptr);
-    copyRegisterToClipboardString(REGISTER_I, ptr);
-
-    ptr += strlen(ptr);
-    strcpy(ptr, LINEBREAK "L = ");
-    ptr += strlen(ptr);
-    copyRegisterToClipboardString(REGISTER_L, ptr);
-
-    ptr += strlen(ptr);
-    strcpy(ptr, LINEBREAK "D = ");
-    ptr += strlen(ptr);
-    copyRegisterToClipboardString(REGISTER_D, ptr);
-
-    ptr += strlen(ptr);
-    strcpy(ptr, LINEBREAK "C = ");
-    ptr += strlen(ptr);
-    copyRegisterToClipboardString(REGISTER_C, ptr);
-
-    ptr += strlen(ptr);
-    strcpy(ptr, LINEBREAK "B = ");
-    ptr += strlen(ptr);
-    copyRegisterToClipboardString(REGISTER_B, ptr);
-
-    ptr += strlen(ptr);
-    strcpy(ptr, LINEBREAK "A = ");
-    ptr += strlen(ptr);
-    copyRegisterToClipboardString(REGISTER_A, ptr);
-
-    ptr += strlen(ptr);
-    strcpy(ptr, LINEBREAK "T = ");
-    ptr += strlen(ptr);
-    copyRegisterToClipboardString(REGISTER_T, ptr);
-
-    ptr += strlen(ptr);
-    strcpy(ptr, LINEBREAK "Z = ");
-    ptr += strlen(ptr);
-    copyRegisterToClipboardString(REGISTER_Z, ptr);
-
-    ptr += strlen(ptr);
-    strcpy(ptr, LINEBREAK "Y = ");
-    ptr += strlen(ptr);
-    copyRegisterToClipboardString(REGISTER_Y, ptr);
-
-    ptr += strlen(ptr);
-    strcpy(ptr, LINEBREAK "X = ");
-    ptr += strlen(ptr);
-    copyRegisterToClipboardString(REGISTER_X, ptr);
-  }
-
-
-
-  void copyStackRegistersToClipboard(void) {
-    GtkClipboard *clipboard;
-    char clipboardString[10000];
-
-    clipboard = gtk_clipboard_get(GDK_SELECTION_CLIPBOARD);
-    gtk_clipboard_clear(clipboard);
-    gtk_clipboard_set_text(clipboard, "", 0); //JM FOUND TIP TO PROPERLY CLEAR CLIPBOARD: https://stackoverflow.com/questions/2418487/clear-the-system-clipboard-using-the-gtk-lib-in-c/2419673#2419673
-
-    copyStackRegistersToClipboardString(clipboardString);
-
-    gtk_clipboard_set_text(clipboard, clipboardString, -1);
-  }
-
-
-
-  void copyAllRegistersToClipboard(void) {
-    GtkClipboard *clipboard;
-    char clipboardString[15000], *ptr = clipboardString;
-
-    clipboard = gtk_clipboard_get(GDK_SELECTION_CLIPBOARD);
-    gtk_clipboard_clear(clipboard);
-    gtk_clipboard_set_text(clipboard, "", 0); //JM FOUND TIP TO PROPERLY CLEAR CLIPBOARD: https://stackoverflow.com/questions/2418487/clear-the-system-clipboard-using-the-gtk-lib-in-c/2419673#2419673
-
-    copyStackRegistersToClipboardString(ptr);
-
-    for(int32_t regist=99; regist>=0; --regist) {
-      ptr += strlen(ptr);
-      sprintf(ptr, LINEBREAK "R%02d = ", regist);
-      ptr += strlen(ptr);
-      copyRegisterToClipboardString(regist, ptr);
-    }
-
-    for(int32_t regist=currentNumberOfLocalRegisters-1; regist>=0; --regist) {
-      ptr += strlen(ptr);
-      sprintf(ptr, LINEBREAK "R.%02d = ", regist);
-      ptr += strlen(ptr);
-      copyRegisterToClipboardString(FIRST_LOCAL_REGISTER + regist, ptr);
-    }
-
-    if(statisticalSumsPointer != NULL) {
-      char sumName[40];
-      for(int32_t sum=0; sum<NUMBER_OF_STATISTICAL_SUMS; sum++) {
-        ptr += strlen(ptr);
-
-        switch(sum) {
-          case 0: {
-            strcpy(sumName,           "n             "           );
-            break;
-          }
-          case 1: {
-            strcpy(sumName, STD_SIGMA "(x)          "            );
-            break;
-          }
-          case 2: {
-            strcpy(sumName, STD_SIGMA "(y)          "            );
-            break;
-          }
-          case 3: {
-            strcpy(sumName, STD_SIGMA "(x" STD_SUP_2 ")         ");
-            break;
-          }
-          case 4: {
-            strcpy(sumName, STD_SIGMA "(x" STD_SUP_2 "y)        ");
-            break;
-          }
-          case 5: {
-            strcpy(sumName, STD_SIGMA "(y" STD_SUP_2 ")         ");
-            break;
-          }
-          case 6: {
-            strcpy(sumName, STD_SIGMA "(xy)         "            );
-            break;
-          }
-          case 7: {
-            strcpy(sumName, STD_SIGMA "(ln(x)" STD_CROSS "ln(y))");
-            break;
-          }
-          case 8: {
-            strcpy(sumName, STD_SIGMA "(ln(x))      "            );
-            break;
-          }
-          case 9: {
-            strcpy(sumName, STD_SIGMA "(ln" STD_SUP_2 "(x))     ");
-            break;
-          }
-          case 10: {
-            strcpy(sumName, STD_SIGMA "(y ln(x))    "            );
-            break;
-          }
-          case 11: {
-            strcpy(sumName, STD_SIGMA "(ln(y))      "            );
-            break;
-          }
-          case 12: {
-            strcpy(sumName, STD_SIGMA "(ln" STD_SUP_2 "(y))     ");
-            break;
-          }
-          case 13: {
-            strcpy(sumName, STD_SIGMA "(x ln(y))    "            );
-            break;
-          }
-          case 14: {
-            strcpy(sumName, STD_SIGMA "(ln(y)/x)    "            );
-            break;
-          }
-          case 15: {
-            strcpy(sumName, STD_SIGMA "(x" STD_SUP_2 "/y)       ");
-            break;
-          }
-          case 16: {
-            strcpy(sumName, STD_SIGMA "(1/x)        "            );
-            break;
-          }
-          case 17: {
-            strcpy(sumName, STD_SIGMA "(1/x" STD_SUP_2 ")       ");
-            break;
-          }
-          case 18: {
-            strcpy(sumName, STD_SIGMA "(x/y)        "            );
-            break;
-          }
-          case 19: {
-            strcpy(sumName, STD_SIGMA "(1/y)        "            );
-            break;
-          }
-          case 20: {
-            strcpy(sumName, STD_SIGMA "(1/y" STD_SUP_2 ")       ");
-            break;
-          }
-          case 21: {
-            strcpy(sumName, STD_SIGMA "(x" STD_SUP_3 ")         ");
-            break;
-          }
-          case 22: {
-            strcpy(sumName, STD_SIGMA "(x" STD_SUP_4 ")         ");
-            break;
-          }
-          case 23: {
-            strcpy(sumName,           "x min         "           );
-            break;
-          }
-          case 24: {
-            strcpy(sumName,           "x max         "           );
-            break;
-          }
-          case 25: {
-            strcpy(sumName,           "y min         "           );
-            break;
-          }
-          case 26: {
-            strcpy(sumName,           "y max         "           );
-            break;
-          }
-          default: {
-            strcpy(sumName,           "?             "           );
-          }
-        }
-
-        sprintf(ptr, LINEBREAK "SR%02d = ", sum);
-        ptr += strlen(ptr);
-        stringToUtf8(sumName, (uint8_t *)ptr);
-        ptr += strlen(ptr);
-        strcpy(ptr, " = ");
-        ptr += strlen(ptr);
-        realToString(statisticalSumsPointer + REAL_SIZE * sum, tmpString);
-        if(strchr(tmpString, '.') == NULL && strchr(tmpString, 'E') == NULL) {
-          strcat(tmpString, ".");
-        }
-        strcpy(ptr, tmpString);
-      }
-    }
-
-    gtk_clipboard_set_text(clipboard, clipboardString, -1);
-  }
-
-
-
-  gboolean refreshLcd(gpointer unusedData) { // This function is called every SCREEN_REFRESH_PERIOD ms by a GTK timer
+#if defined(TESTSUITE_BUILD) && !defined(GENERATE_CATALOGS)
+  void refreshLcd(void) {}
+#else
+  // This function is called periodically by the main loop or a GTK timer
+  void refreshLcd(void) {
     // Cursor blinking
     static bool_t cursorBlink=true;
 
@@ -581,12 +81,18 @@
       else {
         hideCursor();
       }
-      cursorBlink = !cursorBlink;
+      #if defined(PC_BUILD)
+        cursorBlink = !cursorBlink;
+      #endif // PC_BUILD
     }
 
     // Function name display
     if(showFunctionNameCounter > 0) {
-      showFunctionNameCounter -= SCREEN_REFRESH_PERIOD;
+      #if defined(PC_BUILD)
+        showFunctionNameCounter -= SCREEN_REFRESH_PERIOD;
+      #elif defined(DMCP_BUILD)
+        showFunctionNameCounter -= FAST_SCREEN_REFRESH_PERIOD;
+      #endif // PC_BUILD DMCP_BUILD
       if(showFunctionNameCounter <= 0) {
         hideFunctionName();
         tmpString[0] = 0;
@@ -601,107 +107,75 @@
       #if (DEBUG_INSTEAD_STATUS_BAR != 1)
         showDateTime();
       #endif // (DEBUG_INSTEAD_STATUS_BAR != 1)
-    }
-
-    // If LCD has changed: update the GTK screen
-    if(screenChange) {
-      #if defined(LINUX) && (DEBUG_PANEL == 1)
-        if(programRunStop != PGM_RUNNING) {
-          refreshDebugPanel();
+      #if defined(DMCP_BUILD)
+        if(!getSystemFlag(FLAG_AUTOFF) || (nextTimerRefresh != 0)) {
+          reset_auto_off();
         }
-      #endif // defined(LINUX) && (DEBUG_PANEL == 1)
-
-      gtk_widget_queue_draw(screen);
-      while(gtk_events_pending()) {
-        gtk_main_iteration();
-      }
+        fnPollTimerApp();
+      #endif // DMCP_BUILD
     }
 
-    // Alpha selection timer
-    if(catalog && alphaSelectionTimer != 0 && (getUptimeMs() - alphaSelectionTimer) > 3000) { // More than 3 seconds elapsed since last keypress
-      resetAlphaSelectionBuffer();
-    }
+    #if defined(PC_BUILD)
+      // If LCD has changed: update the GTK screen
+      if(screenChange) {
+        #if defined(LINUX) && (DEBUG_PANEL == 1)
+          if(programRunStop != PGM_RUNNING) {
+            refreshDebugPanel();
+          }
+        #endif // defined(LINUX) && (DEBUG_PANEL == 1)
 
-    return TRUE;
-  }
-#elif defined(DMCP_BUILD)
-  void refreshLcd(void) { // This function is called roughly every SCREEN_REFRESH_PERIOD ms from the main loop
-    // Cursor blinking
-    static bool_t cursorBlink=true;
-
-    if(cursorEnabled) {
-      if(cursorBlink) {
-        showGlyph(STD_CURSOR, cursorFont, xCursor, yCursor, vmNormal, true, false);
-      }
-      else {
-        hideCursor();
-      }
-      //cursorBlink = !cursorBlink;
-    }
-
-    // Function name display
-    if(showFunctionNameCounter>0) {
-      showFunctionNameCounter -= FAST_SCREEN_REFRESH_PERIOD;
-      if(showFunctionNameCounter <= 0) {
-        hideFunctionName();
-        tmpString[0] = 0;
-        showFunctionName(ITM_NOP, 0);
-      }
-    }
-
-    // Update date and time
-    getTimeString(dateTimeString);
-    if(strcmp(dateTimeString, oldTime)) {
-      strcpy(oldTime, dateTimeString);
-      #if (DEBUG_INSTEAD_STATUS_BAR != 1)
-        showDateTime();
-      #endif // (DEBUG_INSTEAD_STATUS_BAR != 1)
-
-      if(!getSystemFlag(FLAG_AUTOFF) || (nextTimerRefresh != 0)) {
-        reset_auto_off();
-      }
-      fnPollTimerApp();
-    }
-
-    if(usb_powered() == 1) {
-      if(!getSystemFlag(FLAG_USB)) {
-        setSystemFlag(FLAG_USB);
-        clearSystemFlag(FLAG_LOWBAT);
-        showHideUsbLowBattery();
-      }
-    }
-    else {
-      if(getSystemFlag(FLAG_USB)) {
-        clearSystemFlag(FLAG_USB);
-      }
-
-      if(get_vbat() < 2000) {
-        if(!getSystemFlag(FLAG_LOWBAT)) {
-          setSystemFlag(FLAG_LOWBAT);
-          showHideUsbLowBattery();
-        }
-        SET_ST(STAT_PGM_END);
-      }
-      else if(get_vbat() < 2500) {
-        if(!getSystemFlag(FLAG_LOWBAT)) {
-          setSystemFlag(FLAG_LOWBAT);
-          showHideUsbLowBattery();
+        gtk_widget_queue_draw(screen);
+        while(gtk_events_pending()) {
+          gtk_main_iteration();
         }
       }
-      else {
-        if(getSystemFlag(FLAG_LOWBAT)) {
+    #elif defined(DMCP_BUILD)
+      if(usb_powered() == 1) {
+        if(!getSystemFlag(FLAG_USB)) {
+          setSystemFlag(FLAG_USB);
           clearSystemFlag(FLAG_LOWBAT);
           showHideUsbLowBattery();
         }
       }
-    }
+      else {
+        if(getSystemFlag(FLAG_USB)) {
+          clearSystemFlag(FLAG_USB);
+        }
+
+        if(get_vbat() < 2000) {
+          if(!getSystemFlag(FLAG_LOWBAT)) {
+            setSystemFlag(FLAG_LOWBAT);
+            showHideUsbLowBattery();
+          }
+          SET_ST(STAT_PGM_END);
+        }
+        else if(get_vbat() < 2500) {
+          if(!getSystemFlag(FLAG_LOWBAT)) {
+            setSystemFlag(FLAG_LOWBAT);
+            showHideUsbLowBattery();
+          }
+        }
+        else {
+          if(getSystemFlag(FLAG_LOWBAT)) {
+            clearSystemFlag(FLAG_LOWBAT);
+            showHideUsbLowBattery();
+          }
+        }
+      }
+    #endif // PC_BUILD DMCP_BUILD
 
     // Alpha selection timer
     if(catalog && alphaSelectionTimer != 0 && (getUptimeMs() - alphaSelectionTimer) > 3000) { // More than 3 seconds elapsed since last keypress
       resetAlphaSelectionBuffer();
     }
   }
-#endif // PC_BUILD DMCP_BUILD
+#endif // !TESTSUITE_BUILD || GENERATE_CATALOGS
+
+
+
+void clearScreen(void) {
+  lcd_fill_rect(0, 0, SCREEN_WIDTH, 240, LCD_SET_VALUE);
+}
 
 
 
@@ -713,69 +187,6 @@ void execTimerApp(uint16_t timerType) {
 
 
 #if !defined(TESTSUITE_BUILD)
-  #if !defined(DMCP_BUILD)
-    void setBlackPixel(uint32_t x, uint32_t y) {
-      if(x>=SCREEN_WIDTH || y>=SCREEN_HEIGHT) {
-        printf("In function setBlackPixel: x=%u, y=%u outside the screen!\n", x, y);
-        return;
-      }
-
-      *(screenData + y*screenStride + x) = ON_PIXEL;
-      screenChange = true;
-    }
-
-
-
-    void setWhitePixel(uint32_t x, uint32_t y) {
-      if(x>=SCREEN_WIDTH || y>=SCREEN_HEIGHT) {
-        printf("In function setWhitePixel: x=%u, y=%u outside the screen!\n", x, y);
-        return;
-      }
-
-      *(screenData + y*screenStride + x) = OFF_PIXEL;
-      screenChange = true;
-    }
-
-
-
-    void flipPixel(uint32_t x, uint32_t y) {
-      if(x>=SCREEN_WIDTH || y>=SCREEN_HEIGHT) {
-        printf("In function flipPixel: x=%u, y=%u outside the screen!\n", x, y);
-        return;
-      }
-
-      if(*(screenData + y*screenStride + x) == OFF_PIXEL) {
-        *(screenData + y*screenStride + x) = ON_PIXEL;
-      }
-      else {
-        *(screenData + y*screenStride + x) = OFF_PIXEL;
-      }
-      screenChange = true;
-    }
-
-
-
-    void lcd_fill_rect(uint32_t x, uint32_t y, uint32_t dx, uint32_t dy, int val) {
-      uint32_t line, col, pixelColor, *pixel, endX = x + dx, endY = y + dy;
-
-      if(endX > SCREEN_WIDTH || endY > SCREEN_HEIGHT) {
-        printf("In function lcd_fill_rect: x=%u, y=%u, dx=%u, dy=%u, val=%d outside the screen!\n", x, y, dx, dy, val);
-        return;
-      }
-
-      pixelColor = (val == LCD_SET_VALUE ? OFF_PIXEL : ON_PIXEL);
-      for(line=y; line<endY; line++) {
-        for(col=x, pixel=screenData + line*screenStride + x; col<endX; col++, pixel++) {
-          *pixel = pixelColor;
-        }
-      }
-
-      screenChange = true;
-    }
-  #endif // !DMCP_BUILD
-
-
-
   uint32_t showGlyphCode(uint16_t charCode, const font_t *font, uint32_t x, uint32_t y, videoMode_t videoMode, bool_t showLeadingCols, bool_t showEndingCols) {
     uint32_t  col, row, xGlyph, endingCols;
     int32_t glyphId;
@@ -1088,7 +499,7 @@ void execTimerApp(uint16_t timerType) {
     if(getRegisterDataType(REGISTER_X) == dtReal34Matrix || (calcMode == CM_MIM && getRegisterDataType(matrixIndex) == dtReal34Matrix)) {
       real34Matrix_t matrix;
 
-      if(temporaryInformation == TI_VIEW) {
+      if(temporaryInformation == TI_VIEW_REGISTER) {
         viewRegName(prefix, &prefixWidth);
       }
       if(temporaryInformation == TI_NO_INFO && currentInputVariable != INVALID_VARIABLE) {
@@ -1129,7 +540,7 @@ void execTimerApp(uint16_t timerType) {
     }
     else if(getRegisterDataType(REGISTER_X) == dtComplex34Matrix || (calcMode == CM_MIM && getRegisterDataType(matrixIndex) == dtComplex34Matrix)) {
       complex34Matrix_t matrix;
-      if(temporaryInformation == TI_VIEW) {
+      if(temporaryInformation == TI_VIEW_REGISTER) {
         viewRegName(prefix, &prefixWidth);
       }
       if(temporaryInformation == TI_NO_INFO && currentInputVariable != INVALID_VARIABLE) {
@@ -1377,11 +788,11 @@ void execTimerApp(uint16_t timerType) {
         }
       }
 
-      else if(regist < REGISTER_X + min(displayStack, origDisplayStack) || (lastErrorCode != 0 && regist == errorMessageRegisterLine) || (temporaryInformation == TI_VIEW && regist == REGISTER_T)) {
+      else if(regist < REGISTER_X + min(displayStack, origDisplayStack) || (lastErrorCode != 0 && regist == errorMessageRegisterLine) || (temporaryInformation == TI_VIEW_REGISTER && regist == REGISTER_T)) {
         prefixWidth = 0;
-        const int16_t baseY = Y_POSITION_OF_REGISTER_X_LINE - REGISTER_LINE_HEIGHT*(regist - REGISTER_X + ((temporaryInformation == TI_VIEW && regist == REGISTER_T) ? 0 : (getRegisterDataType(REGISTER_X) == dtReal34Matrix || getRegisterDataType(REGISTER_X) == dtComplex34Matrix) ? 4 - displayStack : 0));
+        const int16_t baseY = Y_POSITION_OF_REGISTER_X_LINE - REGISTER_LINE_HEIGHT*(regist - REGISTER_X + ((temporaryInformation == TI_VIEW_REGISTER && regist == REGISTER_T) ? 0 : (getRegisterDataType(REGISTER_X) == dtReal34Matrix || getRegisterDataType(REGISTER_X) == dtComplex34Matrix) ? 4 - displayStack : 0));
         calcRegister_t origRegist = regist;
-        if(temporaryInformation == TI_VIEW && regist == REGISTER_T) {
+        if(temporaryInformation == TI_VIEW_REGISTER && regist == REGISTER_T) {
           if(currentViewRegister >= FIRST_RESERVED_VARIABLE && currentViewRegister < LAST_RESERVED_VARIABLE && allReservedVariables[currentViewRegister - FIRST_RESERVED_VARIABLE].header.pointerToRegisterData == WP43_NULL) {
             copySourceRegisterToDestRegister(currentViewRegister, TEMP_REGISTER_1);
             regist = TEMP_REGISTER_1;
@@ -1449,7 +860,7 @@ void execTimerApp(uint16_t timerType) {
             }
 
             if(stringWidth(tmpString + 1500 + w, &standardFont, true, true) >= SCREEN_WIDTH - 8) { // 8 is the standard font cursor width
-              btnClicked(NULL, "16"); // back space
+              btnClicked("16"); // back space
             }
             else {
               showString(tmpString, &standardFont, 1, Y_POSITION_OF_NIM_LINE - 3, vmNormal, true, true);
@@ -1977,7 +1388,7 @@ void execTimerApp(uint16_t timerType) {
             }
           }
 
-          else if(temporaryInformation == TI_VIEW && origRegist == REGISTER_T) {
+          else if(temporaryInformation == TI_VIEW_REGISTER && origRegist == REGISTER_T) {
             viewRegName(prefix, &prefixWidth);
           }
           real34ToDisplayString(REGISTER_REAL34_DATA(regist), getRegisterAngularMode(regist), tmpString, &numericFont, SCREEN_WIDTH - prefixWidth, NUMBER_OF_DISPLAY_DIGITS, true, STD_SPACE_PUNCTUATION, true);
@@ -1992,7 +1403,7 @@ void execTimerApp(uint16_t timerType) {
               showString(prefix, &standardFont, 1, baseY + TEMPORARY_INFO_OFFSET, vmNormal, prefixPre, prefixPost);
             }
           }
-          showString(tmpString, &numericFont, (temporaryInformation == TI_VIEW && origRegist == REGISTER_T) ? prefixWidth : SCREEN_WIDTH - w, baseY, vmNormal, false, true);
+          showString(tmpString, &numericFont, (temporaryInformation == TI_VIEW_REGISTER && origRegist == REGISTER_T) ? prefixWidth : SCREEN_WIDTH - w, baseY, vmNormal, false, true);
         }
 
         else if(getRegisterDataType(regist) == dtComplex34) {
@@ -2004,7 +1415,7 @@ void execTimerApp(uint16_t timerType) {
             }
           }
 
-          else if(temporaryInformation == TI_VIEW && origRegist == REGISTER_T) {
+          else if(temporaryInformation == TI_VIEW_REGISTER && origRegist == REGISTER_T) {
             viewRegName(prefix, &prefixWidth);
           }
           complex34ToDisplayString(REGISTER_COMPLEX34_DATA(regist), tmpString, &numericFont, SCREEN_WIDTH - prefixWidth, NUMBER_OF_DISPLAY_DIGITS, true, STD_SPACE_PUNCTUATION, true);
@@ -2014,11 +1425,11 @@ void execTimerApp(uint16_t timerType) {
           if(prefixWidth > 0) {
             showString(prefix, &standardFont, 1, baseY + TEMPORARY_INFO_OFFSET, vmNormal, prefixPre, prefixPost);
           }
-          showString(tmpString, &numericFont, (temporaryInformation == TI_VIEW && origRegist == REGISTER_T) ? prefixWidth : SCREEN_WIDTH - w, baseY, vmNormal, false, true);
+          showString(tmpString, &numericFont, (temporaryInformation == TI_VIEW_REGISTER && origRegist == REGISTER_T) ? prefixWidth : SCREEN_WIDTH - w, baseY, vmNormal, false, true);
         }
 
         else if(getRegisterDataType(regist) == dtString) {
-          if(temporaryInformation == TI_VIEW && origRegist == REGISTER_T) {
+          if(temporaryInformation == TI_VIEW_REGISTER && origRegist == REGISTER_T) {
             viewRegName(prefix, &prefixWidth);
           }
           if(prefixWidth > 0) {
@@ -2028,13 +1439,13 @@ void execTimerApp(uint16_t timerType) {
           w = stringWidth(REGISTER_STRING_DATA(regist), &standardFont, false, true);
 
           if(w >= SCREEN_WIDTH - prefixWidth) {
-            if(regist == REGISTER_X || (temporaryInformation == TI_VIEW && origRegist == REGISTER_T)) {
+            if(regist == REGISTER_X || (temporaryInformation == TI_VIEW_REGISTER && origRegist == REGISTER_T)) {
               xcopy(tmpString, REGISTER_STRING_DATA(regist), stringByteLength(REGISTER_STRING_DATA(regist)) + 1);
               do {
                 tmpString[stringLastGlyph(tmpString)] = 0;
                 w = stringWidth(tmpString, &standardFont, false, true);
               } while(w >= SCREEN_WIDTH - prefixWidth);
-              if(temporaryInformation == TI_VIEW && origRegist == REGISTER_T) {
+              if(temporaryInformation == TI_VIEW_REGISTER && origRegist == REGISTER_T) {
                 showString(tmpString, &standardFont, prefixWidth     , Y_POSITION_OF_REGISTER_T_LINE - 3, vmNormal, false, true);
               }
               else {
@@ -2052,7 +1463,7 @@ void execTimerApp(uint16_t timerType) {
                 xcopy(tmpString + stringByteLength(tmpString), STD_ELLIPSIS, 3);
                 w += 14;
               }
-              if(temporaryInformation == TI_VIEW && origRegist == REGISTER_T) {
+              if(temporaryInformation == TI_VIEW_REGISTER && origRegist == REGISTER_T) {
                 showString(tmpString, &standardFont, prefixWidth     , Y_POSITION_OF_REGISTER_T_LINE + 18, vmNormal, false, true);
               }
               else {
@@ -2073,7 +1484,7 @@ void execTimerApp(uint16_t timerType) {
           }
           else {
             lineWidth = w;
-            if(temporaryInformation == TI_VIEW && origRegist == REGISTER_T) {
+            if(temporaryInformation == TI_VIEW_REGISTER && origRegist == REGISTER_T) {
               showString(REGISTER_STRING_DATA(regist), &standardFont, prefixWidth     , baseY + TEMPORARY_INFO_OFFSET, vmNormal, false, true);
             }
             else {
@@ -2083,7 +1494,7 @@ void execTimerApp(uint16_t timerType) {
         }
 
         else if(getRegisterDataType(regist) == dtShortInteger) {
-          if(temporaryInformation == TI_VIEW && origRegist == REGISTER_T) {
+          if(temporaryInformation == TI_VIEW_REGISTER && origRegist == REGISTER_T) {
             viewRegName(prefix, &prefixWidth);
           }
           shortIntegerToDisplayString(regist, tmpString, true);
@@ -2091,7 +1502,7 @@ void execTimerApp(uint16_t timerType) {
             showString(prefix, &standardFont, 1, baseY + TEMPORARY_INFO_OFFSET, vmNormal, prefixPre, prefixPost);
           }
           w = stringWidth(tmpString, fontForShortInteger, false, true);
-          showString(tmpString, fontForShortInteger, (temporaryInformation == TI_VIEW && origRegist == REGISTER_T) ? min(prefixWidth, SCREEN_WIDTH - w) : SCREEN_WIDTH - w, baseY + (fontForShortInteger == &standardFont ? 6 : 0), vmNormal, false, true);
+          showString(tmpString, fontForShortInteger, (temporaryInformation == TI_VIEW_REGISTER && origRegist == REGISTER_T) ? min(prefixWidth, SCREEN_WIDTH - w) : SCREEN_WIDTH - w, baseY + (fontForShortInteger == &standardFont ? 6 : 0), vmNormal, false, true);
         }
 
         else if(getRegisterDataType(regist) == dtLongInteger) {
@@ -2103,7 +1514,7 @@ void execTimerApp(uint16_t timerType) {
             }
           }
 
-          if(temporaryInformation == TI_VIEW && origRegist == REGISTER_T) {
+          if(temporaryInformation == TI_VIEW_REGISTER && origRegist == REGISTER_T) {
             viewRegName(prefix, &prefixWidth);
           }
           longIntegerRegisterToDisplayString(regist, tmpString, TMP_STR_LENGTH, SCREEN_WIDTH - prefixWidth, 50, STD_SPACE_PUNCTUATION);
@@ -2145,7 +1556,7 @@ void execTimerApp(uint16_t timerType) {
           }
 
           if(w <= SCREEN_WIDTH) {
-            showString(tmpString, &numericFont, (temporaryInformation == TI_VIEW && origRegist == REGISTER_T) ? prefixWidth : SCREEN_WIDTH - w, baseY, vmNormal, false, true);
+            showString(tmpString, &numericFont, (temporaryInformation == TI_VIEW_REGISTER && origRegist == REGISTER_T) ? prefixWidth : SCREEN_WIDTH - w, baseY, vmNormal, false, true);
           }
           else {
             w = stringWidth(tmpString, &standardFont, false, true);
@@ -2157,12 +1568,12 @@ void execTimerApp(uint16_t timerType) {
             }
             w = stringWidth(tmpString, &standardFont, false, true);
             lineWidth = w;
-            showString(tmpString, &standardFont, (temporaryInformation == TI_VIEW && origRegist == REGISTER_T) ? prefixWidth : SCREEN_WIDTH - w, baseY + 6, vmNormal, false, true);
+            showString(tmpString, &standardFont, (temporaryInformation == TI_VIEW_REGISTER && origRegist == REGISTER_T) ? prefixWidth : SCREEN_WIDTH - w, baseY + 6, vmNormal, false, true);
           }
         }
 
         else if(getRegisterDataType(regist) == dtTime) {
-          if(temporaryInformation == TI_VIEW && origRegist == REGISTER_T) {
+          if(temporaryInformation == TI_VIEW_REGISTER && origRegist == REGISTER_T) {
             viewRegName(prefix, &prefixWidth);
           }
           timeToDisplayString(regist, tmpString, false);
@@ -2170,7 +1581,7 @@ void execTimerApp(uint16_t timerType) {
           if(prefixWidth > 0) {
             showString(prefix, &standardFont, 1, baseY + TEMPORARY_INFO_OFFSET, vmNormal, prefixPre, prefixPost);
           }
-          showString(tmpString, &numericFont, (temporaryInformation == TI_VIEW && origRegist == REGISTER_T) ? prefixWidth : SCREEN_WIDTH - w, baseY, vmNormal, false, true);
+          showString(tmpString, &numericFont, (temporaryInformation == TI_VIEW_REGISTER && origRegist == REGISTER_T) ? prefixWidth : SCREEN_WIDTH - w, baseY, vmNormal, false, true);
         }
 
         else if(getRegisterDataType(regist) == dtDate) {
@@ -2180,7 +1591,7 @@ void execTimerApp(uint16_t timerType) {
               showString(prefix, &standardFont, 1, baseY + TEMPORARY_INFO_OFFSET, vmNormal, true, true);
             }
           }
-          else if(temporaryInformation == TI_VIEW && origRegist == REGISTER_T) {
+          else if(temporaryInformation == TI_VIEW_REGISTER && origRegist == REGISTER_T) {
             viewRegName(prefix, &prefixWidth);
           }
 
@@ -2189,11 +1600,11 @@ void execTimerApp(uint16_t timerType) {
           if(prefixWidth > 0) {
             showString(prefix, &standardFont, 1, baseY + TEMPORARY_INFO_OFFSET, vmNormal, prefixPre, prefixPost);
           }
-          showString(tmpString, &numericFont, (temporaryInformation == TI_VIEW && origRegist == REGISTER_T) ? prefixWidth : SCREEN_WIDTH - w, baseY, vmNormal, false, true);
+          showString(tmpString, &numericFont, (temporaryInformation == TI_VIEW_REGISTER && origRegist == REGISTER_T) ? prefixWidth : SCREEN_WIDTH - w, baseY, vmNormal, false, true);
         }
 
         else if(getRegisterDataType(regist) == dtConfig) {
-          if(temporaryInformation == TI_VIEW && origRegist == REGISTER_T) {
+          if(temporaryInformation == TI_VIEW_REGISTER && origRegist == REGISTER_T) {
             viewRegName(prefix, &prefixWidth);
           }
           xcopy(tmpString, "Configuration data", 19);
@@ -2202,15 +1613,15 @@ void execTimerApp(uint16_t timerType) {
           if(prefixWidth > 0) {
             showString(prefix, &standardFont, 1, baseY + TEMPORARY_INFO_OFFSET, vmNormal, prefixPre, prefixPost);
           }
-          showString(tmpString, &numericFont, (temporaryInformation == TI_VIEW && origRegist == REGISTER_T) ? prefixWidth : SCREEN_WIDTH - w, baseY, vmNormal, false, true);
+          showString(tmpString, &numericFont, (temporaryInformation == TI_VIEW_REGISTER && origRegist == REGISTER_T) ? prefixWidth : SCREEN_WIDTH - w, baseY, vmNormal, false, true);
         }
 
         else if(getRegisterDataType(regist) == dtReal34Matrix) {
-          if((origRegist == REGISTER_X && calcMode != CM_MIM) || (temporaryInformation == TI_VIEW && origRegist == REGISTER_T)) {
+          if((origRegist == REGISTER_X && calcMode != CM_MIM) || (temporaryInformation == TI_VIEW_REGISTER && origRegist == REGISTER_T)) {
             real34Matrix_t matrix;
             prefixWidth = 0; prefix[0] = 0;
             linkToRealMatrixRegister(regist, &matrix);
-            if(temporaryInformation == TI_VIEW && origRegist == REGISTER_T) {
+            if(temporaryInformation == TI_VIEW_REGISTER && origRegist == REGISTER_T) {
               viewRegName(prefix, &prefixWidth);
             }
             showRealMatrix(&matrix, prefixWidth);
@@ -2237,10 +1648,10 @@ void execTimerApp(uint16_t timerType) {
         }
 
         else if(getRegisterDataType(regist) == dtComplex34Matrix) {
-          if((origRegist == REGISTER_X && calcMode != CM_MIM) || (temporaryInformation == TI_VIEW && origRegist == REGISTER_T)) {
+          if((origRegist == REGISTER_X && calcMode != CM_MIM) || (temporaryInformation == TI_VIEW_REGISTER && origRegist == REGISTER_T)) {
             complex34Matrix_t matrix;
             linkToComplexMatrixRegister(regist, &matrix);
-            if(temporaryInformation == TI_VIEW && origRegist == REGISTER_T) {
+            if(temporaryInformation == TI_VIEW_REGISTER && origRegist == REGISTER_T) {
               viewRegName(prefix, &prefixWidth);
             }
             showComplexMatrix(&matrix, prefixWidth);
@@ -2271,7 +1682,7 @@ void execTimerApp(uint16_t timerType) {
           showString(tmpString, &standardFont, SCREEN_WIDTH - stringWidth(tmpString, &standardFont, false, true), baseY + 6, vmNormal, false, true);
         }
 
-        if(temporaryInformation == TI_VIEW && origRegist == REGISTER_X) {
+        if(temporaryInformation == TI_VIEW_REGISTER && origRegist == REGISTER_X) {
           regist = REGISTER_X;
         }
       }
@@ -2318,7 +1729,7 @@ void execTimerApp(uint16_t timerType) {
       }
 
       if(stringWidth(tmpString + 1500 + w, &standardFont, true, true) + wLastBaseStandard > SCREEN_WIDTH - 8) { // 8 is the standard font cursor width
-        btnClicked(NULL, "16"); // back space
+        btnClicked("16"); // back space
       }
       else {
         showString(tmpString, &standardFont, 0, Y_POSITION_OF_NIM_LINE - 3, vmNormal, true, true);
@@ -2445,13 +1856,13 @@ void execTimerApp(uint16_t timerType) {
 
         // The ordering of the 4 lines below is important for SHOW (temporaryInformation == TI_SHOW_REGISTER)
         if(!(screenUpdatingMode & (SCRUPD_MANUAL_STACK | SCRUPD_SKIP_STACK_ONE_TIME))) {
-          if(calcMode != CM_TIMER && temporaryInformation != TI_VIEW) {
+          if(calcMode != CM_TIMER && temporaryInformation != TI_VIEW_REGISTER) {
             refreshRegisterLine(REGISTER_T);
           }
           refreshRegisterLine(REGISTER_Z);
           refreshRegisterLine(REGISTER_Y);
           refreshRegisterLine(REGISTER_X);
-          if(temporaryInformation == TI_VIEW) {
+          if(temporaryInformation == TI_VIEW_REGISTER) {
             clearRegisterLine(REGISTER_T, true, true);
             refreshRegisterLine(REGISTER_T);
           }
@@ -2561,7 +1972,7 @@ void execTimerApp(uint16_t timerType) {
     }
 
     #if !defined(DMCP_BUILD)
-      refreshLcd(NULL);
+      refreshLcd();
     #endif // !DMCP_BUILD
   }
 #endif // !TESTSUITE_BUILD

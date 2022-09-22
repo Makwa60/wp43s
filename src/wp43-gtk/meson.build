@@ -1,8 +1,10 @@
 wp43_gtk_src = files(
   'wp43-gtk.c',
   'gtkGui.c',
+  'gtkScreen.c',
   'hal/audio.c',
-  'hal/gui.c')
+  'hal/gui.c',
+  'hal/lcd.c')
 sim = executable(
   'wp43',
   sources             : decNumber_src + wp43_src + wp43_gtk_src +

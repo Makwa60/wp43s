@@ -48,10 +48,10 @@
 #include "solver/solver.h"
 #include "stack.h"
 #include "stats.h"
-#include "statusBar.h"
 #include "store.h"
 #include "stringFuncs.h"
 #include "timer.h"
+#include "ui/statusBar.h"
 #include "ui/tam.h"
 #include "ui/tone.h"
 
@@ -122,7 +122,7 @@ void fnNop(uint16_t unusedButMandatoryParameter) {
       #if defined(DMCP_BUILD)
         lcd_refresh();
       #else // !DMCP_BUILD
-        refreshLcd(NULL);
+        refreshLcd();
       #endif // DMCP_BUILD
 
       screenUpdatingMode = SCRUPD_AUTO;
@@ -157,7 +157,7 @@ void fnNop(uint16_t unusedButMandatoryParameter) {
       updateMatrixHeightCache();
       cachedDynamicMenu = 0;
       #if defined(PC_BUILD)
-        refreshLcd(NULL);
+        refreshLcd();
       #endif // PC_BUILD
     }
   }

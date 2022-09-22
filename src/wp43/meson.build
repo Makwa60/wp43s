@@ -192,10 +192,10 @@ wp43_src = files(
   'sort.c',
   'stack.c',
   'stats.c',
-  'statusBar.c',
   'store.c',
   'stringFuncs.c',
   'timer.c',
+  'ui/statusBar.c',
   'ui/tam.c',
   'ui/tone.c',
   'wp43.c')

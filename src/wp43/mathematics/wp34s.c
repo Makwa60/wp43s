@@ -33,8 +33,8 @@
 #include "mathematics/toPolar.h"
 #include "realType.h"
 #include "screen.h"
-#include "statusBar.h"
 #include "registers.h"
+#include "ui/statusBar.h"
 
 #include "wp43.h"
 

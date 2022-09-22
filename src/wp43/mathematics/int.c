@@ -65,7 +65,7 @@ void fnCheckInteger(uint16_t mode) {
   #if defined(DMCP_BUILD)
     lcd_refresh();
   #else // !DMCP_BUILD
-    refreshLcd(NULL);
+    refreshLcd();
   #endif // DMCP_BUILD
   if(longIntegerCompare(x, x2) == 0) {
     switch(mode) {
