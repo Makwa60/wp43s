@@ -23,6 +23,7 @@
 #include "error.h"
 #include "flags.h"
 #include "hal/gui.h"
+#include "hal/io.h"
 #include "items.h"
 #include "matrix.h"
 #include "memory.h"
@@ -54,24 +55,13 @@
 static char *tmpRegisterString = NULL;
 
 static void save(const void *buffer, uint32_t size, void *stream) {
-  #if defined(DMCP_BUILD)
-    UINT bytesWritten;
-    f_write(stream, buffer, size, &bytesWritten);
-  #else // !DMCP_BUILD
-    fwrite(buffer, 1, size, stream);
-  #endif // DMCP_BUILD
+  ioFileWrite(stream, buffer, size);
 }
 
 
 
 static uint32_t restore(void *buffer, uint32_t size, void *stream) {
-  #if defined(DMCP_BUILD)
-    UINT bytesRead;
-    f_read(stream, buffer, size, &bytesRead);
-    return(bytesRead);
-  #else // !DMCP_BUILD
-    return(fread(buffer, 1, size, stream));
-  #endif // DMCP_BUILD
+  return ioFileRead(stream, buffer, size);
 }
 
 
@@ -81,9 +71,9 @@ static uint32_t restore(void *buffer, uint32_t size, void *stream) {
     uint32_t backupVersion = BACKUP_VERSION;
     uint32_t ramSize       = RAM_SIZE;
     uint32_t ramPtr;
-    FILE *ppgm_fp;
+    ioFile_t *ppgm_fp;
 
-    BACKUP = fopen("backup.bin", "wb");
+    BACKUP = ioFileOpen(IOPATH_BACKUP, IOMODE_WRITE);
     if(BACKUP == NULL) {
       printf("Cannot save calc's memory in file backup.bin!\n");
       exit(0);
@@ -325,7 +315,7 @@ static uint32_t restore(void *buffer, uint32_t size, void *stream) {
       }
     }
 
-    fclose(BACKUP);
+    ioFileClose(BACKUP);
     printf("End of calc's backup\n");
   }
 
@@ -333,11 +323,11 @@ static uint32_t restore(void *buffer, uint32_t size, void *stream) {
 
   void restoreCalc(void) {
     uint32_t backupVersion, ramSize, ramPtr;
-    FILE *ppgm_fp;
+    ioFile_t *ppgm_fp;
     uint8_t *loadedScreen = malloc(SCREEN_WIDTH * SCREEN_HEIGHT / 8);
 
     fnReset(CONFIRMED);
-    BACKUP = fopen("backup.bin", "rb");
+    BACKUP = ioFileOpen(IOPATH_BACKUP, IOMODE_READ);
     if(BACKUP == NULL) {
       printf("Cannot restore calc's memory from file backup.bin! Performing RESET\n");
       refreshScreen();
@@ -347,7 +337,7 @@ static uint32_t restore(void *buffer, uint32_t size, void *stream) {
     restore(&backupVersion,                      sizeof(backupVersion),                      BACKUP);
     restore(&ramSize,                            sizeof(ramSize),                            BACKUP);
     if(backupVersion != BACKUP_VERSION || ramSize != RAM_SIZE) {
-      fclose(BACKUP);
+      ioFileClose(BACKUP);
       refreshScreen();
 
       printf("Cannot restore calc's memory from file backup.bin! File backup.bin is from another backup version.\n");
@@ -579,7 +569,7 @@ static uint32_t restore(void *buffer, uint32_t size, void *stream) {
       restore(&screenUpdatingMode,                 sizeof(screenUpdatingMode),                 BACKUP);
       restore(loadedScreen,                        SCREEN_WIDTH * SCREEN_HEIGHT / 8,           BACKUP);
 
-      fclose(BACKUP);
+      ioFileClose(BACKUP);
       printf("End of calc's restoration\n");
 
       if(currentProgramNumber >= (numberOfPrograms - numberOfProgramsInFlash)) {
@@ -616,51 +606,37 @@ static uint32_t restore(void *buffer, uint32_t size, void *stream) {
       }
       free(loadedScreen);
 
-      if(calcMode == CM_NORMAL) {
-        calcModeNormalGui();
-      }
-      else if(calcMode == CM_AIM) {
-        calcModeAimGui();
-        cursorEnabled = true;
-      }
-      else if(calcMode == CM_NIM) {
-        calcModeNormalGui();
-        cursorEnabled = true;
-      }
-      else if(calcMode == CM_REGISTER_BROWSER) {
-        calcModeNormalGui();
-      }
-      else if(calcMode == CM_FLAG_BROWSER) {
-        calcModeNormalGui();
-      }
-      else if(calcMode == CM_FONT_BROWSER) {
-        calcModeNormalGui();
-      }
-      else if(calcMode == CM_PEM) {
-        calcModeNormalGui();
-      }
-      else if(calcMode == CM_PLOT_STAT) {
-        calcModeNormalGui();
-      }
-      else if(calcMode == CM_GRAPH) {
-        calcModeNormalGui();
-      }
-      else if(calcMode == CM_MIM) {
-        calcModeNormalGui();
-        mimRestore();
-      }
-      else if(calcMode == CM_EIM) {
-        calcModeAimGui();
-      }
-      else if(calcMode == CM_ASSIGN) {
-        calcModeNormalGui();
-      }
-      else if(calcMode == CM_TIMER) {
-        calcModeNormalGui();
-      }
-      else {
-        sprintf(errorMessage, "In function restoreCalc: %" PRIu8 " is an unexpected value for calcMode", (uint8_t)calcMode);
-        displayBugScreen(errorMessage);
+      switch(calcMode) {
+        case CM_NORMAL:
+        case CM_REGISTER_BROWSER:
+        case CM_FLAG_BROWSER:
+        case CM_FONT_BROWSER:
+        case CM_PEM:
+        case CM_PLOT_STAT:
+        case CM_GRAPH:
+        case CM_ASSIGN:
+        case CM_TIMER:
+          calcModeNormalGui();
+          break;
+        case CM_NIM:
+          calcModeNormalGui();
+          cursorEnabled = true;
+          break;
+        case CM_MIM:
+          calcModeNormalGui();
+          mimRestore();
+          break;
+        case CM_AIM:
+          calcModeAimGui();
+          cursorEnabled = true;
+          break;
+        case CM_EIM:
+          calcModeAimGui();
+          break;
+        default:
+          sprintf(errorMessage, "In function restoreCalc: %" PRIu8 " is an unexpected value for calcMode", (uint8_t)calcMode);
+          displayBugScreen(errorMessage);
+          break;
       }
       if(catalog) {
         clearSystemFlag(FLAG_ALPHA);
@@ -819,26 +795,17 @@ static void saveMatrixElements(calcRegister_t regist, void *stream) {
 void fnSave(uint16_t unusedButMandatoryParameter) {
   calcRegister_t regist;
   uint32_t i;
+  #if !defined(DMCP_BUILD)
+    ioFile_t *ppgm_fp;
+  #endif // !DMCP_BUILD
 
-  #if defined(DMCP_BUILD)
-    FRESULT result;
-
-    sys_disk_write_enable(1);
-    check_create_dir("SAVFILES");
-    result = f_open(BACKUP, "SAVFILES\\wp43.sav", FA_CREATE_ALWAYS | FA_WRITE);
-    if(result != FR_OK) {
-      sys_disk_write_enable(0);
-      return;
-    }
-  #else // !DMCP_BUILD
-    FILE *ppgm_fp;
-
-    BACKUP = fopen("wp43.sav", "wb");
-    if(BACKUP == NULL) {
+  BACKUP = ioFileOpen(IOPATH_SAVEFILE, IOMODE_WRITE);
+  if(BACKUP == NULL) {
+    #if !defined(DMCP_BUILD)
       printf("Cannot SAVE in file wp43.sav!\n");
-      return;
-    }
-  #endif // DMCP_BUILD
+    #endif
+    return;
+  }
 
   // Global registers
   sprintf(tmpString, "GLOBAL_REGISTERS\n%" PRIu16 "\n", (uint16_t)(FIRST_LOCAL_REGISTER));
@@ -1052,12 +1019,7 @@ void fnSave(uint16_t unusedButMandatoryParameter) {
   sprintf(tmpString, "notBestF\n%" PRIu16 "\n", lrSelection);
   save(tmpString, strlen(tmpString), BACKUP);
 
-  #if defined(DMCP_BUILD)
-    f_close(BACKUP);
-    sys_disk_write_enable(0);
-  #else // !DMCP_BUILD
-    fclose(BACKUP);
-  #endif // DMCP_BUILD
+  ioFileClose(BACKUP);
 
   temporaryInformation = TI_SAVED;
 }
@@ -1924,25 +1886,17 @@ static bool_t restoreOneSection(void *stream, uint16_t loadMode, uint16_t s, uin
 
 
 void doLoad(uint16_t loadMode, uint16_t s, uint16_t n, uint16_t d) {
-  #if defined(DMCP_BUILD)
-    if(f_open(BACKUP, "SAVFILES\\wp43.sav", FA_READ) != FR_OK) {
-      displayCalcErrorMessage(ERROR_NO_BACKUP_DATA, ERR_REGISTER_LINE, REGISTER_X);
-      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-        moreInfoOnError("In function fnLoad: cannot find or read backup data file wp43.sav", NULL, NULL, NULL);
-      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
-      return;
-    }
-  #else // !DMCP_BUILD
-    FILE *ppgm_fp;
-
-    if((BACKUP = fopen("wp43.sav", "rb")) == NULL) {
-      displayCalcErrorMessage(ERROR_NO_BACKUP_DATA, ERR_REGISTER_LINE, REGISTER_X);
-      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-        moreInfoOnError("In function fnLoad: cannot find or read backup data file wp43.sav", NULL, NULL, NULL);
-      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
-      return;
-    }
+  #if !defined(DMCP_BUILD)
+    ioFile_t *ppgm_fp;
   #endif // DMCP_BUILD
+
+  if((BACKUP = ioFileOpen(IOPATH_SAVEFILE, IOMODE_READ)) == NULL) {
+    displayCalcErrorMessage(ERROR_NO_BACKUP_DATA, ERR_REGISTER_LINE, REGISTER_X);
+    #if (EXTRA_INFO_ON_CALC_ERROR == 1)
+      moreInfoOnError("In function fnLoad: cannot find or read backup data file wp43.sav", NULL, NULL, NULL);
+    #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+    return;
+  }
 
   if(loadMode == LM_ALL) {
     while(currentSubroutineLevel > 0) {
@@ -1955,11 +1909,7 @@ void doLoad(uint16_t loadMode, uint16_t s, uint16_t n, uint16_t d) {
 
   lastErrorCode = ERROR_NONE;
 
-  #if defined(DMCP_BUILD)
-    f_close(BACKUP);
-  #else // !DMCP_BUILD
-    fclose(BACKUP);
-  #endif //DMCP_BUILD
+  ioFileClose(BACKUP);
 
   #if !defined(TESTSUITE_BUILD)
     if(loadMode == LM_ALL) {

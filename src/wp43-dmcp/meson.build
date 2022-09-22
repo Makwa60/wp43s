@@ -11,6 +11,7 @@ dmcp_linkargs = [
 
 wp43_dmcp_src = files(
   'hal/audio.c',
+  'hal/io.c',
   'wp43-dmcp.c')
 wp43_lib = static_library(
   'libwp43',

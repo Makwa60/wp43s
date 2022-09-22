@@ -2,6 +2,7 @@ testSuite_src = files(
   'testSuite.c',
   'hal/audio.c',
   'hal/gui.c',
+  'hal/io.c',
   'hal/lcd.c')
 testSuite = executable(
   'testSuite',
