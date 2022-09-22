@@ -21,11 +21,22 @@
   #define GTKGUI_H
 
   /**
+   * \struct calcKeyboard_t
+   * Structure keeping key images, image sizes, and image locations.
+   */
+  typedef struct {
+    int x, y;
+    int width[4], height[4];
+    GtkWidget *keyImage[4];
+  } calcKeyboard_t;
+
+  /**
    * Creates the calc's GUI window with all the widgets.
    */
   void setupUI(void);
 
-  extern GtkWidget *grid;
+  extern GtkWidget      *grid;
+  extern calcKeyboard_t  calcKeyboard[43];
   #if (SCREEN_800X480 == 0)
     extern GtkWidget *bezelImage[3];
     extern int bezelX[3], bezelY[3];

@@ -22,10 +22,6 @@
 
   #include "realType.h"
   #include <stdint.h>
-  #if defined(PC_BUILD)
-    #include <gtk/gtk.h>
-    #include <gdk/gdk.h>
-  #endif // PC_BUILD
 
   /**
    * \union multiplyDivide_t
@@ -485,16 +481,4 @@
     bool_t     keyIndirect;
     bool_t     keyInputFinished;
   } tamState_t;
-
-  #if defined(PC_BUILD)
-    /**
-     * \struct calcKeyboard_t
-     * Structure keeping key images, image sizes, and image locations.
-     */
-    typedef struct {
-      int x, y;
-      int width[4], height[4];
-      GtkWidget *keyImage[4];
-    } calcKeyboard_t;
-  #endif // PC_BUILD
 #endif // .TYPEDEFINITIONS_H

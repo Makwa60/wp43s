@@ -27,7 +27,8 @@
 #include "screen.h"
 #include "wp43.h"
 
-GtkWidget *grid;
+GtkWidget      *grid;
+calcKeyboard_t  calcKeyboard[43];
 #if (SCREEN_800X480 == 0)
   GtkWidget *backgroundImage, *bezelImage[3], *behindScreenImage, *fgShiftedArea1, *fgShiftedArea2;
   GtkWidget *lblFSoftkeyArea, *lblGSoftkeyArea;
