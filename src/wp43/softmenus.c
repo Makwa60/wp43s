@@ -346,7 +346,7 @@ TO_QSPI const int16_t menu_alphaMATH[]   = { ITM_LESS_THAN,                 ITM_
 /*      Menu name                           <----------------------------------------------------------------------------- 6 functions ---------------------------------------------------------------------------->  */
 /*                                          <---------------------------------------------------------------------- 6 f shifted functions ------------------------------------------------------------------------->  */
 /*                                          <---------------------------------------------------------------------- 6 g shifted functions ------------------------------------------------------------------------->  */
-TO_QSPI const int16_t menu_alphaDot[]    = { ITM_EXCLAMATION_MARK,          ITM_SEMICOLON,              ITM_UNDERSCORE,           ITM_QUOTE,             ITM_DOUBLE_QUOTE,            ITM_CHECK_MARK,
+TO_QSPI const int16_t menu_alphaDot[]    = { ITM_EXCLAMATION_MARK,          ITM_SEMICOLON,              ITM_COLON,                ITM_QUOTE,             ITM_DOUBLE_QUOTE,            ITM_CHECK_MARK,
                                              ITM_INVERTED_EXCLAMATION_MARK, ITM_INVERTED_QUESTION_MARK, ITM_SECTION,              ITM_EMPTY_SET,         ITM_TILDE,                   ITM_BACK_SLASH,
                                              ITM_DOLLAR,                    ITM_EURO,                   ITM_PERCENT,              ITM_AMPERSAND,         ITM_POUND,                   ITM_YEN,
                                              ITM_LEFT_ARROW,                ITM_UP_ARROW,               ITM_SERIAL_IO,            ITM_DOWN_ARROW,        ITM_RIGHT_ARROW,             ITM_PGM_BEGIN,
@@ -1179,7 +1179,7 @@ void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
         dottedTopLine = (numberOfFormulae >= 2);
         yDotted = 2;
       }
-      if(softmenu[m].menuItem == -MNU_EQ_EDIT && softmenu[softmenuStack[1].softmenuId].menuItem == -MNU_EQN) {
+      if(softmenu[m].menuItem == -MNU_EQ_EDIT) {
         bool_t cursorShown;
         bool_t rightEllipsis;
         while(1) {
