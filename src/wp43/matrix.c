@@ -2661,7 +2661,7 @@ smallFont:
       if(rows >= (font == &standardFont ? 3 : 2)) {
         clearRegisterLine(REGISTER_Z, true, true);
       }
-      if(rows >= (font == &standardFont ? 4 : 2)) {
+      if(rows >= (font == &standardFont ? 4 : 3)) {
         clearRegisterLine(REGISTER_T, true, true);
       }
     }
