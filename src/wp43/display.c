@@ -31,6 +31,7 @@
 #include "fractions.h"
 #include "mathematics/comparisonReals.h"
 #include "mathematics/toPolar.h"
+#include "matrix.h"
 #include "programming/input.h"
 #include "registers.h"
 #include "registerValueConversions.h"
@@ -2022,10 +2023,52 @@ void complex34MatrixToDisplayString(calcRegister_t regist, char *displayString) 
   sprintf(displayString, "[%" PRIu16 STD_CROSS "%" PRIu16 " " STD_COMPLEX_C " Matrix]", dblock->matrixRows, dblock->matrixColumns);
 }
 
+static void _complex34ToShowTmpString(const real34_t *r, const real34_t *i) {
+  int16_t last;
+  real34_t real34;
+  char *separator;
+
+  // Real part
+  separator = STD_SPACE_4_PER_EM;
+  real34ToDisplayString(r, amNone, tmpString, &standardFont, 2000, 34, false, separator, false);
+
+  // +/- i×
+  real34Copy(i, &real34);
+  last = 300;
+  while(tmpString[last]) {
+    last++;
+  }
+  xcopy(tmpString + last++, (real34IsNegative(&real34) ? "-" : "+"), 1);
+  xcopy(tmpString + last++, COMPLEX_UNIT, 1);
+  xcopy(tmpString + last, PRODUCT_SIGN, 3);
+
+  // Imaginary part
+  real34SetPositiveSign(&real34);
+  real34ToDisplayString(&real34, amNone, tmpString + 600, &standardFont, 2000, 34, false, separator, false);
+
+  if(stringWidth(tmpString + 300, &standardFont, true, true) + stringWidth(tmpString + 600, &standardFont, true, true) <= SCREEN_WIDTH) {
+    last = 300;
+    while(tmpString[last]) {
+      last++;
+    }
+    xcopy(tmpString + last, tmpString + 600, strlen(tmpString + 600) + 1);
+    tmpString[600] = 0;
+  }
+
+  if(stringWidth(tmpString, &standardFont, true, true) + stringWidth(tmpString + 300, &standardFont, true, true) <= SCREEN_WIDTH) {
+    last = 0;
+    while(tmpString[last]) {
+      last++;
+    }
+    xcopy(tmpString + last, tmpString + 300, strlen(tmpString + 300) + 1);
+    xcopy(tmpString + 300,  tmpString + 600, strlen(tmpString + 600) + 1);
+    tmpString[600] = 0;
+  }
+}
+
 void fnShow(uint16_t unusedButMandatoryParameter) {
   uint8_t savedDisplayFormat = displayFormat, savedDisplayFormatDigits = displayFormatDigits;
   int16_t source, dest, last, d, maxWidth, offset, bytesProcessed;
-  real34_t real34;
   char *separator;
   bool_t thereIsANextLine;
 
@@ -2086,42 +2129,7 @@ void fnShow(uint16_t unusedButMandatoryParameter) {
     }
 
     case dtComplex34: {
-      // Real part
-      separator = STD_SPACE_4_PER_EM;
-      real34ToDisplayString(REGISTER_REAL34_DATA(REGISTER_X), amNone, tmpString, &standardFont, 2000, 34, false, separator, false);
-
-      // +/- i×
-      real34Copy(REGISTER_IMAG34_DATA(REGISTER_X), &real34);
-      last = 300;
-      while(tmpString[last]) {
-        last++;
-      }
-      xcopy(tmpString + last++, (real34IsNegative(&real34) ? "-" : "+"), 1);
-      xcopy(tmpString + last++, COMPLEX_UNIT, 1);
-      xcopy(tmpString + last, PRODUCT_SIGN, 3);
-
-      // Imaginary part
-      real34SetPositiveSign(&real34);
-      real34ToDisplayString(&real34, amNone, tmpString + 600, &standardFont, 2000, 34, false, separator, false);
-
-      if(stringWidth(tmpString + 300, &standardFont, true, true) + stringWidth(tmpString + 600, &standardFont, true, true) <= SCREEN_WIDTH) {
-        last = 300;
-        while(tmpString[last]) {
-          last++;
-        }
-        xcopy(tmpString + last, tmpString + 600, strlen(tmpString + 600) + 1);
-        tmpString[600] = 0;
-      }
-
-      if(stringWidth(tmpString, &standardFont, true, true) + stringWidth(tmpString + 300, &standardFont, true, true) <= SCREEN_WIDTH) {
-        last = 0;
-        while(tmpString[last]) {
-          last++;
-        }
-        xcopy(tmpString + last, tmpString + 300, strlen(tmpString + 300) + 1);
-        xcopy(tmpString + 300,  tmpString + 600, strlen(tmpString + 600) + 1);
-        tmpString[600] = 0;
-      }
+      _complex34ToShowTmpString(REGISTER_REAL34_DATA(REGISTER_X), REGISTER_IMAG34_DATA(REGISTER_X));
       break;
     }
 
@@ -2170,6 +2178,38 @@ void fnShow(uint16_t unusedButMandatoryParameter) {
       #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
       return;
     }
+  }
+
+  displayFormat = savedDisplayFormat;
+  displayFormatDigits = savedDisplayFormatDigits;
+}
+
+void mimShowElement(void) {
+  uint8_t savedDisplayFormat = displayFormat, savedDisplayFormatDigits = displayFormatDigits;
+
+  int16_t i = getIRegisterAsInt(true);
+  int16_t j = getJRegisterAsInt(true);
+
+  displayFormat = DF_ALL;
+  displayFormatDigits = 0;
+
+  tmpString[   0] = 0; // L1
+  tmpString[ 300] = 0; // L2
+  tmpString[ 600] = 0; // L3
+  tmpString[ 900] = 0; // L4
+  tmpString[1200] = 0; // L5
+  tmpString[1500] = 0; // L6
+  tmpString[1800] = 0; // L7
+
+  temporaryInformation = TI_SHOW_REGISTER;
+
+  if(getRegisterDataType(matrixIndex) == dtReal34Matrix) {
+    real34ToDisplayString(&openMatrixMIMPointer.realMatrix.matrixElements[i * openMatrixMIMPointer.header.matrixColumns + j], amNone, tmpString, &standardFont, 2000, 34, false, STD_SPACE_4_PER_EM, false);
+  }
+
+  else {
+    _complex34ToShowTmpString(VARIABLE_REAL34_DATA(&openMatrixMIMPointer.complexMatrix.matrixElements[i * openMatrixMIMPointer.header.matrixColumns + j]),
+                              VARIABLE_IMAG34_DATA(&openMatrixMIMPointer.complexMatrix.matrixElements[i * openMatrixMIMPointer.header.matrixColumns + j]));
   }
 
   displayFormat = savedDisplayFormat;

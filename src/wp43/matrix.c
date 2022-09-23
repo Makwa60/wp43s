@@ -1929,6 +1929,16 @@ void fnEigenvectors(uint16_t unusedParamButMandatory) {
     else {
       displayNim(tmpString, "", 0, 0);
     }
+
+    if(temporaryInformation == TI_SHOW_REGISTER && calcMode == cmMim) {
+      mimShowElement();
+      clearRegisterLine(REGISTER_T, true, true);
+      refreshRegisterLine(REGISTER_T);
+      if(tmpString[300]) {
+        clearRegisterLine(REGISTER_Z, true, true);
+        refreshRegisterLine(REGISTER_Z);
+      }
+    }
   }
 
   void mimEnter(bool_t commit) {
