@@ -15,30 +15,29 @@
  */
 
 /**
- * \file gui.h
+ * \file hal/io.h
  */
-#if !defined(GTKGUI_H)
-  #define GTKGUI_H
+#if !defined(IO_H)
+  #define IO_H
 
-  /**
-   * \struct calcKeyboard_t
-   * Structure keeping key images, image sizes, and image locations.
-   */
-  typedef struct {
-    int x, y;
-    int width[4], height[4];
-    GtkWidget *keyImage[4];
-  } calcKeyboard_t;
+  #include <stdint.h>
 
-  /**
-   * Creates the calc's GUI window with all the widgets.
-   */
-  void setupUI(void);
+  typedef void ioFile_t;
+  typedef enum {
+    IOPATH_SAVEFILE   = 0,
+    IOPATH_PGMFILE    = 1,
+    IOPATH_TESTPGMS   = 2,
+    IOPATH_BACKUP     = 3
+  } ioFilePath_t;
+  typedef enum {
+    IOMODE_READ   = 0,
+    IOMODE_WRITE  = 1,
+    IOMODE_UPDATE = 2
+  } ioFileMode_t;
 
-  extern GtkWidget      *grid;
-  extern calcKeyboard_t  calcKeyboard[43];
-  #if (SCREEN_800X480 == 0)
-    extern GtkWidget *bezelImage[3];
-    extern int bezelX[3], bezelY[3];
-  #endif // (SCREEN_800X480 == 0)
-#endif // !GTKGUI_H
+  ioFile_t *ioFileOpen(ioFilePath_t path, ioFileMode_t mode);
+  void ioFileWrite(ioFile_t *file, const void *buffer, uint32_t size);
+  uint32_t ioFileRead(ioFile_t *file, void *buffer, uint32_t size);
+  void ioFileClose(ioFile_t *file);
+
+#endif // IO_H

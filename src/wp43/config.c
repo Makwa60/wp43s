@@ -30,6 +30,7 @@
 #include "error.h"
 #include "fonts.h"
 #include "flags.h"
+#include "hal/io.h"
 #include "items.h"
 #include "keyboard.h"
 #include "matrix.h"
@@ -547,60 +548,52 @@ void addTestPrograms(void) {
   currentLocalStepNumber        = 1;
   firstDisplayedLocalStepNumber = 0;
 
-  #if defined(DMCP_BUILD)
-    if(f_open(ppgm_fp, "testPgms.bin", FA_READ) != FR_OK) {
-      *(beginOfProgramMemory)     = 255; // .END.
-      *(beginOfProgramMemory + 1) = 255; // .END.
-      firstFreeProgramByte = beginOfProgramMemory;
-      freeProgramBytes = numberOfBytesForTheTestPrograms - 2;
-    }
-    else {
-      UINT bytesRead;
-      f_read(ppgm_fp, &numberOfBytesUsed,   sizeof(numberOfBytesUsed), &bytesRead);
-      f_read(ppgm_fp, beginOfProgramMemory, numberOfBytesUsed,         &bytesRead);
-      f_close(ppgm_fp);
+  #if !defined(DMCP_BUILD)
+    ioFile_t *ppgm_fp;
+  #endif // !DMCP_BUILD
 
-      firstFreeProgramByte = beginOfProgramMemory + (numberOfBytesUsed - 2);
-      freeProgramBytes = numberOfBytesForTheTestPrograms - numberOfBytesUsed;
-    }
-
-    scanLabelsAndPrograms();
-  #else // !DMCP_BUILD
-    FILE *testPgms;
-
-    testPgms = fopen("res/dmcp/testPgms.bin", "rb");
-    if(testPgms == NULL) {
+  ppgm_fp = ioFileOpen(IOPATH_TESTPGMS, IOMODE_READ);
+  if(ppgm_fp == NULL) {
+    #if !defined(DMCP_BUILD)
       printf("Cannot open file res/dmcp/testPgms.bin\n");
-      *(beginOfProgramMemory)     = 255; // .END.
-      *(beginOfProgramMemory + 1) = 255; // .END.
-      firstFreeProgramByte = beginOfProgramMemory;
-      freeProgramBytes = numberOfBytesForTheTestPrograms - 2;
-    }
-    else {
-      ignore_result(fread(&numberOfBytesUsed, 1, sizeof(numberOfBytesUsed), testPgms));
+    #endif // !DMCP_BUILD
+    *(beginOfProgramMemory)     = 255; // .END.
+    *(beginOfProgramMemory + 1) = 255; // .END.
+    firstFreeProgramByte = beginOfProgramMemory;
+    freeProgramBytes = numberOfBytesForTheTestPrograms - 2;
+  }
+  else {
+    #if defined(DMCP_BUILD)
+      ioFileRead(ppgm_fp, &numberOfBytesUsed, sizeof(numberOfBytesUsed));
+      ioFileRead(ppgm_fp, beginOfProgramMemory, numberOfBytesUsed);
+    #else
+      ignore_result(ioFileRead(ppgm_fp, &numberOfBytesUsed, sizeof(numberOfBytesUsed)));
       printf("%u bytes\n", numberOfBytesUsed);
       if(numberOfBytesUsed > numberOfBytesForTheTestPrograms) {
         printf("Increase allocated memory for programs! File config.c 1st line of function addTestPrograms\n");
-        fclose(testPgms);
+        ioFileClose(ppgm_fp);
         exit(0);
       }
-      ignore_result(fread(beginOfProgramMemory, 1, numberOfBytesUsed, testPgms));
-      fclose(testPgms);
+      ignore_result(ioFileRead(ppgm_fp, beginOfProgramMemory, numberOfBytesUsed));
+    #endif // DMCP_BUILD !DMCP_BUILD
+    ioFileClose(ppgm_fp);
+    firstFreeProgramByte = beginOfProgramMemory + (numberOfBytesUsed - 2);
+    freeProgramBytes = numberOfBytesForTheTestPrograms - numberOfBytesUsed;
+  }
 
-      firstFreeProgramByte = beginOfProgramMemory + (numberOfBytesUsed - 2);
-      freeProgramBytes = numberOfBytesForTheTestPrograms - numberOfBytesUsed;
-    }
-
+  #if !defined(DMCP_BUILD)
     printf("freeProgramBytes = %u\n", freeProgramBytes);
+  #endif // !DMCP_BUILD
 
-    scanLabelsAndPrograms();
+  scanLabelsAndPrograms();
+  #if !defined(DMCP_BUILD)
     #if !defined(TESTSUITE_BUILD)
       leavePem();
     #endif // !TESTSUITE_BUILD
     printf("freeProgramBytes = %u\n", freeProgramBytes);
     //listPrograms();
     //listLabelsAndPrograms();
-  #endif // DMCP_BUILD
+  #endif // !DMCP_BUILD
 }
 
 

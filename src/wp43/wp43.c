@@ -124,7 +124,7 @@ uint8_t                shortIntegerMode;
 uint8_t                previousCalcMode;
 uint8_t                groupingGap;
 uint8_t                roundingMode;
-uint8_t                calcMode;
+calcMode_t             calcMode;
 uint8_t                nextChar;
 uint8_t                displayStack;
 uint8_t                cachedDisplayStack;

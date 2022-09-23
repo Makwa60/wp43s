@@ -1464,7 +1464,7 @@
             }
 
             default: {
-              sprintf(errorMessage, "In function processKeyAction: %" PRIu8 " is an unexpected value while processing calcMode!", calcMode);
+              sprintf(errorMessage, "In function processKeyAction: %" PRIu8 " is an unexpected value while processing calcMode!", (uint8_t)calcMode);
               displayBugScreen(errorMessage);
             }
           }
@@ -1681,7 +1681,7 @@ void fnKeyEnter(uint16_t unusedButMandatoryParameter) {
       }
 
       default: {
-        sprintf(errorMessage, "In function fnKeyEnter: unexpected calcMode value (%" PRIu8 ") while processing key ENTER!", calcMode);
+        sprintf(errorMessage, "In function fnKeyEnter: unexpected calcMode value (%" PRIu8 ") while processing key ENTER!", (uint8_t)calcMode);
         displayBugScreen(errorMessage);
       }
     }
@@ -1924,7 +1924,7 @@ void fnKeyExit(uint16_t unusedButMandatoryParameter) {
       case CM_PLOT_STAT: {
         //Temporary - TODO JM
         restoreStats();
-        printf(">>> ####@@@@ D %i\n",calcMode);
+        printf(">>> ####@@@@ D %" PRIu8 "\n", (uint8_t)calcMode);
         if(lastPlotMode == H_PLOT && calcMode == CM_PLOT_STAT) {
           popSoftmenu();
         }
@@ -1964,7 +1964,7 @@ void fnKeyExit(uint16_t unusedButMandatoryParameter) {
       }
 
       default: {
-        sprintf(errorMessage, "In function fnKeyExit: unexpected calcMode value (%" PRIu8 ") while processing key EXIT!", calcMode);
+        sprintf(errorMessage, "In function fnKeyExit: unexpected calcMode value (%" PRIu8 ") while processing key EXIT!", (uint8_t)calcMode);
         displayBugScreen(errorMessage);
       }
     }
@@ -2039,7 +2039,7 @@ void fnKeyCC(uint16_t unusedButMandatoryParameter) {
       }
 
       default: {
-        sprintf(errorMessage, "In function fnKeyCC: unexpected calcMode value (%" PRIu8 ") while processing key CC!", calcMode);
+        sprintf(errorMessage, "In function fnKeyCC: unexpected calcMode value (%" PRIu8 ") while processing key CC!", (uint8_t)calcMode);
         displayBugScreen(errorMessage);
       }
     }
@@ -2243,7 +2243,7 @@ void fnKeyBackspace(uint16_t unusedButMandatoryParameter) {
       }
 
       default: {
-        sprintf(errorMessage, "In function fnKeyBackspace: unexpected calcMode value (%" PRIu8 ") while processing key BACKSPACE!", calcMode);
+        sprintf(errorMessage, "In function fnKeyBackspace: unexpected calcMode value (%" PRIu8 ") while processing key BACKSPACE!", (uint8_t)calcMode);
         displayBugScreen(errorMessage);
       }
     }
@@ -2411,7 +2411,7 @@ void fnKeyUp(uint16_t unusedButMandatoryParameter) {
       }
 
       default: {
-        sprintf(errorMessage, "In function fnKeyUp: unexpected calcMode value (%" PRIu8 ") while processing key UP!", calcMode);
+        sprintf(errorMessage, "In function fnKeyUp: unexpected calcMode value (%" PRIu8 ") while processing key UP!", (uint8_t)calcMode);
         displayBugScreen(errorMessage);
       }
     }
@@ -2574,7 +2574,7 @@ void fnKeyDown(uint16_t unusedButMandatoryParameter) {
       }
 
       default: {
-        sprintf(errorMessage, "In function fnKeyDown: unexpected calcMode value (%" PRIu8 ") while processing key DOWN!", calcMode);
+        sprintf(errorMessage, "In function fnKeyDown: unexpected calcMode value (%" PRIu8 ") while processing key DOWN!", (uint8_t)calcMode);
         displayBugScreen(errorMessage);
       }
     }
@@ -2613,7 +2613,7 @@ void fnKeyDotD(uint16_t unusedButMandatoryParameter) {
       }
 
       default: {
-        sprintf(errorMessage, "In function fnKeyDotD: unexpected calcMode value (%" PRIu8 ") while processing key .d!", calcMode);
+        sprintf(errorMessage, "In function fnKeyDotD: unexpected calcMode value (%" PRIu8 ") while processing key .d!", (uint8_t)calcMode);
         displayBugScreen(errorMessage);
       }
     }
@@ -2659,7 +2659,7 @@ void fnKeyAngle(uint16_t unusedButMandatoryParameter) {
       }
 
       default: {
-        sprintf(errorMessage, "In function fnKeyAngle: unexpected calcMode value (%" PRIu8 ") while processing key .d!", calcMode);
+        sprintf(errorMessage, "In function fnKeyAngle: unexpected calcMode value (%" PRIu8 ") while processing key .d!", (uint8_t)calcMode);
         displayBugScreen(errorMessage);
       }
     }

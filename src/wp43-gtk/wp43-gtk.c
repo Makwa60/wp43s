@@ -46,7 +46,6 @@ char                debugString[10000];
 #if (SHOW_MEMORY_STATUS == 1)
   GtkWidget         *lblMemoryStatus;
 #endif // (SHOW_MEMORY_STATUS == 1)
-calcKeyboard_t       calcKeyboard[43];
 int                  currentBezel; // 0=normal, 1=AIM, 2=TAM
 
 #if defined(EXPORT_ITEMS)

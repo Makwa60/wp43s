@@ -81,7 +81,6 @@
     #if (SHOW_MEMORY_STATUS == 1)
       extern GtkWidget         *lblMemoryStatus;
     #endif // (SHOW_MEMORY_STATUS == 1)
-    extern calcKeyboard_t       calcKeyboard[43];
     extern int                  currentBezel; // 0=normal, 1=AIM, 2=TAM
   #endif //PC_BUILD
 
@@ -198,7 +197,7 @@
   extern uint8_t                previousCalcMode;
   extern uint8_t                groupingGap;
   extern uint8_t                roundingMode;
-  extern uint8_t                calcMode;
+  extern calcMode_t             calcMode;
   extern uint8_t                nextChar;
   extern uint8_t                displayStack;
   extern uint8_t                cachedDisplayStack;

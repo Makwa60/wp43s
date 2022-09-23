@@ -507,25 +507,6 @@
   #define RM_CEIL                                    5
   #define RM_FLOOR                                   6
 
-  // Calc mode 5 bits
-  #define CM_NORMAL                                  0 // Normal operation
-  #define CM_AIM                                     1 // Alpha input mode
-  #define CM_NIM                                     2 // Numeric input mode
-  #define CM_PEM                                     3 // Program entry mode
-  #define CM_ASSIGN                                  4 // Assign mode
-  #define CM_REGISTER_BROWSER                        5 // Register browser
-  #define CM_FLAG_BROWSER                            6 // Flag browser
-  #define CM_FONT_BROWSER                            7 // Font browser
-  #define CM_PLOT_STAT                               8 // Plot stats mode
-  #define CM_ERROR_MESSAGE                           9 // Error message in one of the register lines
-  #define CM_BUG_ON_SCREEN                          10 // Bug message on screen
-  #define CM_CONFIRMATION                           11 // Waiting for confirmation or canceling
-  #define CM_MIM                                    12 // Matrix imput mode tbd reorder
-  #define CM_EIM                                    13 // Equation imput mode
-  #define CM_TIMER                                  14 // Timer application
-  #define CM_GRAPH                                  15 // Plot graph mode
-  #define CM_NO_UNDO                                16 // Running functions without undo affected
-
   // Next character in AIM 2 bits
   #define NC_NORMAL                                  0
   #define NC_SUBSCRIPT                               1
