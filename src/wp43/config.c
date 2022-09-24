@@ -889,7 +889,7 @@ void fnReset(uint16_t confirmation) {
       if(calcMode == CM_MIM) {
         mimFinalize();
       }
-      calcModeNormal();
+      calcModeEnter(CM_NORMAL);
     #endif // !TESTSUITE_BUILD
 
     #if defined(PC_BUILD) || defined(TESTSUITE_BUILD)

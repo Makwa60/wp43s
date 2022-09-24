@@ -21,29 +21,23 @@
   #define CALCMODE_H
 
   #include "defines.h"
+  #include "typeDefinitions.h"
   #include <stdint.h>
 
   #if !defined(TESTSUITE_BUILD)
     void fnOff                       (uint16_t unsuedParamButMandatory);
 
     /**
-     * Sets the calc mode to normal.
+     * Sets the calc mode.
+     *
+     * \param[in] newMode new mode
      */
-    void calcModeNormal              (void);
+    void calcModeEnter               (calcMode_t newMode);
 
     /**
-     * Sets the calc mode to alpha input mode.
-     *
-     * \param[in] unusedButMandatoryParameter
+     * Leaves the calc mode.
      */
-    void calcModeAim                 (uint16_t unusedButMandatoryParameter);
-
-    /**
-     * Sets the calc mode to number input mode.
-     *
-     * \param[in] unusedButMandatoryParameter
-     */
-    void calcModeNim                 (uint16_t unusedButMandatoryParameter);
+    void calcModeLeave               (void);
 
     /**
      * Sets the calc mode to alpha selection menu if needed.

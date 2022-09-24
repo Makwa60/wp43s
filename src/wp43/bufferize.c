@@ -51,7 +51,7 @@
     shiftF = false;
     shiftG = false;
     aimBuffer[0] = 0;
-    calcModeAim(NOPARAM); // Alpha Input Mode
+    calcModeEnter(CM_AIM);
     if(programRunStop != PGM_RUNNING) {
       entryStatus |= 0x01;
     }
@@ -304,7 +304,7 @@
 
       if(catalog && catalog != CATALOG_MVAR && !fnKeyInCatalog) {
         if(item == ITM_BACKSPACE) {
-          calcModeNormal();
+          calcModeEnter(CM_NORMAL);
           return;
         }
 
@@ -845,7 +845,7 @@
     if(calcMode == CM_NORMAL) {
       switch(item) {
         case ITM_EXPONENT: {
-          calcModeNim(NOPARAM);
+          calcModeEnter(CM_NIM);
           aimBuffer[0] = '+';
           aimBuffer[1] = '1';
           aimBuffer[2] = '.';
@@ -856,7 +856,7 @@
         }
 
         case ITM_PERIOD: {
-          calcModeNim(NOPARAM);
+          calcModeEnter(CM_NIM);
           aimBuffer[0] = '+';
           aimBuffer[1] = '0';
           aimBuffer[2] = 0;
@@ -880,7 +880,7 @@
         case ITM_D:
         case ITM_E:
         case ITM_F: {
-          calcModeNim(NOPARAM);
+          calcModeEnter(CM_NIM);
           aimBuffer[0] = '+';
           aimBuffer[1] = 0;
           nimNumberPart = NP_EMPTY;
@@ -1429,7 +1429,7 @@
 
         if((calcMode != CM_MIM) && (lastChar == -1 || (lastChar == 0 && aimBuffer[0] == '+'))) {
           screenUpdatingMode &= ~SCRUPD_SKIP_STACK_ONE_TIME;
-          calcModeNormal();
+          calcModeEnter(CM_NORMAL);
           #if defined(DEBUGUNDO)
             printf(">>> undo from addItemToNimBuffer\n");
           #endif // DEBUGUNDO
@@ -1996,7 +1996,7 @@
         }
 
         if((aimBuffer[0] != '-' || aimBuffer[1] != 0) && (aimBuffer[lastChar] != '-')) { // The buffer is not just the minus sign AND The last char of the buffer is not the minus sign
-          calcModeNormal();
+          calcModeEnter(CM_NORMAL);
 
           if(nimNumberPart == NP_INT_10) {
             longInteger_t lgInt;
@@ -2171,7 +2171,7 @@
   }
 
   void closeAim(void) {
-    calcModeNormal();
+    calcModeEnter(CM_NORMAL);
     popSoftmenu();
 
     if(aimBuffer[0] == 0) {

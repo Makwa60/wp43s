@@ -374,7 +374,7 @@
         --numberOfTamMenusToPop;
         if(tam.alpha) {
           setSystemFlag(FLAG_ALPHA);
-          calcModeAim(NOPARAM);
+          calcModeEnter(CM_AIM);
         }
         calcModeTamGui();
       }
@@ -407,7 +407,7 @@
         tam.alpha = true;
         setSystemFlag(FLAG_ALPHA);
         aimBuffer[0] = 0;
-        calcModeAim(NOPARAM);
+        calcModeEnter(CM_AIM);
         if(beginWithLowercase) {
           alphaCase = AC_LOWER;
         }
@@ -969,7 +969,7 @@
       if(tam.mode == TM_NEWMENU) {
         setSystemFlag(FLAG_ALPHA);
         aimBuffer[0] = 0;
-        calcModeAim(NOPARAM);
+        calcModeEnter(CM_AIM);
       }
       else {
         calcModeTamGui();

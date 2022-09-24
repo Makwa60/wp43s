@@ -91,8 +91,7 @@ void fnAssign(uint16_t mode) {
     aimBuffer[0] = 0;
   }
   else {
-    previousCalcMode = calcMode;
-    calcMode = CM_ASSIGN;
+    calcModeEnter(CM_ASSIGN);
     itemToBeAssigned = 0;
     updateAssignTamBuffer();
   }
@@ -608,7 +607,7 @@ void assignEnterAlpha(void) {
   tam.alpha = true;
   setSystemFlag(FLAG_ALPHA);
   aimBuffer[0] = 0;
-  calcModeAim(NOPARAM);
+  calcModeEnter(CM_AIM);
   numberOfTamMenusToPop = 0;
 #endif // !TESTSUITE_BUILD
 }
@@ -767,7 +766,7 @@ void assignGetName2(void) {
     result = _assignToKey(ITM_DOWN);
   }
 
-  calcMode = previousCalcMode;
+  calcModeLeave();
   shiftF = shiftG = false;
   refreshScreen();
 
