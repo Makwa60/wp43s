@@ -242,11 +242,11 @@ void program_main(void) {
   //now = sys_current_ms();
   //runner_key_tout_init(0); // Enables fast auto repeat
 
-  fnTimerReset();
-  fnTimerConfig(TO_AUTO_REPEAT, execAutoRepeat, 0);
-  fnTimerConfig(TO_TIMER_APP, execTimerApp, 0);
-  fnTimerConfig(TO_KB_ACTV, fnTimerDummyTest, TO_KB_ACTV);
-  //fnTimerConfig(TO_SHOW_NOP, execNOPTimeout, TO_SHOW_NOP);
+  timerReset();
+  timerConfig(TO_AUTO_REPEAT, execAutoRepeat, 0);
+  timerConfig(TO_TIMER_APP, execTimerApp, 0);
+  timerConfig(TO_KB_ACTV, timerDummyTest, TO_KB_ACTV);
+  //timerConfig(TO_SHOW_NOP, execNOPTimeout, TO_SHOW_NOP);
   nextTimerRefresh = 0;
 
   // Status flags:
@@ -322,8 +322,8 @@ void program_main(void) {
       continue;
     }
     if(ST(STAT_POWER_CHANGE)) {
-      if(!ST(STAT_OFF) && (fnTimerGetStatus(TO_KB_ACTV) != TMR_RUNNING)) {
-        fnTimerStart(TO_KB_ACTV, TO_KB_ACTV, SCREEN_REFRESH_PERIOD+50);
+      if(!ST(STAT_OFF) && (timerGetStatus(TO_KB_ACTV) != TMR_RUNNING)) {
+        timerStart(TO_KB_ACTV, TO_KB_ACTV, SCREEN_REFRESH_PERIOD+50);
       }
       CLR_ST(STAT_POWER_CHANGE);
       continue;
@@ -401,15 +401,15 @@ void program_main(void) {
     if(key == 27 || key == 32) {
       //inDownUpPress = 1;
       //nextAutoRepeat = now + KEY_AUTOREPEAT_FIRST_PERIOD;
-      if(fnTimerGetStatus(TO_AUTO_REPEAT) != TMR_RUNNING && (!shiftF || calcMode == CM_PEM) && !shiftG && (currentSoftmenuScrolls() || (calcMode != CM_NORMAL && calcMode != CM_NIM && calcMode != CM_AIM))) {
-        fnTimerStart(TO_AUTO_REPEAT, key, KEY_AUTOREPEAT_FIRST_PERIOD);
+      if(timerGetStatus(TO_AUTO_REPEAT) != TMR_RUNNING && (!shiftF || calcMode == CM_PEM) && !shiftG && (currentSoftmenuScrolls() || (calcMode != CM_NORMAL && calcMode != CM_NIM && calcMode != CM_AIM))) {
+        timerStart(TO_AUTO_REPEAT, key, KEY_AUTOREPEAT_FIRST_PERIOD);
       }
     }
     else if(key == 0) {
       //inDownUpPress = 0;
       //repeatDownUpPress = 0;
       //nextAutoRepeat = 0;
-      fnTimerStop(TO_AUTO_REPEAT);
+      timerStop(TO_AUTO_REPEAT);
     }
     //else if(repeatDownUpPress) {
     //  keyAutoRepeat = 1;
@@ -485,14 +485,14 @@ void program_main(void) {
 
     if(key >= 0) {                                        // Temporary intermediate solution to get some refreshLcd and go to sleep afterwards
       if(key > 0) {
-        fnTimerStart(TO_KB_ACTV, TO_KB_ACTV, 60000);
+        timerStart(TO_KB_ACTV, TO_KB_ACTV, 60000);
       }
       else if(cursorEnabled == true) {
-        fnTimerStart(TO_KB_ACTV, TO_KB_ACTV, 4*FAST_SCREEN_REFRESH_PERIOD+50);
+        timerStart(TO_KB_ACTV, TO_KB_ACTV, 4*FAST_SCREEN_REFRESH_PERIOD+50);
       }
       else
       {
-        fnTimerStart(TO_KB_ACTV, TO_KB_ACTV, FAST_SCREEN_REFRESH_PERIOD+50);
+        timerStart(TO_KB_ACTV, TO_KB_ACTV, FAST_SCREEN_REFRESH_PERIOD+50);
       }
     }
 
@@ -508,7 +508,7 @@ void program_main(void) {
     uint32_t now = sys_current_ms();
 
     if(nextTimerRefresh != 0 && nextTimerRefresh <= now) {
-      refreshTimer();                                     // Executes pending timer jobs
+      timerRefresh();                                     // Executes pending timer jobs
     }
     now = sys_current_ms();
     if(nextScreenRefresh <= now) {

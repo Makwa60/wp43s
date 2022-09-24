@@ -20,6 +20,10 @@ Contents
    :caption: Hardware Abstraction Layer
 
    audio
+   gui
+   io
+   lcd
+   time
 
 .. toctree::
    :maxdepth: 2

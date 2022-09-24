@@ -22,7 +22,7 @@
 #include "gtkScreen.h"
 #include "items.h"
 #include "keyboard.h"
-#include "timer.h"
+#include "timerApp.h"
 #include "saveRestoreCalcState.h"
 #include "screen.h"
 #include "wp43.h"

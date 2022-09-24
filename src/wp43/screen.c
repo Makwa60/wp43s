@@ -44,6 +44,7 @@
 #include "registerValueConversions.h"
 #include "softmenus.h"
 #include "timer.h"
+#include "timerApp.h"
 #include "ui/statusBar.h"
 #include "version.h"
 #include <string.h>
@@ -181,7 +182,7 @@ void clearScreen(void) {
 
 
 void execTimerApp(uint16_t timerType) {
-  fnTimerStart(TO_TIMER_APP, TO_TIMER_APP, TIMER_APP_PERIOD);
+  timerStart(TO_TIMER_APP, TO_TIMER_APP, TIMER_APP_PERIOD);
   fnUpdateTimerApp();
 }
 

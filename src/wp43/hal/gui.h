@@ -28,8 +28,28 @@
     static inline void calcModeAimGui    (void) {}
     static inline void calcModeTamGui    (void) {}
   #else
+    /**
+     * Show the keys associated with the normal layout.
+     * The graphical user interface should update the labels
+     * on the keys to show the outcome of pressing the key in
+     * normal mode.
+     */
     void calcModeNormalGui (void);
+
+    /**
+     * Show the keys associated with Alpha Input Mode.
+     * The graphical user interface should update the labels
+     * on the keys to show the outcome of pressing the key in
+     * alpha mode.
+     */
     void calcModeAimGui    (void);
+
+    /**
+     * Show the keys associated with Transient Alpha Mode.
+     * The graphical user interface should update the labels
+     * on the keys to show the outcome of pressing the key in
+     * the transient alpha mode.
+     */
     void calcModeTamGui    (void);
   #endif
 #endif // !GUI_H

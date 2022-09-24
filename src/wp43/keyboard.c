@@ -43,6 +43,7 @@
 #include "stack.h"
 #include "stats.h"
 #include "timer.h"
+#include "timerApp.h"
 #include "ui/tam.h"
 #if (REAL34_WIDTH_TEST == 1)
   #include "registerValueConversions.h"
@@ -274,7 +275,7 @@
       uint8_t origScreenUpdatingMode = screenUpdatingMode;
       sprintf(charKey, "%02d", key -1);
 
-      fnTimerStart(TO_AUTO_REPEAT, key, KEY_AUTOREPEAT_PERIOD);
+      timerStart(TO_AUTO_REPEAT, key, KEY_AUTOREPEAT_PERIOD);
 
       btnClicked(charKey);
       screenUpdatingMode = origScreenUpdatingMode;
@@ -979,7 +980,7 @@
     //    btnPressed(data);
     //  }
     //#endif // DMCP_BUILD
-    if(fnTimerGetStatus(TO_AUTO_REPEAT) != TMR_RUNNING) {
+    if(timerGetStatus(TO_AUTO_REPEAT) != TMR_RUNNING) {
       refreshScreen();
     }
     screenUpdatingMode &= ~SCRUPD_ONE_TIME_FLAGS;

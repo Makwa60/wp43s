@@ -16,16 +16,7 @@
 
 #include "wp43.h"
 
-#include "charString.h"
-#include "config.h"
-#include "flags.h"
-#include "items.h"
-#include "keyboard.h"
-#include "longIntegerType.h"
-#include "memory.h"
-#include "screen.h"
-#include "softmenus.h"
-#include "timer.h"
+#include "defines.h"
 
 #if defined(PC_BUILD) || defined(TESTSUITE_BUILD)
   bool_t              debugMemAllocation;

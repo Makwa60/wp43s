@@ -77,8 +77,8 @@ gboolean refreshLcdCallback(gpointer unusedData) {
  *                          * true  = timer will call this function again
  *                          * false = timer stops calling this function
  ***********************************************/
-gboolean refreshTimerCallback(gpointer unusedData) {
-  refreshTimer();
+gboolean timerRefreshCallback(gpointer unusedData) {
+  timerRefresh();
   return TRUE;
 }
 
@@ -156,10 +156,10 @@ int main(int argc, char* argv[]) {
 
   gdk_threads_add_timeout(SCREEN_REFRESH_PERIOD, refreshLcdCallback, NULL); // refreshLcd is called every SCREEN_REFRESH_PERIOD ms
 
-  fnTimerReset();
-  fnTimerConfig(TO_TIMER_APP, execTimerApp, 0);
-  //fnTimerConfig(TO_SHOW_NOP, execNOPTimeout, TO_SHOW_NOP);
-  gdk_threads_add_timeout(5, refreshTimerCallback, NULL);
+  timerReset();
+  timerConfig(TO_TIMER_APP, execTimerApp, 0);
+  //timerConfig(TO_SHOW_NOP, execNOPTimeout, TO_SHOW_NOP);
+  gdk_threads_add_timeout(5, timerRefreshCallback, NULL);
 
   if(getSystemFlag(FLAG_AUTXEQ)) {
     clearSystemFlag(FLAG_AUTXEQ);
