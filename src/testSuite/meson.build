@@ -3,7 +3,8 @@ testSuite_src = files(
   'hal/audio.c',
   'hal/gui.c',
   'hal/io.c',
-  'hal/lcd.c')
+  'hal/lcd.c',
+  'hal/time.c')
 testSuite = executable(
   'testSuite',
   build_by_default    : false,

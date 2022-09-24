@@ -48,5 +48,10 @@
      * Leaves the alpha selection mode.
      */
     void leaveAsmMode                (void);
+  #else // TESTSUITE_BUILD
+    #pragma GCC diagnostic ignored "-Wunused-parameter"
+
+    static inline void calcModeEnter               (calcMode_t newMode) {}
+    static inline void calcModeLeave               (void) {}
   #endif // !TESTSUITE_BUILD
 #endif // !CALCMODE_H

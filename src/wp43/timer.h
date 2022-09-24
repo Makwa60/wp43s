@@ -26,10 +26,7 @@
     #include <gdk/gdk.h>
   #endif // PC_BUILD
 
-
-  uint32_t getUptimeMs          (void);
   void     fnTicks              (uint16_t unusedButMandatoryParameter);
-
 
   void     fnTimer              (uint16_t unusedButMandatoryParameter);
   void     fnAddTimerApp        (uint16_t unusedButMandatoryParameter);
@@ -50,14 +47,7 @@
   void     fnLeaveTimerApp      (void);
   void     fnPollTimerApp       (void);
 
-
-  #if defined(PC_BUILD)
-    gboolean refreshTimer         (gpointer data);
-  #endif
-  #if defined(DMCP_BUILD)
-    void     refreshTimer         (void);
-  #endif
-
+  void     refreshTimer         (void);
 
   void     fnTimerReset         (void);
   void     fnTimerDummyTest     (uint16_t param);
@@ -80,16 +70,10 @@
   #define TMR_RUNNING   2
   #define TMR_COMPLETED 3
 
-
-
   typedef struct {
     void     (*func)(uint16_t); ///< Function called to execute the timer
     uint16_t param;             ///< 1st parameter to the above
-  #if !defined(PC_BUILD)
     uint32_t timer_will_expire; ///<
-  #else // PC_BUILD
-    gint64   timer_will_expire; ///<
-  #endif // !PC_BUILD
     uint8_t  state;             ///<
   } kb_timer_t;
 #endif // !TIMER_H

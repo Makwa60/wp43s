@@ -27,6 +27,7 @@
 #include "error.h"
 #include "flags.h"
 #include "fonts.h"
+#include "hal/time.h"
 #include "items.h"
 #include "mathematics/comparisonReals.h"
 #include "mathematics/toRect.h"
@@ -40,7 +41,6 @@
 #include "softmenus.h"
 #include "sort.h"
 #include "stack.h"
-#include "timer.h"
 #include "ui/tam.h"
 #include <string.h>
 
@@ -326,7 +326,7 @@
 
           softmenuStack[0].firstItem = findFirstItem(asmBuffer);
           setCatalogLastPos();
-          alphaSelectionTimer = getUptimeMs();
+          alphaSelectionTimer = timeUptimeMs();
         }
       }
 
