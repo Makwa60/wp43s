@@ -22,7 +22,23 @@
 
   #include <stdint.h>
 
+  /**
+   * Get the current time in milliseconds.
+   * This is the wall clock time. It should increase when the
+   * program isn't running.
+   *
+   * \return time in milliseconds
+   */
   uint32_t timeCurrentMs(void);
+
+  /**
+   * Get the uptime in milliseconds.
+   * This doesn't need to reflect the current time but should be
+   * monotonically increasing during runtime. It can pause when
+   * the program is off.
+   *
+   * \return time in milliseconds
+   */
   uint32_t timeUptimeMs(void);
 
 #endif // !TIME_H

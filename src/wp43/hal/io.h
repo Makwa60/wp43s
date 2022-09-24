@@ -22,22 +22,77 @@
 
   #include <stdint.h>
 
+  /**
+   * File handle.
+   * File handles are needed by all file operations and returned by
+   * ::ioFileOpen.
+   */
   typedef void ioFile_t;
+
+  /**
+   * Abstracted file path.
+   * All file operations use an abstracted path so they can be stored in the
+   * appropriate location dependent on the platform.
+   */
   typedef enum {
-    IOPATH_SAVEFILE   = 0,
-    IOPATH_PGMFILE    = 1,
-    IOPATH_TESTPGMS   = 2,
-    IOPATH_BACKUP     = 3
+    IOPATH_SAVEFILE   = 0, //< save file used in SAVE and LOAD functions
+    IOPATH_PGMFILE    = 1, //< program file
+    IOPATH_TESTPGMS   = 2, //< test programs
+    IOPATH_BACKUP     = 3  //< backup file for full state used in simulators
   } ioFilePath_t;
+
+  /**
+   * File open mode.
+   * Files must be opened with a mode to indicate whether they will be read, or
+   * written to, or both. All operations are in binary modes where the platform
+   * allows this to be specified.
+   */
   typedef enum {
-    IOMODE_READ   = 0,
-    IOMODE_WRITE  = 1,
-    IOMODE_UPDATE = 2
+    IOMODE_READ   = 0, //< open the file in read-only mode
+    IOMODE_WRITE  = 1, //< open the file in write-only mode
+    IOMODE_UPDATE = 2  //< open the file in read/write mode
   } ioFileMode_t;
 
+  /**
+   * Open a file.
+   * File operations require a file to be opened first. Opening the file returns
+   * a file handle which is then used by subsequent operations. Any files opened
+   * by ::ioFileOpen must be closed by ::ioFileClose (preferably as soon as possible
+   * after all operations have completed).
+   *
+   * \param[in] path the enumeration value for the particular file to open
+   * \param[in] mode the mode to open the file (read, write, update)
+   * \return file handle to pass to ::ioFileWrite, ::ioFileRead, ::ioFileClose
+   */
   ioFile_t *ioFileOpen(ioFilePath_t path, ioFileMode_t mode);
+
+  /**
+   * Write to an open file.
+   *
+   * \param[in] file the file handle returned by ::ioFileOpen
+   * \param[in] buffer the binary stream to write
+   * \param[in] size how many bytes to write
+   */
   void ioFileWrite(ioFile_t *file, const void *buffer, uint32_t size);
+
+  /**
+   * Read from an open file.
+   * The buffer must have an allocated size at least as long as the specified
+   * size.
+   *
+   * \param[in] file the file handle returned by ::ioFileOpen
+   * \param[out] buffer the allocated buffer to read into
+   * \param[in] size how many bytes to read
+   * \return how many bytes were actually read
+   */
   uint32_t ioFileRead(ioFile_t *file, void *buffer, uint32_t size);
+
+  /**
+   * Close an open file.
+   * Files must be closed to avoid resource leaks.
+   *
+   * \param[in] file the file handle returned by ::ioFileOpen
+   */
   void ioFileClose(ioFile_t *file);
 
 #endif // IO_H

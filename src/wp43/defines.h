@@ -872,8 +872,6 @@
   #define TIMER_APP_STOPPED                          0xFFFFFFFFu
 
   #if !defined(DMCP_BUILD)
-    #define LCD_SET_VALUE                            0 // Black pixel
-    #define LCD_EMPTY_VALUE                        255 // White (or empty) pixel
     #define TO_QSPI
   #else // DMCP_BUILD
     #define beep(frequence, length)            {while(get_beep_volume() < 11) beep_volume_up(); start_buzzer_freq(frequence * 1000); sys_delay(length); stop_buzzer();}
