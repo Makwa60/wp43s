@@ -28,7 +28,7 @@
 #include "saveRestoreCalcState.h"
 #include "screen.h"
 #include "stack.h"
-#include "timer.h"
+#include "timerApp.h"
 #include <string.h>
 #include <unistd.h>
 

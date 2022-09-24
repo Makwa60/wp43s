@@ -195,6 +195,7 @@ wp43_src = files(
   'store.c',
   'stringFuncs.c',
   'timer.c',
+  'timerApp.c',
   'ui/statusBar.c',
   'ui/tam.c',
   'ui/tone.c',
