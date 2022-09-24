@@ -1346,7 +1346,7 @@
             case CM_PEM: {
               if(item == ITM_PR) {
                 leavePem();
-                calcModeNormal();
+                calcModeEnter(CM_NORMAL);
                 keyActionProcessed = true;
               }
               else if(item == ITM_OFF) {
@@ -1577,7 +1577,7 @@ void fnKeyEnter(uint16_t unusedButMandatoryParameter) {
       }
 
       case CM_AIM: {
-        calcModeNormal();
+        calcModeEnter(CM_NORMAL);
         popSoftmenu();
 
         if(aimBuffer[0] == 0) {
@@ -1650,7 +1650,7 @@ void fnKeyEnter(uint16_t unusedButMandatoryParameter) {
           setEquation(currentFormula, aimBuffer);
         }
         if(softmenu[softmenuStack[0].softmenuId].menuItem == -MNU_EQ_EDIT) {
-          calcModeNormal();
+          calcModeEnter(CM_NORMAL);
           if(allFormulae[currentFormula].pointerToFormulaData == WP43_NULL) {
             deleteEquation(currentFormula);
           }
@@ -1837,7 +1837,7 @@ void fnKeyExit(uint16_t unusedButMandatoryParameter) {
             calcSigma(0);
           }
           mimFinalize();
-          calcModeNormal();
+          calcModeEnter(CM_NORMAL);
           updateMatrixHeightCache();
         }
         screenUpdatingMode = SCRUPD_AUTO;
@@ -1869,7 +1869,7 @@ void fnKeyExit(uint16_t unusedButMandatoryParameter) {
 
         aimBuffer[0] = 0;
         leavePem();
-        calcModeNormal();
+        calcModeEnter(CM_NORMAL);
         #if defined(DEBUGUNDO)
           printf(">>> saveForUndo from fnKeyExitB\n");
         #endif // DEBUGUNDO
@@ -1886,7 +1886,7 @@ void fnKeyExit(uint16_t unusedButMandatoryParameter) {
         }
         else {
           if(softmenu[softmenuStack[0].softmenuId].menuItem == -MNU_EQ_EDIT) {
-            calcModeNormal();
+            calcModeEnter(CM_NORMAL);
             if(allFormulae[currentFormula].pointerToFormulaData == WP43_NULL) {
               deleteEquation(currentFormula);
             }

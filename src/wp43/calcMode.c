@@ -81,7 +81,7 @@
 
 
 
-  void calcModeAim(uint16_t unusedButMandatoryParameter) {
+  void calcModeAim(void) {
     alphaCase = AC_UPPER;
     nextChar = NC_NORMAL;
 
@@ -103,6 +103,81 @@
     setSystemFlag(FLAG_ALPHA);
 
     calcModeAimGui();
+  }
+
+
+
+  void calcModeNim(void) {
+    #if defined(DEBUGUNDO)
+      printf(">>> saveForUndo from gui: calcModeNim\n");
+    #endif // DEBUGUNDO
+    saveForUndo();
+    if(lastErrorCode == ERROR_RAM_FULL) {
+      displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
+      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
+        moreInfoOnError("In function calcModeNim:", "there is not enough memory to save for undo!", NULL, NULL);
+      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+      return;
+    }
+
+    clearSystemFlag(FLAG_ALPHA);
+    if(calcMode != CM_PEM && calcMode != CM_MIM) {
+      calcMode = CM_NIM;
+
+      liftStack();
+      real34Zero(REGISTER_REAL34_DATA(REGISTER_X));
+    }
+
+    aimBuffer[0] = 0;
+    hexDigits = 0;
+
+    if(calcMode != CM_PEM) {
+      clearRegisterLine(NIM_REGISTER_LINE, true, true);
+      xCursor = 1;
+      yCursor = Y_POSITION_OF_NIM_LINE;
+      cursorEnabled = true;
+      cursorFont = &numericFont;
+    }
+  }
+
+
+
+  void calcModeEnter(calcMode_t newMode) {
+    switch(newMode) {
+      case CM_NORMAL:
+        calcModeNormal();
+        break;
+      case CM_AIM:
+        calcModeAim();
+        break;
+      case CM_NIM:
+        calcModeNim();
+        break;
+      case CM_ASSIGN:
+        previousCalcMode = calcMode;
+        calcMode = CM_ASSIGN;
+        break;
+      case CM_TIMER:
+        // This is potentially a bug, because we don't set previousCalcMode here,
+        // but we use it in calcModeLeave for CM_TIMER
+        calcMode = CM_TIMER;
+        break;
+      default:
+        break;
+    }
+  }
+
+
+
+  void calcModeLeave(void) {
+    switch(calcMode) {
+      case CM_ASSIGN:
+      case CM_TIMER:
+        calcMode = previousCalcMode;
+        break;
+      default:
+        break;
+    }
   }
 
 
@@ -227,40 +302,5 @@
         calcModeNormalGui();
       }
     #endif // !DMCP_BUILD
-  }
-
-
-
-  void calcModeNim(uint16_t unusedButMandatoryParameter) {
-    #if defined(DEBUGUNDO)
-      printf(">>> saveForUndo from gui: calcModeNim\n");
-    #endif // DEBUGUNDO
-    saveForUndo();
-    if(lastErrorCode == ERROR_RAM_FULL) {
-      displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
-      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-        moreInfoOnError("In function calcModeNim:", "there is not enough memory to save for undo!", NULL, NULL);
-      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
-      return;
-    }
-
-    clearSystemFlag(FLAG_ALPHA);
-    if(calcMode != CM_PEM && calcMode != CM_MIM) {
-      calcMode = CM_NIM;
-
-      liftStack();
-      real34Zero(REGISTER_REAL34_DATA(REGISTER_X));
-    }
-
-    aimBuffer[0] = 0;
-    hexDigits = 0;
-
-    if(calcMode != CM_PEM) {
-      clearRegisterLine(NIM_REGISTER_LINE, true, true);
-      xCursor = 1;
-      yCursor = Y_POSITION_OF_NIM_LINE;
-      cursorEnabled = true;
-      cursorFont = &numericFont;
-    }
   }
 #endif // !TESTSUITE_BUILD

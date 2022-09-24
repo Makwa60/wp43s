@@ -68,6 +68,20 @@ gboolean refreshLcdCallback(gpointer unusedData) {
   return TRUE;
 }
 
+/********************************************//**
+ * \brief Refreshes timer. This function is
+ * called every 5 ms by a GTK timer.
+ *
+ * \param[in] data gpointer Not used
+ * \return gboolean         What will happen next?
+ *                          * true  = timer will call this function again
+ *                          * false = timer stops calling this function
+ ***********************************************/
+gboolean refreshTimerCallback(gpointer unusedData) {
+  refreshTimer();
+  return TRUE;
+}
+
 int main(int argc, char* argv[]) {
   #if defined(__APPLE__)
     // we take the directory where the application is as the root for this application.
@@ -145,7 +159,7 @@ int main(int argc, char* argv[]) {
   fnTimerReset();
   fnTimerConfig(TO_TIMER_APP, execTimerApp, 0);
   //fnTimerConfig(TO_SHOW_NOP, execNOPTimeout, TO_SHOW_NOP);
-  gdk_threads_add_timeout(5, refreshTimer, NULL);
+  gdk_threads_add_timeout(5, refreshTimerCallback, NULL);
 
   if(getSystemFlag(FLAG_AUTXEQ)) {
     clearSystemFlag(FLAG_AUTXEQ);

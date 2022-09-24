@@ -25,12 +25,12 @@
 #include "debug.h"
 #include "error.h"
 #include "flags.h"
+#include "hal/time.h"
 #include "integers.h"
 #include "memory.h"
 #include "registers.h"
 #include "registerValueConversions.h"
 #include "stack.h"
-#include "timer.h"
 
 #include "wp43.h"
 
@@ -180,8 +180,8 @@ void fnSeed(uint16_t unusedButMandatoryParameter) {
       seed = 0xDeadBeef;
       sequ = 0xBadCafeFace;
     #else // !TESTSUITE_BUILD
-      seed = (((uint64_t)getUptimeMs()) << 32) + (uint64_t)getFreeRamMemory();
-      sequ = (((uint64_t)getUptimeMs()) << 32) + (uint64_t)getFreeFlash();
+      seed = (((uint64_t)timeUptimeMs()) << 32) + (uint64_t)getFreeRamMemory();
+      sequ = (((uint64_t)timeUptimeMs()) << 32) + (uint64_t)getFreeFlash();
     #endif // TESTSUITE_BUILD
   }
 

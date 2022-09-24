@@ -1,7 +1,8 @@
 project('wp43', 'c',
   meson_version   : '>=0.56.0',
   license         : 'GPL-3.0-only',
-  default_options : ['warning_level=2']
+  default_options : ['warning_level=2',
+                     'b_ndebug=if-release']
 )
 
 # Simulator and generate tools arguments

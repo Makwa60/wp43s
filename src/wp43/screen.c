@@ -30,6 +30,7 @@
 #include "flags.h"
 #include "fonts.h"
 #include "hal/lcd.h"
+#include "hal/time.h"
 #include "items.h"
 #include "keyboard.h"
 #include "longIntegerType.h"
@@ -165,7 +166,7 @@
     #endif // PC_BUILD DMCP_BUILD
 
     // Alpha selection timer
-    if(catalog && alphaSelectionTimer != 0 && (getUptimeMs() - alphaSelectionTimer) > 3000) { // More than 3 seconds elapsed since last keypress
+    if(catalog && alphaSelectionTimer != 0 && (timeUptimeMs() - alphaSelectionTimer) > 3000) { // More than 3 seconds elapsed since last keypress
       resetAlphaSelectionBuffer();
     }
   }
