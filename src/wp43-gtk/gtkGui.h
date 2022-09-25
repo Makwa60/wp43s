@@ -25,6 +25,7 @@
   // One extra layout is sometimes needed for one key in TAM
   #define MAX_GTK_LAYOUTS (MAX_GUI_LAYOUTS + 1)
   #define TAM_L_LAYOUT    MAX_GUI_LAYOUTS
+  #define MAX_KEYS        43
 
   /**
    * \struct calcKeyboard_t
@@ -35,8 +36,6 @@
     int width[MAX_GTK_LAYOUTS], height[MAX_GTK_LAYOUTS];
     GtkWidget *keyImage[MAX_GTK_LAYOUTS];
   } calcKeyboard_t;
-
-  static const int MAX_KEYS = 43;
 
   /**
    * Creates the calc's GUI window with all the widgets.
