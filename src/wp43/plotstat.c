@@ -934,7 +934,7 @@ void graphPlotstat(uint16_t selection) {
     float y;
 
     statnum = 0;
-    if(calcMode == CM_GRAPH) {
+    if(calcMode == cmGraph) {
       roundedTicks = true;
     }
     else {
@@ -1100,7 +1100,7 @@ void graphPlotstat(uint16_t selection) {
       #endif // STATDEBUG && PC_BUILD
 
       //graphAxisDraw();
-      if(calcMode == CM_GRAPH) {
+      if(calcMode == cmGraph) {
         roundedTicks = true;
       }
       else {
@@ -1191,7 +1191,7 @@ void graphPlotstat(uint16_t selection) {
       }
       //#################################################### ^^^ MAIN GRAPH LOOP ^^^
 
-      if(calcMode == CM_GRAPH) {
+      if(calcMode == cmGraph) {
         int16_t index = -1;
         char ss[100], tt[100];
         int32_t n;
@@ -1269,7 +1269,7 @@ void graphPlotstat(uint16_t selection) {
 
     }
     else {
-      calcMode = CM_NORMAL;
+      calcMode = cmNormal;
       displayCalcErrorMessage(ERROR_NO_SUMMATION_DATA, ERR_REGISTER_LINE, REGISTER_X);
       #if (EXTRA_INFO_ON_CALC_ERROR == 1)
         sprintf(errorMessage, "There is no statistical data available!");
@@ -1622,7 +1622,7 @@ static  void drawline(uint16_t selection, real_t *RR, real_t *SMI, real_t *aa0, 
 void fnPlotClose(uint16_t unusedButMandatoryParameter){
   lastPlotMode = PLOT_NOTHING;
   plotSelection = 0;
-  calcMode = CM_NORMAL;
+  calcMode = cmNormal;
   fnKeyExit(0);
   #if defined(DEBUGUNDO)
     printf(">>> Undo from fnPlotClose\n");
@@ -1634,7 +1634,7 @@ void fnPlotClose(uint16_t unusedButMandatoryParameter){
 void fnPlotCloseSmi(uint16_t unusedButMandatoryParameter){
   lastPlotMode = PLOT_NOTHING;
   plotSelection = 0;
-  calcMode = CM_NORMAL;
+  calcMode = cmNormal;
   fnKeyExit(0);
   #if defined(DEBUGUNDO)
     printf(">>> Undo from fnPlotCloseSmi\n");
@@ -1732,7 +1732,7 @@ void fnPlotStat(uint16_t plotMode){
         if(!(lastPlotMode == PLOT_NOTHING || lastPlotMode == PLOT_START)) {
           plotMode = lastPlotMode;
         }
-        calcMode = CM_PLOT_STAT;
+        calcMode = cmPlotStat;
         if(plotMode != PLOT_GRAPH) {
           statGraphReset();
         }
@@ -1743,7 +1743,7 @@ void fnPlotStat(uint16_t plotMode){
         }
         else {
           if(plotMode == PLOT_GRAPH) {
-            calcMode = CM_GRAPH;
+            calcMode = cmGraph;
             plotSelection = 0;
             PLOT_AXIS     = true;
             PLOT_LINE     = true;
@@ -1757,7 +1757,7 @@ void fnPlotStat(uint16_t plotMode){
             }
             else {
               if(plotMode == H_PLOT || plotMode == H_NORM) {
-                 calcMode = CM_PLOT_STAT;
+                 calcMode = cmPlotStat;
               }
             }
           }
@@ -1820,7 +1820,7 @@ void fnPlotStat(uint16_t plotMode){
 
     }
     else {
-      calcMode = CM_NORMAL;
+      calcMode = cmNormal;
       displayCalcErrorMessage(ERROR_NO_SUMMATION_DATA, ERR_REGISTER_LINE, REGISTER_X);
       #if (EXTRA_INFO_ON_CALC_ERROR == 1)
         sprintf(errorMessage, "There is no statistical/plot data available!");
@@ -1911,7 +1911,7 @@ void fnPlotRegressionLine(uint16_t plotMode) {
 void fnPlotZoom(uint16_t unusedButMandatoryParameter) {
   PLOT_ZOOM = (PLOT_ZOOM + 1) & 0x03;
   switch(calcMode) {
-    case CM_PLOT_STAT: {
+    case cmPlotStat: {
       if(PLOT_ZOOM != 0) {
         PLOT_AXIS = true;
       }
@@ -1920,7 +1920,7 @@ void fnPlotZoom(uint16_t unusedButMandatoryParameter) {
       }
       break;
     }
-    case CM_GRAPH: {
+    case cmGraph: {
       PLOT_AXIS = true;
       break;
     }

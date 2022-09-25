@@ -150,6 +150,8 @@ void timerStart(uint8_t nr, uint16_t param, uint32_t time) {
     timer[nr].param = param;
     timer[nr].timer_will_expire = (uint32_t)(now + time);
     #if defined(PC_BUILD)
+      // The type has change so it can no longer be less than zero
+      // Is this needed now, or should it be written differently
       if(timer[nr].timer_will_expire < 0) {
         timer[nr].timer_will_expire = time;
       }

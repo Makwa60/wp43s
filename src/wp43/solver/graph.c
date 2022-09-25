@@ -312,7 +312,7 @@ void graph_eqn(uint16_t mode) {
     if(graphVariable <= 0 || graphVariable > 65535) {
       return;
     }
-    calcMode = CM_GRAPH;
+    calcMode = cmGraph;
     double x;
     fnClearStack(0);
 
@@ -371,7 +371,7 @@ void graph_eqn(uint16_t mode) {
       return;
     }
 
-    calcMode = CM_NO_UNDO;
+    calcMode = cmNoUndo;
     calcRegister_t SREG_TMP  = __TMP ;
     calcRegister_t SREG_Xold = __Xold; //: x old difference
     calcRegister_t SREG_Yold = __Yold; //: y old difference
@@ -1030,7 +1030,7 @@ void graph_eqn(uint16_t mode) {
     #if defined(PC_BUILD)
       to_return:
     #endif // PC_BUILD
-    calcMode = CM_NORMAL;
+    calcMode = cmNormal;
     SAVED_SIGMA_LAct = 0;   //prevent undo of last stats add action. REMOVE when STATS are not used anymore
     return;
   }

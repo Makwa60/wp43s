@@ -369,8 +369,8 @@ void fnPem(uint16_t unusedButMandatoryParameter) {
     uint16_t numberOfSteps = getNumberOfSteps();
     uint16_t linesOfCurrentStep = 1;
 
-    if(calcMode != CM_PEM) {
-      calcMode = CM_PEM;
+    if(calcMode != cmPem) {
+      calcMode = cmPem;
       hourGlassIconEnabled = false;
       aimBuffer[0] = 0;
       currentInputVariable = INVALID_VARIABLE;
@@ -596,7 +596,7 @@ void pemAlpha(int16_t item) {
 
       setSystemFlag(FLAG_ALPHA);
 
-      calcModeAimGui();
+      guiSetLayout(glAim);
 
       tmpString[0] = ITM_LITERAL;
       tmpString[1] = (char)STRING_LABEL_VARIABLE;
@@ -630,7 +630,7 @@ void pemAlpha(int16_t item) {
       if(aimBuffer[0] == 0) {
         deleteStepsFromTo(currentStep.ram, findNextStep_ram(currentStep.ram));
         clearSystemFlag(FLAG_ALPHA);
-        calcModeNormalGui();
+        guiSetLayout(glNormal);
         return;
       }
       else {
@@ -662,7 +662,7 @@ void pemCloseAlphaInput(void) {
   #if !defined(TESTSUITE_BUILD)
     aimBuffer[0] = 0;
     clearSystemFlag(FLAG_ALPHA);
-    calcModeNormalGui();
+    guiSetLayout(glNormal);
     ++currentLocalStepNumber;
     currentStep = findNextStep(currentStep);
     ++firstDisplayedLocalStepNumber;
@@ -770,7 +770,7 @@ void pemAddNumber(int16_t item) {
           scrollPemBackwards();
         }
       }
-      calcMode = CM_PEM;
+      calcMode = cmPem;
     }
     else {
       aimBuffer[0] = 0;

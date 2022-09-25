@@ -18,69 +18,49 @@
 
 #include "gtkGui.h"
 #include "items.h"
+#include "typeDefinitions.h"
 #include "wp43.h"
 
 #if (SCREEN_800X480 == 0)
-  void calcModeNormalGui(void) {
-    int key;
-
-    gtk_fixed_move(GTK_FIXED(grid), bezelImage[1], -999,      -999);
-    gtk_fixed_move(GTK_FIXED(grid), bezelImage[2], -999,      -999);
-    gtk_fixed_move(GTK_FIXED(grid), bezelImage[0], bezelX[0], bezelY[0]);
-    currentBezel = 0;
-
-    for(key=0; key<43; key++) {
-      gtk_fixed_move(GTK_FIXED(grid), calcKeyboard[key].keyImage[1], -999,                -999);
-      gtk_fixed_move(GTK_FIXED(grid), calcKeyboard[key].keyImage[2], -999,                -999);
-      gtk_fixed_move(GTK_FIXED(grid), calcKeyboard[key].keyImage[0], calcKeyboard[key].x, calcKeyboard[key].y);
+  static void _guiShowKey(guiLayout_t layout, int key, bool_t show) {
+    if(show) {
+      gtk_fixed_move(GTK_FIXED(grid), calcKeyboard[key].keyImage[layout], calcKeyboard[key].x, calcKeyboard[key].y);
+    } else {
+      gtk_fixed_move(GTK_FIXED(grid), calcKeyboard[key].keyImage[layout], -999, -999);
     }
-    gtk_fixed_move(GTK_FIXED(grid), calcKeyboard[ 10].keyImage[3], -999,                -999);
   }
 
-  void calcModeAimGui(void) {
-    int key;
-
-    gtk_fixed_move(GTK_FIXED(grid), bezelImage[0], -999,      -999);
-    gtk_fixed_move(GTK_FIXED(grid), bezelImage[2], -999,      -999);
-    gtk_fixed_move(GTK_FIXED(grid), bezelImage[1], bezelX[1], bezelY[1]);
-    currentBezel = 1;
-
-    for(key=0; key<43; key++) {
-      gtk_fixed_move(GTK_FIXED(grid), calcKeyboard[key].keyImage[0], -999,                -999);
-      gtk_fixed_move(GTK_FIXED(grid), calcKeyboard[key].keyImage[2], -999,                -999);
-      gtk_fixed_move(GTK_FIXED(grid), calcKeyboard[key].keyImage[1], calcKeyboard[key].x, calcKeyboard[key].y);
-    }
-    gtk_fixed_move(GTK_FIXED(grid), calcKeyboard[ 10].keyImage[3], -999,                -999);
+  bool_t _guiUseTamL(void) {
+    return (tam.mode == TM_LABEL || (tam.mode == TM_SOLVE && (tam.function != ITM_SOLVE || calcMode != cmPem)) || (tam.mode == TM_KEY && tam.keyInputFinished));
   }
 
-  void calcModeTamGui(void) {
-    int key;
+  void guiSetLayout(guiLayout_t layout) {
+    currentBezel = layout;
 
-    gtk_fixed_move(GTK_FIXED(grid), bezelImage[0], -999,      -999);
-    gtk_fixed_move(GTK_FIXED(grid), bezelImage[1], -999,      -999);
-    gtk_fixed_move(GTK_FIXED(grid), bezelImage[2], bezelX[2], bezelY[2]);
-    currentBezel = 2;
-
-    for(key=0; key<43; key++) {
-      gtk_fixed_move(GTK_FIXED(grid), calcKeyboard[key].keyImage[0], -999,                -999);
-      gtk_fixed_move(GTK_FIXED(grid), calcKeyboard[key].keyImage[1], -999,                -999);
-      if(key == 10) {
-        if(tam.mode == TM_LABEL || (tam.mode == TM_SOLVE && (tam.function != ITM_SOLVE || calcMode != CM_PEM)) || (tam.mode == TM_KEY && tam.keyInputFinished)) {
-          gtk_fixed_move(GTK_FIXED(grid), calcKeyboard[key].keyImage[2], -999,                -999);
-          gtk_fixed_move(GTK_FIXED(grid), calcKeyboard[key].keyImage[3], calcKeyboard[key].x, calcKeyboard[key].y);
+    for(guiLayout_t i = 0; i < MAX_GUI_LAYOUTS; i++) {
+      if(layout == i) {
+        gtk_fixed_move(GTK_FIXED(grid), bezelImage[i], bezelX[i], bezelY[i]);
+        for (int key = 0; key < MAX_KEYS; key++) {
+          if(key == 10) {
+            if(layout == glTam && _guiUseTamL()) {
+              _guiShowKey(TAM_L_LAYOUT, key, true);
+              _guiShowKey(i,            key, false);
+            } else {
+              _guiShowKey(i,            key, true);
+              _guiShowKey(TAM_L_LAYOUT, key, false);
+            }
+          } else {
+            _guiShowKey(i, key, true);
+          }
         }
-        else {
-          gtk_fixed_move(GTK_FIXED(grid), calcKeyboard[key].keyImage[2], calcKeyboard[key].x, calcKeyboard[key].y);
-          gtk_fixed_move(GTK_FIXED(grid), calcKeyboard[key].keyImage[3], -999,                -999);
+      } else {
+        gtk_fixed_move(GTK_FIXED(grid), bezelImage[i], -999, -999);
+        for (int key = 0; key < MAX_KEYS; key++) {
+          _guiShowKey(i, key, false);
         }
-      }
-      else {
-        gtk_fixed_move(GTK_FIXED(grid), calcKeyboard[key].keyImage[2], calcKeyboard[key].x, calcKeyboard[key].y);
       }
     }
   }
 #else
-  void calcModeNormalGui (void) {}
-  void calcModeAimGui    (void) {}
-  void calcModeTamGui    (void) {}
+  void guiSetLayout(guiLayout_t layout) {}
 #endif

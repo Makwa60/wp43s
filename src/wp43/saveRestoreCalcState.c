@@ -79,7 +79,7 @@ static uint32_t restore(void *buffer, uint32_t size, void *stream) {
       exit(0);
     }
 
-    if(calcMode == CM_CONFIRMATION) {
+    if(calcMode == cmConfirmation) {
       calcMode = previousCalcMode;
       refreshScreen();
     }
@@ -607,31 +607,31 @@ static uint32_t restore(void *buffer, uint32_t size, void *stream) {
       free(loadedScreen);
 
       switch(calcMode) {
-        case CM_NORMAL:
-        case CM_REGISTER_BROWSER:
-        case CM_FLAG_BROWSER:
-        case CM_FONT_BROWSER:
-        case CM_PEM:
-        case CM_PLOT_STAT:
-        case CM_GRAPH:
-        case CM_ASSIGN:
-        case CM_TIMER:
-          calcModeNormalGui();
+        case cmNormal:
+        case cmRegisterBrowser:
+        case cmFlagBrowser:
+        case cmFontBrowser:
+        case cmPem:
+        case cmPlotStat:
+        case cmGraph:
+        case cmAssign:
+        case cmTimer:
+          guiSetLayout(glNormal);
           break;
-        case CM_NIM:
-          calcModeNormalGui();
+        case cmNim:
+          guiSetLayout(glNormal);
           cursorEnabled = true;
           break;
-        case CM_MIM:
-          calcModeNormalGui();
+        case cmMim:
+          guiSetLayout(glNormal);
           mimRestore();
           break;
-        case CM_AIM:
-          calcModeAimGui();
+        case cmAim:
+          guiSetLayout(glAim);
           cursorEnabled = true;
           break;
-        case CM_EIM:
-          calcModeAimGui();
+        case cmEim:
+          guiSetLayout(glAim);
           break;
         default:
           sprintf(errorMessage, "In function restoreCalc: %" PRIu8 " is an unexpected value for calcMode", (uint8_t)calcMode);

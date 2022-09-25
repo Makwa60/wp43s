@@ -553,7 +553,7 @@ static void decodeLiteral(uint8_t *literalAddress) {
       }
       *(dispStringPtr++) = PRODUCT_SIGN[0];
       *(dispStringPtr++) = PRODUCT_SIGN[1];
-      _decodeNumeral(dispStringPtr, sourceStringPtr, calcMode == CM_PEM && aimBuffer[0] != 0 && (currentStep.ram + 2 == literalAddress), NULL, NULL);
+      _decodeNumeral(dispStringPtr, sourceStringPtr, calcMode == cmPem && aimBuffer[0] != 0 && (currentStep.ram + 2 == literalAddress), NULL, NULL);
       break;
     }
 

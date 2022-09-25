@@ -35,6 +35,43 @@
 #include "wp43.h"
 
 #if !defined(TESTSUITE_BUILD)
+  #if !defined(DMCP_BUILD)
+    static guiLayout_t previousLayout = glNormal;
+
+    void calcModeUpdateGui() {
+      guiLayout_t newLayout = previousLayout;
+      // Ideally this should be more fully specified
+      switch(calcMode) {
+        case cmRegisterBrowser:
+          newLayout = glRegisterBrowser;
+          break;
+        case cmFlagBrowser:
+        case cmFontBrowser:
+          newLayout = glFlagFontBrowser;
+          break;
+        case cmTimer:
+          newLayout = glTimerApp;
+          break;
+        default:
+          if(tam.mode && !tam.alpha) {
+            newLayout = glTam;
+          }
+          else if(calcMode == cmAim || (tam.mode && tam.alpha)) {
+            newLayout = glAim;
+          }
+          else if(calcMode == cmNormal || calcMode == cmPem || calcMode == cmMim || calcMode == cmAssign) {
+            newLayout = glNormal;
+          }
+      }
+      if(newLayout != previousLayout) {
+        guiSetLayout(newLayout);
+        previousLayout = newLayout;
+      }
+    }
+  #endif // !DMCP_BUILD
+
+
+
   void fnOff(uint16_t unsuedParamButMandatory) {
     shiftF = false;
     shiftG = false;
@@ -66,7 +103,7 @@
 
 
   void calcModeNormal(void) {
-    calcMode = CM_NORMAL;
+    calcMode = cmNormal;
 
     if(softmenuStack[0].softmenuId == 1) { // MyAlpha
       softmenuStack[0].softmenuId = 0; // MyMenu
@@ -75,8 +112,6 @@
     clearSystemFlag(FLAG_ALPHA);
     hideCursor();
     cursorEnabled = false;
-
-    calcModeNormalGui();
   }
 
 
@@ -85,8 +120,8 @@
     alphaCase = AC_UPPER;
     nextChar = NC_NORMAL;
 
-    if(!tam.mode && calcMode != CM_ASSIGN) {
-      calcMode = CM_AIM;
+    if(!tam.mode && calcMode != cmAssign) {
+      calcMode = cmAim;
       liftStack();
 
       clearRegisterLine(AIM_REGISTER_LINE, true, true);
@@ -101,8 +136,6 @@
     }
 
     setSystemFlag(FLAG_ALPHA);
-
-    calcModeAimGui();
   }
 
 
@@ -121,8 +154,8 @@
     }
 
     clearSystemFlag(FLAG_ALPHA);
-    if(calcMode != CM_PEM && calcMode != CM_MIM) {
-      calcMode = CM_NIM;
+    if(calcMode != cmPem && calcMode != cmMim) {
+      calcMode = cmNim;
 
       liftStack();
       real34Zero(REGISTER_REAL34_DATA(REGISTER_X));
@@ -131,7 +164,7 @@
     aimBuffer[0] = 0;
     hexDigits = 0;
 
-    if(calcMode != CM_PEM) {
+    if(calcMode != cmPem) {
       clearRegisterLine(NIM_REGISTER_LINE, true, true);
       xCursor = 1;
       yCursor = Y_POSITION_OF_NIM_LINE;
@@ -144,36 +177,44 @@
 
   void calcModeEnter(calcMode_t newMode) {
     switch(newMode) {
-      case CM_NORMAL:
+      case cmNormal:
         calcModeNormal();
         break;
-      case CM_AIM:
+      case cmAim:
         calcModeAim();
         break;
-      case CM_NIM:
+      case cmNim:
         calcModeNim();
         break;
-      case CM_ASSIGN:
+      case cmAssign:
+      case cmFlagBrowser:
+      case cmFontBrowser:
+      case cmRegisterBrowser:
         previousCalcMode = calcMode;
-        calcMode = CM_ASSIGN;
+        calcMode = newMode;
         break;
-      case CM_TIMER:
+      case cmTimer:
         // This is potentially a bug, because we don't set previousCalcMode here,
-        // but we use it in calcModeLeave for CM_TIMER
-        calcMode = CM_TIMER;
+        // but we use it in calcModeLeave for cmTimer
+        calcMode = cmTimer;
         break;
       default:
         break;
     }
+    calcModeUpdateGui();
   }
 
 
 
   void calcModeLeave(void) {
     switch(calcMode) {
-      case CM_ASSIGN:
-      case CM_TIMER:
+      case cmAssign:
+      case cmFlagBrowser:
+      case cmFontBrowser:
+      case cmRegisterBrowser:
+      case cmTimer:
         calcMode = previousCalcMode;
+        calcModeUpdateGui();
         break;
       default:
         break;
@@ -268,11 +309,11 @@
     }
 
     if(catalog) {
-      if(calcMode == CM_NIM) {
+      if(calcMode == cmNim) {
         closeNim();
       }
 
-      if(calcMode != CM_PEM || !getSystemFlag(FLAG_ALPHA)) {
+      if(calcMode != cmPem || !getSystemFlag(FLAG_ALPHA)) {
         alphaCase = AC_UPPER;
         nextChar = NC_NORMAL;
 
@@ -280,7 +321,7 @@
         resetAlphaSelectionBuffer();
 
         if(catalog != CATALOG_MVAR) {
-          calcModeAimGui();
+          guiSetLayout(glAim);
         }
       }
     }
@@ -290,17 +331,6 @@
 
   void leaveAsmMode(void) {
     catalog = CATALOG_NONE;
-
-    #if !defined(DMCP_BUILD)
-      if(tam.mode && !tam.alpha) {
-        calcModeTamGui();
-      }
-      else if(calcMode == CM_AIM || (tam.mode && tam.alpha)) {
-        calcModeAimGui();
-      }
-      else if(calcMode == CM_NORMAL || calcMode == CM_PEM || calcMode == CM_MIM || calcMode == CM_ASSIGN) {
-        calcModeNormalGui();
-      }
-    #endif // !DMCP_BUILD
+    calcModeUpdateGui();
   }
 #endif // !TESTSUITE_BUILD

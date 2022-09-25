@@ -555,7 +555,7 @@ void fnEditMatrix(uint16_t regist) {
     saveStatsMatrix();
     const uint16_t reg = (regist == NOPARAM) ? REGISTER_X : regist;
     if((getRegisterDataType(reg) == dtReal34Matrix) || (getRegisterDataType(reg) == dtComplex34Matrix)) {
-      calcMode = CM_MIM;
+      calcMode = cmMim;
       matrixIndex = reg;
 
       getMatrixFromRegister(reg);
@@ -580,7 +580,7 @@ void fnEditMatrix(uint16_t regist) {
 
 void fnOldMatrix(uint16_t unusedParamButMandatory) {
   #if !defined(TESTSUITE_BUILD)
-    if(calcMode == CM_MIM) {
+    if(calcMode == cmMim) {
       aimBuffer[0] = 0;
       nimBufferDisplay[0] = 0;
       hideCursor();
@@ -612,7 +612,7 @@ void fnOldMatrix(uint16_t unusedParamButMandatory) {
 
 void fnGoToElement(uint16_t unusedParamButMandatory) {
   #if !defined(TESTSUITE_BUILD)
-    if(calcMode == CM_MIM) {
+    if(calcMode == cmMim) {
       mimEnter(false);
       runFunction(ITM_M_GOTO_ROW);
     }
@@ -629,7 +629,7 @@ void fnGoToElement(uint16_t unusedParamButMandatory) {
 
 void fnGoToRow(uint16_t row) {
   #if !defined(TESTSUITE_BUILD)
-    if(calcMode == CM_MIM) {
+    if(calcMode == cmMim) {
       tmpRow = row;
     }
     else {
@@ -645,7 +645,7 @@ void fnGoToRow(uint16_t row) {
 
 void fnGoToColumn(uint16_t col) {
   #if !defined(TESTSUITE_BUILD)
-    if(calcMode == CM_MIM) {
+    if(calcMode == cmMim) {
       if(tmpRow == 0 || tmpRow > openMatrixMIMPointer.header.matrixRows || col == 0 || col > openMatrixMIMPointer.header.matrixColumns) {
         displayCalcErrorMessage(ERROR_OUT_OF_RANGE, ERR_REGISTER_LINE, REGISTER_X);
         #if (EXTRA_INFO_ON_CALC_ERROR == 1)
@@ -663,7 +663,7 @@ void fnGoToColumn(uint16_t col) {
         setIRegisterAsInt(false, tmpRow);
         setJRegisterAsInt(false, col);
       }
-      calcModeNormalGui();
+      guiSetLayout(glNormal);
     }
     else {
       displayCalcErrorMessage(ERROR_OPERATION_UNDEFINED, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
@@ -702,7 +702,7 @@ void fnIncDecJ(uint16_t mode) {
 
 void fnInsRow(uint16_t unusedParamButMandatory) {
   #if !defined(TESTSUITE_BUILD)
-    if(calcMode == CM_MIM) {
+    if(calcMode == cmMim) {
       mimEnter(false);
       if(getRegisterDataType(matrixIndex) == dtReal34Matrix) {
         insRowRealMatrix(&openMatrixMIMPointer.realMatrix, getIRegisterAsInt(true));
@@ -725,7 +725,7 @@ void fnInsRow(uint16_t unusedParamButMandatory) {
 
 void fnDelRow(uint16_t unusedParamButMandatory) {
   #if !defined(TESTSUITE_BUILD)
-    if(calcMode == CM_MIM) {
+    if(calcMode == cmMim) {
       mimEnter(false);
       if(openMatrixMIMPointer.header.matrixRows > 1) {
         if(getRegisterDataType(matrixIndex) == dtReal34Matrix) {
@@ -1864,7 +1864,7 @@ void fnEigenvectors(uint16_t unusedParamButMandatory) {
       showSoftmenu(-MNU_M_EDIT);
     }
     if(softmenu[softmenuStack[0].softmenuId].menuItem == -MNU_M_EDIT) {
-      calcModeNormalGui();
+      guiSetLayout(glNormal);
     }
 
     bool_t colVector = false;
@@ -2119,7 +2119,7 @@ void fnEigenvectors(uint16_t unusedParamButMandatory) {
       }
     }
     addItemToNimBuffer(item);
-    calcMode = CM_MIM;
+    calcMode = cmMim;
   }
 
   void mimRunFunction(int16_t func, uint16_t param) {

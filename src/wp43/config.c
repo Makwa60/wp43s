@@ -391,7 +391,7 @@ void fnFractionType(uint16_t unusedButMandatoryParameter) {
 void setConfirmationMode(void (*func)(uint16_t)) {
   previousCalcMode = calcMode;
   cursorEnabled = false;
-  calcMode = CM_CONFIRMATION;
+  calcMode = cmConfirmation;
   clearSystemFlag(FLAG_ALPHA);
   confirmedFunction = func;
   temporaryInformation = TI_ARE_YOU_SURE;
@@ -884,12 +884,12 @@ void fnReset(uint16_t confirmation) {
     #endif // !TESTSUITE_BUILD
 
     #if defined(TESTSUITE_BUILD)
-      calcMode = CM_NORMAL;
+      calcMode = cmNormal;
     #else // TESTSUITE_BUILD
-      if(calcMode == CM_MIM) {
+      if(calcMode == cmMim) {
         mimFinalize();
       }
-      calcModeEnter(CM_NORMAL);
+      calcModeEnter(cmNormal);
     #endif // !TESTSUITE_BUILD
 
     #if defined(PC_BUILD) || defined(TESTSUITE_BUILD)

@@ -51,7 +51,7 @@
     shiftF = false;
     shiftG = false;
     aimBuffer[0] = 0;
-    calcModeEnter(CM_AIM);
+    calcModeEnter(cmAim);
     if(programRunStop != PGM_RUNNING) {
       entryStatus |= 0x01;
     }
@@ -253,16 +253,16 @@
     else {
       screenUpdatingMode &= ~(SCRUPD_MANUAL_STACK | SCRUPD_MANUAL_SHIFT_STATUS);
       currentSolverStatus &= ~SOLVER_STATUS_READY_TO_EXECUTE;
-      if(calcMode == CM_NORMAL && fnKeyInCatalog && isAlphabeticSoftmenu()) {
+      if(calcMode == cmNormal && fnKeyInCatalog && isAlphabeticSoftmenu()) {
         fnAim(NOPARAM);
       }
-      if((fnKeyInCatalog || !catalog || catalog == CATALOG_MVAR) && (((calcMode == CM_AIM || calcMode == CM_EIM) && !tam.mode) || tam.alpha)) {
+      if((fnKeyInCatalog || !catalog || catalog == CATALOG_MVAR) && (((calcMode == cmAim || calcMode == cmEim) && !tam.mode) || tam.alpha)) {
         item = convertItemToSubOrSup(item, nextChar);
         if(stringByteLength(aimBuffer) + stringByteLength(indexOfItems[item].itemSoftmenuName) >= AIM_BUFFER_LENGTH) { /// TODO this error should never happen but who knows!
           sprintf(errorMessage, "In function addItemToBuffer: the AIM input buffer is full! %d bytes for now", AIM_BUFFER_LENGTH);
           displayBugScreen(errorMessage);
         }
-        else if(calcMode == CM_EIM) {
+        else if(calcMode == cmEim) {
           const char *addChar = item == ITM_PAIR_OF_PARENTHESES ? "()" :
                                 item == ITM_VERTICAL_BAR        ? "||" :
                                 item == ITM_ROOT_SIGN           ? STD_SQUARE_ROOT "()" :
@@ -304,7 +304,7 @@
 
       if(catalog && catalog != CATALOG_MVAR && !fnKeyInCatalog) {
         if(item == ITM_BACKSPACE) {
-          calcModeEnter(CM_NORMAL);
+          calcModeEnter(cmNormal);
           return;
         }
 
@@ -334,12 +334,12 @@
         tamProcessInput(item);
       }
 
-      else if(calcMode == CM_NIM) {
+      else if(calcMode == cmNim) {
         addItemToNimBuffer(item);
       }
 
       //Probably wrong place for this function?! Should Arrow be processed in buffercize.c in this case? //Switch statement better.
-      else if(calcMode == CM_MIM) {
+      else if(calcMode == cmMim) {
         if(item == ITM_RIGHT_ARROW) {
           mimEnter(true);
           setJRegisterAsInt(true, getJRegisterAsInt(true) + 1);
@@ -816,13 +816,13 @@
         }
       }
 
-      else if(calcMode != CM_AIM && calcMode != CM_EIM && calcMode != CM_ASSIGN && (item >= ITM_A && item <= ITM_F)) {
+      else if(calcMode != cmAim && calcMode != cmEim && calcMode != cmAssign && (item >= ITM_A && item <= ITM_F)) {
         // We are not in NIM, but should enter NIM - this should be handled here
         // unlike digits 0 to 9 which are handled by processKeyAction
         addItemToNimBuffer(item);
       }
 
-      else if(calcMode != CM_AIM && calcMode != CM_EIM) {
+      else if(calcMode != cmAim && calcMode != cmEim) {
         funcOK = false;
         return;
       }
@@ -842,10 +842,10 @@
     screenUpdatingMode &= ~(SCRUPD_MANUAL_STACK | SCRUPD_MANUAL_SHIFT_STATUS);
     currentSolverStatus &= ~SOLVER_STATUS_READY_TO_EXECUTE;
 
-    if(calcMode == CM_NORMAL) {
+    if(calcMode == cmNormal) {
       switch(item) {
         case ITM_EXPONENT: {
-          calcModeEnter(CM_NIM);
+          calcModeEnter(cmNim);
           aimBuffer[0] = '+';
           aimBuffer[1] = '1';
           aimBuffer[2] = '.';
@@ -856,7 +856,7 @@
         }
 
         case ITM_PERIOD: {
-          calcModeEnter(CM_NIM);
+          calcModeEnter(cmNim);
           aimBuffer[0] = '+';
           aimBuffer[1] = '0';
           aimBuffer[2] = 0;
@@ -880,7 +880,7 @@
         case ITM_D:
         case ITM_E:
         case ITM_F: {
-          calcModeEnter(CM_NIM);
+          calcModeEnter(cmNim);
           aimBuffer[0] = '+';
           aimBuffer[1] = 0;
           nimNumberPart = NP_EMPTY;
@@ -901,7 +901,7 @@
       //debugNIM();
     }
 
-    else if(calcMode == CM_NIM) {
+    else if(calcMode == cmNim) {
       screenUpdatingMode |= SCRUPD_SKIP_STACK_ONE_TIME;
     }
 
@@ -1427,9 +1427,9 @@
 
         aimBuffer[lastChar--] = 0;
 
-        if((calcMode != CM_MIM) && (lastChar == -1 || (lastChar == 0 && aimBuffer[0] == '+'))) {
+        if((calcMode != cmMim) && (lastChar == -1 || (lastChar == 0 && aimBuffer[0] == '+'))) {
           screenUpdatingMode &= ~SCRUPD_SKIP_STACK_ONE_TIME;
-          calcModeEnter(CM_NORMAL);
+          calcModeEnter(cmNormal);
           #if defined(DEBUGUNDO)
             printf(">>> undo from addItemToNimBuffer\n");
           #endif // DEBUGUNDO
@@ -1443,7 +1443,7 @@
         done = true;
         screenUpdatingMode &= ~SCRUPD_SKIP_STACK_ONE_TIME;
         closeNim();
-        if(calcMode != CM_NIM && lastErrorCode == 0) {
+        if(calcMode != cmNim && lastErrorCode == 0) {
           setSystemFlag(FLAG_ASLIFT);
           if(item == ITM_EXIT) {
             #if defined(DEBUGUNDO)
@@ -1506,7 +1506,7 @@
 
           screenUpdatingMode &= ~SCRUPD_SKIP_STACK_ONE_TIME;
           closeNim();
-          if(calcMode != CM_NIM && lastErrorCode == 0) {
+          if(calcMode != cmNim && lastErrorCode == 0) {
             if(getRegisterDataType(REGISTER_X) == dtLongInteger) {
               convertLongIntegerRegisterToReal34Register(REGISTER_X, REGISTER_X);
             }
@@ -1527,7 +1527,7 @@
 
           screenUpdatingMode &= ~SCRUPD_SKIP_STACK_ONE_TIME;
           closeNim();
-          if(calcMode != CM_NIM && lastErrorCode == 0) {
+          if(calcMode != cmNim && lastErrorCode == 0) {
             convertReal34RegisterToDateRegister(REGISTER_X, REGISTER_X);
             checkDateRange(REGISTER_REAL34_DATA(REGISTER_X));
 
@@ -1552,7 +1552,7 @@
 
           screenUpdatingMode &= ~SCRUPD_SKIP_STACK_ONE_TIME;
           closeNim();
-          if(calcMode != CM_NIM && lastErrorCode == 0) {
+          if(calcMode != cmNim && lastErrorCode == 0) {
             if(getRegisterDataType(REGISTER_X) == dtLongInteger) {
               convertLongIntegerRegisterToReal34Register(REGISTER_X, REGISTER_X);
             }
@@ -1734,7 +1734,7 @@
         screenUpdatingMode &= ~SCRUPD_SKIP_STACK_ONE_TIME;
         closeNim();
       }
-      if(calcMode != CM_NIM) {
+      if(calcMode != cmNim) {
         if(item == ITM_CONSTpi || (item >= 0 && indexOfItems[item].func == fnConstant)) {
           setSystemFlag(FLAG_ASLIFT);
         }
@@ -1975,7 +1975,7 @@
 
     int16_t lastChar = strlen(aimBuffer) - 1;
 
-    if(calcMode == CM_PEM) {
+    if(calcMode == cmPem) {
       pemCloseNumberInput();
       return;
     }
@@ -1996,7 +1996,7 @@
         }
 
         if((aimBuffer[0] != '-' || aimBuffer[1] != 0) && (aimBuffer[lastChar] != '-')) { // The buffer is not just the minus sign AND The last char of the buffer is not the minus sign
-          calcModeEnter(CM_NORMAL);
+          calcModeEnter(cmNormal);
 
           if(nimNumberPart == NP_INT_10) {
             longInteger_t lgInt;
@@ -2171,7 +2171,7 @@
   }
 
   void closeAim(void) {
-    calcModeEnter(CM_NORMAL);
+    calcModeEnter(cmNormal);
     popSoftmenu();
 
     if(aimBuffer[0] == 0) {

@@ -22,6 +22,7 @@
 
 #include <stdlib.h>
 
+#include "calcMode.h"
 #include "charString.h"
 #include "error.h"
 #include "flags.h"
@@ -94,9 +95,8 @@
 
     hourGlassIconEnabled = false;
 
-    if(calcMode != CM_FONT_BROWSER) {
-      previousCalcMode = calcMode;
-      calcMode = CM_FONT_BROWSER;
+    if(calcMode != cmFontBrowser) {
+      calcModeEnter(cmFontBrowser);
       clearSystemFlag(FLAG_ALPHA);
       return;
     }

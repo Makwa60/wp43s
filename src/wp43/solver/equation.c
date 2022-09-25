@@ -137,12 +137,12 @@ void fnEqEdit(uint16_t unusedButMandatoryParameter) {
     else {
       aimBuffer[0] = 0;
     }
-    calcMode = CM_EIM;
+    calcMode = cmEim;
     alphaCase = AC_LOWER;
     setSystemFlag(FLAG_ALPHA);
     yCursor = 0;
     xCursor = equationString ? stringGlyphLength(equationString) : 0;
-    calcModeAimGui();
+    guiSetLayout(glAim);
   #endif // !TESTSUITE_BUILD
 }
 
@@ -166,7 +166,8 @@ void fnEqCalc(uint16_t unusedButMandatoryParameter) {
   #if defined(DEBUGUNDO)
     printf(">>> saveForUndo from fnEqCalc, calcMode = %i, something to undo (pre) = %i \n",calcMode, thereIsSomethingToUndo);
   #endif // DEBUGUNDO
-  if(!thereIsSomethingToUndo && !CM_NO_UNDO) {
+  // This is almost certainly wrong - should be calcMode != cmNoUndo
+  if(!thereIsSomethingToUndo && !cmNoUndo) {
     saveForUndo();
   }
   parseEquation(currentFormula, EQUATION_PARSER_XEQ, tmpString, tmpString + AIM_BUFFER_LENGTH);

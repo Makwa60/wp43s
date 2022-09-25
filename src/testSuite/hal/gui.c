@@ -16,6 +16,6 @@
 
 #include "hal/gui.h"
 
-void calcModeNormalGui (void) {}
-void calcModeAimGui    (void) {}
-void calcModeTamGui    (void) {}
+#pragma GCC diagnostic ignored "-Wunused-parameter"
+
+void guiSetLayout(guiLayout_t layout) {}

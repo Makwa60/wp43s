@@ -255,15 +255,15 @@ void synchronizeLetteredFlags(void) {
 
 #if !defined(TESTSUITE_BUILD)
 static void _setAlpha(void) {
-  if(calcMode != CM_EIM) {
-    calcModeEnter(CM_AIM);
+  if(calcMode != cmEim) {
+    calcModeEnter(cmAim);
   }
 }
 
 static void _clearAlpha(void) {
-  if(calcMode == CM_EIM) {
+  if(calcMode == cmEim) {
     if(softmenu[softmenuStack[0].softmenuId].menuItem == -MNU_EQ_EDIT) {
-      calcModeEnter(CM_NORMAL);
+      calcModeEnter(cmNormal);
       if(allFormulae[currentFormula].pointerToFormulaData == WP43_NULL) {
         deleteEquation(currentFormula);
       }
@@ -271,7 +271,7 @@ static void _clearAlpha(void) {
     popSoftmenu();
   }
   else {
-    calcModeEnter(CM_NORMAL);
+    calcModeEnter(cmNormal);
   }
 }
 #endif // TESTSUITE_BUILD

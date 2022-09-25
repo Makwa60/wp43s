@@ -212,8 +212,8 @@
         }
       }
       else {
-        int16_t max = (tam.indirect ? (tam.dot ? (calcMode == CM_PEM ? 98 : currentNumberOfLocalRegisters) : 99)
-          : (tam.dot ? (calcMode == CM_PEM ? 98 : ((tam.mode == TM_FLAGR || tam.mode == TM_FLAGW) ? NUMBER_OF_LOCAL_FLAGS : currentNumberOfLocalRegisters)) : tam.max));
+        int16_t max = (tam.indirect ? (tam.dot ? (calcMode == cmPem ? 98 : currentNumberOfLocalRegisters) : 99)
+          : (tam.dot ? (calcMode == cmPem ? 98 : ((tam.mode == TM_FLAGR || tam.mode == TM_FLAGW) ? NUMBER_OF_LOCAL_FLAGS : currentNumberOfLocalRegisters)) : tam.max));
         uint8_t maxDigits = _tamMaxDigits(max);
         uint8_t underscores = maxDigits - tam.digitsSoFar;
         int16_t v = tam.value;
@@ -249,7 +249,7 @@
             tam.value |= 1 << (2*i + 8);
             tam.value = (tam.value & ~mask) | (((item-ITM_REG_X) << (2*i)) & mask);
             if(i == 3) {
-              if(calcMode == CM_PEM) {
+              if(calcMode == cmPem) {
                 addStepInProgram(tamOperation());
               }
               else {
@@ -295,9 +295,9 @@
     }
 
     min = (tam.dot ? 0 : tam.min);
-    max = (tam.dot ? (calcMode == CM_PEM ? 98 : ((tam.mode == TM_FLAGR || tam.mode == TM_FLAGW) ? NUMBER_OF_LOCAL_FLAGS : currentNumberOfLocalRegisters)) : tam.max);
+    max = (tam.dot ? (calcMode == cmPem ? 98 : ((tam.mode == TM_FLAGR || tam.mode == TM_FLAGW) ? NUMBER_OF_LOCAL_FLAGS : currentNumberOfLocalRegisters)) : tam.max);
     min2 = (tam.indirect ? 0 : min);
-    max2 = (tam.indirect ? (tam.dot ? (calcMode == CM_PEM ? 98 : currentNumberOfLocalRegisters) : 99) : max);
+    max2 = (tam.indirect ? (tam.dot ? (calcMode == cmPem ? 98 : currentNumberOfLocalRegisters) : 99) : max);
     if(item == ITM_ENTER || (tam.alpha && stringGlyphLength(aimBuffer) > 6)) {
       forceTry = true;
     }
@@ -316,7 +316,7 @@
           // backspaces within AIM are handled by addItemToBuffer, so this is if the aimBuffer is already empty
           tam.alpha = false;
           clearSystemFlag(FLAG_ALPHA);
-          calcModeTamGui();
+          calcModeUpdateGui();
         }
       }
       else if(tam.digitsSoFar > 0) {
@@ -374,9 +374,9 @@
         --numberOfTamMenusToPop;
         if(tam.alpha) {
           setSystemFlag(FLAG_ALPHA);
-          calcModeEnter(CM_AIM);
+          calcModeEnter(cmAim);
         }
-        calcModeTamGui();
+        calcModeUpdateGui();
       }
       else {
         tamLeaveMode();
@@ -407,7 +407,7 @@
         tam.alpha = true;
         setSystemFlag(FLAG_ALPHA);
         aimBuffer[0] = 0;
-        calcModeEnter(CM_AIM);
+        calcModeEnter(cmAim);
         if(beginWithLowercase) {
           alphaCase = AC_LOWER;
         }
@@ -457,11 +457,11 @@
             tam.currentOperation = item;
             if(item == ITM_dddEL || item == ITM_dddIJ) {
               switch(calcMode) {
-                case CM_MIM: {
+                case cmMim: {
                   mimRunFunction(tamOperation(), NOPARAM);
                   break;
                 }
-                case CM_PEM: {
+                case cmPem: {
                   addStepInProgram(tamOperation());
                   break;
                 }
@@ -481,7 +481,7 @@
       return;
     }
     else if(tam.function == ITM_toINT && item == ITM_REG_I) {
-      if(calcMode == CM_PEM) {
+      if(calcMode == cmPem) {
         addStepInProgram(ITM_IP);
       }
       else {
@@ -491,7 +491,7 @@
       return;
     }
     else if(tam.function == ITM_toINT && item == ITM_alpha) {
-      if(calcMode == CM_PEM) {
+      if(calcMode == cmPem) {
         addStepInProgram(ITM_FP);
       }
       else {
@@ -638,11 +638,11 @@
           tam.min = 0;
           tam.max = max(getNumberOfSteps(), 99);
         }
-        else if(tam.indirect && (currentNumberOfLocalRegisters || calcMode == CM_PEM)) {
+        else if(tam.indirect && (currentNumberOfLocalRegisters || calcMode == cmPem)) {
           tam.dot = true;
         }
         else if(tam.mode != TM_VALUE && tam.mode != TM_VALUE_CHB) {
-          if(calcMode == CM_PEM || ((tam.mode == TM_FLAGR || tam.mode == TM_FLAGW) && currentLocalFlags != NULL) || ((tam.mode != TM_FLAGR && tam.mode != TM_FLAGW) && currentNumberOfLocalRegisters)) {
+          if(calcMode == cmPem || ((tam.mode == TM_FLAGR || tam.mode == TM_FLAGW) && currentLocalFlags != NULL) || ((tam.mode != TM_FLAGR && tam.mode != TM_FLAGW) && currentNumberOfLocalRegisters)) {
             tam.dot = true;
           }
         }
@@ -693,7 +693,7 @@
         showSoftmenu(-MNU_TAMLABEL);
         --numberOfTamMenusToPop;
         clearSystemFlag(FLAG_ALPHA);
-        calcModeTamGui();
+        calcModeUpdateGui();
       }
       else if(tam.digitsSoFar == 2 && tam.value == 0) {
         tam.digitsSoFar = 1;
@@ -707,7 +707,7 @@
         if(tam.dot) {
           value += FIRST_LOCAL_REGISTER;
         }
-        if(tam.indirect && calcMode != CM_PEM) {
+        if(tam.indirect && calcMode != cmPem) {
           value = indirectAddressing(value, (indexOfItems[tamOperation()].param == TM_FLAGR || indexOfItems[tamOperation()].param == TM_FLAGW) ? INDPM_FLAG : (tam.mode == TM_STORCL || tam.mode == TM_M_DIM) ? INDPM_REGISTER : INDPM_PARAM, min, max);
           run = (lastErrorCode == 0);
         }
@@ -726,11 +726,11 @@
         }
         else if(run) {
           switch(calcMode) {
-            case CM_MIM: {
+            case cmMim: {
               mimRunFunction(tamOperation(), value);
               break;
             }
-            case CM_PEM: {
+            case cmPem: {
               addStepInProgram(tamOperation());
               break;
             }
@@ -765,7 +765,7 @@
               if(tam.mode) {
                 tamLeaveMode();
               }
-              if(calcMode == CM_PEM) {
+              if(calcMode == cmPem) {
                 aimBuffer[0] = 0;
                 if(!programListEnd) {
                   scrollPemBackwards();
@@ -775,7 +775,7 @@
               return;
             }
           }
-          if(calcMode != CM_PEM) {
+          if(calcMode != cmPem) {
             if(tam.mode) {
               tamLeaveMode();
             }
@@ -811,26 +811,26 @@
           #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
         }
       }
-      if(calcMode == CM_PEM) {
+      if(calcMode == cmPem) {
         addStepInProgram(tamOperation());
       }
       if(tam.mode != TM_NEWMENU) {
         aimBuffer[0] = 0;
       }
-      if(tam.indirect && value != INVALID_VARIABLE && calcMode != CM_PEM) {
+      if(tam.indirect && value != INVALID_VARIABLE && calcMode != cmPem) {
         value = indirectAddressing(value, (indexOfItems[tam.function].param == TM_FLAGR || indexOfItems[tam.function].param == TM_FLAGW) ? INDPM_FLAG : (tam.mode == TM_STORCL || tam.mode == TM_M_DIM) ? INDPM_REGISTER : INDPM_PARAM, min, max);
         if(lastErrorCode != 0) {
           value = INVALID_VARIABLE;
         }
       }
       if(value != INVALID_VARIABLE || tamOperation() == ITM_LBLQ) {
-        if(calcMode == CM_MIM) {
+        if(calcMode == cmMim) {
           mimRunFunction(tamOperation(), value);
         }
         else if(tam.function == ITM_GTOP) {
           reallyRunFunction(ITM_GTOP, labelList[value - FIRST_LABEL].step);
         }
-        else if(calcMode == CM_PEM) {
+        else if(calcMode == cmPem) {
           // already done
         }
         else {
@@ -867,10 +867,10 @@
       tam.max = NUMBER_OF_CONSTANTS_39 + NUMBER_OF_CONSTANTS_51 + NUMBER_OF_CONSTANTS_1071 + NUMBER_OF_CONSTANTS_34 - 1;
     }
 
-    if(calcMode == CM_NIM) {
+    if(calcMode == cmNim) {
       closeNim();
     }
-    else if(calcMode == CM_PEM && aimBuffer[0] != 0) {
+    else if(calcMode == cmPem && aimBuffer[0] != 0) {
       if(getSystemFlag(FLAG_ALPHA)) {
         pemCloseAlphaInput();
       }
@@ -881,7 +881,7 @@
       --currentLocalStepNumber;
       currentStep = findPreviousStep(currentStep);
     }
-    else if(calcMode == CM_PEM) {
+    else if(calcMode == cmPem) {
       scrollPemForwards();
     }
 
@@ -939,7 +939,7 @@
       }
 
       case TM_SOLVE: {
-        if(func == ITM_SOLVE && calcMode == CM_PEM) {
+        if(func == ITM_SOLVE && calcMode == cmPem) {
           showSoftmenu(-MNU_TAM);
         }
         else {
@@ -969,10 +969,10 @@
       if(tam.mode == TM_NEWMENU) {
         setSystemFlag(FLAG_ALPHA);
         aimBuffer[0] = 0;
-        calcModeEnter(CM_AIM);
+        calcModeEnter(cmAim);
       }
       else {
-        calcModeTamGui();
+        calcModeUpdateGui();
       }
     #endif // PC_BUILD && (SCREEN_800X480 == 0)
   }
@@ -993,26 +993,9 @@
       popSoftmenu();
     }
 
-    #if defined(PC_BUILD) && (SCREEN_800X480 == 0)
-      switch(calcMode) {
-        case CM_NORMAL:
-        case CM_PEM:
-        case CM_MIM:
-        case CM_TIMER: {
-          calcModeNormalGui();
-          break;
-        }
-        case CM_AIM:
-        case CM_EIM: {
-          calcModeAimGui();
-          break;
-        default:
-          break;
-        }
-      }
-    #endif // PC_BUILD && (SCREEN_800X480 == 0)
+    calcModeUpdateGui();
 
-    if(calcMode == CM_PEM) {
+    if(calcMode == cmPem) {
       hourGlassIconEnabled = false;
     }
   }

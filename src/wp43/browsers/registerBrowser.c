@@ -20,6 +20,7 @@
 
 #include "browsers/registerBrowser.h"
 
+#include "calcMode.h"
 #include "charString.h"
 #include "debug.h"
 #include "display.h"
@@ -165,14 +166,13 @@
 
     hourGlassIconEnabled = false;
 
-    if(calcMode != CM_REGISTER_BROWSER) {
-      if(calcMode == CM_AIM) {
+    if(calcMode != cmRegisterBrowser) {
+      if(calcMode == cmAim) {
         hideCursor();
         cursorEnabled = false;
       }
 
-      previousCalcMode = calcMode;
-      calcMode = CM_REGISTER_BROWSER;
+      calcModeEnter(cmRegisterBrowser);
       clearSystemFlag(FLAG_ALPHA);
       return;
     }

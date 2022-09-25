@@ -947,7 +947,7 @@ void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
     int16_t w;
     char l[15];
 
-    if((calcMode == CM_PLOT_STAT || calcMode == CM_GRAPH) && xSoftkey >= 2) {           //prevent softkeys columns 3-6 from displaying over the graph
+    if((calcMode == cmPlotStat || calcMode == cmGraph) && xSoftkey >= 2) {           //prevent softkeys columns 3-6 from displaying over the graph
         return;
     }
 
@@ -1261,10 +1261,10 @@ void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
     xcopy(softmenuStack, softmenuStack + 1, (SOFTMENU_STACK_SIZE - 1) * sizeof(softmenuStack_t)); // shifting the entire stack
     memset(softmenuStack + SOFTMENU_STACK_SIZE - 1, 0, sizeof(softmenuStack_t)); // Put MyMenu in the last stack element
 
-    if(softmenuStack[0].softmenuId == 0 && calcMode == CM_AIM) { // MyMenu displayed and in AIM
+    if(softmenuStack[0].softmenuId == 0 && calcMode == cmAim) { // MyMenu displayed and in AIM
       softmenuStack[0].softmenuId = 1; // MyAlpha
     }
-    else if(softmenuStack[0].softmenuId == 1 && calcMode != CM_AIM) { // MyAlpha displayed and not in AIM
+    else if(softmenuStack[0].softmenuId == 1 && calcMode != cmAim) { // MyAlpha displayed and not in AIM
       softmenuStack[0].softmenuId = 0; // MyMenu
     }
 
@@ -1350,7 +1350,7 @@ void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
       displayBugScreen(errorMessage);
     }
     else {
-      if(tam.mode || (calcMode == CM_ASSIGN && tam.alpha)) {
+      if(tam.mode || (calcMode == cmAssign && tam.alpha)) {
         numberOfTamMenusToPop++;
       }
       pushSoftmenu(m);

@@ -216,7 +216,7 @@
     }
   #pragma GCC diagnostic pop
 
-    if(calcMode == CM_ASSIGN && item != ITM_NOP && item != ITM_NULL) {
+    if(calcMode == cmAssign && item != ITM_NOP && item != ITM_NULL) {
       switch(-softmenu[menuId].menuItem) {
         case MNU_PROG:
         case MNU_RAM:
@@ -369,7 +369,7 @@
       // not processed here
       return;
     }
-    if(calcMode == CM_ASSIGN && itemToBeAssigned != 0 && !(tam.alpha && tam.mode != TM_NEWMENU)) {
+    if(calcMode == cmAssign && itemToBeAssigned != 0 && !(tam.alpha && tam.mode != TM_NEWMENU)) {
       int16_t item = determineFunctionKeyItem((char *)data);
 
       #pragma GCC diagnostic push
@@ -400,7 +400,7 @@
       #pragma GCC diagnostic pop
       _closeCatalog();
     }
-    else if(calcMode != CM_REGISTER_BROWSER && calcMode != CM_FLAG_BROWSER && calcMode != CM_FONT_BROWSER) {
+    else if(calcMode != cmRegisterBrowser && calcMode != cmFlagBrowser && calcMode != cmFontBrowser) {
       int16_t item = determineFunctionKeyItem((char *)data);
 
       if(shiftF || shiftG) {
@@ -413,11 +413,11 @@
       if(item != ITM_NOP && item != ITM_NULL) {
         lastErrorCode = 0;
 
-      if(calcMode != CM_ASSIGN && indexOfItems[item].func == addItemToBuffer) {
+      if(calcMode != cmAssign && indexOfItems[item].func == addItemToBuffer) {
         // If we are in the catalog then a normal key press should affect the Alpha Selection Buffer to choose
         // an item from the catalog, but a function key press should put the item in the AIM (or TAM) buffer
         // Use this variable to distinguish between the two
-        if(calcMode == CM_PEM && !tam.mode) {
+        if(calcMode == cmPem && !tam.mode) {
           if(getSystemFlag(FLAG_ALPHA)) {
             pemAlpha(item);
           }
@@ -431,7 +431,7 @@
           addItemToBuffer(item);
           fnKeyInCatalog = 0;
         }
-        if(calcMode == CM_EIM && !tam.mode) {
+        if(calcMode == cmEim && !tam.mode) {
           while(softmenu[softmenuStack[0].softmenuId].menuItem != -MNU_EQ_EDIT) {
             popSoftmenu();
           }
@@ -522,7 +522,7 @@
       screenUpdatingMode &= ~SCRUPD_ONE_TIME_FLAGS;
       return;
     }
-    if(calcMode != CM_REGISTER_BROWSER && calcMode != CM_FLAG_BROWSER && calcMode != CM_FONT_BROWSER) {
+    if(calcMode != cmRegisterBrowser && calcMode != cmFlagBrowser && calcMode != cmFontBrowser) {
       if(tam.mode == TM_KEY && !tam.keyInputFinished) {
         if(tam.digitsSoFar == 0) {
           switch(data[0]) {
@@ -564,7 +564,7 @@
         return;
       }
 
-      if(calcMode == CM_ASSIGN && itemToBeAssigned != 0 && !(tam.alpha && tam.mode != TM_NEWMENU)) {
+      if(calcMode == cmAssign && itemToBeAssigned != 0 && !(tam.alpha && tam.mode != TM_NEWMENU)) {
         if(_assignToMenu((uint8_t *)data)) {
           return;
         }
@@ -577,23 +577,23 @@
           showFunctionNameItem = 0;
         #endif // FN_KEY_TIMEOUT_TO_NOP == 1
 
-        if(calcMode != CM_CONFIRMATION) {
+        if(calcMode != cmConfirmation) {
           lastErrorCode = 0;
 
-          if(calcMode != CM_PEM && item == -MNU_Sfdx) {
+          if(calcMode != cmPem && item == -MNU_Sfdx) {
             tamEnterMode(MNU_Sfdx);
             refreshScreen();
             screenUpdatingMode &= ~SCRUPD_ONE_TIME_FLAGS;
             return;
           }
-          else if(calcMode != CM_PEM && item == ITM_INTEGRAL) {
+          else if(calcMode != cmPem && item == ITM_INTEGRAL) {
             reallyRunFunction(item, currentSolverVariable);
             refreshScreen();
             screenUpdatingMode &= ~SCRUPD_ONE_TIME_FLAGS;
             return;
           }
           else if(item < 0) { // softmenu
-            if(calcMode == CM_ASSIGN && itemToBeAssigned == 0 && softmenu[softmenuStack[0].softmenuId].menuItem == -MNU_MENUS) {
+            if(calcMode == cmAssign && itemToBeAssigned == 0 && softmenu[softmenuStack[0].softmenuId].menuItem == -MNU_MENUS) {
               itemToBeAssigned = item;
             }
             else {
@@ -620,7 +620,7 @@
             screenUpdatingMode &= ~SCRUPD_ONE_TIME_FLAGS;
             return;
           }
-          else if(calcMode == CM_PEM && catalog && catalog != CATALOG_MVAR) { // TODO: is that correct
+          else if(calcMode == cmPem && catalog && catalog != CATALOG_MVAR) { // TODO: is that correct
             if(indexOfItems[item].func == fnGetSystemFlag && (tam.mode == TM_FLAGR || tam.mode == TM_FLAGW) && !tam.indirect) {
               tam.value = (indexOfItems[item].param & 0xff);
               tam.alpha = true;
@@ -656,37 +656,37 @@
           else if(tam.mode && (!tam.alpha || isAlphabeticSoftmenu())) {
             addItemToBuffer(item);
           }
-          else if((calcMode == CM_NORMAL || calcMode == CM_AIM) && isAlphabeticSoftmenu()) {
-            if(calcMode == CM_NORMAL) {
+          else if((calcMode == cmNormal || calcMode == cmAim) && isAlphabeticSoftmenu()) {
+            if(calcMode == cmNormal) {
               fnAim(NOPARAM);
             }
             addItemToBuffer(item);
           }
-          else if(calcMode == CM_EIM && catalog && catalog != CATALOG_MVAR) {
+          else if(calcMode == cmEim && catalog && catalog != CATALOG_MVAR) {
             addItemToBuffer(item);
             while(softmenu[softmenuStack[0].softmenuId].menuItem != -MNU_EQ_EDIT) {
               popSoftmenu();
             }
           }
-          else if((calcMode == CM_NORMAL || calcMode == CM_NIM) && (ITM_0<=item && item<=ITM_F) && (!catalog || catalog == CATALOG_MVAR)) {
+          else if((calcMode == cmNormal || calcMode == cmNim) && (ITM_0<=item && item<=ITM_F) && (!catalog || catalog == CATALOG_MVAR)) {
             addItemToNimBuffer(item);
           }
-          else if(calcMode == CM_MIM && softmenu[softmenuStack[0].softmenuId].menuItem != -MNU_M_EDIT) {
+          else if(calcMode == cmMim && softmenu[softmenuStack[0].softmenuId].menuItem != -MNU_M_EDIT) {
             addItemToBuffer(item);
           }
           else if(item > 0) { // function
-            if(calcMode == CM_NIM && item != ITM_CC) {
+            if(calcMode == cmNim && item != ITM_CC) {
               closeNim();
-              if(calcMode != CM_NIM) {
+              if(calcMode != cmNim) {
                 if(indexOfItems[item].func == fnConstant) {
                   setSystemFlag(FLAG_ASLIFT);
                 }
               }
             }
-            if(calcMode == CM_AIM && !isAlphabeticSoftmenu()) {
+            if(calcMode == cmAim && !isAlphabeticSoftmenu()) {
               closeAim();
             }
-            if(tam.alpha && calcMode != CM_ASSIGN && tam.mode != TM_NEWMENU) {
+            if(tam.alpha && calcMode != cmAssign && tam.mode != TM_NEWMENU) {
               tamLeaveMode();
             }
 
@@ -701,7 +701,7 @@
               if(programRunStop == PGM_WAITING) {
                 programRunStop = PGM_STOPPED;
               }
-              if(calcMode == CM_ASSIGN && itemToBeAssigned == 0 && item != ITM_NOP) {
+              if(calcMode == cmAssign && itemToBeAssigned == 0 && item != ITM_NOP) {
                 if(tam.alpha) {
                   processAimInput(item);
                   if(stringGlyphLength(aimBuffer) > 6) {
@@ -717,7 +717,7 @@
                   itemToBeAssigned = item;
                 }
               }
-              else if(calcMode == CM_ASSIGN && tam.alpha && tam.mode != TM_NEWMENU && item != ITM_NOP) {
+              else if(calcMode == cmAssign && tam.alpha && tam.mode != TM_NEWMENU && item != ITM_NOP) {
                 processAimInput(item);
                 if(stringGlyphLength(aimBuffer) > 6) {
                   assignLeaveAlpha();
@@ -749,7 +749,7 @@
     key = getSystemFlag(FLAG_USER) ? (kbd_usr + (*data - '0')*10 + *(data+1) - '0') : (kbd_std + (*data - '0')*10 + *(data+1) - '0');
 
     // Shift f pressed and shift g not active
-    if(key->primary == ITM_SHIFTf && !shiftG && (calcMode == CM_NORMAL || calcMode == CM_AIM || calcMode == CM_NIM || calcMode == CM_MIM || calcMode == CM_EIM || calcMode == CM_PEM || calcMode == CM_PLOT_STAT || calcMode == CM_GRAPH || calcMode == CM_ASSIGN)) {
+    if(key->primary == ITM_SHIFTf && !shiftG && (calcMode == cmNormal || calcMode == cmAim || calcMode == cmNim || calcMode == cmMim || calcMode == cmEim || calcMode == cmPem || calcMode == cmPlotStat || calcMode == cmGraph || calcMode == cmAssign)) {
       if(temporaryInformation == TI_VIEW_REGISTER) {
         temporaryInformation = TI_NO_INFO;
         updateMatrixHeightCache();
@@ -767,7 +767,7 @@
     }
 
     // Shift g pressed and shift f not active
-    else if(key->primary == ITM_SHIFTg && !shiftF && (calcMode == CM_NORMAL || calcMode == CM_AIM || calcMode == CM_NIM || calcMode == CM_MIM || calcMode == CM_EIM || calcMode == CM_PEM || calcMode == CM_PLOT_STAT || calcMode == CM_GRAPH || calcMode == CM_ASSIGN)) {
+    else if(key->primary == ITM_SHIFTg && !shiftF && (calcMode == cmNormal || calcMode == cmAim || calcMode == cmNim || calcMode == cmMim || calcMode == cmEim || calcMode == cmPem || calcMode == cmPlotStat || calcMode == cmGraph || calcMode == cmAssign)) {
       if(temporaryInformation == TI_VIEW_REGISTER) {
         temporaryInformation = TI_NO_INFO;
         updateMatrixHeightCache();
@@ -784,7 +784,7 @@
       return ITM_NOP;
     }
 
-    if(calcMode == CM_AIM || (catalog && catalog != CATALOG_MVAR && calcMode != CM_NIM) || calcMode == CM_EIM || tam.alpha || (calcMode == CM_ASSIGN && (previousCalcMode == CM_AIM || previousCalcMode == CM_EIM)) || (calcMode == CM_PEM && getSystemFlag(FLAG_ALPHA))) {
+    if(calcMode == cmAim || (catalog && catalog != CATALOG_MVAR && calcMode != cmNim) || calcMode == cmEim || tam.alpha || (calcMode == cmAssign && (previousCalcMode == cmAim || previousCalcMode == cmEim)) || (calcMode == cmPem && getSystemFlag(FLAG_ALPHA))) {
       result = shiftF ? key->fShiftedAim :
                shiftG ? key->gShiftedAim :
                         key->primaryAim;
@@ -793,7 +793,7 @@
     else if(tam.mode) {
       result = key->primaryTam; // No shifted function in TAM
     }
-    else if(calcMode == CM_NORMAL || calcMode == CM_NIM || calcMode == CM_MIM || calcMode == CM_FONT_BROWSER || calcMode == CM_FLAG_BROWSER || calcMode == CM_REGISTER_BROWSER || calcMode == CM_BUG_ON_SCREEN || calcMode == CM_CONFIRMATION || calcMode == CM_PEM || calcMode == CM_PLOT_STAT || calcMode == CM_GRAPH || calcMode == CM_ASSIGN || calcMode == CM_TIMER) {
+    else if(calcMode == cmNormal || calcMode == cmNim || calcMode == cmMim || calcMode == cmFontBrowser || calcMode == cmFlagBrowser || calcMode == cmRegisterBrowser || calcMode == cmBugOnScreen || calcMode == cmConfirmation || calcMode == cmPem || calcMode == cmPlotStat || calcMode == cmGraph || calcMode == cmAssign || calcMode == cmTimer) {
       result = shiftF ? key->fShifted :
                shiftG ? key->gShifted :
                         key->primary;
@@ -815,7 +815,7 @@
     shiftF = false;
     shiftG = false;
 
-    if(calcMode == CM_ASSIGN && itemToBeAssigned != 0 && (result == ITM_NOP || result == ITM_NULL)) {
+    if(calcMode == cmAssign && itemToBeAssigned != 0 && (result == ITM_NOP || result == ITM_NULL)) {
       result = ITM_LBL;
     }
 
@@ -878,7 +878,7 @@
         return;
       }
     #elif defined(DMCP_BUILD)
-      if(calcMode == CM_PEM && (item == ITM_SST || item == ITM_BST)) {
+      if(calcMode == cmPem && (item == ITM_SST || item == ITM_BST)) {
         shiftF = f;
         shiftG = g;
       }
@@ -900,7 +900,7 @@
         showFunctionName(item, 1000); // 1000ms = 1s
       }
     }
-    if(calcMode == CM_ASSIGN && itemToBeAssigned != 0 && tamBuffer[0] == 0) {
+    if(calcMode == cmAssign && itemToBeAssigned != 0 && tamBuffer[0] == 0) {
       shiftF = f;
       shiftG = g;
     }
@@ -917,7 +917,7 @@
       return;
     }
 
-    if(calcMode == CM_ASSIGN && itemToBeAssigned != 0 && tamBuffer[0] == 0) {
+    if(calcMode == cmAssign && itemToBeAssigned != 0 && tamBuffer[0] == 0) {
       assignToKey(data);
       calcMode = previousCalcMode;
       shiftF = shiftG = false;
@@ -1052,7 +1052,7 @@
 
       case ITM_UP: {
         fnKeyUp(NOPARAM);
-        if(currentSoftmenuScrolls() || calcMode != CM_NORMAL || temporaryInformation != TI_NO_INFO) {
+        if(currentSoftmenuScrolls() || calcMode != cmNormal || temporaryInformation != TI_NO_INFO) {
           refreshScreen();
         }
         temporaryInformation = TI_NO_INFO;
@@ -1069,7 +1069,7 @@
 
       case ITM_DOWN: {
         fnKeyDown(NOPARAM);
-        if(currentSoftmenuScrolls() || calcMode != CM_NORMAL || temporaryInformation != TI_NO_INFO) {
+        if(currentSoftmenuScrolls() || calcMode != cmNormal || temporaryInformation != TI_NO_INFO) {
           refreshScreen();
         }
         temporaryInformation = TI_NO_INFO;
@@ -1096,7 +1096,7 @@
 
       case ITM_CC:
       case ITM_dotD: {
-        if(calcMode == CM_ASSIGN) {
+        if(calcMode == cmAssign) {
           if(itemToBeAssigned == 0) {
             itemToBeAssigned = item;
           }
@@ -1105,10 +1105,10 @@
           }
           keyActionProcessed = true;
         }
-        else if(calcMode == CM_REGISTER_BROWSER || calcMode == CM_FLAG_BROWSER || calcMode == CM_FONT_BROWSER || calcMode == CM_TIMER) {
+        else if(calcMode == cmRegisterBrowser || calcMode == cmFlagBrowser || calcMode == cmFontBrowser || calcMode == cmTimer) {
           keyActionProcessed = true;
         }
-        else if(calcMode == CM_PEM && item == ITM_dotD && aimBuffer[0] == 0) {
+        else if(calcMode == cmPem && item == ITM_dotD && aimBuffer[0] == 0) {
           addStepInProgram(ITM_toREAL);
           keyActionProcessed = true;
         }
@@ -1116,7 +1116,7 @@
       }
 
       case ITM_ENTER: {
-        if(calcMode == CM_ASSIGN) {
+        if(calcMode == cmAssign) {
           if(itemToBeAssigned == 0) {
             if(tam.alpha) {
               assignLeaveAlpha();
@@ -1137,7 +1137,7 @@
           }
           keyActionProcessed = true;
         }
-        else if(calcMode == CM_REGISTER_BROWSER || calcMode == CM_FLAG_BROWSER || calcMode == CM_FONT_BROWSER) {
+        else if(calcMode == cmRegisterBrowser || calcMode == cmFlagBrowser || calcMode == cmFontBrowser) {
           keyActionProcessed = true;
         }
         else if(tam.mode) {
@@ -1148,29 +1148,29 @@
       }
 
       default: {
-        if(calcMode == CM_ASSIGN && itemToBeAssigned != 0 && item == ITM_USERMODE) {
+        if(calcMode == cmAssign && itemToBeAssigned != 0 && item == ITM_USERMODE) {
           while(softmenuStack[0].softmenuId > 1) {
             popSoftmenu();
           }
-          if(previousCalcMode == CM_AIM) {
+          if(previousCalcMode == cmAim) {
             softmenuStack[0].softmenuId = 1;
-            calcModeAimGui();
+            guiSetLayout(glAim);
           }
           else {
             leaveAsmMode();
           }
           keyActionProcessed = true;
         }
-        else if(calcMode == CM_ASSIGN && itemToBeAssigned == 0 && item == ITM_USERMODE) {
+        else if(calcMode == cmAssign && itemToBeAssigned == 0 && item == ITM_USERMODE) {
           tamEnterMode(ITM_ASSIGN);
           calcMode = previousCalcMode;
           keyActionProcessed = true;
         }
-        else if(calcMode == CM_ASSIGN && item == ITM_AIM) {
+        else if(calcMode == cmAssign && item == ITM_AIM) {
           assignEnterAlpha();
           keyActionProcessed = true;
         }
-        else if((calcMode != CM_PEM || !getSystemFlag(FLAG_ALPHA)) && catalog && catalog != CATALOG_MVAR) {
+        else if((calcMode != cmPem || !getSystemFlag(FLAG_ALPHA)) && catalog && catalog != CATALOG_MVAR) {
           if(ITM_A <= item && item <= ITM_Z && alphaCase == AC_LOWER) {
             addItemToBuffer(item + 26);
             keyActionProcessed = true;
@@ -1199,7 +1199,7 @@
         }
         else {
           switch(calcMode) {
-            case CM_NORMAL: {
+            case cmNormal: {
               if(item == ITM_EXPONENT || item == ITM_PERIOD || (ITM_0 <= item && item <= ITM_9)) {
                 addItemToNimBuffer(item);
                 keyActionProcessed = true;
@@ -1212,7 +1212,7 @@
               break;
             }
 
-            case CM_AIM: {
+            case cmAim: {
               if(item == ITM_BST || item == ITM_SST) {
                 closeAim();
                 runFunction(item);
@@ -1224,12 +1224,12 @@
               break;
             }
 
-            case CM_EIM: {
+            case cmEim: {
               processAimInput(item);
               break;
             }
 
-            case CM_NIM: {
+            case cmNim: {
               if(item == ITM_BST || item == ITM_SST) {
                 closeNim();
                 runFunction(item);
@@ -1242,13 +1242,13 @@
               break;
             }
 
-            case CM_MIM: {
+            case cmMim: {
               addItemToBuffer(item);
               keyActionProcessed = true;
               break;
             }
 
-            case CM_REGISTER_BROWSER: {
+            case cmRegisterBrowser: {
               if(item == ITM_PERIOD) {
                 rbr1stDigit = true;
                 if(rbrMode == RBR_GLOBAL) {
@@ -1283,7 +1283,7 @@
               else if(item == ITM_RCL) {
                 rbr1stDigit = true;
                 if(rbrMode == RBR_GLOBAL || rbrMode == RBR_LOCAL) {
-                  calcMode = previousCalcMode;
+                  calcModeLeave();
                   fnRecall(currentRegisterBrowserScreen);
                   setSystemFlag(FLAG_ASLIFT);
                 }
@@ -1313,20 +1313,20 @@
               break;
             }
 
-            case CM_FLAG_BROWSER:
-            case CM_FONT_BROWSER:
-            case CM_ERROR_MESSAGE:
-            case CM_BUG_ON_SCREEN: {
+            case cmFlagBrowser:
+            case cmFontBrowser:
+            case cmErrorMessage:
+            case cmBugOnScreen: {
               keyActionProcessed = true;
               break;
             }
 
-            case CM_GRAPH:
-            case CM_PLOT_STAT: {
+            case cmGraph:
+            case cmPlotStat: {
               break;
             }
 
-            case CM_CONFIRMATION: {
+            case cmConfirmation: {
               if(item == ITM_3 || item == ITM_XEQ || item == ITM_ENTER) { // Yes or XEQ or ENTER
                 calcMode = previousCalcMode;
                 confirmedFunction(CONFIRMED);
@@ -1344,10 +1344,10 @@
               break;
             }
 
-            case CM_PEM: {
+            case cmPem: {
               if(item == ITM_PR) {
                 leavePem();
-                calcModeEnter(CM_NORMAL);
+                calcModeEnter(cmNormal);
                 keyActionProcessed = true;
               }
               else if(item == ITM_OFF) {
@@ -1382,7 +1382,7 @@
               break;
             }
 
-            case CM_ASSIGN: {
+            case cmAssign: {
               if(item > 0 && itemToBeAssigned == 0) {
                 if(tam.alpha) {
                   processAimInput(item);
@@ -1427,7 +1427,7 @@
               break;
             }
 
-            case CM_TIMER: {
+            case cmTimer: {
               printf("ITEM: %d\n", item);
               switch(item) {
                 case ITM_RS: {
@@ -1554,7 +1554,7 @@
 void fnKeyEnter(uint16_t unusedButMandatoryParameter) {
   #if !defined(TESTSUITE_BUILD)
     switch(calcMode) {
-      case CM_NORMAL: {
+      case cmNormal: {
         setSystemFlag(FLAG_ASLIFT);
         #if defined(DEBUGUNDO)
           printf(">>> saveForUndo from fnKeyEnterA\n");
@@ -1577,8 +1577,8 @@ void fnKeyEnter(uint16_t unusedButMandatoryParameter) {
         break;
       }
 
-      case CM_AIM: {
-        calcModeEnter(CM_NORMAL);
+      case cmAim: {
+        calcModeEnter(cmNormal);
         popSoftmenu();
 
         if(aimBuffer[0] == 0) {
@@ -1616,15 +1616,15 @@ void fnKeyEnter(uint16_t unusedButMandatoryParameter) {
         break;
       }
 
-      case CM_MIM: {
+      case cmMim: {
         mimEnter(false);
         break;
       }
 
-      case CM_NIM: {
+      case cmNim: {
         closeNim();
 
-        if(calcMode != CM_NIM && lastErrorCode == 0) {
+        if(calcMode != cmNim && lastErrorCode == 0) {
           setSystemFlag(FLAG_ASLIFT);
           #if defined(DEBUGUNDO)
             printf(">>> saveForUndo from fnKeyEnterC\n");
@@ -1646,12 +1646,12 @@ void fnKeyEnter(uint16_t unusedButMandatoryParameter) {
         break;
       }
 
-      case CM_EIM: {
+      case cmEim: {
         if(aimBuffer[0] != 0) {
           setEquation(currentFormula, aimBuffer);
         }
         if(softmenu[softmenuStack[0].softmenuId].menuItem == -MNU_EQ_EDIT) {
-          calcModeEnter(CM_NORMAL);
+          calcModeEnter(cmNormal);
           if(allFormulae[currentFormula].pointerToFormulaData == WP43_NULL) {
             deleteEquation(currentFormula);
           }
@@ -1660,22 +1660,22 @@ void fnKeyEnter(uint16_t unusedButMandatoryParameter) {
         break;
       }
 
-      case CM_REGISTER_BROWSER:
-      case CM_FLAG_BROWSER:
-      case CM_FONT_BROWSER:
-      case CM_ERROR_MESSAGE:
-      case CM_BUG_ON_SCREEN:
-      case CM_PLOT_STAT:
-      case CM_GRAPH: {
+      case cmRegisterBrowser:
+      case cmFlagBrowser:
+      case cmFontBrowser:
+      case cmErrorMessage:
+      case cmBugOnScreen:
+      case cmPlotStat:
+      case cmGraph: {
         break;
       }
 
-      case CM_TIMER: {
+      case cmTimer: {
         fnEnterTimerApp();
         break;
       }
 
-      case CM_CONFIRMATION: {
+      case cmConfirmation: {
         calcMode = previousCalcMode;
         confirmedFunction(CONFIRMED);
         break;
@@ -1720,12 +1720,12 @@ void fnKeyExit(uint16_t unusedButMandatoryParameter) {
     }
 
     switch(calcMode) {
-      case CM_REGISTER_BROWSER:
-      case CM_FLAG_BROWSER:
-      case CM_FONT_BROWSER:
-      case CM_CONFIRMATION:
-      case CM_ERROR_MESSAGE:
-      case CM_BUG_ON_SCREEN: {
+      case cmRegisterBrowser:
+      case cmFlagBrowser:
+      case cmFontBrowser:
+      case cmConfirmation:
+      case cmErrorMessage:
+      case cmBugOnScreen: {
         // Browser or message should be closed first
         break;
       }
@@ -1753,11 +1753,11 @@ void fnKeyExit(uint16_t unusedButMandatoryParameter) {
         numberOfTamMenusToPop--;
       }
       else {
-        if(calcMode == CM_PEM) {
+        if(calcMode == cmPem) {
           aimBuffer[0] = 0;
         }
         tamLeaveMode();
-        if(calcMode == CM_PEM) {
+        if(calcMode == cmPem) {
           scrollPemBackwards();
         }
       }
@@ -1765,12 +1765,12 @@ void fnKeyExit(uint16_t unusedButMandatoryParameter) {
     }
 
     switch(calcMode) {
-      case CM_REGISTER_BROWSER:
-      case CM_FLAG_BROWSER:
-      case CM_FONT_BROWSER:
-      case CM_CONFIRMATION:
-      case CM_ERROR_MESSAGE:
-      case CM_BUG_ON_SCREEN: {
+      case cmRegisterBrowser:
+      case cmFlagBrowser:
+      case cmFontBrowser:
+      case cmConfirmation:
+      case cmErrorMessage:
+      case cmBugOnScreen: {
         // Browser or message should be closed first
         break;
       }
@@ -1785,7 +1785,7 @@ void fnKeyExit(uint16_t unusedButMandatoryParameter) {
     }
 
     switch(calcMode) {
-      case CM_NORMAL: {
+      case cmNormal: {
         if(temporaryInformation == TI_SHOW_REGISTER || temporaryInformation == TI_VIEW_REGISTER) {
           temporaryInformation = TI_NO_INFO;
         }
@@ -1807,7 +1807,7 @@ void fnKeyExit(uint16_t unusedButMandatoryParameter) {
         break;
       }
 
-      case CM_AIM: {
+      case cmAim: {
         if(softmenuStack[0].softmenuId <= 1) { // MyMenu or MyAlpha is displayed
           closeAim();
           #if defined(DEBUGUNDO)
@@ -1825,20 +1825,20 @@ void fnKeyExit(uint16_t unusedButMandatoryParameter) {
         break;
       }
 
-      case CM_NIM: {
+      case cmNim: {
         addItemToNimBuffer(ITM_EXIT);
         updateMatrixHeightCache();
         break;
       }
 
-      case CM_MIM: {
+      case cmMim: {
         if(softmenu[softmenuStack[0].softmenuId].menuItem == -MNU_M_EDIT) {
           mimEnter(true);
           if(matrixIndex == findNamedVariable(statMx)) {
             calcSigma(0);
           }
           mimFinalize();
-          calcModeEnter(CM_NORMAL);
+          calcModeEnter(cmNormal);
           updateMatrixHeightCache();
         }
         screenUpdatingMode = SCRUPD_AUTO;
@@ -1846,7 +1846,7 @@ void fnKeyExit(uint16_t unusedButMandatoryParameter) {
         break;
       }
 
-      case CM_PEM: {
+      case cmPem: {
         if(getSystemFlag(FLAG_ALPHA) && aimBuffer[0] == 0 && !tam.mode) {
           pemAlpha(ITM_BACKSPACE);
           fnBst(NOPARAM); // Set the PGM pointer to the original position
@@ -1870,7 +1870,7 @@ void fnKeyExit(uint16_t unusedButMandatoryParameter) {
 
         aimBuffer[0] = 0;
         leavePem();
-        calcModeEnter(CM_NORMAL);
+        calcModeEnter(cmNormal);
         #if defined(DEBUGUNDO)
           printf(">>> saveForUndo from fnKeyExitB\n");
         #endif // DEBUGUNDO
@@ -1881,13 +1881,13 @@ void fnKeyExit(uint16_t unusedButMandatoryParameter) {
         break;
       }
 
-      case CM_EIM: {
+      case cmEim: {
         if(lastErrorCode != 0) {
           lastErrorCode = 0;
         }
         else {
           if(softmenu[softmenuStack[0].softmenuId].menuItem == -MNU_EQ_EDIT) {
-            calcModeEnter(CM_NORMAL);
+            calcModeEnter(cmNormal);
             if(allFormulae[currentFormula].pointerToFormulaData == WP43_NULL) {
               deleteEquation(currentFormula);
             }
@@ -1897,15 +1897,15 @@ void fnKeyExit(uint16_t unusedButMandatoryParameter) {
         break;
       }
 
-      case CM_REGISTER_BROWSER:
-      case CM_FLAG_BROWSER:
-      case CM_FONT_BROWSER: {
+      case cmRegisterBrowser:
+      case cmFlagBrowser:
+      case cmFontBrowser: {
         rbr1stDigit = true;
-        calcMode = previousCalcMode;
+        calcModeLeave();
         break;
       }
 
-      case CM_TIMER: {
+      case cmTimer: {
         screenUpdatingMode = SCRUPD_AUTO;
         if(lastErrorCode != 0) {
           lastErrorCode = 0;
@@ -1916,23 +1916,23 @@ void fnKeyExit(uint16_t unusedButMandatoryParameter) {
         break;
       }
 
-      case CM_BUG_ON_SCREEN: {
+      case cmBugOnScreen: {
         calcMode = previousCalcMode;
         break;
       }
 
-      case CM_GRAPH:
-      case CM_PLOT_STAT: {
+      case cmGraph:
+      case cmPlotStat: {
         //Temporary - TODO JM
         restoreStats();
         printf(">>> ####@@@@ D %" PRIu8 "\n", (uint8_t)calcMode);
-        if(lastPlotMode == H_PLOT && calcMode == CM_PLOT_STAT) {
+        if(lastPlotMode == H_PLOT && calcMode == cmPlotStat) {
           popSoftmenu();
         }
         //TODO
         lastPlotMode = PLOT_NOTHING;
         plotSelection = 0;
-        calcMode = CM_NORMAL;
+        calcMode = cmNormal;
         #if defined(DEBUGUNDO)
           printf(">>> Undo from fnKeyExit\n");
         #endif // DEBUGUNDO
@@ -1942,7 +1942,7 @@ void fnKeyExit(uint16_t unusedButMandatoryParameter) {
         break;
       }
 
-      case CM_CONFIRMATION: {
+      case cmConfirmation: {
         calcMode = previousCalcMode;
         temporaryInformation = TI_NO_INFO;
         if(programRunStop == PGM_WAITING) {
@@ -1951,8 +1951,8 @@ void fnKeyExit(uint16_t unusedButMandatoryParameter) {
         break;
       }
 
-      case CM_ASSIGN: {
-        if((softmenuStack[0].softmenuId <= 1 && softmenuStack[1].softmenuId <= 1) || (previousCalcMode == CM_EIM && softmenu[softmenuStack[0].softmenuId].menuItem == -MNU_EQ_EDIT)) { // MyMenu or MyAlpha is displayed
+      case cmAssign: {
+        if((softmenuStack[0].softmenuId <= 1 && softmenuStack[1].softmenuId <= 1) || (previousCalcMode == cmEim && softmenu[softmenuStack[0].softmenuId].menuItem == -MNU_EQ_EDIT)) { // MyMenu or MyAlpha is displayed
           calcMode = previousCalcMode;
           if(tam.alpha) {
             assignLeaveAlpha();
@@ -1985,7 +1985,7 @@ void fnKeyCC(uint16_t unusedButMandatoryParameter) {
     uint32_t dataTypeY;
 
     switch(calcMode) {
-      case CM_NORMAL: {
+      case cmNormal: {
         dataTypeX = getRegisterDataType(REGISTER_X);
         dataTypeY = getRegisterDataType(REGISTER_Y);
 
@@ -2012,30 +2012,30 @@ void fnKeyCC(uint16_t unusedButMandatoryParameter) {
         break;
       }
 
-      case CM_NIM: {
+      case cmNim: {
         addItemToNimBuffer(ITM_CC);
         break;
       }
 
-      case CM_MIM: {
+      case cmMim: {
         mimAddNumber(ITM_CC);
         break;
       }
 
-      case CM_PEM: {
+      case cmPem: {
         if(aimBuffer[0] != 0 && !getSystemFlag(FLAG_ALPHA)) {
           pemAddNumber(ITM_CC);
         }
         break;
       }
 
-      case CM_EIM:
-      case CM_REGISTER_BROWSER:
-      case CM_FLAG_BROWSER:
-      case CM_FONT_BROWSER:
-      case CM_PLOT_STAT:
-      case CM_TIMER:
-      case CM_GRAPH: {
+      case cmEim:
+      case cmRegisterBrowser:
+      case cmFlagBrowser:
+      case cmFontBrowser:
+      case cmPlotStat:
+      case cmTimer:
+      case cmGraph: {
         break;
       }
 
@@ -2060,7 +2060,7 @@ void fnKeyBackspace(uint16_t unusedButMandatoryParameter) {
     }
 
     switch(calcMode) {
-      case CM_NORMAL: {
+      case cmNormal: {
         if(lastErrorCode != 0) {
           lastErrorCode = 0;
         }
@@ -2070,7 +2070,7 @@ void fnKeyBackspace(uint16_t unusedButMandatoryParameter) {
         break;
       }
 
-      case CM_AIM: {
+      case cmAim: {
         if(catalog && catalog != CATALOG_MVAR) {
           if(stringByteLength(aimBuffer) > 0) {
             lg = stringLastGlyph(aimBuffer);
@@ -2085,17 +2085,17 @@ void fnKeyBackspace(uint16_t unusedButMandatoryParameter) {
         break;
       }
 
-      case CM_NIM: {
+      case cmNim: {
         addItemToNimBuffer(ITM_BACKSPACE);
         break;
       }
 
-      case CM_MIM: {
+      case cmMim: {
         mimAddNumber(ITM_BACKSPACE);
         break;
       }
 
-      case CM_EIM: {
+      case cmEim: {
         if(xCursor > 0) {
           char *srcPos = aimBuffer;
           char *dstPos = aimBuffer;
@@ -2112,26 +2112,26 @@ void fnKeyBackspace(uint16_t unusedButMandatoryParameter) {
         break;
       }
 
-      //case CM_ASM_OVER_NORMAL: {
+      //case cmAsm_over_normal: {
       //  addItemToBuffer(ITM_BACKSPACE);
       //  break;
       //}
 
-      case CM_REGISTER_BROWSER:
-      case CM_FLAG_BROWSER:
-      case CM_FONT_BROWSER: {
+      case cmRegisterBrowser:
+      case cmFlagBrowser:
+      case cmFontBrowser: {
+        calcModeLeave();
+        break;
+      }
+
+      case cmBugOnScreen:
+      case cmPlotStat:
+      case cmGraph: {
         calcMode = previousCalcMode;
         break;
       }
 
-      case CM_BUG_ON_SCREEN:
-      case CM_PLOT_STAT:
-      case CM_GRAPH: {
-        calcMode = previousCalcMode;
-        break;
-      }
-
-      case CM_CONFIRMATION: {
+      case cmConfirmation: {
         calcMode = previousCalcMode;
         temporaryInformation = TI_NO_INFO;
         if(programRunStop == PGM_WAITING) {
@@ -2140,7 +2140,7 @@ void fnKeyBackspace(uint16_t unusedButMandatoryParameter) {
         break;
       }
 
-      case CM_PEM: {
+      case cmPem: {
         if(programList[currentProgramNumber - 1].step < 0) {
           // attempt to modify a program in the flash memory
           displayCalcErrorMessage(ERROR_FLASH_MEMORY_WRITE_PROTECTED, ERR_REGISTER_LINE, REGISTER_X);
@@ -2193,7 +2193,7 @@ void fnKeyBackspace(uint16_t unusedButMandatoryParameter) {
         break;
       }
 
-      case CM_ASSIGN: {
+      case cmAssign: {
         if(itemToBeAssigned == 0) {
           if(!tam.alpha) {
             calcMode = previousCalcMode;
@@ -2233,7 +2233,7 @@ void fnKeyBackspace(uint16_t unusedButMandatoryParameter) {
         break;
       }
 
-      case CM_TIMER: {
+      case cmTimer: {
         if(lastErrorCode != 0) {
           lastErrorCode = 0;
         }
@@ -2287,19 +2287,19 @@ void fnKeyUp(uint16_t unusedButMandatoryParameter) {
     }
 
     switch(calcMode) {
-      case CM_NORMAL:
-      case CM_AIM:
-      case CM_NIM:
-      case CM_EIM:
-      case CM_PLOT_STAT:
-      case CM_GRAPH: {
+      case cmNormal:
+      case cmAim:
+      case cmNim:
+      case cmEim:
+      case cmPlotStat:
+      case cmGraph: {
         resetAlphaSelectionBuffer();
         if(currentSoftmenuScrolls()) {
           menuUp();
         }
-        else if((calcMode == CM_NORMAL || calcMode == CM_NIM) && (numberOfFormulae < 2 || softmenu[softmenuStack[0].softmenuId].menuItem != -MNU_EQN)) {
+        else if((calcMode == cmNormal || calcMode == cmNim) && (numberOfFormulae < 2 || softmenu[softmenuStack[0].softmenuId].menuItem != -MNU_EQN)) {
           screenUpdatingMode = SCRUPD_AUTO;
-          if(calcMode == CM_NIM) {
+          if(calcMode == cmNim) {
             closeNim();
           }
           fnBst(NOPARAM);
@@ -2326,7 +2326,7 @@ void fnKeyUp(uint16_t unusedButMandatoryParameter) {
         break;
       }
 
-      case CM_REGISTER_BROWSER: {
+      case cmRegisterBrowser: {
         rbr1stDigit = true;
         if(rbrMode == RBR_GLOBAL) {
           currentRegisterBrowserScreen = modulo(currentRegisterBrowserScreen + 1, FIRST_LOCAL_REGISTER);
@@ -2344,19 +2344,19 @@ void fnKeyUp(uint16_t unusedButMandatoryParameter) {
         break;
       }
 
-      case CM_FLAG_BROWSER: {
+      case cmFlagBrowser: {
         currentFlgScr = 3 - currentFlgScr;
         break;
       }
 
-      case CM_FONT_BROWSER: {
+      case cmFontBrowser: {
         if(currentFntScr >= 2) {
           currentFntScr--;
         }
         break;
       }
 
-      case CM_PEM: {
+      case cmPem: {
         resetAlphaSelectionBuffer();
         if(getSystemFlag(FLAG_ALPHA) && alphaCase == AC_LOWER) {
           alphaCase = AC_UPPER;
@@ -2373,14 +2373,14 @@ void fnKeyUp(uint16_t unusedButMandatoryParameter) {
         break;
       }
 
-      case CM_MIM: {
+      case cmMim: {
         if(currentSoftmenuScrolls()) {
           menuUp();
         }
         break;
       }
 
-      case CM_ASSIGN: {
+      case cmAssign: {
         if(currentSoftmenuScrolls()) {
           menuUp();
         }
@@ -2406,7 +2406,7 @@ void fnKeyUp(uint16_t unusedButMandatoryParameter) {
         break;
       }
 
-      case CM_TIMER: {
+      case cmTimer: {
         fnUpTimerApp();
         break;
       }
@@ -2455,19 +2455,19 @@ void fnKeyDown(uint16_t unusedButMandatoryParameter) {
     }
 
     switch(calcMode) {
-      case CM_NORMAL:
-      case CM_AIM:
-      case CM_NIM:
-      case CM_EIM:
-      case CM_PLOT_STAT:
-      case CM_GRAPH: {
+      case cmNormal:
+      case cmAim:
+      case cmNim:
+      case cmEim:
+      case cmPlotStat:
+      case cmGraph: {
         resetAlphaSelectionBuffer();
         if(currentSoftmenuScrolls()) {
           menuDown();
         }
-        else if((calcMode == CM_NORMAL || calcMode == CM_NIM) && (numberOfFormulae < 2 || softmenu[softmenuStack[0].softmenuId].menuItem != -MNU_EQN)) {
+        else if((calcMode == cmNormal || calcMode == cmNim) && (numberOfFormulae < 2 || softmenu[softmenuStack[0].softmenuId].menuItem != -MNU_EQN)) {
           screenUpdatingMode = SCRUPD_AUTO;
-          if(calcMode == CM_NIM) {
+          if(calcMode == cmNim) {
             closeNim();
           }
           fnSst(NOPARAM);
@@ -2489,7 +2489,7 @@ void fnKeyDown(uint16_t unusedButMandatoryParameter) {
         break;
       }
 
-      case CM_REGISTER_BROWSER: {
+      case cmRegisterBrowser: {
         rbr1stDigit = true;
         if(rbrMode == RBR_GLOBAL) {
           currentRegisterBrowserScreen = modulo(currentRegisterBrowserScreen - 1, FIRST_LOCAL_REGISTER);
@@ -2507,19 +2507,19 @@ void fnKeyDown(uint16_t unusedButMandatoryParameter) {
         break;
       }
 
-      case CM_FLAG_BROWSER: {
+      case cmFlagBrowser: {
         currentFlgScr = 3 - currentFlgScr;
         break;
       }
 
-      case CM_FONT_BROWSER: {
+      case cmFontBrowser: {
         if(currentFntScr < numScreensNumericFont + numScreensStandardFont) {
           currentFntScr++;
         }
         break;
       }
 
-      case CM_PEM: {
+      case cmPem: {
         resetAlphaSelectionBuffer();
         if(getSystemFlag(FLAG_ALPHA) && alphaCase == AC_UPPER) {
           alphaCase = AC_LOWER;
@@ -2536,14 +2536,14 @@ void fnKeyDown(uint16_t unusedButMandatoryParameter) {
         break;
       }
 
-      case CM_MIM: {
+      case cmMim: {
         if(currentSoftmenuScrolls()) {
           menuDown();
         }
         break;
       }
 
-      case CM_ASSIGN: {
+      case cmAssign: {
         if(currentSoftmenuScrolls()) {
           menuDown();
         }
@@ -2569,7 +2569,7 @@ void fnKeyDown(uint16_t unusedButMandatoryParameter) {
         break;
       }
 
-      case CM_TIMER: {
+      case cmTimer: {
         fnDownTimerApp();
         break;
       }
@@ -2587,7 +2587,7 @@ void fnKeyDown(uint16_t unusedButMandatoryParameter) {
 void fnKeyDotD(uint16_t unusedButMandatoryParameter) {
   #if !defined(TESTSUITE_BUILD)
     switch(calcMode) {
-      case CM_NORMAL: {
+      case cmNormal: {
         if(getSystemFlag(FLAG_FRACT)) {
           clearSystemFlag(FLAG_FRACT);
         }
@@ -2597,19 +2597,19 @@ void fnKeyDotD(uint16_t unusedButMandatoryParameter) {
         break;
       }
 
-      case CM_NIM: {
+      case cmNim: {
         addItemToNimBuffer(ITM_dotD);
         break;
       }
 
-      case CM_REGISTER_BROWSER:
-      case CM_FLAG_BROWSER:
-      case CM_FONT_BROWSER:
-      case CM_PLOT_STAT:
-      case CM_GRAPH:
-      case CM_MIM:
-      case CM_EIM:
-      case CM_TIMER: {
+      case cmRegisterBrowser:
+      case cmFlagBrowser:
+      case cmFontBrowser:
+      case cmPlotStat:
+      case cmGraph:
+      case cmMim:
+      case cmEim:
+      case cmTimer: {
         break;
       }
 
@@ -2626,7 +2626,7 @@ void fnKeyDotD(uint16_t unusedButMandatoryParameter) {
 void fnKeyAngle(uint16_t unusedButMandatoryParameter) {
   #if !defined(TESTSUITE_BUILD)
     switch(calcMode) {
-      case CM_NORMAL: {
+      case cmNormal: {
         if(getRegisterDataType(REGISTER_X) == dtReal34Matrix) {
           runFunction(ITM_VANGLE);
         }
@@ -2636,23 +2636,23 @@ void fnKeyAngle(uint16_t unusedButMandatoryParameter) {
         break;
       }
 
-      case CM_NIM: {
+      case cmNim: {
         addItemToNimBuffer(ITM_ANGLE);
         break;
       }
 
-      case CM_REGISTER_BROWSER:
-      case CM_FLAG_BROWSER:
-      case CM_FONT_BROWSER:
-      case CM_PLOT_STAT:
-      case CM_GRAPH:
-      case CM_MIM:
-      case CM_EIM:
-      case CM_TIMER: {
+      case cmRegisterBrowser:
+      case cmFlagBrowser:
+      case cmFontBrowser:
+      case cmPlotStat:
+      case cmGraph:
+      case cmMim:
+      case cmEim:
+      case cmTimer: {
         break;
       }
 
-      case CM_ASSIGN: {
+      case cmAssign: {
         if(itemToBeAssigned == 0) {
           itemToBeAssigned = ITM_ANGLE;
         }
