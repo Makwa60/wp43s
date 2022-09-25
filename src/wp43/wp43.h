@@ -81,7 +81,6 @@
     #if (SHOW_MEMORY_STATUS == 1)
       extern GtkWidget         *lblMemoryStatus;
     #endif // (SHOW_MEMORY_STATUS == 1)
-    extern int                  currentBezel; // 0=normal, 1=AIM, 2=TAM
   #endif //PC_BUILD
 
   // Variables stored in FLASH

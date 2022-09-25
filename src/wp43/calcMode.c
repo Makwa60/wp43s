@@ -35,6 +35,43 @@
 #include "wp43.h"
 
 #if !defined(TESTSUITE_BUILD)
+  #if !defined(DMCP_BUILD)
+    static guiLayout_t previousLayout = glNormal;
+
+    void calcModeUpdateGui() {
+      guiLayout_t newLayout = previousLayout;
+      // Ideally this should be more fully specified
+      switch(calcMode) {
+        case cmRegisterBrowser:
+          newLayout = glRegisterBrowser;
+          break;
+        case cmFlagBrowser:
+        case cmFontBrowser:
+          newLayout = glFlagFontBrowser;
+          break;
+        case cmTimer:
+          newLayout = glTimerApp;
+          break;
+        default:
+          if(tam.mode && !tam.alpha) {
+            newLayout = glTam;
+          }
+          else if(calcMode == cmAim || (tam.mode && tam.alpha)) {
+            newLayout = glAim;
+          }
+          else if(calcMode == cmNormal || calcMode == cmPem || calcMode == cmMim || calcMode == cmAssign) {
+            newLayout = glNormal;
+          }
+      }
+      if(newLayout != previousLayout) {
+        guiSetLayout(newLayout);
+        previousLayout = newLayout;
+      }
+    }
+  #endif // !DMCP_BUILD
+
+
+
   void fnOff(uint16_t unsuedParamButMandatory) {
     shiftF = false;
     shiftG = false;
@@ -75,8 +112,6 @@
     clearSystemFlag(FLAG_ALPHA);
     hideCursor();
     cursorEnabled = false;
-
-    guiSetLayout(glNormal);
   }
 
 
@@ -101,8 +136,6 @@
     }
 
     setSystemFlag(FLAG_ALPHA);
-
-    guiSetLayout(glAim);
   }
 
 
@@ -154,8 +187,11 @@
         calcModeNim();
         break;
       case cmAssign:
+      case cmFlagBrowser:
+      case cmFontBrowser:
+      case cmRegisterBrowser:
         previousCalcMode = calcMode;
-        calcMode = cmAssign;
+        calcMode = newMode;
         break;
       case cmTimer:
         // This is potentially a bug, because we don't set previousCalcMode here,
@@ -165,6 +201,7 @@
       default:
         break;
     }
+    calcModeUpdateGui();
   }
 
 
@@ -172,8 +209,12 @@
   void calcModeLeave(void) {
     switch(calcMode) {
       case cmAssign:
+      case cmFlagBrowser:
+      case cmFontBrowser:
+      case cmRegisterBrowser:
       case cmTimer:
         calcMode = previousCalcMode;
+        calcModeUpdateGui();
         break;
       default:
         break;
@@ -290,17 +331,6 @@
 
   void leaveAsmMode(void) {
     catalog = CATALOG_NONE;
-
-    #if !defined(DMCP_BUILD)
-      if(tam.mode && !tam.alpha) {
-        guiSetLayout(glTam);
-      }
-      else if(calcMode == cmAim || (tam.mode && tam.alpha)) {
-        guiSetLayout(glAim);
-      }
-      else if(calcMode == cmNormal || calcMode == cmPem || calcMode == cmMim || calcMode == cmAssign) {
-        guiSetLayout(glNormal);
-      }
-    #endif // !DMCP_BUILD
+    calcModeUpdateGui();
   }
 #endif // !TESTSUITE_BUILD

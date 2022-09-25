@@ -316,7 +316,7 @@
           // backspaces within AIM are handled by addItemToBuffer, so this is if the aimBuffer is already empty
           tam.alpha = false;
           clearSystemFlag(FLAG_ALPHA);
-          guiSetLayout(glTam);
+          calcModeUpdateGui();
         }
       }
       else if(tam.digitsSoFar > 0) {
@@ -376,7 +376,7 @@
           setSystemFlag(FLAG_ALPHA);
           calcModeEnter(cmAim);
         }
-        guiSetLayout(glTam);
+        calcModeUpdateGui();
       }
       else {
         tamLeaveMode();
@@ -693,7 +693,7 @@
         showSoftmenu(-MNU_TAMLABEL);
         --numberOfTamMenusToPop;
         clearSystemFlag(FLAG_ALPHA);
-        guiSetLayout(glTam);
+        calcModeUpdateGui();
       }
       else if(tam.digitsSoFar == 2 && tam.value == 0) {
         tam.digitsSoFar = 1;
@@ -972,7 +972,7 @@
         calcModeEnter(cmAim);
       }
       else {
-        guiSetLayout(glTam);
+        calcModeUpdateGui();
       }
     #endif // PC_BUILD && (SCREEN_800X480 == 0)
   }
@@ -993,24 +993,7 @@
       popSoftmenu();
     }
 
-    #if defined(PC_BUILD) && (SCREEN_800X480 == 0)
-      switch(calcMode) {
-        case cmNormal:
-        case cmPem:
-        case cmMim:
-        case cmTimer: {
-          guiSetLayout(glNormal);
-          break;
-        }
-        case cmAim:
-        case cmEim: {
-          guiSetLayout(glAim);
-          break;
-        default:
-          break;
-        }
-      }
-    #endif // PC_BUILD && (SCREEN_800X480 == 0)
+    calcModeUpdateGui();
 
     if(calcMode == cmPem) {
       hourGlassIconEnabled = false;

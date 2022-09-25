@@ -27,10 +27,14 @@
    * Enumeration of the possible layouts of the keys.
    */
   typedef enum {
-    glNormal = 0,
-    glAim    = 1,
-    glTam    = 2
+    glNormal          = 0,
+    glAim             = 1,
+    glTam             = 2,
+    glRegisterBrowser = 3,
+    glFlagFontBrowser = 4,
+    glTimerApp        = 5
   } guiLayout_t;
+  static const uint8_t MAX_GUI_LAYOUTS = 6;
 
   #if defined(DMCP_BUILD)
     // Inline this empty function for DMCP to save memory

@@ -1283,7 +1283,7 @@
               else if(item == ITM_RCL) {
                 rbr1stDigit = true;
                 if(rbrMode == RBR_GLOBAL || rbrMode == RBR_LOCAL) {
-                  calcMode = previousCalcMode;
+                  calcModeLeave();
                   fnRecall(currentRegisterBrowserScreen);
                   setSystemFlag(FLAG_ASLIFT);
                 }
@@ -1901,7 +1901,7 @@ void fnKeyExit(uint16_t unusedButMandatoryParameter) {
       case cmFlagBrowser:
       case cmFontBrowser: {
         rbr1stDigit = true;
-        calcMode = previousCalcMode;
+        calcModeLeave();
         break;
       }
 
@@ -2120,7 +2120,7 @@ void fnKeyBackspace(uint16_t unusedButMandatoryParameter) {
       case cmRegisterBrowser:
       case cmFlagBrowser:
       case cmFontBrowser: {
-        calcMode = previousCalcMode;
+        calcModeLeave();
         break;
       }
 

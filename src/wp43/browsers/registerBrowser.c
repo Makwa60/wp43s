@@ -20,6 +20,7 @@
 
 #include "browsers/registerBrowser.h"
 
+#include "calcMode.h"
 #include "charString.h"
 #include "debug.h"
 #include "display.h"
@@ -171,8 +172,7 @@
         cursorEnabled = false;
       }
 
-      previousCalcMode = calcMode;
-      calcMode = cmRegisterBrowser;
+      calcModeEnter(cmRegisterBrowser);
       clearSystemFlag(FLAG_ALPHA);
       return;
     }

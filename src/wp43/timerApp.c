@@ -217,7 +217,7 @@ void fnTicks(uint16_t unusedButMandatoryParameter) {
       showSoftmenu(-MNU_TIMERF);
     }
     if(softmenu[softmenuStack[0].softmenuId].menuItem == -MNU_TIMERF) {
-      guiSetLayout(glNormal);
+      guiSetLayout(glTimerApp);
     }
   }
 

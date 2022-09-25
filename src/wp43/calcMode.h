@@ -39,6 +39,15 @@
      */
     void calcModeLeave               (void);
 
+    #if !defined(DMCP_BUILD)
+      /**
+       * Updates the GUI layout based on the calcMode
+       */
+      void calcModeUpdateGui           (void);
+    #else
+      static inline void calcModeUpdateGui (void) {}
+    #endif // !DMCP_BUILD DMCP_BUILD
+
     /**
      * Sets the calc mode to alpha selection menu if needed.
      */

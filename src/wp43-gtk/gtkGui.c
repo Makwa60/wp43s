@@ -28,13 +28,14 @@
 #include "wp43.h"
 
 GtkWidget      *grid;
-calcKeyboard_t  calcKeyboard[43];
+calcKeyboard_t  calcKeyboard[MAX_KEYS];
+guiLayout_t     currentBezel;
 #if (SCREEN_800X480 == 0)
-  GtkWidget *backgroundImage, *bezelImage[3], *behindScreenImage, *fgShiftedArea1, *fgShiftedArea2;
+  GtkWidget *backgroundImage, *bezelImage[MAX_GUI_LAYOUTS], *behindScreenImage, *fgShiftedArea1, *fgShiftedArea2;
   GtkWidget *lblFSoftkeyArea, *lblGSoftkeyArea;
   int backgroundWidth, backgroundHeight;
   int lcdx, lcdy;
-  int bezelX[3], bezelY[3];
+  int bezelX[MAX_GUI_LAYOUTS], bezelY[MAX_GUI_LAYOUTS];
   int behindScreenX, behindScreenY;
   int fgShiftedArea1X, fgShiftedArea1Y;
   int fgShiftedArea2X, fgShiftedArea2Y;
@@ -47,6 +48,15 @@ calcKeyboard_t  calcKeyboard[43];
   #endif // (DEBUG_PANEL == 1)
 
   char *cssData;
+
+  static const char *_layoutNames[] = {
+    "Normal",
+    "AIM",
+    "TAM",
+    "RBR",
+    "FBR",
+    "Timer"
+  };
 #endif // (SCREEN_800X480 == 0)
 
 
@@ -67,12 +77,12 @@ static void convertXYToKey(int x, int y) {
   key[1] = 0;
   key[2] = 0;
 
-  for(int i=0; i<43; i++) {
+  for(int i=0; i<MAX_KEYS; i++) {
     xMin = calcKeyboard[i].x;
     yMin = calcKeyboard[i].y;
-    if(i == 10 && currentBezel == 2 && (tam.mode == TM_LABEL || (tam.mode == TM_SOLVE && (tam.function != ITM_SOLVE || calcMode != cmPem)) || (tam.mode == TM_KEY && tam.keyInputFinished))) {
-      xMax = xMin + calcKeyboard[10].width[3];
-      yMax = yMin + calcKeyboard[10].height[3];
+    if(i == 10 && currentBezel == glTam && (tam.mode == TM_LABEL || (tam.mode == TM_SOLVE && (tam.function != ITM_SOLVE || calcMode != cmPem)) || (tam.mode == TM_KEY && tam.keyInputFinished))) {
+      xMax = xMin + calcKeyboard[10].width[TAM_L_LAYOUT];
+      yMax = yMin + calcKeyboard[10].height[TAM_L_LAYOUT];
     }
     else {
       xMax = xMin + calcKeyboard[i].width[currentBezel];
@@ -300,64 +310,37 @@ void frmCalcMouseButtonReleased(GtkWidget *notUsed, GdkEvent *event, gpointer da
           continue;
         }
 
-        if(!strcmp(parameter, "bezelNormal")) {
-          sprintf(fileName, "%s%s", skinDirectory, value);
-          if(access(fileName, F_OK) != 0) {
-            moreInfoOnError("In function prepareSkin:", "error: cannot access file", fileName, NULL);
-            exit(1);
+        if(!strncmp(parameter, "bezel", 5)) {
+          bool_t found = false;
+          for(guiLayout_t layout = 0; layout < MAX_GUI_LAYOUTS; layout++) {
+            if(!strcmp(parameter + 6, _layoutNames[layout])) {
+              if(parameter[5] == 'i') {
+                sprintf(fileName, "%s%s", skinDirectory, value);
+                if(access(fileName, F_OK) != 0) {
+                  moreInfoOnError("In function prepareSkin:", "error: cannot access file", fileName, NULL);
+                  exit(1);
+                }
+                bezelImage[layout] = gtk_image_new_from_file(fileName);
+                found = true;
+                break;
+              }
+
+              if(parameter[5] == 'x') {
+                bezelX[layout] = atoi(value);
+                found = true;
+                break;
+              }
+
+              if(parameter[5] == 'y') {
+                bezelY[layout] = atoi(value);
+                found = true;
+                break;
+              }
+            }
           }
-          bezelImage[0] = gtk_image_new_from_file(fileName);
-          continue;
-        }
-
-        if(!strcmp(parameter, "bezelNormalx")) {
-          bezelX[0] = atoi(value);
-          continue;
-        }
-
-        if(!strcmp(parameter, "bezelNormaly")) {
-          bezelY[0] = atoi(value);
-          continue;
-        }
-
-        if(!strcmp(parameter, "bezelAIM")) {
-          sprintf(fileName, "%s%s", skinDirectory, value);
-          if(access(fileName, F_OK) != 0) {
-            moreInfoOnError("In function prepareSkin:", "error: cannot access file", fileName, NULL);
-            exit(1);
+          if(found) {
+            continue;
           }
-          bezelImage[1] = gtk_image_new_from_file(fileName);
-          continue;
-        }
-
-        if(!strcmp(parameter, "bezelAIMx")) {
-          bezelX[1] = atoi(value);
-          continue;
-        }
-
-        if(!strcmp(parameter, "bezelAIMy")) {
-          bezelY[1] = atoi(value);
-          continue;
-        }
-
-        if(!strcmp(parameter, "bezelTAM")) {
-          sprintf(fileName, "%s%s", skinDirectory, value);
-          if(access(fileName, F_OK) != 0) {
-            moreInfoOnError("In function prepareSkin:", "error: cannot access file", fileName, NULL);
-            exit(1);
-          }
-          bezelImage[2] = gtk_image_new_from_file(fileName);
-          continue;
-        }
-
-        if(!strcmp(parameter, "bezelTAMx")) {
-          bezelX[2] = atoi(value);
-          continue;
-        }
-
-        if(!strcmp(parameter, "bezelTAMy")) {
-          bezelY[2] = atoi(value);
-          continue;
         }
 
         if(!strncmp(parameter, "key", 3)) {
@@ -397,42 +380,23 @@ void frmCalcMouseButtonReleased(GtkWidget *notUsed, GdkEvent *event, gpointer da
             continue;
           }
 
-          if(!strcmp(parameter + 5, "Normal")) {
-            sprintf(fileName, "%s%s", skinDirectory, value);
-            if(access(fileName, F_OK) != 0) {
-              moreInfoOnError("In function prepareSkin:", "error: cannot access file", fileName, NULL);
-              exit(1);
+          bool_t found = false;
+          for(guiLayout_t layout = 0; layout < MAX_GUI_LAYOUTS; layout++) {
+            if(!strcmp(parameter + 5, _layoutNames[layout])) {
+              sprintf(fileName, "%s%s", skinDirectory, value);
+              if(access(fileName, F_OK) != 0) {
+                moreInfoOnError("In function prepareSkin:", "error: cannot access file", fileName, NULL);
+                exit(1);
+              }
+              calcKeyboard[calcKey].keyImage[layout] = gtk_image_new_from_file(fileName);
+              const GdkPixbuf *pb = gtk_image_get_pixbuf(GTK_IMAGE(calcKeyboard[calcKey].keyImage[layout]));
+              calcKeyboard[calcKey].width[layout] = gdk_pixbuf_get_width(pb);
+              calcKeyboard[calcKey].height[layout] = gdk_pixbuf_get_height(pb);
+              found = true;
+              break;
             }
-            calcKeyboard[calcKey].keyImage[0] = gtk_image_new_from_file(fileName);
-            const GdkPixbuf *pb = gtk_image_get_pixbuf(GTK_IMAGE(calcKeyboard[calcKey].keyImage[0]));
-            calcKeyboard[calcKey].width[0] = gdk_pixbuf_get_width(pb);
-            calcKeyboard[calcKey].height[0] = gdk_pixbuf_get_height(pb);
-            continue;
           }
-
-          if(!strcmp(parameter + 5, "AIM")) {
-            sprintf(fileName, "%s%s", skinDirectory, value);
-            if(access(fileName, F_OK) != 0) {
-              moreInfoOnError("In function prepareSkin:", "error: cannot access file", fileName, NULL);
-              exit(1);
-            }
-            calcKeyboard[calcKey].keyImage[1] = gtk_image_new_from_file(fileName);
-            const GdkPixbuf *pb = gtk_image_get_pixbuf(GTK_IMAGE(calcKeyboard[calcKey].keyImage[1]));
-            calcKeyboard[calcKey].width[1] = gdk_pixbuf_get_width(pb);
-            calcKeyboard[calcKey].height[1] = gdk_pixbuf_get_height(pb);
-            continue;
-          }
-
-          if(!strcmp(parameter + 5, "TAM")) {
-            sprintf(fileName, "%s%s", skinDirectory, value);
-            if(access(fileName, F_OK) != 0) {
-              moreInfoOnError("In function prepareSkin:", "error: cannot access file", fileName, NULL);
-              exit(1);
-            }
-            calcKeyboard[calcKey].keyImage[2] = gtk_image_new_from_file(fileName);
-            const GdkPixbuf *pb = gtk_image_get_pixbuf(GTK_IMAGE(calcKeyboard[calcKey].keyImage[2]));
-            calcKeyboard[calcKey].width[2] = gdk_pixbuf_get_width(pb);
-            calcKeyboard[calcKey].height[2] = gdk_pixbuf_get_height(pb);
+          if(found) {
             continue;
           }
 
@@ -442,10 +406,10 @@ void frmCalcMouseButtonReleased(GtkWidget *notUsed, GdkEvent *event, gpointer da
               moreInfoOnError("In function prepareSkin:", "error: cannot access file", fileName, NULL);
               exit(1);
             }
-            calcKeyboard[calcKey].keyImage[3] = gtk_image_new_from_file(fileName);
-            const GdkPixbuf *pb = gtk_image_get_pixbuf(GTK_IMAGE(calcKeyboard[calcKey].keyImage[3]));
-            calcKeyboard[calcKey].width[3] = gdk_pixbuf_get_width(pb);
-            calcKeyboard[calcKey].height[3] = gdk_pixbuf_get_height(pb);
+            calcKeyboard[calcKey].keyImage[TAM_L_LAYOUT] = gtk_image_new_from_file(fileName);
+            const GdkPixbuf *pb = gtk_image_get_pixbuf(GTK_IMAGE(calcKeyboard[calcKey].keyImage[TAM_L_LAYOUT]));
+            calcKeyboard[calcKey].width[TAM_L_LAYOUT] = gdk_pixbuf_get_width(pb);
+            calcKeyboard[calcKey].height[TAM_L_LAYOUT] = gdk_pixbuf_get_height(pb);
             continue;
           }
         }
@@ -896,15 +860,15 @@ void setupUI(void) {
 
     g_signal_connect(screen, "draw", G_CALLBACK(drawScreen), NULL);
 
-    for(int bezel=0; bezel<3; bezel++) {
+    for(int bezel=0; bezel<MAX_GUI_LAYOUTS; bezel++) {
       gtk_fixed_put(GTK_FIXED(grid), bezelImage[bezel], -999, -999);
     }
-    for(int key=0; key<43; key++) {
-      for(int bezel=0; bezel<3; bezel++) {
+    for(int key=0; key<MAX_KEYS; key++) {
+      for(int bezel=0; bezel<MAX_GUI_LAYOUTS; bezel++) {
         gtk_fixed_put(GTK_FIXED(grid), calcKeyboard[key].keyImage[bezel], -999, -999);
       }
     }
-    gtk_fixed_put(GTK_FIXED(grid), calcKeyboard[10].keyImage[3], -999, -999);
+    gtk_fixed_put(GTK_FIXED(grid), calcKeyboard[10].keyImage[TAM_L_LAYOUT], -999, -999);
 
     #if (DEBUG_REGISTER_L == 1)
       lblRegisterL1 = gtk_label_new("");
@@ -922,7 +886,7 @@ void setupUI(void) {
     #endif // (SHOW_MEMORY_STATUS == 1)
 
 
-    for(int bezel=0; bezel<3; bezel++) {
+    for(int bezel=0; bezel<MAX_GUI_LAYOUTS; bezel++) {
       gtk_widget_set_tooltip_text(GTK_WIDGET(calcKeyboard[ 6].keyImage[bezel]), "i");
       gtk_widget_set_tooltip_text(GTK_WIDGET(calcKeyboard[ 7].keyImage[bezel]), "L");
       gtk_widget_set_tooltip_text(GTK_WIDGET(calcKeyboard[ 8].keyImage[bezel]), "t");
@@ -967,7 +931,7 @@ void setupUI(void) {
       gtk_widget_set_tooltip_text(GTK_WIDGET(calcKeyboard[41].keyImage[bezel]), "Ctrl");
       gtk_widget_set_tooltip_text(GTK_WIDGET(calcKeyboard[42].keyImage[bezel]), "Esc");
     }
-    gtk_widget_set_tooltip_text(GTK_WIDGET(calcKeyboard[10].keyImage[3]), "e");
+    gtk_widget_set_tooltip_text(GTK_WIDGET(calcKeyboard[10].keyImage[TAM_L_LAYOUT]), "e");
 
     // The debug window
     #if (DEBUG_PANEL == 1)

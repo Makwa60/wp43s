@@ -20,6 +20,7 @@
 
 #include "browsers/flagBrowser.h"
 
+#include "calcMode.h"
 #include "charString.h"
 #include "config.h"
 #include "display.h"
@@ -76,8 +77,7 @@
         cursorEnabled = false;
       }
 
-      previousCalcMode = calcMode;
-      calcMode = cmFlagBrowser;
+      calcModeEnter(cmFlagBrowser);
       clearSystemFlag(FLAG_ALPHA);
       currentFlgScr = 0;
       return;
