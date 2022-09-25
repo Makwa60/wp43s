@@ -23,8 +23,8 @@
   #include "hal/gui.h"
 
   // One extra layout is sometimes needed for one key in TAM
-  static const int MAX_GTK_LAYOUTS = MAX_GUI_LAYOUTS + 1;
-  static const int TAM_L_LAYOUT    = MAX_GUI_LAYOUTS;
+  #define MAX_GTK_LAYOUTS (MAX_GUI_LAYOUTS + 1)
+  #define TAM_L_LAYOUT    MAX_GUI_LAYOUTS
 
   /**
    * \struct calcKeyboard_t

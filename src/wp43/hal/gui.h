@@ -34,7 +34,7 @@
     glFlagFontBrowser = 4,
     glTimerApp        = 5
   } guiLayout_t;
-  static const uint8_t MAX_GUI_LAYOUTS = 6;
+  #define MAX_GUI_LAYOUTS 6
 
   #if defined(DMCP_BUILD)
     // Inline this empty function for DMCP to save memory
