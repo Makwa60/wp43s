@@ -81,14 +81,14 @@ void fnNop(uint16_t unusedButMandatoryParameter) {
 #if !defined(TESTSUITE_BUILD) && !defined(GENERATE_CATALOGS)
   void reallyRunFunction(int16_t func, uint16_t param) {
     if((indexOfItems[func].status & US_STATUS) == US_ENABLED || (indexOfItems[func].status & US_STATUS) == US_ENABL_XEQ) {
-      if((programRunStop != PGM_RUNNING || getSystemFlag(FLAG_IGN1ER)) && calcMode != CM_GRAPH && calcMode != CM_NO_UNDO) {
+      if((programRunStop != PGM_RUNNING || getSystemFlag(FLAG_IGN1ER)) && calcMode != cmGraph && calcMode != cmNoUndo) {
         #if defined(DEBUGUNDO)
           printf(">>> saveForUndo from reallyRunFunction: %s, calcMode = %i ",indexOfItems[func].itemCatalogName, calcMode);
         #endif // DEBUGUNDO
         saveForUndo();
       }
       if(lastErrorCode == ERROR_RAM_FULL) {
-        if((indexOfItems[func].status & US_STATUS) == US_ENABLED || calcMode == CM_CONFIRMATION) {
+        if((indexOfItems[func].status & US_STATUS) == US_ENABLED || calcMode == cmConfirmation) {
           displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
           #if (EXTRA_INFO_ON_CALC_ERROR == 1)
             moreInfoOnError("In function reallyRunFunction:", "there is not enough memory to save for undo!", NULL, NULL);
@@ -104,7 +104,7 @@ void fnNop(uint16_t unusedButMandatoryParameter) {
         }
       }
     }
-    else if(((indexOfItems[func].status & US_STATUS) == US_CANCEL) && calcMode != CM_NO_UNDO && calcMode !=CM_GRAPH){
+    else if(((indexOfItems[func].status & US_STATUS) == US_CANCEL) && calcMode != cmNoUndo && calcMode !=cmGraph){
       thereIsSomethingToUndo = false;
     }
 
@@ -210,7 +210,7 @@ void fnNop(uint16_t unusedButMandatoryParameter) {
         return;
       }
 
-      if(calcMode == CM_PEM && !tam.mode) {
+      if(calcMode == cmPem && !tam.mode) {
         addStepInProgram(func);
         return;
       }

@@ -237,13 +237,13 @@ void displayCalcErrorMessage(uint8_t errorCode, calcRegister_t errMessageRegiste
    * \return void
    ***********************************************/
   void displayBugScreen(const char *msg) {
-    if(calcMode != CM_BUG_ON_SCREEN) {
+    if(calcMode != cmBugOnScreen) {
       int16_t y, pos;
       char line[100], word[50], message[1000];
       bool_t firstWordOfLine;
 
       previousCalcMode = calcMode;
-      calcMode = CM_BUG_ON_SCREEN;
+      calcMode = cmBugOnScreen;
       clearSystemFlag(FLAG_ALPHA);
       hideCursor();
       cursorEnabled = false;

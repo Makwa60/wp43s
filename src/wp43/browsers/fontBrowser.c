@@ -94,9 +94,9 @@
 
     hourGlassIconEnabled = false;
 
-    if(calcMode != CM_FONT_BROWSER) {
+    if(calcMode != cmFontBrowser) {
       previousCalcMode = calcMode;
-      calcMode = CM_FONT_BROWSER;
+      calcMode = cmFontBrowser;
       clearSystemFlag(FLAG_ALPHA);
       return;
     }

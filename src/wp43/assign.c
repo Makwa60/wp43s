@@ -40,12 +40,12 @@ TO_QSPI const calcKey_t kbd_std[37] = {
  {21,   ITM_1ONX,        ITM_TGLFRT,     -MNU_UNITCONV,    ITM_NULL,        ITM_A,            -MNU_ALPHAINTL,         ITM_ALPHA,     ITM_REG_A    },
  {22,  -MNU_EXP,         ITM_toINT,      -MNU_BITS,        ITM_NUMBER_SIGN, ITM_B,             ITM_NUMBER_SIGN,       ITM_BETA,      ITM_REG_B    },
  {23,  -MNU_TRI,         ITM_DMS,        -MNU_ANGLECONV,   ITM_NULL,        ITM_C,             ITM_LEFT_PARENTHESIS,  ITM_GAMMA,     ITM_REG_C    },
- {24,   ITM_LN,          ITM_dotD,        ITM_LOG10,       ITM_NULL,        ITM_D,             ITM_RIGHT_PARENTHESIS, ITM_DELTA,     ITM_REG_D    }, // if f or g are changed: adapt the function btnClicked section if(calcMode == CM_NIM) in keyboard.c. Case D for decimal base
+ {24,   ITM_LN,          ITM_dotD,        ITM_LOG10,       ITM_NULL,        ITM_D,             ITM_RIGHT_PARENTHESIS, ITM_DELTA,     ITM_REG_D    }, // if f or g are changed: adapt the function btnClicked section if(calcMode == cmNim) in keyboard.c. Case D for decimal base
  {25,   ITM_EXP,         ITM_toHMS,       ITM_10x,         ITM_ALOG_SYMBOL, ITM_E,             ITM_ALOG_SYMBOL,       ITM_EPSILON,   ITM_E        },
  {26,   ITM_SQUAREROOTX, ITM_AIM,        -MNU_ALPHAFN,     ITM_ROOT_SIGN,   ITM_F,             ITM_ROOT_SIGN,         ITM_PHI,       ITM_alpha    },
 
  {31,   ITM_STO,         ITM_ASSIGN,      ITM_SAVE,        ITM_NULL,        ITM_G,             ITM_ASSIGN,            ITM_GAMMA,     ITM_NULL     },
- {32,   ITM_RCL,         ITM_RBR,         ITM_VIEW,        ITM_NULL,        ITM_H,             ITM_RBR,               ITM_CHI,       ITM_HEX      }, // if f or g are changed: adapt the function btnClicked section if(calcMode == CM_NIM) in keyboard.c. Case H for hexadecimal base
+ {32,   ITM_RCL,         ITM_RBR,         ITM_VIEW,        ITM_NULL,        ITM_H,             ITM_RBR,               ITM_CHI,       ITM_HEX      }, // if f or g are changed: adapt the function btnClicked section if(calcMode == cmNim) in keyboard.c. Case H for hexadecimal base
  {33,   ITM_Rdown,       ITM_Rup,        -MNU_CPX,         ITM_NULL,        ITM_I,             ITM_DOWN_ARROW,        ITM_IOTA,      ITM_REG_I    },
  {34,   ITM_CC,          ITM_MAGNITUDE,   ITM_ANGLE,       ITM_NULL,        ITM_J,             ITM_VERTICAL_BAR,      ITM_ETA,       ITM_REG_J    },
  {35,   ITM_SHIFTf,      ITM_NULL,        ITM_SNAP,        ITM_SHIFTf,      ITM_SHIFTf,        ITM_NULL,              ITM_SNAP,      ITM_SHIFTf   },
@@ -91,7 +91,7 @@ void fnAssign(uint16_t mode) {
     aimBuffer[0] = 0;
   }
   else {
-    calcModeEnter(CM_ASSIGN);
+    calcModeEnter(cmAssign);
     itemToBeAssigned = 0;
     updateAssignTamBuffer();
   }
@@ -304,7 +304,7 @@ void assignToKey(const char *data) {
   int keyCode = (*data - '0')*10 + *(data+1) - '0';
   calcKey_t *key = kbd_usr + keyCode;
   userMenuItem_t tmpMenuItem;
-  int keyStateCode = ((previousCalcMode) == CM_AIM ? 3 : 0) + (shiftG ? 2 : shiftF ? 1 : 0);
+  int keyStateCode = ((previousCalcMode) == cmAim ? 3 : 0) + (shiftG ? 2 : shiftF ? 1 : 0);
   const calcKey_t *stdKey = kbd_std + keyCode;
 
   _assignItem(&tmpMenuItem);
@@ -607,7 +607,7 @@ void assignEnterAlpha(void) {
   tam.alpha = true;
   setSystemFlag(FLAG_ALPHA);
   aimBuffer[0] = 0;
-  calcModeEnter(CM_AIM);
+  calcModeEnter(cmAim);
   numberOfTamMenusToPop = 0;
 #endif // !TESTSUITE_BUILD
 }
@@ -622,7 +622,7 @@ void assignLeaveAlpha(void) {
   if(softmenuStack[0].softmenuId == 1) { // MyAlpha
     softmenuStack[0].softmenuId = 0; // MyMenu
   }
-  calcModeNormalGui();
+  guiSetLayout(glNormal);
 #endif // !TESTSUITE_BUILD
 }
 
@@ -697,7 +697,7 @@ void assignGetName1(void) {
 }
 
 static bool_t _assignToKey(int16_t keyFunc) {
-  int keyStateCode = (previousCalcMode) == CM_AIM ? 3 : 0;
+  int keyStateCode = (previousCalcMode) == cmAim ? 3 : 0;
 
   for(int i = 0; i < 3; ++i) {
     for(int j = 0; j < 37; ++j) {

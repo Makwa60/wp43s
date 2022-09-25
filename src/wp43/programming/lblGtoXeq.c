@@ -51,7 +51,7 @@
 
 
 void fnGoto(uint16_t label) {
-  if(tam.mode || calcMode != CM_PEM) {
+  if(tam.mode || calcMode != cmPem) {
     if(dynamicMenuItem >= 0) {
       fnGotoDot(label);
       return;

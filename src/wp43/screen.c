@@ -498,7 +498,7 @@ void execTimerApp(uint16_t timerType) {
 
     cachedDisplayStack = 4;
 
-    if(getRegisterDataType(REGISTER_X) == dtReal34Matrix || (calcMode == CM_MIM && getRegisterDataType(matrixIndex) == dtReal34Matrix)) {
+    if(getRegisterDataType(REGISTER_X) == dtReal34Matrix || (calcMode == cmMim && getRegisterDataType(matrixIndex) == dtReal34Matrix)) {
       real34Matrix_t matrix;
 
       if(temporaryInformation == TI_VIEW_REGISTER) {
@@ -507,7 +507,7 @@ void execTimerApp(uint16_t timerType) {
       if(temporaryInformation == TI_NO_INFO && currentInputVariable != INVALID_VARIABLE) {
         inputRegName(prefix, &prefixWidth);
       }
-      if(calcMode == CM_MIM) {
+      if(calcMode == cmMim) {
         matrix = openMatrixMIMPointer.realMatrix;
       }
       else {
@@ -533,14 +533,14 @@ void execTimerApp(uint16_t timerType) {
       if(rows >= 5 && cols > 1) {
         cachedDisplayStack = 2;
       }
-      if(calcMode == CM_MIM) {
+      if(calcMode == cmMim) {
         cachedDisplayStack -= 2;
       }
       if(cachedDisplayStack > 4) { // in case of overflow
         cachedDisplayStack = 0;
       }
     }
-    else if(getRegisterDataType(REGISTER_X) == dtComplex34Matrix || (calcMode == CM_MIM && getRegisterDataType(matrixIndex) == dtComplex34Matrix)) {
+    else if(getRegisterDataType(REGISTER_X) == dtComplex34Matrix || (calcMode == cmMim && getRegisterDataType(matrixIndex) == dtComplex34Matrix)) {
       complex34Matrix_t matrix;
       if(temporaryInformation == TI_VIEW_REGISTER) {
         viewRegName(prefix, &prefixWidth);
@@ -548,7 +548,7 @@ void execTimerApp(uint16_t timerType) {
       if(temporaryInformation == TI_NO_INFO && currentInputVariable != INVALID_VARIABLE) {
         inputRegName(prefix, &prefixWidth);
       }
-      if(calcMode == CM_MIM) {
+      if(calcMode == cmMim) {
         matrix = openMatrixMIMPointer.complexMatrix;
       }
       else
@@ -573,7 +573,7 @@ void execTimerApp(uint16_t timerType) {
       if(rows >= 5 && cols > 1) {
         cachedDisplayStack = 2;
       }
-      if(calcMode == CM_MIM) {
+      if(calcMode == cmMim) {
         cachedDisplayStack -= 2;
       }
       if(cachedDisplayStack > 4) { // in case of overflow
@@ -581,7 +581,7 @@ void execTimerApp(uint16_t timerType) {
       }
     }
 
-    if(calcMode == CM_MIM && matrixIndex == REGISTER_X) {
+    if(calcMode == cmMim && matrixIndex == REGISTER_X) {
       cachedDisplayStack += 1;
     }
   }
@@ -600,7 +600,7 @@ void execTimerApp(uint16_t timerType) {
       }
     #endif // (DEBUG_PANEL == 1)
 
-    if((calcMode != CM_BUG_ON_SCREEN) && (calcMode != CM_PLOT_STAT) && (calcMode != CM_GRAPH)) {
+    if((calcMode != cmBugOnScreen) && (calcMode != cmPlotStat) && (calcMode != cmGraph)) {
       clearRegisterLine(regist, true, (regist != REGISTER_Y));
 
       #if defined(PC_BUILD)
@@ -691,10 +691,10 @@ void execTimerApp(uint16_t timerType) {
         #endif // (SHOW_MEMORY_STATUS == 1)
       #endif // PC_BUILD
 
-      if(getRegisterDataType(REGISTER_X) == dtReal34Matrix || (calcMode == CM_MIM && getRegisterDataType(matrixIndex) == dtReal34Matrix)) {
+      if(getRegisterDataType(REGISTER_X) == dtReal34Matrix || (calcMode == cmMim && getRegisterDataType(matrixIndex) == dtReal34Matrix)) {
         displayStack = cachedDisplayStack;
       }
-      else if(getRegisterDataType(REGISTER_X) == dtComplex34Matrix || (calcMode == CM_MIM && getRegisterDataType(matrixIndex) == dtComplex34Matrix)) {
+      else if(getRegisterDataType(REGISTER_X) == dtComplex34Matrix || (calcMode == cmMim && getRegisterDataType(matrixIndex) == dtComplex34Matrix)) {
         displayStack = cachedDisplayStack;
       }
 
@@ -823,7 +823,7 @@ void execTimerApp(uint16_t timerType) {
           }
         }
 
-        else if(regist == NIM_REGISTER_LINE && calcMode == CM_NIM) {
+        else if(regist == NIM_REGISTER_LINE && calcMode == cmNim) {
           if(lastIntegerBase != 0) {
             lastBase[0] = '#';
             if(lastIntegerBase > 9) {
@@ -846,7 +846,7 @@ void execTimerApp(uint16_t timerType) {
           displayNim(nimBufferDisplay, lastBase, wLastBaseNumeric, wLastBaseStandard);
         }
 
-        else if(regist == AIM_REGISTER_LINE && calcMode == CM_AIM && !tam.mode) {
+        else if(regist == AIM_REGISTER_LINE && calcMode == cmAim && !tam.mode) {
           if(stringWidth(aimBuffer, &standardFont, true, true) < SCREEN_WIDTH - 8) { // 8 is the standard font cursor width
             xCursor = showString(aimBuffer, &standardFont, 1, Y_POSITION_OF_NIM_LINE + 6, vmNormal, true, true);
             yCursor = Y_POSITION_OF_NIM_LINE + 6;
@@ -1619,7 +1619,7 @@ void execTimerApp(uint16_t timerType) {
         }
 
         else if(getRegisterDataType(regist) == dtReal34Matrix) {
-          if((origRegist == REGISTER_X && calcMode != CM_MIM) || (temporaryInformation == TI_VIEW_REGISTER && origRegist == REGISTER_T)) {
+          if((origRegist == REGISTER_X && calcMode != cmMim) || (temporaryInformation == TI_VIEW_REGISTER && origRegist == REGISTER_T)) {
             real34Matrix_t matrix;
             prefixWidth = 0; prefix[0] = 0;
             linkToRealMatrixRegister(regist, &matrix);
@@ -1650,7 +1650,7 @@ void execTimerApp(uint16_t timerType) {
         }
 
         else if(getRegisterDataType(regist) == dtComplex34Matrix) {
-          if((origRegist == REGISTER_X && calcMode != CM_MIM) || (temporaryInformation == TI_VIEW_REGISTER && origRegist == REGISTER_T)) {
+          if((origRegist == REGISTER_X && calcMode != cmMim) || (temporaryInformation == TI_VIEW_REGISTER && origRegist == REGISTER_T)) {
             complex34Matrix_t matrix;
             linkToComplexMatrixRegister(regist, &matrix);
             if(temporaryInformation == TI_VIEW_REGISTER && origRegist == REGISTER_T) {
@@ -1694,7 +1694,7 @@ void execTimerApp(uint16_t timerType) {
       }
     }
 
-    if(getRegisterDataType(REGISTER_X) == dtReal34Matrix || getRegisterDataType(REGISTER_X) == dtComplex34Matrix || calcMode == CM_MIM) {
+    if(getRegisterDataType(REGISTER_X) == dtReal34Matrix || getRegisterDataType(REGISTER_X) == dtComplex34Matrix || calcMode == cmMim) {
       displayStack = origDisplayStack;
     }
   }
@@ -1763,11 +1763,11 @@ void execTimerApp(uint16_t timerType) {
   }
 
   void displayShiftAndTamBuffer(void) {
-    if(calcMode == CM_ASSIGN) {
+    if(calcMode == cmAssign) {
       updateAssignTamBuffer();
     }
 
-    if(calcMode != CM_ASSIGN || itemToBeAssigned == 0 || tam.alpha) {
+    if(calcMode != cmAssign || itemToBeAssigned == 0 || tam.alpha) {
       if(shiftF) {
         showGlyph(STD_SUP_f, &numericFont, 0, Y_POSITION_OF_REGISTER_T_LINE, vmNormal, true, true); // f is pixel 4+8+3 wide
       }
@@ -1776,8 +1776,8 @@ void execTimerApp(uint16_t timerType) {
       }
     }
 
-    if(tam.mode || calcMode == CM_ASSIGN) {
-      if(calcMode == CM_PEM) { // Variable line to display TAM informations
+    if(tam.mode || calcMode == cmAssign) {
+      if(calcMode == cmPem) { // Variable line to display TAM informations
         lcd_fill_rect(45+20, tamOverPemYPos, 168, 20, LCD_SET_VALUE);
         showString(tamBuffer, &standardFont, 75+20, tamOverPemYPos, vmNormal,  false, false);
       }
@@ -1792,28 +1792,28 @@ void execTimerApp(uint16_t timerType) {
 
   void refreshScreen(void) {
     switch(calcMode) {
-      case CM_FLAG_BROWSER: {
+      case cmFlagBrowser: {
         clearScreen();
         flagBrowser(NOPARAM);
         refreshStatusBar();
         break;
       }
 
-      case CM_FONT_BROWSER: {
+      case cmFontBrowser: {
         clearScreen();
         fontBrowser(NOPARAM);
         refreshStatusBar();
         break;
       }
 
-      case CM_REGISTER_BROWSER: {
+      case cmRegisterBrowser: {
         clearScreen();
         registerBrowser(NOPARAM);
         refreshStatusBar();
         break;
       }
 
-      case CM_PEM: {
+      case cmPem: {
         clearScreen();
         showSoftmenuCurrentPart();
         fnPem(NOPARAM);
@@ -1822,22 +1822,22 @@ void execTimerApp(uint16_t timerType) {
         break;
       }
 
-      case CM_NORMAL:
-      case CM_AIM:
-      case CM_NIM:
-      case CM_MIM:
-      case CM_EIM:
-      case CM_ASSIGN:
-      case CM_ERROR_MESSAGE:
-      case CM_CONFIRMATION:
-      case CM_TIMER: {
-        if(calcMode == CM_CONFIRMATION) {
+      case cmNormal:
+      case cmAim:
+      case cmNim:
+      case cmMim:
+      case cmEim:
+      case cmAssign:
+      case cmErrorMessage:
+      case cmConfirmation:
+      case cmTimer: {
+        if(calcMode == cmConfirmation) {
           screenUpdatingMode = SCRUPD_AUTO;
         }
-        else if(calcMode == CM_MIM) {
+        else if(calcMode == cmMim) {
           screenUpdatingMode = (aimBuffer[0] == 0) ? SCRUPD_AUTO : (SCRUPD_MANUAL_STACK | SCRUPD_MANUAL_SHIFT_STATUS);
         }
-        else if(calcMode == CM_TIMER) {
+        else if(calcMode == cmTimer) {
           screenUpdatingMode = SCRUPD_MANUAL_STACK | SCRUPD_MANUAL_SHIFT_STATUS;
         }
 
@@ -1858,7 +1858,7 @@ void execTimerApp(uint16_t timerType) {
 
         // The ordering of the 4 lines below is important for SHOW (temporaryInformation == TI_SHOW_REGISTER)
         if(!(screenUpdatingMode & (SCRUPD_MANUAL_STACK | SCRUPD_SKIP_STACK_ONE_TIME))) {
-          if(calcMode != CM_TIMER && temporaryInformation != TI_VIEW_REGISTER) {
+          if(calcMode != cmTimer && temporaryInformation != TI_VIEW_REGISTER) {
             refreshRegisterLine(REGISTER_T);
           }
           refreshRegisterLine(REGISTER_Z);
@@ -1869,15 +1869,15 @@ void execTimerApp(uint16_t timerType) {
             refreshRegisterLine(REGISTER_T);
           }
         }
-        else if(calcMode == CM_NIM) {
+        else if(calcMode == cmNim) {
           refreshRegisterLine(NIM_REGISTER_LINE);
         }
 
 
-        if(calcMode == CM_MIM) {
+        if(calcMode == cmMim) {
           showMatrixEditor();
         }
-        if(calcMode == CM_TIMER) {
+        if(calcMode == cmTimer) {
           fnShowTimerApp();
         }
 
@@ -1904,7 +1904,7 @@ void execTimerApp(uint16_t timerType) {
             }
           }
         }
-        if(calcMode == CM_EIM) {
+        if(calcMode == cmEim) {
           bool_t mvarMenu = false;
           for(int i = 0; i < SOFTMENU_STACK_SIZE; i++) {
             if(softmenu[softmenuStack[i].softmenuId].menuItem == -MNU_EQ_EDIT) {
@@ -1942,7 +1942,7 @@ void execTimerApp(uint16_t timerType) {
         break;
       }
 
-      case CM_GRAPH: {
+      case cmGraph: {
         clearScreen();
         displayShiftAndTamBuffer();
         showSoftmenuCurrentPart();
@@ -1955,7 +1955,7 @@ void execTimerApp(uint16_t timerType) {
         break;
       }
 
-      case CM_PLOT_STAT: {
+      case cmPlotStat: {
         clearScreen();
         displayShiftAndTamBuffer();
         showSoftmenuCurrentPart();

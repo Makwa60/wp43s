@@ -244,12 +244,12 @@ void fnGetStackSize(uint16_t unusedButMandatoryParameter) {
 
 
 void saveForUndo(void) {
-  if(((calcMode == CM_NIM || calcMode == CM_AIM || calcMode == CM_MIM) && thereIsSomethingToUndo) || calcMode == CM_NO_UNDO) {
+  if(((calcMode == cmNim || calcMode == cmAim || calcMode == cmMim) && thereIsSomethingToUndo) || calcMode == cmNoUndo) {
     #if defined(DEBUGUNDO)
       if(thereIsSomethingToUndo) {
         printf(">>> saveForUndo; calcMode = %i, nothing stored as there is something to undo\n", calcMode);
       }
-      if(calcMode == CM_NIM || calcMode == CM_AIM || calcMode == CM_MIM || calcMode == CM_NO_UNDO) {
+      if(calcMode == cmNim || calcMode == cmAim || calcMode == cmMim || calcMode == cmNoUndo) {
         printf(">>> saveForUndo; calcMode = %i, nothing stored, wrong mode\n", calcMode);
       }
     #endif // DEBUGUNDO

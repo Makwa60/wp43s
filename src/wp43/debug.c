@@ -742,46 +742,46 @@ void debugNIM(void) {
    ***********************************************/
   char * getCalcModeName(uint16_t cm) {
     switch(cm) {
-      case CM_NORMAL: {
+      case cmNormal: {
         return "normal ";
       }
-      case CM_AIM: {
+      case cmAim: {
         return "aim    ";
       }
-      case CM_EIM: {
+      case cmEim: {
         return "eim    ";
       }
-      case CM_PEM: {
+      case cmPem: {
         return "pem    ";
       }
-      case CM_NIM: {
+      case cmNim: {
         return "nim    ";
       }
-      case CM_ASSIGN: {
+      case cmAssign: {
         return "assign ";
       }
-      case CM_REGISTER_BROWSER: {
+      case cmRegisterBrowser: {
         return "reg.bro";
       }
-      case CM_FLAG_BROWSER: {
+      case cmFlagBrowser: {
         return "flg.bro";
       }
-      case CM_FONT_BROWSER: {
+      case cmFontBrowser: {
         return "fnt.bro";
       }
-      case CM_PLOT_STAT: {
+      case cmPlotStat: {
         return "plot.st";
       }
-      case CM_GRAPH: {
+      case cmGraph: {
         return "plot.gr";
       }
-      case CM_ERROR_MESSAGE: {
+      case cmErrorMessage: {
         return "err.msg";
       }
-      case CM_BUG_ON_SCREEN: {
+      case cmBugOnScreen: {
         return "bug.scr";
       }
-      case CM_TIMER: {
+      case cmTimer: {
         return "timer  ";
       }
       default: {

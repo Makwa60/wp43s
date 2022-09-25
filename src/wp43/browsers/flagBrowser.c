@@ -70,14 +70,14 @@
 
     hourGlassIconEnabled = false;
 
-    if(calcMode != CM_FLAG_BROWSER) {
-      if(calcMode == CM_AIM) {
+    if(calcMode != cmFlagBrowser) {
+      if(calcMode == cmAim) {
         hideCursor();
         cursorEnabled = false;
       }
 
       previousCalcMode = calcMode;
-      calcMode = CM_FLAG_BROWSER;
+      calcMode = cmFlagBrowser;
       clearSystemFlag(FLAG_ALPHA);
       currentFlgScr = 0;
       return;

@@ -22,34 +22,28 @@
 
   #include "defines.h"
 
+  /**
+   * Graphical keyboard layout.
+   * Enumeration of the possible layouts of the keys.
+   */
+  typedef enum {
+    glNormal = 0,
+    glAim    = 1,
+    glTam    = 2
+  } guiLayout_t;
+
   #if defined(DMCP_BUILD)
-    // Inline these empty functions for DMCP to save memory
-    static inline void calcModeNormalGui (void) {}
-    static inline void calcModeAimGui    (void) {}
-    static inline void calcModeTamGui    (void) {}
+    // Inline this empty function for DMCP to save memory
+    static inline void guiSetLayout(guiLayout_t layout) {}
   #else
     /**
-     * Show the keys associated with the normal layout.
+     * Show the keys associated with the specified layout.
      * The graphical user interface should update the labels
      * on the keys to show the outcome of pressing the key in
-     * normal mode.
+     * the given layout.
+     *
+     * \param[in] layout the layout for the key labels
      */
-    void calcModeNormalGui (void);
-
-    /**
-     * Show the keys associated with Alpha Input Mode.
-     * The graphical user interface should update the labels
-     * on the keys to show the outcome of pressing the key in
-     * alpha mode.
-     */
-    void calcModeAimGui    (void);
-
-    /**
-     * Show the keys associated with Transient Alpha Mode.
-     * The graphical user interface should update the labels
-     * on the keys to show the outcome of pressing the key in
-     * the transient alpha mode.
-     */
-    void calcModeTamGui    (void);
+    void guiSetLayout(guiLayout_t layout);
   #endif
 #endif // !GUI_H

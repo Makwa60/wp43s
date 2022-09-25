@@ -451,7 +451,7 @@ static void _bstInPem(void) {
 
 void fnBst(uint16_t unusedButMandatoryParameter) {
   screenUpdatingMode = SCRUPD_AUTO;
-  if(calcMode == CM_PEM) {
+  if(calcMode == cmPem) {
     if(aimBuffer[0] != 0) {
       if(getSystemFlag(FLAG_ALPHA)) {
         pemCloseAlphaInput();
@@ -469,7 +469,7 @@ void fnBst(uint16_t unusedButMandatoryParameter) {
   }
   currentInputVariable = INVALID_VARIABLE;
   _bstInPem();
-  if(calcMode != CM_PEM) {
+  if(calcMode != cmPem) {
     defineCurrentStep();
     _showStep();
   }
@@ -512,7 +512,7 @@ static void _sstInPem(void) {
 
 void fnSst(uint16_t unusedButMandatoryParameter) {
   screenUpdatingMode = SCRUPD_AUTO;
-  if(calcMode == CM_PEM) {
+  if(calcMode == cmPem) {
     if(aimBuffer[0] != 0) {
       if(getSystemFlag(FLAG_ALPHA)) {
         pemCloseAlphaInput();

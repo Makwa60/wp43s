@@ -401,7 +401,7 @@ void program_main(void) {
     if(key == 27 || key == 32) {
       //inDownUpPress = 1;
       //nextAutoRepeat = now + KEY_AUTOREPEAT_FIRST_PERIOD;
-      if(timerGetStatus(TO_AUTO_REPEAT) != TMR_RUNNING && (!shiftF || calcMode == CM_PEM) && !shiftG && (currentSoftmenuScrolls() || (calcMode != CM_NORMAL && calcMode != CM_NIM && calcMode != CM_AIM))) {
+      if(timerGetStatus(TO_AUTO_REPEAT) != TMR_RUNNING && (!shiftF || calcMode == cmPem) && !shiftG && (currentSoftmenuScrolls() || (calcMode != cmNormal && calcMode != cmNim && calcMode != cmAim))) {
         timerStart(TO_AUTO_REPEAT, key, KEY_AUTOREPEAT_FIRST_PERIOD);
       }
     }
@@ -474,7 +474,7 @@ void program_main(void) {
       else { // Last key pressed was not one of the 6 function keys
         //beep(440, 50);
         btnReleased(charKey);
-        if(calcMode == CM_PEM && shiftF && ((charKey[0] == '2' && charKey[1] == '6') || (charKey[0] == '3' && charKey[1] == '1'))) {
+        if(calcMode == cmPem && shiftF && ((charKey[0] == '2' && charKey[1] == '6') || (charKey[0] == '3' && charKey[1] == '1'))) {
           shiftF = false;
           refreshScreen();
         }
@@ -517,7 +517,7 @@ void program_main(void) {
       if(nextScreenRefresh < now) {
         nextScreenRefresh = now + ((showFunctionNameCounter > 0) ? FAST_SCREEN_REFRESH_PERIOD : SCREEN_REFRESH_PERIOD);         // we were out longer than expected; just skip ahead.
       }
-      if(calcMode != CM_TIMER) {
+      if(calcMode != cmTimer) {
         refreshLcd();
         lcd_refresh();
       }

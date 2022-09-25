@@ -65,7 +65,7 @@
       gtk_fixed_move(GTK_FIXED(grid), calcKeyboard[key].keyImage[0], -999,                -999);
       gtk_fixed_move(GTK_FIXED(grid), calcKeyboard[key].keyImage[1], -999,                -999);
       if(key == 10) {
-        if(tam.mode == TM_LABEL || (tam.mode == TM_SOLVE && (tam.function != ITM_SOLVE || calcMode != CM_PEM)) || (tam.mode == TM_KEY && tam.keyInputFinished)) {
+        if(tam.mode == TM_LABEL || (tam.mode == TM_SOLVE && (tam.function != ITM_SOLVE || calcMode != cmPem)) || (tam.mode == TM_KEY && tam.keyInputFinished)) {
           gtk_fixed_move(GTK_FIXED(grid), calcKeyboard[key].keyImage[2], -999,                -999);
           gtk_fixed_move(GTK_FIXED(grid), calcKeyboard[key].keyImage[3], calcKeyboard[key].x, calcKeyboard[key].y);
         }
@@ -79,8 +79,20 @@
       }
     }
   }
+
+  void guiSetLayout(guiLayout_t layout) {
+    switch(layout) {
+      case glNormal:
+        calcModeNormalGui();
+        break;
+      case glAim:
+        calcModeAimGui();
+        break;
+      case glTam:
+        calcModeTamGui();
+        break;
+    }
+  }
 #else
-  void calcModeNormalGui (void) {}
-  void calcModeAimGui    (void) {}
-  void calcModeTamGui    (void) {}
+  void guiSetLayout(guiLayout_t layout) {}
 #endif
