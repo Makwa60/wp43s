@@ -36,7 +36,7 @@
 
 #if !defined(TESTSUITE_BUILD)
   #if !defined(DMCP_BUILD)
-    static guiLayout_t previousLayout = glNormal;
+    static guiLayout_t previousLayout = MAX_GUI_LAYOUTS;
 
     void calcModeUpdateGui() {
       guiLayout_t newLayout = previousLayout;
@@ -190,13 +190,9 @@
       case cmFlagBrowser:
       case cmFontBrowser:
       case cmRegisterBrowser:
+      case cmTimer:
         previousCalcMode = calcMode;
         calcMode = newMode;
-        break;
-      case cmTimer:
-        // This is potentially a bug, because we don't set previousCalcMode here,
-        // but we use it in calcModeLeave for cmTimer
-        calcMode = cmTimer;
         break;
       default:
         break;
