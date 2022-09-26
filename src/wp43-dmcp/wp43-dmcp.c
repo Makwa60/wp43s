@@ -517,7 +517,7 @@ void program_main(void) {
       if(nextScreenRefresh < now) {
         nextScreenRefresh = now + ((showFunctionNameCounter > 0) ? FAST_SCREEN_REFRESH_PERIOD : SCREEN_REFRESH_PERIOD);         // we were out longer than expected; just skip ahead.
       }
-      if(calcMode != cmTimer) {
+      if(calcMode != cmTimerApp) {
         refreshLcd();
         lcd_refresh();
       }

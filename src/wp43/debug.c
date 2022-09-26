@@ -781,7 +781,7 @@ void debugNIM(void) {
       case cmBugOnScreen: {
         return "bug.scr";
       }
-      case cmTimer: {
+      case cmTimerApp: {
         return "timer  ";
       }
       default: {

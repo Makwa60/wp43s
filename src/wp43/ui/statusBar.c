@@ -37,7 +37,7 @@
         case cmPlotStat:
         case cmConfirmation:
         case cmMim:
-        case cmTimer:
+        case cmTimerApp:
         case cmGraph: {
           screenUpdatingMode &= ~SCRUPD_MANUAL_STATUSBAR;
           break;
@@ -266,7 +266,7 @@
         case cmPlotStat:
         case cmConfirmation:
         case cmMim:
-        case cmTimer:
+        case cmTimerApp:
         case cmGraph: {
           screenUpdatingMode &= ~SCRUPD_MANUAL_STATUSBAR;
           break;

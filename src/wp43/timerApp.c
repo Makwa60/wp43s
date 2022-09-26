@@ -86,7 +86,7 @@ void fnTicks(uint16_t unusedButMandatoryParameter) {
 
   //#if defined(PC_BUILD)
   //  static gboolean _updateTimer(gpointer unusedData) {
-  //    if(calcMode != cmTimer) {
+  //    if(calcMode != cmTimerApp) {
   //      return FALSE;
   //    }
   //    fnUpdateTimerApp();
@@ -95,7 +95,7 @@ void fnTicks(uint16_t unusedButMandatoryParameter) {
   //#endif // PC_BUILD
 
   void fnTimerApp(uint16_t unusedButMandatoryParameter) {
-    calcModeEnter(cmTimer);
+    calcModeEnter(cmTimerApp);
     rbr1stDigit = true;
     watchIconEnabled = false;
     if(timerStartTime != TIMER_APP_STOPPED) {
@@ -171,7 +171,7 @@ void fnTicks(uint16_t unusedButMandatoryParameter) {
   }
 
   void fnShowTimerApp(void) {
-    assert(calcMode == cmTimer);
+    assert(calcMode == cmTimerApp);
 
     const uint32_t msec = _getTimerValue();
     clearRegisterLine(REGISTER_T, true, true);
@@ -222,7 +222,7 @@ void fnTicks(uint16_t unusedButMandatoryParameter) {
   }
 
   void fnUpdateTimerApp(void) {
-    if(calcMode == cmTimer) {
+    if(calcMode == cmTimerApp) {
       fnShowTimerApp();
       displayShiftAndTamBuffer();
       #if defined(DMCP_BUILD)
@@ -418,7 +418,7 @@ void fnTicks(uint16_t unusedButMandatoryParameter) {
   }
 
   void fnPollTimerApp(void) { // poll every minute not to rewind the timer
-    if(calcMode != cmTimer && timerStartTime != TIMER_APP_STOPPED) {
+    if(calcMode != cmTimerApp && timerStartTime != TIMER_APP_STOPPED) {
       _antirewinder(timeCurrentMs());
     }
   }

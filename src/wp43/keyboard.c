@@ -793,7 +793,7 @@
     else if(tam.mode) {
       result = key->primaryTam; // No shifted function in TAM
     }
-    else if(calcMode == cmNormal || calcMode == cmNim || calcMode == cmMim || calcMode == cmFontBrowser || calcMode == cmFlagBrowser || calcMode == cmRegisterBrowser || calcMode == cmBugOnScreen || calcMode == cmConfirmation || calcMode == cmPem || calcMode == cmPlotStat || calcMode == cmGraph || calcMode == cmAssign || calcMode == cmTimer) {
+    else if(calcMode == cmNormal || calcMode == cmNim || calcMode == cmMim || calcMode == cmFontBrowser || calcMode == cmFlagBrowser || calcMode == cmRegisterBrowser || calcMode == cmBugOnScreen || calcMode == cmConfirmation || calcMode == cmPem || calcMode == cmPlotStat || calcMode == cmGraph || calcMode == cmAssign || calcMode == cmTimerApp) {
       result = shiftF ? key->fShifted :
                shiftG ? key->gShifted :
                         key->primary;
@@ -1105,7 +1105,7 @@
           }
           keyActionProcessed = true;
         }
-        else if(calcMode == cmRegisterBrowser || calcMode == cmFlagBrowser || calcMode == cmFontBrowser || calcMode == cmTimer) {
+        else if(calcMode == cmRegisterBrowser || calcMode == cmFlagBrowser || calcMode == cmFontBrowser || calcMode == cmTimerApp) {
           keyActionProcessed = true;
         }
         else if(calcMode == cmPem && item == ITM_dotD && aimBuffer[0] == 0) {
@@ -1427,7 +1427,7 @@
               break;
             }
 
-            case cmTimer: {
+            case cmTimerApp: {
               printf("ITEM: %d\n", item);
               switch(item) {
                 case ITM_RS: {
@@ -1670,7 +1670,7 @@ void fnKeyEnter(uint16_t unusedButMandatoryParameter) {
         break;
       }
 
-      case cmTimer: {
+      case cmTimerApp: {
         fnEnterTimerApp();
         break;
       }
@@ -1905,7 +1905,7 @@ void fnKeyExit(uint16_t unusedButMandatoryParameter) {
         break;
       }
 
-      case cmTimer: {
+      case cmTimerApp: {
         screenUpdatingMode = SCRUPD_AUTO;
         if(lastErrorCode != 0) {
           lastErrorCode = 0;
@@ -2034,7 +2034,7 @@ void fnKeyCC(uint16_t unusedButMandatoryParameter) {
       case cmFlagBrowser:
       case cmFontBrowser:
       case cmPlotStat:
-      case cmTimer:
+      case cmTimerApp:
       case cmGraph: {
         break;
       }
@@ -2233,7 +2233,7 @@ void fnKeyBackspace(uint16_t unusedButMandatoryParameter) {
         break;
       }
 
-      case cmTimer: {
+      case cmTimerApp: {
         if(lastErrorCode != 0) {
           lastErrorCode = 0;
         }
@@ -2406,7 +2406,7 @@ void fnKeyUp(uint16_t unusedButMandatoryParameter) {
         break;
       }
 
-      case cmTimer: {
+      case cmTimerApp: {
         fnUpTimerApp();
         break;
       }
@@ -2569,7 +2569,7 @@ void fnKeyDown(uint16_t unusedButMandatoryParameter) {
         break;
       }
 
-      case cmTimer: {
+      case cmTimerApp: {
         fnDownTimerApp();
         break;
       }
@@ -2609,7 +2609,7 @@ void fnKeyDotD(uint16_t unusedButMandatoryParameter) {
       case cmGraph:
       case cmMim:
       case cmEim:
-      case cmTimer: {
+      case cmTimerApp: {
         break;
       }
 
@@ -2648,7 +2648,7 @@ void fnKeyAngle(uint16_t unusedButMandatoryParameter) {
       case cmGraph:
       case cmMim:
       case cmEim:
-      case cmTimer: {
+      case cmTimerApp: {
         break;
       }
 

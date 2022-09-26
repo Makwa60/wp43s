@@ -1830,14 +1830,14 @@ void execTimerApp(uint16_t timerType) {
       case cmAssign:
       case cmErrorMessage:
       case cmConfirmation:
-      case cmTimer: {
+      case cmTimerApp: {
         if(calcMode == cmConfirmation) {
           screenUpdatingMode = SCRUPD_AUTO;
         }
         else if(calcMode == cmMim) {
           screenUpdatingMode = (aimBuffer[0] == 0) ? SCRUPD_AUTO : (SCRUPD_MANUAL_STACK | SCRUPD_MANUAL_SHIFT_STATUS);
         }
-        else if(calcMode == cmTimer) {
+        else if(calcMode == cmTimerApp) {
           screenUpdatingMode = SCRUPD_MANUAL_STACK | SCRUPD_MANUAL_SHIFT_STATUS;
         }
 
@@ -1858,7 +1858,7 @@ void execTimerApp(uint16_t timerType) {
 
         // The ordering of the 4 lines below is important for SHOW (temporaryInformation == TI_SHOW_REGISTER)
         if(!(screenUpdatingMode & (SCRUPD_MANUAL_STACK | SCRUPD_SKIP_STACK_ONE_TIME))) {
-          if(calcMode != cmTimer && temporaryInformation != TI_VIEW_REGISTER) {
+          if(calcMode != cmTimerApp && temporaryInformation != TI_VIEW_REGISTER) {
             refreshRegisterLine(REGISTER_T);
           }
           refreshRegisterLine(REGISTER_Z);
@@ -1877,7 +1877,7 @@ void execTimerApp(uint16_t timerType) {
         if(calcMode == cmMim) {
           showMatrixEditor();
         }
-        if(calcMode == cmTimer) {
+        if(calcMode == cmTimerApp) {
           fnShowTimerApp();
         }
 
