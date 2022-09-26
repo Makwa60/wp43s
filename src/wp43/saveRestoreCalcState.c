@@ -17,6 +17,7 @@
 #include "saveRestoreCalcState.h"
 
 #include "assign.h"
+#include "calcMode.h"
 #include "charString.h"
 #include "config.h"
 #include "display.h"
@@ -606,42 +607,17 @@ static uint32_t restore(void *buffer, uint32_t size, void *stream) {
       }
       free(loadedScreen);
 
-      switch(calcMode) {
-        case cmNormal:
-        case cmRegisterBrowser:
-        case cmFlagBrowser:
-        case cmFontBrowser:
-        case cmPem:
-        case cmPlotStat:
-        case cmGraph:
-        case cmAssign:
-        case cmTimer:
-          guiSetLayout(glNormal);
-          break;
-        case cmNim:
-          guiSetLayout(glNormal);
-          cursorEnabled = true;
-          break;
-        case cmMim:
-          guiSetLayout(glNormal);
-          mimRestore();
-          break;
-        case cmAim:
-          guiSetLayout(glAim);
-          cursorEnabled = true;
-          break;
-        case cmEim:
-          guiSetLayout(glAim);
-          break;
-        default:
-          sprintf(errorMessage, "In function restoreCalc: %" PRIu8 " is an unexpected value for calcMode", (uint8_t)calcMode);
-          displayBugScreen(errorMessage);
-          break;
+      if(calcMode == cmNim || calcMode == cmAim) {
+        cursorEnabled = true;
+      }
+      if(calcMode == cmMim) {
+        mimRestore();
       }
       if(catalog) {
         clearSystemFlag(FLAG_ALPHA);
       }
 
+      calcModeUpdateGui();
       updateMatrixHeightCache();
       refreshScreen();
     }
