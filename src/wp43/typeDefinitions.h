@@ -147,7 +147,7 @@
     cmConfirmation     = 11, // Waiting for confirmation or canceling
     cmMim              = 12, // Matrix imput mode tbd reorder
     cmEim              = 13, // Equation imput mode
-    cmTimer            = 14, // Timer application
+    cmTimerApp         = 14, // Timer application
     cmGraph            = 15, // Plot graph mode
     cmNoUndo           = 16  // Running functions without undo affected
   } calcMode_t;

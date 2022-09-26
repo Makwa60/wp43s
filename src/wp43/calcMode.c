@@ -49,7 +49,7 @@
         case cmFontBrowser:
           newLayout = glFlagFontBrowser;
           break;
-        case cmTimer:
+        case cmTimerApp:
           newLayout = glTimerApp;
           break;
         default:
@@ -190,7 +190,7 @@
       case cmFlagBrowser:
       case cmFontBrowser:
       case cmRegisterBrowser:
-      case cmTimer:
+      case cmTimerApp:
         previousCalcMode = calcMode;
         calcMode = newMode;
         break;
@@ -208,7 +208,7 @@
       case cmFlagBrowser:
       case cmFontBrowser:
       case cmRegisterBrowser:
-      case cmTimer:
+      case cmTimerApp:
         calcMode = previousCalcMode;
         calcModeUpdateGui();
         break;
