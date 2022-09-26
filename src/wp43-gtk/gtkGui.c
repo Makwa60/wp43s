@@ -18,6 +18,7 @@
 
 #include "charString.h"
 #include "debug.h"
+#include "defines.h"
 #include "error.h"
 #include "gtkScreen.h"
 #include "items.h"
