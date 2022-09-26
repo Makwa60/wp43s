@@ -23,6 +23,7 @@ Contents
    gui
    io
    lcd
+   system
    time
 
 .. toctree::
