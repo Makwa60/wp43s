@@ -6,6 +6,7 @@ wp43_gtk_src = files(
   'hal/gui.c',
   'hal/io.c',
   'hal/lcd.c',
+  'hal/system.c',
   'hal/time.c')
 sim = executable(
   'wp43',
