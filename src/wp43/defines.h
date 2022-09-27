@@ -938,16 +938,11 @@
     #error Only one of OS32BIT and OS64BIT must be defined
   #endif // OS32BIT && OS64BIT
 
-  #if defined(PC_BUILD)
-    #if defined(WIN32) // No DEBUG_PANEL mode for Windows
-      #undef  DEBUG_PANEL
-      #define DEBUG_PANEL 0
-    #endif // WIN32
-    #if defined(RASPBERRY) // No DEBUG_PANEL mode for Raspberry Pi
-      #undef  DEBUG_PANEL
-      #define DEBUG_PANEL 0
-    #endif // RASPBERRY
-  #endif // PC_BUILD
+  #if defined(PC_BUILD) && defined(RASPBERRY)
+    // No DEBUG_PANEL mode for Raspberry Pi
+    #undef  DEBUG_PANEL
+    #define DEBUG_PANEL 0
+  #endif // PC_BUILD && RASPBERRY
 
   #if defined(DMCP_BUILD) || (SCREEN_800X480 == 1)
     #undef  DEBUG_PANEL
