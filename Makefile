@@ -28,6 +28,13 @@ sim: build.sim
 	cp build.sim/src/generateConstants/constantPointers.* src/generated/
 	cp build.sim/src/ttf2RasterFonts/rasterFontsData.c src/generated/
 
+release: build.rel
+	cd build.rel && ninja sim
+	cp build.rel/src/wp43-gtk/wp43$(EXE) ./
+	cp build.rel/src/generateCatalogs/softmenuCatalogs.h src/generated/
+	cp build.rel/src/generateConstants/constantPointers.* src/generated/
+	cp build.rel/src/ttf2RasterFonts/rasterFontsData.c src/generated/
+
 test: build.sim
 	cd build.sim && ninja test
 
