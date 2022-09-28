@@ -16,6 +16,7 @@
 
 #include "gtkGui.h"
 
+#include "apps/timerApp.h"
 #include "charString.h"
 #include "debug.h"
 #include "defines.h"
@@ -23,7 +24,6 @@
 #include "gtkScreen.h"
 #include "items.h"
 #include "keyboard.h"
-#include "timerApp.h"
 #include "saveRestoreCalcState.h"
 #include "screen.h"
 #include "wp43.h"

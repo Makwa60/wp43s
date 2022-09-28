@@ -49,7 +49,7 @@
 
 #include "wp43.h"
 
-#define BACKUP_VERSION         78  // calcMode changed size
+#define BACKUP_VERSION         79  // removed cache state from font browser
 #define START_REGISTER_VALUE 1000  // was 1522, why?
 #define BACKUP               ppgm_fp // The FIL *ppgm_fp pointer is provided by DMCP
 
@@ -173,8 +173,6 @@ static uint32_t restore(void *buffer, uint32_t size, void *stream) {
     save(&rbrMode,                            sizeof(rbrMode),                            BACKUP);
     save(&showContent,                        sizeof(showContent),                        BACKUP);
     save(&numScreensNumericFont,              sizeof(numScreensNumericFont),              BACKUP);
-    save(&numLinesNumericFont,                sizeof(numLinesNumericFont),                BACKUP);
-    save(&numLinesStandardFont,               sizeof(numLinesStandardFont),               BACKUP);
     save(&numScreensStandardFont,             sizeof(numScreensStandardFont),             BACKUP);
     save(&previousCalcMode,                   sizeof(previousCalcMode),                   BACKUP);
     save(&lastErrorCode,                      sizeof(lastErrorCode),                      BACKUP);
@@ -435,8 +433,6 @@ static uint32_t restore(void *buffer, uint32_t size, void *stream) {
       restore(&rbrMode,                            sizeof(rbrMode),                            BACKUP);
       restore(&showContent,                        sizeof(showContent),                        BACKUP);
       restore(&numScreensNumericFont,              sizeof(numScreensNumericFont),              BACKUP);
-      restore(&numLinesNumericFont,                sizeof(numLinesNumericFont),                BACKUP);
-      restore(&numLinesStandardFont,               sizeof(numLinesStandardFont),               BACKUP);
       restore(&numScreensStandardFont,             sizeof(numScreensStandardFont),             BACKUP);
       restore(&previousCalcMode,                   sizeof(previousCalcMode),                   BACKUP);
       restore(&lastErrorCode,                      sizeof(lastErrorCode),                      BACKUP);

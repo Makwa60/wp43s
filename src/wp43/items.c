@@ -16,8 +16,11 @@
 
 #include "items.h"
 
+#include "apps/flagBrowser.h"
+#include "apps/fontBrowser.h"
+#include "apps/registerBrowser.h"
+#include "apps/timerApp.h"
 #include "assign.h"
-#include "browsers/browsers.h"
 #include "bufferize.h"
 #include "calcMode.h"
 #include "config.h"
@@ -50,7 +53,6 @@
 #include "stats.h"
 #include "store.h"
 #include "stringFuncs.h"
-#include "timerApp.h"
 #include "ui/statusBar.h"
 #include "ui/tam.h"
 #include "ui/tone.h"
@@ -230,8 +232,8 @@ void fnNop(uint16_t unusedButMandatoryParameter) {
 
 #if defined(GENERATE_CATALOGS)
   void registerBrowser             (uint16_t unusedButMandatoryParameter) {}
-  void flagBrowser                 (uint16_t unusedButMandatoryParameter) {}
-  void fontBrowser                 (uint16_t unusedButMandatoryParameter) {}
+  void fnFlagBrowser               (uint16_t unusedButMandatoryParameter) {}
+  void fnFontBrowser               (uint16_t unusedButMandatoryParameter) {}
   void fnPow10                     (uint16_t unusedButMandatoryParameter) {}
   void fnIntegerMode               (uint16_t unusedButMandatoryParameter) {}
   void fnConstant                  (uint16_t unusedButMandatoryParameter) {}
@@ -2484,7 +2486,7 @@ TO_QSPI const item_t indexOfItems[] = {
 /* 1607 */  { fnWeightedStandardError,      NOPARAM,                     "s" STD_SUB_m STD_SUB_w,                       "s" STD_SUB_m STD_SUB_w,                       (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
 /* 1608 */  { fnSolve,                      TM_SOLVE,                    "SOLVE",                                       "SOLVE",                                       (0 << TAM_MAX_BITS) |    99, CAT_FNCT | SLS_ENABLED   | US_UNCHANGED | EIM_DISABLED | PTP_REGISTER     },
 /* 1609 */  { fnGetStackSize,               NOPARAM,                     "SSIZE?",                                      "SSIZE?",                                      (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
-/* 1610 */  { flagBrowser,                  NOPARAM,                     "STATUS",                                      "STATUS",                                      (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
+/* 1610 */  { fnFlagBrowser,                NOPARAM,                     "STATUS",                                      "STATUS",                                      (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
 /* 1611 */  { fnStoreConfig,                TM_REGISTER,                 "STOCFG",                                      "Config",                                      (0 << TAM_MAX_BITS) |    99, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_REGISTER     },
 /* 1612 */  { fnStoreElement,               NOPARAM,                     "STOEL",                                       "STOEL",                                       (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
 /* 1613 */  { fnStoreIJ,                    NOPARAM,                     "STOIJ",                                       "STOIJ",                                       (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
@@ -2597,7 +2599,7 @@ TO_QSPI const item_t indexOfItems[] = {
 /* 1720 */  { itemToBeCoded,                NOPARAM,                     STD_PRINTER STD_SIGMA,                         STD_PRINTER STD_SIGMA,                         (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
 /* 1721 */  { itemToBeCoded,                NOPARAM,                     STD_PRINTER "#",                               STD_PRINTER "#",                               (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
 
-/* 1722 */  { fontBrowser,                  NOPARAM,                     "FBR",                                         "FBR",                                         (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     }, // Font browser
+/* 1722 */  { fnFontBrowser,                NOPARAM,                     "FBR",                                         "FBR",                                         (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     }, // Font browser
 
 /* 1723 */  { fnUndo,                       NOPARAM,                     "UNDO",                                        STD_UNDO,                                      (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
 /* 1724 */  { fnPem,                        NOPARAM,                     "P/R",                                         "P/R",                                         (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_ENABLED   | US_CANCEL    | EIM_DISABLED | PTP_DISABLED     },

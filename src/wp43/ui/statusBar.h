@@ -33,85 +33,15 @@
     void showDateTime           (void);
 
     /**
-     * Displays the complex result mode C or R in the status bar.
-     */
-    void showRealComplexResult  (void);
-
-    /**
-     * Displays the complex mode rectangular or polar in the status bar.
-     */
-    void showComplexMode        (void);
-
-    /**
-     * Displays the angular mode in the status bar.
-     */
-    void showAngularMode        (void);
-
-    /**
-     * Displays the faction mode in the status bar.
-     */
-    void showFracMode           (void);
-
-    /**
-     * Displays the integer mode icon in the status bar.
-     */
-    void showIntegerMode        (void);
-
-    /**
-     * Displays the matrix mode icon in the status bar.
-     */
-    void showMatrixMode         (void);
-
-    /**
-     * Displays the TVM mode icon in the status bar.
-     */
-    void showTvmMode            (void);
-
-    /**
-     * Displays the overflow flag and the carry flag.
-     */
-    void showOverflowCarry      (void);
-
-    /**
-     * Shows or hides the alpha mode.
-     */
-    void showHideAlphaMode      (void);
-
-    /**
      * Shows or hides the hourglass icon in the status bar.
      */
     void showHideHourGlass      (void);
-
-    /**
-     * Shows or hides the watch icon in the status bar.
-     */
-    void showHideWatch          (void);
-
-    /**
-     * Shows or hides the serial I/O icon in the status bar.
-     */
-    void showHideSerialIO       (void);
-
-    /**
-     * Shows or hides the printer icon in the status bar.
-     */
-    void showHidePrinter        (void);
-
-    /**
-     * Shows or hides the user mode icon in the status bar.
-     */
-    void showHideUserMode       (void);
 
     #if defined(DMCP_BUILD)
       /**
        * Shows or hides the USB or low battery icon in the status bar.
        */
       void showHideUsbLowBattery(void);
-    #else // !DMCP_BUILD
-      /**
-       * Shows or hides the USB icon in the status bar.
-       */
-      void showHideStackLift    (void);
     #endif // DMCP_BUILD
   #endif // !TESTSUITE_BUILD
 #endif // !STATUSBAR_H

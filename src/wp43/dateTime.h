@@ -24,6 +24,8 @@
   #include "typeDefinitions.h"
   #include <stdint.h>
 
+  void fnTicks                 (uint16_t unusedButMandatoryParameter);
+
   void fnSetDateFormat         (uint16_t dateFormat);
 
   /********************************************//**

@@ -20,7 +20,6 @@
 
 #include "conversionUnits.h"
 
-#include "browsers/fontBrowser.h"
 #include "constantPointers.h"
 #include "debug.h"
 #include "error.h"

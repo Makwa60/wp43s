@@ -20,7 +20,7 @@
 
 #include "config.h"
 
-#include "browsers/fontBrowser.h"
+#include "apps/fontBrowser.h"
 #include "bufferize.h"
 #include "calcMode.h"
 #include "charString.h"
@@ -865,7 +865,7 @@ void fnReset(uint16_t confirmation) {
     ctxtReal34.round = DEC_ROUND_HALF_EVEN;
     displayStack = cachedDisplayStack = 4;
 
-    initFontBrowser();
+    fontBrowserInit();
     currentFlgScr = 0;
     currentRegisterBrowserScreen = 9999;
 

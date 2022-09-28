@@ -16,6 +16,7 @@
 
 #include "keyboard.h"
 
+#include "apps/timerApp.h"
 #include "assign.h"
 #include "bufferize.h"
 #include "calcMode.h"
@@ -43,7 +44,6 @@
 #include "stack.h"
 #include "stats.h"
 #include "timer.h"
-#include "timerApp.h"
 #include "ui/tam.h"
 #if (REAL34_WIDTH_TEST == 1)
   #include "registerValueConversions.h"

@@ -17,7 +17,10 @@
 #include "screen.h"
 
 #include "assign.h"
-#include "browsers/browsers.h"
+#include "apps/flagBrowser.h"
+#include "apps/fontBrowser.h"
+#include "apps/registerBrowser.h"
+#include "apps/timerApp.h"
 #include "bufferize.h"
 #include "charString.h"
 #include "constantPointers.h"
@@ -45,7 +48,6 @@
 #include "registerValueConversions.h"
 #include "softmenus.h"
 #include "timer.h"
-#include "timerApp.h"
 #include "ui/statusBar.h"
 #include "version.h"
 #include <string.h>
@@ -1795,14 +1797,14 @@ void execTimerApp(uint16_t timerType) {
     switch(calcMode) {
       case cmFlagBrowser: {
         clearScreen();
-        flagBrowser(NOPARAM);
+        flagBrowserDraw();
         refreshStatusBar();
         break;
       }
 
       case cmFontBrowser: {
         clearScreen();
-        fontBrowser(NOPARAM);
+        fontBrowserDraw();
         refreshStatusBar();
         break;
       }

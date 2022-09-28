@@ -14,7 +14,7 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "timerApp.h"
+#include "apps/timerApp.h"
 
 #include "calcMode.h"
 #include "charString.h"
@@ -38,22 +38,6 @@
 #include <assert.h>
 
 #include "wp43.h"
-
-
-void fnTicks(uint16_t unusedButMandatoryParameter) {
-  uint32_t tim;
-  longInteger_t lgInt;
-
-  tim = timeUptimeMs() / 100;
-
-  liftStack();
-  longIntegerInit(lgInt);
-  uIntToLongInteger(tim, lgInt);
-  convertLongIntegerToLongIntegerRegister(lgInt, REGISTER_X);
-  longIntegerFree(lgInt);
-}
-
-
 
 #if !defined(TESTSUITE_BUILD)
   static void _antirewinder(uint32_t currTime) {

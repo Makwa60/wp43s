@@ -24,6 +24,7 @@
 #include "debug.h"
 #include "error.h"
 #include "flags.h"
+#include "hal/time.h"
 #include "items.h"
 #include "mathematics/comparisonReals.h"
 #include "registers.h"
@@ -33,6 +34,21 @@
 #include <time.h>
 
 #include "wp43.h"
+
+void fnTicks(uint16_t unusedButMandatoryParameter) {
+  uint32_t tim;
+  longInteger_t lgInt;
+
+  tim = timeUptimeMs() / 100;
+
+  liftStack();
+  longIntegerInit(lgInt);
+  uIntToLongInteger(tim, lgInt);
+  convertLongIntegerToLongIntegerRegister(lgInt, REGISTER_X);
+  longIntegerFree(lgInt);
+}
+
+
 
 void fnSetDateFormat(uint16_t dateFormat) {
   switch(dateFormat) {

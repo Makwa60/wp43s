@@ -201,8 +201,6 @@
   extern uint8_t                displayStack;
   extern uint8_t                cachedDisplayStack;
   extern uint8_t                alphaCase;
-  extern uint8_t                numLinesNumericFont;
-  extern uint8_t                numLinesStandardFont;
   extern uint8_t                cursorEnabled;
   extern uint8_t                nimNumberPart;
   extern uint8_t                hexDigits;
@@ -242,7 +240,6 @@
   extern int16_t                cachedDynamicMenu;
 
   extern uint16_t               globalFlags[7];
-  extern uint16_t               glyphRow[NUMBER_OF_GLYPH_ROWS];
   extern uint16_t               freeProgramBytes;
   extern uint16_t               firstDisplayedLocalStepNumber;
   extern uint16_t               numberOfLabels;
