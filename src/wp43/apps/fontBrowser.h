@@ -14,21 +14,34 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file registerBrowser.h
- ***********************************************/
-#if !defined(REGISTERBROWSER_H)
-  #define REGISTERBROWSER_H
+/**
+ * \file apps/fontBrowser.h
+ */
+#if !defined(FONTBROWSER_H)
+  #define FONTBROWSER_H
 
   #include <stdint.h>
 
   #if !defined(TESTSUITE_BUILD)
-    /********************************************//**
-     * \brief The register browser
+    /**
+     * The font browser application initialisation.
+     */
+    void fontBrowserInit(void);
+
+    /**
+     * The font browser draw routine.
+     */
+    void fontBrowserDraw(void);
+
+    /**
+     * The font browser application.
      *
-     * \param[in] unusedButMandatoryParameter uint16_t
-     * \return void
-     ***********************************************/
-    void registerBrowser(uint16_t unusedButMandatoryParameter);
+     * \param[in] unusedButMandatoryParameter
+     */
+    void fnFontBrowser  (uint16_t unusedButMandatoryParameter);
+  #else
+    static inline void fontBrowserInit(void) {}
+    static inline void fontBrowserDraw(void) {}
+    static inline void fnFontBrowser  (uint16_t unusedButMandatoryParameter) {}
   #endif // !TESTSUITE_BUILD
-#endif // !REGISTERBROWSER_H
+#endif // !FONTBROWSER_H

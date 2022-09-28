@@ -13,12 +13,22 @@
  * You should have received a copy of the GNU General Public License
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
-#if !defined(FLAGBROWSER_H)
-  #define FLAGBROWSER_H
+
+/**
+ * \file apps/registerBrowser.h
+ */
+#if !defined(REGISTERBROWSER_H)
+  #define REGISTERBROWSER_H
 
   #include <stdint.h>
 
   #if !defined(TESTSUITE_BUILD)
-    void flagBrowser(uint16_t unusedButMandatoryParameter);
+    /********************************************//**
+     * \brief The register browser
+     *
+     * \param[in] unusedButMandatoryParameter uint16_t
+     * \return void
+     ***********************************************/
+    void registerBrowser(uint16_t unusedButMandatoryParameter);
   #endif // !TESTSUITE_BUILD
-#endif // !FLAGBROWSER_H
+#endif // !REGISTERBROWSER_H

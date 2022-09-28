@@ -14,11 +14,7 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file flagBrowser.c
- ***********************************************/
-
-#include "browsers/flagBrowser.h"
+#include "apps/flagBrowser.h"
 
 #include "calcMode.h"
 #include "charString.h"
@@ -30,6 +26,7 @@
 #include "memory.h"
 #include "registers.h"
 #include "screen.h"
+#include <assert.h>
 #include <string.h>
 
 #include "wp43.h"
@@ -58,30 +55,13 @@
 
 
 
-  /********************************************//**
-   * \brief The flag browser application
-   *
-   * \param[in] unusedButMandatoryParameter uint16_t
-   * \return void
-   ***********************************************/
-  void flagBrowser(uint16_t unusedButMandatoryParameter) {
+  void flagBrowserDraw(void) {
     static int16_t line;
     int16_t f;
     bool_t firstFlag;
 
     hourGlassIconEnabled = false;
-
-    if(calcMode != cmFlagBrowser) {
-      if(calcMode == cmAim) {
-        hideCursor();
-        cursorEnabled = false;
-      }
-
-      calcModeEnter(cmFlagBrowser);
-      clearSystemFlag(FLAG_ALPHA);
-      currentFlgScr = 0;
-      return;
-    }
+    assert(calcMode == cmFlagBrowser);
 
     if(currentFlgScr == 0) { // Init
       char flagNumber[4];
@@ -310,8 +290,21 @@
       }
       else {
         currentFlgScr = 1;
-        flagBrowser(NOPARAM);
+        flagBrowserDraw();
       }
     }
+  }
+
+
+
+  void fnFlagBrowser(uint16_t unusedButMandatoryParameter) {
+    hourGlassIconEnabled = false;
+    if(calcMode == cmAim) {
+      hideCursor();
+      cursorEnabled = false;
+    }
+    calcModeEnter(cmFlagBrowser);
+    clearSystemFlag(FLAG_ALPHA);
+    currentFlgScr = 0;
   }
 #endif // !TESTSUITE_BUILD

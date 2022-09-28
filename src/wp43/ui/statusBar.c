@@ -27,65 +27,6 @@
 #include "wp43.h"
 
 #if !defined(TESTSUITE_BUILD)
-  void refreshStatusBar(void) {
-    if(screenUpdatingMode & SCRUPD_MANUAL_STATUSBAR) {
-      switch(calcMode) {
-        case cmPem:
-        case cmRegisterBrowser:
-        case cmFlagBrowser:
-        case cmFontBrowser:
-        case cmPlotStat:
-        case cmConfirmation:
-        case cmMim:
-        case cmTimerApp:
-        case cmGraph: {
-          screenUpdatingMode &= ~SCRUPD_MANUAL_STATUSBAR;
-          break;
-        }
-
-        default: {
-          return;
-        }
-      }
-    }
-    #if (DEBUG_INSTEAD_STATUS_BAR == 1)
-      sprintf(tmpString, "%s%d %s/%s  mnu:%s fi:%d", catalog ? "asm:" : "", catalog, tam.mode ? "/tam" : "", getCalcModeName(calcMode),indexOfItems[-softmenu[softmenuStack[0].softmenuId].menuItem].itemCatalogName, softmenuStack[0].firstItem);
-      showString(tmpString, &standardFont, X_DATE, 0, vmNormal, true, true);
-    #else // DEBUG_INSTEAD_STATUS_BAR != 1
-      showDateTime();
-      if(calcMode == cmPlotStat || calcMode == cmGraph) {
-        return;    // With graph displayed, only update the time, as the other items are clashing with the graph display screen
-      }
-      showRealComplexResult();
-      showComplexMode();
-      showAngularMode();
-      showFracMode();
-      if(calcMode == cmMim) {
-        showMatrixMode();
-      }
-      else if(softmenu[softmenuStack[0].softmenuId].menuItem == -MNU_TVM) {
-        showTvmMode();
-      }
-      else {
-        showIntegerMode();
-        showOverflowCarry();
-      }
-      showHideAlphaMode();
-      showHideHourGlass();
-      showHideWatch();
-      showHideSerialIO();
-      showHidePrinter();
-      showHideUserMode();
-      #if defined(DMCP_BUILD)
-        showHideUsbLowBattery();
-      #else // !DMCP_BUILD
-        showHideStackLift();
-      #endif // DMCP_BUILD
-    #endif // DEBUG_INSTEAD_STATUS_BAR == 1
-  }
-
-
-
   void showDateTime(void) {
     lcd_fill_rect(0, 0, X_REAL_COMPLEX, 20, LCD_SET_VALUE);
 
@@ -411,4 +352,63 @@
       }
     }
   #endif // !DMCP_BUILD
+
+
+
+  void refreshStatusBar(void) {
+    if(screenUpdatingMode & SCRUPD_MANUAL_STATUSBAR) {
+      switch(calcMode) {
+        case cmPem:
+        case cmRegisterBrowser:
+        case cmFlagBrowser:
+        case cmFontBrowser:
+        case cmPlotStat:
+        case cmConfirmation:
+        case cmMim:
+        case cmTimerApp:
+        case cmGraph: {
+          screenUpdatingMode &= ~SCRUPD_MANUAL_STATUSBAR;
+          break;
+        }
+
+        default: {
+          return;
+        }
+      }
+    }
+    #if (DEBUG_INSTEAD_STATUS_BAR == 1)
+      sprintf(tmpString, "%s%d %s/%s  mnu:%s fi:%d", catalog ? "asm:" : "", catalog, tam.mode ? "/tam" : "", getCalcModeName(calcMode),indexOfItems[-softmenu[softmenuStack[0].softmenuId].menuItem].itemCatalogName, softmenuStack[0].firstItem);
+      showString(tmpString, &standardFont, X_DATE, 0, vmNormal, true, true);
+    #else // DEBUG_INSTEAD_STATUS_BAR != 1
+      showDateTime();
+      if(calcMode == cmPlotStat || calcMode == cmGraph) {
+        return;    // With graph displayed, only update the time, as the other items are clashing with the graph display screen
+      }
+      showRealComplexResult();
+      showComplexMode();
+      showAngularMode();
+      showFracMode();
+      if(calcMode == cmMim) {
+        showMatrixMode();
+      }
+      else if(softmenu[softmenuStack[0].softmenuId].menuItem == -MNU_TVM) {
+        showTvmMode();
+      }
+      else {
+        showIntegerMode();
+        showOverflowCarry();
+      }
+      showHideAlphaMode();
+      showHideHourGlass();
+      showHideWatch();
+      showHideSerialIO();
+      showHidePrinter();
+      showHideUserMode();
+      #if defined(DMCP_BUILD)
+        showHideUsbLowBattery();
+      #else // !DMCP_BUILD
+        showHideStackLift();
+      #endif // DMCP_BUILD
+    #endif // DEBUG_INSTEAD_STATUS_BAR == 1
+  }
 #endif // !TESTSUITE_BUILD

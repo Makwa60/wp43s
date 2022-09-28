@@ -15,14 +15,12 @@
  */
 
 /**
- * \file timerApp.h
+ * \file apps/timerApp.h
  */
 #if !defined(TIMERAPP_H)
   #define TIMERAPP_H
 
   #include <stdint.h>
-
-  void     fnTicks              (uint16_t unusedButMandatoryParameter);
 
   void     fnTimerApp           (uint16_t unusedButMandatoryParameter);
   void     fnAddTimerApp        (uint16_t unusedButMandatoryParameter);

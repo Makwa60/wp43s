@@ -81,8 +81,6 @@
 
   #define NUMERIC_FONT_HEIGHT                       36 // In pixel. Used in the font browser application
   #define STANDARD_FONT_HEIGHT                      22 // In Pixel. Used in the font browser application
-  #define NUMBER_OF_NUMERIC_FONT_LINES_PER_SCREEN    5 // Used in the font browser application
-  #define NUMBER_OF_STANDARD_FONT_LINES_PER_SCREEN   8 // Used in the font browser application
 
   #define AIM_BUFFER_LENGTH                        400 // 199 double byte glyphs + trailing 0 + 1 byte to round up to a 4 byte boundary
   #define TAM_BUFFER_LENGTH                         32 // TODO: find the exact maximum needed
@@ -745,7 +743,6 @@
   #define SIGMA_YMAX   ((real_t *)(statisticalSumsPointer + REAL_SIZE * SUM_YMAX  )) // could be a real34
 
   #define MAX_NUMBER_OF_GLYPHS_IN_STRING           196
-  #define NUMBER_OF_GLYPH_ROWS                     100 // Used in the font browser application
 
   #define MAX_DENMAX                              9999 // Biggest denominator in fraction display mode
 
@@ -970,13 +967,10 @@
     #define fnOff           fnNop
     #define fnAim           fnNop
     #define registerBrowser fnNop
-    #define flagBrowser     fnNop
-    #define fontBrowser     fnNop
     #define refreshRegisterLine(a)  {}
     #define displayBugScreen(a)     { printf("\n-----------------------------------------------------------------------\n"); printf("%s\n", a); printf("\n-----------------------------------------------------------------------\n");}
     #define showHideHourGlass()     {}
     #define refreshScreen()         {}
-    #define initFontBrowser()       {}
   #endif // TESTSUITE_BUILD && !GENERATE_CATALOGS
 
   /* Turn off -Wunused-result for a specific function call */

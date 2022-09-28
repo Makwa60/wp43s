@@ -13,13 +13,29 @@
  * You should have received a copy of the GNU General Public License
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
-#if !defined(FONTBROWSER_H)
-  #define FONTBROWSER_H
+
+/**
+ * \file apps/flagBrowser.h
+ */
+#if !defined(FLAGBROWSER_H)
+  #define FLAGBROWSER_H
 
   #include <stdint.h>
 
   #if !defined(TESTSUITE_BUILD)
-    void initFontBrowser(void);
-    void fontBrowser    (uint16_t unusedButMandatoryParameter);
+    /**
+     * The flag browser draw routine.
+     */
+    void flagBrowserDraw(void);
+
+    /**
+     * The flag browser application.
+     *
+     * \param[in] unusedButMandatoryParameter uint16_t
+     */
+    void fnFlagBrowser  (uint16_t unusedButMandatoryParameter);
+  #else
+    static inline void fnFlagBrowser  (uint16_t unusedButMandatoryParameter) {}
+    static inline void flagBrowserDraw(void) {}
   #endif // !TESTSUITE_BUILD
-#endif // !FONTBROWSER_H
+#endif // !FLAGBROWSER_H

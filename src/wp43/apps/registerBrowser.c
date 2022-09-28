@@ -14,11 +14,7 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file registerBrowser.c The register browser application
- ***********************************************/
-
-#include "browsers/registerBrowser.h"
+#include "apps/registerBrowser.h"
 
 #include "calcMode.h"
 #include "charString.h"

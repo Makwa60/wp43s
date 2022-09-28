@@ -14,11 +14,7 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file fontBrowser.c
- ***********************************************/
-
-#include "browsers/fontBrowser.h"
+#include "apps/fontBrowser.h"
 
 #include <stdlib.h>
 
@@ -28,20 +24,23 @@
 #include "flags.h"
 #include "fonts.h"
 #include "screen.h"
+#include <assert.h>
+#include <stdlib.h>
 
 #include "wp43.h"
-#include <stdlib.h>
 
 
 
 #if !defined(TESTSUITE_BUILD)
-  /********************************************//**
-   * \brief The font browser application initialisation
-   *
-   * \param[in] unusedButMandatoryParameter uint16_t
-   * \return void
-   ***********************************************/
-  void initFontBrowser(void) {
+  #define NUMBER_OF_GLYPH_ROWS 100
+  #define NUMBER_OF_NUMERIC_FONT_LINES_PER_SCREEN    5
+  #define NUMBER_OF_STANDARD_FONT_LINES_PER_SCREEN   8
+
+  static uint16_t glyphRow[NUMBER_OF_GLYPH_ROWS];
+  static uint8_t  numLinesNumericFont;
+  static uint8_t  numLinesStandardFont;
+
+  void fontBrowserInit(void) {
     uint16_t g;
 
     numLinesNumericFont  = 0;
@@ -74,32 +73,19 @@
 
     currentFntScr = 1;
 
-    #if defined(PC_BUILD)
-      if(numLinesNumericFont + numLinesStandardFont > NUMBER_OF_GLYPH_ROWS) {
-        printf("In file defines.h NUMBER_OF_GLYPH_ROWS must be increased from %d to %d\n", NUMBER_OF_GLYPH_ROWS, numLinesNumericFont + numLinesStandardFont);
-        exit(-1);
-      }
-    #endif // PC_BUILD
+    // NUMBER_OF_GLYPH_ROWS must be more than numLinesNumericFont + numLinesStandardFont
+    assert(numLinesNumericFont + numLinesStandardFont <= NUMBER_OF_GLYPH_ROWS);
   }
 
 
 
-  /********************************************//**
-   * \brief The font browser application
-   *
-   * \param[in] unusedButMandatoryParameter uint16_t
-   * \return void
-   ***********************************************/
-  void fontBrowser(uint16_t unusedButMandatoryParameter) {
+  void fontBrowserDraw(void) {
     uint16_t x, y, first;
 
     hourGlassIconEnabled = false;
 
-    if(calcMode != cmFontBrowser) {
-      calcModeEnter(cmFontBrowser);
-      clearSystemFlag(FLAG_ALPHA);
-      return;
-    }
+    assert(calcMode == cmFontBrowser);
+    assert(!getSystemFlag(FLAG_ALPHA));
 
     if(currentFntScr>=1 && currentFntScr<=numScreensNumericFont) { // Numeric font
       for(x=0; x<=9; x++) {
@@ -159,5 +145,13 @@
     else {
       displayBugScreen("In function showFonts: This should never happen!");
     }
+  }
+
+
+
+  void fnFontBrowser(uint16_t unusedButMandatoryParameter) {
+    hourGlassIconEnabled = false;
+    calcModeEnter(cmFontBrowser);
+    clearSystemFlag(FLAG_ALPHA);
   }
 #endif // !TESTSUITE_BUILD

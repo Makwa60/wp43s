@@ -16,6 +16,7 @@
 
 #include "calcMode.h"
 
+#include "apps/timerApp.h"
 #include "bufferize.h"
 #include "debug.h"
 #include "error.h"
@@ -28,7 +29,6 @@
 #include "saveRestoreCalcState.h"
 #include "screen.h"
 #include "stack.h"
-#include "timerApp.h"
 #include <string.h>
 #include <unistd.h>
 

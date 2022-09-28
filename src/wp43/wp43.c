@@ -120,8 +120,6 @@ uint8_t                nextChar;
 uint8_t                displayStack;
 uint8_t                cachedDisplayStack;
 uint8_t                alphaCase;
-uint8_t                numLinesNumericFont;
-uint8_t                numLinesStandardFont;
 uint8_t                cursorEnabled;
 uint8_t                nimNumberPart;
 uint8_t                hexDigits;
@@ -159,7 +157,6 @@ int16_t                cachedDynamicMenu;
 
 uint16_t               globalFlags[7];
 uint16_t               freeProgramBytes;
-uint16_t               glyphRow[NUMBER_OF_GLYPH_ROWS];
 uint16_t               firstDisplayedLocalStepNumber;
 uint16_t               numberOfLabels;
 uint16_t               numberOfLabelsInFlash;
