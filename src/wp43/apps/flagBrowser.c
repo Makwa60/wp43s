@@ -32,6 +32,7 @@
 #include "wp43.h"
 
 
+uint8_t currentFlgScr;
 
 #if !defined(TESTSUITE_BUILD)
   TO_QSPI const char flagLetter[] = "XYZTABCDLIJK";
@@ -51,6 +52,12 @@
         xcopy(tmpString + CHARS_PER_LINE * ++(*line), systemFlagNamename, strlen(systemFlagNamename) + 1);
       }
     }
+  }
+
+
+
+  void flagBrowserInit(void) {
+    currentFlgScr = 0;
   }
 
 

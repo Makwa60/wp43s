@@ -114,7 +114,6 @@
   extern bool_t                 printerIconEnabled;
   extern bool_t                 shiftF;
   extern bool_t                 shiftG;
-  extern bool_t                 showContent;
   extern bool_t                 rbr1stDigit;
   extern bool_t                 updateDisplayValueX;
   extern bool_t                 thereIsSomethingToUndo;
@@ -185,8 +184,6 @@
   extern char                   displayValueX[DISPLAY_VALUE_LEN];
 
   extern uint8_t                numScreensStandardFont;
-  extern uint8_t                currentFntScr;
-  extern uint8_t                currentFlgScr;
   extern uint8_t                displayFormat;
   extern uint8_t                displayFormatDigits;
   extern uint8_t                timeDisplayFormatDigits;
@@ -206,7 +203,6 @@
   extern uint8_t                hexDigits;
   extern uint8_t                lastErrorCode;
   extern uint8_t                temporaryInformation;
-  extern uint8_t                rbrMode;
   extern uint8_t                numScreensNumericFont;
   extern uint8_t                timerCraAndDeciseconds;
   extern uint8_t                programRunStop;
@@ -220,7 +216,6 @@
    * Instance of the internal state for TAM.
    */
   extern tamState_t             tam;
-  extern int16_t                currentRegisterBrowserScreen;
   extern int16_t                lineTWidth;
   extern int16_t                rbrRegister;
   extern int16_t                catalog;

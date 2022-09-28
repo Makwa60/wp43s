@@ -16,6 +16,9 @@
 
 #include "saveRestoreCalcState.h"
 
+#include "apps/flagBrowser.h"
+#include "apps/fontBrowser.h"
+#include "apps/registerBrowser.h"
 #include "assign.h"
 #include "calcMode.h"
 #include "charString.h"

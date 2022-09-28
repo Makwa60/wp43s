@@ -20,6 +20,9 @@
 
 #include "debug.h"
 
+#include "apps/flagBrowser.h"
+#include "apps/fontBrowser.h"
+#include "apps/registerBrowser.h"
 #include "charString.h"
 #include "display.h"
 #include "flags.h"

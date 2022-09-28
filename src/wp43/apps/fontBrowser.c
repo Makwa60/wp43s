@@ -29,7 +29,7 @@
 
 #include "wp43.h"
 
-
+uint8_t currentFntScr;
 
 #if !defined(TESTSUITE_BUILD)
   #define NUMBER_OF_GLYPH_ROWS 100

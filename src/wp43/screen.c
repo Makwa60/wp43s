@@ -1811,7 +1811,7 @@ void execTimerApp(uint16_t timerType) {
 
       case cmRegisterBrowser: {
         clearScreen();
-        registerBrowser(NOPARAM);
+        registerBrowserDraw();
         refreshStatusBar();
         break;
       }

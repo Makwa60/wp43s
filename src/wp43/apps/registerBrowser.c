@@ -26,13 +26,20 @@
 #include "items.h"
 #include "registers.h"
 #include "screen.h"
+#include <assert.h>
 #include <string.h>
 
 #include "wp43.h"
 
-
+bool_t  showContent;
+uint8_t rbrMode;
+int16_t currentRegisterBrowserScreen;
 
 #if !defined(TESTSUITE_BUILD)
+  void registerBrowserInit(void) {
+    currentRegisterBrowserScreen = 9999;
+  }
+
   static void _showRegisterInRbr(calcRegister_t regist, int16_t registerNameWidth) {
     switch(getRegisterDataType(regist)) {
       case dtReal34: {
@@ -157,21 +164,12 @@
     }
   }
 
-  void registerBrowser(uint16_t unusedButMandatoryParameter) {
+  void registerBrowserDraw(void) {
     int16_t registerNameWidth;
 
     hourGlassIconEnabled = false;
 
-    if(calcMode != cmRegisterBrowser) {
-      if(calcMode == cmAim) {
-        hideCursor();
-        cursorEnabled = false;
-      }
-
-      calcModeEnter(cmRegisterBrowser);
-      clearSystemFlag(FLAG_ALPHA);
-      return;
-    }
+    assert(calcMode == cmRegisterBrowser);
 
     if(currentRegisterBrowserScreen == 9999) { // Init
       currentRegisterBrowserScreen = REGISTER_X;
@@ -274,8 +272,22 @@
       }
       else { // no local register allocated
         rbrMode = RBR_GLOBAL;
-        registerBrowser(NOPARAM);
+        registerBrowserDraw();
       }
     }
+  }
+
+
+
+  void fnRegisterBrowser(uint16_t unusedButMandatoryParameter) {
+    hourGlassIconEnabled = false;
+
+    if(calcMode == cmAim) {
+      hideCursor();
+      cursorEnabled = false;
+    }
+
+    calcModeEnter(cmRegisterBrowser);
+    clearSystemFlag(FLAG_ALPHA);
   }
 #endif // !TESTSUITE_BUILD

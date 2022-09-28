@@ -16,6 +16,9 @@
 
 #include "keyboard.h"
 
+#include "apps/flagBrowser.h"
+#include "apps/fontBrowser.h"
+#include "apps/registerBrowser.h"
 #include "apps/timerApp.h"
 #include "assign.h"
 #include "bufferize.h"
