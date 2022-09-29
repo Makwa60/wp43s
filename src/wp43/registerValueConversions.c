@@ -16,6 +16,7 @@
 
 #include "registerValueConversions.h"
 
+#include "apps/bugScreen.h"
 #include "charString.h"
 #include "constantPointers.h"
 #include "dateTime.h"
@@ -187,7 +188,7 @@ void convertShortIntegerRegisterToUInt64(calcRegister_t regist, int16_t *sign, u
       }
       else {
         sprintf(errorMessage, "In function convertShortIntegerRegisterToUInt64: %" PRIu8 " is an unexpected value for shortIntegerMode!", shortIntegerMode);
-        displayBugScreen(errorMessage);
+        bugScreen(errorMessage);
         *sign = 0;
         *value = 0;
       }
@@ -242,7 +243,7 @@ void convertUInt64ToShortIntegerRegister(int16_t sign, uint64_t value, uint32_t 
     }
     else {
       sprintf(errorMessage, "In function convertUInt64ToShortIntegerRegister: %" PRIu8 " is an unexpected value for shortIntegerMode!", shortIntegerMode);
-      displayBugScreen(errorMessage);
+      bugScreen(errorMessage);
       value = 0;
     }
   }

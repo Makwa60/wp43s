@@ -16,6 +16,7 @@
 
 #include "ui/tam.h"
 
+#include "apps/bugScreen.h"
 #include "bufferize.h"
 #include "calcMode.h"
 #include "charString.h"
@@ -954,7 +955,7 @@
 
       default: {
         sprintf(errorMessage, "In function calcModeTam: %" PRIu16 " is an unexpected value for tam.mode!", tam.mode);
-        displayBugScreen(errorMessage);
+        bugScreen(errorMessage);
         return;
       }
     }

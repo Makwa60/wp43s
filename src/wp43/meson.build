@@ -1,5 +1,6 @@
 wp43_src = files(
   'apps/apps.c',
+  'apps/bugScreen.c',
   'apps/flagBrowser.c',
   'apps/fontBrowser.c',
   'apps/registerBrowser.c',

@@ -20,6 +20,7 @@
 
 #include "display.h"
 
+#include "apps/bugScreen.h"
 #include "charString.h"
 #include "constantPointers.h"
 #include "conversionAngles.h"
@@ -1068,7 +1069,7 @@ void fractionToDisplayString(calcRegister_t regist, char *displayString) {
     else {
       strcpy(displayString, "?" STD_SPACE_PUNCTUATION);
       sprintf(errorMessage, "In function fractionToDisplayString: %d is an unexpected value for lessEqualGreater!", lessEqualGreater);
-      displayBugScreen(errorMessage);
+      bugScreen(errorMessage);
     }
   }
   else {
@@ -1084,7 +1085,7 @@ void fractionToDisplayString(calcRegister_t regist, char *displayString) {
     else {
       strcpy(displayString, "?" STD_SPACE_PUNCTUATION);
       sprintf(errorMessage, "In function fractionToDisplayString: %d is an unexpected value for lessEqualGreater!", lessEqualGreater);
-      displayBugScreen(errorMessage);
+      bugScreen(errorMessage);
     }
   }
 
@@ -1296,7 +1297,7 @@ void angle34ToDisplayString2(const real34_t *angle34, uint8_t mode, char *displa
     else {
       strcat(displayString, "?");
       sprintf(errorMessage, "In function angle34ToDisplayString2: %" PRIu8 " is an unexpected value for mode!", mode);
-      displayBugScreen(errorMessage);
+      bugScreen(errorMessage);
     }
   }
 }
@@ -1312,7 +1313,7 @@ void shortIntegerToDisplayString(calcRegister_t regist, char *displayString, boo
 
   if(base <= 1 || base >= 17) {
     sprintf(errorMessage, "In function shortIntegerToDisplayString: %d is an unexpected value for base!", base);
-    displayBugScreen(errorMessage);
+    bugScreen(errorMessage);
     base = 10;
   }
 
@@ -1338,7 +1339,7 @@ void shortIntegerToDisplayString(calcRegister_t regist, char *displayString, boo
     }
     else {
       sprintf(errorMessage, "In function shortIntegerToDisplayString: %d is an unexpected value for shortIntegerMode!", shortIntegerMode);
-      displayBugScreen(errorMessage);
+      bugScreen(errorMessage);
     }
 
     number &= shortIntegerMask;
@@ -1742,7 +1743,7 @@ void longIntegerToAllocatedString(const longInteger_t lgInt, char *str, int32_t 
 
   if(strLen < stringLen) {
     sprintf(errorMessage, "In function longIntegerToAllocatedString: the string str (%" PRId32 " bytes) is too small to hold the base 10 representation of lgInt, %" PRId32 " are needed!", strLen, stringLen);
-    displayBugScreen(errorMessage);
+    bugScreen(errorMessage);
     return;
   }
 

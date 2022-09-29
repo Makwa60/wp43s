@@ -16,6 +16,7 @@
 
 #include "softmenus.h"
 
+#include "apps/bugScreen.h"
 #include "calcMode.h"
 #include "charString.h"
 #include "error.h"
@@ -935,7 +936,7 @@ void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
 
       default: {
         sprintf(errorMessage, "In function initVariableSoftmenu: unexpected variable softmenu %" PRId16 "!", (int16_t)(-dynamicSoftmenu[menu].menuItem));
-        displayBugScreen(errorMessage);
+        bugScreen(errorMessage);
       }
     }
   }
@@ -957,7 +958,7 @@ void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
     }
     else {
       sprintf(errorMessage, "In function showSoftkey: xSoftkey=%" PRId16 " must be from 0 to 5" , xSoftkey);
-      displayBugScreen(errorMessage);
+      bugScreen(errorMessage);
       return;
     }
 
@@ -967,7 +968,7 @@ void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
     }
     else {
       sprintf(errorMessage, "In function showSoftkey: ySoftKey=%" PRId16 " but must be from 0 to 2!" , ySoftKey);
-      displayBugScreen(errorMessage);
+      bugScreen(errorMessage);
       return;
     }
 
@@ -1139,7 +1140,7 @@ void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
 
             if(softmenu[menu].menuItem == 0) {
               sprintf(errorMessage, "In function showSoftmenuCurrentPart: softmenu ID %" PRId16 " not found!", item);
-              displayBugScreen(errorMessage);
+              bugScreen(errorMessage);
             }
             else {
               showSoftkey(indexOfItems[-softmenu[menu].menuItem].itemSoftmenuName, x, y-currentFirstItem/6, vmReverse, true, true);
@@ -1279,7 +1280,7 @@ void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
     enterAsmModeIfMenuIsACatalog(id);
 
     if(id == 0) {
-      displayBugScreen("In function showSoftmenu: id must not be 0!");
+      bugScreen("In function showSoftmenu: id must not be 0!");
       return;
     }
 
@@ -1347,7 +1348,7 @@ void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
 
     if(softmenu[m].menuItem == 0) {
       sprintf(errorMessage, "In function showSoftmenu: softmenu %" PRId16 " not found!", id);
-      displayBugScreen(errorMessage);
+      bugScreen(errorMessage);
     }
     else {
       if(tam.mode || (calcMode == cmAssign && tam.alpha)) {
