@@ -16,14 +16,17 @@
 
 #include "apps/registerBrowser.h"
 
+#include "apps/apps.h"
 #include "calcMode.h"
 #include "charString.h"
 #include "debug.h"
 #include "display.h"
+#include "error.h"
 #include "flags.h"
 #include "fonts.h"
 #include "hal/lcd.h"
 #include "items.h"
+#include "recall.h"
 #include "registers.h"
 #include "screen.h"
 #include <assert.h>
@@ -164,12 +167,119 @@ int16_t currentRegisterBrowserScreen;
     }
   }
 
-  void registerBrowserDraw(void) {
+
+
+  static bool_t _registerBrowserKeyHandler(int16_t item) {
+    if(ITM_0 <= item && item <= ITM_9 && (rbrMode == RBR_GLOBAL || rbrMode == RBR_LOCAL)) {
+      if(rbr1stDigit) {
+        rbr1stDigit = false;
+        rbrRegister = item - ITM_0;
+      }
+      else {
+        rbr1stDigit = true;
+        rbrRegister = rbrRegister*10 + item - ITM_0;
+
+        if(rbrMode == RBR_GLOBAL) {
+          currentRegisterBrowserScreen = rbrRegister;
+        }
+        else {
+          rbrRegister = (rbrRegister >= currentNumberOfLocalRegisters ? 0 : rbrRegister);
+          currentRegisterBrowserScreen = FIRST_LOCAL_REGISTER + rbrRegister;
+        }
+      }
+      return true;
+    }
+    switch(item) {
+      case ITM_UP: {
+        rbr1stDigit = true;
+        if(rbrMode == RBR_GLOBAL) {
+          currentRegisterBrowserScreen = modulo(currentRegisterBrowserScreen + 1, FIRST_LOCAL_REGISTER);
+        }
+        else if(rbrMode == RBR_LOCAL) {
+          currentRegisterBrowserScreen = modulo(currentRegisterBrowserScreen - FIRST_LOCAL_REGISTER + 1, currentNumberOfLocalRegisters) + FIRST_LOCAL_REGISTER;
+        }
+        else if(rbrMode == RBR_NAMED) {
+          currentRegisterBrowserScreen = modulo(currentRegisterBrowserScreen - FIRST_NAMED_VARIABLE + 1, numberOfNamedVariables) + FIRST_NAMED_VARIABLE;
+        }
+        else {
+          sprintf(errorMessage, "In function fnKeyUp: unexpected case while processing key UP! %" PRIu8 " is an unexpected value for rbrMode.", rbrMode);
+          displayBugScreen(errorMessage);
+        }
+        break;
+      }
+      case ITM_DOWN: {
+        rbr1stDigit = true;
+        if(rbrMode == RBR_GLOBAL) {
+          currentRegisterBrowserScreen = modulo(currentRegisterBrowserScreen - 1, FIRST_LOCAL_REGISTER);
+        }
+        else if(rbrMode == RBR_LOCAL) {
+          currentRegisterBrowserScreen = modulo(currentRegisterBrowserScreen - FIRST_LOCAL_REGISTER - 1, currentNumberOfLocalRegisters) + FIRST_LOCAL_REGISTER;
+        }
+        else if(rbrMode == RBR_NAMED) {
+          currentRegisterBrowserScreen = modulo(currentRegisterBrowserScreen - 1000 - 1, numberOfNamedVariables) + 1000;
+        }
+        else {
+          sprintf(errorMessage, "In function fnKeyDown: unexpected case while processing key DOWN! %" PRIu8 " is an unexpected value for rbrMode.", rbrMode);
+          displayBugScreen(errorMessage);
+        }
+        break;
+      }
+      case ITM_PERIOD: {
+        rbr1stDigit = true;
+        if(rbrMode == RBR_GLOBAL) {
+          if(currentLocalRegisters != NULL) {
+            rbrMode = RBR_LOCAL;
+            currentRegisterBrowserScreen = FIRST_LOCAL_REGISTER;
+          }
+          else if(numberOfNamedVariables > 0) {
+            rbrMode = RBR_NAMED;
+            currentRegisterBrowserScreen = FIRST_NAMED_VARIABLE;
+          }
+        }
+        else if(rbrMode == RBR_LOCAL) {
+          if(numberOfNamedVariables > 0) {
+            rbrMode = RBR_NAMED;
+            currentRegisterBrowserScreen = FIRST_NAMED_VARIABLE;
+          }
+          else {
+            rbrMode = RBR_GLOBAL;
+            currentRegisterBrowserScreen = REGISTER_X;
+          }
+        }
+        else if(rbrMode == RBR_NAMED) {
+          rbrMode = RBR_GLOBAL;
+          currentRegisterBrowserScreen = REGISTER_X;
+        }
+        break;
+      }
+      case ITM_RS: {
+        rbr1stDigit = true;
+        showContent = !showContent;
+        break;
+      }
+      case ITM_RCL: {
+        rbr1stDigit = true;
+        if(rbrMode == RBR_GLOBAL || rbrMode == RBR_LOCAL) {
+          fnRecall(currentRegisterBrowserScreen);
+          setSystemFlag(FLAG_ASLIFT);
+          calcModeLeave();
+        }
+        else if(rbrMode == RBR_NAMED) {
+        }
+        break;
+      }
+      default:
+        return false;
+    }
+    return true;
+  }
+
+
+
+  static void _registerBrowserDraw(void) {
     int16_t registerNameWidth;
 
     hourGlassIconEnabled = false;
-
-    assert(calcMode == cmRegisterBrowser);
 
     if(currentRegisterBrowserScreen == 9999) { // Init
       currentRegisterBrowserScreen = REGISTER_X;
@@ -272,7 +382,7 @@ int16_t currentRegisterBrowserScreen;
       }
       else { // no local register allocated
         rbrMode = RBR_GLOBAL;
-        registerBrowserDraw();
+        _registerBrowserDraw();
       }
     }
   }
@@ -287,7 +397,8 @@ int16_t currentRegisterBrowserScreen;
       cursorEnabled = false;
     }
 
-    calcModeEnter(cmRegisterBrowser);
     clearSystemFlag(FLAG_ALPHA);
+
+    appsEnter(glRegisterBrowser, _registerBrowserKeyHandler, _registerBrowserDraw);
   }
 #endif // !TESTSUITE_BUILD

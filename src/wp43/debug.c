@@ -752,32 +752,17 @@ void debugNIM(void) {
       case cmAim: {
         return "aim    ";
       }
-      case cmEim: {
-        return "eim    ";
+      case cmNim: {
+        return "nim    ";
       }
       case cmPem: {
         return "pem    ";
       }
-      case cmNim: {
-        return "nim    ";
-      }
       case cmAssign: {
         return "assign ";
       }
-      case cmRegisterBrowser: {
-        return "reg.bro";
-      }
-      case cmFlagBrowser: {
-        return "flg.bro";
-      }
-      case cmFontBrowser: {
-        return "fnt.bro";
-      }
       case cmPlotStat: {
         return "plot.st";
-      }
-      case cmGraph: {
-        return "plot.gr";
       }
       case cmErrorMessage: {
         return "err.msg";
@@ -785,8 +770,26 @@ void debugNIM(void) {
       case cmBugOnScreen: {
         return "bug.scr";
       }
+      case cmConfirmation: {
+        return "confirm";
+      }
+      case cmMim: {
+        return "mim    ";
+      }
+      case cmEim: {
+        return "eim    ";
+      }
       case cmTimerApp: {
         return "timer  ";
+      }
+      case cmGraph: {
+        return "plot.gr";
+      }
+      case cmNoUndo: {
+        return "noundo ";
+      }
+      case cmApp: {
+        return "app    ";
       }
       default: {
         return "???    ";

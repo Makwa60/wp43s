@@ -34,19 +34,16 @@
     cmNim              = 2,  // Numeric input mode
     cmPem              = 3,  // Program entry mode
     cmAssign           = 4,  // Assign mode
-    cmRegisterBrowser  = 5,  // Register browser
-    cmFlagBrowser      = 6,  // Flag browser
-    cmFontBrowser      = 7,  // Font browser
-    cmPlotStat         = 8,  // Plot stats mode
-    cmErrorMessage     = 9,  // Error message in one of the register lines
-    cmBugOnScreen      = 10, // Bug message on screen
-    cmConfirmation     = 11, // Waiting for confirmation or canceling
-    cmMim              = 12, // Matrix imput mode tbd reorder
-    cmEim              = 13, // Equation imput mode
-    cmTimerApp         = 14, // Timer application
-    cmGraph            = 15, // Plot graph mode
-    cmNoUndo           = 16, // Running functions without undo affected
-    cmApp              = 17
+    cmPlotStat         = 5,  // Plot stats mode
+    cmErrorMessage     = 6,  // Error message in one of the register lines
+    cmBugOnScreen      = 7,  // Bug message on screen
+    cmConfirmation     = 8,  // Waiting for confirmation or canceling
+    cmMim              = 9,  // Matrix imput mode tbd reorder
+    cmEim              = 10, // Equation imput mode
+    cmTimerApp         = 11, // Timer application
+    cmGraph            = 12, // Plot graph mode
+    cmNoUndo           = 13, // Running functions without undo affected
+    cmApp              = 14  // App mode
   } calcMode_t;
 
   extern calcMode_t calcMode;

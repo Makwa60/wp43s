@@ -26,8 +26,30 @@
 
   // Interface for other modules
 
+  /**
+   * Handles a key press when in app mode.
+   * It should be assumed that the app will completely handle the key
+   * press and no work need be done elsewhere related to this key press.
+   * This should be called on key press, not on release as app keys are
+   * not NOPable by holding.
+   *
+   * \param[in] item the item indicating the key that is pressed
+   */
   void        appsHandleKey(int16_t item);
+
+  /**
+   * Draw the app main screen.
+   * Apps replace the entire screen except for the status bar which
+   * should continue to be drawn in the usual way. This should be
+   * called whenever a screen refresh is needed.
+   */
   void        appsDraw     (void);
+
+  /**
+   * Return the current key layout for the running app.
+   *
+   * \return GUI layout that the app uses
+   */
   guiLayout_t appsGetLayout(void);
 
   // Interface for apps

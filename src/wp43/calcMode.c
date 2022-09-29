@@ -48,13 +48,6 @@ calcMode_t calcMode;
         case cmApp:
           newLayout = appsGetLayout();
           break;
-        case cmRegisterBrowser:
-          newLayout = glRegisterBrowser;
-          break;
-        case cmFlagBrowser:
-        case cmFontBrowser:
-          newLayout = glFlagFontBrowser;
-          break;
         case cmTimerApp:
           newLayout = glTimerApp;
           break;
@@ -193,9 +186,6 @@ calcMode_t calcMode;
         calcModeNim();
         break;
       case cmAssign:
-      case cmFlagBrowser:
-      case cmFontBrowser:
-      case cmRegisterBrowser:
       case cmTimerApp:
       case cmApp:
         previousCalcMode = calcMode;
@@ -212,9 +202,6 @@ calcMode_t calcMode;
   void calcModeLeave(void) {
     switch(calcMode) {
       case cmAssign:
-      case cmFlagBrowser:
-      case cmFontBrowser:
-      case cmRegisterBrowser:
       case cmTimerApp:
       case cmApp:
         calcMode = previousCalcMode;

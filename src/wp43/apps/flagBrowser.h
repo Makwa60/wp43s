@@ -31,11 +31,6 @@
     void flagBrowserInit(void);
 
     /**
-     * The flag browser draw routine.
-     */
-    void flagBrowserDraw(void);
-
-    /**
      * The flag browser application.
      *
      * \param[in] unusedButMandatoryParameter uint16_t
@@ -45,7 +40,6 @@
     #pragma GCC diagnostic ignored "-Wunused-parameter"
 
     static inline void flagBrowserInit(void) {}
-    static inline void flagBrowserDraw(void) {}
     static inline void fnFlagBrowser  (uint16_t unusedButMandatoryParameter) {}
   #endif // !TESTSUITE_BUILD
 #endif // !FLAGBROWSER_H

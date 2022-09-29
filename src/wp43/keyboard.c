@@ -404,7 +404,7 @@
       #pragma GCC diagnostic pop
       _closeCatalog();
     }
-    else if(calcMode != cmApp && calcMode != cmRegisterBrowser && calcMode != cmFlagBrowser && calcMode != cmFontBrowser) {
+    else if(calcMode != cmApp) {
       int16_t item = determineFunctionKeyItem((char *)data);
 
       if(shiftF || shiftG) {
@@ -526,7 +526,7 @@
       screenUpdatingMode &= ~SCRUPD_ONE_TIME_FLAGS;
       return;
     }
-    if(calcMode != cmApp && calcMode != cmRegisterBrowser && calcMode != cmFlagBrowser && calcMode != cmFontBrowser) {
+    if(calcMode != cmApp) {
       if(tam.mode == TM_KEY && !tam.keyInputFinished) {
         if(tam.digitsSoFar == 0) {
           switch(data[0]) {
@@ -802,7 +802,7 @@
     else if(tam.mode) {
       result = key->primaryTam; // No shifted function in TAM
     }
-    else if(calcMode == cmNormal || calcMode == cmNim || calcMode == cmMim || calcMode == cmFontBrowser || calcMode == cmFlagBrowser || calcMode == cmRegisterBrowser || calcMode == cmBugOnScreen || calcMode == cmConfirmation || calcMode == cmPem || calcMode == cmPlotStat || calcMode == cmGraph || calcMode == cmAssign || calcMode == cmTimerApp) {
+    else if(calcMode == cmNormal || calcMode == cmNim || calcMode == cmMim || calcMode == cmBugOnScreen || calcMode == cmConfirmation || calcMode == cmPem || calcMode == cmPlotStat || calcMode == cmGraph || calcMode == cmAssign || calcMode == cmTimerApp) {
       result = shiftF ? key->fShifted :
                shiftG ? key->gShifted :
                         key->primary;
@@ -1120,7 +1120,7 @@
           }
           keyActionProcessed = true;
         }
-        else if(calcMode == cmRegisterBrowser || calcMode == cmFlagBrowser || calcMode == cmFontBrowser || calcMode == cmTimerApp) {
+        else if(calcMode == cmTimerApp) {
           keyActionProcessed = true;
         }
         else if(calcMode == cmPem && item == ITM_dotD && aimBuffer[0] == 0) {
@@ -1150,9 +1150,6 @@
               tamBuffer[0] = 0;
             }
           }
-          keyActionProcessed = true;
-        }
-        else if(calcMode == cmRegisterBrowser || calcMode == cmFlagBrowser || calcMode == cmFontBrowser) {
           keyActionProcessed = true;
         }
         else if(tam.mode) {
@@ -1263,73 +1260,6 @@
               break;
             }
 
-            case cmRegisterBrowser: {
-              if(item == ITM_PERIOD) {
-                rbr1stDigit = true;
-                if(rbrMode == RBR_GLOBAL) {
-                  if(currentLocalRegisters != NULL) {
-                    rbrMode = RBR_LOCAL;
-                    currentRegisterBrowserScreen = FIRST_LOCAL_REGISTER;
-                  }
-                  else if(numberOfNamedVariables > 0) {
-                    rbrMode = RBR_NAMED;
-                    currentRegisterBrowserScreen = FIRST_NAMED_VARIABLE;
-                  }
-                }
-                else if(rbrMode == RBR_LOCAL) {
-                  if(numberOfNamedVariables > 0) {
-                    rbrMode = RBR_NAMED;
-                    currentRegisterBrowserScreen = FIRST_NAMED_VARIABLE;
-                  }
-                  else {
-                    rbrMode = RBR_GLOBAL;
-                    currentRegisterBrowserScreen = REGISTER_X;
-                  }
-                }
-                else if(rbrMode == RBR_NAMED) {
-                  rbrMode = RBR_GLOBAL;
-                  currentRegisterBrowserScreen = REGISTER_X;
-                }
-              }
-              else if(item == ITM_RS) {
-                rbr1stDigit = true;
-                showContent = !showContent;
-              }
-              else if(item == ITM_RCL) {
-                rbr1stDigit = true;
-                if(rbrMode == RBR_GLOBAL || rbrMode == RBR_LOCAL) {
-                  calcModeLeave();
-                  fnRecall(currentRegisterBrowserScreen);
-                  setSystemFlag(FLAG_ASLIFT);
-                }
-                else if(rbrMode == RBR_NAMED) {
-                }
-              }
-              else if(ITM_0 <= item && item <= ITM_9 && (rbrMode == RBR_GLOBAL || rbrMode == RBR_LOCAL)) {
-                if(rbr1stDigit) {
-                  rbr1stDigit = false;
-                  rbrRegister = item - ITM_0;
-                }
-                else {
-                  rbr1stDigit = true;
-                  rbrRegister = rbrRegister*10 + item - ITM_0;
-
-                  if(rbrMode == RBR_GLOBAL) {
-                    currentRegisterBrowserScreen = rbrRegister;
-                  }
-                  else {
-                    rbrRegister = (rbrRegister >= currentNumberOfLocalRegisters ? 0 : rbrRegister);
-                    currentRegisterBrowserScreen = FIRST_LOCAL_REGISTER + rbrRegister;
-                  }
-                }
-              }
-
-              keyActionProcessed = true;
-              break;
-            }
-
-            case cmFlagBrowser:
-            case cmFontBrowser:
             case cmErrorMessage:
             case cmBugOnScreen: {
               keyActionProcessed = true;
@@ -1675,9 +1605,6 @@ void fnKeyEnter(uint16_t unusedButMandatoryParameter) {
         break;
       }
 
-      case cmRegisterBrowser:
-      case cmFlagBrowser:
-      case cmFontBrowser:
       case cmErrorMessage:
       case cmBugOnScreen:
       case cmPlotStat:
@@ -1735,9 +1662,6 @@ void fnKeyExit(uint16_t unusedButMandatoryParameter) {
     }
 
     switch(calcMode) {
-      case cmRegisterBrowser:
-      case cmFlagBrowser:
-      case cmFontBrowser:
       case cmConfirmation:
       case cmErrorMessage:
       case cmBugOnScreen: {
@@ -1780,9 +1704,6 @@ void fnKeyExit(uint16_t unusedButMandatoryParameter) {
     }
 
     switch(calcMode) {
-      case cmRegisterBrowser:
-      case cmFlagBrowser:
-      case cmFontBrowser:
       case cmConfirmation:
       case cmErrorMessage:
       case cmBugOnScreen: {
@@ -1912,14 +1833,6 @@ void fnKeyExit(uint16_t unusedButMandatoryParameter) {
         break;
       }
 
-      case cmRegisterBrowser:
-      case cmFlagBrowser:
-      case cmFontBrowser: {
-        rbr1stDigit = true;
-        calcModeLeave();
-        break;
-      }
-
       case cmTimerApp: {
         screenUpdatingMode = SCRUPD_AUTO;
         if(lastErrorCode != 0) {
@@ -2045,9 +1958,6 @@ void fnKeyCC(uint16_t unusedButMandatoryParameter) {
       }
 
       case cmEim:
-      case cmRegisterBrowser:
-      case cmFlagBrowser:
-      case cmFontBrowser:
       case cmPlotStat:
       case cmTimerApp:
       case cmGraph: {
@@ -2131,13 +2041,6 @@ void fnKeyBackspace(uint16_t unusedButMandatoryParameter) {
       //  addItemToBuffer(ITM_BACKSPACE);
       //  break;
       //}
-
-      case cmRegisterBrowser:
-      case cmFlagBrowser:
-      case cmFontBrowser: {
-        calcModeLeave();
-        break;
-      }
 
       case cmBugOnScreen:
       case cmPlotStat:
@@ -2341,36 +2244,6 @@ void fnKeyUp(uint16_t unusedButMandatoryParameter) {
         break;
       }
 
-      case cmRegisterBrowser: {
-        rbr1stDigit = true;
-        if(rbrMode == RBR_GLOBAL) {
-          currentRegisterBrowserScreen = modulo(currentRegisterBrowserScreen + 1, FIRST_LOCAL_REGISTER);
-        }
-        else if(rbrMode == RBR_LOCAL) {
-          currentRegisterBrowserScreen = modulo(currentRegisterBrowserScreen - FIRST_LOCAL_REGISTER + 1, currentNumberOfLocalRegisters) + FIRST_LOCAL_REGISTER;
-        }
-        else if(rbrMode == RBR_NAMED) {
-          currentRegisterBrowserScreen = modulo(currentRegisterBrowserScreen - FIRST_NAMED_VARIABLE + 1, numberOfNamedVariables) + FIRST_NAMED_VARIABLE;
-        }
-        else {
-          sprintf(errorMessage, "In function fnKeyUp: unexpected case while processing key UP! %" PRIu8 " is an unexpected value for rbrMode.", rbrMode);
-          displayBugScreen(errorMessage);
-        }
-        break;
-      }
-
-      case cmFlagBrowser: {
-        currentFlgScr = 3 - currentFlgScr;
-        break;
-      }
-
-      case cmFontBrowser: {
-        if(currentFntScr >= 2) {
-          currentFntScr--;
-        }
-        break;
-      }
-
       case cmPem: {
         resetAlphaSelectionBuffer();
         if(getSystemFlag(FLAG_ALPHA) && alphaCase == AC_LOWER) {
@@ -2504,36 +2377,6 @@ void fnKeyDown(uint16_t unusedButMandatoryParameter) {
         break;
       }
 
-      case cmRegisterBrowser: {
-        rbr1stDigit = true;
-        if(rbrMode == RBR_GLOBAL) {
-          currentRegisterBrowserScreen = modulo(currentRegisterBrowserScreen - 1, FIRST_LOCAL_REGISTER);
-        }
-        else if(rbrMode == RBR_LOCAL) {
-          currentRegisterBrowserScreen = modulo(currentRegisterBrowserScreen - FIRST_LOCAL_REGISTER - 1, currentNumberOfLocalRegisters) + FIRST_LOCAL_REGISTER;
-        }
-        else if(rbrMode == RBR_NAMED) {
-          currentRegisterBrowserScreen = modulo(currentRegisterBrowserScreen - 1000 - 1, numberOfNamedVariables) + 1000;
-        }
-        else {
-          sprintf(errorMessage, "In function fnKeyDown: unexpected case while processing key DOWN! %" PRIu8 " is an unexpected value for rbrMode.", rbrMode);
-          displayBugScreen(errorMessage);
-        }
-        break;
-      }
-
-      case cmFlagBrowser: {
-        currentFlgScr = 3 - currentFlgScr;
-        break;
-      }
-
-      case cmFontBrowser: {
-        if(currentFntScr < numScreensNumericFont + numScreensStandardFont) {
-          currentFntScr++;
-        }
-        break;
-      }
-
       case cmPem: {
         resetAlphaSelectionBuffer();
         if(getSystemFlag(FLAG_ALPHA) && alphaCase == AC_UPPER) {
@@ -2617,9 +2460,6 @@ void fnKeyDotD(uint16_t unusedButMandatoryParameter) {
         break;
       }
 
-      case cmRegisterBrowser:
-      case cmFlagBrowser:
-      case cmFontBrowser:
       case cmPlotStat:
       case cmGraph:
       case cmMim:
@@ -2656,9 +2496,6 @@ void fnKeyAngle(uint16_t unusedButMandatoryParameter) {
         break;
       }
 
-      case cmRegisterBrowser:
-      case cmFlagBrowser:
-      case cmFontBrowser:
       case cmPlotStat:
       case cmGraph:
       case cmMim:

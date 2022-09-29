@@ -1804,27 +1804,6 @@ void execTimerApp(uint16_t timerType) {
         break;
       }
 
-      case cmFlagBrowser: {
-        clearScreen();
-        flagBrowserDraw();
-        refreshStatusBar();
-        break;
-      }
-
-      case cmFontBrowser: {
-        clearScreen();
-        fontBrowserDraw();
-        refreshStatusBar();
-        break;
-      }
-
-      case cmRegisterBrowser: {
-        clearScreen();
-        registerBrowserDraw();
-        refreshStatusBar();
-        break;
-      }
-
       case cmPem: {
         clearScreen();
         showSoftmenuCurrentPart();

@@ -38,19 +38,11 @@
      *
      * \param[in] unusedButMandatoryParameter uint16_t
      */
-    void registerBrowserDraw(void);
-
-    /**
-     * The register browser.
-     *
-     * \param[in] unusedButMandatoryParameter uint16_t
-     */
     void fnRegisterBrowser(uint16_t unusedButMandatoryParameter);
   #else
     #pragma GCC diagnostic ignored "-Wunused-parameter"
 
     static inline void registerBrowserInit(void) {}
-    static inline void registerBrowserDraw(void) {}
     static inline void fnRegisterBrowser(uint16_t unusedButMandatoryParameter) {}
   #endif // !TESTSUITE_BUILD
 #endif // !REGISTERBROWSER_H

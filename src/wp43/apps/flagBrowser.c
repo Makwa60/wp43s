@@ -63,7 +63,7 @@ uint8_t currentFlgScr;
 
 
 
-  bool_t flagBrowserKeyHandler(int16_t item) {
+  static bool_t _flagBrowserKeyHandler(int16_t item) {
     if(item == ITM_UP || item == ITM_DOWN) {
       currentFlgScr = 3 - currentFlgScr;
       return true;
@@ -73,7 +73,7 @@ uint8_t currentFlgScr;
 
 
 
-  void flagBrowserDraw(void) {
+  static void _flagBrowserDraw(void) {
     static int16_t line;
     int16_t f;
     bool_t firstFlag;
@@ -307,7 +307,7 @@ uint8_t currentFlgScr;
       }
       else {
         currentFlgScr = 1;
-        flagBrowserDraw();
+        _flagBrowserDraw();
       }
     }
   }
@@ -322,7 +322,6 @@ uint8_t currentFlgScr;
     }
     clearSystemFlag(FLAG_ALPHA);
     currentFlgScr = 0;
-    appsEnter(glFlagFontBrowser, flagBrowserKeyHandler, flagBrowserDraw);
-    //calcModeEnter(cmFlagBrowser);
+    appsEnter(glFlagFontBrowser, _flagBrowserKeyHandler, _flagBrowserDraw);
   }
 #endif // !TESTSUITE_BUILD
