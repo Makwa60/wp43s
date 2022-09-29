@@ -20,6 +20,7 @@
 
 #include "flags.h"
 
+#include "apps/bugScreen.h"
 #include "calcMode.h"
 #include "config.h"
 #include "error.h"
@@ -299,7 +300,7 @@ bool_t getFlag(uint16_t flag) {
       }
       else {
         sprintf(errorMessage, "In function getFlag: local flag %" PRIu16 " is not defined! Must be from 0 to %d.", flag, NUMBER_OF_LOCAL_FLAGS - 1);
-        displayBugScreen(errorMessage);
+        bugScreen(errorMessage);
       }
     }
     #if defined(PC_BUILD)
@@ -407,7 +408,7 @@ void fnSetFlag(uint16_t flag) {
       }
       else {
         sprintf(errorMessage, "In function fnSetFlag: local flag %" PRIu16 " is not defined! Must be from 0 to %d.", flag, NUMBER_OF_LOCAL_FLAGS - 1);
-        displayBugScreen(errorMessage);
+        bugScreen(errorMessage);
       }
     }
     #if defined(PC_BUILD)
@@ -497,7 +498,7 @@ void fnClearFlag(uint16_t flag) {
       }
       else {
         sprintf(errorMessage, "In function fnClearFlag: local flag %" PRIu16 " is not defined! Must be from 0 to %d.", flag, NUMBER_OF_LOCAL_FLAGS - 1);
-        displayBugScreen(errorMessage);
+        bugScreen(errorMessage);
       }
     }
     #if defined(PC_BUILD)
@@ -592,7 +593,7 @@ void fnFlipFlag(uint16_t flag) {
       }
       else {
         sprintf(errorMessage, "In function fnFlipFlag: local flag %" PRIu16 " is not defined! Must be from 0 to %d.", flag, NUMBER_OF_LOCAL_FLAGS - 1);
-        displayBugScreen(errorMessage);
+        bugScreen(errorMessage);
       }
     }
     #if defined(PC_BUILD)

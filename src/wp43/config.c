@@ -20,6 +20,7 @@
 
 #include "config.h"
 
+#include "apps/bugScreen.h"
 #include "apps/flagBrowser.h"
 #include "apps/fontBrowser.h"
 #include "apps/registerBrowser.h"
@@ -364,7 +365,7 @@ void fnRoundingMode(uint16_t RM) {
 
     default: {
       sprintf(errorMessage, "In function fnRoundingMode: %d is an unexpected value for RM! Must be from 0 to 6", RM);
-      displayBugScreen(errorMessage);
+      bugScreen(errorMessage);
       break;
     }
   }

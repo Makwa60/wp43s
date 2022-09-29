@@ -20,6 +20,7 @@
 
 #include "mathematics/toRect.h"
 
+#include "apps/bugScreen.h"
 #include "constantPointers.h"
 #include "conversionAngles.h"
 #include "debug.h"
@@ -57,7 +58,7 @@ void fnToRect(uint16_t unusedButMandatoryParameter) {
       }
       default: {
         sprintf(errorMessage, "In function fnToRect: %" PRIu32 " is an unexpected dataTypeX value!", dataTypeX);
-        displayBugScreen(errorMessage);
+        bugScreen(errorMessage);
       }
     }
 
@@ -80,7 +81,7 @@ void fnToRect(uint16_t unusedButMandatoryParameter) {
 
       default: {
         sprintf(errorMessage, "In function fnToRect: %" PRIu32 " is an unexpected dataTypeY value!", dataTypeY);
-        displayBugScreen(errorMessage);
+        bugScreen(errorMessage);
       }
     }
 

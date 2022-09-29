@@ -16,6 +16,7 @@
 
 #include "integers.h"
 
+#include "apps/bugScreen.h"
 #include "constantPointers.h"
 #include "debug.h"
 #include "display.h"
@@ -235,7 +236,7 @@ static int32_t WP34S_calc_overflow(uint64_t xv, uint64_t yv, int32_t neg) {
 
     default: {
       sprintf(errorMessage, "In function calc_overflow: %" PRIu8 " is an unexpected value for shortIntegerMode!", shortIntegerMode);
-      displayBugScreen(errorMessage);
+      bugScreen(errorMessage);
       return 0;
     }
   }

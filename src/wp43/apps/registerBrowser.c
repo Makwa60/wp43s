@@ -17,6 +17,7 @@
 #include "apps/registerBrowser.h"
 
 #include "apps/apps.h"
+#include "apps/bugScreen.h"
 #include "calcMode.h"
 #include "charString.h"
 #include "debug.h"
@@ -203,7 +204,7 @@ int16_t currentRegisterBrowserScreen;
         }
         else {
           sprintf(errorMessage, "In function fnKeyUp: unexpected case while processing key UP! %" PRIu8 " is an unexpected value for rbrMode.", rbrMode);
-          displayBugScreen(errorMessage);
+          bugScreen(errorMessage);
         }
         break;
       }
@@ -220,7 +221,7 @@ int16_t currentRegisterBrowserScreen;
         }
         else {
           sprintf(errorMessage, "In function fnKeyDown: unexpected case while processing key DOWN! %" PRIu8 " is an unexpected value for rbrMode.", rbrMode);
-          displayBugScreen(errorMessage);
+          bugScreen(errorMessage);
         }
         break;
       }

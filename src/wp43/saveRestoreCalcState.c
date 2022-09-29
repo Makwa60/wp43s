@@ -16,6 +16,7 @@
 
 #include "saveRestoreCalcState.h"
 
+#include "apps/bugScreen.h"
 #include "apps/flagBrowser.h"
 #include "apps/fontBrowser.h"
 #include "apps/registerBrowser.h"
@@ -1238,7 +1239,7 @@ static void restoreRegister(calcRegister_t regist, char *type, char *value) {
 
   else {
     sprintf(errorMessage, "In function restoreRegister: Date type %s is to be coded!", type);
-    displayBugScreen(errorMessage);
+    bugScreen(errorMessage);
   }
 }
 

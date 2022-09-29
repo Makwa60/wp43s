@@ -18,6 +18,7 @@
 
 #include "assign.h"
 #include "apps/apps.h"
+#include "apps/bugScreen.h"
 #include "apps/flagBrowser.h"
 #include "apps/fontBrowser.h"
 #include "apps/registerBrowser.h"
@@ -218,7 +219,7 @@ void execTimerApp(uint16_t timerType) {
 
     if(glyph == NULL) {
       sprintf(errorMessage, "In function showGlyphCode: %" PRIi32 " is an unexpected value returned by fingGlyph!", glyphId);
-      displayBugScreen(errorMessage);
+      bugScreen(errorMessage);
       return 0;
     }
 
@@ -306,7 +307,7 @@ void execTimerApp(uint16_t timerType) {
     glyphId = findGlyph(font, charCodeFromString(ch, offset));
     if(glyphId < 0) {
       sprintf(errorMessage, "In function getGlyphBounds: %" PRIi32 " is an unexpected value returned by findGlyph!", glyphId);
-      displayBugScreen(errorMessage);
+      bugScreen(errorMessage);
       return;
     }
     glyph = (font->glyphs) + glyphId;
@@ -605,7 +606,7 @@ void execTimerApp(uint16_t timerType) {
       }
     #endif // (DEBUG_PANEL == 1)
 
-    if((calcMode != cmBugOnScreen) && (calcMode != cmPlotStat) && (calcMode != cmGraph)) {
+    if((calcMode != cmPlotStat) && (calcMode != cmGraph)) {
       clearRegisterLine(regist, true, (regist != REGISTER_Y));
 
       #if defined(PC_BUILD)

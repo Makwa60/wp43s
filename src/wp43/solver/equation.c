@@ -20,6 +20,7 @@
 
 #include "solver/equation.h"
 
+#include "apps/bugScreen.h"
 #include "calcMode.h"
 #include "constantPointers.h"
 #include "charString.h"
@@ -1142,7 +1143,7 @@ void showEquation(uint16_t equationId, uint16_t startAt, uint16_t cursorAt, bool
             // label or parameter separator will be skipped
           }
           else {
-            displayBugScreen("In function _parseWord: Unknown operator appeared!");
+            bugScreen("In function _parseWord: Unknown operator appeared!");
           }
         }
         else if(parserHint == PARSER_HINT_FUNCTION) {
@@ -1173,7 +1174,7 @@ void showEquation(uint16_t equationId, uint16_t startAt, uint16_t cursorAt, bool
       }
 
       default: {
-        displayBugScreen("In function _parseWord: Unknown mode of formula parser!");
+        bugScreen("In function _parseWord: Unknown mode of formula parser!");
       }
     }
   }

@@ -17,6 +17,7 @@
 #include "apps/fontBrowser.h"
 
 #include "apps/apps.h"
+#include "apps/bugScreen.h"
 #include "calcMode.h"
 #include "charString.h"
 #include "error.h"
@@ -160,7 +161,7 @@ uint8_t currentFntScr;
       showString(tmpString, &standardFont, SCREEN_WIDTH-stringWidth(tmpString, &standardFont, false, true), 220, vmNormal, false, true);
     }
     else {
-      displayBugScreen("In function showFonts: This should never happen!");
+      bugScreen("In function showFonts: This should never happen!");
     }
   }
 
