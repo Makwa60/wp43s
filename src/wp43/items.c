@@ -231,7 +231,7 @@ void fnNop(uint16_t unusedButMandatoryParameter) {
 #endif // !TESTSUITE_BUILD && !GENERATE_CATALOGS
 
 #if defined(GENERATE_CATALOGS)
-  void registerBrowser             (uint16_t unusedButMandatoryParameter) {}
+  void fnRegisterBrowser           (uint16_t unusedButMandatoryParameter) {}
   void fnFlagBrowser               (uint16_t unusedButMandatoryParameter) {}
   void fnFontBrowser               (uint16_t unusedButMandatoryParameter) {}
   void fnPow10                     (uint16_t unusedButMandatoryParameter) {}
@@ -2436,7 +2436,7 @@ TO_QSPI const item_t indexOfItems[] = {
 /* 1557 */  { fnAngularMode,                amRadian,                    "RAD",                                         "RAD",                                         (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
 /* 1558 */  { fnCvtToCurrentAngularMode,    amRadian,                    "RAD" STD_RIGHT_ARROW,                         "RAD" STD_RIGHT_ARROW,                         (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
 /* 1559 */  { fnRandom,                     NOPARAM,                     "RAN#",                                        "RAN#",                                        (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
-/* 1560 */  { registerBrowser,              NOPARAM,                     "RBR",                                         "RBR",                                         (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
+/* 1560 */  { fnRegisterBrowser,            NOPARAM,                     "RBR",                                         "RBR",                                         (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
 /* 1561 */  { fnRecallConfig,               TM_REGISTER,                 "RCLCFG",                                      "Config",                                      (0 << TAM_MAX_BITS) |    99, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_REGISTER     },
 /* 1562 */  { fnRecallElement,              NOPARAM,                     "RCLEL",                                       "RCLEL",                                       (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
 /* 1563 */  { fnRecallIJ,                   NOPARAM,                     "RCLIJ",                                       "RCLIJ",                                       (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },

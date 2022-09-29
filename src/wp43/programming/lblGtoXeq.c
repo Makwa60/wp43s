@@ -20,6 +20,7 @@
 
 #include "programming/lblGtoXeq.h"
 
+#include "calcMode.h"
 #include "charString.h"
 #include "constantPointers.h"
 #include "conversionAngles.h"

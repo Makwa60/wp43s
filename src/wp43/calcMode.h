@@ -24,6 +24,30 @@
   #include "typeDefinitions.h"
   #include <stdint.h>
 
+  /**
+   * \enum calcMode_t
+   * Calculator mode (5 bits).
+   */
+  typedef enum {
+    cmNormal           = 0,  // Normal operation
+    cmAim              = 1,  // Alpha input mode
+    cmNim              = 2,  // Numeric input mode
+    cmPem              = 3,  // Program entry mode
+    cmAssign           = 4,  // Assign mode
+    cmPlotStat         = 5,  // Plot stats mode
+    cmErrorMessage     = 6,  // Error message in one of the register lines
+    cmBugOnScreen      = 7,  // Bug message on screen
+    cmConfirmation     = 8,  // Waiting for confirmation or canceling
+    cmMim              = 9,  // Matrix imput mode tbd reorder
+    cmEim              = 10, // Equation imput mode
+    cmTimerApp         = 11, // Timer application
+    cmGraph            = 12, // Plot graph mode
+    cmNoUndo           = 13, // Running functions without undo affected
+    cmApp              = 14  // App mode
+  } calcMode_t;
+
+  extern calcMode_t calcMode;
+
   #if !defined(TESTSUITE_BUILD)
     void fnOff                       (uint16_t unsuedParamButMandatory);
 

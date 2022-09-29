@@ -20,6 +20,7 @@
 
 #include "solver/equation.h"
 
+#include "calcMode.h"
 #include "constantPointers.h"
 #include "charString.h"
 #include "defines.h"

@@ -20,6 +20,7 @@
 
 #include "error.h"
 
+#include "calcMode.h"
 #include "charString.h"
 #include "constantPointers.h"
 #include "debug.h"

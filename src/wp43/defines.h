@@ -966,7 +966,6 @@
     #define addItemToBuffer fnNop
     #define fnOff           fnNop
     #define fnAim           fnNop
-    #define registerBrowser fnNop
     #define refreshRegisterLine(a)  {}
     #define displayBugScreen(a)     { printf("\n-----------------------------------------------------------------------\n"); printf("%s\n", a); printf("\n-----------------------------------------------------------------------\n");}
     #define showHideHourGlass()     {}

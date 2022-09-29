@@ -16,6 +16,7 @@
 
 #include "apps/flagBrowser.h"
 
+#include "apps/apps.h"
 #include "calcMode.h"
 #include "charString.h"
 #include "config.h"
@@ -32,6 +33,7 @@
 #include "wp43.h"
 
 
+uint8_t currentFlgScr;
 
 #if !defined(TESTSUITE_BUILD)
   TO_QSPI const char flagLetter[] = "XYZTABCDLIJK";
@@ -55,13 +57,28 @@
 
 
 
-  void flagBrowserDraw(void) {
+  void flagBrowserInit(void) {
+    currentFlgScr = 0;
+  }
+
+
+
+  static bool_t _flagBrowserKeyHandler(int16_t item) {
+    if(item == ITM_UP || item == ITM_DOWN) {
+      currentFlgScr = 3 - currentFlgScr;
+      return true;
+    }
+    return false;
+  }
+
+
+
+  static void _flagBrowserDraw(void) {
     static int16_t line;
     int16_t f;
     bool_t firstFlag;
 
     hourGlassIconEnabled = false;
-    assert(calcMode == cmFlagBrowser);
 
     if(currentFlgScr == 0) { // Init
       char flagNumber[4];
@@ -290,7 +307,7 @@
       }
       else {
         currentFlgScr = 1;
-        flagBrowserDraw();
+        _flagBrowserDraw();
       }
     }
   }
@@ -303,8 +320,8 @@
       hideCursor();
       cursorEnabled = false;
     }
-    calcModeEnter(cmFlagBrowser);
     clearSystemFlag(FLAG_ALPHA);
     currentFlgScr = 0;
+    appsEnter(glFlagFontBrowser, _flagBrowserKeyHandler, _flagBrowserDraw);
   }
 #endif // !TESTSUITE_BUILD

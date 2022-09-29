@@ -16,6 +16,7 @@
 
 #include "stack.h"
 
+#include "calcMode.h"
 #include "charString.h"
 #include "constantPointers.h"
 #include "mathematics/comparisonReals.h"

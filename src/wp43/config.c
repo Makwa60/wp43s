@@ -20,7 +20,9 @@
 
 #include "config.h"
 
+#include "apps/flagBrowser.h"
 #include "apps/fontBrowser.h"
+#include "apps/registerBrowser.h"
 #include "bufferize.h"
 #include "calcMode.h"
 #include "charString.h"
@@ -866,8 +868,8 @@ void fnReset(uint16_t confirmation) {
     displayStack = cachedDisplayStack = 4;
 
     fontBrowserInit();
-    currentFlgScr = 0;
-    currentRegisterBrowserScreen = 9999;
+    flagBrowserInit();
+    registerBrowserInit();
 
     memset(softmenuStack, 0, sizeof(softmenuStack)); // This works because the ID of MyMenu is 0
 

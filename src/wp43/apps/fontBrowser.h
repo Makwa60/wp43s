@@ -22,16 +22,13 @@
 
   #include <stdint.h>
 
+  extern uint8_t currentFntScr;
+
   #if !defined(TESTSUITE_BUILD)
     /**
      * The font browser application initialisation.
      */
     void fontBrowserInit(void);
-
-    /**
-     * The font browser draw routine.
-     */
-    void fontBrowserDraw(void);
 
     /**
      * The font browser application.
@@ -40,8 +37,9 @@
      */
     void fnFontBrowser  (uint16_t unusedButMandatoryParameter);
   #else
+    #pragma GCC diagnostic ignored "-Wunused-parameter"
+
     static inline void fontBrowserInit(void) {}
-    static inline void fontBrowserDraw(void) {}
     static inline void fnFontBrowser  (uint16_t unusedButMandatoryParameter) {}
   #endif // !TESTSUITE_BUILD
 #endif // !FONTBROWSER_H

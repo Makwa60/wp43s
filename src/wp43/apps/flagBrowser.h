@@ -22,11 +22,13 @@
 
   #include <stdint.h>
 
+  extern uint8_t currentFlgScr;
+
   #if !defined(TESTSUITE_BUILD)
     /**
-     * The flag browser draw routine.
+     * The flag browser initialisation.
      */
-    void flagBrowserDraw(void);
+    void flagBrowserInit(void);
 
     /**
      * The flag browser application.
@@ -35,7 +37,9 @@
      */
     void fnFlagBrowser  (uint16_t unusedButMandatoryParameter);
   #else
+    #pragma GCC diagnostic ignored "-Wunused-parameter"
+
+    static inline void flagBrowserInit(void) {}
     static inline void fnFlagBrowser  (uint16_t unusedButMandatoryParameter) {}
-    static inline void flagBrowserDraw(void) {}
   #endif // !TESTSUITE_BUILD
 #endif // !FLAGBROWSER_H

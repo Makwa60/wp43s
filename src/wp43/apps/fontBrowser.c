@@ -16,20 +16,20 @@
 
 #include "apps/fontBrowser.h"
 
-#include <stdlib.h>
-
+#include "apps/apps.h"
 #include "calcMode.h"
 #include "charString.h"
 #include "error.h"
 #include "flags.h"
 #include "fonts.h"
+#include "items.h"
 #include "screen.h"
 #include <assert.h>
 #include <stdlib.h>
 
 #include "wp43.h"
 
-
+uint8_t currentFntScr;
 
 #if !defined(TESTSUITE_BUILD)
   #define NUMBER_OF_GLYPH_ROWS 100
@@ -79,12 +79,29 @@
 
 
 
-  void fontBrowserDraw(void) {
+  static bool_t _fontBrowserKeyHandler(int16_t item) {
+    if(item == ITM_UP) {
+      if(currentFntScr >= 2) {
+        currentFntScr--;
+      }
+      return true;
+    }
+    else if(item == ITM_DOWN) {
+      if(currentFntScr < numScreensNumericFont + numScreensStandardFont) {
+        currentFntScr++;
+      }
+      return true;
+    }
+    return false;
+  }
+
+
+
+  void _fontBrowserDraw(void) {
     uint16_t x, y, first;
 
     hourGlassIconEnabled = false;
 
-    assert(calcMode == cmFontBrowser);
     assert(!getSystemFlag(FLAG_ALPHA));
 
     if(currentFntScr>=1 && currentFntScr<=numScreensNumericFont) { // Numeric font
@@ -151,7 +168,7 @@
 
   void fnFontBrowser(uint16_t unusedButMandatoryParameter) {
     hourGlassIconEnabled = false;
-    calcModeEnter(cmFontBrowser);
     clearSystemFlag(FLAG_ALPHA);
+    appsEnter(glFlagFontBrowser, _fontBrowserKeyHandler, _fontBrowserDraw);
   }
 #endif // !TESTSUITE_BUILD

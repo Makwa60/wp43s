@@ -16,6 +16,7 @@
 
 #include "ui/statusBar.h"
 
+#include "calcMode.h"
 #include "charString.h"
 #include "dateTime.h"
 #include "flags.h"
@@ -201,9 +202,7 @@
     if(screenUpdatingMode & SCRUPD_MANUAL_STATUSBAR) {
       switch(calcMode) {
         case cmPem:
-        case cmRegisterBrowser:
-        case cmFlagBrowser:
-        case cmFontBrowser:
+        case cmApp:
         case cmPlotStat:
         case cmConfirmation:
         case cmMim:
@@ -359,9 +358,7 @@
     if(screenUpdatingMode & SCRUPD_MANUAL_STATUSBAR) {
       switch(calcMode) {
         case cmPem:
-        case cmRegisterBrowser:
-        case cmFlagBrowser:
-        case cmFontBrowser:
+        case cmApp:
         case cmPlotStat:
         case cmConfirmation:
         case cmMim:

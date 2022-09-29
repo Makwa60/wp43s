@@ -16,8 +16,8 @@
 
 #include "matrix.h"
 
-#include <string.h>
 #include "bufferize.h"
+#include "calcMode.h"
 #include "charString.h"
 #include "constantPointers.h"
 #include "conversionAngles.h"
@@ -47,6 +47,7 @@
 #include "stack.h"
 #include "store.h"
 #include "ui/tam.h"
+#include <string.h>
 
 #include "wp43.h"
 

@@ -16,6 +16,7 @@
 
 #include "hal/gui.h"
 
+#include "calcMode.h"
 #include "gtkGui.h"
 #include "items.h"
 #include "typeDefinitions.h"
