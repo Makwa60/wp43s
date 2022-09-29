@@ -16,6 +16,7 @@
 
 #include "apps/flagBrowser.h"
 
+#include "apps/apps.h"
 #include "calcMode.h"
 #include "charString.h"
 #include "config.h"
@@ -62,13 +63,22 @@ uint8_t currentFlgScr;
 
 
 
+  bool_t flagBrowserKeyHandler(int16_t item) {
+    if(item == ITM_UP || item == ITM_DOWN) {
+      currentFlgScr = 3 - currentFlgScr;
+      return true;
+    }
+    return false;
+  }
+
+
+
   void flagBrowserDraw(void) {
     static int16_t line;
     int16_t f;
     bool_t firstFlag;
 
     hourGlassIconEnabled = false;
-    assert(calcMode == cmFlagBrowser);
 
     if(currentFlgScr == 0) { // Init
       char flagNumber[4];
@@ -310,8 +320,9 @@ uint8_t currentFlgScr;
       hideCursor();
       cursorEnabled = false;
     }
-    calcModeEnter(cmFlagBrowser);
     clearSystemFlag(FLAG_ALPHA);
     currentFlgScr = 0;
+    appsEnter(glFlagFontBrowser, flagBrowserKeyHandler, flagBrowserDraw);
+    //calcModeEnter(cmFlagBrowser);
   }
 #endif // !TESTSUITE_BUILD

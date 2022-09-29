@@ -16,6 +16,7 @@
 
 #include "wp43.h"
 
+#include "calcMode.h"
 #include "charString.h"
 #include "config.h"
 #include "flags.h"

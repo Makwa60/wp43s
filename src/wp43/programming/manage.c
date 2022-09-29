@@ -21,6 +21,7 @@
 #include "programming/manage.h"
 
 #include "bufferize.h"
+#include "calcMode.h"
 #include "charString.h"
 #include "config.h"
 #include "dateTime.h"

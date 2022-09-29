@@ -22,7 +22,7 @@
 
   #include <stdint.h>
 
-  uint8_t currentFntScr;
+  extern uint8_t currentFntScr;
 
   #if !defined(TESTSUITE_BUILD)
     /**

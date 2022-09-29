@@ -16,6 +16,7 @@
 
 #include "keyboard.h"
 
+#include "apps/apps.h"
 #include "apps/flagBrowser.h"
 #include "apps/fontBrowser.h"
 #include "apps/registerBrowser.h"
@@ -403,7 +404,7 @@
       #pragma GCC diagnostic pop
       _closeCatalog();
     }
-    else if(calcMode != cmRegisterBrowser && calcMode != cmFlagBrowser && calcMode != cmFontBrowser) {
+    else if(calcMode != cmApp && calcMode != cmRegisterBrowser && calcMode != cmFlagBrowser && calcMode != cmFontBrowser) {
       int16_t item = determineFunctionKeyItem((char *)data);
 
       if(shiftF || shiftG) {
@@ -525,7 +526,7 @@
       screenUpdatingMode &= ~SCRUPD_ONE_TIME_FLAGS;
       return;
     }
-    if(calcMode != cmRegisterBrowser && calcMode != cmFlagBrowser && calcMode != cmFontBrowser) {
+    if(calcMode != cmApp && calcMode != cmRegisterBrowser && calcMode != cmFlagBrowser && calcMode != cmFontBrowser) {
       if(tam.mode == TM_KEY && !tam.keyInputFinished) {
         if(tam.digitsSoFar == 0) {
           switch(data[0]) {
@@ -750,6 +751,11 @@
 
     dynamicMenuItem = -1;
     key = getSystemFlag(FLAG_USER) ? (kbd_usr + (*data - '0')*10 + *(data+1) - '0') : (kbd_std + (*data - '0')*10 + *(data+1) - '0');
+
+    // App mode doesn't support shift keys
+    if(calcMode == cmApp) {
+      return key->primary;
+    }
 
     // Shift f pressed and shift g not active
     if(key->primary == ITM_SHIFTf && !shiftG && (calcMode == cmNormal || calcMode == cmAim || calcMode == cmNim || calcMode == cmMim || calcMode == cmEim || calcMode == cmPem || calcMode == cmPlotStat || calcMode == cmGraph || calcMode == cmAssign)) {
@@ -1039,6 +1045,12 @@
     }
     if(programRunStop == PGM_WAITING) {
       programRunStop = PGM_STOPPED;
+    }
+
+    if(calcMode == cmApp) {
+      appsHandleKey(item);
+      keyActionProcessed = true;
+      return;
     }
 
     #if (REAL34_WIDTH_TEST == 1)

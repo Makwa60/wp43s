@@ -16,6 +16,7 @@
 
 #include "plotstat.h"
 
+#include "calcMode.h"
 #include "charString.h"
 #include "constantPointers.h"
 #include "config.h"

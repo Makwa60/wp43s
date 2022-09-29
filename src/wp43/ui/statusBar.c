@@ -16,6 +16,7 @@
 
 #include "ui/statusBar.h"
 
+#include "calcMode.h"
 #include "charString.h"
 #include "dateTime.h"
 #include "flags.h"

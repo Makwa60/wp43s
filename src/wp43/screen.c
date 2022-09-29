@@ -17,11 +17,13 @@
 #include "screen.h"
 
 #include "assign.h"
+#include "apps/apps.h"
 #include "apps/flagBrowser.h"
 #include "apps/fontBrowser.h"
 #include "apps/registerBrowser.h"
 #include "apps/timerApp.h"
 #include "bufferize.h"
+#include "calcMode.h"
 #include "charString.h"
 #include "constantPointers.h"
 #include "curveFitting.h"
@@ -1795,6 +1797,13 @@ void execTimerApp(uint16_t timerType) {
 
   void refreshScreen(void) {
     switch(calcMode) {
+      case cmApp: {
+        clearScreen();
+        appsDraw();
+        refreshStatusBar();
+        break;
+      }
+
       case cmFlagBrowser: {
         clearScreen();
         flagBrowserDraw();

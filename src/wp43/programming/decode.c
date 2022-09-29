@@ -20,6 +20,7 @@
 
 #include "programming/decode.h"
 
+#include "calcMode.h"
 #include "charString.h"
 #include "dateTime.h"
 #include "display.h"

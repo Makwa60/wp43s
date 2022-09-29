@@ -193,7 +193,6 @@
   extern uint8_t                previousCalcMode;
   extern uint8_t                groupingGap;
   extern uint8_t                roundingMode;
-  extern calcMode_t             calcMode;
   extern uint8_t                nextChar;
   extern uint8_t                displayStack;
   extern uint8_t                cachedDisplayStack;

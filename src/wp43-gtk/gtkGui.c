@@ -17,6 +17,7 @@
 #include "gtkGui.h"
 
 #include "apps/timerApp.h"
+#include "calcMode.h"
 #include "charString.h"
 #include "debug.h"
 #include "defines.h"
@@ -26,6 +27,7 @@
 #include "keyboard.h"
 #include "saveRestoreCalcState.h"
 #include "screen.h"
+
 #include "wp43.h"
 
 GtkWidget      *grid;

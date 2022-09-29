@@ -16,6 +16,7 @@
 
 #include "calcMode.h"
 
+#include "apps/apps.h"
 #include "apps/timerApp.h"
 #include "bufferize.h"
 #include "debug.h"
@@ -34,6 +35,8 @@
 
 #include "wp43.h"
 
+calcMode_t calcMode;
+
 #if !defined(TESTSUITE_BUILD)
   #if !defined(DMCP_BUILD)
     static guiLayout_t previousLayout = MAX_GUI_LAYOUTS;
@@ -42,6 +45,9 @@
       guiLayout_t newLayout = previousLayout;
       // Ideally this should be more fully specified
       switch(calcMode) {
+        case cmApp:
+          newLayout = appsGetLayout();
+          break;
         case cmRegisterBrowser:
           newLayout = glRegisterBrowser;
           break;
@@ -191,6 +197,7 @@
       case cmFontBrowser:
       case cmRegisterBrowser:
       case cmTimerApp:
+      case cmApp:
         previousCalcMode = calcMode;
         calcMode = newMode;
         break;
@@ -209,6 +216,7 @@
       case cmFontBrowser:
       case cmRegisterBrowser:
       case cmTimerApp:
+      case cmApp:
         calcMode = previousCalcMode;
         calcModeUpdateGui();
         break;

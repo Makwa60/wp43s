@@ -20,13 +20,14 @@
 
 #include "solver/graph.h"
 
-#include "defines.h"
-#include "mathematics/comparisonReals.h"
+#include "calcMode.h"
 #include "charString.h"
 #include "constantPointers.h"
+#include "defines.h"
 #include "error.h"
 #include "flags.h"
 #include "items.h"
+#include "mathematics/comparisonReals.h"
 #include "mathematics/invert.h"
 #include "matrix.h"
 #include "plotstat.h"
