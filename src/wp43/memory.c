@@ -20,6 +20,7 @@
 #include "config.h"
 #include "core/freeList.h"
 #include "debug.h"
+#include "error.h"
 #include "items.h"
 #include "registers.h"
 

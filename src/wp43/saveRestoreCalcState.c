@@ -53,7 +53,7 @@
 
 #include "wp43.h"
 
-#define BACKUP_VERSION         79  // removed cache state from font browser
+#define BACKUP_VERSION         80  // made error codes into an enum
 #define START_REGISTER_VALUE 1000  // was 1522, why?
 
 static char *tmpRegisterString = NULL;

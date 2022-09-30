@@ -17,6 +17,7 @@
 #include "hal/system.h"
 
 #include "charString.h"
+#include "error.h"
 #include "wp43.h"
 #include <stdio.h>
 #include <dmcp.h>

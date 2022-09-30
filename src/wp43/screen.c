@@ -820,10 +820,10 @@ void execTimerApp(uint16_t timerType) {
           }
           else {
             #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-              sprintf(errorMessage, "Error message %" PRIu8 " is too wide!", lastErrorCode);
+              sprintf(errorMessage, "Error message %" PRIu8 " is too wide!", (uint8_t)lastErrorCode);
               moreInfoOnError("In function refreshRegisterLine:", errorMessage, errorMessages[lastErrorCode], NULL);
             #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
-            sprintf(tmpString, "Error message %" PRIu8 " is too wide!", lastErrorCode);
+            sprintf(tmpString, "Error message %" PRIu8 " is too wide!", (uint8_t)lastErrorCode);
             w = stringWidth(tmpString, &standardFont, true, true);
             showString(tmpString, &standardFont, SCREEN_WIDTH - w, Y_POSITION_OF_REGISTER_X_LINE - REGISTER_LINE_HEIGHT*(regist - REGISTER_X) + 6, vmNormal, true, true);
           }
