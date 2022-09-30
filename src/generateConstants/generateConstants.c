@@ -20,14 +20,12 @@
 
 #define NUMBER_OF_CONSTANTS_IN_CNST_CATALOG 78
 
-#include <stdlib.h>
+#include "defines.h"
+#include "realType.h"
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-
-#include "defines.h"
-
-#include "realType.h"
 
 realContext_t ctxtReal34, ctxtReal39, ctxtReal51, ctxtReal1071;
 
