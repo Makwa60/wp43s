@@ -16,7 +16,32 @@
 
 #include "hal/time.h"
 
+#include <assert.h>
 #include <glib.h>
+#include <time.h>
+
+void timeGetTimeInfo(timeInfo_t *ti) {
+  assert(ti != NULL);
+  time_t epoch = time(NULL);
+  struct tm *timeInfo = localtime(&epoch);
+  ti->hour = timeInfo->tm_hour;
+  ti->min  = timeInfo->tm_min;
+  ti->sec  = timeInfo->tm_sec;
+  ti->csec = 0;
+}
+
+
+
+void timeGetDateInfo(dateInfo_t *di) {
+  assert(di != NULL);
+  time_t epoch = time(NULL);
+  struct tm *timeInfo = localtime(&epoch);
+  di->year  = timeInfo->tm_year + 1990;
+  di->month = timeInfo->tm_mon;
+  di->day   = timeInfo->tm_mday;
+}
+
+
 
 uint32_t timeCurrentMs(void) {
   return (uint32_t)(g_get_real_time() % 86400000000uLL / 1000uLL);
