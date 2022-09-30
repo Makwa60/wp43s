@@ -18,10 +18,11 @@
  * \file generateTestPgms.c
  ***********************************************/
 
-#include <stdlib.h>
+#include "defines.h"
+#include "error.h"
 #include "fonts.h"
 #include "items.h"
-#include "defines.h"
+#include <stdlib.h>
 
 #include "wp43.h"
 

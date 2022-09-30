@@ -86,7 +86,6 @@
   // Variables stored in FLASH
   extern const item_t                    indexOfItems[];
   extern const reservedVariableHeader_t  allReservedVariables[];
-  extern const char                     *errorMessages[NUMBER_OF_ERROR_CODES];
   extern const calcKey_t                 kbd_std[37];
   extern const font_t                    standardFont, numericFont;
   extern const font_t                   *fontForShortInteger;
@@ -149,7 +148,6 @@
   extern userMenu_t            *userMenus;
   extern programmableMenu_t     programmableMenu;
   extern calcKey_t              kbd_usr[37];
-  extern calcRegister_t         errorMessageRegisterLine;
   extern glyph_t                glyphNotFound;
   extern freeMemoryRegion_t     freeMemoryRegions[MAX_FREE_REGION];
   extern pcg32_random_t         pcg32_global;
@@ -167,7 +165,6 @@
 
   extern char                  *tmpString;
   extern char                  *tmpStringLabelOrVariableName;
-  extern char                  *errorMessage;
   extern char                  *aimBuffer; // aimBuffer is also used for NIM
   extern char                  *nimBufferDisplay;
 
@@ -200,7 +197,6 @@
   extern uint8_t                cursorEnabled;
   extern uint8_t                nimNumberPart;
   extern uint8_t                hexDigits;
-  extern uint8_t                lastErrorCode;
   extern uint8_t                temporaryInformation;
   extern uint8_t                numScreensNumericFont;
   extern uint8_t                timerCraAndDeciseconds;
