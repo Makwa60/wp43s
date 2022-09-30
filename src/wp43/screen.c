@@ -119,7 +119,7 @@
         if(!getSystemFlag(FLAG_AUTOFF) || (nextTimerRefresh != 0)) {
           reset_auto_off();
         }
-        fnPollTimerApp();
+        timerAppPoll();
       #endif // DMCP_BUILD
     }
 
@@ -189,7 +189,7 @@ void clearScreen(void) {
 
 void execTimerApp(uint16_t timerType) {
   timerStart(TO_TIMER_APP, TO_TIMER_APP, TIMER_APP_PERIOD);
-  fnUpdateTimerApp();
+  timerAppUpdate();
 }
 
 
@@ -1870,7 +1870,7 @@ void execTimerApp(uint16_t timerType) {
           showMatrixEditor();
         }
         if(calcMode == cmTimerApp) {
-          fnShowTimerApp();
+          timerAppDraw();
         }
 
         if(currentSolverStatus & SOLVER_STATUS_INTERACTIVE) {

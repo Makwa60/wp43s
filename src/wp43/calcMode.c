@@ -75,7 +75,7 @@ calcMode_t calcMode;
     shiftF = false;
     shiftG = false;
 
-    fnStopTimerApp();
+    timerAppStop();
 
     #if defined(PC_BUILD)
       if(matrixIndex != INVALID_VARIABLE) {

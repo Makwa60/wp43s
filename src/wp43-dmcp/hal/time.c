@@ -16,8 +16,61 @@
 
 #include "hal/time.h"
 
+#include <assert.h>
 #include <stdio.h>
 #include <dmcp.h>
+
+void timeGetTimeInfo(timeInfo_t *ti) {
+  assert(ti != NULL);
+  tm_t timeInfo;
+  dt_t dateInfo;
+  rtc_read(&timeInfo, &dateInfo);
+  ti->hour = timeInfo.hour;
+  ti->min  = timeInfo.min;
+  ti->sec  = timeInfo.sec;
+  ti->csec = timeInfo.csec;
+}
+
+
+
+void timeGetDateInfo(dateInfo_t *di) {
+  assert(di != NULL);
+  tm_t timeInfo;
+  dt_t dateInfo;
+  rtc_read(&timeInfo, &dateInfo);
+  di->year  = dateInfo.year;
+  di->month = dateInfo.month;
+  di->day   = dateInfo.day;
+}
+
+
+
+void timeSetTimeInfo(timeInfo_t *ti) {
+  assert(ti != NULL);
+  tm_t timeInfo;
+  dt_t dateInfo;
+  rtc_read(&timeInfo, &dateInfo);
+  timeInfo.hour = ti->hour;
+  timeInfo.min  = ti->min;
+  timeInfo.sec  = ti->sec;
+  timeInfo.csec = ti->csec;
+  rtc_write(&timeInfo, &dateInfo);
+}
+
+
+
+void timeSetDateInfo(dateInfo_t *di) {
+  assert(di != NULL);
+  tm_t timeInfo;
+  dt_t dateInfo;
+  rtc_read(&timeInfo, &dateInfo);
+  dateInfo.year  = di->year;
+  dateInfo.month = di->month;
+  dateInfo.day   = di->day;
+  rtc_write(&timeInfo, &dateInfo);
+}
+
+
 
 uint32_t timeCurrentMs(void) {
   tm_t timeInfo;
