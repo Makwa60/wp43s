@@ -1765,17 +1765,22 @@ void fnKeyExit(uint16_t unusedButMandatoryParameter) {
       }
 
       case cmMim: {
-        if(softmenu[softmenuStack[0].softmenuId].menuItem == -MNU_M_EDIT) {
-          mimEnter(true);
-          if(matrixIndex == findNamedVariable(statMx)) {
-            calcSigma(0);
-          }
-          mimFinalize();
-          calcModeEnter(cmNormal);
-          updateMatrixHeightCache();
+        if(temporaryInformation == TI_SHOW_REGISTER) {
+          temporaryInformation = TI_NO_INFO;
         }
-        screenUpdatingMode = SCRUPD_AUTO;
-        popSoftmenu(); // close softmenu dedicated for the MIM
+        else {
+          if(softmenu[softmenuStack[0].softmenuId].menuItem == -MNU_M_EDIT) {
+            mimEnter(true);
+            if(matrixIndex == findNamedVariable(statMx)) {
+              calcSigma(0);
+            }
+            mimFinalize();
+            calcModeEnter(cmNormal);
+            updateMatrixHeightCache();
+          }
+          screenUpdatingMode = SCRUPD_AUTO;
+          popSoftmenu(); // close softmenu dedicated for the MIM
+        }
         break;
       }
 
