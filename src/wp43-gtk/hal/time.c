@@ -36,8 +36,8 @@ void timeGetDateInfo(dateInfo_t *di) {
   assert(di != NULL);
   time_t epoch = time(NULL);
   struct tm *timeInfo = localtime(&epoch);
-  di->year  = timeInfo->tm_year + 1990;
-  di->month = timeInfo->tm_mon;
+  di->year  = timeInfo->tm_year + 1900;
+  di->month = timeInfo->tm_mon + 1;
   di->day   = timeInfo->tm_mday;
 }
 

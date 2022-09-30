@@ -1404,6 +1404,10 @@
                   runFunction(ITM_TIMER_RCL);
                   break;
                 }
+                case ITM_SHIFTf: {
+                  fnScreenDump(NOPARAM);
+                  break;
+                }
               }
               keyActionProcessed = true;
               break;
