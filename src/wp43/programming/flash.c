@@ -33,22 +33,12 @@
 #include <string.h>
 #include <stdlib.h>
 
-#define LIBDATA               ppgm_fp // The FIL *ppgm_fp pointer is provided by DMCP
-
-static void save(const void *buffer, uint32_t size, void *stream) {
-  ioFileWrite(stream, buffer, size);
+static void save(const void *buffer, uint32_t size) {
+  ioFileWrite(buffer, size);
 }
 
-static uint32_t load(void *buffer, uint32_t size, void *stream) {
-  return ioFileRead(stream, buffer, size);
-}
-
-static void seek(uint32_t pos, void *stream) {
-  #if defined(DMCP_BUILD)
-    f_lseek(stream, pos);
-  #else // !DMCP_BUILD
-    fseek(stream, pos, SEEK_SET);
-  #endif // DMCP_BUILD
+static uint32_t load(void *buffer, uint32_t size) {
+  return ioFileRead(buffer, size);
 }
 
 
@@ -155,11 +145,7 @@ void fnPSto(uint16_t unusedButMandatoryParameter) {
     }
 
     // Append to Flash
-    #if !defined(DMCP_BUILD)
-      ioFile_t *ppgm_fp;
-    #endif // !DMCP_BUILD
-
-    if((LIBDATA = ioFileOpen(IOPATH_PGMFILE, IOMODE_UPDATE)) == NULL) {
+    if(!ioFileOpen(IOPATH_PGMFILE, IOMODE_UPDATE)) {
       displayCalcErrorMessage(ERROR_NO_BACKUP_DATA, ERR_REGISTER_LINE, REGISTER_X);
       #if (EXTRA_INFO_ON_CALC_ERROR == 1)
         moreInfoOnError("In function deleteFromFlashPgmLibrary: cannot find or read backup data file wp43.sav", NULL, NULL, NULL);
@@ -167,11 +153,11 @@ void fnPSto(uint16_t unusedButMandatoryParameter) {
       return;
     }
 
-    seek(sizeOfFlashPgmLibrary, LIBDATA);
-    save(beginOfCurrentProgram.ram, pgmSize, LIBDATA);
-    save(firstFreeProgramByte, 2, LIBDATA); // 0xffff
+    ioFileSeek(sizeOfFlashPgmLibrary);
+    save(beginOfCurrentProgram.ram, pgmSize);
+    save(firstFreeProgramByte, 2); // 0xffff
 
-    ioFileClose(LIBDATA);
+    ioFileClose();
 
     scanFlashPgmLibrary();
     scanLabelsAndPrograms();
@@ -187,11 +173,7 @@ void fnPSto(uint16_t unusedButMandatoryParameter) {
 
 
 void deleteFromFlashPgmLibrary(uint32_t fromAddr, uint32_t toAddr) {
-  #if !defined(DMCP_BUILD)
-    ioFile_t *ppgm_fp;
-  #endif // !DMCP_BUILD
-
-  if((LIBDATA = ioFileOpen(IOPATH_PGMFILE, IOMODE_UPDATE)) == NULL) {
+  if(!ioFileOpen(IOPATH_PGMFILE, IOMODE_UPDATE)) {
     displayCalcErrorMessage(ERROR_NO_BACKUP_DATA, ERR_REGISTER_LINE, REGISTER_X);
     #if (EXTRA_INFO_ON_CALC_ERROR == 1)
       moreInfoOnError("In function deleteFromFlashPgmLibrary: cannot find or read backup data file wp43.sav", NULL, NULL, NULL);
@@ -202,25 +184,21 @@ void deleteFromFlashPgmLibrary(uint32_t fromAddr, uint32_t toAddr) {
   --toAddr; // argument is 1-based
   --fromAddr; // must convert to 0-based
   do {
-    seek(toAddr, LIBDATA);
-    load(tmpString, FLASH_PGM_PAGE_SIZE, LIBDATA);
-    seek(fromAddr, LIBDATA);
-    save(tmpString, FLASH_PGM_PAGE_SIZE, LIBDATA);
+    ioFileSeek(toAddr);
+    load(tmpString, FLASH_PGM_PAGE_SIZE);
+    ioFileSeek(fromAddr);
+    save(tmpString, FLASH_PGM_PAGE_SIZE);
     fromAddr += FLASH_PGM_PAGE_SIZE;
     toAddr += FLASH_PGM_PAGE_SIZE;
   } while(toAddr < (sizeOfFlashPgmLibrary + 2));
 
-  ioFileClose(LIBDATA);
+  ioFileClose();
 }
 
 
 
 void readStepInFlashPgmLibrary(uint8_t *buffer, uint16_t bufferSize, uint32_t pointer) {
-  #if !defined(DMCP_BUILD)
-    ioFile_t *ppgm_fp;
-  #endif // !DMCP_BUILD
-
-  if((LIBDATA = ioFileOpen(IOPATH_PGMFILE, IOMODE_READ)) == NULL) {
+  if(!ioFileOpen(IOPATH_PGMFILE, IOMODE_READ)) {
     displayCalcErrorMessage(ERROR_NO_BACKUP_DATA, ERR_REGISTER_LINE, REGISTER_X);
     #if (EXTRA_INFO_ON_CALC_ERROR == 1)
       moreInfoOnError("In function scanFlashProgramLibrary: cannot find or read backup data file wp43.sav", NULL, NULL, NULL);
@@ -228,22 +206,18 @@ void readStepInFlashPgmLibrary(uint8_t *buffer, uint16_t bufferSize, uint32_t po
     return;
   }
 
-  seek(pointer - 1, LIBDATA);
-  load(buffer, bufferSize, LIBDATA);
+  ioFileSeek(pointer - 1);
+  load(buffer, bufferSize);
 
-  ioFileClose(LIBDATA);
+  ioFileClose();
 }
 
 
 
 void scanFlashPgmLibrary(void) {
-  #if !defined(DMCP_BUILD)
-    ioFile_t *ppgm_fp;
-  #endif // !DMCP_BUILD
-
-  if((LIBDATA = ioFileOpen(IOPATH_PGMFILE, IOMODE_READ)) == NULL) {
+  if(!ioFileOpen(IOPATH_PGMFILE, IOMODE_READ)) {
     initFlashPgmLibrary();
-    if((LIBDATA = ioFileOpen(IOPATH_PGMFILE, IOMODE_READ)) == NULL) {
+    if(!ioFileOpen(IOPATH_PGMFILE, IOMODE_READ)) {
       displayCalcErrorMessage(ERROR_NO_BACKUP_DATA, ERR_REGISTER_LINE, REGISTER_X);
       #if (EXTRA_INFO_ON_CALC_ERROR == 1)
         moreInfoOnError("In function scanFlashProgramLibrary: cannot find or read backup data file wp43.sav", NULL, NULL, NULL);
@@ -262,7 +236,7 @@ void scanFlashPgmLibrary(void) {
   numberOfLabelsInFlash = 0;
   numberOfProgramsInFlash = 1;
 
-  load(tmpString, FLASH_PGM_PAGE_SIZE + 32, LIBDATA);
+  load(tmpString, FLASH_PGM_PAGE_SIZE + 32);
   while(*step != 255 || *(step + 1) != 255) { // .END.
     if(*step == ITM_LBL) { // LBL
       numberOfLabelsInFlash++;
@@ -273,8 +247,8 @@ void scanFlashPgmLibrary(void) {
     step = findNextStep_ram(step);
     if(step >= (uint8_t *)tmpString + FLASH_PGM_PAGE_SIZE) {
       seekPos += FLASH_PGM_PAGE_SIZE;
-      seek(seekPos, LIBDATA);
-      load(tmpString, FLASH_PGM_PAGE_SIZE + 32, LIBDATA);
+      ioFileSeek(seekPos);
+      load(tmpString, FLASH_PGM_PAGE_SIZE + 32);
       step -= FLASH_PGM_PAGE_SIZE;
     }
   }
@@ -296,8 +270,8 @@ void scanFlashPgmLibrary(void) {
   }
 
   seekPos = 0;
-  seek(seekPos, LIBDATA);
-  load(tmpString, FLASH_PGM_PAGE_SIZE + 32, LIBDATA);
+  ioFileSeek(seekPos);
+  load(tmpString, FLASH_PGM_PAGE_SIZE + 32);
 
   numberOfLabelsInFlash = 0;
   step = (uint8_t *)tmpString;
@@ -334,24 +308,19 @@ void scanFlashPgmLibrary(void) {
 
     if(step >= (uint8_t *)tmpString + FLASH_PGM_PAGE_SIZE) {
       seekPos += FLASH_PGM_PAGE_SIZE;
-      seek(seekPos, LIBDATA);
-      load(tmpString, FLASH_PGM_PAGE_SIZE + 32, LIBDATA);
+      ioFileSeek(seekPos);
+      load(tmpString, FLASH_PGM_PAGE_SIZE + 32);
       step -= FLASH_PGM_PAGE_SIZE;
     }
   }
 
-  ioFileClose(LIBDATA);
+  ioFileClose();
 }
 
 
 
 void initFlashPgmLibrary(void) {
-  #if !defined(DMCP_BUILD)
-    ioFile_t *ppgm_fp;
-  #endif // !DMCP_BUILD
-
-  LIBDATA = ioFileOpen(IOPATH_PGMFILE, IOMODE_WRITE);
-  if(LIBDATA == NULL) {
+  if(!ioFileOpen(IOPATH_PGMFILE, IOMODE_WRITE)) {
     #if !defined(DMCP_BUILD)
       printf("Cannot SAVE in file wp43.dat!\n");
     #endif // !DMCP_BUILD
@@ -361,12 +330,12 @@ void initFlashPgmLibrary(void) {
   memset(tmpString, 0, FLASH_PGM_PAGE_SIZE);
   tmpString[0] = -1;
   tmpString[1] = -1;
-  save(tmpString, FLASH_PGM_PAGE_SIZE, LIBDATA);
+  save(tmpString, FLASH_PGM_PAGE_SIZE);
   tmpString[0] = 0;
   tmpString[1] = 0;
   for(int i = 1; i < FLASH_PGM_NUMBER_OF_PAGES; ++i) {
-    save(tmpString, FLASH_PGM_PAGE_SIZE, LIBDATA);
+    save(tmpString, FLASH_PGM_PAGE_SIZE);
   }
 
-  ioFileClose(LIBDATA);
+  ioFileClose();
 }

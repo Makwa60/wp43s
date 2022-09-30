@@ -36,14 +36,13 @@
     cmAssign           = 4,  // Assign mode
     cmPlotStat         = 5,  // Plot stats mode
     cmErrorMessage     = 6,  // Error message in one of the register lines
-    cmBugOnScreen      = 7,  // Bug message on screen
-    cmConfirmation     = 8,  // Waiting for confirmation or canceling
-    cmMim              = 9,  // Matrix imput mode tbd reorder
-    cmEim              = 10, // Equation imput mode
-    cmTimerApp         = 11, // Timer application
-    cmGraph            = 12, // Plot graph mode
-    cmNoUndo           = 13, // Running functions without undo affected
-    cmApp              = 14  // App mode
+    cmConfirmation     = 7,  // Waiting for confirmation or canceling
+    cmMim              = 8,  // Matrix imput mode tbd reorder
+    cmEim              = 9,  // Equation imput mode
+    cmTimerApp         = 10, // Timer application
+    cmGraph            = 11, // Plot graph mode
+    cmNoUndo           = 12, // Running functions without undo affected
+    cmApp              = 13  // App mode
   } calcMode_t;
 
   extern calcMode_t calcMode;

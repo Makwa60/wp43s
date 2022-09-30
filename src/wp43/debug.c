@@ -767,9 +767,6 @@ void debugNIM(void) {
       case cmErrorMessage: {
         return "err.msg";
       }
-      case cmBugOnScreen: {
-        return "bug.scr";
-      }
       case cmConfirmation: {
         return "confirm";
       }

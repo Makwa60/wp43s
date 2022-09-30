@@ -20,6 +20,7 @@
 
 #include "mathematics/toPolar.h"
 
+#include "apps/bugScreen.h"
 #include "constantPointers.h"
 #include "conversionAngles.h"
 #include "debug.h"
@@ -55,7 +56,7 @@ void fnToPolar(uint16_t unusedButMandatoryParameter) {
       }
       default: {
         sprintf(errorMessage, "In function fnToPolar: %" PRIu32 " is an unexpected dataTypeX value!", dataTypeX);
-        displayBugScreen(errorMessage);
+        bugScreen(errorMessage);
       }
     }
 
@@ -70,7 +71,7 @@ void fnToPolar(uint16_t unusedButMandatoryParameter) {
       }
       default: {
         sprintf(errorMessage, "In function fnToPolar: %" PRIu32 " is an unexpected dataTypeY value!", dataTypeY);
-        displayBugScreen(errorMessage);
+        bugScreen(errorMessage);
       }
     }
 
@@ -286,7 +287,7 @@ void realRectangularToPolar(const real_t *real, const real_t *imag, real_t *magn
 
   if(realContext->digits > 75) {
     sprintf(errorMessage, "In function realRectangularToPolar: The number of digits is > 75");
-    displayBugScreen(errorMessage);
+    bugScreen(errorMessage);
   }
   else {
     // Magnitude

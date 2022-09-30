@@ -20,14 +20,8 @@
 #if !defined(IO_H)
   #define IO_H
 
+  #include "typeDefinitions.h"
   #include <stdint.h>
-
-  /**
-   * File handle.
-   * File handles are needed by all file operations and returned by
-   * ::ioFileOpen.
-   */
-  typedef void ioFile_t;
 
   /**
    * Abstracted file path.
@@ -56,43 +50,47 @@
   /**
    * Open a file.
    * File operations require a file to be opened first. Opening the file returns
-   * a file handle which is then used by subsequent operations. Any files opened
-   * by ::ioFileOpen must be closed by ::ioFileClose (preferably as soon as possible
-   * after all operations have completed).
+   * true if the file was opened and false otherwise. The HAL only allows a single
+   * open file at any one time and this should be closed with ::ioFileClose as
+   * soon as possible.
    *
    * \param[in] path the enumeration value for the particular file to open
    * \param[in] mode the mode to open the file (read, write, update)
-   * \return file handle to pass to ::ioFileWrite, ::ioFileRead, ::ioFileClose
+   * \return true if file opened successfully
    */
-  ioFile_t *ioFileOpen(ioFilePath_t path, ioFileMode_t mode);
+  bool_t ioFileOpen(ioFilePath_t path, ioFileMode_t mode);
 
   /**
-   * Write to an open file.
+   * Write to the open file.
    *
-   * \param[in] file the file handle returned by ::ioFileOpen
    * \param[in] buffer the binary stream to write
    * \param[in] size how many bytes to write
    */
-  void ioFileWrite(ioFile_t *file, const void *buffer, uint32_t size);
+  void ioFileWrite(const void *buffer, uint32_t size);
 
   /**
-   * Read from an open file.
+   * Read from the open file.
    * The buffer must have an allocated size at least as long as the specified
    * size.
    *
-   * \param[in] file the file handle returned by ::ioFileOpen
    * \param[out] buffer the allocated buffer to read into
    * \param[in] size how many bytes to read
    * \return how many bytes were actually read
    */
-  uint32_t ioFileRead(ioFile_t *file, void *buffer, uint32_t size);
+  uint32_t ioFileRead(void *buffer, uint32_t size);
 
   /**
-   * Close an open file.
-   * Files must be closed to avoid resource leaks.
+   * Move to a particular position in the file.
+   * This is an absolute position from the beginning of the file.
    *
-   * \param[in] file the file handle returned by ::ioFileOpen
+   * \param[in] position position to move to
    */
-  void ioFileClose(ioFile_t *file);
+  void ioFileSeek(uint32_t position);
+
+  /**
+   * Close the open file.
+   * Files must be closed to avoid resource leaks.
+   */
+  void ioFileClose(void);
 
 #endif // IO_H

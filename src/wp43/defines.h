@@ -967,7 +967,6 @@
     #define fnOff           fnNop
     #define fnAim           fnNop
     #define refreshRegisterLine(a)  {}
-    #define displayBugScreen(a)     { printf("\n-----------------------------------------------------------------------\n"); printf("%s\n", a); printf("\n-----------------------------------------------------------------------\n");}
     #define showHideHourGlass()     {}
     #define refreshScreen()         {}
   #endif // TESTSUITE_BUILD && !GENERATE_CATALOGS

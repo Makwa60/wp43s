@@ -17,6 +17,7 @@
 #include "keyboard.h"
 
 #include "apps/apps.h"
+#include "apps/bugScreen.h"
 #include "apps/flagBrowser.h"
 #include "apps/fontBrowser.h"
 #include "apps/registerBrowser.h"
@@ -246,7 +247,7 @@
                 return ASSIGN_USER_MENU - i;
               }
             }
-            displayBugScreen("In function determineFunctionKeyItem: nonexistent menu specified!");
+            bugScreen("In function determineFunctionKeyItem: nonexistent menu specified!");
             return item;
           }
           else {
@@ -802,13 +803,13 @@
     else if(tam.mode) {
       result = key->primaryTam; // No shifted function in TAM
     }
-    else if(calcMode == cmNormal || calcMode == cmNim || calcMode == cmMim || calcMode == cmBugOnScreen || calcMode == cmConfirmation || calcMode == cmPem || calcMode == cmPlotStat || calcMode == cmGraph || calcMode == cmAssign || calcMode == cmTimerApp) {
+    else if(calcMode == cmNormal || calcMode == cmNim || calcMode == cmMim || calcMode == cmConfirmation || calcMode == cmPem || calcMode == cmPlotStat || calcMode == cmGraph || calcMode == cmAssign || calcMode == cmTimerApp) {
       result = shiftF ? key->fShifted :
                shiftG ? key->gShifted :
                         key->primary;
     }
     else {
-      displayBugScreen("In function determineItem: item was not determined!");
+      bugScreen("In function determineItem: item was not determined!");
       result = 0;
     }
 
@@ -1260,8 +1261,7 @@
               break;
             }
 
-            case cmErrorMessage:
-            case cmBugOnScreen: {
+            case cmErrorMessage: {
               keyActionProcessed = true;
               break;
             }
@@ -1411,7 +1411,7 @@
 
             default: {
               sprintf(errorMessage, "In function processKeyAction: %" PRIu8 " is an unexpected value while processing calcMode!", (uint8_t)calcMode);
-              displayBugScreen(errorMessage);
+              bugScreen(errorMessage);
             }
           }
         }
@@ -1606,7 +1606,6 @@ void fnKeyEnter(uint16_t unusedButMandatoryParameter) {
       }
 
       case cmErrorMessage:
-      case cmBugOnScreen:
       case cmPlotStat:
       case cmGraph: {
         break;
@@ -1625,7 +1624,7 @@ void fnKeyEnter(uint16_t unusedButMandatoryParameter) {
 
       default: {
         sprintf(errorMessage, "In function fnKeyEnter: unexpected calcMode value (%" PRIu8 ") while processing key ENTER!", (uint8_t)calcMode);
-        displayBugScreen(errorMessage);
+        bugScreen(errorMessage);
       }
     }
     return;
@@ -1663,8 +1662,7 @@ void fnKeyExit(uint16_t unusedButMandatoryParameter) {
 
     switch(calcMode) {
       case cmConfirmation:
-      case cmErrorMessage:
-      case cmBugOnScreen: {
+      case cmErrorMessage: {
         // Browser or message should be closed first
         break;
       }
@@ -1705,8 +1703,7 @@ void fnKeyExit(uint16_t unusedButMandatoryParameter) {
 
     switch(calcMode) {
       case cmConfirmation:
-      case cmErrorMessage:
-      case cmBugOnScreen: {
+      case cmErrorMessage: {
         // Browser or message should be closed first
         break;
       }
@@ -1768,17 +1765,22 @@ void fnKeyExit(uint16_t unusedButMandatoryParameter) {
       }
 
       case cmMim: {
-        if(softmenu[softmenuStack[0].softmenuId].menuItem == -MNU_M_EDIT) {
-          mimEnter(true);
-          if(matrixIndex == findNamedVariable(statMx)) {
-            calcSigma(0);
-          }
-          mimFinalize();
-          calcModeEnter(cmNormal);
-          updateMatrixHeightCache();
+        if(temporaryInformation == TI_SHOW_REGISTER) {
+          temporaryInformation = TI_NO_INFO;
         }
-        screenUpdatingMode = SCRUPD_AUTO;
-        popSoftmenu(); // close softmenu dedicated for the MIM
+        else {
+          if(softmenu[softmenuStack[0].softmenuId].menuItem == -MNU_M_EDIT) {
+            mimEnter(true);
+            if(matrixIndex == findNamedVariable(statMx)) {
+              calcSigma(0);
+            }
+            mimFinalize();
+            calcModeEnter(cmNormal);
+            updateMatrixHeightCache();
+          }
+          screenUpdatingMode = SCRUPD_AUTO;
+          popSoftmenu(); // close softmenu dedicated for the MIM
+        }
         break;
       }
 
@@ -1844,11 +1846,6 @@ void fnKeyExit(uint16_t unusedButMandatoryParameter) {
         break;
       }
 
-      case cmBugOnScreen: {
-        calcMode = previousCalcMode;
-        break;
-      }
-
       case cmGraph:
       case cmPlotStat: {
         //Temporary - TODO JM
@@ -1894,7 +1891,7 @@ void fnKeyExit(uint16_t unusedButMandatoryParameter) {
 
       default: {
         sprintf(errorMessage, "In function fnKeyExit: unexpected calcMode value (%" PRIu8 ") while processing key EXIT!", (uint8_t)calcMode);
-        displayBugScreen(errorMessage);
+        bugScreen(errorMessage);
       }
     }
     return;
@@ -1966,7 +1963,7 @@ void fnKeyCC(uint16_t unusedButMandatoryParameter) {
 
       default: {
         sprintf(errorMessage, "In function fnKeyCC: unexpected calcMode value (%" PRIu8 ") while processing key CC!", (uint8_t)calcMode);
-        displayBugScreen(errorMessage);
+        bugScreen(errorMessage);
       }
     }
   #endif // !TESTSUITE_BUILD
@@ -2042,7 +2039,6 @@ void fnKeyBackspace(uint16_t unusedButMandatoryParameter) {
       //  break;
       //}
 
-      case cmBugOnScreen:
       case cmPlotStat:
       case cmGraph: {
         calcMode = previousCalcMode;
@@ -2163,7 +2159,7 @@ void fnKeyBackspace(uint16_t unusedButMandatoryParameter) {
 
       default: {
         sprintf(errorMessage, "In function fnKeyBackspace: unexpected calcMode value (%" PRIu8 ") while processing key BACKSPACE!", (uint8_t)calcMode);
-        displayBugScreen(errorMessage);
+        bugScreen(errorMessage);
       }
     }
   #endif // !TESTSUITE_BUILD
@@ -2301,7 +2297,7 @@ void fnKeyUp(uint16_t unusedButMandatoryParameter) {
 
       default: {
         sprintf(errorMessage, "In function fnKeyUp: unexpected calcMode value (%" PRIu8 ") while processing key UP!", (uint8_t)calcMode);
-        displayBugScreen(errorMessage);
+        bugScreen(errorMessage);
       }
     }
   #endif // !TESTSUITE_BUILD
@@ -2434,7 +2430,7 @@ void fnKeyDown(uint16_t unusedButMandatoryParameter) {
 
       default: {
         sprintf(errorMessage, "In function fnKeyDown: unexpected calcMode value (%" PRIu8 ") while processing key DOWN!", (uint8_t)calcMode);
-        displayBugScreen(errorMessage);
+        bugScreen(errorMessage);
       }
     }
   #endif // !TESTSUITE_BUILD
@@ -2470,7 +2466,7 @@ void fnKeyDotD(uint16_t unusedButMandatoryParameter) {
 
       default: {
         sprintf(errorMessage, "In function fnKeyDotD: unexpected calcMode value (%" PRIu8 ") while processing key .d!", (uint8_t)calcMode);
-        displayBugScreen(errorMessage);
+        bugScreen(errorMessage);
       }
     }
   #endif // !TESTSUITE_BUILD
@@ -2513,7 +2509,7 @@ void fnKeyAngle(uint16_t unusedButMandatoryParameter) {
 
       default: {
         sprintf(errorMessage, "In function fnKeyAngle: unexpected calcMode value (%" PRIu8 ") while processing key .d!", (uint8_t)calcMode);
-        displayBugScreen(errorMessage);
+        bugScreen(errorMessage);
       }
     }
   #endif // !TESTSUITE_BUILD

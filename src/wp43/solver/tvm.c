@@ -20,6 +20,7 @@
 
 #include "solver/tvm.h"
 
+#include "apps/bugScreen.h"
 #include "constantPointers.h"
 #include "defines.h"
 #include "error.h"
@@ -120,7 +121,7 @@ void fnTvmVar(uint16_t variable) {
       }
 
       default: {
-        displayBugScreen("In function fnTvmVar: this variable is not intended for TVM application!");
+        bugScreen("In function fnTvmVar: this variable is not intended for TVM application!");
       }
     }
   #endif // !TESTSUITE_BUILD

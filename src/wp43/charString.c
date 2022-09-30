@@ -20,10 +20,11 @@
 
 #include "charString.h"
 
-#include <stdlib.h>
-#include <string.h>
+#include "apps/bugScreen.h"
 #include "error.h"
 #include "fonts.h"
+#include <stdlib.h>
+#include <string.h>
 
 #include "wp43.h"
 
@@ -67,7 +68,7 @@ int16_t stringWidth(const char *str, const font_t *font, bool_t withLeadingEmpty
                "/n---------------------------------------------------------------------------\n", glyphId);
       #else // !GENERATE_CATALOGS
         sprintf(errorMessage, "In function stringWidth: %d is an unexpected value returned by findGlyph!", glyphId);
-        displayBugScreen(errorMessage);
+        bugScreen(errorMessage);
       #endif // GENERATE_CATALOGS
       return 0;
     }

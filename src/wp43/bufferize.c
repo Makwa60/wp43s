@@ -16,6 +16,7 @@
 
 #include "bufferize.h"
 
+#include "apps/bugScreen.h"
 #include "calcMode.h"
 #include "charString.h"
 #include "constantPointers.h"
@@ -248,7 +249,7 @@
 
   void addItemToBuffer(uint16_t item) {
     if(item == NOPARAM) {
-      displayBugScreen("In function addItemToBuffer: item should not be NOPARAM=7654!");
+      bugScreen("In function addItemToBuffer: item should not be NOPARAM=7654!");
     }
     else {
       screenUpdatingMode &= ~(SCRUPD_MANUAL_STACK | SCRUPD_MANUAL_SHIFT_STATUS);
@@ -260,7 +261,7 @@
         item = convertItemToSubOrSup(item, nextChar);
         if(stringByteLength(aimBuffer) + stringByteLength(indexOfItems[item].itemSoftmenuName) >= AIM_BUFFER_LENGTH) { /// TODO this error should never happen but who knows!
           sprintf(errorMessage, "In function addItemToBuffer: the AIM input buffer is full! %d bytes for now", AIM_BUFFER_LENGTH);
-          displayBugScreen(errorMessage);
+          bugScreen(errorMessage);
         }
         else if(calcMode == cmEim) {
           const char *addChar = item == ITM_PAIR_OF_PARENTHESES ? "()" :
@@ -340,6 +341,10 @@
 
       //Probably wrong place for this function?! Should Arrow be processed in buffercize.c in this case? //Switch statement better.
       else if(calcMode == cmMim) {
+        if(temporaryInformation == TI_SHOW_REGISTER) {
+          temporaryInformation = TI_NO_INFO;
+        }
+
         if(item == ITM_RIGHT_ARROW) {
           mimEnter(true);
           setJRegisterAsInt(true, getJRegisterAsInt(true) + 1);
@@ -809,6 +814,12 @@
             break;
           }
 
+          case ITM_SHOW: {
+            mimEnter(true);
+            temporaryInformation = TI_SHOW_REGISTER;
+            break;
+          }
+
           case ITM_OFF: {
             runFunction(ITM_OFF);
             break;
@@ -889,7 +900,7 @@
 
         default: {
           sprintf(errorMessage, "In function addItemToNimBuffer: %d is an unexpected item value when initializing NIM!", item);
-          displayBugScreen(errorMessage);
+          bugScreen(errorMessage);
           return;
         }
       }
@@ -1716,7 +1727,7 @@
 
         default: {
           sprintf(errorMessage, "In function addItemToNimBuffer: %d is an unexpected nimNumberPart value while converting buffer to display!", nimNumberPart);
-          displayBugScreen(errorMessage);
+          bugScreen(errorMessage);
         }
       }
 
@@ -2070,7 +2081,7 @@
             }
             else {
               sprintf(errorMessage, "In function closeNIM: %d is an unexpected value for shortIntegerWordSize!", shortIntegerWordSize);
-              displayBugScreen(errorMessage);
+              bugScreen(errorMessage);
               longIntegerFree(maxVal);
               longIntegerFree(value);
               return;
@@ -2138,7 +2149,7 @@
             }
             else {
               sprintf(errorMessage, "In function closeNIM: %d is an unexpected value for shortIntegerMode!", shortIntegerMode);
-              displayBugScreen(errorMessage);
+              bugScreen(errorMessage);
               *(REGISTER_SHORT_INTEGER_DATA(REGISTER_X)) = 0;
             }
 
@@ -2163,7 +2174,7 @@
           }
           else {
             sprintf(errorMessage, "In function closeNIM: %d is an unexpected nimNumberPart value!", nimNumberPart);
-            displayBugScreen(errorMessage);
+            bugScreen(errorMessage);
           }
         }
       }

@@ -16,11 +16,15 @@
 
 #include "hal/io.h"
 
+#include <assert.h>
 #include <stdio.h>
 
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 
-ioFile_t *ioFileOpen(ioFilePath_t path, ioFileMode_t mode) {
+static FILE *_ioFileHandle = NULL;
+
+bool_t ioFileOpen(ioFilePath_t path, ioFileMode_t mode) {
+  assert(_ioFileHandle == NULL);
   const char *filename, *filemode;
   switch(path) {
     case IOPATH_SAVEFILE:
@@ -51,23 +55,35 @@ ioFile_t *ioFileOpen(ioFilePath_t path, ioFileMode_t mode) {
     default:
       return 0;
   }
-  return fopen(filename, filemode);
+  _ioFileHandle = fopen(filename, filemode);
+  return (_ioFileHandle != NULL);
 }
 
 
 
-void ioFileWrite(ioFile_t *file, const void *buffer, uint32_t size) {
-  fwrite(buffer, 1, size, file);
+void ioFileWrite(const void *buffer, uint32_t size) {
+  assert(_ioFileHandle != NULL);
+  fwrite(buffer, 1, size, _ioFileHandle);
 }
 
 
 
-uint32_t ioFileRead(ioFile_t *file, void *buffer, uint32_t size) {
-  return fread(buffer, 1, size, file);
+uint32_t ioFileRead(void *buffer, uint32_t size) {
+  assert(_ioFileHandle != NULL);
+  return fread(buffer, 1, size, _ioFileHandle);
 }
 
 
 
-void ioFileClose(ioFile_t *file) {
-  fclose(file);
+void ioFileSeek(uint32_t position) {
+  assert(_ioFileHandle != NULL);
+  fseek(_ioFileHandle, position, SEEK_SET);
+}
+
+
+
+void ioFileClose(void) {
+  assert(_ioFileHandle != NULL);
+  fclose(_ioFileHandle);
+  _ioFileHandle = NULL;
 }

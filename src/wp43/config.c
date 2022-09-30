@@ -20,6 +20,7 @@
 
 #include "config.h"
 
+#include "apps/bugScreen.h"
 #include "apps/flagBrowser.h"
 #include "apps/fontBrowser.h"
 #include "apps/registerBrowser.h"
@@ -364,7 +365,7 @@ void fnRoundingMode(uint16_t RM) {
 
     default: {
       sprintf(errorMessage, "In function fnRoundingMode: %d is an unexpected value for RM! Must be from 0 to 6", RM);
-      displayBugScreen(errorMessage);
+      bugScreen(errorMessage);
       break;
     }
   }
@@ -550,12 +551,7 @@ void addTestPrograms(void) {
   currentLocalStepNumber        = 1;
   firstDisplayedLocalStepNumber = 0;
 
-  #if !defined(DMCP_BUILD)
-    ioFile_t *ppgm_fp;
-  #endif // !DMCP_BUILD
-
-  ppgm_fp = ioFileOpen(IOPATH_TESTPGMS, IOMODE_READ);
-  if(ppgm_fp == NULL) {
+  if(!ioFileOpen(IOPATH_TESTPGMS, IOMODE_READ)) {
     #if !defined(DMCP_BUILD)
       printf("Cannot open file res/dmcp/testPgms.bin\n");
     #endif // !DMCP_BUILD
@@ -566,19 +562,19 @@ void addTestPrograms(void) {
   }
   else {
     #if defined(DMCP_BUILD)
-      ioFileRead(ppgm_fp, &numberOfBytesUsed, sizeof(numberOfBytesUsed));
-      ioFileRead(ppgm_fp, beginOfProgramMemory, numberOfBytesUsed);
+      ioFileRead(&numberOfBytesUsed, sizeof(numberOfBytesUsed));
+      ioFileRead(beginOfProgramMemory, numberOfBytesUsed);
     #else
-      ignore_result(ioFileRead(ppgm_fp, &numberOfBytesUsed, sizeof(numberOfBytesUsed)));
+      ignore_result(ioFileRead(&numberOfBytesUsed, sizeof(numberOfBytesUsed)));
       printf("%u bytes\n", numberOfBytesUsed);
       if(numberOfBytesUsed > numberOfBytesForTheTestPrograms) {
         printf("Increase allocated memory for programs! File config.c 1st line of function addTestPrograms\n");
-        ioFileClose(ppgm_fp);
+        ioFileClose();
         exit(0);
       }
-      ignore_result(ioFileRead(ppgm_fp, beginOfProgramMemory, numberOfBytesUsed));
+      ignore_result(ioFileRead(beginOfProgramMemory, numberOfBytesUsed));
     #endif // DMCP_BUILD !DMCP_BUILD
-    ioFileClose(ppgm_fp);
+    ioFileClose();
     firstFreeProgramByte = beginOfProgramMemory + (numberOfBytesUsed - 2);
     freeProgramBytes = numberOfBytesForTheTestPrograms - numberOfBytesUsed;
   }
