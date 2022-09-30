@@ -1376,7 +1376,7 @@
               printf("ITEM: %d\n", item);
               switch(item) {
                 case ITM_RS: {
-                  fnStartStopTimerApp();
+                  timerAppStartStop();
                   break;
                 }
                 case ITM_0:
@@ -1389,15 +1389,15 @@
                 case ITM_7:
                 case ITM_8:
                 case ITM_9: {
-                  fnDigitKeyTimerApp(item - ITM_0);
+                  timerAppDigitKey(item - ITM_0);
                   break;
                 }
                 case ITM_PERIOD: {
-                  fnDotTimerApp();
+                  timerAppDot();
                   break;
                 }
                 case ITM_ADD: {
-                  fnPlusTimerApp();
+                  timerAppPlus();
                   break;
                 }
                 case ITM_RCL: {
@@ -1612,7 +1612,7 @@ void fnKeyEnter(uint16_t unusedButMandatoryParameter) {
       }
 
       case cmTimerApp: {
-        fnEnterTimerApp();
+        timerAppEnter();
         break;
       }
 
@@ -1841,7 +1841,7 @@ void fnKeyExit(uint16_t unusedButMandatoryParameter) {
           lastErrorCode = 0;
         }
         else {
-          fnLeaveTimerApp();
+          timerAppLeave();
         }
         break;
       }
@@ -2152,7 +2152,7 @@ void fnKeyBackspace(uint16_t unusedButMandatoryParameter) {
           lastErrorCode = 0;
         }
         else {
-          fnBackspaceTimerApp();
+          timerAppBackspace();
         }
         break;
       }
@@ -2291,7 +2291,7 @@ void fnKeyUp(uint16_t unusedButMandatoryParameter) {
       }
 
       case cmTimerApp: {
-        fnUpTimerApp();
+        timerAppUp();
         break;
       }
 
@@ -2424,7 +2424,7 @@ void fnKeyDown(uint16_t unusedButMandatoryParameter) {
       }
 
       case cmTimerApp: {
-        fnDownTimerApp();
+        timerAppDown();
         break;
       }
 

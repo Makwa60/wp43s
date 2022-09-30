@@ -65,7 +65,7 @@ guiLayout_t     currentBezel;
 
 
 static gint destroyCalc(GtkWidget* w, GdkEventAny* e, gpointer data) {
-  fnStopTimerApp();
+  timerAppStop();
   saveCalc();
   gtk_main_quit();
 
