@@ -2185,35 +2185,37 @@ void fnShow(uint16_t unusedButMandatoryParameter) {
 }
 
 void mimShowElement(void) {
-  uint8_t savedDisplayFormat = displayFormat, savedDisplayFormatDigits = displayFormatDigits;
+  #if !defined(TESTSUITE_BUILD)
+    uint8_t savedDisplayFormat = displayFormat, savedDisplayFormatDigits = displayFormatDigits;
 
-  int16_t i = getIRegisterAsInt(true);
-  int16_t j = getJRegisterAsInt(true);
+    int16_t i = getIRegisterAsInt(true);
+    int16_t j = getJRegisterAsInt(true);
 
-  displayFormat = DF_ALL;
-  displayFormatDigits = 0;
+    displayFormat = DF_ALL;
+    displayFormatDigits = 0;
 
-  tmpString[   0] = 0; // L1
-  tmpString[ 300] = 0; // L2
-  tmpString[ 600] = 0; // L3
-  tmpString[ 900] = 0; // L4
-  tmpString[1200] = 0; // L5
-  tmpString[1500] = 0; // L6
-  tmpString[1800] = 0; // L7
+    tmpString[   0] = 0; // L1
+    tmpString[ 300] = 0; // L2
+    tmpString[ 600] = 0; // L3
+    tmpString[ 900] = 0; // L4
+    tmpString[1200] = 0; // L5
+    tmpString[1500] = 0; // L6
+    tmpString[1800] = 0; // L7
 
-  temporaryInformation = TI_SHOW_REGISTER;
+    temporaryInformation = TI_SHOW_REGISTER;
 
-  if(getRegisterDataType(matrixIndex) == dtReal34Matrix) {
-    real34ToDisplayString(&openMatrixMIMPointer.realMatrix.matrixElements[i * openMatrixMIMPointer.header.matrixColumns + j], amNone, tmpString, &standardFont, 2000, 34, false, STD_SPACE_4_PER_EM, false);
-  }
+    if(getRegisterDataType(matrixIndex) == dtReal34Matrix) {
+      real34ToDisplayString(&openMatrixMIMPointer.realMatrix.matrixElements[i * openMatrixMIMPointer.header.matrixColumns + j], amNone, tmpString, &standardFont, 2000, 34, false, STD_SPACE_4_PER_EM, false);
+    }
 
-  else {
-    _complex34ToShowTmpString(VARIABLE_REAL34_DATA(&openMatrixMIMPointer.complexMatrix.matrixElements[i * openMatrixMIMPointer.header.matrixColumns + j]),
-                              VARIABLE_IMAG34_DATA(&openMatrixMIMPointer.complexMatrix.matrixElements[i * openMatrixMIMPointer.header.matrixColumns + j]));
-  }
+    else {
+      _complex34ToShowTmpString(VARIABLE_REAL34_DATA(&openMatrixMIMPointer.complexMatrix.matrixElements[i * openMatrixMIMPointer.header.matrixColumns + j]),
+                                VARIABLE_IMAG34_DATA(&openMatrixMIMPointer.complexMatrix.matrixElements[i * openMatrixMIMPointer.header.matrixColumns + j]));
+    }
 
-  displayFormat = savedDisplayFormat;
-  displayFormatDigits = savedDisplayFormatDigits;
+    displayFormat = savedDisplayFormat;
+    displayFormatDigits = savedDisplayFormatDigits;
+  #endif
 }
 
 void fnView(uint16_t regist) {
