@@ -34,6 +34,9 @@
 
 #include "wp43.h"
 
+#if !defined(NDEBUG)
+  char debuggerString[1000];
+#endif
 
 
 /********************************************//**
@@ -1976,6 +1979,11 @@ void debugNIM(void) {
 
 
 #if (DEBUG_PANEL == 1) || (DEBUG_REGISTER_L == 1)
+  char *debuggerReal34(real34_t *real34) {
+    formatReal34Debug(debuggerString, real34);
+    return debuggerString;
+  }
+
   /********************************************//**
    * \brief Formats a real34 for the debug window
    *
