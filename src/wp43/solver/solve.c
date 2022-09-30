@@ -603,6 +603,10 @@ int solver(calcRegister_t variable, const real34_t *y, const real34_t *x, real34
       }
     }
 
+    if(result == SOLVER_RESULT_NORMAL && real34IsInfinite(REGISTER_REAL34_DATA(variable)) && extendRange && real34IsZero(resZ)) {
+      result = SOLVER_RESULT_CONSTANT;
+    }
+
     return result;
   #else // !TESTSUITE_BUILD
     return SOLVER_RESULT_NORMAL;
