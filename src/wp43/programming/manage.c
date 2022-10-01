@@ -597,7 +597,7 @@ void pemAlpha(int16_t item) {
 
       setSystemFlag(FLAG_ALPHA);
 
-      guiSetLayout(glAim);
+      calcModeUpdateGui();
 
       tmpString[0] = ITM_LITERAL;
       tmpString[1] = (char)STRING_LABEL_VARIABLE;
@@ -631,7 +631,7 @@ void pemAlpha(int16_t item) {
       if(aimBuffer[0] == 0) {
         deleteStepsFromTo(currentStep.ram, findNextStep_ram(currentStep.ram));
         clearSystemFlag(FLAG_ALPHA);
-        guiSetLayout(glNormal);
+        calcModeUpdateGui();
         return;
       }
       else {
@@ -663,7 +663,7 @@ void pemCloseAlphaInput(void) {
   #if !defined(TESTSUITE_BUILD)
     aimBuffer[0] = 0;
     clearSystemFlag(FLAG_ALPHA);
-    guiSetLayout(glNormal);
+    calcModeUpdateGui();
     ++currentLocalStepNumber;
     currentStep = findNextStep(currentStep);
     ++firstDisplayedLocalStepNumber;

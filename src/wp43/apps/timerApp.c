@@ -201,7 +201,7 @@
       showSoftmenu(-MNU_TIMERF);
     }
     if(softmenu[softmenuStack[0].softmenuId].menuItem == -MNU_TIMERF) {
-      guiSetLayout(glTimerApp);
+      calcModeUpdateGui();
     }
   }
 
