@@ -551,7 +551,7 @@ void addTestPrograms(void) {
   currentLocalStepNumber        = 1;
   firstDisplayedLocalStepNumber = 0;
 
-  if(!ioFileOpen(IOPATH_TESTPGMS, IOMODE_READ)) {
+  if(!ioFileOpen(ioPathTestPgms, ioModeRead)) {
     #if !defined(DMCP_BUILD)
       printf("Cannot open file res/dmcp/testPgms.bin\n");
     #endif // !DMCP_BUILD
