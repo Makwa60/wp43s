@@ -1,5 +1,6 @@
 # WP43 Firmware
 ![WP43 simulator screenshot](res/artwork/WP43Example.png)
+
 The *WP43* pocket calculator is a new fast, compact, reliable, and solid problem solver like you never owned before – instant on, fully programmable, incorporating a state-of-the-art high-resolution display, customizable by you, connecting to your computer, and RPN – a serious scientific instrument supporting you in your studies and professional activities. It readily provides advanced capabilities never before combined so conveniently in a true pocket-size calculator.
 
 ## Getting involved
