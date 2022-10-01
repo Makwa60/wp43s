@@ -1167,7 +1167,7 @@
           }
           if(previousCalcMode == cmAim) {
             softmenuStack[0].softmenuId = 1;
-            guiSetLayout(glAim);
+            calcModeUpdateGui();
           }
           else {
             leaveAsmMode();
