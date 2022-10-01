@@ -29,10 +29,10 @@
    * appropriate location dependent on the platform.
    */
   typedef enum {
-    IOPATH_SAVEFILE   = 0, //< save file used in SAVE and LOAD functions
-    IOPATH_PGMFILE    = 1, //< program file
-    IOPATH_TESTPGMS   = 2, //< test programs
-    IOPATH_BACKUP     = 3  //< backup file for full state used in simulators
+    ioPathSaveFile = 0, ///< save file used in SAVE and LOAD functions
+    ioPathPgmFile  = 1, ///< program file
+    ioPathTestPgms = 2, ///< test programs
+    ioPathBackup   = 3  ///< backup file for full state used in simulators
   } ioFilePath_t;
 
   /**
@@ -42,9 +42,9 @@
    * allows this to be specified.
    */
   typedef enum {
-    IOMODE_READ   = 0, //< open the file in read-only mode
-    IOMODE_WRITE  = 1, //< open the file in write-only mode
-    IOMODE_UPDATE = 2  //< open the file in read/write mode
+    ioModeRead   = 0, ///< open the file in read-only mode
+    ioModeWrite  = 1, ///< open the file in write-only mode
+    ioModeUpdate = 2  ///< open the file in read/write mode
   } ioFileMode_t;
 
   /**

@@ -32,28 +32,28 @@ bool_t ioFileOpen(ioFilePath_t path, ioFileMode_t mode) {
   const TCHAR *filename;
   BYTE filemode;
   switch(path) {
-    case IOPATH_SAVEFILE:
+    case ioPathSaveFile:
       filename = "SAVFILES\\wp43.sav";
       break;
-    case IOPATH_PGMFILE:
+    case ioPathPgmFile:
       filename = "LIBRARY\\wp43.dat";
       break;
-    case IOPATH_TESTPGMS:
+    case ioPathTestPgms:
       filename = "testPgms.bin";
       break;
     default:
       return 0;
   }
   switch(mode) {
-    case IOMODE_READ:
+    case ioModeRead:
       filemode = FA_READ;
       _ioReadEnabled = true;
       break;
-    case IOMODE_WRITE:
+    case ioModeWrite:
       filemode = FA_CREATE_ALWAYS | FA_WRITE;
       _ioWriteEnabled = true;
       break;
-    case IOMODE_UPDATE:
+    case ioModeUpdate:
       filemode = FA_READ | FA_WRITE | FA_OPEN_EXISTING;
       _ioWriteEnabled = true;
       _ioReadEnabled = true;
@@ -61,20 +61,20 @@ bool_t ioFileOpen(ioFilePath_t path, ioFileMode_t mode) {
     default:
       return 0;
   }
-  if(mode != IOMODE_READ) {
+  if(mode != ioModeRead) {
     sys_disk_write_enable(1);
   }
-  if(mode == IOMODE_WRITE) {
-    if(path == IOPATH_SAVEFILE) {
+  if(mode == ioModeWrite) {
+    if(path == ioPathSaveFile) {
       check_create_dir("SAVFILES");
     }
-    if(path == IOPATH_PGMFILE) {
+    if(path == ioPathPgmFile) {
       check_create_dir("LIBRARY");
     }
   }
   FRESULT result = f_open(ppgm_fp, filename, filemode);
   if(result != FR_OK) {
-    if(mode != IOMODE_READ) {
+    if(mode != ioModeRead) {
       sys_disk_write_enable(0);
     }
   }

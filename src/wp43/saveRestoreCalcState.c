@@ -76,7 +76,7 @@ static uint32_t restore(void *buffer, uint32_t size) {
     uint32_t ramSize       = RAM_SIZE;
     uint32_t ramPtr;
 
-    if(!ioFileOpen(IOPATH_BACKUP, IOMODE_WRITE)) {
+    if(!ioFileOpen(ioPathBackup, ioModeWrite)) {
       printf("Cannot save calc's memory in file backup.bin!\n");
       exit(0);
     }
@@ -326,7 +326,7 @@ static uint32_t restore(void *buffer, uint32_t size) {
     uint8_t *loadedScreen = malloc(SCREEN_WIDTH * SCREEN_HEIGHT / 8);
 
     fnReset(CONFIRMED);
-    if(!ioFileOpen(IOPATH_BACKUP, IOMODE_READ)) {
+    if(!ioFileOpen(ioPathBackup, ioModeRead)) {
       printf("Cannot restore calc's memory from file backup.bin! Performing RESET\n");
       refreshScreen();
       return;
@@ -767,7 +767,7 @@ void fnSave(uint16_t unusedButMandatoryParameter) {
   calcRegister_t regist;
   uint32_t i;
 
-  if(!ioFileOpen(IOPATH_SAVEFILE, IOMODE_WRITE)) {
+  if(!ioFileOpen(ioPathSaveFile, ioModeWrite)) {
     #if !defined(DMCP_BUILD)
       printf("Cannot SAVE in file wp43.sav!\n");
     #endif
@@ -1853,7 +1853,7 @@ static bool_t restoreOneSection(uint16_t loadMode, uint16_t s, uint16_t n, uint1
 
 
 void doLoad(uint16_t loadMode, uint16_t s, uint16_t n, uint16_t d) {
-  if(!ioFileOpen(IOPATH_SAVEFILE, IOMODE_READ)) {
+  if(!ioFileOpen(ioPathSaveFile, ioModeRead)) {
     displayCalcErrorMessage(ERROR_NO_BACKUP_DATA, ERR_REGISTER_LINE, REGISTER_X);
     #if (EXTRA_INFO_ON_CALC_ERROR == 1)
       moreInfoOnError("In function fnLoad: cannot find or read backup data file wp43.sav", NULL, NULL, NULL);
