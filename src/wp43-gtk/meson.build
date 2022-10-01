@@ -11,10 +11,12 @@ wp43_gtk_src = files(
 
 override_opts = []
 cflags        = []
+linkargs      = []
 if get_option('buildtype').startswith('release')
   override_opts = ['b_lto=true']
 else
   cflags        = ['-D_FORTIFY_SOURCE=2', '-fstack-protector-strong']
+  linkargs      = ['-fstack-protector-strong']
 endif
 
 sim = executable(
@@ -24,6 +26,7 @@ sim = executable(
                           constantPointers_ch, vcs_h, version_h],
   c_args              : cflags,
   c_pch               : 'pch/wp43-gtk_pch.h',
+  link_args           : linkargs,
   include_directories : [decNumber_inc, wp43_inc],
   dependencies        : [gtk_dep, gmp_dep, m_dep, pulse_dep],
   native              : true,
