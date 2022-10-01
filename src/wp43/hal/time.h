@@ -22,33 +22,51 @@
 
   #include <stdint.h>
 
+  /**
+   * Structure for the time in a day.
+   */
   typedef struct {
-    uint8_t hour;
-    uint8_t min;
-    uint8_t sec;
-    uint8_t csec;
+    uint8_t hour; ///< hour of the day in 24-hour format
+    uint8_t min;  ///< minute of the current hour
+    uint8_t sec;  ///< second of the current minute
+    uint8_t csec; ///< centisecond (hundreth of a second) of the current second
   } timeInfo_t;
 
+  /**
+   * Structure for a date in the Gregorian calendar.
+   */
   typedef struct {
-    uint16_t year;
-    uint8_t  month;
-    uint8_t  day;
+    uint16_t year;  ///< year, not offset
+    uint8_t  month; ///< month with January being 1
+    uint8_t  day;   ///< day of the month starting from 1
   } dateInfo_t;
 
   /**
+   * Get the current time.
+   *
+   * \param[out] ti pointer to a structure that will be filled out
    */
   void timeGetTimeInfo(timeInfo_t *ti);
 
   /**
+   * Get the current date.
+   *
+   * \param[out] di pointer to a structure that will be filled out
    */
   void timeGetDateInfo(dateInfo_t *di);
 
   #if defined(DMCP_BUILD)
     /**
+     * Set the current time.
+     *
+     * \param[in] ti pointer to a structure with the new time
      */
     void timeSetTimeInfo(timeInfo_t *ti);
 
     /**
+     * Set the current date.
+     *
+     * \param[in] di pointer to a structure with the new date
      */
     void timeSetDateInfo(dateInfo_t *di);
   #endif
