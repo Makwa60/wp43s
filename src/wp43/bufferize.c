@@ -69,10 +69,7 @@
         case ITM_delta:    return ITM_SUB_delta;
         case ITM_mu:       return ITM_SUB_mu;
         case ITM_SUN:      return ITM_SUB_SUN;
-        case ITM_h:        return ITM_SUB_h;
-        case ITM_t:        return ITM_SUB_t;
         case ITM_INFINITY: return ITM_SUB_INFINITY;
-        case ITM_s:        return ITM_SUB_s;
         case ITM_PLUS:     return ITM_SUB_PLUS;
         case ITM_MINUS:    return ITM_SUB_MINUS;
         case ITM_0:        return ITM_SUB_0;
@@ -90,6 +87,9 @@
         case ITM_c:        return ITM_SUB_c;
         case ITM_d:        return ITM_SUB_d;
         case ITM_e:        return ITM_SUB_e;
+        case ITM_f:        return ITM_SUB_f;
+        case ITM_g:        return ITM_SUB_g;
+        case ITM_h:        return ITM_SUB_h;
         case ITM_i:        return ITM_SUB_i;
         case ITM_j:        return ITM_SUB_j;
         case ITM_k:        return ITM_SUB_k;
@@ -99,6 +99,9 @@
         case ITM_o:        return ITM_SUB_o;
         case ITM_p:        return ITM_SUB_p;
         case ITM_q:        return ITM_SUB_q;
+        case ITM_r:        return ITM_SUB_r;
+        case ITM_s:        return ITM_SUB_s;
+        case ITM_t:        return ITM_SUB_t;
         case ITM_u:        return ITM_SUB_u;
         case ITM_v:        return ITM_SUB_v;
         case ITM_w:        return ITM_SUB_w;
@@ -136,8 +139,6 @@
     }
     else if(subOrSup == NC_SUPERSCRIPT) {
       switch(item) {
-        case ITM_a:        return ITM_SUP_a;
-        case ITM_x:        return ITM_SUP_x;
         case ITM_INFINITY: return ITM_SUP_INFINITY;
         case ITM_PLUS:     return ITM_SUP_PLUS;
         case ITM_MINUS:    return ITM_SUP_MINUS;
@@ -151,11 +152,58 @@
         case ITM_7:        return ITM_SUP_7;
         case ITM_8:        return ITM_SUP_8;
         case ITM_9:        return ITM_SUP_9;
+        case ITM_a:        return ITM_SUP_a;
+        case ITM_b:        return ITM_SUP_b;
+        case ITM_c:        return ITM_SUP_c;
+        case ITM_d:        return ITM_SUP_d;
+        case ITM_e:        return ITM_SUP_e;
         case ITM_f:        return ITM_SUP_f;
         case ITM_g:        return ITM_SUP_g;
         case ITM_h:        return ITM_SUP_h;
+        case ITM_i:        return ITM_SUP_i;
+        case ITM_j:        return ITM_SUP_j;
+        case ITM_k:        return ITM_SUP_k;
+        case ITM_l:        return ITM_SUP_l;
+        case ITM_m:        return ITM_SUP_m;
+        case ITM_n:        return ITM_SUP_n;
+        case ITM_o:        return ITM_SUP_o;
+        case ITM_p:        return ITM_SUP_p;
+        case ITM_q:        return ITM_SUP_q;
         case ITM_r:        return ITM_SUP_r;
+        case ITM_s:        return ITM_SUP_s;
+        case ITM_t:        return ITM_SUP_t;
+        case ITM_u:        return ITM_SUP_u;
+        case ITM_v:        return ITM_SUP_v;
+        case ITM_w:        return ITM_SUP_w;
+        case ITM_x:        return ITM_SUP_x;
+        case ITM_y:        return ITM_SUP_y;
+        case ITM_z:        return ITM_SUP_z;
+        case ITM_A:        return ITM_SUP_A;
+        case ITM_B:        return ITM_SUP_B;
+        case ITM_C:        return ITM_SUP_C;
+        case ITM_D:        return ITM_SUP_D;
+        case ITM_E:        return ITM_SUP_E;
+        case ITM_F:        return ITM_SUP_F;
+        case ITM_G:        return ITM_SUP_G;
+        case ITM_H:        return ITM_SUP_H;
+        case ITM_I:        return ITM_SUP_I;
+        case ITM_J:        return ITM_SUP_J;
+        case ITM_K:        return ITM_SUP_K;
+        case ITM_L:        return ITM_SUP_L;
+        case ITM_M:        return ITM_SUP_M;
+        case ITM_N:        return ITM_SUP_N;
+        case ITM_O:        return ITM_SUP_O;
+        case ITM_P:        return ITM_SUP_P;
+        case ITM_Q:        return ITM_SUP_Q;
+        case ITM_R:        return ITM_SUP_R;
+        case ITM_S:        return ITM_SUP_S;
         case ITM_T:        return ITM_SUP_T;
+        case ITM_U:        return ITM_SUP_U;
+        case ITM_V:        return ITM_SUP_V;
+        case ITM_W:        return ITM_SUP_W;
+        case ITM_X:        return ITM_SUP_X;
+        case ITM_Y:        return ITM_SUP_Y;
+        case ITM_Z:        return ITM_SUP_Z;
         default:           return item;
       }
     }

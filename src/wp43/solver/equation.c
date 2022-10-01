@@ -225,21 +225,21 @@ void deleteEquation(uint16_t equationId) {
 #if !defined(TESTSUITE_BUILD)
   static void _showExponent(char **bufPtr, const char **strPtr, int16_t *strWidth) {
     switch(*(++(*strPtr))) {
-      case '1': {
-        **bufPtr         = STD_SUP_1[0];
-        *((*bufPtr) + 1) = STD_SUP_1[1];
-        break;
-      }
-      case '2': {
-        **bufPtr         = STD_SUP_2[0];
-        *((*bufPtr) + 1) = STD_SUP_2[1];
-        break;
-      }
-      case '3': {
-        **bufPtr         = STD_SUP_3[0];
-        *((*bufPtr) + 1) = STD_SUP_3[1];
-        break;
-      }
+      //case '1': {
+      //  **bufPtr         = STD_SUP_1[0];
+      //  *((*bufPtr) + 1) = STD_SUP_1[1];
+      //  break;
+      //}
+      //case '2': {
+      //  **bufPtr         = STD_SUP_2[0];
+      //  *((*bufPtr) + 1) = STD_SUP_2[1];
+      //  break;
+      //}
+      //case '3': {
+      //  **bufPtr         = STD_SUP_3[0];
+      //  *((*bufPtr) + 1) = STD_SUP_3[1];
+      //  break;
+      //}
       case '+': {
         **bufPtr         = STD_SUP_PLUS[0];
         *((*bufPtr) + 1) = STD_SUP_PLUS[1];
