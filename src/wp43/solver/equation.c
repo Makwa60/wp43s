@@ -144,7 +144,7 @@ void fnEqEdit(uint16_t unusedButMandatoryParameter) {
     setSystemFlag(FLAG_ALPHA);
     yCursor = 0;
     xCursor = equationString ? stringGlyphLength(equationString) : 0;
-    guiSetLayout(glAim);
+    calcModeUpdateGui();
   #endif // !TESTSUITE_BUILD
 }
 

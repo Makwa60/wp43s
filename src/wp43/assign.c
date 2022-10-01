@@ -622,7 +622,7 @@ void assignLeaveAlpha(void) {
   if(softmenuStack[0].softmenuId == 1) { // MyAlpha
     softmenuStack[0].softmenuId = 0; // MyMenu
   }
-  guiSetLayout(glNormal);
+  calcModeUpdateGui();
 #endif // !TESTSUITE_BUILD
 }
 
