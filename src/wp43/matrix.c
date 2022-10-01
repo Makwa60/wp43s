@@ -664,7 +664,7 @@ void fnGoToColumn(uint16_t col) {
         setIRegisterAsInt(false, tmpRow);
         setJRegisterAsInt(false, col);
       }
-      guiSetLayout(glNormal);
+      calcModeUpdateGui();
     }
     else {
       displayCalcErrorMessage(ERROR_OPERATION_UNDEFINED, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
@@ -1865,7 +1865,7 @@ void fnEigenvectors(uint16_t unusedParamButMandatory) {
       showSoftmenu(-MNU_M_EDIT);
     }
     if(softmenu[softmenuStack[0].softmenuId].menuItem == -MNU_M_EDIT) {
-      guiSetLayout(glNormal);
+      calcModeUpdateGui();
     }
 
     bool_t colVector = false;

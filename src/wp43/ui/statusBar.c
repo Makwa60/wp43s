@@ -19,6 +19,7 @@
 #include "calcMode.h"
 #include "charString.h"
 #include "dateTime.h"
+#include "error.h"
 #include "flags.h"
 #include "fonts.h"
 #include "hal/lcd.h"

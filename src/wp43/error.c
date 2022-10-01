@@ -37,6 +37,10 @@
 
 #include "wp43.h"
 
+errorCode_t     lastErrorCode;
+calcRegister_t  errorMessageRegisterLine;
+char           *errorMessage;
+
 TO_QSPI const char *errorMessages[NUMBER_OF_ERROR_CODES] = {
 /*  0 */  "No error",
 /*  1 */  "An argument exceeds the function domain",
@@ -94,7 +98,6 @@ TO_QSPI const char *errorMessages[NUMBER_OF_ERROR_CODES] = {
 };
 
 
-
 #if defined(PC_BUILD)
   /********************************************//**
    * \brief Displays an error message like a pop up
@@ -140,7 +143,7 @@ TO_QSPI const char *errorMessages[NUMBER_OF_ERROR_CODES] = {
 
 
 void fnRaiseError(uint16_t errorCode) {
-  displayCalcErrorMessage((uint8_t)errorCode, ERR_REGISTER_LINE, REGISTER_X);
+  displayCalcErrorMessage((errorCode_t)errorCode, ERR_REGISTER_LINE, REGISTER_X);
 }
 
 
@@ -177,7 +180,7 @@ void fnErrorMessage(uint16_t unusedButMandatoryParameter) {
   #pragma GCC diagnostic pop
 
   if(real34CompareLessEqual(const34_1, &r) && real34CompareLessThan(&r, &maxErr)) {
-    displayCalcErrorMessage((uint8_t)real34ToUInt32(&r), ERR_REGISTER_LINE, REGISTER_X);
+    displayCalcErrorMessage((errorCode_t)real34ToUInt32(&r), ERR_REGISTER_LINE, REGISTER_X);
   }
   else {
     displayCalcErrorMessage(ERROR_OUT_OF_RANGE, ERR_REGISTER_LINE, REGISTER_X);
@@ -190,7 +193,7 @@ void fnErrorMessage(uint16_t unusedButMandatoryParameter) {
 
 
 
-void displayCalcErrorMessage(uint8_t errorCode, calcRegister_t errMessageRegisterLine, calcRegister_t errRegisterLine) {
+void displayCalcErrorMessage(errorCode_t errorCode, calcRegister_t errMessageRegisterLine, calcRegister_t errRegisterLine) {
   if(errorCode >= NUMBER_OF_ERROR_CODES || errorCode == 0) {
     sprintf(errorMessage, "In function displayCalcErrorMessage: %d is an unexpected value for errorCode!", errorCode);
     bugScreen(errorMessage);

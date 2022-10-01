@@ -74,7 +74,6 @@ userMenuItem_t         userAlphaItems[18];
 userMenu_t            *userMenus;
 programmableMenu_t     programmableMenu;
 calcKey_t              kbd_usr[37];
-calcRegister_t         errorMessageRegisterLine;
 glyph_t                glyphNotFound = {.charCode = 0x0000, .colsBeforeGlyph = 0, .colsGlyph = 13, .colsAfterGlyph = 0, .rowsGlyph = 19, .data = NULL};
 freeMemoryRegion_t     freeMemoryRegions[MAX_FREE_REGION];
 pcg32_random_t         pcg32_global = PCG32_INITIALIZER;
@@ -92,7 +91,6 @@ pgmPtr_t               currentStep;
 
 char                  *tmpString = NULL;
 char                  *tmpStringLabelOrVariableName = NULL;
-char                  *errorMessage;
 char                  *aimBuffer; // aimBuffer is also used for NIM
 char                  *nimBufferDisplay;
 char                  *tamBuffer;
@@ -119,7 +117,6 @@ uint8_t                alphaCase;
 uint8_t                cursorEnabled;
 uint8_t                nimNumberPart;
 uint8_t                hexDigits;
-uint8_t                lastErrorCode;
 uint8_t                temporaryInformation;
 uint8_t                numScreensNumericFont;
 uint8_t                timerCraAndDeciseconds = 128u;

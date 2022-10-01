@@ -27,18 +27,20 @@
   void     fnDecisecondTimerApp (uint16_t unusedButMandatoryParameter);
   void     fnResetTimerApp      (uint16_t unusedButMandatoryParameter);
   void     fnRecallTimerApp     (uint16_t regist);
-  void     fnStartStopTimerApp  (void);
-  void     fnStopTimerApp       (void);
-  void     fnShowTimerApp       (void);
-  void     fnUpdateTimerApp     (void);
-  void     fnEnterTimerApp      (void);
-  void     fnDotTimerApp        (void);
-  void     fnUpTimerApp         (void);
-  void     fnDownTimerApp       (void);
-  void     fnDigitKeyTimerApp   (uint16_t digit);
-  void     fnPlusTimerApp       (void);
-  void     fnBackspaceTimerApp  (void);
-  void     fnLeaveTimerApp      (void);
-  void     fnPollTimerApp       (void);
+
+  void     timerAppStartStop    (void);
+  void     timerAppStop         (void);
+  void     timerAppDraw         (void);
+  void     timerAppUpdate       (void);
+  void     timerAppPoll         (void);
+  void     timerAppLeave        (void);
+
+  void     timerAppEnter      (void);
+  void     timerAppDot        (void);
+  void     timerAppUp         (void);
+  void     timerAppDown       (void);
+  void     timerAppDigitKey   (uint16_t digit);
+  void     timerAppPlus       (void);
+  void     timerAppBackspace  (void);
 
 #endif // !TIMERAPP_H

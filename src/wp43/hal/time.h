@@ -22,6 +22,37 @@
 
   #include <stdint.h>
 
+  typedef struct {
+    uint8_t hour;
+    uint8_t min;
+    uint8_t sec;
+    uint8_t csec;
+  } timeInfo_t;
+
+  typedef struct {
+    uint16_t year;
+    uint8_t  month;
+    uint8_t  day;
+  } dateInfo_t;
+
+  /**
+   */
+  void timeGetTimeInfo(timeInfo_t *ti);
+
+  /**
+   */
+  void timeGetDateInfo(dateInfo_t *di);
+
+  #if defined(DMCP_BUILD)
+    /**
+     */
+    void timeSetTimeInfo(timeInfo_t *ti);
+
+    /**
+     */
+    void timeSetDateInfo(dateInfo_t *di);
+  #endif
+
   /**
    * Get the current time in milliseconds.
    * This is the wall clock time. It should increase when the

@@ -55,7 +55,10 @@ calcMode_t calcMode;
           if(tam.mode && !tam.alpha) {
             newLayout = glTam;
           }
-          else if(calcMode == cmAim || (tam.mode && tam.alpha)) {
+          else if(catalog && calcMode != cmPem && catalog != CATALOG_MVAR) {
+            newLayout = glAim;
+          }
+          else if(calcMode == cmAim || (tam.mode && tam.alpha) || getSystemFlag(FLAG_ALPHA)) {
             newLayout = glAim;
           }
           else if(calcMode == cmNormal || calcMode == cmPem || calcMode == cmMim || calcMode == cmAssign) {
@@ -75,7 +78,7 @@ calcMode_t calcMode;
     shiftF = false;
     shiftG = false;
 
-    fnStopTimerApp();
+    timerAppStop();
 
     #if defined(PC_BUILD)
       if(matrixIndex != INVALID_VARIABLE) {
@@ -312,7 +315,7 @@ calcMode_t calcMode;
         resetAlphaSelectionBuffer();
 
         if(catalog != CATALOG_MVAR) {
-          guiSetLayout(glAim);
+          calcModeUpdateGui();
         }
       }
     }

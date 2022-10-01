@@ -18,6 +18,7 @@
 #include "charString.h"
 #include "defines.h"
 #include "display.h"
+#include "error.h"
 #include "fonts.h"
 #include "longIntegerType.h"
 #include "registers.h"

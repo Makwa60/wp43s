@@ -73,7 +73,7 @@
   //    if(calcMode != cmTimerApp) {
   //      return FALSE;
   //    }
-  //    fnUpdateTimerApp();
+  //    timerAppUpdate();
   //    return timerStartTime != TIMER_APP_STOPPED;
   //  }
   //#endif // PC_BUILD
@@ -125,7 +125,7 @@
     rbr1stDigit = true;
   }
 
-  void fnStartStopTimerApp(void) {
+  void timerAppStartStop(void) {
     if(timerStartTime == TIMER_APP_STOPPED) {
       setSystemFlag(FLAG_RUNTIM);
       timerStartTime = timeCurrentMs();
@@ -135,12 +135,12 @@
       //#endif // PC_BUILD
     }
     else {
-      fnStopTimerApp();
+      timerAppStop();
     }
     rbr1stDigit = true;
   }
 
-  void fnStopTimerApp(void) {
+  void timerAppStop(void) {
     if(timerStartTime != TIMER_APP_STOPPED) {
       const uint32_t msec = timeCurrentMs();
       timerValue += msec - timerStartTime;
@@ -154,7 +154,7 @@
     watchIconEnabled = false;
   }
 
-  void fnShowTimerApp(void) {
+  void timerAppDraw(void) {
     assert(calcMode == cmTimerApp);
 
     const uint32_t msec = _getTimerValue();
@@ -201,13 +201,13 @@
       showSoftmenu(-MNU_TIMERF);
     }
     if(softmenu[softmenuStack[0].softmenuId].menuItem == -MNU_TIMERF) {
-      guiSetLayout(glTimerApp);
+      calcModeUpdateGui();
     }
   }
 
-  void fnUpdateTimerApp(void) {
+  void timerAppUpdate(void) {
     if(calcMode == cmTimerApp) {
-      fnShowTimerApp();
+      timerAppDraw();
       displayShiftAndTamBuffer();
       #if defined(DMCP_BUILD)
         refreshLcd();
@@ -218,14 +218,14 @@
     }
   }
 
-  void fnEnterTimerApp(void) {
+  void timerAppEnter(void) {
     if(rbr1stDigit) {
       real_t tmp;
       uInt32ToReal(_getTimerValue() / 100u, &tmp);
       tmp.exponent -= 1;
       reallocateRegister(timerCraAndDeciseconds & 0x7fu, dtTime, REAL34_SIZE, amNone);
       realToReal34(&tmp, REGISTER_REAL34_DATA(timerCraAndDeciseconds & 0x7fu));
-      fnUpTimerApp();
+      timerAppUp();
     }
     else if(aimBuffer[AIM_BUFFER_LENGTH / 2] == 0) {
       rbr1stDigit = true;
@@ -236,7 +236,7 @@
     }
   }
 
-  void fnDotTimerApp(void) {
+  void timerAppDot(void) {
     const uint32_t msec = _getTimerValue();
     real_t tmp;
 
@@ -245,7 +245,7 @@
     reallocateRegister(timerCraAndDeciseconds & 0x7fu, dtTime, REAL34_SIZE, amNone);
     realToReal34(&tmp, REGISTER_REAL34_DATA(timerCraAndDeciseconds & 0x7fu));
 
-    fnUpTimerApp();
+    timerAppUp();
 
     if(timerTotalTime > 0) {
       timerTotalTime += msec - timerValue;
@@ -260,7 +260,7 @@
     }
   }
 
-  void fnPlusTimerApp(void) {
+  void timerAppPlus(void) {
     const uint32_t msec = _getTimerValue();
     real_t tmp;
 
@@ -281,7 +281,7 @@
     realToReal34(&tmp, REGISTER_REAL34_DATA(REGISTER_X));
     fnSigma(1);
 
-    fnUpTimerApp();
+    timerAppUp();
 
     if(timerTotalTime > 0) {
       timerTotalTime += msec - timerValue;
@@ -298,7 +298,7 @@
     refreshScreen();
   }
 
-  void fnUpTimerApp(void) {
+  void timerAppUp(void) {
     if((timerCraAndDeciseconds & 0x7fu) >= 99u) {
       timerCraAndDeciseconds &= 0x80u;
     }
@@ -308,7 +308,7 @@
     rbr1stDigit = true;
   }
 
-  void fnDownTimerApp(void) {
+  void timerAppDown(void) {
     if((timerCraAndDeciseconds & 0x7fu) == 0u) {
       timerCraAndDeciseconds |= 99u;
     }
@@ -318,7 +318,7 @@
     rbr1stDigit = true;
   }
 
-  void fnDigitKeyTimerApp(uint16_t digit) {
+  void timerAppDigitKey(uint16_t digit) {
     if(rbr1stDigit || aimBuffer[AIM_BUFFER_LENGTH / 2] == 0) {
       aimBuffer[AIM_BUFFER_LENGTH / 2    ] = digit + '0';
       aimBuffer[AIM_BUFFER_LENGTH / 2 + 1] = 0;
@@ -382,7 +382,7 @@
     }
   }
 
-  void fnBackspaceTimerApp(void) {
+  void timerAppBackspace(void) {
     if(rbr1stDigit) {
       fnResetTimerApp(NOPARAM);
     }
@@ -394,35 +394,37 @@
     }
   }
 
-  void fnLeaveTimerApp(void) {
+  void timerAppLeave(void) {
     popSoftmenu();
     rbr1stDigit = true;
     calcModeLeave();
     watchIconEnabled = (timerStartTime != TIMER_APP_STOPPED);
   }
 
-  void fnPollTimerApp(void) { // poll every minute not to rewind the timer
+  void timerAppPoll(void) { // poll every minute not to rewind the timer
     if(calcMode != cmTimerApp && timerStartTime != TIMER_APP_STOPPED) {
       _antirewinder(timeCurrentMs());
     }
   }
 #else // TESTSUITE_BUILD
-  void fnTimerApp(uint16_t unusedButMandatoryParameter) {}
-  void fnAddTimerApp(uint16_t unusedButMandatoryParameter) {}
-  void fnDecisecondTimerApp(uint16_t unusedButMandatoryParameter) {}
-  void fnResetTimerApp(uint16_t unusedButMandatoryParameter) {}
-  void fnStartStopTimerApp(void) {}
-  void fnStopTimerApp(void) {}
-  void fnShowTimerApp(void) {}
-  void fnUpdateTimerApp(void) {}
-  void fnEnterTimerApp(void) {}
-  void fnDotTimerApp(void) {}
-  void fnPlusTimerApp(void) {}
-  void fnUpTimerApp(void) {}
-  void fnDownTimerApp(void) {}
-  void fnDigitKeyTimerApp(uint16_t digit) {}
-  void fnRecallTimerApp(uint16_t regist) {}
-  void fnBackspaceTimerApp(void) {}
-  void fnLeaveTimerApp(void) {}
-  void fnPollTimerApp(void) {}
+  void fnTimerApp           (uint16_t unusedButMandatoryParameter) {}
+  void fnAddTimerApp        (uint16_t unusedButMandatoryParameter) {}
+  void fnDecisecondTimerApp (uint16_t unusedButMandatoryParameter) {}
+  void fnResetTimerApp      (uint16_t unusedButMandatoryParameter) {}
+  void fnRecallTimerApp     (uint16_t regist) {}
+
+  void timerAppStartStop    (void) {}
+  void timerAppStop         (void) {}
+  void timerAppDraw         (void) {}
+  void timerAppUpdate       (void) {}
+  void timerAppPoll         (void) {}
+  void timerAppLeave        (void) {}
+
+  void timerAppEnter      (void) {}
+  void timerAppDot        (void) {}
+  void timerAppPlus       (void) {}
+  void timerAppUp         (void) {}
+  void timerAppDown       (void) {}
+  void timerAppDigitKey   (uint16_t digit) {}
+  void timerAppBackspace  (void) {}
 #endif // !TESTSUITE_BUILD TESTSUITE_BUILD

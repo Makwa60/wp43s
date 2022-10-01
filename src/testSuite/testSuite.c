@@ -29,6 +29,7 @@
 #include "debug.h"
 #include "display.h"
 #include "distributions/distributions.h"
+#include "error.h"
 #include "flags.h"
 #include "fractions.h"
 #include "items.h"
@@ -1786,7 +1787,7 @@ void checkExpectedOutParameter(char *p) {
 
       if(ec <= 28) {
         if(lastErrorCode != ec) {
-          printf("\nLast error code should be %u (%s) but it is %u (%s)!\n", ec, errorMessages[ec], lastErrorCode, errorMessages[lastErrorCode]);
+          printf("\nLast error code should be %d (%s) but it is %d (%s)!\n", ec, errorMessages[ec], lastErrorCode, errorMessages[lastErrorCode]);
           abortTest();
         }
       }

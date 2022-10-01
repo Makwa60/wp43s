@@ -1,0 +1,1 @@
+command source -s true tools/lldb/helpers

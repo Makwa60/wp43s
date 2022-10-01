@@ -31,7 +31,6 @@
 #include "registerValueConversions.h"
 #include "stack.h"
 #include <string.h>
-#include <time.h>
 
 #include "wp43.h"
 
@@ -776,23 +775,12 @@ void fnToHms(uint16_t unusedButMandatoryParameter) {
 
 void fnDate(uint16_t unusedButMandatoryParameter) {
   real34_t y, m, d, j;
+  dateInfo_t dateInfo;
 
-  #if defined(DMCP_BUILD)
-    tm_t timeInfo;
-    dt_t dateInfo;
-
-    rtc_read(&timeInfo, &dateInfo);
-    uInt32ToReal34(dateInfo.year,  &y);
-    uInt32ToReal34(dateInfo.month, &m);
-    uInt32ToReal34(dateInfo.day,   &d);
-  #else // !DMCP_BUILD
-    time_t epoch = time(NULL);
-    struct tm *timeInfo = localtime(&epoch);
-
-    int32ToReal34(timeInfo->tm_year + 1900, &y);
-    int32ToReal34(timeInfo->tm_mon  + 1,    &m);
-    int32ToReal34(timeInfo->tm_mday,        &d);
-  #endif // DMCP_BUILD
+  timeGetDateInfo(&dateInfo);
+  uInt32ToReal34(dateInfo.year,  &y);
+  uInt32ToReal34(dateInfo.month, &m);
+  uInt32ToReal34(dateInfo.day,   &d);
 
   composeJulianDay(&y, &m, &d, &j);
   liftStack();
@@ -803,19 +791,10 @@ void fnDate(uint16_t unusedButMandatoryParameter) {
 
 void fnTime(uint16_t unusedButMandatoryParameter) {
   real34_t time34;
+  timeInfo_t timeInfo;
 
-  #if defined(DMCP_BUILD)
-    tm_t timeInfo;
-    dt_t dateInfo;
-
-    rtc_read(&timeInfo, &dateInfo);
-    uInt32ToReal34((uint32_t)timeInfo.hour * 3600u + (uint32_t)timeInfo.min * 60u + (uint32_t)timeInfo.sec, &time34);
-  #else // !DMCP_BUILD
-    time_t epoch = time(NULL);
-    struct tm *timeInfo = localtime(&epoch);
-
-    uInt32ToReal34((uint32_t)timeInfo->tm_hour * 3600u + (uint32_t)timeInfo->tm_min * 60u + (uint32_t)timeInfo->tm_sec, &time34);
-  #endif // DMCP_BUILD
+  timeGetTimeInfo(&timeInfo);
+  uInt32ToReal34((uint32_t)timeInfo.hour * 3600u + (uint32_t)timeInfo.min * 60u + (uint32_t)timeInfo.sec, &time34);
 
   liftStack();
   reallocateRegister(REGISTER_X, dtTime, REAL34_SIZE, amNone);
@@ -825,17 +804,15 @@ void fnTime(uint16_t unusedButMandatoryParameter) {
 
 void fnSetDate(uint16_t unusedButMandatoryParameter) {
   #if defined(DMCP_BUILD)
-    tm_t timeInfo;
-    dt_t dateInfo;
+    dateInfo_t dateInfo;
     real34_t j, y, m, d;
 
     if(checkDateArgument(REGISTER_X, &j)) {
-      rtc_read(&timeInfo, &dateInfo);
       decomposeJulianDay(&j, &y, &m, &d);
       dateInfo.year  = real34ToUInt32(&y);
       dateInfo.month = real34ToUInt32(&m);
       dateInfo.day   = real34ToUInt32(&d);
-      rtc_write(&timeInfo, &dateInfo);
+      timeSetDateInfo(&dateInfo);
     }
   #else // !DMCP_BUILD
     displayCalcErrorMessage(ERROR_FUNCTION_NOT_FOUND, ERR_REGISTER_LINE, REGISTER_X);
@@ -848,8 +825,7 @@ void fnSetDate(uint16_t unusedButMandatoryParameter) {
 
 void fnSetTime(uint16_t unusedButMandatoryParameter) {
   #if defined(DMCP_BUILD)
-    tm_t timeInfo;
-    dt_t dateInfo;
+    timeInfo_t timeInfo;
     real34_t time34;
     int32_t timeVal;
 
@@ -858,7 +834,6 @@ void fnSetTime(uint16_t unusedButMandatoryParameter) {
         displayCalcErrorMessage(ERROR_BAD_TIME_OR_DATE_INPUT, ERR_REGISTER_LINE, REGISTER_X);
       }
       else {
-        rtc_read(&timeInfo, &dateInfo);
         real34Multiply(REGISTER_REAL34_DATA(REGISTER_X), const34_100, &time34);
         real34ToIntegralValue(&time34, &time34, DEC_ROUND_DOWN);
         timeVal = real34ToInt32(&time34);
@@ -866,7 +841,7 @@ void fnSetTime(uint16_t unusedButMandatoryParameter) {
         timeInfo.sec  = (timeVal /= 100) %  60;
         timeInfo.min  = (timeVal /=  60) %  60;
         timeInfo.hour = (timeVal /=  60);
-        rtc_write(&timeInfo, &dateInfo);
+        timeSetTimeInfo(&timeInfo);
       }
     }
     else if(getRegisterDataType(REGISTER_X) == dtReal34) {
@@ -874,7 +849,6 @@ void fnSetTime(uint16_t unusedButMandatoryParameter) {
         displayCalcErrorMessage(ERROR_BAD_TIME_OR_DATE_INPUT, ERR_REGISTER_LINE, REGISTER_X);
       }
       else {
-        rtc_read(&timeInfo, &dateInfo);
         real34Multiply(REGISTER_REAL34_DATA(REGISTER_X), const34_1e6, &time34);
         real34ToIntegralValue(&time34, &time34, DEC_ROUND_DOWN);
         timeVal = real34ToInt32(&time34);
@@ -883,7 +857,7 @@ void fnSetTime(uint16_t unusedButMandatoryParameter) {
         timeInfo.min  = (timeVal /= 100) % 100;
         timeInfo.hour = (timeVal /= 100);
         if(timeInfo.sec <= 59 && timeInfo.min <= 59 && timeInfo.hour <= 23) {
-          rtc_write(&timeInfo, &dateInfo);
+          timeSetTimeInfo(&timeInfo);
         }
         else {
           displayCalcErrorMessage(ERROR_BAD_TIME_OR_DATE_INPUT, ERR_REGISTER_LINE, REGISTER_X);
@@ -904,111 +878,57 @@ void fnSetTime(uint16_t unusedButMandatoryParameter) {
 
 
 void getDateString(char *dateString) {
-  #if defined(DMCP_BUILD)
-    tm_t timeInfo;
-    dt_t dateInfo;
+  dateInfo_t dateInfo;
 
-    rtc_read(&timeInfo, &dateInfo);
-    if(!getSystemFlag(FLAG_TDM24)) { // 2 digit year
-      if(getSystemFlag(FLAG_DMY)) {
-        sprintf(dateString, "%02d.%02d.%02d", dateInfo.day, dateInfo.month, dateInfo.year % 100);
-      }
-      else if(getSystemFlag(FLAG_YMD)) {
-        sprintf(dateString, "%02d-%02d-%02d", dateInfo.year % 100, dateInfo.month, dateInfo.day);
-      }
-      else if(getSystemFlag(FLAG_MDY)) {
-        sprintf(dateString, "%02d/%02d/%02d", dateInfo.month, dateInfo.day, dateInfo.year % 100);
-      }
-      else {
-        strcpy(dateString, "?? ?? ????");
-      }
-    }
-    else {// 4 digit year
-      if(getSystemFlag(FLAG_DMY)) {
-        sprintf(dateString, "%02d.%02d.%04d", dateInfo.day, dateInfo.month, dateInfo.year);
-      }
-      else if(getSystemFlag(FLAG_YMD)) {
-        sprintf(dateString, "%04d-%02d-%02d", dateInfo.year, dateInfo.month, dateInfo.day);
-      }
-      else if(getSystemFlag(FLAG_MDY)) {
-        sprintf(dateString, "%02d/%02d/%04d", dateInfo.month, dateInfo.day, dateInfo.year);
-      }
-      else {
-        strcpy(dateString, "?? ?? ????");
-      }
-    }
-  #else // !DMCP_BUILD
-    time_t epoch = time(NULL);
-    struct tm *timeInfo = localtime(&epoch);
+  timeGetDateInfo(&dateInfo);
 
-    // For the format string : man strftime
-    if(!getSystemFlag(FLAG_TDM24)) { // time format = 12H ==> 2 digit year
-      if(getSystemFlag(FLAG_DMY)) {
-        strftime(dateString, 11, "%d.%m.%y", timeInfo);
-      }
-      else if(getSystemFlag(FLAG_YMD)) {
-        strftime(dateString, 11, "%y-%m-%d", timeInfo);
-      }
-      else if(getSystemFlag(FLAG_MDY)) {
-        strftime(dateString, 11, "%m/%d/%y", timeInfo);
-      }
-      else {
-        strcpy(dateString, "?? ?? ????");
-      }
+  if(!getSystemFlag(FLAG_TDM24)) { // 2 digit year
+    if(getSystemFlag(FLAG_DMY)) {
+      sprintf(dateString, "%02d.%02d.%02d", dateInfo.day, dateInfo.month, dateInfo.year % 100);
     }
-    else {// 4 digit year
-      if(getSystemFlag(FLAG_DMY)) {
-        strftime(dateString, 11, "%d.%m.%Y", timeInfo);
-      }
-      else if(getSystemFlag(FLAG_YMD)) {
-        strftime(dateString, 11, "%Y-%m-%d", timeInfo);
-      }
-      else if(getSystemFlag(FLAG_MDY)) {
-        strftime(dateString, 11, "%m/%d/%Y", timeInfo);
-      }
-      else {
-        strcpy(dateString, "?? ?? ????");
-      }
+    else if(getSystemFlag(FLAG_YMD)) {
+      sprintf(dateString, "%02d-%02d-%02d", dateInfo.year % 100, dateInfo.month, dateInfo.day);
     }
-  #endif // DMCP_BUILD
+    else if(getSystemFlag(FLAG_MDY)) {
+      sprintf(dateString, "%02d/%02d/%02d", dateInfo.month, dateInfo.day, dateInfo.year % 100);
+    }
+    else {
+      strcpy(dateString, "?? ?? ????");
+    }
+  }
+  else {// 4 digit year
+    if(getSystemFlag(FLAG_DMY)) {
+      sprintf(dateString, "%02d.%02d.%04d", dateInfo.day, dateInfo.month, dateInfo.year);
+    }
+    else if(getSystemFlag(FLAG_YMD)) {
+      sprintf(dateString, "%04d-%02d-%02d", dateInfo.year, dateInfo.month, dateInfo.day);
+    }
+    else if(getSystemFlag(FLAG_MDY)) {
+      sprintf(dateString, "%02d/%02d/%04d", dateInfo.month, dateInfo.day, dateInfo.year);
+    }
+    else {
+      strcpy(dateString, "?? ?? ????");
+    }
+  }
 }
 
 
 
 void getTimeString(char *timeString) {
-  #if defined(DMCP_BUILD)
-    tm_t timeInfo;
-    dt_t dateInfo;
+  timeInfo_t timeInfo;
 
-    rtc_read(&timeInfo, &dateInfo);
-    if(!getSystemFlag(FLAG_TDM24)) {
-      sprintf(timeString, "%02d:%02d", (timeInfo.hour % 12) == 0 ? 12 : timeInfo.hour % 12, timeInfo.min);
-      if(timeInfo.hour >= 12) {
-        strcat(timeString, "pm");
-      }
-      else {
-        strcat(timeString, "am");
-      }
+  timeGetTimeInfo(&timeInfo);
+
+  if(!getSystemFlag(FLAG_TDM24)) {
+    sprintf(timeString, "%02d:%02d", (timeInfo.hour % 12) == 0 ? 12 : timeInfo.hour % 12, timeInfo.min);
+    if(timeInfo.hour >= 12) {
+      strcat(timeString, "pm");
     }
     else {
-      sprintf(timeString, "%02d:%02d", timeInfo.hour, timeInfo.min);
+      strcat(timeString, "am");
     }
-  #else // !DMCP_BUILD
-    time_t epoch = time(NULL);
-    struct tm *timeInfo = localtime(&epoch);
-
-    // For the format string : man strftime
-    if(getSystemFlag(FLAG_TDM24)) { // time format = 24H
-      strftime(timeString, 8, "%H:%M", timeInfo); // %R don't work on Windows
-    }
-    else {
-      strftime(timeString, 8, "%I:%M", timeInfo); // I could use %p but in many locals the AM and PM string are empty
-      if(timeInfo->tm_hour >= 12) {
-        strcat(timeString, "pm");
-      }
-      else {
-        strcat(timeString, "am");
-      }
-    }
-  #endif // DMCP_BUILD
+  }
+  else {
+    sprintf(timeString, "%02d:%02d", timeInfo.hour, timeInfo.min);
+  }
 }
