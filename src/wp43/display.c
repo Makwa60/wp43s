@@ -198,21 +198,9 @@ void supNumberToDisplayString(int32_t supNumber, char *displayString, char *disp
 
       xcopy(displayString + 2, displayString, stringByteLength(displayString) + 1);
 
-      if(digit <= 1) {
-        displayString[0] = STD_SUP_0[0];
-        displayString[1] = STD_SUP_0[1];
-        displayString[1] += digit;
-      }
-      else if(digit <= 3) {
-        displayString[0] = STD_SUP_2[0];
-        displayString[1] = STD_SUP_2[1];
-        displayString[1] += digit-2;
-      }
-      else {
-        displayString[0] = STD_SUP_4[0];
-        displayString[1] = STD_SUP_4[1];
-        displayString[1] += digit-4;
-      }
+      displayString[0] = STD_SUP_0[0];
+      displayString[1] = STD_SUP_0[1];
+      displayString[1] += digit;
 
       if(insertGap && greaterThan9999 && supNumber > 0 && groupingGap != 0 && ((++digitCount) % groupingGap) == 0) {
         xcopy(displayString + 2, displayString, stringByteLength(displayString) + 1);
@@ -1155,22 +1143,9 @@ void fractionToDisplayString(calcRegister_t regist, char *displayString) {
     endingZero++;
     xcopy(displayString + insertAt + 2, displayString + insertAt, endingZero++ - insertAt);
 
-    if(u <= 1) {
-      displayString[insertAt]     = STD_SUP_0[0];
-      displayString[insertAt + 1] = STD_SUP_0[1];
-      displayString[insertAt + 1] += u;
-    }
-    else if(u <= 3) {
-      displayString[insertAt]     = STD_SUP_2[0];
-      displayString[insertAt + 1] = STD_SUP_2[1];
-      displayString[insertAt + 1] += u - 2;
-    }
-    else {
-      displayString[insertAt]     = STD_SUP_4[0];
-      displayString[insertAt + 1] = STD_SUP_4[1];
-      displayString[insertAt + 1] += u - 4;
-    }
-
+    displayString[insertAt]     = STD_SUP_0[0];
+    displayString[insertAt + 1] = STD_SUP_0[1];
+    displayString[insertAt + 1] += u;
   } while(numer != 0);
 
 
@@ -1494,12 +1469,12 @@ void shortIntegerToDisplayString(calcRegister_t regist, char *displayString, boo
         displayString[j]   = STD_SPACE_PUNCTUATION[1];
       }
       else if(displayString[k] == '0') {
-        displayString[j++] = STD_ZERO[0];
-        displayString[j]   = STD_ZERO[1];
+        displayString[j++] = STD_BINARY_ZERO[0];
+        displayString[j]   = STD_BINARY_ZERO[1];
       }
       else if(displayString[k] == '1') {
-        displayString[j++] = STD_ONE[0];
-        displayString[j]   = STD_ONE[1];
+        displayString[j++] = STD_BINARY_ONE[0];
+        displayString[j]   = STD_BINARY_ONE[1];
       }
       else {
         displayString[j] = displayString[k];
@@ -1550,12 +1525,12 @@ void shortIntegerToDisplayString(calcRegister_t regist, char *displayString, boo
         displayString[j]   = STD_SPACE_PUNCTUATION[1];
       }
       else if(displayString[k] == '0') {
-        displayString[j++] = STD_ZERO[0];
-        displayString[j]   = STD_ZERO[1];
+        displayString[j++] = STD_BINARY_ZERO[0];
+        displayString[j]   = STD_BINARY_ZERO[1];
       }
       else if(displayString[k] == '1') {
-        displayString[j++] = STD_ONE[0];
-        displayString[j]   = STD_ONE[1];
+        displayString[j++] = STD_BINARY_ONE[0];
+        displayString[j]   = STD_BINARY_ONE[1];
       }
       else {
        displayString[j] = displayString[k];

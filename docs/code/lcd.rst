@@ -1,10 +1,11 @@
 LCD
 ===
 
-The display of the calculator is a 400 (width) by 240 (height) LCD. The hardware abstraction
-layer provides functions to draw a filled rectangle and to manipulate individual pixels. On
-a simulator these should only modify the contents of the LCD part of the simulator (which should
-still be 400 by 240). All functions use the origin at the top left.
+The display of the calculator is a 400 (width) by 240 (height) LCD. The hardware
+abstraction layer provides functions to draw a filled rectangle and to manipulate
+individual pixels. On a simulator these should only modify the contents of the
+LCD part of the simulator (which should still be 400 by 240). All functions use
+the origin at the top left.
 
 Functions
 ---------
@@ -14,8 +15,9 @@ Functions
 Example
 -------
 
-LCD operations update the contents of the screen such that the latest operation "wins". You can
-draw on top of previous state and the state remains until changed.
+LCD operations update the contents of the screen such that the latest operation
+"wins". You can draw on top of previous state and the state remains until
+changed.
 
 .. code-block:: C
 

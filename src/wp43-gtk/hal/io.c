@@ -27,29 +27,29 @@ bool_t ioFileOpen(ioFilePath_t path, ioFileMode_t mode) {
   assert(_ioFileHandle == NULL);
   const char *filename, *filemode;
   switch(path) {
-    case IOPATH_SAVEFILE:
+    case ioPathSaveFile:
       filename = "wp43.sav";
       break;
-    case IOPATH_PGMFILE:
+    case ioPathPgmFile:
       filename = "wp43.dat";
       break;
-    case IOPATH_TESTPGMS:
+    case ioPathTestPgms:
       filename = "res/dmcp/testPgms.bin";
       break;
-    case IOPATH_BACKUP:
+    case ioPathBackup:
       filename = "backup.bin";
       break;
     default:
       return 0;
   }
   switch(mode) {
-    case IOMODE_READ:
+    case ioModeRead:
       filemode = "rb";
       break;
-    case IOMODE_WRITE:
+    case ioModeWrite:
       filemode = "wb";
       break;
-    case IOMODE_UPDATE:
+    case ioModeUpdate:
       filemode = "r+b";
       break;
     default:
