@@ -1,4 +1,5 @@
 testSuite_src = files(
+  'reporter.c',
   'testSuite.c',
   'hal/audio.c',
   'hal/gui.c',
