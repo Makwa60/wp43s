@@ -174,3 +174,38 @@
            moved in numeric font U+2069 to U+2295 (subscript earth),
            removed in standard font U+2068 (subscript sun),
            removed in standard font U+2069 (subscript earth)
+
+2022-10-01 In both fonts removing:
+           U+00AA superscript a  
+           U+00B2 superscript 2  
+           U+00B3 superscript 3  
+           U+00BA superscript o  
+           U+1D61 superscript x  
+           U+1D64 subscript u  
+           U+2070 to U+2071 superscript 0 to 1  
+           U+2074 to U+2079 superscript 4 to 9  
+           U+207A superscript +  
+           U+207B superscript -  
+           U+2090 subscript a  
+           U+2091 subscript e  
+           U+2092 subscript o  
+           U+2093 subscript x  
+           U+2095 subscript h  
+           U+2096 subscript k  
+           U+2097 subscript l  
+           U+2098 subscript m  
+           U+2099 subscript n  
+           U+209A subscript p  
+           U+209B subscript s  
+           U+209C subscript t  
+           In both fonts moving:
+           U+2491 to U+247D 10 exponent
+           In both fonts adding or replacing:
+           from U+2160 to U+2169 superscript 0 to 9  
+           U+216A superscript +  
+           U+216B superscript -  
+           from U+2482 to U+249B superscript a to z  
+           from U+249C to U+24B5 subscript   a to z  
+           from U+24B6 to U+24CF superscript A to Z  
+           from U+24D0 to U+24E9 subscript   A to Z
+
