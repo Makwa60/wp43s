@@ -75,13 +75,6 @@
    */
   void fnKeyDotD       (uint16_t unusedButMandatoryParameter);
 
-  /**
-   * Processing ANGLE key.
-   *
-   * \param[in] unusedButMandatoryParameter
-   */
-  void fnKeyAngle      (uint16_t unusedButMandatoryParameter);
-
   #if defined(PC_BUILD)
     extern char key[3];
   #endif // PC_BUILD
