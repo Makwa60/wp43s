@@ -85,7 +85,7 @@ static void _junitEndTestSuites(void) {
   }
   _testSuitesOut[_testSuitesOutPtr] = '\0';
   fprintf(junitOut, "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n");
-  fprintf(junitOut, "<testsuites tests=\"%d\" failures=\"%d\">\n", _passingTests + _failingTests, _failingTests);
+  fprintf(junitOut, "<testsuites name=\"All tests\" tests=\"%d\" failures=\"%d\">\n", _passingTests + _failingTests, _failingTests);
   fprintf(junitOut, "%s", _testSuitesOut);
   fprintf(junitOut, "</testsuites>\n");
   fclose(junitOut);
