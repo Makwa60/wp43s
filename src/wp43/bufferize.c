@@ -852,13 +852,9 @@
           case ITM_DtoDMS:
           case ITM_MULPIto:
           case ITM_Kk:
-          case ITM_Ek: {
+          case ITM_Ek:
+          case ITM_ARG: {
             mimRunFunction(item, indexOfItems[item].param);
-            break;
-          }
-
-          case ITM_ANGLE: {
-            mimRunFunction(ITM_ARG, indexOfItems[ITM_ARG].param);
             break;
           }
 
