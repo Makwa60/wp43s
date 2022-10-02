@@ -51,9 +51,9 @@ static void _junitStartTest(void) {
 //}
 
 static void _junitEndTest(bool_t passed, const char *errorMsg) {
-  char tmp[100];
+  char tmp[1000];
   if(passed) {
-    sprintf(tmp, "\t\t<testcase id=\"%d\" name=\"%s\" />\n", _testId++, _testName);
+    sprintf(tmp, "\t\t<testcase id=\"testcase.%d\" name=\"%s\" />\n", _testId++, _testName);
   } else {
     sprintf(tmp, "\t\t<testcase id=\"%d\" name=\"%s\">\n\t\t\t<failure message=\"%s\" />\n\t\t</testcase>\n", _testId++, _testName, errorMsg);
   }
@@ -65,7 +65,7 @@ static void _junitEndTest(bool_t passed, const char *errorMsg) {
 static void _junitEndTestSuite(void) {
   assert(_testSuiteOutPtr + _testSuitesOutPtr <= MAX_TEST_SUITES_SIZE);
   char tmp[100];
-  sprintf(tmp, "\t<testsuite id=\"%d\" name=\"%s\" tests=\"%d\" failures=\"%d\">\n", _testSuiteId++, _testSuiteName, _testsInSuite, _failingTestsInSuite);
+  sprintf(tmp, "\t<testsuite id=\"testsuite.%d\" name=\"%s\" tests=\"%d\" failures=\"%d\">\n", _testSuiteId++, _testSuiteName, _testsInSuite, _failingTestsInSuite);
   assert(strlen(tmp) + _testSuitesOutPtr + _testSuiteOutPtr < MAX_TEST_SUITES_SIZE);
   strcpy(_testSuitesOut + _testSuitesOutPtr, tmp);
   _testSuitesOutPtr += strlen(tmp);
