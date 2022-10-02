@@ -33,8 +33,6 @@ static char     _testSuiteOut[MAX_TEST_SUITE_SIZE];
 static uint32_t _testSuiteOutPtr = 0;
 static char     _testSuitesOut[MAX_TEST_SUITES_SIZE];
 static uint32_t _testSuitesOutPtr = 0;
-static uint32_t _testId = 0;
-static uint32_t _testSuiteId = 0;
 static uint32_t _passingTestsInSuite = 0;
 static uint32_t _failingTestsInSuite = 0;
 
@@ -53,9 +51,9 @@ static void _junitStartTest(void) {
 static void _junitEndTest(bool_t passed, const char *errorMsg) {
   char tmp[1000];
   if(passed) {
-    sprintf(tmp, "\t\t<testcase id=\"testcase.%d\" name=\"%s\" />\n", _testId++, _testName);
+    sprintf(tmp, "\t\t<testcase time=\"0\" name=\"%s\" />\n", _testName);
   } else {
-    sprintf(tmp, "\t\t<testcase id=\"%d\" name=\"%s\">\n\t\t\t<failure message=\"%s\" />\n\t\t</testcase>\n", _testId++, _testName, errorMsg);
+    sprintf(tmp, "\t\t<testcase time=\"0\" name=\"%s\">\n\t\t\t<failure message=\"%s\" />\n\t\t</testcase>\n", _testName, errorMsg);
   }
   assert(strlen(tmp) + _testSuiteOutPtr < MAX_TEST_SUITE_SIZE);
   strcpy(_testSuiteOut + _testSuiteOutPtr, tmp);
@@ -65,7 +63,7 @@ static void _junitEndTest(bool_t passed, const char *errorMsg) {
 static void _junitEndTestSuite(void) {
   assert(_testSuiteOutPtr + _testSuitesOutPtr <= MAX_TEST_SUITES_SIZE);
   char tmp[100];
-  sprintf(tmp, "\t<testsuite id=\"testsuite.%d\" name=\"%s\" tests=\"%d\" failures=\"%d\">\n", _testSuiteId++, _testSuiteName, _testsInSuite, _failingTestsInSuite);
+  sprintf(tmp, "\t<testsuite time=\"0\" tests=\"%d\" errors=\"%d\" name=\"%s\">\n", _testsInSuite, _failingTestsInSuite, _testSuiteName);
   assert(strlen(tmp) + _testSuitesOutPtr + _testSuiteOutPtr < MAX_TEST_SUITES_SIZE);
   strcpy(_testSuitesOut + _testSuitesOutPtr, tmp);
   _testSuitesOutPtr += strlen(tmp);
@@ -84,8 +82,7 @@ static void _junitEndTestSuites(void) {
     fprintf(stderr, "Cannot create file %s\n", FILE_NAME);
   }
   _testSuitesOut[_testSuitesOutPtr] = '\0';
-  fprintf(junitOut, "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n");
-  fprintf(junitOut, "<testsuites name=\"All tests\" tests=\"%d\" failures=\"%d\">\n", _passingTests + _failingTests, _failingTests);
+  fprintf(junitOut, "<testsuites>\n");
   fprintf(junitOut, "%s", _testSuitesOut);
   fprintf(junitOut, "</testsuites>\n");
   fclose(junitOut);
