@@ -51,9 +51,9 @@ static void _junitStartTest(void) {
 static void _junitEndTest(bool_t passed, const char *errorMsg) {
   char tmp[1000];
   if(passed) {
-    sprintf(tmp, "\t\t<testcase time=\"0\" name=\"%s\" />\n", _testName);
+    sprintf(tmp, "\t\t<testcase time=\"0\" name=\"%s\" classname=\"%s\" />\n", _testName, _testSuiteName);
   } else {
-    sprintf(tmp, "\t\t<testcase time=\"0\" name=\"%s\">\n\t\t\t<failure message=\"%s\" />\n\t\t</testcase>\n", _testName, errorMsg);
+    sprintf(tmp, "\t\t<testcase time=\"0\" name=\"%s\" classname=\"%s\">\n\t\t\t<failure message=\"%s\" />\n\t\t</testcase>\n", _testName, _testSuiteName, errorMsg);
   }
   assert(strlen(tmp) + _testSuiteOutPtr < MAX_TEST_SUITE_SIZE);
   strcpy(_testSuiteOut + _testSuiteOutPtr, tmp);
