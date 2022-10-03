@@ -1838,9 +1838,6 @@ void execTimerApp(uint16_t timerType) {
         else if(calcMode == cmMim) {
           screenUpdatingMode = (aimBuffer[0] == 0) ? SCRUPD_AUTO : (SCRUPD_MANUAL_STACK | SCRUPD_MANUAL_SHIFT_STATUS);
         }
-        else if(calcMode == cmTimerApp) {
-          screenUpdatingMode = SCRUPD_MANUAL_STACK;
-        }
 
         if(screenUpdatingMode == SCRUPD_AUTO) {
           clearScreen();

@@ -48,9 +48,6 @@ calcMode_t calcMode;
         case cmApp:
           newLayout = appsGetLayout();
           break;
-        case cmTimerApp:
-          newLayout = glTimerApp;
-          break;
         default:
           if(tam.mode && !tam.alpha) {
             newLayout = glTam;
@@ -63,6 +60,9 @@ calcMode_t calcMode;
           }
           else if(calcMode == cmNormal || calcMode == cmPem || calcMode == cmMim || calcMode == cmAssign) {
             newLayout = glNormal;
+          }
+          else if(calcMode == cmTimerApp) {
+            newLayout = glTimerApp;
           }
       }
       if(newLayout != previousLayout) {
