@@ -4,7 +4,8 @@ generateTestPgms = executable(
   sources             : files('generateTestPgms.c'),
   include_directories : [decNumber_inc, wp43_inc],
   dependencies        : gtk_dep,
-  native              : true)
+  native              : true,
+  override_options    : ['b_coverage=false'])
 testPgms_bin = custom_target(
   'testPgms.bin',
   build_by_default : false,

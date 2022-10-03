@@ -60,17 +60,22 @@ dm42:
 
 testSuite:
   stage: test
+  coverage: '/^TOTAL.*\s+(\d+\%)$/'
   script:
     - apt-get update -qq
-    - apt-get install -qq -y git python3-pip ninja-build pkg-config build-essential libgtk-3-dev libgmp-dev
+    - apt-get install -qq -y git python3-pip ninja-build pkg-config build-essential libgtk-3-dev libgmp-dev gcovr
     - python3 -m pip install meson
     - make test
+    - make coverage
   artifacts:
     expire_in: 5 day
     paths:
       - testSuiteJunit.xml
     reports:
       junit: testSuiteJunit.xml
+      coverage_report:
+        coverage_format: cobertura
+        path: build.sim/meson-logs/coverage.xml
   tags:
     - linux
 
