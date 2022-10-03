@@ -7,7 +7,8 @@ generateCatalogs = executable(
   c_args              : '-DGENERATE_CATALOGS',
   include_directories : [decNumber_inc, wp43_inc],
   dependencies        : [gtk_dep, gmp_dep],
-  native              : true)
+  native              : true,
+  override_options    : ['b_coverage=false'])
 softmenuCatalogs_h = custom_target(
   'softmenuCatalogs.h',
   build_by_default : false,

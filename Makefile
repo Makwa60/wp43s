@@ -13,7 +13,7 @@ clean:
 	rm -rf build build.sim build.dmcp build.rel
 
 build.sim:
-	meson setup build.sim --buildtype=debug -DRASPBERRY=`tools/onARaspberry`
+	meson setup build.sim --buildtype=debug -DRASPBERRY=`tools/onARaspberry` -Db_coverage=true
 
 build.rel:
 	meson setup build.rel --buildtype=release -DCI_COMMIT_TAG=$(CI_COMMIT_TAG)
@@ -37,6 +37,9 @@ release: build.rel
 
 test: build.sim
 	cd build.sim && ninja test
+
+coverage:
+	cd build.sim && ninja coverage-xml
 
 dmcp: build.dmcp
 	cd build.dmcp && ninja dmcp
