@@ -1405,7 +1405,9 @@
                   break;
                 }
                 case ITM_SHIFTf: {
-                  fnScreenDump(NOPARAM);
+                  if(!tam.mode) {
+                    fnScreenDump(NOPARAM);
+                  }
                   break;
                 }
               }
@@ -2295,7 +2297,13 @@ void fnKeyUp(uint16_t unusedButMandatoryParameter) {
       }
 
       case cmTimerApp: {
-        timerAppUp();
+        resetAlphaSelectionBuffer();
+        if(currentSoftmenuScrolls()) {
+          menuUp();
+        }
+        else if(!tam.mode) {
+          timerAppUp();
+        }
         break;
       }
 
@@ -2428,7 +2436,13 @@ void fnKeyDown(uint16_t unusedButMandatoryParameter) {
       }
 
       case cmTimerApp: {
-        timerAppDown();
+        resetAlphaSelectionBuffer();
+        if(currentSoftmenuScrolls()) {
+          menuDown();
+        }
+        else if(!tam.mode) {
+          timerAppDown();
+        }
         break;
       }
 

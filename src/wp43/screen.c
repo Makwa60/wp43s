@@ -1755,12 +1755,21 @@ void execTimerApp(uint16_t timerType) {
 
 
 
+  uint32_t _screenTamLineYPosition(void) {
+    if(calcMode == cmTimerApp) {
+      return Y_POSITION_OF_TAM_ALT_LINE;
+    }
+    return Y_POSITION_OF_TAM_LINE;
+  }
+
+
+
   void clearTamBuffer(void) {
     if(shiftF || shiftG) {
-      lcd_fill_rect(18, Y_POSITION_OF_TAM_LINE, 120, 32, LCD_SET_VALUE);
+      lcd_fill_rect(18, _screenTamLineYPosition(), 120, 32, LCD_SET_VALUE);
     }
     else {
-      lcd_fill_rect(0, Y_POSITION_OF_TAM_LINE, 138, 32, LCD_SET_VALUE);
+      lcd_fill_rect(0, _screenTamLineYPosition(), 138, 32, LCD_SET_VALUE);
     }
   }
 
@@ -1775,10 +1784,10 @@ void execTimerApp(uint16_t timerType) {
 
     if(calcMode != cmAssign || itemToBeAssigned == 0 || tam.alpha) {
       if(shiftF) {
-        showGlyph(STD_SUP_f, &numericFont, 0, Y_POSITION_OF_REGISTER_T_LINE, vmNormal, true, true); // f is pixel 4+8+3 wide
+        showGlyph(STD_SUP_f, &numericFont, 0, _screenTamLineYPosition(), vmNormal, true, true); // f is pixel 4+8+3 wide
       }
       else if(shiftG) {
-        showGlyph(STD_SUP_g, &numericFont, 0, Y_POSITION_OF_REGISTER_T_LINE, vmNormal, true, true); // g is pixel 4+10+1 wide
+        showGlyph(STD_SUP_g, &numericFont, 0, _screenTamLineYPosition(), vmNormal, true, true); // g is pixel 4+10+1 wide
       }
     }
 
@@ -1789,7 +1798,7 @@ void execTimerApp(uint16_t timerType) {
       }
       else { // Fixed line to display TAM informations
         clearTamBuffer();
-        showString(tamBuffer, &standardFont, 18, Y_POSITION_OF_TAM_LINE + 6, vmNormal, true, true);
+        showString(tamBuffer, &standardFont, 18, _screenTamLineYPosition() + 6, vmNormal, true, true);
       }
     }
   }
@@ -1828,9 +1837,6 @@ void execTimerApp(uint16_t timerType) {
         }
         else if(calcMode == cmMim) {
           screenUpdatingMode = (aimBuffer[0] == 0) ? SCRUPD_AUTO : (SCRUPD_MANUAL_STACK | SCRUPD_MANUAL_SHIFT_STATUS);
-        }
-        else if(calcMode == cmTimerApp) {
-          screenUpdatingMode = SCRUPD_MANUAL_STACK | SCRUPD_MANUAL_SHIFT_STATUS;
         }
 
         if(screenUpdatingMode == SCRUPD_AUTO) {

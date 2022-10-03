@@ -300,7 +300,10 @@
       bugScreen("In function addItemToBuffer: item should not be NOPARAM=7654!");
     }
     else {
-      screenUpdatingMode &= ~(SCRUPD_MANUAL_STACK | SCRUPD_MANUAL_SHIFT_STATUS);
+      if(calcMode != cmTimerApp) {
+        // We should probably be more careful about when we're updating the screenUpdatingMode
+        screenUpdatingMode &= ~(SCRUPD_MANUAL_STACK | SCRUPD_MANUAL_SHIFT_STATUS);
+      }
       currentSolverStatus &= ~SOLVER_STATUS_READY_TO_EXECUTE;
       if(calcMode == cmNormal && fnKeyInCatalog && isAlphabeticSoftmenu()) {
         fnAim(NOPARAM);

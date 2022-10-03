@@ -127,7 +127,10 @@ void fnNop(uint16_t unusedButMandatoryParameter) {
         refreshLcd();
       #endif // DMCP_BUILD
 
-      screenUpdatingMode = SCRUPD_AUTO;
+      if(calcMode != cmTimerApp) {
+        // We should probably be more careful about when we're updating the screenUpdatingMode
+        screenUpdatingMode = SCRUPD_AUTO;
+      }
     }
 
     indexOfItems[func].func(param);
