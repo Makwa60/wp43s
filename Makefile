@@ -40,6 +40,7 @@ test: build.sim
 
 coverage:
 	cd build.sim && ninja coverage-xml
+	cd build.sim && ninja coverage-text && cat meson-logs/coverage.txt
 
 dmcp: build.dmcp
 	cd build.dmcp && ninja dmcp
