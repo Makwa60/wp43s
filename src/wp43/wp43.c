@@ -117,7 +117,7 @@ uint8_t                alphaCase;
 uint8_t                cursorEnabled;
 uint8_t                nimNumberPart;
 uint8_t                hexDigits;
-uint8_t                temporaryInformation;
+temporaryInformation_t temporaryInformation;
 uint8_t                numScreensNumericFont;
 uint8_t                timerCraAndDeciseconds = 128u;
 uint8_t                programRunStop;

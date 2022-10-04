@@ -53,7 +53,7 @@
 
 #include "wp43.h"
 
-#define BACKUP_VERSION         80  // made error codes into an enum
+#define BACKUP_VERSION         81  // made temporary information into an enum
 #define START_REGISTER_VALUE 1000  // was 1522, why?
 
 static char *tmpRegisterString = NULL;

@@ -197,7 +197,7 @@
   extern uint8_t                cursorEnabled;
   extern uint8_t                nimNumberPart;
   extern uint8_t                hexDigits;
-  extern uint8_t                temporaryInformation;
+  extern temporaryInformation_t temporaryInformation;
   extern uint8_t                numScreensNumericFont;
   extern uint8_t                timerCraAndDeciseconds;
   extern uint8_t                programRunStop;
