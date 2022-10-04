@@ -322,12 +322,12 @@
 
   static void processAimInput(int16_t item) {
     if(alphaCase == AC_LOWER && (ITM_A <= item && item <= ITM_Z)) {
-      addItemToBuffer(item + 26);
+      addItemToBuffer(item + (ITM_a - ITM_A));
       keyActionProcessed = true;
     }
 
     else if(alphaCase == AC_LOWER && (ITM_ALPHA <= item && item <= ITM_OMEGA)) {
-      addItemToBuffer(item + 36);
+      addItemToBuffer(item + (ITM_alpha - ITM_ALPHA));
       keyActionProcessed = true;
     }
 
