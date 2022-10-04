@@ -374,11 +374,7 @@
       #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
     }
     else {
-      timerValue = val;
-      if(timerStartTime != TIMER_APP_STOPPED) {
-        timerStartTime = timeCurrentMs();
-        timerStart(TO_TIMER_APP, TO_TIMER_APP, TIMER_APP_PERIOD);
-      }
+      timerValue += val;
     }
   }
 
