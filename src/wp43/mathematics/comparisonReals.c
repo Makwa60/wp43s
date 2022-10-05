@@ -101,7 +101,7 @@ bool_t realCompareAbsGreaterThan(const real_t *number1, const real_t *number2) {
   realCopyAbs(number1, &num1);
   realCopyAbs(number2, &num2);
   realCompare(&num1, &num2, &num2, &ctxtReal75);
-  realToInt32(&num2, cmp);
+  cmp = realToInt32(&num2);
   return cmp > 0;
 }
 
@@ -114,7 +114,7 @@ bool_t realCompareAbsGreaterEqual(const real_t *number1, const real_t *number2) 
   realCopyAbs(number1, &num1);
   realCopyAbs(number2, &num2);
   realCompare(&num1, &num2, &num2, &ctxtReal75);
-  realToInt32(&num2, cmp);
+  cmp = realToInt32(&num2);
   return cmp >= 0;
 }
 */
@@ -127,7 +127,7 @@ bool_t realCompareAbsLessThan(const real_t *number1, const real_t *number2) {
   realCopyAbs(number1, &num1);
   realCopyAbs(number2, &num2);
   realCompare(&num1, &num2, &num2, &ctxtReal75);
-  realToInt32(&num2, cmp);
+  cmp = realToInt32(&num2);
   return cmp < 0;
 }
 
@@ -138,7 +138,7 @@ bool_t realCompareEqual(const real_t *number1, const real_t *number2) {
   int32_t cmp;
 
   realCompare(number1, number2, &compare, &ctxtReal75);
-  realToInt32(&compare, cmp);
+  cmp = realToInt32(&compare);
   return cmp == 0;
 }
 
@@ -149,7 +149,7 @@ bool_t realCompareGreaterEqual(const real_t *number1, const real_t *number2) {
   int32_t cmp;
 
   realCompare(number1, number2, &compare, &ctxtReal75);
-  realToInt32(&compare, cmp);
+  cmp = realToInt32(&compare);
   return cmp >= 0;
 }
 
@@ -160,7 +160,7 @@ bool_t realCompareGreaterThan(const real_t *number1, const real_t *number2) {
   int32_t cmp;
 
   realCompare(number1, number2, &compare, &ctxtReal75);
-  realToInt32(&compare, cmp);
+  cmp = realToInt32(&compare);
   return cmp > 0;
 }
 
@@ -171,7 +171,7 @@ bool_t realCompareLessEqual(const real_t *number1, const real_t *number2) {
   int32_t cmp;
 
   realCompare(number1, number2, &compare, &ctxtReal75);
-  realToInt32(&compare, cmp);
+  cmp = realToInt32(&compare);
   return cmp <= 0;
 }
 
@@ -182,7 +182,7 @@ bool_t realCompareLessThan(const real_t *number1, const real_t *number2) {
   int32_t cmp;
 
   realCompare(number1, number2, &compare, &ctxtReal75);
-  realToInt32(&compare, cmp);
+  cmp = realToInt32(&compare);
   return cmp < 0;
 }
 

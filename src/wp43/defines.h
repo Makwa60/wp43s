@@ -155,13 +155,6 @@
   #define FLAG_FRCSRN                           0x802a
   #define NUMBER_OF_SYSTEM_FLAGS                    43
 
-  typedef enum {
-    LI_ZERO     = 0, // Long integer sign 0
-    LI_NEGATIVE = 1, // Long integer sign -
-    LI_POSITIVE = 2  // Long integer sign +
-  } longIntegerSign_t;
-
-
   // PC GUI
   #define CSSFILE                      "res/wp43_pre.css"
 
@@ -439,15 +432,6 @@
   #define PLOT_GRAPH                                 6
   #define H_PLOT                                     7
   #define H_NORM                                     8
-
-  // Rounding mode 3 bits
-  #define RM_HALF_EVEN                               0
-  #define RM_HALF_UP                                 1
-  #define RM_HALF_DOWN                               2
-  #define RM_UP                                      3
-  #define RM_DOWN                                    4
-  #define RM_CEIL                                    5
-  #define RM_FLOOR                                   6
 
   // Next character in AIM 2 bits
   #define NC_NORMAL                                  0
@@ -912,8 +896,8 @@
                                        int i; \
                                        mp_limb_t *p; \
                                        printf("\n%s", comment); \
-                                       if(getRegisterLongIntegerSign(reg) == LI_ZERO) printf("lint=0"); \
-                                       else if(getRegisterLongIntegerSign(reg) == LI_NEGATIVE) printf("lint=-"); \
+                                       if(getRegisterLongIntegerSign(reg) == liZero) printf("lint=0"); \
+                                       else if(getRegisterLongIntegerSign(reg) == liNegative) printf("lint=-"); \
                                        else printf("lint=+"); \
                                        for(i=*REGISTER_DATA_MAX_LEN(reg)/LIMB_SIZE, p=REGISTER_LONG_INTEGER_DATA(reg); i>0; i--, p++) { \
                                          printf("%lu ", *p); \

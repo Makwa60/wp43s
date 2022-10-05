@@ -68,7 +68,7 @@ int16_t currentRegisterBrowserScreen;
 
       case dtLongInteger: {
         if(showContent) {
-          if(getRegisterLongIntegerSign(regist) == LI_NEGATIVE) {
+          if(getRegisterLongIntegerSign(regist) == liNegative) {
             longIntegerRegisterToDisplayString(regist, tmpString, TMP_STR_LENGTH, SCREEN_WIDTH - 1 - registerNameWidth, 50, STD_SPACE_4_PER_EM);
           }
           else {

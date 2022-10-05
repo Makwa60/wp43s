@@ -63,9 +63,7 @@ void fnDenMax(uint16_t unusedButMandatoryParameter) {
     denMax = MAX_DENMAX;
   }
   else {
-    int32_t den;
-
-    realToInt32(&reX, den);
+    int32_t den = realToInt32(&reX);
 
     if(den == 1) {
       longInteger_t lgInt;

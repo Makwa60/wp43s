@@ -20,10 +20,10 @@
 #if !defined(CONFIG_H)
   #define CONFIG_H
 
-  #include "decContext.h"
+  #include "realType.h"
   #include <stdint.h>
 
-  extern const enum rounding roundingModeTable[7];
+  extern const realRoundingMode_t roundingModeTable[7];
 
   /********************************************//**
    * \brief Sets the calc to meet Chinese standards

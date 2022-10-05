@@ -20,8 +20,9 @@
 
 #include "mathematics/subtraction.h"
 
-#include "conversionAngles.h"
+#include "config.h"
 #include "constantPointers.h"
+#include "conversionAngles.h"
 #include "debug.h"
 #include "error.h"
 #include "fonts.h"
@@ -399,7 +400,7 @@ void subDateReal(void) {
 
   if(xAngularMode == amNone) {
     int32ToReal34(86400, &val);
-    real34ToIntegralValue(REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X), roundingMode);
+    real34ToIntegralValue(REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X), roundingModeTable[roundingMode]);
     real34Multiply(REGISTER_REAL34_DATA(REGISTER_X), &val, &val);
     reallocateRegister(REGISTER_X, dtDate, REAL34_SIZE, amNone);
     real34Subtract(REGISTER_REAL34_DATA(REGISTER_Y), &val, REGISTER_REAL34_DATA(REGISTER_X));

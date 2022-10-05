@@ -137,8 +137,8 @@ static bool_t _checkReadOnlyVariable(uint16_t regist) {
       else {
         #if (EXTRA_INFO_ON_CALC_ERROR == 1)
           uint16_t row, col;
-          longIntegerToUInt(i, row);
-          longIntegerToUInt(j, col);
+          row = longIntegerToUInt(i);
+          col = longIntegerToUInt(j);
         #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
         displayCalcErrorMessage(ERROR_OUT_OF_RANGE, ERR_REGISTER_LINE, REGISTER_X);
         #if (EXTRA_INFO_ON_CALC_ERROR == 1)

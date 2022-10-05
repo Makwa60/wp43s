@@ -951,7 +951,7 @@ void graphPlotstat(uint16_t selection) {
       (plotStatMx[0]=='H' && statMxN() >= 3)) {
       switch(plotStatMx[0]) {
         case 'S': {
-          realToInt32(SIGMA_N, statnum);
+          statnum = realToInt32(SIGMA_N);
           break;
         }
         case 'D': {
@@ -1333,7 +1333,7 @@ static  void drawline(uint16_t selection, real_t *RR, real_t *SMI, real_t *aa0, 
 
     switch(plotStatMx[0]) {
       case 'S': {
-        realToInt32(SIGMA_N, n);
+        n = realToInt32(SIGMA_N);
         break;
       }
       case 'D':  {
@@ -1705,7 +1705,7 @@ void fnPlotStat(uint16_t plotMode){
         int16_t cnt = 0;
         switch(plotStatMx[0]) {
           case 'S': {
-            realToInt32(SIGMA_N, cnt);
+            cnt = realToInt32(SIGMA_N);
             break;
           }
           case 'D':  {

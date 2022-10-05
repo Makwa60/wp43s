@@ -53,7 +53,7 @@
 
 #include "wp43.h"
 
-#define BACKUP_VERSION         81  // made temporary information into an enum
+#define BACKUP_VERSION         82  // made roundingMode_t into an enum
 #define START_REGISTER_VALUE 1000  // was 1522, why?
 
 static char *tmpRegisterString = NULL;
@@ -827,7 +827,7 @@ void fnSave(uint16_t unusedButMandatoryParameter) {
   sprintf(tmpString, "STATISTICAL_SUMS\n%" PRIu16 "\n", (uint16_t)(statisticalSumsPointer ? NUMBER_OF_STATISTICAL_SUMS : 0));
   save(tmpString, strlen(tmpString));
   for(i=0; i<(statisticalSumsPointer ? NUMBER_OF_STATISTICAL_SUMS : 0); i++) {
-    realToString(statisticalSumsPointer + REAL_SIZE * i , tmpRegisterString);
+    realToString((real_t *)(statisticalSumsPointer + REAL_SIZE * i), tmpRegisterString);
     sprintf(tmpString, "%s\n", tmpRegisterString);
     save(tmpString, strlen(tmpString));
   }
@@ -973,7 +973,7 @@ void fnSave(uint16_t unusedButMandatoryParameter) {
   save(tmpString, strlen(tmpString));
   sprintf(tmpString, "groupingGap\n%" PRIu8 "\n", groupingGap);
   save(tmpString, strlen(tmpString));
-  sprintf(tmpString, "roundingMode\n%" PRIu8 "\n", roundingMode);
+  sprintf(tmpString, "roundingMode\n%" PRIu8 "\n", (uint8_t)roundingMode);
   save(tmpString, strlen(tmpString));
   sprintf(tmpString, "displayStack\n%" PRIu8 "\n", displayStack);
   save(tmpString, strlen(tmpString));

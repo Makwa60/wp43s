@@ -112,7 +112,7 @@ void fnRandomI(uint16_t unusedButMandatoryParameter) {
     return;
   }
 
-  longIntegerToUInt(regX, maxRand);
+  maxRand = longIntegerToUInt(regX);
   longIntegerAddUInt(mini, boundedRand(maxRand), maxi);
 
   setSystemFlag(FLAG_ASLIFT);
@@ -161,7 +161,7 @@ void fnSeed(uint16_t unusedButMandatoryParameter) {
     }
   }
   else if(getRegisterDataType(REGISTER_X) == dtLongInteger) {
-    if(getRegisterLongIntegerSign(REGISTER_X) != LI_ZERO) {
+    if(getRegisterLongIntegerSign(REGISTER_X) != liZero) {
       seed = *(uint64_t *)getRegisterDataPointer(REGISTER_X);          // First 64 bits of the long integer
       sequ = *(((uint64_t *)getRegisterDataPointer(REGISTER_X)) + 1);  // Second 64 bits of the long integer
     }

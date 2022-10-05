@@ -20,6 +20,7 @@
 
 #include "mathematics/round.h"
 
+#include "config.h"
 #include "debug.h"
 #include "error.h"
 #include "items.h"
@@ -100,7 +101,7 @@ void roundTime(void) {
       for(digits = 4; digits <= timeDisplayFormatDigits; ++digits) {
         real34Multiply(&real34, &value34, &real34);
       }
-      real34ToIntegralValue(&real34, &real34, roundingMode);
+      real34ToIntegralValue(&real34, &real34, roundingModeTable[roundingMode]);
       for(digits = 4; digits <= timeDisplayFormatDigits; ++digits) {
         real34Divide(&real34, &value34, &real34);
       }
@@ -123,7 +124,7 @@ void roundDate(void) {
   int32ToReal34(86400, &value34);
   real34Divide(&real34, &value34, &real34);
 
-  real34ToIntegralValue(&real34, &real34, roundingMode);
+  real34ToIntegralValue(&real34, &real34, roundingModeTable[roundingMode]);
 
   real34Multiply(&real34, &value34, &real34);
   int32ToReal34(43200, &value34);

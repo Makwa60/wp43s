@@ -53,11 +53,11 @@ const reservedVariableHeader_t allReservedVariables[] = { // MUST be in the same
 /*  9 */  { .header = {.pointerToRegisterData = WP43_NULL,  .dataType = 0,             .tag = 0,           .readOnly = 0, .notUsed = 0}, .reservedVariableName = {1, 'I',  0,   0,   0,   0,   0,   0} },
 /* 10 */  { .header = {.pointerToRegisterData = WP43_NULL,  .dataType = 0,             .tag = 0,           .readOnly = 0, .notUsed = 0}, .reservedVariableName = {1, 'J',  0,   0,   0,   0,   0,   0} },
 /* 11 */  { .header = {.pointerToRegisterData = WP43_NULL,  .dataType = 0,             .tag = 0,           .readOnly = 0, .notUsed = 0}, .reservedVariableName = {1, 'K',  0,   0,   0,   0,   0,   0} },
-/* 12 */  { .header = {.pointerToRegisterData = WP43_NULL,  .dataType = dtLongInteger, .tag = LI_POSITIVE, .readOnly = 1, .notUsed = 0}, .reservedVariableName = {3, 'A', 'D', 'M',  0,   0,   0,   0} },
-/* 13 */  { .header = {.pointerToRegisterData = WP43_NULL,  .dataType = dtLongInteger, .tag = LI_POSITIVE, .readOnly = 1, .notUsed = 0}, .reservedVariableName = {5, 'D', '.', 'M', 'A', 'X',  0,   0} },
-/* 14 */  { .header = {.pointerToRegisterData = WP43_NULL,  .dataType = dtLongInteger, .tag = LI_POSITIVE, .readOnly = 1, .notUsed = 0}, .reservedVariableName = {3, 'I', 'S', 'M',  0,   0,   0,   0} },
-/* 15 */  { .header = {.pointerToRegisterData = WP43_NULL,  .dataType = dtLongInteger, .tag = LI_POSITIVE, .readOnly = 1, .notUsed = 0}, .reservedVariableName = {6, 'R', 'E', 'A', 'L', 'D', 'F',  0} },
-/* 16 */  { .header = {.pointerToRegisterData = WP43_NULL,  .dataType = dtLongInteger, .tag = LI_POSITIVE, .readOnly = 1, .notUsed = 0}, .reservedVariableName = {4, '#', 'D', 'E', 'C',  0,   0,   0} },
+/* 12 */  { .header = {.pointerToRegisterData = WP43_NULL,  .dataType = dtLongInteger, .tag = liPositive,  .readOnly = 1, .notUsed = 0}, .reservedVariableName = {3, 'A', 'D', 'M',  0,   0,   0,   0} },
+/* 13 */  { .header = {.pointerToRegisterData = WP43_NULL,  .dataType = dtLongInteger, .tag = liPositive,  .readOnly = 1, .notUsed = 0}, .reservedVariableName = {5, 'D', '.', 'M', 'A', 'X',  0,   0} },
+/* 14 */  { .header = {.pointerToRegisterData = WP43_NULL,  .dataType = dtLongInteger, .tag = liPositive,  .readOnly = 1, .notUsed = 0}, .reservedVariableName = {3, 'I', 'S', 'M',  0,   0,   0,   0} },
+/* 15 */  { .header = {.pointerToRegisterData = WP43_NULL,  .dataType = dtLongInteger, .tag = liPositive,  .readOnly = 1, .notUsed = 0}, .reservedVariableName = {6, 'R', 'E', 'A', 'L', 'D', 'F',  0} },
+/* 16 */  { .header = {.pointerToRegisterData = WP43_NULL,  .dataType = dtLongInteger, .tag = liPositive,  .readOnly = 1, .notUsed = 0}, .reservedVariableName = {4, '#', 'D', 'E', 'C',  0,   0,   0} },
 /* 17 */  { .header = {.pointerToRegisterData = 0,          .dataType = dtReal34,      .tag = amNone,      .readOnly = 0, .notUsed = 0}, .reservedVariableName = {3, 'A', 'C', 'C',  0,   0,   0,   0} },
 /* 18 */  { .header = {.pointerToRegisterData = 4,          .dataType = dtReal34,      .tag = amNone,      .readOnly = 0, .notUsed = 0}, .reservedVariableName = {5, 161, 145, 'L', 'i', 'm',  0,   0} },
 /* 19 */  { .header = {.pointerToRegisterData = 8,          .dataType = dtReal34,      .tag = amNone,      .readOnly = 0, .notUsed = 0}, .reservedVariableName = {5, 161, 147, 'L', 'i', 'm',  0,   0} },
@@ -67,7 +67,7 @@ const reservedVariableHeader_t allReservedVariables[] = { // MUST be in the same
 /* 23 */  { .header = {.pointerToRegisterData = 24,         .dataType = dtReal34,      .tag = amNone,      .readOnly = 0, .notUsed = 0}, .reservedVariableName = {5, 'P', 'E', 'R', '/', 'a',  0,   0} },
 /* 24 */  { .header = {.pointerToRegisterData = 28,         .dataType = dtReal34,      .tag = amNone,      .readOnly = 0, .notUsed = 0}, .reservedVariableName = {3, 'P', 'M', 'T',  0,   0,   0,   0} },
 /* 25 */  { .header = {.pointerToRegisterData = 32,         .dataType = dtReal34,      .tag = amNone,      .readOnly = 0, .notUsed = 0}, .reservedVariableName = {2, 'P', 'V',  0,   0,   0,   0,   0} },
-/* 26 */  { .header = {.pointerToRegisterData = 36,         .dataType = dtLongInteger, .tag = LI_POSITIVE, .readOnly = 0, .notUsed = 0}, .reservedVariableName = {6, 'G', 'R', 'A', 'M', 'O', 'D',  0} },
+/* 26 */  { .header = {.pointerToRegisterData = 36,         .dataType = dtLongInteger, .tag = liPositive,  .readOnly = 0, .notUsed = 0}, .reservedVariableName = {6, 'G', 'R', 'A', 'M', 'O', 'D',  0} },
 };
 
 
@@ -1451,7 +1451,7 @@ int16_t indirectAddressing(calcRegister_t regist, uint16_t parameterType, int16_
       longIntegerFree(lgInt);
       return 9999;
     }
-    longIntegerToUInt(lgInt, value);
+    value = longIntegerToUInt(lgInt);
     longIntegerFree(lgInt);
   }
 
@@ -1907,7 +1907,6 @@ bool_t saveLastX(void) {
 
 static uint8_t getRegParam(bool_t *f, uint16_t *s, uint16_t *n, uint16_t *d) {
   real_t x, p;
-  int32_t t;
 
   if(getRegisterDataType(REGISTER_X) == dtReal34) {
     *s = *n = 0;
@@ -1928,18 +1927,18 @@ static uint8_t getRegParam(bool_t *f, uint16_t *s, uint16_t *n, uint16_t *d) {
     realSetPositiveSign(&x);
 
     realToIntegralValue(&x, &p, DEC_ROUND_DOWN, &ctxtReal39);
-    realToInt32(&p, t); *s = t;
+    *s = realToInt32(&p);
 
     realSubtract(&x, &p, &x, &ctxtReal39);
     x.exponent += 2;
     realToIntegralValue(&x, &p, DEC_ROUND_DOWN, &ctxtReal39);
-    realToInt32(&p, t); *n = t;
+    *n = realToInt32(&p);
 
     if(d) {
       realSubtract(&x, &p, &x, &ctxtReal39);
       x.exponent += 3;
       realToIntegralValue(&x, &p, DEC_ROUND_DOWN, &ctxtReal39);
-      realToInt32(&p, t); *d = t;
+      *d = realToInt32(&p);
     }
 
     if(*s < REGISTER_X) { // global numbered registers

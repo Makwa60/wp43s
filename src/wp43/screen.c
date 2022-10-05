@@ -1314,7 +1314,7 @@ void execTimerApp(uint16_t timerType) {
           }
 
           else if(temporaryInformation == TI_STATISTIC_SUMS) {
-            realToInt32(SIGMA_N, w);
+            w = realToInt32(SIGMA_N);
             if(regist == REGISTER_Y) {
               if(w == 1) {
                 sprintf(prefix, "%03" PRId16 " data point", w);
@@ -2020,7 +2020,7 @@ void fnScreenDump(uint16_t unusedButMandatoryParameter) {
         longIntegerFree(lgInt);
         return -1;
       }
-      longIntegerToUInt(lgInt, value);
+      value = longIntegerToUInt(lgInt);
       longIntegerFree(lgInt);
     }
 
@@ -2088,7 +2088,7 @@ void fnAGraph(uint16_t regist) {
     longInteger_t liGramod;
     getPixelPos(&x, &y);
     convertLongIntegerRegisterToLongInteger(RESERVED_VARIABLE_GRAMOD, liGramod);
-    longIntegerToUInt(liGramod, gramod);
+    gramod = longIntegerToUInt(liGramod);
     longIntegerFree(liGramod);
     if(lastErrorCode == ERROR_NONE) {
       if(getRegisterDataType(regist) == dtShortInteger) {

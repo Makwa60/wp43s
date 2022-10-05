@@ -109,7 +109,7 @@ static void cyxLong(longInteger_t y, longInteger_t x, longInteger_t result) {
   else if(longIntegerCompareInt(x, 400) <= 0) {
     uint32_t loops, counter;
 
-    longIntegerToUInt(x, loops);
+    loops = longIntegerToUInt(x);
     longIntegerSubtractUInt(y, --loops, result);
     longIntegerCopy(result, y);
     counter = 1;
@@ -193,7 +193,7 @@ static void pyxLong(longInteger_t y, longInteger_t x, longInteger_t result) {
   else if(longIntegerCompareInt(x, 400) <= 0) {
     uint32_t loops;
 
-    longIntegerToUInt(x, loops);
+    loops = longIntegerToUInt(x);
     longIntegerSubtractUInt(y, --loops, result);
     longIntegerCopy(result, y);
     while(loops-- > 0) {

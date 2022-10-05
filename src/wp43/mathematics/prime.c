@@ -354,7 +354,7 @@ bool_t longIntegerIsPrime2(longInteger_t primeCandidate) {
   uint32_t i, j, pc;
 
   if(longIntegerCompareUInt(primeCandidate, 212) <= 0) {
-    longIntegerToUInt(primeCandidate, pc);
+    pc = longIntegerToUInt(primeCandidate);
     for(i=0; i<sizeof(smallPrimes)/sizeof(smallPrimes[0]); i++) {
       if(smallPrimes[i] == pc) {
         return true;
@@ -372,7 +372,7 @@ bool_t longIntegerIsPrime2(longInteger_t primeCandidate) {
   // if primeCandidate is a 32-bit integer, perform full trial division
   if(longIntegerCompareUInt(primeCandidate, 0xffffffff) <= 0) {
     i = 211;
-    longIntegerToUInt(primeCandidate, pc);
+    pc = longIntegerToUInt(primeCandidate);
     while(i*i < pc) {
       for(j=0; j<sizeof(offsets)/sizeof(offsets[0]); j++) {
         i += offsets[j];
@@ -420,7 +420,7 @@ void nextPrime(longInteger_t currentNumber, longInteger_t nextPrime) {
   }
 
   if(longIntegerCompareUInt(currentNumber, 212) < 0) {
-    longIntegerToUInt(currentNumber, cn);
+    cn = longIntegerToUInt(currentNumber);
     while(true) {
       for(i=0; i<sizeof(smallPrimes)/sizeof(smallPrimes[0]); i++) {
         if(smallPrimes[i] == cn) {
