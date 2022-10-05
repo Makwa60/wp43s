@@ -20,10 +20,10 @@
 
 #include "programming/manage.h"
 
-#include "bufferize.h"
 #include "calcMode.h"
 #include "charString.h"
 #include "config.h"
+#include "core/memory.h"
 #include "dateTime.h"
 #include "defines.h"
 #include "error.h"
@@ -31,7 +31,6 @@
 #include "fonts.h"
 #include "hal/gui.h"
 #include "items.h"
-#include "memory.h"
 #include "programming/decode.h"
 #include "programming/flash.h"
 #include "programming/lblGtoXeq.h"
@@ -39,9 +38,10 @@
 #include "realType.h"
 #include "registers.h"
 #include "registerValueConversions.h"
-#include "screen.h"
-#include "softmenus.h"
 #include "sort.h"
+#include "ui/bufferize.h"
+#include "ui/screen.h"
+#include "ui/softmenus.h"
 #include <stdlib.h>
 #include <string.h>
 

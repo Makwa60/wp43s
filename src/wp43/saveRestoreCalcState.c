@@ -24,6 +24,7 @@
 #include "calcMode.h"
 #include "charString.h"
 #include "config.h"
+#include "core/memory.h"
 #include "display.h"
 #include "error.h"
 #include "flags.h"
@@ -31,7 +32,6 @@
 #include "hal/io.h"
 #include "items.h"
 #include "matrix.h"
-#include "memory.h"
 #include "plotstat.h"
 #include "programming/flash.h"
 #include "programming/lblGtoXeq.h"
@@ -39,12 +39,12 @@
 #include "programming/nextStep.h"
 #include "registers.h"
 #include "registerValueConversions.h"
-#include "screen.h"
-#include "softmenus.h"
 #include "solver/equation.h"
 #include "solver/graph.h"
 #include "sort.h"
 #include "stats.h"
+#include "ui/screen.h"
+#include "ui/softmenus.h"
 #include <string.h>
 #if defined(PC_BUILD)
 #include <stdio.h>

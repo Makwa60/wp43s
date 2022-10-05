@@ -35,13 +35,14 @@
 #include "programming/nextStep.h"
 #include "registers.h"
 #include "registerValueConversions.h"
-#include "softmenus.h"
 #include "solver/equation.h"
 #include "solver/graph.h"
 #include "solver/tvm.h"
 #include "stack.h"
-#include "wp43.h"
+#include "ui/softmenus.h"
 #include <math.h>
+
+#include "wp43.h"
 
 void fnPgmSlv(uint16_t label) {
   if(label >= FIRST_LABEL && label <= LAST_LABEL) {

@@ -19,13 +19,13 @@
 #include "apps/bugScreen.h"
 #include "charString.h"
 #include "constantPointers.h"
+#include "core/memory.h"
 #include "dateTime.h"
 #include "display.h"
 #include "error.h"
 #include "integers.h"
 #include "matrix.h"
 #include "mathematics/rsd.h"
-#include "memory.h"
 #include "registers.h"
 #include <string.h>
 

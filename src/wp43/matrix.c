@@ -16,11 +16,11 @@
 
 #include "matrix.h"
 
-#include "bufferize.h"
 #include "calcMode.h"
 #include "charString.h"
 #include "constantPointers.h"
 #include "conversionAngles.h"
+#include "core/memory.h"
 #include "debug.h"
 #include "defines.h"
 #include "display.h"
@@ -38,14 +38,14 @@
 #include "mathematics/toPolar.h"
 #include "mathematics/toRect.h"
 #include "mathematics/wp34s.h"
-#include "memory.h"
 #include "realType.h"
 #include "registers.h"
 #include "registerValueConversions.h"
-#include "screen.h"
-#include "softmenus.h"
 #include "stack.h"
 #include "store.h"
+#include "ui/bufferize.h"
+#include "ui/screen.h"
+#include "ui/softmenus.h"
 #include "ui/tam.h"
 #include <string.h>
 

@@ -22,12 +22,12 @@
 
 #include "config.h"
 #include "constantPointers.h"
+#include "core/memory.h"
 #include "debug.h"
 #include "error.h"
 #include "flags.h"
 #include "hal/time.h"
 #include "integers.h"
-#include "memory.h"
 #include "registers.h"
 #include "registerValueConversions.h"
 #include "stack.h"

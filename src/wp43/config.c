@@ -24,10 +24,10 @@
 #include "apps/flagBrowser.h"
 #include "apps/fontBrowser.h"
 #include "apps/registerBrowser.h"
-#include "bufferize.h"
 #include "calcMode.h"
 #include "charString.h"
 #include "constantPointers.h"
+#include "core/memory.h"
 #include "debug.h"
 #include "display.h"
 #include "error.h"
@@ -35,9 +35,7 @@
 #include "flags.h"
 #include "hal/io.h"
 #include "items.h"
-#include "keyboard.h"
 #include "matrix.h"
-#include "memory.h"
 #include "plotstat.h"
 #include "programming/flash.h"
 #include "programming/manage.h"
@@ -48,6 +46,8 @@
 #include "solver/equation.h"
 #include "stack.h"
 #include "stats.h"
+#include "ui/bufferize.h"
+#include "ui/keyboard.h"
 #include <stdlib.h>
 #include <string.h>
 

@@ -24,18 +24,19 @@
 #include "calcMode.h"
 #include "constantPointers.h"
 #include "charString.h"
+#include "core/memory.h"
 #include "defines.h"
 #include "error.h"
 #include "flags.h"
 #include "fonts.h"
 #include "hal/gui.h"
 #include "items.h"
-#include "memory.h"
 #include "realType.h"
 #include "registers.h"
-#include "screen.h"
 #include "stack.h"
 #include "sort.h"
+#include "ui/screen.h"
+
 #include "wp43.h"
 
 

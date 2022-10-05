@@ -21,6 +21,7 @@
 #include "mathematics/bessel.h"
 
 #include "constantPointers.h"
+#include "core/memory.h"
 #include "debug.h"
 #include "error.h"
 #include "mathematics/arccosh.h"
@@ -29,7 +30,6 @@
 #include "mathematics/multiplication.h"
 #include "mathematics/toRect.h"
 #include "mathematics/wp34s.h"
-#include "memory.h"
 #include "registers.h"
 #include "registerValueConversions.h"
 

@@ -15,7 +15,7 @@
  */
 
 /**
- * \file memory.h
+ * \file core/memory.h
  */
 #if !defined(MEMORY_H)
   #define MEMORY_H

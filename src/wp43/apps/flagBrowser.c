@@ -20,13 +20,13 @@
 #include "calcMode.h"
 #include "charString.h"
 #include "config.h"
+#include "core/memory.h"
 #include "display.h"
 #include "flags.h"
 #include "fonts.h"
 #include "items.h"
-#include "memory.h"
 #include "registers.h"
-#include "screen.h"
+#include "ui/screen.h"
 #include <assert.h>
 #include <string.h>
 

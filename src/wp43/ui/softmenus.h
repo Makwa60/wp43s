@@ -15,7 +15,7 @@
  */
 
 /**
- * \file softmenus.h
+ * \file ui/softmenus.h
  * List of softmenus and related functions.
  */
 #if !defined(SOFTMENUS_H)

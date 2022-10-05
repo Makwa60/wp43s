@@ -29,7 +29,7 @@
 #include "items.h"
 #include "recall.h"
 #include "registers.h"
-#include "screen.h"
+#include "ui/screen.h"
 #include <assert.h>
 #include <string.h>
 

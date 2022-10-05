@@ -18,18 +18,18 @@
 
 #include "apps/apps.h"
 #include "apps/timerApp.h"
-#include "bufferize.h"
 #include "debug.h"
 #include "error.h"
 #include "flags.h"
 #include "hal/gui.h"
 #include "items.h"
-#include "keyboard.h"
 #include "matrix.h"
 #include "registers.h"
 #include "saveRestoreCalcState.h"
-#include "screen.h"
 #include "stack.h"
+#include "ui/bufferize.h"
+#include "ui/keyboard.h"
+#include "ui/screen.h"
 #include <string.h>
 #include <unistd.h>
 

@@ -17,6 +17,7 @@
 #include "recall.h"
 
 #include "charString.h"
+#include "core/memory.h"
 #include "debug.h"
 #include "defines.h"
 #include "error.h"
@@ -24,7 +25,6 @@
 #include "items.h"
 #include "mathematics/compare.h"
 #include "matrix.h"
-#include "memory.h"
 #include "registerValueConversions.h"
 #include "registers.h"
 #include "stack.h"

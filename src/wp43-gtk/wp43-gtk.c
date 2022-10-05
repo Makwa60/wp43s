@@ -14,19 +14,15 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file wp43-gtk.c
- ***********************************************/
-
+#include "core/memory.h"
 #include "flags.h"
 #include "gtkGui.h"
 #include "items.h"
-#include "keyboard.h"
 #include "longIntegerType.h"
-#include "memory.h"
 #include "saveRestoreCalcState.h"
-#include "screen.h"
 #include "timer.h"
+#include "ui/keyboard.h"
+#include "ui/screen.h"
 
 #include "wp43.h"
 

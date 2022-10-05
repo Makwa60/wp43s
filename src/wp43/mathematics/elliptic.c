@@ -22,6 +22,7 @@
 
 #include "constantPointers.h"
 #include "conversionAngles.h"
+#include "core/memory.h"
 #include "debug.h"
 #include "error.h"
 #include "flags.h"
@@ -40,7 +41,6 @@
 #include "mathematics/tan.h"
 #include "mathematics/tanh.h"
 #include "mathematics/wp34s.h"
-#include "memory.h"
 #include "realType.h"
 #include "registers.h"
 #include "registerValueConversions.h"

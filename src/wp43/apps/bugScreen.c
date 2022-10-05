@@ -21,7 +21,7 @@
 #include "flags.h"
 #include "fonts.h"
 #include "hal/lcd.h"
-#include "screen.h"
+#include "ui/screen.h"
 #include "typeDefinitions.h"
 #include <string.h>
 

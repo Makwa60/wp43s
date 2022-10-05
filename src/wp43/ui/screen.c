@@ -14,7 +14,7 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "screen.h"
+#include "ui/screen.h"
 
 #include "assign.h"
 #include "apps/apps.h"
@@ -23,10 +23,10 @@
 #include "apps/fontBrowser.h"
 #include "apps/registerBrowser.h"
 #include "apps/timerApp.h"
-#include "bufferize.h"
 #include "calcMode.h"
 #include "charString.h"
 #include "constantPointers.h"
+#include "core/memory.h"
 #include "curveFitting.h"
 #include "dateTime.h"
 #include "debug.h"
@@ -39,18 +39,18 @@
 #include "hal/time.h"
 #include "hal/system.h"
 #include "items.h"
-#include "keyboard.h"
 #include "longIntegerType.h"
 #include "mathematics/comparisonReals.h"
 #include "mathematics/incDec.h"
 #include "matrix.h"
-#include "memory.h"
 #include "plotstat.h"
 #include "programming/manage.h"
 #include "registers.h"
 #include "registerValueConversions.h"
-#include "softmenus.h"
 #include "timer.h"
+#include "ui/bufferize.h"
+#include "ui/keyboard.h"
+#include "ui/softmenus.h"
 #include "ui/statusBar.h"
 #include "version.h"
 #include <string.h>

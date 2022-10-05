@@ -15,7 +15,7 @@
  */
 
 /**
- * \file keyboard.h
+ * \file ui/keyboard.h
  */
 #if !defined(KEYBOARD_H)
   #define KEYBOARD_H

@@ -29,7 +29,7 @@
 #include "registers.h"
 #include "registerValueConversions.h"
 #include "saveRestoreCalcState.h"
-#include "screen.h"
+#include "ui/screen.h"
 
 #include "wp43.h"
 

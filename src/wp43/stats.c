@@ -17,6 +17,7 @@
 #include "stats.h"
 
 #include "constantPointers.h"
+#include "core/memory.h"
 #include "debug.h"
 #include "error.h"
 #include "flags.h"
@@ -25,7 +26,6 @@
 #include "mathematics/comparisonReals.h"
 #include "mathematics/wp34s.h"
 #include "matrix.h"
-#include "memory.h"
 #include "plotstat.h"
 #include "registers.h"
 #include "registerValueConversions.h"

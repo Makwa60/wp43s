@@ -15,7 +15,7 @@
  */
 
 /**
- * \file screen.h
+ * \file ui/screen.h
  * Screen related functions.
  */
 #if !defined(SCREEN_H)
