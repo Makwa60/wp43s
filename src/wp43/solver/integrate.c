@@ -32,9 +32,10 @@
 #include "realType.h"
 #include "registers.h"
 #include "registerValueConversions.h"
-#include "softmenus.h"
 #include "solver/equation.h"
 #include "stack.h"
+#include "ui/softmenus.h"
+
 #include "wp43.h"
 
 void fnPgmInt(uint16_t label) {

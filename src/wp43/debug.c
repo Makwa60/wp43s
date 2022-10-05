@@ -275,13 +275,13 @@ char * getRegisterTagName(calcRegister_t regist, bool_t padWithBlanks) {
   switch(getRegisterDataType(regist)) {
     case dtLongInteger: {
       switch(getRegisterTag(regist)) {
-        case LI_ZERO: {
+        case liZero: {
           return "zero    ";
         }
-        case LI_NEGATIVE: {
+        case liNegative: {
           return "negative";
         }
-        case LI_POSITIVE: {
+        case liPositive: {
           return "positive";
         }
         default: {
@@ -714,26 +714,26 @@ void debugNIM(void) {
    ***********************************************/
   char * getRoundingModeName(uint16_t rm) {
     switch(rm) {
-      case RM_CEIL: {
-        return "ceil     ";
-      }
-      case RM_DOWN: {
-        return "down     ";
-      }
-      case RM_FLOOR: {
-        return "floor    ";
-      }
-      case RM_HALF_DOWN: {
-        return "half down";
-      }
-      case RM_HALF_EVEN: {
+      case rmHalfEven: {
         return "half even";
       }
-      case RM_HALF_UP: {
+      case rmHalfUp: {
         return "half up  ";
       }
-      case RM_UP: {
+      case rmHalfDown: {
+        return "half down";
+      }
+      case rmUp: {
         return "up       ";
+      }
+      case rmDown: {
+        return "down     ";
+      }
+      case rmCeil: {
+        return "ceil     ";
+      }
+      case rmFloor: {
+        return "floor    ";
       }
       default: {
         return "???      ";

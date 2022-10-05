@@ -24,7 +24,7 @@
 #include "error.h"
 #include "registers.h"
 #include "registerValueConversions.h"
-#include "screen.h"
+#include "ui/screen.h"
 
 #include "wp43.h"
 

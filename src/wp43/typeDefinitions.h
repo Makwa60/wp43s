@@ -516,4 +516,15 @@
     TI_2ND_DERIVATIVE      = 54
   } temporaryInformation_t;
 
-#endif // .TYPEDEFINITIONS_H
+  // Rounding mode 3 bits
+  typedef enum {
+    rmHalfEven  = 0,
+    rmHalfUp    = 1,
+    rmHalfDown  = 2,
+    rmUp        = 3,
+    rmDown      = 4,
+    rmCeil      = 5,
+    rmFloor     = 6
+  } roundingMode_t;
+
+#endif // !TYPEDEFINITIONS_H

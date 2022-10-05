@@ -15,7 +15,7 @@
  */
 
 /**
- * \file bufferize.h
+ * \file ui/bufferize.h
  */
 #if !defined(BUFFERIZE_H)
   #define BUFFERIZE_H

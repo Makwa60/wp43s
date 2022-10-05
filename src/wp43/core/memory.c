@@ -14,7 +14,7 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "memory.h"
+#include "core/memory.h"
 
 #include "charString.h"
 #include "config.h"

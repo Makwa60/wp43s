@@ -15,22 +15,22 @@
  */
 
 #include "assign.h"
-#include "bufferize.h"
 #include "calcMode.h"
 #include "charString.h"
+#include "core/memory.h"
 #include "defines.h"
 #include "error.h"
 #include "flags.h"
 #include "fonts.h"
 #include "hal/gui.h"
 #include "items.h"
-#include "memory.h"
 #include "programming/flash.h"
 #include "programming/manage.h"
 #include "registers.h"
-#include "screen.h"
-#include "softmenus.h"
 #include "sort.h"
+#include "ui/bufferize.h"
+#include "ui/screen.h"
+#include "ui/softmenus.h"
 #include "wp43.h"
 #include <string.h>
 

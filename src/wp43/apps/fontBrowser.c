@@ -24,7 +24,7 @@
 #include "flags.h"
 #include "fonts.h"
 #include "items.h"
-#include "screen.h"
+#include "ui/screen.h"
 #include <assert.h>
 #include <stdlib.h>
 

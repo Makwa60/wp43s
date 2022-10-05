@@ -14,22 +14,22 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "softmenus.h"
+#include "ui/softmenus.h"
 
 #include "apps/bugScreen.h"
 #include "calcMode.h"
 #include "charString.h"
+#include "core/memory.h"
 #include "error.h"
 #include "hal/lcd.h"
 #include "items.h"
-#include "memory.h"
 #include "programming/flash.h"
 #include "programming/nextStep.h"
 #include "registers.h"
-#include "screen.h"
 #include "solver/differentiate.h"
 #include "solver/equation.h"
 #include "sort.h"
+#include "ui/screen.h"
 #include <string.h>
 #include <stdlib.h>
 

@@ -21,8 +21,9 @@
 #include "mathematics/addition.h"
 
 #include "charString.h"
-#include "conversionAngles.h"
+#include "config.h"
 #include "constantPointers.h"
+#include "conversionAngles.h"
 #include "debug.h"
 #include "display.h"
 #include "error.h"
@@ -404,7 +405,7 @@ void addDateReal(void) {
 
   if(xAngularMode == amNone) {
     int32ToReal34(86400, &val);
-    real34ToIntegralValue(REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X), roundingMode);
+    real34ToIntegralValue(REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X), roundingModeTable[roundingMode]);
     real34Multiply(REGISTER_REAL34_DATA(REGISTER_X), &val, &val);
     reallocateRegister(REGISTER_X, dtDate, REAL34_SIZE, amNone);
     real34Add(REGISTER_REAL34_DATA(REGISTER_Y), &val, REGISTER_REAL34_DATA(REGISTER_X));
@@ -430,7 +431,7 @@ void addRealDate(void) {
 
   if(yAngularMode == amNone) {
     int32ToReal34(86400, &val);
-    real34ToIntegralValue(REGISTER_REAL34_DATA(REGISTER_Y), REGISTER_REAL34_DATA(REGISTER_Y), roundingMode);
+    real34ToIntegralValue(REGISTER_REAL34_DATA(REGISTER_Y), REGISTER_REAL34_DATA(REGISTER_Y), roundingModeTable[roundingMode]);
     real34Multiply(REGISTER_REAL34_DATA(REGISTER_Y), &val, &val);
     real34Add(&val, REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X));
   }

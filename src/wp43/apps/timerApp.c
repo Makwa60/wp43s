@@ -30,11 +30,11 @@
 #include "registers.h"
 #include "registerValueConversions.h"
 #include "stack.h"
-#include "screen.h"
-#include "softmenus.h"
 #include "stats.h"
 #include "timer.h"
 #include "typeDefinitions.h"
+#include "ui/screen.h"
+#include "ui/softmenus.h"
 #include <assert.h>
 
 #include "wp43.h"

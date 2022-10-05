@@ -28,19 +28,21 @@
 
   typedef mpz_t longInteger_t;
 
-  #define REGISTER_LONG_INTEGER_DATA(a)       ((void *)(getRegisterDataPointer(a) + 1)) // Memory pointer to the long integer of a register
-  #define longIntegerToUInt(op, uint)         {uint = mpz_get_ui(op);}
-  #define longIntegerToInt(op, int)           {int  = mpz_get_si(op);}
-  #define longIntegerIsZeroRegister(regist)   (getRegisterLongIntegerSign(regist) == LI_ZERO)
-  //#define longIntegerIsZeroRegister(regist)   (*REGISTER_DATA_MAX_LEN(regist) == 0)
+  typedef enum {
+    liZero     = 0, // sign 0
+    liNegative = 1, // sign -
+    liPositive = 2  // sign +
+  } longIntegerSign_t;
 
   enum { LIMB_SIZE = sizeof(mp_limb_t) };
 
   static inline size_t longIntegerSizeInBytes(mpz_srcptr li)                                                                               {return (abs((li)->_mp_size) * LIMB_SIZE);}
   static inline void longIntegerInit(mpz_ptr op)                                                                                           {mpz_init(op);}
   static inline void longIntegerInitSizeInBits(mpz_ptr op, mp_bitcnt_t bits)                                                               {mpz_init2(op, bits);}
-  static inline void uIntToLongInteger(unsigned long int source, mpz_ptr destination)                                                      {mpz_set_ui(destination, source);}
-  static inline void intToLongInteger(signed long int source, mpz_ptr destination)                                                         {mpz_set_si(destination, source);}
+  static inline void uIntToLongInteger(uint32_t source, mpz_ptr destination)                                                               {mpz_set_ui(destination, source);}
+  static inline void intToLongInteger(int32_t source, mpz_ptr destination)                                                                 {mpz_set_si(destination, source);}
+  static inline uint32_t longIntegerToUInt(const mpz_t op)                                                                                 {return mpz_get_ui(op);}
+  static inline int32_t  longIntegerToInt(const mpz_t op)                                                                                  {return mpz_get_si(op);}
   static inline void longIntegerCopy(mpz_srcptr source, mpz_ptr destination)                                                               {mpz_set(destination, source);}                       // Previous implementation: mpz_add_ui(destination, source, 0);
   static inline int stringToLongInteger(const char *source, int radix, mpz_ptr destination)                                                {return mpz_set_str(destination, source, radix);}
   static inline void longIntegerChangeSign(mpz_ptr op)                                                                                     {(op)->_mp_size = -((op)->_mp_size);}
@@ -55,7 +57,7 @@
   static inline bool_t longIntegerIsEven(mpz_srcptr op)                                                                                    {return mpz_even_p(op);}
   static inline bool_t longIntegerIsOdd(mpz_srcptr op)                                                                                     {return mpz_odd_p(op);}
   static inline int longIntegerSign(mpz_srcptr op)                                                                                         {return mpz_sgn(op);}
-  static inline longIntegerSign_t longIntegerSignTag(mpz_srcptr op)                                                                        {return ((op)->_mp_size == 0 ? LI_ZERO : ((op)->_mp_size > 0 ? LI_POSITIVE : LI_NEGATIVE));}
+  static inline longIntegerSign_t longIntegerSignTag(mpz_srcptr op)                                                                        {return ((op)->_mp_size == 0 ? liZero : ((op)->_mp_size > 0 ? liPositive : liNegative));}
   static inline size_t longIntegerBits(mpz_srcptr op)                                                                                      {return mpz_sizeinbase(op, 2);}
   static inline size_t longIntegerBase10Digits(mpz_srcptr op)                                                                              {return mpz_sizeinbase(op, 10);}
 

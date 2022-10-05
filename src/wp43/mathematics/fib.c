@@ -114,8 +114,7 @@ void fibLonI(void) {
     return;
   }
 
-  uint32_t n;
-  longIntegerToUInt(x, n);           // Convert x into unsigned int.
+  uint32_t n = longIntegerToUInt(x); // Convert x into unsigned int.
 
   longIntegerInit(result);           // Initialize fib variable
   longIntegerFibonacci(n, result);   // result = FIB(n)

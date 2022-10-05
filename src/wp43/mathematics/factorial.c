@@ -105,8 +105,7 @@ void factLonI(void) {
   }
 
 
-  uint32_t n;
-  longIntegerToUInt(x, n);
+  uint32_t n = longIntegerToUInt(x);
   #if defined(LINUX)
     //The more precise formula below is: (n*ln(n) - n + (ln(8n� + 4n� + n + 1/30))/6 + ln(pi)/2) / ln(2)
     longIntegerInitSizeInBits(f, 1 + (uint32_t)((n * log(n) - n) / log(2)));

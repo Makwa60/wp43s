@@ -470,7 +470,7 @@ void fnAlphaSR(uint16_t regist) {
     intToLongInteger(stringGlyphLen, lgInt);
   }
 
-  longIntegerToInt(lgInt, steps);
+  steps = longIntegerToInt(lgInt);
   longIntegerFree(lgInt);
 
   if(!saveLastX()) {
@@ -550,7 +550,7 @@ void fnAlphaSL(uint16_t regist) {
     intToLongInteger(stringGlyphLen, lgInt);
   }
 
-  longIntegerToInt(lgInt, steps);
+  steps = longIntegerToInt(lgInt);
   longIntegerFree(lgInt);
 
   if(!saveLastX()) {

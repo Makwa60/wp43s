@@ -16,11 +16,11 @@
 
 #include "matrix.h"
 
-#include "bufferize.h"
 #include "calcMode.h"
 #include "charString.h"
 #include "constantPointers.h"
 #include "conversionAngles.h"
+#include "core/memory.h"
 #include "debug.h"
 #include "defines.h"
 #include "display.h"
@@ -38,14 +38,14 @@
 #include "mathematics/toPolar.h"
 #include "mathematics/toRect.h"
 #include "mathematics/wp34s.h"
-#include "memory.h"
 #include "realType.h"
 #include "registers.h"
 #include "registerValueConversions.h"
-#include "screen.h"
-#include "softmenus.h"
 #include "stack.h"
 #include "store.h"
+#include "ui/bufferize.h"
+#include "ui/screen.h"
+#include "ui/softmenus.h"
 #include "ui/tam.h"
 #include <string.h>
 
@@ -110,7 +110,7 @@
       #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
       return false;
     }
-    longIntegerToUInt(tmp_lgInt, *cols);
+    *cols = longIntegerToUInt(tmp_lgInt);
 
     if(getRegisterDataType(REGISTER_Y) == dtLongInteger) {
       convertLongIntegerRegisterToLongInteger(REGISTER_Y, tmp_lgInt);
@@ -128,7 +128,7 @@
       #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
       return false;
     }
-    longIntegerToUInt(tmp_lgInt, *rows);
+    *rows = longIntegerToUInt(tmp_lgInt);
 
     longIntegerFree(tmp_lgInt);
     return true;
@@ -146,8 +146,8 @@
       return false;
     }
 
-    realToInt32(&ry, a);
-    realToInt32(&rx, b);
+    a = realToInt32(&ry);
+    b = realToInt32(&rx);
     if(realIsPositive(&rx) && realIsPositive(&ry) && realCompareLessEqual(&rx, &rrows) && realCompareLessEqual(&ry, &rrows)) {
       if(!realCompareEqual(&ry, &rx)) {
         realMatrixSwapRows(matrix, matrix, a - 1, b - 1);
@@ -175,8 +175,8 @@
       return false;
     }
 
-    realToInt32(&ry, a);
-    realToInt32(&rx, b);
+    a = realToInt32(&ry);
+    b = realToInt32(&rx);
     if(realIsPositive(&rx) && realIsPositive(&ry) && realCompareLessEqual(&rx, &rrows) && realCompareLessEqual(&ry, &rrows)) {
       if(!realCompareEqual(&ry, &rx)) {
         complexMatrixSwapRows(matrix, matrix, a - 1, b - 1);
@@ -210,8 +210,8 @@
       return false;
     }
 
-    realToInt32(&ry, a);
-    realToInt32(&rx, b);
+    a = realToInt32(&ry);
+    b = realToInt32(&rx);
     if(realIsPositive(&rx) && realIsPositive(&ry) && realCompareLessEqual(&rx, &rcols) && realCompareLessEqual(&ry, &rrows)) {
       real34Matrix_t mat;
       fnDropY(NOPARAM);
@@ -256,8 +256,8 @@
       return false;
     }
 
-    realToInt32(&ry, a);
-    realToInt32(&rx, b);
+    a = realToInt32(&ry);
+    b = realToInt32(&rx);
     if(realIsPositive(&rx) && realIsPositive(&ry) && realCompareLessEqual(&rx, &rcols) && realCompareLessEqual(&ry, &rrows)) {
       complex34Matrix_t mat;
       fnDropY(NOPARAM);
@@ -3116,7 +3116,7 @@ smallFont:
     else {
       longIntegerInit(tmp_lgInt);
     }
-    longIntegerToInt(tmp_lgInt, ret);
+    ret = longIntegerToInt(tmp_lgInt);
 
     longIntegerFree(tmp_lgInt);
 
@@ -3141,7 +3141,7 @@ smallFont:
     else {
       longIntegerInit(tmp_lgInt);
     }
-    longIntegerToInt(tmp_lgInt, ret);
+    ret = longIntegerToInt(tmp_lgInt);
 
     longIntegerFree(tmp_lgInt);
 

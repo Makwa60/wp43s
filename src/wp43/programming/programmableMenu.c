@@ -32,8 +32,9 @@
 #include "programming/manage.h"
 #include "programming/nextStep.h"
 #include "registers.h"
-#include "softmenus.h"
 #include "typeDefinitions.h"
+#include "ui/softmenus.h"
+
 #include "wp43.h"
 
 #if defined(TESTSUITE_BUILD)
