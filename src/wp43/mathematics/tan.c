@@ -113,7 +113,19 @@ void fnTan(uint16_t unusedButMandatoryParameter) {
 void tanLonI(void) {
   real_t sin, cos, tan;
 
-  longIntegerAngleReduction(REGISTER_X, currentAngularMode, &tan);
+  if(currentAngularMode == amMultPi) {
+    longInteger_t lgInt;
+    convertLongIntegerRegisterToLongInteger(REGISTER_X, lgInt);
+    if(longIntegerIsEven(lgInt)) {
+      realZero(&tan);
+    }
+    else {
+      realPlus(const_pi, &tan, &ctxtReal39);
+    }
+  }
+  else {
+    longIntegerAngleReduction(REGISTER_X, currentAngularMode, &tan);
+  }
   WP34S_Cvt2RadSinCosTan(&tan, currentAngularMode, &sin, &cos, &tan, &ctxtReal39);
 
   if(realIsZero(&cos) && !getSystemFlag(FLAG_SPCRES)) {
@@ -156,6 +168,11 @@ void tanReal(void) {
     angularMode_t xAngularMode = getRegisterAngularMode(REGISTER_X);
 
     real34ToReal(REGISTER_REAL34_DATA(REGISTER_X), &tan);
+
+    if(xAngularMode == amNone && currentAngularMode == amMultPi) {
+      realMultiply(&tan, const_pi, &tan, &ctxtReal39);
+    }
+
     WP34S_Cvt2RadSinCosTan(&tan, (xAngularMode == amNone ? currentAngularMode : xAngularMode), &sin, &cos, &tan, &ctxtReal39);
 
     if(realIsZero(&cos) && !getSystemFlag(FLAG_SPCRES)) {
