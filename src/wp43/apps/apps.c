@@ -18,7 +18,7 @@
 
 #include "calcMode.h"
 #include "items.h"
-#include "screen.h"
+#include "ui/screen.h"
 #include <assert.h>
 
 #include "wp43.h"

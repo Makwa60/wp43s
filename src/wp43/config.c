@@ -24,10 +24,10 @@
 #include "apps/flagBrowser.h"
 #include "apps/fontBrowser.h"
 #include "apps/registerBrowser.h"
-#include "bufferize.h"
 #include "calcMode.h"
 #include "charString.h"
 #include "constantPointers.h"
+#include "core/memory.h"
 #include "debug.h"
 #include "display.h"
 #include "error.h"
@@ -35,9 +35,7 @@
 #include "flags.h"
 #include "hal/io.h"
 #include "items.h"
-#include "keyboard.h"
 #include "matrix.h"
-#include "memory.h"
 #include "plotstat.h"
 #include "programming/flash.h"
 #include "programming/manage.h"
@@ -48,6 +46,8 @@
 #include "solver/equation.h"
 #include "stack.h"
 #include "stats.h"
+#include "ui/bufferize.h"
+#include "ui/keyboard.h"
 #include <stdlib.h>
 #include <string.h>
 
@@ -175,10 +175,10 @@ void fnSetRoundingMode(uint16_t RM) {
   roundingMode = RM;
 }
 
-// "enum rounding" does not match with the specification of WP43 rounding mode.
+// "realRoundingMode_t" does not match with the specification of WP43 rounding mode.
 // So you need roundingModeTable[roundingMode] rather than roundingMode
 // to specify rounding mode in the real number functions.
-TO_QSPI const enum rounding roundingModeTable[7] = {
+TO_QSPI const realRoundingMode_t roundingModeTable[7] = {
   DEC_ROUND_HALF_EVEN, DEC_ROUND_HALF_UP, DEC_ROUND_HALF_DOWN,
   DEC_ROUND_UP, DEC_ROUND_DOWN, DEC_ROUND_CEILING, DEC_ROUND_FLOOR
 };
@@ -299,7 +299,7 @@ void fnSetSignificantDigits(uint16_t unusedButMandatoryParameter) {
   if(getRegisterDataType(REGISTER_X) == dtLongInteger) {
     convertLongIntegerRegisterToLongInteger(REGISTER_X, sigDigits);
     if((longIntegerCompareInt(sigDigits, 0) >= 0) && (longIntegerCompareInt(sigDigits, 34) <= 0)) {
-      longIntegerToUInt(sigDigits, significantDigits);
+      significantDigits = longIntegerToUInt(sigDigits);
       if(significantDigits == 0) {
         significantDigits = 34;
       }
@@ -859,7 +859,7 @@ void fnReset(uint16_t confirmation) {
     shiftG = false;
 
     significantDigits = 0;
-    roundingMode = RM_HALF_EVEN;
+    roundingMode = rmHalfEven;
     ctxtReal34.round = DEC_ROUND_HALF_EVEN;
     displayStack = cachedDisplayStack = 4;
 

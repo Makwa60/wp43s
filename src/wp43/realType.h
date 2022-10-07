@@ -26,7 +26,6 @@
   #include "decimal64.h"
   #include "decDouble.h"
   #include "decQuad.h"
-  #include "realType.h"
   extern int decGetInt(const decNumber *x); // Because decNumberToInt32 seems buggy! Needs more investigation
 
   typedef struct {
@@ -86,12 +85,22 @@
 
   typedef decNumber  real_t;
 
+  typedef enum rounding realRoundingMode_t;
+
   static const size_t REAL_SIZE      = TO_BLOCKS(sizeof(real_t));
   static const size_t REAL34_SIZE    = TO_BLOCKS(sizeof(real34_t));
   static const size_t REAL39_SIZE    = TO_BLOCKS(sizeof(real39_t));
   static const size_t REAL51_SIZE    = TO_BLOCKS(sizeof(real51_t));
   static const size_t REAL1071_SIZE  = TO_BLOCKS(sizeof(real1071_t));
   static const size_t COMPLEX34_SIZE = TO_BLOCKS(sizeof(complex34_t));
+
+  extern realContext_t          ctxtReal4;    //   Limited digits: used for high speed internal calcs
+  extern realContext_t          ctxtReal34;   //   34 digits
+  extern realContext_t          ctxtReal39;   //   39 digits: used for 34 digits intermediate calculations
+  extern realContext_t          ctxtReal51;   //   51 digits: used for 34 digits intermediate calculations
+  extern realContext_t          ctxtReal75;   //   75 digits: used in SLVQ
+  extern realContext_t          ctxtReal1071; // 1071 digits: used in radian angle reduction
+  //extern realContext_t          ctxtReal2139; // 2139 digits: used for really big modulo
 
   #define VARIABLE_REAL34_DATA(a)                                ((real34_t    *)(a))
   #define VARIABLE_IMAG34_DATA(a)                                ((real34_t    *)((dataBlock_t *)(a) + REAL34_SIZE))
@@ -135,7 +144,7 @@
   #define real34SetPositiveSign(operand)                         ((real34_t *)(operand))->bytes[15] &= 0x7F
   #define real34Subtract(operand1, operand2, res)                decQuadSubtract          ((real34_t *)(res), (real34_t *)(operand1), (real34_t *)(operand2), &ctxtReal34)
   #define real34ToInt32(source)                                  decQuadToInt32           ((real34_t *)(source), &ctxtReal34, DEC_ROUND_DOWN)
-  #define real34ToIntegralValue(source, destination, mode)       decQuadToIntegralValue   ((real34_t *)(destination), (real34_t *)(source), &ctxtReal34, mode)
+  static inline void real34ToIntegralValue(const real34_t *source, real34_t *destination, realRoundingMode_t mode) { decQuadToIntegralValue(destination, source, &ctxtReal34, mode); }
   #define real34ToReal(source, destination)                      decQuadToNumber          ((real34_t *)(source), destination)
   #define real34ToString(source, destination)                    decQuadToString          ((real34_t *)(source), destination)
   #define real34ToUInt32(source)                                 decQuadToUInt32          ((real34_t *)(source), &ctxtReal34, DEC_ROUND_DOWN)
@@ -184,18 +193,22 @@
   #define realSetPositiveSign(operand)                           (operand)->bits &= 0x7F
   #define realSquareRoot(operand, res, ctxt)                     decNumberSquareRoot      (res, operand, ctxt)
   #define realSubtract(operand1, operand2, res, ctxt)            decNumberSubtract        (res, operand1, operand2, ctxt)
-  #define realToInt32(source, destination)                       {enum rounding savedRoundingMode; \
-                                                                  real_t tmp; \
-                                                                  savedRoundingMode = ctxtReal39.round; \
-                                                                  ctxtReal39.round = DEC_ROUND_DOWN; \
-                                                                  ctxtReal39.status = 0; \
-                                                                  decNumberToIntegralValue(&tmp, source, &ctxtReal39); \
-                                                                  destination = decGetInt(&tmp); \
-                                                                  ctxtReal39.round = savedRoundingMode; \
-                                                                 }
-  #define realToReal34(source, destination)                      decQuadFromNumber        ((real34_t *)(destination), source, &ctxtReal34)
-  #define realToString(source, destination)                      decNumberToString        ((real_t *)(source), destination)
-  #define realZero(destination)                                  decNumberZero            (destination)
+  static inline int32_t realToInt32(const real_t *source) {
+    realRoundingMode_t savedRoundingMode;
+    real_t             tmp;
+    int32_t            result;
+
+    savedRoundingMode = ctxtReal39.round;
+    ctxtReal39.round  = DEC_ROUND_DOWN;
+    ctxtReal39.status = 0;
+    decNumberToIntegralValue(&tmp, source, &ctxtReal39);
+    result = decGetInt(&tmp);
+    ctxtReal39.round = savedRoundingMode;
+    return result;
+  }
+  static inline void realToReal34(const real_t *source, real34_t *destination) { decQuadFromNumber(destination, source, &ctxtReal34); }
+  static inline void realToString(const real_t *source, char     *destination) { decNumberToString(source, destination); }
+  static inline void realZero    (real_t *destination)                         { decNumberZero(destination); }
   #define stringToReal(source, destination, ctxt)                decNumberFromString      (destination, source, ctxt)
   #define uInt32ToReal(source, destination)                      decNumberFromUInt32      (destination, source)
 #endif // !REALTYPE_H

@@ -19,27 +19,29 @@
  ***********************************************/
 
 #include "programming/input.h"
+
 #include "constantPointers.h"
 #include "defines.h"
 #include "debug.h"
 #include "error.h"
 #include "items.h"
-#include "keyboard.h"
 #include "longIntegerType.h"
 #include "mathematics/comparisonReals.h"
 #include "realType.h"
 #include "recall.h"
 #include "registers.h"
 #include "registerValueConversions.h"
-#include "screen.h"
-#include "softmenus.h"
 #include "stack.h"
 #include "timer.h"
+#include "ui/keyboard.h"
+#include "ui/screen.h"
+#include "ui/softmenus.h"
 #include "ui/tam.h"
-#include "wp43.h"
 #if defined(PC_BUILD)
   #include <unistd.h>
 #endif // PC_BUILD
+
+#include "wp43.h"
 
 void fnInput(uint16_t regist) {
   if(programRunStop == PGM_RUNNING) {

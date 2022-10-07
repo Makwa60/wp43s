@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
+/**
  * \file testSuite.h
- ***********************************************/
+ */
 
 #include "realType.h"
 #include "typeDefinitions.h"
@@ -43,7 +43,7 @@ void checkRegisterType        (calcRegister_t regist, char letter, uint32_t expe
 void checkExpectedOutParameter(char *p);
 void outParameters            (char *token);
 void functionToCall           (char *functionName);
-void abortTest                (void);
+void processError             (const char *msg);
 void standardizeLine          (void);
 void processLine              (void);
 void processOneFile           (void);

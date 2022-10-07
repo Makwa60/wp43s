@@ -14965,8 +14965,8 @@ int main(int argc, char* argv[]) {
     *(currentStep++) = (ITM_M_INV >> 8) | 0x80;
     *(currentStep++) =  ITM_M_INV       & 0xff;
 
-    *(currentStep++) = (ITM_ANGLE >> 8) | 0x80;
-    *(currentStep++) =  ITM_ANGLE       & 0xff;
+    *(currentStep++) = (ITM_ARG >> 8) | 0x80;
+    *(currentStep++) =  ITM_ARG       & 0xff;
 
     *(currentStep++) = (ITM_MULPIto >> 8) | 0x80;
     *(currentStep++) =  ITM_MULPIto       & 0xff;

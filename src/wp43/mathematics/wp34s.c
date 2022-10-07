@@ -32,8 +32,8 @@
 #include "mathematics/sin.h"
 #include "mathematics/toPolar.h"
 #include "realType.h"
-#include "screen.h"
 #include "registers.h"
+#include "ui/screen.h"
 #include "ui/statusBar.h"
 
 #include "wp43.h"

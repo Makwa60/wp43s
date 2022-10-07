@@ -19,13 +19,13 @@
 #include "apps/bugScreen.h"
 #include "charString.h"
 #include "constantPointers.h"
+#include "core/memory.h"
 #include "dateTime.h"
 #include "display.h"
 #include "error.h"
 #include "integers.h"
 #include "matrix.h"
 #include "mathematics/rsd.h"
-#include "memory.h"
 #include "registers.h"
 #include <string.h>
 
@@ -49,7 +49,7 @@ void convertLongIntegerRegisterToLongInteger(calcRegister_t regist, longInteger_
 
   xcopy(lgInt->_mp_d, REGISTER_LONG_INTEGER_DATA(regist), sizeInBytes);
 
-  if(getRegisterLongIntegerSign(regist) == LI_NEGATIVE) {
+  if(getRegisterLongIntegerSign(regist) == liNegative) {
     lgInt->_mp_size = -(sizeInBytes / LIMB_SIZE);
   }
   else {
@@ -254,7 +254,7 @@ void convertUInt64ToShortIntegerRegister(int16_t sign, uint64_t value, uint32_t 
 
 
 
-void convertReal34ToLongInteger(const real34_t *re34, longInteger_t lgInt, enum rounding roundingMode) {
+void convertReal34ToLongInteger(const real34_t *re34, longInteger_t lgInt, realRoundingMode_t roundingMode) {
   uint8_t bcd[DECQUAD_Pmax];
   int32_t sign, exponent;
   real34_t real34;
@@ -283,7 +283,7 @@ void convertReal34ToLongInteger(const real34_t *re34, longInteger_t lgInt, enum 
 
 
 
-void convertReal34ToLongIntegerRegister(const real34_t *real34, calcRegister_t dest, enum rounding roundingMode) {
+void convertReal34ToLongIntegerRegister(const real34_t *real34, calcRegister_t dest, realRoundingMode_t roundingMode) {
   longInteger_t lgInt;
 
   convertReal34ToLongInteger(real34, lgInt, roundingMode);
@@ -294,7 +294,7 @@ void convertReal34ToLongIntegerRegister(const real34_t *real34, calcRegister_t d
 
 
 
-void convertRealToLongInteger(const real_t *re, longInteger_t lgInt, enum rounding roundingMode) {
+void convertRealToLongInteger(const real_t *re, longInteger_t lgInt, realRoundingMode_t roundingMode) {
   uint8_t bcd[75];
   int32_t sign, exponent;
   real_t real;
@@ -323,7 +323,7 @@ void convertRealToLongInteger(const real_t *re, longInteger_t lgInt, enum roundi
 
 
 
-void convertRealToLongIntegerRegister(const real_t *real, calcRegister_t dest, enum rounding roundingMode) {
+void convertRealToLongIntegerRegister(const real_t *real, calcRegister_t dest, realRoundingMode_t roundingMode) {
   longInteger_t lgInt;
 
   longIntegerInit(lgInt);
@@ -335,8 +335,8 @@ void convertRealToLongIntegerRegister(const real_t *real, calcRegister_t dest, e
 
 
 
-void realToIntegralValue(const real_t *source, real_t *destination, enum rounding mode, realContext_t *realContext) {
-  enum rounding savedRoundingMode;
+void realToIntegralValue(const real_t *source, real_t *destination, realRoundingMode_t mode, realContext_t *realContext) {
+  realRoundingMode_t savedRoundingMode;
 
   savedRoundingMode = realContext->round;
   realContext->round = mode;
@@ -347,7 +347,7 @@ void realToIntegralValue(const real_t *source, real_t *destination, enum roundin
 
 
 
-void realToUInt32(const real_t *re, enum rounding mode, uint32_t *value32, bool_t *overflow) {
+void realToUInt32(const real_t *re, realRoundingMode_t mode, uint32_t *value32, bool_t *overflow) {
   uint8_t bcd[76], sign;
   real_t real;
   longInteger_t lgInt;

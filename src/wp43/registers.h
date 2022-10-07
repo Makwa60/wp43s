@@ -43,6 +43,7 @@
 
   // Helper functions to get register data in the appropriate format
   static inline dataBlock_t          *REGISTER_DATA                        (calcRegister_t a) {return (dataBlock_t *)(getRegisterDataPointer(a));}
+  static inline longInteger_t        *REGISTER_LONG_INTEGER_DATA           (calcRegister_t a) {return (longInteger_t *)(getRegisterDataPointer(a) + 1);}
   static inline real34_t             *REGISTER_REAL34_DATA                 (calcRegister_t a) {return (real34_t    *)(getRegisterDataPointer(a));}
   static inline real34_t             *REGISTER_IMAG34_DATA                 (calcRegister_t a) {return (real34_t    *)(getRegisterDataPointer(a) + REAL34_SIZE);}
   static inline complex34_t          *REGISTER_COMPLEX34_DATA              (calcRegister_t a) {return (complex34_t *)(getRegisterDataPointer(a));}
@@ -246,12 +247,13 @@
   #endif // !DMCP_BUILD
 
 
-  #define getRegisterAngularMode(reg)            getRegisterTag(reg)
-  #define setRegisterAngularMode(reg, am)        setRegisterTag(reg, am)
-  #define getRegisterShortIntegerBase(reg)       getRegisterTag(reg)
-  #define setRegisterShortIntegerBase(reg, base) setRegisterTag(reg, base)
-  #define getRegisterLongIntegerSign(reg)        getRegisterTag(reg)
-  #define setRegisterLongIntegerSign(reg, sign)  setRegisterTag(reg, sign)
+  static inline angularMode_t     getRegisterAngularMode(calcRegister_t reg)                     {return getRegisterTag(reg);}
+  static inline void              setRegisterAngularMode(calcRegister_t reg, angularMode_t am)   {setRegisterTag(reg, am);}
+  static inline uint32_t          getRegisterShortIntegerBase(calcRegister_t reg)                {return getRegisterTag(reg);}
+  static inline void              setRegisterShortIntegerBase(calcRegister_t reg, uint32_t base) {setRegisterTag(reg, base);}
+  static inline longIntegerSign_t getRegisterLongIntegerSign(calcRegister_t reg)                 {return getRegisterTag(reg);}
+  static inline void              setRegisterLongIntegerSign(calcRegister_t reg, longIntegerSign_t sign) {setRegisterTag(reg, sign);}
+  static inline bool_t            longIntegerIsZeroRegister(calcRegister_t regist)               {return (getRegisterLongIntegerSign(regist) == liZero);}
 
   /********************************************//**
    * \brief Prints the content of a register to a string

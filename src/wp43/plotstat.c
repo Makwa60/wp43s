@@ -27,17 +27,17 @@
 #include "fonts.h"
 #include "hal/lcd.h"
 #include "items.h"
-#include "keyboard.h"
 #include "mathematics/comparisonReals.h"
 #include "mathematics/variance.h"
 #include "matrix.h"
 #include "registers.h"
 #include "registerValueConversions.h"
-#include "screen.h"
-#include "softmenus.h"
 #include "solver/graph.h"
 #include "stack.h"
 #include "stats.h"
+#include "ui/keyboard.h"
+#include "ui/screen.h"
+#include "ui/softmenus.h"
 #include "ui/statusBar.h"
 #include <math.h>
 #include <string.h>
@@ -951,7 +951,7 @@ void graphPlotstat(uint16_t selection) {
       (plotStatMx[0]=='H' && statMxN() >= 3)) {
       switch(plotStatMx[0]) {
         case 'S': {
-          realToInt32(SIGMA_N, statnum);
+          statnum = realToInt32(SIGMA_N);
           break;
         }
         case 'D': {
@@ -1333,7 +1333,7 @@ static  void drawline(uint16_t selection, real_t *RR, real_t *SMI, real_t *aa0, 
 
     switch(plotStatMx[0]) {
       case 'S': {
-        realToInt32(SIGMA_N, n);
+        n = realToInt32(SIGMA_N);
         break;
       }
       case 'D':  {
@@ -1705,7 +1705,7 @@ void fnPlotStat(uint16_t plotMode){
         int16_t cnt = 0;
         switch(plotStatMx[0]) {
           case 'S': {
-            realToInt32(SIGMA_N, cnt);
+            cnt = realToInt32(SIGMA_N);
             break;
           }
           case 'D':  {

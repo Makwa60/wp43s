@@ -19,19 +19,21 @@
  ***********************************************/
 
 #include "programming/flash.h"
+
 #include "charString.h"
 #include "config.h"
+#include "core/memory.h"
 #include "defines.h"
 #include "error.h"
 #include "hal/io.h"
 #include "items.h"
-#include "memory.h"
 #include "programming/manage.h"
 #include "programming/nextStep.h"
 #include "sort.h"
-#include "wp43.h"
 #include <string.h>
 #include <stdlib.h>
+
+#include "wp43.h"
 
 static void save(const void *buffer, uint32_t size) {
   ioFileWrite(buffer, size);

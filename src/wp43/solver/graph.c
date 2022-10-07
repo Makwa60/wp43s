@@ -34,17 +34,17 @@
 #include "recall.h"
 #include "registers.h"
 #include "registerValueConversions.h"
-#include "screen.h"
-#include "softmenus.h"
 #include "solver/equation.h"
 #include "stack.h"
 #include "stats.h"
 #include "store.h"
+#include "ui/screen.h"
+#include "ui/softmenus.h"
 #include "ui/statusBar.h"
-#include "wp43.h"
 #include <math.h>
 #include <string.h>
 
+#include "wp43.h"
 
 #if defined(PC_BUILD)
   //Verbose directives can be simulataneously selected

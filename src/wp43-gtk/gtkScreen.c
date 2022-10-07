@@ -23,6 +23,7 @@
 #include "longIntegerType.h"
 #include "registers.h"
 #include "registerValueConversions.h"
+
 #include "wp43.h"
 
 
@@ -519,7 +520,7 @@ void copyAllRegistersToClipboard(void) {
       ptr += strlen(ptr);
       strcpy(ptr, " = ");
       ptr += strlen(ptr);
-      realToString(statisticalSumsPointer + REAL_SIZE * sum, tmpString);
+      realToString((real_t *)(statisticalSumsPointer + REAL_SIZE * sum), tmpString);
       if(strchr(tmpString, '.') == NULL && strchr(tmpString, 'E') == NULL) {
         strcat(tmpString, ".");
       }

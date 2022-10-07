@@ -34,7 +34,7 @@ add_project_arguments('-DDMCP_BUILD', native : false, language : 'c')
 add_project_arguments('-DOS32BIT',    native : false, language : 'c')
 
 git = find_program('git')
-run_command(git, 'submodule', 'update', '--init', '--recursive', meson.project_source_root())
+run_command(git, 'submodule', 'update', '--init', '--recursive', meson.project_source_root(), check: true)
 
 cc = meson.get_compiler('c')
 ft_dep  = dependency('freetype2', native : true)
@@ -55,7 +55,7 @@ endif
 
 conf_data = configuration_data()
 commit_tag = get_option('CI_COMMIT_TAG')
-today = run_command('date', '+%Y-%m-%d')
+today = run_command('date', '+%Y-%m-%d', check: true)
 conf_data.set('TODAY', today.stdout().strip())
 if commit_tag != ''
   conf_data.set('CI_USE_TAG',    true)

@@ -20,13 +20,13 @@
 #include "calcMode.h"
 #include "charString.h"
 #include "config.h"
+#include "core/memory.h"
 #include "display.h"
 #include "flags.h"
 #include "fonts.h"
 #include "items.h"
-#include "memory.h"
 #include "registers.h"
-#include "screen.h"
+#include "ui/screen.h"
 #include <assert.h>
 #include <string.h>
 
@@ -179,37 +179,37 @@ uint8_t currentFlgScr;
       // Rounding mode
       strcpy(tmpString + CHARS_PER_LINE * ++line, "RM=");
       switch(roundingMode) {
-        case RM_HALF_EVEN: {
+        case rmHalfEven: {
           strcat(tmpString + CHARS_PER_LINE * line, STD_ONE_HALF "E");
           break;
         }
 
-        case RM_HALF_UP: {
+        case rmHalfUp: {
           strcat(tmpString + CHARS_PER_LINE * line, STD_ONE_HALF STD_UP_ARROW);
           break;
         }
 
-        case RM_HALF_DOWN: {
+        case rmHalfDown: {
           strcat(tmpString + CHARS_PER_LINE * line, STD_ONE_HALF STD_DOWN_ARROW);
           break;
         }
 
-        case RM_UP: {
+        case rmUp: {
           strcat(tmpString + CHARS_PER_LINE * line, STD_LEFT_ARROW "0" STD_RIGHT_ARROW);
           break;
         }
 
-        case RM_DOWN: {
+        case rmDown: {
           strcat(tmpString + CHARS_PER_LINE * line, STD_RIGHT_ARROW "0" STD_LEFT_ARROW);
           break;
         }
 
-        case RM_CEIL: {
+        case rmCeil: {
           strcat(tmpString + CHARS_PER_LINE * line, STD_LEFT_CEILING "x" STD_RIGHT_CEILING);
           break;
         }
 
-        case RM_FLOOR: {
+        case rmFloor: {
           strcat(tmpString + CHARS_PER_LINE * line, STD_LEFT_FLOOR "x" STD_RIGHT_FLOOR);
           break;
         }

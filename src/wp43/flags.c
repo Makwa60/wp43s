@@ -25,8 +25,8 @@
 #include "config.h"
 #include "error.h"
 #include "items.h"
-#include "softmenus.h"
 #include "solver/equation.h"
+#include "ui/softmenus.h"
 #include "ui/tam.h"
 #include <string.h>
 

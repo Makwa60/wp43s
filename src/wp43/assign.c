@@ -15,22 +15,22 @@
  */
 
 #include "assign.h"
-#include "bufferize.h"
 #include "calcMode.h"
 #include "charString.h"
+#include "core/memory.h"
 #include "defines.h"
 #include "error.h"
 #include "flags.h"
 #include "fonts.h"
 #include "hal/gui.h"
 #include "items.h"
-#include "memory.h"
 #include "programming/flash.h"
 #include "programming/manage.h"
 #include "registers.h"
-#include "screen.h"
-#include "softmenus.h"
 #include "sort.h"
+#include "ui/bufferize.h"
+#include "ui/screen.h"
+#include "ui/softmenus.h"
 #include "wp43.h"
 #include <string.h>
 
@@ -47,7 +47,7 @@ TO_QSPI const calcKey_t kbd_std[37] = {
  {31,   ITM_STO,         ITM_ASSIGN,      ITM_SAVE,        ITM_NULL,        ITM_G,             ITM_ASSIGN,            ITM_GAMMA,     ITM_NULL     },
  {32,   ITM_RCL,         ITM_RBR,         ITM_VIEW,        ITM_NULL,        ITM_H,             ITM_RBR,               ITM_CHI,       ITM_HEX      }, // if f or g are changed: adapt the function btnClicked section if(calcMode == cmNim) in keyboard.c. Case H for hexadecimal base
  {33,   ITM_Rdown,       ITM_Rup,        -MNU_CPX,         ITM_NULL,        ITM_I,             ITM_DOWN_ARROW,        ITM_IOTA,      ITM_REG_I    },
- {34,   ITM_CC,          ITM_MAGNITUDE,   ITM_ANGLE,       ITM_NULL,        ITM_J,             ITM_VERTICAL_BAR,      ITM_ETA,       ITM_REG_J    },
+ {34,   ITM_CC,          ITM_MAGNITUDE,   ITM_ARG,         ITM_NULL,        ITM_J,             ITM_VERTICAL_BAR,      ITM_ETA,       ITM_REG_J    },
  {35,   ITM_SHIFTf,      ITM_NULL,        ITM_SNAP,        ITM_SHIFTf,      ITM_SHIFTf,        ITM_NULL,              ITM_SNAP,      ITM_SHIFTf   },
  {36,   ITM_SHIFTg,      ITM_USERMODE,    ITM_NULL,        ITM_SHIFTg,      ITM_SHIFTg,        ITM_USERMODE,          ITM_NULL,      ITM_SHIFTg   },
 

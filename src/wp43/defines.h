@@ -155,13 +155,6 @@
   #define FLAG_FRCSRN                           0x802a
   #define NUMBER_OF_SYSTEM_FLAGS                    43
 
-  typedef enum {
-    LI_ZERO     = 0, // Long integer sign 0
-    LI_NEGATIVE = 1, // Long integer sign -
-    LI_POSITIVE = 2  // Long integer sign +
-  } longIntegerSign_t;
-
-
   // PC GUI
   #define CSSFILE                      "res/wp43_pre.css"
 
@@ -309,6 +302,7 @@
   // If one of the 4 next defines is changed: change also ???_REGISTER_LINE above
   #define Y_POSITION_OF_AIM_LINE        Y_POSITION_OF_REGISTER_X_LINE
   #define Y_POSITION_OF_TAM_LINE        Y_POSITION_OF_REGISTER_T_LINE
+  #define Y_POSITION_OF_TAM_ALT_LINE    Y_POSITION_OF_REGISTER_Z_LINE
   #define Y_POSITION_OF_NIM_LINE        Y_POSITION_OF_REGISTER_X_LINE
   #define Y_POSITION_OF_ERR_LINE        Y_POSITION_OF_REGISTER_Z_LINE
   #define Y_POSITION_OF_TRUE_FALSE_LINE Y_POSITION_OF_REGISTER_Z_LINE
@@ -439,15 +433,6 @@
   #define H_PLOT                                     7
   #define H_NORM                                     8
 
-  // Rounding mode 3 bits
-  #define RM_HALF_EVEN                               0
-  #define RM_HALF_UP                                 1
-  #define RM_HALF_DOWN                               2
-  #define RM_UP                                      3
-  #define RM_DOWN                                    4
-  #define RM_CEIL                                    5
-  #define RM_FLOOR                                   6
-
   // Next character in AIM 2 bits
   #define NC_NORMAL                                  0
   #define NC_SUBSCRIPT                               1
@@ -484,63 +469,6 @@
   #define NP_COMPLEX_INT_PART                        7 // Integer part of the complex imaginary part
   #define NP_COMPLEX_FLOAT_PART                      8 // Decimal part of the complex imaginary part
   #define NP_COMPLEX_EXPONENT                        9 // Ten exponent of the complex imaginary part
-
-  // Temporary information
-  #define TI_NO_INFO                                 0
-  #define TI_RADIUS_THETA                            1
-  #define TI_THETA_RADIUS                            2
-  #define TI_X_Y                                     3
-  #define TI_RE_IM                                   4
-  #define TI_STATISTIC_SUMS                          5
-  #define TI_RESET                                   6
-  #define TI_ARE_YOU_SURE                            7
-  #define TI_VERSION                                 8
-  #define TI_WHO                                     9
-  #define TI_FALSE                                  10
-  #define TI_TRUE                                   11
-  #define TI_SHOW_REGISTER                          12
-  #define TI_VIEW_REGISTER                          13
-  #define TI_SUMX_SUMY                              14
-  #define TI_MEANX_MEANY                            15
-  #define TI_GEOMMEANX_GEOMMEANY                    16
-  #define TI_WEIGHTEDMEANX                          17
-  #define TI_HARMMEANX_HARMMEANY                    18
-  #define TI_RMSMEANX_RMSMEANY                      19
-  #define TI_WEIGHTEDSAMPLSTDDEV                    20
-  #define TI_WEIGHTEDPOPLSTDDEV                     21
-  #define TI_WEIGHTEDSTDERR                         22
-  #define TI_SAMPLSTDDEV                            23
-  #define TI_POPLSTDDEV                             24
-  #define TI_STDERR                                 25
-  #define TI_GEOMSAMPLSTDDEV                        26
-  #define TI_GEOMPOPLSTDDEV                         27
-  #define TI_GEOMSTDERR                             28
-  #define TI_SAVED                                  29
-  #define TI_BACKUP_RESTORED                        30
-  #define TI_XMIN_YMIN                              31
-  #define TI_XMAX_YMAX                              32
-  #define TI_DAY_OF_WEEK                            33
-  #define TI_SXY                                    34
-  #define TI_COV                                    35
-  #define TI_CORR                                   36
-  #define TI_SMI                                    37
-  #define TI_LR                                     38
-  #define TI_CALCX                                  39
-  #define TI_CALCY                                  40
-  #define TI_CALCX2                                 41
-  #define TI_STATISTIC_LR                           42
-  #define TI_STATISTIC_HISTO                        43
-  #define TI_SA                                     44
-  #define TI_INACCURATE                             45
-  #define TI_UNDO_DISABLED                          46
-  #define TI_SOLVER_VARIABLE                        47
-  #define TI_SOLVER_FAILED                          48
-  #define TI_ACC                                    49
-  #define TI_ULIM                                   50
-  #define TI_LLIM                                   51
-  #define TI_INTEGRAL                               52
-  #define TI_1ST_DERIVATIVE                         53
-  #define TI_2ND_DERIVATIVE                         54
 
   // Register browser mode
   #define RBR_GLOBAL                                 0 // Global registers are browsed
@@ -968,8 +896,8 @@
                                        int i; \
                                        mp_limb_t *p; \
                                        printf("\n%s", comment); \
-                                       if(getRegisterLongIntegerSign(reg) == LI_ZERO) printf("lint=0"); \
-                                       else if(getRegisterLongIntegerSign(reg) == LI_NEGATIVE) printf("lint=-"); \
+                                       if(getRegisterLongIntegerSign(reg) == liZero) printf("lint=0"); \
+                                       else if(getRegisterLongIntegerSign(reg) == liNegative) printf("lint=-"); \
                                        else printf("lint=+"); \
                                        for(i=*REGISTER_DATA_MAX_LEN(reg)/LIMB_SIZE, p=REGISTER_LONG_INTEGER_DATA(reg); i>0; i--, p++) { \
                                          printf("%lu ", *p); \

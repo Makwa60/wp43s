@@ -21,7 +21,6 @@
 #include "apps/registerBrowser.h"
 #include "apps/timerApp.h"
 #include "assign.h"
-#include "bufferize.h"
 #include "calcMode.h"
 #include "config.h"
 #include "constants.h"
@@ -36,7 +35,6 @@
 #include "fonts.h"
 #include "fractions.h"
 #include "integers.h"
-#include "keyboard.h"
 #include "logicalOps/logicalOps.h"
 #include "mathematics/mathematics.h"
 #include "matrix.h"
@@ -45,14 +43,16 @@
 #include "recall.h"
 #include "registers.h"
 #include "saveRestoreCalcState.h"
-#include "screen.h"
-#include "softmenus.h"
 #include "solver/graph.h"
 #include "solver/solver.h"
 #include "stack.h"
 #include "stats.h"
 #include "store.h"
 #include "stringFuncs.h"
+#include "ui/bufferize.h"
+#include "ui/keyboard.h"
+#include "ui/screen.h"
+#include "ui/softmenus.h"
 #include "ui/statusBar.h"
 #include "ui/tam.h"
 #include "ui/tone.h"
@@ -127,7 +127,10 @@ void fnNop(uint16_t unusedButMandatoryParameter) {
         refreshLcd();
       #endif // DMCP_BUILD
 
-      screenUpdatingMode = SCRUPD_AUTO;
+      if(calcMode != cmTimerApp) {
+        // We should probably be more careful about when we're updating the screenUpdatingMode
+        screenUpdatingMode = SCRUPD_AUTO;
+      }
     }
 
     indexOfItems[func].func(param);
@@ -1486,40 +1489,40 @@ TO_QSPI const item_t indexOfItems[] = {
 /*  626 */  { addItemToBuffer,              ITM_PSI,                     "",                                            STD_PSI,                                       (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
 /*  627 */  { addItemToBuffer,              ITM_OMEGA,                   "",                                            STD_OMEGA,                                     (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
 /*  628 */  { addItemToBuffer,              ITM_alpha,                   "",                                            STD_alpha,                                     (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
-/*  629 */  { addItemToBuffer,              ITM_alpha_TONOS,             "",                                            STD_alpha_TONOS,                               (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
-/*  630 */  { addItemToBuffer,              ITM_beta,                    "",                                            STD_beta,                                      (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
-/*  631 */  { addItemToBuffer,              ITM_gamma,                   "",                                            STD_gamma,                                     (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
-/*  632 */  { addItemToBuffer,              ITM_delta,                   "",                                            STD_delta,                                     (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
-/*  633 */  { addItemToBuffer,              ITM_epsilon,                 "",                                            STD_epsilon,                                   (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
-/*  634 */  { addItemToBuffer,              ITM_epsilon_TONOS,           "",                                            STD_epsilon_TONOS,                             (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
-/*  635 */  { addItemToBuffer,              ITM_zeta,                    "",                                            STD_zeta,                                      (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
-/*  636 */  { addItemToBuffer,              ITM_eta,                     "",                                            STD_eta,                                       (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
-/*  637 */  { addItemToBuffer,              ITM_eta_TONOS,               "",                                            STD_eta_TONOS,                                 (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
-/*  638 */  { addItemToBuffer,              ITM_theta,                   "",                                            STD_theta,                                     (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
-/*  639 */  { addItemToBuffer,              ITM_iota,                    "",                                            STD_iota,                                      (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
-/*  640 */  { addItemToBuffer,              ITM_iotaTON,                 "",                                            STD_iota_TONOS,                                (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
-/*  641 */  { addItemToBuffer,              ITM_iota_DIALYTIKA_TONOS,    "",                                            STD_iota_DIALYTIKA_TONOS,                      (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
-/*  642 */  { addItemToBuffer,              ITM_iota_DIALYTIKA,          "",                                            STD_iota_DIALYTIKA,                            (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
-/*  643 */  { addItemToBuffer,              ITM_kappa,                   "",                                            STD_kappa,                                     (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
-/*  644 */  { addItemToBuffer,              ITM_lambda,                  "",                                            STD_lambda,                                    (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
-/*  645 */  { addItemToBuffer,              ITM_mu,                      "",                                            STD_mu,                                        (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
-/*  646 */  { addItemToBuffer,              ITM_nu,                      "",                                            STD_nu,                                        (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
-/*  647 */  { addItemToBuffer,              ITM_xi,                      "",                                            STD_xi,                                        (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
-/*  648 */  { addItemToBuffer,              ITM_omicron,                 "",                                            STD_omicron,                                   (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
-/*  649 */  { addItemToBuffer,              ITM_omicron_TONOS,           "",                                            STD_omicron_TONOS,                             (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
-/*  650 */  { addItemToBuffer,              ITM_pi,                      "",                                            STD_pi,                                        (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
-/*  651 */  { addItemToBuffer,              ITM_rho,                     "",                                            STD_rho,                                       (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
-/*  652 */  { addItemToBuffer,              ITM_sigma,                   "",                                            STD_sigma,                                     (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
-/*  653 */  { addItemToBuffer,              ITM_sigma_end,               "",                                            STD_sigma_end,                                 (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
-/*  654 */  { addItemToBuffer,              ITM_tau,                     "",                                            STD_tau,                                       (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
-/*  655 */  { addItemToBuffer,              ITM_upsilon,                 "",                                            STD_upsilon,                                   (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
-/*  656 */  { addItemToBuffer,              ITM_upsilon_TONOS,           "",                                            STD_upsilon_TONOS,                             (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
-/*  657 */  { addItemToBuffer,              ITM_upsilon_DIALYTIKA,       "",                                            STD_upsilon_DIALYTIKA,                         (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
-/*  658 */  { addItemToBuffer,              ITM_upsilon_DIALYTIKA_TONOS, "",                                            STD_upsilon_DIALYTIKA_TONOS,                   (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
-/*  659 */  { addItemToBuffer,              ITM_phi,                     "",                                            STD_phi,                                       (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
-/*  660 */  { addItemToBuffer,              ITM_chi,                     "",                                            STD_chi,                                       (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
-/*  661 */  { addItemToBuffer,              ITM_psi,                     "",                                            STD_psi,                                       (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
-/*  662 */  { addItemToBuffer,              ITM_omega,                   "",                                            STD_omega,                                     (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
+/*  629 */  { addItemToBuffer,              ITM_beta,                    "",                                            STD_beta,                                      (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
+/*  630 */  { addItemToBuffer,              ITM_gamma,                   "",                                            STD_gamma,                                     (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
+/*  631 */  { addItemToBuffer,              ITM_delta,                   "",                                            STD_delta,                                     (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
+/*  632 */  { addItemToBuffer,              ITM_epsilon,                 "",                                            STD_epsilon,                                   (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
+/*  633 */  { addItemToBuffer,              ITM_zeta,                    "",                                            STD_zeta,                                      (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
+/*  634 */  { addItemToBuffer,              ITM_eta,                     "",                                            STD_eta,                                       (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
+/*  635 */  { addItemToBuffer,              ITM_theta,                   "",                                            STD_theta,                                     (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
+/*  636 */  { addItemToBuffer,              ITM_iota,                    "",                                            STD_iota,                                      (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
+/*  637 */  { addItemToBuffer,              ITM_iota_DIALYTIKA,          "",                                            STD_iota_DIALYTIKA,                            (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
+/*  638 */  { addItemToBuffer,              ITM_kappa,                   "",                                            STD_kappa,                                     (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
+/*  639 */  { addItemToBuffer,              ITM_lambda,                  "",                                            STD_lambda,                                    (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
+/*  640 */  { addItemToBuffer,              ITM_mu,                      "",                                            STD_mu,                                        (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
+/*  641 */  { addItemToBuffer,              ITM_nu,                      "",                                            STD_nu,                                        (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
+/*  642 */  { addItemToBuffer,              ITM_xi,                      "",                                            STD_xi,                                        (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
+/*  643 */  { addItemToBuffer,              ITM_omicron,                 "",                                            STD_omicron,                                   (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
+/*  644 */  { addItemToBuffer,              ITM_pi,                      "",                                            STD_pi,                                        (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
+/*  645 */  { addItemToBuffer,              ITM_rho,                     "",                                            STD_rho,                                       (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
+/*  646 */  { addItemToBuffer,              ITM_sigma,                   "",                                            STD_sigma,                                     (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
+/*  647 */  { addItemToBuffer,              ITM_tau,                     "",                                            STD_tau,                                       (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
+/*  648 */  { addItemToBuffer,              ITM_upsilon,                 "",                                            STD_upsilon,                                   (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
+/*  649 */  { addItemToBuffer,              ITM_upsilon_DIALYTIKA,       "",                                            STD_upsilon_DIALYTIKA,                         (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
+/*  650 */  { addItemToBuffer,              ITM_phi,                     "",                                            STD_phi,                                       (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
+/*  651 */  { addItemToBuffer,              ITM_chi,                     "",                                            STD_chi,                                       (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
+/*  652 */  { addItemToBuffer,              ITM_psi,                     "",                                            STD_psi,                                       (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
+/*  653 */  { addItemToBuffer,              ITM_omega,                   "",                                            STD_omega,                                     (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
+/*  654 */  { addItemToBuffer,              ITM_alpha_TONOS,             "",                                            STD_alpha_TONOS,                               (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
+/*  655 */  { addItemToBuffer,              ITM_epsilon_TONOS,           "",                                            STD_epsilon_TONOS,                             (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
+/*  656 */  { addItemToBuffer,              ITM_eta_TONOS,               "",                                            STD_eta_TONOS,                                 (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
+/*  657 */  { addItemToBuffer,              ITM_iotaTON,                 "",                                            STD_iota_TONOS,                                (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
+/*  658 */  { addItemToBuffer,              ITM_iota_DIALYTIKA_TONOS,    "",                                            STD_iota_DIALYTIKA_TONOS,                      (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
+/*  659 */  { addItemToBuffer,              ITM_omicron_TONOS,           "",                                            STD_omicron_TONOS,                             (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
+/*  660 */  { addItemToBuffer,              ITM_sigma_end,               "",                                            STD_sigma_end,                                 (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
+/*  661 */  { addItemToBuffer,              ITM_upsilon_TONOS,           "",                                            STD_upsilon_TONOS,                             (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
+/*  662 */  { addItemToBuffer,              ITM_upsilon_DIALYTIKA_TONOS, "",                                            STD_upsilon_DIALYTIKA_TONOS,                   (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
 /*  663 */  { addItemToBuffer,              ITM_omega_TONOS,             "",                                            STD_omega_TONOS,                               (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
 /*  664 */  { addItemToBuffer,              ITM_A_MACRON,                STD_A_MACRON,                                  STD_A_MACRON,                                  (0 << TAM_MAX_BITS) |     0, CAT_AINT | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
 /*  665 */  { addItemToBuffer,              ITM_A_ACUTE,                 STD_A_ACUTE,                                   STD_A_ACUTE,                                   (0 << TAM_MAX_BITS) |     0, CAT_AINT | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
@@ -2617,13 +2620,13 @@ TO_QSPI const item_t indexOfItems[] = {
 /* 1736 */  { fnSst,                        NOPARAM,                     "SST",                                         STD_HAMBURGER STD_SST,                         (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_ENABLED   | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
 /* 1737 */  { fnKeyExit,                    NOPARAM,                     "EXIT",                                        "EXIT",                                        (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_ENABLED   | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
 /* 1738 */  { fnKeyBackspace,               NOPARAM,                     "BKSPC",                                       STD_LEFT_ARROW,                                (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_ENABLED   | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
-/* 1739 */  { fnKeyAngle,                   NOPARAM,                     STD_MEASURED_ANGLE,                            STD_MEASURED_ANGLE,                            (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/* 1739 */  { itemToBeCoded,                NOPARAM,                     "",                                            "",                                            (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
 /* 1740 */  { fnAim,                        NOPARAM,                     STD_alpha,                                     STD_alpha,                                     (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_DISABLED     },
 /* 1741 */  { fnKeyDotD,                    NOPARAM,                     ".d",                                          ".d",                                          (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_ENABLED   | US_UNCHANGED | EIM_DISABLED | PTP_NONE         },
 /* 1742 */  { fnShow,                       NOPARAM,                     "SHOW",                                        "SHOW",                                        (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
 /* 1743 */  { backToSystem,                 NOPARAM,                     "SYSTEM",                                      "SYSTEM",                                      (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
 /* 1744 */  { fnCvtDmsToDeg,                NOPARAM,                     "D.MS" STD_RIGHT_ARROW "D",                    "D.MS" STD_RIGHT_ARROW "D",                    (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
-/* 1745 */  { fnVectorAngle,                NOPARAM,                     "V" STD_MEASURED_ANGLE,                        STD_MEASURED_ANGLE,                            (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/* 1745 */  { fnVectorAngle,                NOPARAM,                     "V" STD_MEASURED_ANGLE,                        "V" STD_MEASURED_ANGLE,                        (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
 /* 1746 */  { fnHarmonicMeanXY,             NOPARAM,                     STD_x_BAR STD_SUB_H,                           STD_x_BAR STD_SUB_H,                           (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
 /* 1747 */  { fnRMSMeanXY,                  NOPARAM,                     STD_x_BAR STD_SUB_R STD_SUB_M STD_SUB_S,       STD_x_BAR STD_SUB_R STD_SUB_M STD_SUB_S,       (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
 /* 1748 */  { fnArccos,                     NOPARAM,                     "ACOS",                                        "ACOS",                                        (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_ENABLED  | PTP_NONE         },

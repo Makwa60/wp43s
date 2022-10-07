@@ -19,14 +19,14 @@
 #include "calcMode.h"
 #include "charString.h"
 #include "config.h"
+#include "core/memory.h"
 #include "flags.h"
 #include "items.h"
-#include "keyboard.h"
 #include "longIntegerType.h"
-#include "memory.h"
-#include "screen.h"
-#include "softmenus.h"
 #include "timer.h"
+#include "ui/keyboard.h"
+#include "ui/screen.h"
+#include "ui/softmenus.h"
 
 bool_t               backToDMCP;
 //int                  keyAutoRepeat;

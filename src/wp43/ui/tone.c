@@ -18,7 +18,7 @@
 
 #include <stdio.h>
 #include "hal/audio.h"
-#include "screen.h"
+#include "ui/screen.h"
 
 #include "wp43.h"
 

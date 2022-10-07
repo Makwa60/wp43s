@@ -673,40 +673,40 @@
   #define ITM_PSI                        626
   #define ITM_OMEGA                      627
   #define ITM_alpha                      628
-  #define ITM_alpha_TONOS                629
-  #define ITM_beta                       630
-  #define ITM_gamma                      631
-  #define ITM_delta                      632
-  #define ITM_epsilon                    633
-  #define ITM_epsilon_TONOS              634
-  #define ITM_zeta                       635
-  #define ITM_eta                        636
-  #define ITM_eta_TONOS                  637
-  #define ITM_theta                      638
-  #define ITM_iota                       639
-  #define ITM_iotaTON                    640
-  #define ITM_iota_DIALYTIKA_TONOS       641
-  #define ITM_iota_DIALYTIKA             642
-  #define ITM_kappa                      643
-  #define ITM_lambda                     644
-  #define ITM_mu                         645
-  #define ITM_nu                         646
-  #define ITM_xi                         647
-  #define ITM_omicron                    648
-  #define ITM_omicron_TONOS              649
-  #define ITM_pi                         650
-  #define ITM_rho                        651
-  #define ITM_sigma                      652
-  #define ITM_sigma_end                  653
-  #define ITM_tau                        654
-  #define ITM_upsilon                    655
-  #define ITM_upsilon_TONOS              656
-  #define ITM_upsilon_DIALYTIKA          657
-  #define ITM_upsilon_DIALYTIKA_TONOS    658
-  #define ITM_phi                        659
-  #define ITM_chi                        660
-  #define ITM_psi                        661
-  #define ITM_omega                      662
+  #define ITM_beta                       629
+  #define ITM_gamma                      630
+  #define ITM_delta                      631
+  #define ITM_epsilon                    632
+  #define ITM_zeta                       633
+  #define ITM_eta                        634
+  #define ITM_theta                      635
+  #define ITM_iota                       636
+  #define ITM_iota_DIALYTIKA             637
+  #define ITM_kappa                      638
+  #define ITM_lambda                     639
+  #define ITM_mu                         640
+  #define ITM_nu                         641
+  #define ITM_xi                         642
+  #define ITM_omicron                    643
+  #define ITM_pi                         644
+  #define ITM_rho                        645
+  #define ITM_sigma                      646
+  #define ITM_tau                        647
+  #define ITM_upsilon                    648
+  #define ITM_upsilon_DIALYTIKA          649
+  #define ITM_phi                        650
+  #define ITM_chi                        651
+  #define ITM_psi                        652
+  #define ITM_omega                      653
+  #define ITM_alpha_TONOS                654
+  #define ITM_epsilon_TONOS              655
+  #define ITM_eta_TONOS                  656
+  #define ITM_iotaTON                    657
+  #define ITM_iota_DIALYTIKA_TONOS       658
+  #define ITM_omicron_TONOS              659
+  #define ITM_sigma_end                  660
+  #define ITM_upsilon_TONOS              661
+  #define ITM_upsilon_DIALYTIKA_TONOS    662
   #define ITM_omega_TONOS                663
   #define ITM_A_MACRON                   664
   #define ITM_A_ACUTE                    665
@@ -1799,7 +1799,7 @@
   #define ITM_SST                       1736
   #define ITM_EXIT                      1737
   #define ITM_BACKSPACE                 1738
-  #define ITM_ANGLE                     1739
+  #define ITM_1739                      1739
   #define ITM_AIM                       1740
   #define ITM_dotD                      1741
   #define ITM_SHOW                      1742

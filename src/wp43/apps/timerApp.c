@@ -30,11 +30,11 @@
 #include "registers.h"
 #include "registerValueConversions.h"
 #include "stack.h"
-#include "screen.h"
-#include "softmenus.h"
 #include "stats.h"
 #include "timer.h"
 #include "typeDefinitions.h"
+#include "ui/screen.h"
+#include "ui/softmenus.h"
 #include <assert.h>
 
 #include "wp43.h"
@@ -374,11 +374,7 @@
       #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
     }
     else {
-      timerValue = val;
-      if(timerStartTime != TIMER_APP_STOPPED) {
-        timerStartTime = timeCurrentMs();
-        timerStart(TO_TIMER_APP, TO_TIMER_APP, TIMER_APP_PERIOD);
-      }
+      timerValue += val;
     }
   }
 

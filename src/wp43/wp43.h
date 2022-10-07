@@ -121,14 +121,6 @@
   extern bool_t                 serialIOIconEnabled;
   extern bool_t                 pemCursorIsZerothStep;
 
-  extern realContext_t          ctxtReal4;    //   Limited digits: used for high speed internal calcs
-  extern realContext_t          ctxtReal34;   //   34 digits
-  extern realContext_t          ctxtReal39;   //   39 digits: used for 34 digits intermediate calculations
-  extern realContext_t          ctxtReal51;   //   51 digits: used for 34 digits intermediate calculations
-  extern realContext_t          ctxtReal75;   //   75 digits: used in SLVQ
-  extern realContext_t          ctxtReal1071; // 1071 digits: used in radian angle reduction
-  //extern realContext_t          ctxtReal2139; // 2139 digits: used for really big modulo
-
   extern registerHeader_t       globalRegister[NUMBER_OF_GLOBAL_REGISTERS];
   extern registerHeader_t       savedStackRegister[NUMBER_OF_SAVED_STACK_REGISTERS + NUMBER_OF_TEMP_REGISTERS];
   extern registerHeader_t      *currentLocalRegisters;
@@ -189,7 +181,7 @@
   extern uint8_t                shortIntegerMode;
   extern uint8_t                previousCalcMode;
   extern uint8_t                groupingGap;
-  extern uint8_t                roundingMode;
+  extern roundingMode_t         roundingMode;
   extern uint8_t                nextChar;
   extern uint8_t                displayStack;
   extern uint8_t                cachedDisplayStack;
@@ -197,7 +189,7 @@
   extern uint8_t                cursorEnabled;
   extern uint8_t                nimNumberPart;
   extern uint8_t                hexDigits;
-  extern uint8_t                temporaryInformation;
+  extern temporaryInformation_t temporaryInformation;
   extern uint8_t                numScreensNumericFont;
   extern uint8_t                timerCraAndDeciseconds;
   extern uint8_t                programRunStop;

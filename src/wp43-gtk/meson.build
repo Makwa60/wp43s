@@ -9,14 +9,14 @@ wp43_gtk_src = files(
   'hal/system.c',
   'hal/time.c')
 
-override_opts = []
+override_opts = ['b_coverage=false']
 cflags        = []
 linkargs      = []
 if get_option('buildtype').startswith('release')
-  override_opts = ['b_lto=true']
+  override_opts += ['b_lto=true']
 else
-  cflags        = ['-D_FORTIFY_SOURCE=2', '-fstack-protector-strong']
-  linkargs      = ['-fstack-protector-strong']
+  cflags        += ['-D_FORTIFY_SOURCE=2', '-fstack-protector-strong']
+  linkargs      += ['-fstack-protector-strong']
 endif
 
 sim = executable(

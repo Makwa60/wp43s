@@ -37,9 +37,9 @@
 #include "realType.h"
 #include "registers.h"
 #include "registerValueConversions.h"
-#include "screen.h"
 #include "stack.h"
 #include "store.h"
+#include "ui/screen.h"
 #include <stdint.h>
 
 #include "wp43.h"
