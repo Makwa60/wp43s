@@ -662,19 +662,21 @@ void fnClSigma(uint16_t unusedButMandatoryParameter) {
 
 
 bool_t sigmaPlus(bool_t updateSaved, real_t *x, real_t *y) {
-  if(statisticalSumsPointer == NULL) {
-    initStatisticalSums();
-    if(lastErrorCode != ERROR_NONE) {
-      return false;
+  #if !defined(TESTSUITE_BUILD)
+    if(statisticalSumsPointer == NULL) {
+      initStatisticalSums();
+      if(lastErrorCode != ERROR_NONE) {
+        return false;
+      }
     }
-  }
-  addSigma(x, y);
-  AddtoStatsMatrix(x, y);
-  if(updateSaved) {
-    realCopy(x, &SAVED_SIGMA_LASTX);
-    realCopy(y, &SAVED_SIGMA_LASTY);
-    SAVED_SIGMA_LAct = +1;
-  }
+    addSigma(x, y);
+    AddtoStatsMatrix(x, y);
+    if(updateSaved) {
+      realCopy(x, &SAVED_SIGMA_LASTX);
+      realCopy(y, &SAVED_SIGMA_LASTY);
+      SAVED_SIGMA_LAct = +1;
+    }
+  #endif // !TESTSUITE_BUILD
   return true;
 }
 
