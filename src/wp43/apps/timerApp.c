@@ -39,119 +39,101 @@
 
 #include "wp43.h"
 
+#define TIMER_APP_REDRAW_PERIOD             100   // in milliseconds
+#define TIMER_APP_DETECT_WRAP_AROUND_PERIOD 60000 // in milliseconds
+
+timerAppState_t timerAppState = {0, 0, 0, true, true, false, 0, 0};
+
+static void _timerAppUpdate(void);
+
+void cbTimerAppRedraw(uint16_t unusedButMandatoryParameter) {
+  timerStart(tidTimerAppRedraw, NOPARAM, TIMER_APP_REDRAW_PERIOD);
+  _timerAppUpdate();
+}
+
+
+
+void timerAppResetState(void) {
+  timerAppState.startUptime     = 0;
+  timerAppState.lapTime         = 0;
+  timerAppState.totalTime       = 0;
+  timerAppState.isFirstDigit    = true;
+  timerAppState.showDeciseconds = true;
+  timerAppState.currentRegister = 0;
+}
+
 #if !defined(TESTSUITE_BUILD)
-  static void _antirewinder(uint32_t currTime) {
-    if(currTime < timerStartTime) {
-      timerValue += 86400000u - timerStartTime;
-      if(timerTotalTime > 0) {
-        timerTotalTime += 86400000u - timerStartTime;
-      }
-      timerStartTime = 0u;
+  static uint32_t _getTimerIncrement(uint32_t currTime) {
+    if(currTime < timerAppState.startUptime) {
+      return (UINT32_MAX - timerAppState.startUptime) + currTime + 1;
     }
-    else if(currTime >= timerStartTime + 3600000u) {
-      timerValue += 3600000u;
-      if(timerTotalTime > 0) {
-        timerTotalTime += 3600000u;
-      }
-      timerStartTime += 3600000u;
-    }
+    return currTime - timerAppState.startUptime;
   }
 
   static uint32_t _getTimerValue(void) {
-    uint32_t currTime = timeCurrentMs();
-
-    if(timerStartTime == TIMER_APP_STOPPED) {
-      return timerValue;
+    if(timerAppState.started) {
+      return _getTimerIncrement(timeUptimeMs()) + timerAppState.lapTime;
     }
-
-    _antirewinder(currTime);
-    return currTime - timerStartTime + timerValue;
+    return timerAppState.lapTime;
   }
 
-  //#if defined(PC_BUILD)
-  //  static gboolean _updateTimer(gpointer unusedData) {
-  //    if(calcMode != cmTimerApp) {
-  //      return FALSE;
-  //    }
-  //    timerAppUpdate();
-  //    return timerStartTime != TIMER_APP_STOPPED;
-  //  }
-  //#endif // PC_BUILD
+  static void _timerAppResetExceptTotal(void) {
+    if(timerAppState.started) {
+      timerAppState.startUptime = timeUptimeMs();
+    }
+    timerAppState.lapTime   = 0;
+    timerAppState.isFirstDigit = true;
+  }
 
   void fnTimerApp(uint16_t unusedButMandatoryParameter) {
-    calcModeEnter(cmTimerApp);
-    rbr1stDigit = true;
+    timerAppState.isFirstDigit = true;
     watchIconEnabled = false;
-    if(timerStartTime != TIMER_APP_STOPPED) {
-      timerStart(TO_TIMER_APP, TO_TIMER_APP, TIMER_APP_PERIOD);
-      //#if defined(PC_BUILD)
-      //  gdk_threads_add_timeout(100, _updateTimer, NULL);
-      //#endif // PC_BUILD
+    if(timerAppState.started) {
+      timerStart(tidTimerAppRedraw, NOPARAM, TIMER_APP_REDRAW_PERIOD);
     }
-  }
-
-  void fnAddTimerApp(uint16_t unusedButMandatoryParameter) {
-    real_t tmp;
-
-    uInt32ToReal(_getTimerValue() / 100u, &tmp);
-    tmp.exponent -= 1;
-    realDivide(&tmp, const_3600, &tmp, &ctxtReal39);
-
-    fnStatSum(0);
-    if(lastErrorCode != ERROR_NONE) {
-      liftStack();
-      clearRegister(REGISTER_X);
-      lastErrorCode = ERROR_NONE;
-    }
-    real34Add(REGISTER_REAL34_DATA(REGISTER_X), const34_1, REGISTER_REAL34_DATA(REGISTER_X));
-    liftStack();
-    realToReal34(&tmp, REGISTER_REAL34_DATA(REGISTER_X));
-    fnSigma(1);
-
-    refreshScreen();
+    calcModeEnter(cmTimerApp);
+    showSoftmenu(-MNU_TIMERF);
+    calcModeUpdateGui();
   }
 
   void fnDecisecondTimerApp(uint16_t unusedButMandatoryParameter) {
-    timerCraAndDeciseconds ^= 0x80u;
+    timerAppState.showDeciseconds = !timerAppState.showDeciseconds;
   }
 
   void fnResetTimerApp(uint16_t unusedButMandatoryParameter) {
-    timerValue = 0;
-    timerTotalTime = 0;
-    if(timerStartTime != TIMER_APP_STOPPED) {
-      timerStartTime = timeCurrentMs();
-      timerStart(TO_TIMER_APP, TO_TIMER_APP, TIMER_APP_PERIOD);
-    }
-    rbr1stDigit = true;
+    _timerAppResetExceptTotal();
+    timerAppState.totalTime = 0;
   }
 
   void timerAppStartStop(void) {
-    if(timerStartTime == TIMER_APP_STOPPED) {
-      setSystemFlag(FLAG_RUNTIM);
-      timerStartTime = timeCurrentMs();
-      timerStart(TO_TIMER_APP, TO_TIMER_APP, TIMER_APP_PERIOD);
-      //#if defined(PC_BUILD)
-      //  gdk_threads_add_timeout(100, _updateTimer, NULL);
-      //#endif // PC_BUILD
-    }
-    else {
+    if(timerAppState.started) {
       timerAppStop();
     }
-    rbr1stDigit = true;
+    else {
+      setSystemFlag(FLAG_RUNTIM);
+      timerAppState.startUptime = timeUptimeMs();
+      timerAppState.started     = true;
+      timerStart(tidTimerAppRedraw,           NOPARAM, TIMER_APP_REDRAW_PERIOD);
+      timerStart(tidTimerAppDetectWrapAround, NOPARAM, TIMER_APP_DETECT_WRAP_AROUND_PERIOD);
+      _timerAppUpdate();
+    }
+    timerAppState.isFirstDigit = true;
   }
 
   void timerAppStop(void) {
-    if(timerStartTime != TIMER_APP_STOPPED) {
-      const uint32_t msec = timeCurrentMs();
-      timerValue += msec - timerStartTime;
-      if(timerTotalTime > 0) {
-        timerTotalTime += msec - timerStartTime;
+    if(timerAppState.started) {
+      clearSystemFlag(FLAG_RUNTIM);
+      watchIconEnabled = false;
+      const uint32_t timeSinceLastLapUpdate = _getTimerValue() - timerAppState.lapTime;
+      timerAppState.lapTime += timeSinceLastLapUpdate;
+      if(timerAppState.totalTime > 0) {
+        timerAppState.totalTime += timeSinceLastLapUpdate;
       }
-      timerStartTime = TIMER_APP_STOPPED;
-      timerStop(TO_TIMER_APP);
+      timerAppState.started = false;
+      timerStop(tidTimerAppRedraw);
+      timerStop(tidTimerAppDetectWrapAround);
+      _timerAppUpdate();
     }
-    clearSystemFlag(FLAG_RUNTIM);
-    watchIconEnabled = false;
   }
 
   void timerAppDraw(void) {
@@ -162,9 +144,9 @@
 
     tmpString[0] = 0;
 
-    if(timerTotalTime > 0) {
-      const uint32_t tmsec = msec - timerValue + timerTotalTime;
-      if(timerCraAndDeciseconds & 0x80u) {
+    if(timerAppState.totalTime > 0) {
+      const uint32_t tmsec = (msec - timerAppState.lapTime) + timerAppState.totalTime;
+      if(timerAppState.showDeciseconds) {
         sprintf(tmpString, "%2" PRIu32 ":%02" PRIu32 ":%02" PRIu32 ".%" PRIu32 STD_SUP_T "  ", tmsec / 3600000u, tmsec % 3600000u / 60000u, tmsec % 60000u / 1000u, tmsec % 1000u / 100u);
       }
       else {
@@ -172,40 +154,23 @@
       }
     }
 
-    if(timerCraAndDeciseconds & 0x80u) {
+    if(timerAppState.showDeciseconds) {
       sprintf(tmpString + stringByteLength(tmpString), "%2" PRIu32 ":%02" PRIu32 ":%02" PRIu32 ".%" PRIu32 " ", msec / 3600000u, msec % 3600000u / 60000u, msec % 60000u / 1000u, msec % 1000u / 100u);
     }
     else {
       sprintf(tmpString + stringByteLength(tmpString), "%2" PRIu32 ":%02" PRIu32 ":%02" PRIu32 STD_SPACE_PUNCTUATION STD_SPACE_FIGURE " ", msec / 3600000u, msec % 3600000u / 60000u, msec % 60000u / 1000u);
     }
 
-    if(rbr1stDigit) {
-      sprintf(tmpString + stringByteLength(tmpString), "[%02" PRIu32 "]", (uint32_t)(timerCraAndDeciseconds & 0x7fu));
-    }
-    else if(aimBuffer[AIM_BUFFER_LENGTH / 2] == 0) {
-      sprintf(tmpString + stringByteLength(tmpString), "[" STD_CURSOR STD_SPACE_FIGURE "]");
+    if(timerAppState.isFirstDigit) {
+      sprintf(tmpString + stringByteLength(tmpString), "[%02" PRIu16 "]", timerAppState.currentRegister);
     }
     else {
-      sprintf(tmpString + stringByteLength(tmpString), "[%" PRId32 STD_CURSOR "]", (int32_t)(aimBuffer[AIM_BUFFER_LENGTH / 2] - '0'));
+      sprintf(tmpString + stringByteLength(tmpString), "[%" PRIu8 STD_CURSOR "]", timerAppState.firstDigit);
     }
     showString(tmpString, &numericFont, 1, Y_POSITION_OF_REGISTER_T_LINE, vmNormal, true, true);
-
-    bool_t timerMenu = false;
-    for(int i = 0; i < SOFTMENU_STACK_SIZE; i++) {
-      if(softmenu[softmenuStack[i].softmenuId].menuItem == -MNU_TIMERF) {
-        timerMenu = true;
-        break;
-      }
-    }
-    if(!timerMenu) {
-      showSoftmenu(-MNU_TIMERF);
-    }
-    if(softmenu[softmenuStack[0].softmenuId].menuItem == -MNU_TIMERF) {
-      calcModeUpdateGui();
-    }
   }
 
-  void timerAppUpdate(void) {
+  void _timerAppUpdate(void) {
     if(calcMode == cmTimerApp) {
       timerAppDraw();
       displayShiftAndTamBuffer();
@@ -218,142 +183,118 @@
     }
   }
 
-  void timerAppEnter(void) {
-    if(rbr1stDigit) {
-      real_t tmp;
-      uInt32ToReal(_getTimerValue() / 100u, &tmp);
-      tmp.exponent -= 1;
-      reallocateRegister(timerCraAndDeciseconds & 0x7fu, dtTime, REAL34_SIZE, amNone);
-      realToReal34(&tmp, REGISTER_REAL34_DATA(timerCraAndDeciseconds & 0x7fu));
-      timerAppUp();
-    }
-    else if(aimBuffer[AIM_BUFFER_LENGTH / 2] == 0) {
-      rbr1stDigit = true;
+  static void _timerAppGetLapTimeReal(real_t *lapTimeReal) {
+    uInt32ToReal(_getTimerValue() / 100u, lapTimeReal);
+    lapTimeReal->exponent -= 1;
+  }
+
+  void fnAddTimerApp(uint16_t unusedButMandatoryParameter) {
+    real_t lapTimeReal, numberOfSamplePoints;
+    _timerAppGetLapTimeReal(&lapTimeReal);
+    realDivide(&lapTimeReal, const_3600, &lapTimeReal, &ctxtReal39);
+
+    real_t *statSumSamplePoints = statSum(0);
+    if(statSumSamplePoints != NULL) {
+      realCopy(statSumSamplePoints, &numberOfSamplePoints);
     }
     else {
-      timerCraAndDeciseconds = (timerCraAndDeciseconds & 0x80u) + (uint8_t)(aimBuffer[AIM_BUFFER_LENGTH / 2] - '0');
-      rbr1stDigit = true;
+      realZero(&numberOfSamplePoints);
+    }
+    realAdd(&numberOfSamplePoints, const_1, &numberOfSamplePoints, &ctxtReal75);
+    sigmaPlus(true, &numberOfSamplePoints, &lapTimeReal);
+  }
+
+  void timerAppEnter(void) {
+    if(timerAppState.isFirstDigit) {
+      real_t lapTimeReal;
+      _timerAppGetLapTimeReal(&lapTimeReal);
+      reallocateRegister(timerAppState.currentRegister, dtTime, REAL34_SIZE, amNone);
+      realToReal34(&lapTimeReal, REGISTER_REAL34_DATA(timerAppState.currentRegister));
+      timerAppUp();
+    }
+    else {
+      timerAppState.isFirstDigit    = true;
+      timerAppState.currentRegister = timerAppState.firstDigit;
     }
   }
 
   void timerAppDot(void) {
-    const uint32_t msec = _getTimerValue();
-    real_t tmp;
+    if(timerAppState.isFirstDigit) {
+      timerAppEnter();
 
-    uInt32ToReal(msec / 100u, &tmp);
-    tmp.exponent -= 1;
-    reallocateRegister(timerCraAndDeciseconds & 0x7fu, dtTime, REAL34_SIZE, amNone);
-    realToReal34(&tmp, REGISTER_REAL34_DATA(timerCraAndDeciseconds & 0x7fu));
-
-    timerAppUp();
-
-    if(timerTotalTime > 0) {
-      timerTotalTime += msec - timerValue;
-    }
-    else {
-      timerTotalTime = msec;
-    }
-    timerValue = 0;
-    if(timerStartTime != TIMER_APP_STOPPED) {
-      timerStartTime = timeCurrentMs();
-      timerStart(TO_TIMER_APP, TO_TIMER_APP, TIMER_APP_PERIOD);
+      const uint32_t msec = _getTimerValue();
+      if(timerAppState.totalTime > 0) {
+        timerAppState.totalTime += msec - timerAppState.lapTime;
+      }
+      else {
+        timerAppState.totalTime = msec;
+      }
+      _timerAppResetExceptTotal();
     }
   }
 
   void timerAppPlus(void) {
-    const uint32_t msec = _getTimerValue();
-    real_t tmp;
-
-    uInt32ToReal(msec / 100u, &tmp);
-    tmp.exponent -= 1;
-    reallocateRegister(timerCraAndDeciseconds & 0x7fu, dtTime, REAL34_SIZE, amNone);
-    realToReal34(&tmp, REGISTER_REAL34_DATA(timerCraAndDeciseconds & 0x7fu));
-    realDivide(&tmp, const_3600, &tmp, &ctxtReal39);
-
-    fnStatSum(0);
-    if(lastErrorCode != ERROR_NONE) {
-      liftStack();
-      clearRegister(REGISTER_X);
-      lastErrorCode = ERROR_NONE;
+    if(timerAppState.isFirstDigit) {
+      fnAddTimerApp(NOPARAM);
+      timerAppDot();
     }
-    real34Add(REGISTER_REAL34_DATA(REGISTER_X), const34_1, REGISTER_REAL34_DATA(REGISTER_X));
-    liftStack();
-    realToReal34(&tmp, REGISTER_REAL34_DATA(REGISTER_X));
-    fnSigma(1);
-
-    timerAppUp();
-
-    if(timerTotalTime > 0) {
-      timerTotalTime += msec - timerValue;
-    }
-    else {
-      timerTotalTime = msec;
-    }
-    timerValue = 0;
-    if(timerStartTime != TIMER_APP_STOPPED) {
-      timerStartTime = timeCurrentMs();
-      timerStart(TO_TIMER_APP, TO_TIMER_APP, TIMER_APP_PERIOD);
-    }
-
-    refreshScreen();
   }
 
   void timerAppUp(void) {
-    if((timerCraAndDeciseconds & 0x7fu) >= 99u) {
-      timerCraAndDeciseconds &= 0x80u;
+    if(timerAppState.currentRegister >= 99) {
+      timerAppState.currentRegister = 0;
     }
     else {
-      ++timerCraAndDeciseconds;
+      timerAppState.currentRegister++;
     }
-    rbr1stDigit = true;
+    timerAppState.isFirstDigit = true;
   }
 
   void timerAppDown(void) {
-    if((timerCraAndDeciseconds & 0x7fu) == 0u) {
-      timerCraAndDeciseconds |= 99u;
+    if(timerAppState.currentRegister == 0) {
+      timerAppState.currentRegister = 99;
     }
     else {
-      --timerCraAndDeciseconds;
+      timerAppState.currentRegister--;
     }
-    rbr1stDigit = true;
+    timerAppState.isFirstDigit = true;
   }
 
   void timerAppDigitKey(uint16_t digit) {
-    if(rbr1stDigit || aimBuffer[AIM_BUFFER_LENGTH / 2] == 0) {
-      aimBuffer[AIM_BUFFER_LENGTH / 2    ] = digit + '0';
-      aimBuffer[AIM_BUFFER_LENGTH / 2 + 1] = 0;
-      rbr1stDigit = false;
+    if(timerAppState.isFirstDigit) {
+      timerAppState.isFirstDigit = false;
+      timerAppState.firstDigit   = digit;
     }
     else {
-      timerCraAndDeciseconds = (timerCraAndDeciseconds & 0x80u) + (uint8_t)(aimBuffer[AIM_BUFFER_LENGTH / 2] - '0') * 10u + digit;
-      rbr1stDigit = true;
+      timerAppState.isFirstDigit = true;
+      timerAppState.currentRegister = timerAppState.firstDigit * 10u + digit;
     }
   }
 
   void fnRecallTimerApp(uint16_t regist) {
-    real_t tmp;
+    real_t regValueReal;
     bool_t overflow;
-    uint32_t val;
+    uint32_t regValueUInt32;
 
     switch(getRegisterDataType(regist)) {
       case dtTime: {
-        real34ToReal(REGISTER_REAL34_DATA(regist), &tmp);
-        tmp.exponent += 3;
-        realToUInt32(&tmp, DEC_ROUND_DOWN, &val, &overflow);
+        real34ToReal(REGISTER_REAL34_DATA(regist), &regValueReal);
+        regValueReal.exponent += 3;
+        realToUInt32(&regValueReal, DEC_ROUND_DOWN, &regValueUInt32, &overflow);
         break;
       }
       case dtReal34: {
-        real34ToReal(REGISTER_REAL34_DATA(regist), &tmp);
-        realMultiply(&tmp, const_3600, &tmp, &ctxtReal39);
-        tmp.exponent += 3;
-        realToUInt32(&tmp, DEC_ROUND_HALF_EVEN, &val, &overflow);
+        real34ToReal(REGISTER_REAL34_DATA(regist), &regValueReal);
+        realMultiply(&regValueReal, const_3600, &regValueReal, &ctxtReal39);
+        regValueReal.exponent += 3;
+        realToUInt32(&regValueReal, DEC_ROUND_HALF_EVEN, &regValueUInt32, &overflow);
         break;
       }
       case dtLongInteger: {
-        convertLongIntegerRegisterToReal(regist, &tmp, &ctxtReal39);
-        realMultiply(&tmp, const_3600, &tmp, &ctxtReal39);
-        tmp.exponent += 3;
-        realToUInt32(&tmp, DEC_ROUND_HALF_EVEN, &val, &overflow);
+        convertLongIntegerRegisterToReal(regist, &regValueReal, &ctxtReal39);
+        realMultiply(&regValueReal, const_3600, &regValueReal, &ctxtReal39);
+        regValueReal.exponent += 3;
+        realToUInt32(&regValueReal, DEC_ROUND_HALF_EVEN, &regValueUInt32, &overflow);
         break;
       }
       default: {
@@ -374,53 +315,58 @@
       #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
     }
     else {
-      timerValue += val;
+      timerAppState.lapTime += regValueUInt32;
     }
   }
 
   void timerAppBackspace(void) {
-    if(rbr1stDigit) {
+    if(timerAppState.isFirstDigit) {
       fnResetTimerApp(NOPARAM);
     }
-    else if(aimBuffer[AIM_BUFFER_LENGTH / 2] == 0) {
-      rbr1stDigit = true;
-    }
     else {
-      aimBuffer[AIM_BUFFER_LENGTH / 2] = 0;
+      timerAppState.isFirstDigit = true;
     }
   }
 
   void timerAppLeave(void) {
     popSoftmenu();
-    rbr1stDigit = true;
     calcModeLeave();
-    watchIconEnabled = (timerStartTime != TIMER_APP_STOPPED);
+    timerAppState.isFirstDigit = true;
+    watchIconEnabled = timerAppState.started;
   }
 
-  void timerAppPoll(void) { // poll every minute not to rewind the timer
-    if(calcMode != cmTimerApp && timerStartTime != TIMER_APP_STOPPED) {
-      _antirewinder(timeCurrentMs());
+  void cbTimerAppDetectWrapAround(uint16_t unusedButMandatoryParameter) {
+    if(timerAppState.started) {
+      uint32_t currTime          = timeUptimeMs();
+      uint32_t timeIncrement     = _getTimerIncrement(currTime);
+      timerAppState.startUptime  = currTime;
+      timerAppState.lapTime     += timeIncrement;
+      if(timerAppState.totalTime > 0) {
+        timerAppState.totalTime += timeIncrement;
+      }
+      timerStart(tidTimerAppDetectWrapAround, NOPARAM, TIMER_APP_DETECT_WRAP_AROUND_PERIOD);
     }
   }
 #else // TESTSUITE_BUILD
-  void fnTimerApp           (uint16_t unusedButMandatoryParameter) {}
-  void fnAddTimerApp        (uint16_t unusedButMandatoryParameter) {}
-  void fnDecisecondTimerApp (uint16_t unusedButMandatoryParameter) {}
-  void fnResetTimerApp      (uint16_t unusedButMandatoryParameter) {}
-  void fnRecallTimerApp     (uint16_t regist) {}
+  static void _timerAppUpdate     (void) {}
+  void cbTimerAppDetectWrapAround (uint16_t unusedButMandatoryParameter) {}
 
-  void timerAppStartStop    (void) {}
-  void timerAppStop         (void) {}
-  void timerAppDraw         (void) {}
-  void timerAppUpdate       (void) {}
-  void timerAppPoll         (void) {}
-  void timerAppLeave        (void) {}
+  void fnTimerApp                 (uint16_t unusedButMandatoryParameter) {}
+  void fnAddTimerApp              (uint16_t unusedButMandatoryParameter) {}
+  void fnDecisecondTimerApp       (uint16_t unusedButMandatoryParameter) {}
+  void fnResetTimerApp            (uint16_t unusedButMandatoryParameter) {}
+  void fnRecallTimerApp           (uint16_t regist) {}
 
-  void timerAppEnter      (void) {}
-  void timerAppDot        (void) {}
-  void timerAppPlus       (void) {}
-  void timerAppUp         (void) {}
-  void timerAppDown       (void) {}
-  void timerAppDigitKey   (uint16_t digit) {}
-  void timerAppBackspace  (void) {}
+  void timerAppStartStop          (void) {}
+  void timerAppStop               (void) {}
+  void timerAppDraw               (void) {}
+  void timerAppLeave              (void) {}
+
+  void timerAppEnter              (void) {}
+  void timerAppDot                (void) {}
+  void timerAppPlus               (void) {}
+  void timerAppUp                 (void) {}
+  void timerAppDown               (void) {}
+  void timerAppDigitKey           (uint16_t digit) {}
+  void timerAppBackspace          (void) {}
 #endif // !TESTSUITE_BUILD TESTSUITE_BUILD

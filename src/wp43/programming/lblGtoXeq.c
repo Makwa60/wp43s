@@ -844,7 +844,7 @@ void runProgram(bool_t singleStep, uint16_t menuLabel) {
             programRunStop = PGM_WAITING;
             refreshScreen();
             lcd_refresh();
-            timerStart(TO_KB_ACTV, TO_KB_ACTV, 60000);
+            timerStart(tidKeyboardActive, NOPARAM, 60000);
             wait_for_key_release(0);
             key_pop();
             break;
@@ -876,7 +876,7 @@ stopProgram:
       showHideHourGlass();
       #if defined(DMCP_BUILD)
         lcd_refresh();
-        timerStart(TO_KB_ACTV, TO_KB_ACTV, FAST_SCREEN_REFRESH_PERIOD+50);
+        timerStart(tidKeyboardActive, NOPARAM, FAST_SCREEN_REFRESH_PERIOD+50);
       #else // !DMCP_BUILD
         refreshLcd();
       #endif // DMCP_BUILD

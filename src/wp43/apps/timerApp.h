@@ -20,27 +20,44 @@
 #if !defined(TIMERAPP_H)
   #define TIMERAPP_H
 
+  #include "typeDefinitions.h"
   #include <stdint.h>
 
-  void     fnTimerApp           (uint16_t unusedButMandatoryParameter);
-  void     fnAddTimerApp        (uint16_t unusedButMandatoryParameter);
-  void     fnDecisecondTimerApp (uint16_t unusedButMandatoryParameter);
-  void     fnResetTimerApp      (uint16_t unusedButMandatoryParameter);
-  void     fnRecallTimerApp     (uint16_t regist);
+  typedef struct {
+    uint32_t       startUptime     : 32;
+    uint32_t       lapTime         : 32;
+    uint32_t       totalTime       : 32;
+    bool_t         showDeciseconds :  1;
+    bool_t         isFirstDigit    :  1;
+    bool_t         started         :  1;
+    uint8_t        firstDigit      :  5;
+    calcRegister_t currentRegister :  8;
+  } timerAppState_t;
 
-  void     timerAppStartStop    (void);
-  void     timerAppStop         (void);
-  void     timerAppDraw         (void);
-  void     timerAppUpdate       (void);
-  void     timerAppPoll         (void);
-  void     timerAppLeave        (void);
+  extern timerAppState_t timerAppState;
 
-  void     timerAppEnter      (void);
-  void     timerAppDot        (void);
-  void     timerAppUp         (void);
-  void     timerAppDown       (void);
-  void     timerAppDigitKey   (uint16_t digit);
-  void     timerAppPlus       (void);
-  void     timerAppBackspace  (void);
+  void cbTimerAppRedraw           (uint16_t unusedButMandatoryParameter);
+  void cbTimerAppDetectWrapAround (uint16_t unusedButMandatoryParameter);
+
+  void timerAppResetState         (void);
+
+  void fnTimerApp                 (uint16_t unusedButMandatoryParameter);
+  void fnAddTimerApp              (uint16_t unusedButMandatoryParameter);
+  void fnDecisecondTimerApp       (uint16_t unusedButMandatoryParameter);
+  void fnResetTimerApp            (uint16_t unusedButMandatoryParameter);
+  void fnRecallTimerApp           (uint16_t regist);
+
+  void timerAppStartStop          (void);
+  void timerAppStop               (void);
+  void timerAppDraw               (void);
+  void timerAppLeave              (void);
+
+  void timerAppEnter              (void);
+  void timerAppDot                (void);
+  void timerAppUp                 (void);
+  void timerAppDown               (void);
+  void timerAppDigitKey           (uint16_t digit);
+  void timerAppPlus               (void);
+  void timerAppBackspace          (void);
 
 #endif // !TIMERAPP_H

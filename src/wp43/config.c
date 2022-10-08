@@ -24,6 +24,7 @@
 #include "apps/flagBrowser.h"
 #include "apps/fontBrowser.h"
 #include "apps/registerBrowser.h"
+#include "apps/timerApp.h"
 #include "calcMode.h"
 #include "charString.h"
 #include "constantPointers.h"
@@ -959,11 +960,7 @@ void fnReset(uint16_t confirmation) {
 
     graphVariable = 0;
 
-    // Timer application
-    timerCraAndDeciseconds = 0x80u;
-    timerValue             = 0u;
-    timerStartTime         = TIMER_APP_STOPPED;
-    timerTotalTime         = 0u;
+    timerAppResetState();
 
     #if (DEBUG_PANEL == 1)
       debugWindow = DBG_REGISTERS;
