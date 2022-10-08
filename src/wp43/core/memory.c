@@ -23,6 +23,7 @@
 #include "error.h"
 #include "items.h"
 #include "registers.h"
+#include <stdbool.h>
 
 #include "wp43.h"
 
@@ -48,7 +49,7 @@ int32_t getFreeRamMemory(void) {
   }
 #endif // !DMCP_BUILD
 
-bool_t isMemoryBlockAvailable(size_t sizeInBlocks) {
+bool isMemoryBlockAvailable(size_t sizeInBlocks) {
   int i;
 
   for(i=0; i<numberOfFreeMemoryRegions; i++) {

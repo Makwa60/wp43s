@@ -20,14 +20,14 @@
 #if !defined(REPORTER_H)
   #define REPORTER_H
 
-  #include "typeDefinitions.h"
+  #include <stdbool.h>
 
-  void   reporterStartTestSuites(void);
-  void   reporterStartTestSuite(const char *testSuiteName);
-  void   reporterStartTest(const char *testName);
-  void   reporterTestError(const char *errorMsg);
-  void   reporterEndTest(bool_t passed, const char *errorMsg);
-  void   reporterEndTestSuite(void);
-  bool_t reporterEndTestSuites(void);
+  void reporterStartTestSuites(void);
+  void reporterStartTestSuite(const char *testSuiteName);
+  void reporterStartTest(const char *testName);
+  void reporterTestError(const char *errorMsg);
+  void reporterEndTest(bool passed, const char *errorMsg);
+  void reporterEndTestSuite(void);
+  bool reporterEndTestSuites(void);
 
 #endif // !REPORTER_H

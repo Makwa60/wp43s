@@ -20,10 +20,10 @@
 #if !defined(REGISTERBROWSER_H)
   #define REGISTERBROWSER_H
 
-  #include "typeDefinitions.h"
+  #include <stdbool.h>
   #include <stdint.h>
 
-  extern bool_t  showContent;
+  extern bool    showContent;
   extern uint8_t rbrMode;
   extern int16_t currentRegisterBrowserScreen;
 

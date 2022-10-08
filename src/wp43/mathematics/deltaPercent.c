@@ -26,6 +26,7 @@
 #include "mathematics/comparisonReals.h"
 #include "registers.h"
 #include "registerValueConversions.h"
+#include <stdbool.h>
 
 #include "wp43.h"
 
@@ -93,7 +94,7 @@ void fnDeltaPercent(uint16_t unusedButMandatoryParameter) {
 // Delta% calculation functions
 //-----------------------------------------------------------------------------
 
-static bool_t deltaPercentReal(real_t *xReal, real_t *yReal, real_t *rReal, realContext_t *realContext) {
+static bool deltaPercentReal(real_t *xReal, real_t *yReal, real_t *rReal, realContext_t *realContext) {
   /*
    * Check x and y
    */

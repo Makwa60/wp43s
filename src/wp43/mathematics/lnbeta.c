@@ -29,6 +29,7 @@
 #include "mathematics/wp34s.h"
 #include "registers.h"
 #include "registerValueConversions.h"
+#include <stdbool.h>
 
 #include "wp43.h"
 
@@ -91,8 +92,8 @@ void fnLnBeta(uint16_t unusedButMandatoryParameter) {
 #define RESULT_TYPE_REAL    1
 #define RESULT_TYPE_COMPLEX 2
 
-static bool_t _checkLnGammaArgs(int8_t *resultType, real_t *xReal, realContext_t *realContext) {
-  bool_t result = true;
+static bool _checkLnGammaArgs(int8_t *resultType, real_t *xReal, realContext_t *realContext) {
+  bool result = true;
   *resultType = RESULT_TYPE_UNKNOWN;
 
   if(realIsInfinite(xReal)) {
@@ -188,7 +189,7 @@ static void _lnBetaComplex(real_t *xReal, real_t *xImag, real_t *yReal, real_t *
 
 
 
-static bool_t _lnBetaReal(real_t *xReal, real_t *yReal, real_t *rReal, real_t *rImag, realContext_t *realContext) {
+static bool _lnBetaReal(real_t *xReal, real_t *yReal, real_t *rReal, real_t *rImag, realContext_t *realContext) {
   int8_t xflag, yflag, sflag;
 
   realAdd(xReal, yReal, rReal, realContext);  // r = x+y

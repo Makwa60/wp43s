@@ -29,6 +29,7 @@
 #include "mathematics/wp34s.h"
 #include "registers.h"
 #include "registerValueConversions.h"
+#include <stdbool.h>
 
 #include "wp43.h"
 
@@ -81,7 +82,7 @@ void fnBeta(uint16_t unusedButMandatoryParameter) {
 }
 
 
-static bool_t _beta(real_t *xReal, real_t *xImag, real_t *yReal, real_t *yImag, real_t *rReal, real_t *rImag, realContext_t *realContext) {
+static bool _beta(real_t *xReal, real_t *xImag, real_t *yReal, real_t *yImag, real_t *rReal, real_t *rImag, realContext_t *realContext) {
   // Beta(x, y) := Gamma(x) * Gamma(y) / Gamma(x+y)
   real_t tReal, tImag;
 

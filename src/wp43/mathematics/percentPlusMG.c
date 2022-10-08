@@ -26,6 +26,7 @@
 #include "mathematics/comparisonReals.h"
 #include "registers.h"
 #include "registerValueConversions.h"
+#include <stdbool.h>
 
 #include "wp43.h"
 
@@ -91,7 +92,7 @@ void fnPercentPlusMG(uint16_t unusedButMandatoryParameter) {
 // %+MG calculation functions
 //-----------------------------------------------------------------------------
 
-static bool_t percentPlusMGReal(real_t *xReal, real_t *yReal, real_t *rReal, realContext_t *realContext) {
+static bool percentPlusMGReal(real_t *xReal, real_t *yReal, real_t *rReal, realContext_t *realContext) {
   /*
    * Check x and y
    */

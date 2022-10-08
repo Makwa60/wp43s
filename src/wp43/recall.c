@@ -29,13 +29,14 @@
 #include "registers.h"
 #include "stack.h"
 #include "store.h"
+#include <stdbool.h>
 
 #include "wp43.h"
 
 
 
 #if !defined(TESTSUITE_BUILD)
-  static bool_t recallElementReal(real34Matrix_t *matrix) {
+  static bool recallElementReal(real34Matrix_t *matrix) {
     const int16_t i = getIRegisterAsInt(true);
     const int16_t j = getJRegisterAsInt(true);
 
@@ -45,7 +46,7 @@
     return false;
   }
 
-  static bool_t recallElementComplex(complex34Matrix_t *matrix) {
+  static bool recallElementComplex(complex34Matrix_t *matrix) {
     const int16_t i = getIRegisterAsInt(true);
     const int16_t j = getJRegisterAsInt(true);
 

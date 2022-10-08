@@ -20,7 +20,7 @@
 #if !defined(IO_H)
   #define IO_H
 
-  #include "typeDefinitions.h"
+  #include <stdbool.h>
   #include <stdint.h>
 
   /**
@@ -58,7 +58,7 @@
    * \param[in] mode the mode to open the file (read, write, update)
    * \return true if file opened successfully
    */
-  bool_t ioFileOpen(ioFilePath_t path, ioFileMode_t mode);
+  bool ioFileOpen(ioFilePath_t path, ioFileMode_t mode);
 
   /**
    * Write to the open file.

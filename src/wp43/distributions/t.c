@@ -28,11 +28,12 @@
 #include "mathematics/wp34s.h"
 #include "registers.h"
 #include "registerValueConversions.h"
+#include <stdbool.h>
 
 #include "wp43.h"
 
 
-static bool_t checkParamT(real_t *x, real_t *i) {
+static bool checkParamT(real_t *x, real_t *i) {
   if(   ((getRegisterDataType(REGISTER_X) != dtReal34) && (getRegisterDataType(REGISTER_X) != dtLongInteger))
      || ((getRegisterDataType(REGISTER_I) != dtReal34) && (getRegisterDataType(REGISTER_I) != dtLongInteger))) {
       displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, REGISTER_X);
@@ -181,7 +182,7 @@ void WP34S_Pdf_T(const real_t *x, const real_t *nu, real_t *res, realContext_t *
 
 static void cdf_t(const real_t *x, const real_t *nu, real_t *res, realContext_t *realContext) {
   real_t p, q, r;
-  bool_t invert = false;
+  bool   invert = false;
 
   realCopy(x, &p);
 
@@ -235,8 +236,8 @@ void WP34S_Cdf_T(const real_t *x, const real_t *nu, real_t *res, realContext_t *
 }
 
 void WP34S_Qf_T(const real_t *x, const real_t *nu, real_t *res, realContext_t *realContext) {
-  real_t p, q, r, s, a, reg0;
-  bool_t neg = false;
+  real_t  p, q, r, s, a, reg0;
+  bool    neg = false;
   int32_t loops;
   realSubtract(const_1, x, &p, realContext);
   if(realCompareLessThan(x, &p)) {

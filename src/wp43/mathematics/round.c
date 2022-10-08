@@ -30,6 +30,7 @@
 #include "registerValueConversions.h"
 #include "saveRestoreCalcState.h"
 #include "ui/screen.h"
+#include <stdbool.h>
 
 #include "wp43.h"
 
@@ -191,7 +192,7 @@ void roundReal(void) {
 
 void roundCplx(void) {
   int32_t pos, posI;
-  bool_t polar = false;
+  bool    polar = false;
 
   updateDisplayValueX = true;
   displayValueX[0] = 0;

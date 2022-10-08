@@ -22,9 +22,10 @@
 
   #include "realType.h"
   #include "typeDefinitions.h"
+  #include <stdbool.h>
   #include <stdint.h>
 
-  bool_t checkRegisterNoFP(calcRegister_t reg);
+  bool checkRegisterNoFP(calcRegister_t reg);
 
   void fnChi2P        (uint16_t unusedButMandatoryParameter);
   void fnChi2L        (uint16_t unusedButMandatoryParameter);

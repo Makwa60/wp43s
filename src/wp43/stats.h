@@ -22,10 +22,10 @@
   #define STATS_H
 
   #include "realType.h"
-  #include "typeDefinitions.h"
+  #include <stdbool.h>
   #include <stdint.h>
 
-  bool_t  sigmaPlus             (bool_t updateSaved, real_t *x, real_t *y);
+  bool    sigmaPlus             (bool updateSaved, real_t *x, real_t *y);
 
   /**
    * Adds a value to the statistic registers.
@@ -69,11 +69,11 @@
    * An appropriate error message is displayed if either condition fails.
    *
    * \param[in] unusedButMandatoryParameter
-   * \return bool_t
+   * \return bool
    */
-  bool_t  isStatsMatrix(uint16_t *rows, char *mx);
+  bool    isStatsMatrix(uint16_t *rows, char *mx);
 
-  bool_t  checkMinimumDataPoints(const real_t *n);
+  bool    checkMinimumDataPoints(const real_t *n);
   void    initStatisticalSums   (void);
   void    calcSigma             (uint16_t maxOffset);
 

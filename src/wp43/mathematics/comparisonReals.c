@@ -22,12 +22,13 @@
 
 #include "constantPointers.h"
 #include "registerValueConversions.h"
+#include <stdbool.h>
 
 #include "wp43.h"
 
 
 
-bool_t real34CompareAbsGreaterThan(const real34_t *number1, const real34_t *number2) {
+bool real34CompareAbsGreaterThan(const real34_t *number1, const real34_t *number2) {
   real34_t num1, num2;
 
   real34CopyAbs(number1, &num1);
@@ -38,7 +39,7 @@ bool_t real34CompareAbsGreaterThan(const real34_t *number1, const real34_t *numb
 
 
 
-bool_t real34CompareAbsLessThan(const real34_t *number1, const real34_t *number2) {
+bool real34CompareAbsLessThan(const real34_t *number1, const real34_t *number2) {
   real34_t num1, num2;
 
   real34CopyAbs(number1, &num1);
@@ -49,7 +50,7 @@ bool_t real34CompareAbsLessThan(const real34_t *number1, const real34_t *number2
 
 
 
-bool_t real34CompareEqual(const real34_t *number1, const real34_t *number2) {
+bool real34CompareEqual(const real34_t *number1, const real34_t *number2) {
   real34_t compare;
 
   real34Compare(number1, number2, &compare);
@@ -58,7 +59,7 @@ bool_t real34CompareEqual(const real34_t *number1, const real34_t *number2) {
 
 
 
-bool_t real34CompareGreaterEqual(const real34_t *number1, const real34_t *number2) {
+bool real34CompareGreaterEqual(const real34_t *number1, const real34_t *number2) {
   real34_t compare;
 
   real34Compare(number1, number2, &compare);
@@ -67,7 +68,7 @@ bool_t real34CompareGreaterEqual(const real34_t *number1, const real34_t *number
 
 
 /* never used
-bool_t real34CompareGreaterThan(const real34_t *number1, const real34_t *number2) {
+bool real34CompareGreaterThan(const real34_t *number1, const real34_t *number2) {
   real34_t compare;
 
   real34Compare(number1, number2, &compare);
@@ -76,7 +77,7 @@ bool_t real34CompareGreaterThan(const real34_t *number1, const real34_t *number2
 */
 
 
-bool_t real34CompareLessEqual(const real34_t *number1, const real34_t *number2) {
+bool real34CompareLessEqual(const real34_t *number1, const real34_t *number2) {
   real34_t compare;
 
   real34Compare(number1, number2, &compare);
@@ -85,7 +86,7 @@ bool_t real34CompareLessEqual(const real34_t *number1, const real34_t *number2) 
 
 
 
-bool_t real34CompareLessThan(const real34_t *number1, const real34_t *number2) {
+bool real34CompareLessThan(const real34_t *number1, const real34_t *number2) {
   real34_t compare;
 
   real34Compare(number1, number2, &compare);
@@ -94,7 +95,7 @@ bool_t real34CompareLessThan(const real34_t *number1, const real34_t *number2) {
 
 
 
-bool_t realCompareAbsGreaterThan(const real_t *number1, const real_t *number2) {
+bool realCompareAbsGreaterThan(const real_t *number1, const real_t *number2) {
   real_t num1, num2;
   int32_t cmp;
 
@@ -107,7 +108,7 @@ bool_t realCompareAbsGreaterThan(const real_t *number1, const real_t *number2) {
 
 
 /*
-bool_t realCompareAbsGreaterEqual(const real_t *number1, const real_t *number2) {
+bool realCompareAbsGreaterEqual(const real_t *number1, const real_t *number2) {
   real_t num1, num2;
   int32_t cmp;
 
@@ -120,7 +121,7 @@ bool_t realCompareAbsGreaterEqual(const real_t *number1, const real_t *number2) 
 */
 
 
-bool_t realCompareAbsLessThan(const real_t *number1, const real_t *number2) {
+bool realCompareAbsLessThan(const real_t *number1, const real_t *number2) {
   real_t num1, num2;
   int32_t cmp;
 
@@ -133,7 +134,7 @@ bool_t realCompareAbsLessThan(const real_t *number1, const real_t *number2) {
 
 
 
-bool_t realCompareEqual(const real_t *number1, const real_t *number2) {
+bool realCompareEqual(const real_t *number1, const real_t *number2) {
   real_t compare;
   int32_t cmp;
 
@@ -144,7 +145,7 @@ bool_t realCompareEqual(const real_t *number1, const real_t *number2) {
 
 
 
-bool_t realCompareGreaterEqual(const real_t *number1, const real_t *number2) {
+bool realCompareGreaterEqual(const real_t *number1, const real_t *number2) {
   real_t compare;
   int32_t cmp;
 
@@ -155,7 +156,7 @@ bool_t realCompareGreaterEqual(const real_t *number1, const real_t *number2) {
 
 
 
-bool_t realCompareGreaterThan(const real_t *number1, const real_t *number2) {
+bool realCompareGreaterThan(const real_t *number1, const real_t *number2) {
   real_t compare;
   int32_t cmp;
 
@@ -166,7 +167,7 @@ bool_t realCompareGreaterThan(const real_t *number1, const real_t *number2) {
 
 
 
-bool_t realCompareLessEqual(const real_t *number1, const real_t *number2) {
+bool realCompareLessEqual(const real_t *number1, const real_t *number2) {
   real_t compare;
   int32_t cmp;
 
@@ -177,7 +178,7 @@ bool_t realCompareLessEqual(const real_t *number1, const real_t *number2) {
 
 
 
-bool_t realCompareLessThan(const real_t *number1, const real_t *number2) {
+bool realCompareLessThan(const real_t *number1, const real_t *number2) {
   real_t compare;
   int32_t cmp;
 
@@ -188,7 +189,7 @@ bool_t realCompareLessThan(const real_t *number1, const real_t *number2) {
 
 
 
-bool_t real34IsAnInteger(const real34_t *x) {
+bool real34IsAnInteger(const real34_t *x) {
   real34_t y;
 
   if(real34IsNaN(x) || real34IsInfinite(x)) {
@@ -203,7 +204,7 @@ bool_t real34IsAnInteger(const real34_t *x) {
 
 
 
-bool_t realIsAnInteger(const real_t *x) {
+bool realIsAnInteger(const real_t *x) {
   real_t y;
 
   if(realIsNaN(x)) {

@@ -21,7 +21,7 @@
   #define PLOTSTAT_H
 
   #include "realType.h"
-  #include "typeDefinitions.h"
+  #include <stdbool.h>
   #include <stdint.h>
 
   #define   useFLOAT           0
@@ -40,21 +40,21 @@
   //Graph options
   extern  float    graph_dx;
   extern  float    graph_dy;
-  extern  bool_t   roundedTicks;
-  extern  bool_t   extentx;
-  extern  bool_t   extenty;
-  extern  bool_t   PLOT_VECT;
-  extern  bool_t   PLOT_NVECT;
-  extern  bool_t   PLOT_SCALE;
-  extern  bool_t   Aspect_Square;
-  extern  bool_t   PLOT_LINE;
-  extern  bool_t   PLOT_CROSS;
-  extern  bool_t   PLOT_BOX;
-  extern  bool_t   PLOT_INTG;
-  extern  bool_t   PLOT_DIFF;
-  extern  bool_t   PLOT_RMS;
-  extern  bool_t   PLOT_SHADE;
-  extern  bool_t   PLOT_AXIS;
+  extern  bool     roundedTicks;
+  extern  bool     extentx;
+  extern  bool     extenty;
+  extern  bool     PLOT_VECT;
+  extern  bool     PLOT_NVECT;
+  extern  bool     PLOT_SCALE;
+  extern  bool     Aspect_Square;
+  extern  bool     PLOT_LINE;
+  extern  bool     PLOT_CROSS;
+  extern  bool     PLOT_BOX;
+  extern  bool     PLOT_INTG;
+  extern  bool     PLOT_DIFF;
+  extern  bool     PLOT_RMS;
+  extern  bool     PLOT_SHADE;
+  extern  bool     PLOT_AXIS;
   extern  int8_t   PLOT_ZMX;
   extern  int8_t   PLOT_ZMY;
   extern  uint8_t  PLOT_ZOOM;
@@ -86,10 +86,10 @@
   //Utility functions
   void    placePixel         (uint32_t x, uint32_t y);
   void    removePixel        (uint32_t x, uint32_t y);
-  void    clearScreenPixels  ();
+  void    clearScreenPixels  (void);
   void    plotcross          (uint16_t xn, uint8_t yn);              // Plots line from xo,yo to xn,yn; uses temporary x1,y1
   void    plotbox            (uint16_t xn, uint8_t yn);                // Plots line from xo,yo to xn,yn; uses temporary x1,y1
-  void    pixelline          (uint16_t xo, uint8_t yo, uint16_t xn, uint8_t yn, bool_t vmNormal);              // Plots line from xo,yo to xn,yn; uses temporary x1,y1
+  void    pixelline          (uint16_t xo, uint8_t yo, uint16_t xn, uint8_t yn, bool vmNormal);              // Plots line from xo,yo to xn,yn; uses temporary x1,y1
   void    plotline           (uint16_t xo, uint8_t yo, uint16_t xn, uint8_t yn);
   void    graphAxisDraw      (void);
   void    graph_axis         (void);

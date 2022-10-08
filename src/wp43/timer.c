@@ -18,6 +18,7 @@
 
 #include "defines.h"
 #include "hal/time.h"
+#include <stdbool.h>
 #include <stdio.h>
 
 #include "wp43.h"
@@ -32,7 +33,7 @@ typedef struct {
 static kb_timer_t  timer[MAX_TIMER_ID];
 static uint32_t    timerLastCalled;
 #if defined(DMCP_BUILD)
-  static bool_t      mutexRefreshTimer = false;
+  static bool        mutexRefreshTimer = false;
 #endif // DMCP_BUILD
 
 

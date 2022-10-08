@@ -30,6 +30,7 @@
 #include "matrix.h"
 #include "registers.h"
 #include "registerValueConversions.h"
+#include <stdbool.h>
 
 #include "wp43.h"
 
@@ -715,8 +716,8 @@ void divRemaLonI(void) {
 void divLonIRema(void) {
   #if !defined(TESTSUITE_BUILD)
     real34Matrix_t matrix, res;
-    real_t y;
-    bool_t divZeroOccurs = false;
+    real_t         y;
+    bool           divZeroOccurs = false;
 
     convertLongIntegerRegisterToReal(REGISTER_Y, &y, &ctxtReal39);
     linkToRealMatrixRegister(REGISTER_X, &matrix);
@@ -844,8 +845,8 @@ void divRemaShoI(void) {
 void divShoIRema(void) {
   #if !defined(TESTSUITE_BUILD)
     real34Matrix_t matrix, res;
-    real_t y;
-    bool_t divZeroOccurs = false;
+    real_t         y;
+    bool           divZeroOccurs = false;
 
     convertShortIntegerRegisterToReal(REGISTER_Y, &y, &ctxtReal39);
     linkToRealMatrixRegister(REGISTER_X, &matrix);
@@ -915,7 +916,7 @@ void divRemaReal(void) {
 void divRealRema(void) {
   #if !defined(TESTSUITE_BUILD)
     real34Matrix_t matrix, res;
-    bool_t divZeroOccurs = false;
+    bool           divZeroOccurs = false;
 
     linkToRealMatrixRegister(REGISTER_X, &matrix);
     if(!getSystemFlag(FLAG_SPCRES)) {

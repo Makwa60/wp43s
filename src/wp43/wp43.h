@@ -58,21 +58,22 @@
   #include "mathematics/pcg_basic.h"
   #include "realType.h"
   #include "typeDefinitions.h"
+  #include <stdbool.h>
 
   // Variables for the simulator
   #if defined(PC_BUILD) || defined(TESTSUITE_BUILD)
-    extern bool_t               debugMemAllocation;
+    extern bool                 debugMemAllocation;
   #endif // PC_BUILD || TESTSUITE_BUILD
 
   #if defined(PC_BUILD)
-    extern bool_t               calcLandscape;
-    extern bool_t               calcAutoLandscapePortrait;
+    extern bool                 calcLandscape;
+    extern bool                 calcAutoLandscapePortrait;
     extern GtkWidget           *screen;
     extern GtkWidget           *frmCalc;
     extern int16_t              screenStride;
     extern int16_t              debugWindow;
     extern uint32_t            *screenData;
-    extern bool_t               screenChange;
+    extern bool                 screenChange;
     extern char                 debugString[10000];
     #if (DEBUG_REGISTER_L == 1)
       extern GtkWidget         *lblRegisterL1;
@@ -105,21 +106,21 @@
   extern real51_t                 const *angle45;
 
   // Variables stored in RAM
-  extern bool_t                 funcOK;
-  extern bool_t                 keyActionProcessed;
-  extern bool_t                 fnKeyInCatalog;
-  extern bool_t                 hourGlassIconEnabled;
-  extern bool_t                 watchIconEnabled;
-  extern bool_t                 printerIconEnabled;
-  extern bool_t                 shiftF;
-  extern bool_t                 shiftG;
-  extern bool_t                 rbr1stDigit;
-  extern bool_t                 updateDisplayValueX;
-  extern bool_t                 thereIsSomethingToUndo;
-  extern bool_t                 lastProgramListEnd;
-  extern bool_t                 programListEnd;
-  extern bool_t                 serialIOIconEnabled;
-  extern bool_t                 pemCursorIsZerothStep;
+  extern bool                   funcOK;
+  extern bool                   keyActionProcessed;
+  extern bool                   fnKeyInCatalog;
+  extern bool                   hourGlassIconEnabled;
+  extern bool                   watchIconEnabled;
+  extern bool                   printerIconEnabled;
+  extern bool                   shiftF;
+  extern bool                   shiftG;
+  extern bool                   rbr1stDigit;
+  extern bool                   updateDisplayValueX;
+  extern bool                   thereIsSomethingToUndo;
+  extern bool                   lastProgramListEnd;
+  extern bool                   programListEnd;
+  extern bool                   serialIOIconEnabled;
+  extern bool                   pemCursorIsZerothStep;
 
   extern registerHeader_t       globalRegister[NUMBER_OF_GLOBAL_REGISTERS];
   extern registerHeader_t       savedStackRegister[NUMBER_OF_SAVED_STACK_REGISTERS + NUMBER_OF_TEMP_REGISTERS];
@@ -288,7 +289,7 @@
   extern char                   plotStatMx[8];
 
   #if defined(DMCP_BUILD)
-    extern bool_t               backToDMCP;
+    extern bool                 backToDMCP;
     //extern int                  keyAutoRepeat; // Key repetition
     //extern int16_t              previousItem;
     extern uint32_t             nextTimerRefresh;

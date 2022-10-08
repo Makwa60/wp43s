@@ -23,6 +23,7 @@
   #include "longIntegerType.h"
   #include "realType.h"
   #include "typeDefinitions.h"
+  #include <stdbool.h>
 
   void convertLongIntegerRegisterToReal34Register            (calcRegister_t source, calcRegister_t destination);
   void convertLongIntegerRegisterToShortIntegerRegister      (calcRegister_t source, calcRegister_t destination);
@@ -54,7 +55,7 @@
   void convertRealToLongInteger                              (const real_t *real, longInteger_t lgInt, realRoundingMode_t mode);
   void convertRealToLongIntegerRegister                      (const real_t *real, calcRegister_t dest, realRoundingMode_t mode);
   void realToIntegralValue                                   (const real_t *source, real_t *destination, realRoundingMode_t mode, realContext_t *realContext);
-  void realToUInt32                                          (const real_t *re, realRoundingMode_t mode, uint32_t *value32, bool_t *overflow);
+  void realToUInt32                                          (const real_t *re, realRoundingMode_t mode, uint32_t *value32, bool *overflow);
 
   /********************************************//**
    * \brief Sets function result in real type to a real34 register.

@@ -27,7 +27,7 @@ static guiLayout_t      _appsLayout;
 static appsKeyHandler_t _appsKeyHandler;
 static appsDraw_t       _appsDraw;
 
-static bool_t _appsHandleKeyDefault(int16_t item) {
+static bool _appsHandleKeyDefault(int16_t item) {
   switch(item) {
     case ITM_BACKSPACE:
       calcModeLeave();
@@ -48,7 +48,7 @@ static bool_t _appsHandleKeyDefault(int16_t item) {
 
 void appsHandleKey(int16_t item) {
   assert(calcMode == cmApp);
-  bool_t processed = _appsKeyHandler(item);
+  bool processed = _appsKeyHandler(item);
   if(!processed) {
     processed = _appsHandleKeyDefault(item);
   }

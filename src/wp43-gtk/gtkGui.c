@@ -27,6 +27,7 @@
 #include "saveRestoreCalcState.h"
 #include "ui/keyboard.h"
 #include "ui/screen.h"
+#include <stdbool.h>
 
 #include "wp43.h"
 
@@ -314,7 +315,7 @@ void frmCalcMouseButtonReleased(GtkWidget *notUsed, GdkEvent *event, gpointer da
         }
 
         if(!strncmp(parameter, "bezel", 5)) {
-          bool_t found = false;
+          bool found = false;
           for(guiLayout_t layout = 0; layout < MAX_GUI_LAYOUTS; layout++) {
             if(!strcmp(parameter + 6, _layoutNames[layout])) {
               if(parameter[5] == 'i') {
@@ -383,7 +384,7 @@ void frmCalcMouseButtonReleased(GtkWidget *notUsed, GdkEvent *event, gpointer da
             continue;
           }
 
-          bool_t found = false;
+          bool found = false;
           for(guiLayout_t layout = 0; layout < MAX_GUI_LAYOUTS; layout++) {
             if(!strcmp(parameter + 5, _layoutNames[layout])) {
               sprintf(fileName, "%s%s", skinDirectory, value);

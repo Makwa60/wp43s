@@ -22,7 +22,7 @@
 #include "fonts.h"
 #include "hal/lcd.h"
 #include "ui/screen.h"
-#include "typeDefinitions.h"
+#include <stdbool.h>
 #include <string.h>
 
 #include "wp43.h"
@@ -48,7 +48,7 @@
 
 
 
-  static bool_t _bugScreenKeyHandler(int16_t item) {
+  static bool _bugScreenKeyHandler(int16_t item) {
     return false;
   }
 
@@ -57,7 +57,7 @@
   static void _bugScreenDraw(void) {
     int16_t y, pos;
     char line[100], word[50], message[1000];
-    bool_t firstWordOfLine;
+    bool firstWordOfLine;
 
     lcd_fill_rect(0, 20, SCREEN_WIDTH, 220, LCD_SET_VALUE);
 

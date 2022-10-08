@@ -30,6 +30,7 @@
 #include "mathematics/wp34s.h"
 #include "registers.h"
 #include "registerValueConversions.h"
+#include <stdbool.h>
 
 #include "wp43.h"
 
@@ -91,7 +92,7 @@ void logCyxReal(real_t *y, real_t *x, real_t *result, realContext_t *realContext
 }
 
 static void cyxReal(real_t *y, real_t *x, real_t *result, realContext_t *realContext) {
-  bool_t inputAreIntegers = (realIsAnInteger(x) && realIsAnInteger(y));
+  bool inputAreIntegers = (realIsAnInteger(x) && realIsAnInteger(y));
 
   logCyxReal(y, x, result, realContext);
 
@@ -168,7 +169,7 @@ static void cyxCplx(real_t *yReal, real_t *yImag, real_t *xReal, real_t *xImag, 
 }
 
 static void pyxReal(real_t *y, real_t *x, real_t *result, realContext_t *realContext) {
-  bool_t inputAreIntegers = (realIsAnInteger(x) && realIsAnInteger(y));
+  bool inputAreIntegers = (realIsAnInteger(x) && realIsAnInteger(y));
 
   realSubtract(y, x, result, realContext);
   realAdd(result, const_1, result, realContext);

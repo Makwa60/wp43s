@@ -28,13 +28,14 @@
 #include "ui/keyboard.h"
 #include "ui/screen.h"
 #include "ui/softmenus.h"
+#include <stdbool.h>
 
-bool_t               backToDMCP;
-//int                  keyAutoRepeat;
-//int16_t              previousItem;
-uint32_t             nextTimerRefresh;
-uint32_t             nextScreenRefresh; // timer substitute for refreshLcd(), which does cursor blinking and other stuff
-bool_t               wp43KbdLayout;
+bool     backToDMCP;
+//int      keyAutoRepeat;
+//int16_t  previousItem;
+uint32_t nextTimerRefresh;
+uint32_t nextScreenRefresh; // timer substitute for refreshLcd(), which does cursor blinking and other stuff
+bool     wp43KbdLayout;
 
 int convertKeyCode(int key) {
   if(wp43KbdLayout) {
@@ -121,7 +122,7 @@ int convertKeyCode(int key) {
 void program_main(void) {
   int key = 0;
   char charKey[3];
-  /*bool_t wp43KbdLayout, inFastRefresh = 0, inDownUpPress = 0, repeatDownUpPress = 0*/;
+  /*bool wp43KbdLayout, inFastRefresh = 0, inDownUpPress = 0, repeatDownUpPress = 0*/;
   //uint32_t now, previousRefresh, nextAutoRepeat = 0;
 
   wp43MemInBlocks = 0;

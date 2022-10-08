@@ -35,11 +35,12 @@
 #include "mathematics/wp34s.h"
 #include "registers.h"
 #include "registerValueConversions.h"
+#include <stdbool.h>
 
 #include "wp43.h"
 
 
-static bool_t checkParamF(real_t *x, real_t *i, real_t *j) {
+static bool checkParamF(real_t *x, real_t *i, real_t *j) {
   if(   ((getRegisterDataType(REGISTER_X) != dtReal34) && (getRegisterDataType(REGISTER_X) != dtLongInteger))
      || ((getRegisterDataType(REGISTER_I) != dtReal34) && (getRegisterDataType(REGISTER_I) != dtLongInteger))
      || ((getRegisterDataType(REGISTER_J) != dtReal34) && (getRegisterDataType(REGISTER_J) != dtLongInteger))) {
@@ -300,10 +301,10 @@ void WP34S_Qf_F(const real_t *x, const real_t *d1, const real_t *d2, real_t *res
  * Target value in Y, function identifier in X, estimate in Z.
  */
 void WP34S_Qf_Newton(uint32_t r_dist, const real_t *target, const real_t *estimate, const real_t *p1, const real_t *p2, const real_t *p3, real_t *res, realContext_t *realContext) {
-  real_t p, q;
-  real_t r_p, r_low, r_high, r_maxstep, r_r, r_z, r_w;
+  real_t   p, q;
+  real_t   r_p, r_low, r_high, r_maxstep, r_r, r_z, r_w;
   uint32_t r_iterations;
-  bool_t f_discrete = false, f_nonnegative = false, f_nobisect = false, f_limitjump = false;
+  bool     f_discrete = false, f_nonnegative = false, f_nobisect = false, f_limitjump = false;
 
   // qf_newton
   realCopy(target, &r_p);

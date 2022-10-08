@@ -26,6 +26,7 @@
 #include "registers.h"
 #include "registerValueConversions.h"
 #include "stack.h"
+#include <stdbool.h>
 
 #include "wp43.h"
 
@@ -176,10 +177,10 @@ void fnXToAlpha(uint16_t unusedButMandatoryParameter) {
 
 
 void fnAlphaPos(uint16_t regist) {
-  longInteger_t lgInt;
-  char *ptrTarget, *ptrRegist;
-  int16_t lgTarget, lgRegist, i, j;
-  bool_t found;
+  longInteger_t  lgInt;
+  char          *ptrTarget, *ptrRegist;
+  int16_t        lgTarget, lgRegist, i, j;
+  bool           found;
 
   if(getRegisterDataType(regist) != dtString) {
     displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, REGISTER_X);
