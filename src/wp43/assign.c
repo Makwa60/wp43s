@@ -31,8 +31,10 @@
 #include "ui/bufferize.h"
 #include "ui/screen.h"
 #include "ui/softmenus.h"
-#include "wp43.h"
+#include <stdbool.h>
 #include <string.h>
+
+#include "wp43.h"
 
 //This variable is to store in flash memory
 TO_QSPI const calcKey_t kbd_std[37] = {
@@ -696,7 +698,7 @@ void assignGetName1(void) {
   }
 }
 
-static bool_t _assignToKey(int16_t keyFunc) {
+static bool _assignToKey(int16_t keyFunc) {
   int keyStateCode = (previousCalcMode) == cmAim ? 3 : 0;
 
   for(int i = 0; i < 3; ++i) {
@@ -743,7 +745,7 @@ static bool_t _assignToKey(int16_t keyFunc) {
 }
 
 void assignGetName2(void) {
-  bool_t result = false;
+  bool result = false;
   if(compareString(aimBuffer, "ENTER", CMP_NAME) == 0) {
     result = _assignToKey(ITM_ENTER);
   }

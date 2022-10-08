@@ -53,6 +53,7 @@
 #include "ui/softmenus.h"
 #include "ui/statusBar.h"
 #include "version.h"
+#include <stdbool.h>
 #include <string.h>
 
 #include "wp43.h"
@@ -80,7 +81,7 @@
   // This function is called periodically by the main loop or a GTK timer
   void refreshLcd(void) {
     // Cursor blinking
-    static bool_t cursorBlink=true;
+    static bool cursorBlink=true;
 
     if(cursorEnabled) {
       if(cursorBlink) {
@@ -187,7 +188,7 @@ void clearScreen(void) {
 
 
 #if !defined(TESTSUITE_BUILD)
-  uint32_t showGlyphCode(uint16_t charCode, const font_t *font, uint32_t x, uint32_t y, videoMode_t videoMode, bool_t showLeadingCols, bool_t showEndingCols) {
+  uint32_t showGlyphCode(uint16_t charCode, const font_t *font, uint32_t x, uint32_t y, videoMode_t videoMode, bool showLeadingCols, bool showEndingCols) {
     uint32_t  col, row, xGlyph, endingCols;
     int32_t glyphId;
     int8_t   byte, *data;
@@ -278,7 +279,7 @@ void clearScreen(void) {
 
 
 
-  uint32_t showGlyph(const char *ch, const font_t *font, uint32_t x, uint32_t y, videoMode_t videoMode, bool_t showLeadingCols, bool_t showEndingCols) {
+  uint32_t showGlyph(const char *ch, const font_t *font, uint32_t x, uint32_t y, videoMode_t videoMode, bool showLeadingCols, bool showEndingCols) {
     return showGlyphCode(charCodeFromString(ch, 0), font, x, y, videoMode, showLeadingCols, showEndingCols);
   }
 
@@ -309,9 +310,9 @@ void clearScreen(void) {
 
 
 
-  uint32_t showString(const char *string, const font_t *font, uint32_t x, uint32_t y, videoMode_t videoMode, bool_t showLeadingCols, bool_t showEndingCols) {
+  uint32_t showString(const char *string, const font_t *font, uint32_t x, uint32_t y, videoMode_t videoMode, bool showLeadingCols, bool showEndingCols) {
     uint16_t ch, lg;
-    bool_t   slc, sec;
+    bool     slc, sec;
 
     lg = stringByteLength(string);
 
@@ -419,7 +420,7 @@ void clearScreen(void) {
 
 
 
-  void clearRegisterLine(calcRegister_t regist, bool_t clearTop, bool_t clearBottom) {
+  void clearRegisterLine(calcRegister_t regist, bool clearTop, bool clearBottom) {
     if(REGISTER_X <= regist && regist <= REGISTER_T) {
       uint32_t yStart = Y_POSITION_OF_REGISTER_X_LINE - REGISTER_LINE_HEIGHT*(regist - REGISTER_X);
       uint32_t height = 32;
@@ -513,9 +514,9 @@ void clearScreen(void) {
       }
       const uint16_t rows = matrix.header.matrixRows;
       const uint16_t cols = matrix.header.matrixColumns;
-      bool_t smallFont = (rows >= 5);
-      int16_t dummyVal[MATRIX_MAX_COLUMNS * (MATRIX_MAX_ROWS + 1) + 1] = {};
-      const int16_t mtxWidth = getRealMatrixColumnWidths(&matrix, prefixWidth, &numericFont, dummyVal, dummyVal + MATRIX_MAX_COLUMNS, dummyVal + (MATRIX_MAX_ROWS + 1) * MATRIX_MAX_COLUMNS, cols > MATRIX_MAX_COLUMNS ? MATRIX_MAX_COLUMNS : cols);
+      bool           smallFont = (rows >= 5);
+      int16_t        dummyVal[MATRIX_MAX_COLUMNS * (MATRIX_MAX_ROWS + 1) + 1] = {};
+      const int16_t  mtxWidth = getRealMatrixColumnWidths(&matrix, prefixWidth, &numericFont, dummyVal, dummyVal + MATRIX_MAX_COLUMNS, dummyVal + (MATRIX_MAX_ROWS + 1) * MATRIX_MAX_COLUMNS, cols > MATRIX_MAX_COLUMNS ? MATRIX_MAX_COLUMNS : cols);
       if(abs(mtxWidth) > MATRIX_LINE_WIDTH) {
         smallFont = true;
       }
@@ -553,9 +554,9 @@ void clearScreen(void) {
         linkToComplexMatrixRegister(REGISTER_X, &matrix);
       const uint16_t rows = matrix.header.matrixRows;
       const uint16_t cols = matrix.header.matrixColumns;
-      bool_t smallFont = (rows >= 5);
-      int16_t dummyVal[MATRIX_MAX_COLUMNS * (MATRIX_MAX_ROWS * 2 + 3) + 1] = {};
-      const int16_t mtxWidth = getComplexMatrixColumnWidths(&matrix, prefixWidth, &numericFont, dummyVal, dummyVal + MATRIX_MAX_COLUMNS, dummyVal + MATRIX_MAX_COLUMNS * 2, dummyVal + MATRIX_MAX_COLUMNS * 3, dummyVal + MATRIX_MAX_COLUMNS * (MATRIX_MAX_ROWS + 3), dummyVal + MATRIX_MAX_COLUMNS * (MATRIX_MAX_ROWS * 2 + 3), cols > MATRIX_MAX_COLUMNS ? MATRIX_MAX_COLUMNS : cols);
+      bool           smallFont = (rows >= 5);
+      int16_t        dummyVal[MATRIX_MAX_COLUMNS * (MATRIX_MAX_ROWS * 2 + 3) + 1] = {};
+      const int16_t  mtxWidth = getComplexMatrixColumnWidths(&matrix, prefixWidth, &numericFont, dummyVal, dummyVal + MATRIX_MAX_COLUMNS, dummyVal + MATRIX_MAX_COLUMNS * 2, dummyVal + MATRIX_MAX_COLUMNS * 3, dummyVal + MATRIX_MAX_COLUMNS * (MATRIX_MAX_ROWS + 3), dummyVal + MATRIX_MAX_COLUMNS * (MATRIX_MAX_ROWS * 2 + 3), cols > MATRIX_MAX_COLUMNS ? MATRIX_MAX_COLUMNS : cols);
       if(mtxWidth > MATRIX_LINE_WIDTH) {
         smallFont = true;
       }
@@ -585,9 +586,9 @@ void clearScreen(void) {
   }
 
   void refreshRegisterLine(calcRegister_t regist) {
-    int16_t w, wLastBaseNumeric, wLastBaseStandard, prefixWidth, lineWidth = 0;
-    bool_t prefixPre = true;
-    bool_t prefixPost = true;
+    int16_t       w, wLastBaseNumeric, wLastBaseStandard, prefixWidth, lineWidth = 0;
+    bool          prefixPre = true;
+    bool          prefixPost = true;
     const uint8_t origDisplayStack = displayStack;
 
     char prefix[200], lastBase[4];
@@ -1128,8 +1129,8 @@ void clearScreen(void) {
           //L.R. Display
           else if(temporaryInformation == TI_LR && lrChosen != 0) {
             #define LRWidth 140
-            bool_t prefixPre = false;
-            bool_t prefixPost = false;
+            bool prefixPre = false;
+            bool prefixPost = false;
 
             if(lrChosen == CF_CAUCHY_FITTING || lrChosen == CF_GAUSS_FITTING || lrChosen == CF_PARABOLIC_FITTING){
               if(regist == REGISTER_X) {
@@ -1872,7 +1873,7 @@ void clearScreen(void) {
         }
 
         if(currentSolverStatus & SOLVER_STATUS_INTERACTIVE) {
-          bool_t mvarMenu = false;
+          bool mvarMenu = false;
           for(int i = 0; i < SOFTMENU_STACK_SIZE; i++) {
             if(softmenu[softmenuStack[i].softmenuId].menuItem == -MNU_MVAR) {
               mvarMenu = true;
@@ -1895,7 +1896,7 @@ void clearScreen(void) {
           }
         }
         if(calcMode == cmEim) {
-          bool_t mvarMenu = false;
+          bool mvarMenu = false;
           for(int i = 0; i < SOFTMENU_STACK_SIZE; i++) {
             if(softmenu[softmenuStack[i].softmenuId].menuItem == -MNU_EQ_EDIT) {
               mvarMenu = true;

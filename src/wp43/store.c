@@ -27,13 +27,14 @@
 #include "registerValueConversions.h"
 #include "registers.h"
 #include "stats.h"
+#include <stdbool.h>
 
 #include "wp43.h"
 
 
 
-bool_t regInRange(uint16_t regist) {
-  bool_t inRange = (
+bool regInRange(uint16_t regist) {
+  bool inRange = (
     (regist < FIRST_LOCAL_REGISTER + currentNumberOfLocalRegisters) ||
     (regist >= FIRST_NAMED_VARIABLE && regist - FIRST_NAMED_VARIABLE < numberOfNamedVariables) ||
     (regist >= FIRST_RESERVED_VARIABLE && regist <= LAST_RESERVED_VARIABLE));
@@ -58,7 +59,7 @@ bool_t regInRange(uint16_t regist) {
   return inRange;
 }
 
-static bool_t _checkReadOnlyVariable(uint16_t regist) {
+static bool _checkReadOnlyVariable(uint16_t regist) {
   if(regist >= FIRST_RESERVED_VARIABLE && regist <= LAST_RESERVED_VARIABLE && allReservedVariables[regist - FIRST_RESERVED_VARIABLE].header.readOnly == 1) {
     displayCalcErrorMessage(ERROR_WRITE_PROTECTED_VAR, ERR_REGISTER_LINE, REGISTER_X);
     #if (EXTRA_INFO_ON_CALC_ERROR == 1)
@@ -75,7 +76,7 @@ static bool_t _checkReadOnlyVariable(uint16_t regist) {
 
 
 #if !defined(TESTSUITE_BUILD)
-  static bool_t storeElementReal(real34Matrix_t *matrix) {
+  static bool storeElementReal(real34Matrix_t *matrix) {
     const int16_t i = getIRegisterAsInt(true);
     const int16_t j = getJRegisterAsInt(true);
 
@@ -96,7 +97,7 @@ static bool_t _checkReadOnlyVariable(uint16_t regist) {
     return true;
   }
 
-  static bool_t storeElementComplex(complex34Matrix_t *matrix) {
+  static bool storeElementComplex(complex34Matrix_t *matrix) {
     const int16_t i = getIRegisterAsInt(true);
     const int16_t j = getJRegisterAsInt(true);
 
@@ -125,7 +126,7 @@ static bool_t _checkReadOnlyVariable(uint16_t regist) {
 
 
 
-  static bool_t storeIjReal(real34Matrix_t *matrix) {
+  static bool storeIjReal(real34Matrix_t *matrix) {
     if(getRegisterDataType(REGISTER_X) == dtLongInteger && getRegisterDataType(REGISTER_Y) == dtLongInteger) {
       longInteger_t i, j;
       convertLongIntegerRegisterToLongInteger(REGISTER_Y, i);
@@ -159,7 +160,7 @@ static bool_t _checkReadOnlyVariable(uint16_t regist) {
     return false;
   }
 
-  static bool_t storeIjComplex(complex34Matrix_t *matrix) {
+  static bool storeIjComplex(complex34Matrix_t *matrix) {
     return storeIjReal((real34Matrix_t *)matrix);
   }
 #endif // !TESTSUITE_BUILD

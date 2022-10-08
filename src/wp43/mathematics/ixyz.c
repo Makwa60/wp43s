@@ -30,12 +30,13 @@
 #include "registers.h"
 #include "registerValueConversions.h"
 #include "stack.h"
+#include <stdbool.h>
 
 #include "wp43.h"
 
 
 
-static bool_t ixyzConvert(calcRegister_t reg, real_t *val) {
+static bool ixyzConvert(calcRegister_t reg, real_t *val) {
   switch(getRegisterDataType(reg)) {
     case dtLongInteger: {
       convertLongIntegerRegisterToReal(reg, val, &ctxtReal39);

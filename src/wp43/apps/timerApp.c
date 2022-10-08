@@ -32,10 +32,10 @@
 #include "stack.h"
 #include "stats.h"
 #include "timer.h"
-#include "typeDefinitions.h"
 #include "ui/screen.h"
 #include "ui/softmenus.h"
 #include <assert.h>
+#include <stdbool.h>
 
 #include "wp43.h"
 
@@ -273,7 +273,7 @@ void timerAppResetState(void) {
 
   void fnRecallTimerApp(uint16_t regist) {
     real_t regValueReal;
-    bool_t overflow;
+    bool   overflow;
     uint32_t regValueUInt32;
 
     switch(getRegisterDataType(regist)) {

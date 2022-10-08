@@ -28,6 +28,7 @@
 #include "solver/equation.h"
 #include "ui/softmenus.h"
 #include "ui/tam.h"
+#include <stdbool.h>
 #include <string.h>
 
 #include "wp43.h"
@@ -283,9 +284,9 @@ static void _clearAlpha(void) {
  * \brief Returns the status of a flag
  *
  * \param[in] flag uint16_t
- * \return bool_t
+ * \return bool
  ***********************************************/
-bool_t getFlag(uint16_t flag) {
+bool getFlag(uint16_t flag) {
   if(flag & 0x8000) { // System flag
     return getSystemFlag(flag);
   }

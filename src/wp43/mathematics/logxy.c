@@ -37,6 +37,7 @@
 #include "realType.h"
 #include "registers.h"
 #include "registerValueConversions.h"
+#include <stdbool.h>
 
 #include "wp43.h"
 
@@ -98,7 +99,7 @@ static void logXYComplex(const real_t *xReal, const real_t *xImag, const real_t 
 
 #define COMPLEX_IS_ZERO(real, imag) (realIsZero(real) && (imag==NULL || realIsZero(imag)))
 
-static bool_t checkArgs(const real_t *xReal, const real_t *xImag, const real_t *yReal, const real_t *yImag) {
+static bool checkArgs(const real_t *xReal, const real_t *xImag, const real_t *yReal, const real_t *yImag) {
   /*
    * Log(0, 0) = +Inf
    * Log(x, 0) = -Inf x!=0

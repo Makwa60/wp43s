@@ -16,12 +16,13 @@
 
 #include "core/freeList.h"
 
-#include <stdint.h>
-#include <stdlib.h>
 #include "charString.h"
 #include "config.h"
 #include "debug.h"
 #include "items.h"
+#include <stdbool.h>
+#include <stdint.h>
+#include <stdlib.h>
 
 #include "wp43.h"
 
@@ -117,8 +118,8 @@ void *freeListRealloc(void *pcMemPtr, size_t oldSizeInBlocks, size_t newSizeInBl
 
 void freeListFree(void *pcMemPtr, size_t sizeInBlocks) {
   uint16_t ramPtr, addr;
-  int32_t i, j;
-  bool_t done;
+  int32_t  i, j;
+  bool     done;
 
   // GMP never calls free with pcMemPtr beeing NULL
   if(pcMemPtr == NULL) {

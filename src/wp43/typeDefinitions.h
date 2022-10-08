@@ -21,6 +21,7 @@
   #define TYPEDEFINITIONS_H
 
   #include "realType.h"
+  #include <stdbool.h>
   #include <stdint.h>
 
   /**
@@ -293,16 +294,6 @@
 
 
   /**
-   * \enum bool_t
-   * Boolean type.
-   */
-  typedef enum {
-    false = 0,     ///< Value for false
-    true  = !false ///< Value for true
-  } bool_t; // 1 bit
-
-
-  /**
    * \typedef calcRegister_t
    * A type for calculator registers.
    */
@@ -439,10 +430,10 @@
      * If the calculator is in alpha mode then additional details apply. See
      * ::tamProcessInput for further details.
      */
-    bool_t     alpha;
+    bool       alpha;
     int16_t    currentOperation;
-    bool_t     dot;
-    bool_t     indirect;
+    bool       dot;
+    bool       indirect;
     int16_t    digitsSoFar;
     int16_t    value;
     int16_t    min;
@@ -451,10 +442,10 @@
      * Only used for KEYG and KEYX
      */
     int16_t    key;
-    bool_t     keyAlpha;
-    bool_t     keyDot;
-    bool_t     keyIndirect;
-    bool_t     keyInputFinished;
+    bool       keyAlpha;
+    bool       keyDot;
+    bool       keyIndirect;
+    bool       keyInputFinished;
   } tamState_t;
 
   // Temporary information

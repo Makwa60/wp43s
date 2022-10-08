@@ -25,6 +25,7 @@
 #include "error.h"
 #include "registers.h"
 #include "registerValueConversions.h"
+#include <stdbool.h>
 
 #include "wp43.h"
 
@@ -91,7 +92,7 @@ void fnPercentT(uint16_t unusedButMandatoryParameter) {
 // %+MG calculation functions
 //-----------------------------------------------------------------------------
 
-static bool_t percentTReal(real_t *xReal, real_t *yReal, real_t *rReal, realContext_t *realContext) {
+static bool percentTReal(real_t *xReal, real_t *yReal, real_t *rReal, realContext_t *realContext) {
   /*
    * Check x and y
    */

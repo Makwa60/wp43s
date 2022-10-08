@@ -27,11 +27,12 @@
 #include "registers.h"
 #include "registerValueConversions.h"
 #include "stack.h"
+#include <stdbool.h>
 
 #include "wp43.h"
 
-static bool_t convertRegisterToReal(calcRegister_t regist, real_t *r) {
-  bool_t result = true;
+static bool convertRegisterToReal(calcRegister_t regist, real_t *r) {
+  bool result = true;
 
   switch(getRegisterDataType(regist)) {
     case dtLongInteger: {

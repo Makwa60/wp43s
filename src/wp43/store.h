@@ -20,10 +20,10 @@
 #if !defined(STORE_H)
   #define STORE_H
 
-  #include "typeDefinitions.h"
+  #include <stdbool.h>
   #include <stdint.h>
 
-  bool_t       regInRange    (uint16_t r);
+  bool         regInRange    (uint16_t r);
   /**
    * Stores X in an other register.
    *

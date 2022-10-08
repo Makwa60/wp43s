@@ -40,6 +40,7 @@
 #include "ui/softmenus.h"
 #include "ui/statusBar.h"
 #include <math.h>
+#include <stdbool.h>
 #include <string.h>
 #include <time.h>
 
@@ -62,21 +63,21 @@ void fnPlotRegressionLine(uint16_t plotMode);
 
 float     graph_dx;           // Many unused functions in WP43. Do not change the variables.
 float     graph_dy;
-bool_t    roundedTicks;
-bool_t    extentx;
-bool_t    extenty;
-bool_t    PLOT_VECT;
-bool_t    PLOT_NVECT;
-bool_t    PLOT_SCALE;
-bool_t    Aspect_Square;
-bool_t    PLOT_LINE;
-bool_t    PLOT_CROSS;
-bool_t    PLOT_BOX;
-bool_t    PLOT_INTG;
-bool_t    PLOT_DIFF;
-bool_t    PLOT_RMS;
-bool_t    PLOT_SHADE;
-bool_t    PLOT_AXIS;
+bool      roundedTicks;
+bool      extentx;
+bool      extenty;
+bool      PLOT_VECT;
+bool      PLOT_NVECT;
+bool      PLOT_SCALE;
+bool      Aspect_Square;
+bool      PLOT_LINE;
+bool      PLOT_CROSS;
+bool      PLOT_BOX;
+bool      PLOT_INTG;
+bool      PLOT_DIFF;
+bool      PLOT_RMS;
+bool      PLOT_SHADE;
+bool      PLOT_AXIS;
 int8_t    PLOT_ZMX;
 int8_t    PLOT_ZMY;
 uint8_t   PLOT_ZOOM;
@@ -363,7 +364,7 @@ void plotline2(uint16_t xo, uint8_t yo, uint16_t xn, uint8_t yn) {              
 
 
 //Exhange the name of this routine with pixelline() above to try Bresenham
-void pixelline(uint16_t xo, uint8_t yo, uint16_t xn, uint8_t yn, bool_t vmNormal) { // Plots line from xo,yo to xn,yn; uses temporary x1,y1
+void pixelline(uint16_t xo, uint8_t yo, uint16_t xn, uint8_t yn, bool vmNormal) { // Plots line from xo,yo to xn,yn; uses temporary x1,y1
   #if defined(STATDEBUG_VERBOSE) && defined(PC_BUILD)
     printf("pixelline: xo, yo, xn, yn: %d %d   %d %d \n", xo, yo, xn, yn);
   #endif // STATDEBUG_VERBOSE && PC_BUILD
@@ -1353,7 +1354,7 @@ static  void drawline(uint16_t selection, real_t *RR, real_t *SMI, real_t *aa0, 
     #endif // STATDEBUG && PC_BUILD
 
     NN = (uint16_t) n;
-    bool_t isValidDraw =
+    bool isValidDraw =
       selection != 0
       && n >= (int32_t)minLRDataPoints(selection)
       && !realCompareGreaterThan(RR, const_1)

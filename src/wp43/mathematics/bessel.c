@@ -32,12 +32,13 @@
 #include "mathematics/wp34s.h"
 #include "registers.h"
 #include "registerValueConversions.h"
+#include <stdbool.h>
 
 #include "wp43.h"
 
 
 
-static bool_t besselGetParam(calcRegister_t regist, real_t *r, realContext_t *realContext) {
+static bool besselGetParam(calcRegister_t regist, real_t *r, realContext_t *realContext) {
   switch(getRegisterDataType(regist)) {
     case dtReal34: {
       if(getRegisterAngularMode(regist) == amNone) {
@@ -138,7 +139,7 @@ void fnBesselY(uint16_t unusedButMandatoryParameter) {
 
 
 // Hankel's asymptotic expansion (based on Abramowitz and Stegun, p.364)
-static void bessel_asymptotic_large_x(const real_t *alpha, const real_t *x, bool_t is_y, real_t *res, realContext_t *realContext) {
+static void bessel_asymptotic_large_x(const real_t *alpha, const real_t *x, bool is_y, real_t *res, realContext_t *realContext) {
   real_t p, q, pp, qq, chi, sChi, cChi, mu, z8, k21, k21sq, nm, tmp;
   int32_t k;
 
@@ -358,7 +359,7 @@ static void Sigma_u_k(const real_t *nu, const real_t *t_r, const real_t *t_i, in
 #undef NUMBER_OF_COEFF
 
 // Debye's asymptotic expansion (based on Abramowitz and Stegun, p.366)
-static void bessel_asymptotic_large_order_hyp(const real_t *nu, const real_t *x, bool_t is_y, real_t *res, realContext_t *realContext) {
+static void bessel_asymptotic_large_order_hyp(const real_t *nu, const real_t *x, bool is_y, real_t *res, realContext_t *realContext) {
   real_t alpha, tanh_alpha, coefficient, itrval, t, tmp;
 
   // nu * sech(alpha) = nu / cosh(alpha) = x
@@ -388,7 +389,7 @@ static void bessel_asymptotic_large_order_hyp(const real_t *nu, const real_t *x,
   realMultiply(&coefficient, &itrval, res, realContext);
 }
 
-static void bessel_asymptotic_large_order_trig(const real_t *nu, const real_t *x, bool_t is_y, real_t *res, realContext_t *realContext) {
+static void bessel_asymptotic_large_order_trig(const real_t *nu, const real_t *x, bool is_y, real_t *res, realContext_t *realContext) {
   real_t beta, sin_beta, cos_beta, tan_beta, cot_beta, coefficient, psi, sin_psi, cos_psi, lr, li, mr, mi;
 
   // nu * sec(beta) = nu / cos(beta) = x
@@ -436,7 +437,7 @@ static void bessel_asymptotic_large_order_trig(const real_t *nu, const real_t *x
 
 
 // Recurrence relations (Abramowitz and Stegun, p.361)
-static void plusMinus(bool_t subtracting, const real_t *a, const real_t *b, real_t *res, realContext_t *realContext) {
+static void plusMinus(bool subtracting, const real_t *a, const real_t *b, real_t *res, realContext_t *realContext) {
   if(subtracting) {
     realSubtract(a, b, res, realContext);
   }
@@ -444,7 +445,7 @@ static void plusMinus(bool_t subtracting, const real_t *a, const real_t *b, real
     realAdd(a, b, res, realContext);
   }
 }
-static void bessel_recur(const real_t *nu, const real_t *x, bool_t is_y, bool_t descending, real_t *res, realContext_t *realContext) {
+static void bessel_recur(const real_t *nu, const real_t *x, bool is_y, bool descending, real_t *res, realContext_t *realContext) {
   real_t jnx, jn_1x, alpha, floor_nu;
 
   realToIntegralValue(nu, &floor_nu, DEC_ROUND_FLOOR, realContext);
@@ -496,7 +497,7 @@ static void digamma(const real_t *x, real_t *res, realContext_t *realContext) {
 
 /* The code below is ported from the WP 34s repository,
  * but never implemented in it. */
-static void bessel(const real_t *alpha, const real_t *x, bool_t neg, real_t *res, realContext_t *realContext) {
+static void bessel(const real_t *alpha, const real_t *x, bool neg, real_t *res, realContext_t *realContext) {
   real_t q, r, m;
   real_t x2on4, term, gfac;
   int16_t n;

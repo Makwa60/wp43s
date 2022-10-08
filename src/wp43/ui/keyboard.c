@@ -53,6 +53,7 @@
 #if (REAL34_WIDTH_TEST == 1)
   #include "registerValueConversions.h"
 #endif // (REAL34_WIDTH_TEST == 1)
+#include <stdbool.h>
 #include <string.h>
 
 #include "wp43.h"
@@ -274,9 +275,9 @@
 
   void execAutoRepeat(uint16_t key) {
     #if defined(DMCP_BUILD)
-      char charKey[6];
-      bool_t f = shiftF;
-      bool_t g = shiftG;
+      char    charKey[6];
+      bool    f = shiftF;
+      bool    g = shiftG;
       uint8_t origScreenUpdatingMode = screenUpdatingMode;
       sprintf(charKey, "%02d", key -1);
 
@@ -294,7 +295,7 @@
 
 
   static void _closeCatalog(void) {
-    bool_t inCatalog = false;
+    bool inCatalog = false;
     for(int i = 0; i < SOFTMENU_STACK_SIZE; ++i) {
       if(softmenu[softmenuStack[i].softmenuId].menuItem == -MNU_CATALOG) {
         inCatalog = true;
@@ -461,7 +462,7 @@
 
 
 
-  static bool_t _assignToMenu(uint8_t *data) {
+  static bool _assignToMenu(uint8_t *data) {
     switch(-softmenu[softmenuStack[0].softmenuId].menuItem) {
       case MNU_MyMenu: {
         assignToMyMenu((*data - '1') + (shiftG ? 12 : shiftF ? 6 : 0));
@@ -861,8 +862,8 @@
       lastKeyCode = 0;
     }
 
-    bool_t f = shiftF;
-    bool_t g = shiftG;
+    bool f = shiftF;
+    bool g = shiftG;
     #if defined(DMCP_BUILD)
       //if(keyAutoRepeat) {
       //  //beep(880, 50);
@@ -1004,7 +1005,7 @@
       uint16_t localStepNumber = currentLocalStepNumber;
       uint16_t programNumber = currentProgramNumber;
       uint16_t fdLocalStepNumber = firstDisplayedLocalStepNumber;
-      bool_t inRam = (programList[currentProgramNumber - 1].step > 0);
+      bool     inRam = (programList[currentProgramNumber - 1].step > 0);
       if(inRam) {
         currentStep.ram           += (freeProgramBytes & 0xfffc);
         firstDisplayedStep.ram    += (freeProgramBytes & 0xfffc);

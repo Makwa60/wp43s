@@ -21,9 +21,10 @@
   #define LONGINTEGERTYPE_H
 
   #include "defines.h"
-  #include "typeDefinitions.h"
 
   #include <gmp.h>
+  #include <stdbool.h>
+  #include <stdint.h>
   #include <stdlib.h>
 
   typedef mpz_t longInteger_t;
@@ -49,13 +50,13 @@
   static inline void longIntegerSetPositiveSign(mpz_ptr op)                                                                                {(op)->_mp_size = abs((op)->_mp_size);}
   static inline void longIntegerSetNegativeSign(mpz_ptr op)                                                                                {(op)->_mp_size = -abs((op)->_mp_size);}
   static inline void longIntegerSetZero(mpz_ptr op)                                                                                        {mpz_clear(op);mpz_init(op);}                         // Previous implementation: (op)->_mp_size = 0;
-  static inline bool_t longIntegerIsZero(mpz_srcptr op)                                                                                    {return ((op)->_mp_size == 0);}
-  static inline bool_t longIntegerIsPositive(mpz_srcptr op)                                                                                {return ((op)->_mp_size >  0);}
-  static inline bool_t longIntegerIsPositiveOrZero(mpz_srcptr op)                                                                          {return ((op)->_mp_size >= 0);}
-  static inline bool_t longIntegerIsNegative(mpz_srcptr op)                                                                                {return ((op)->_mp_size <  0);}
-  static inline bool_t longIntegerIsNegativeOrZero(mpz_srcptr op)                                                                          {return ((op)->_mp_size <= 0);}
-  static inline bool_t longIntegerIsEven(mpz_srcptr op)                                                                                    {return mpz_even_p(op);}
-  static inline bool_t longIntegerIsOdd(mpz_srcptr op)                                                                                     {return mpz_odd_p(op);}
+  static inline bool longIntegerIsZero(mpz_srcptr op)                                                                                      {return ((op)->_mp_size == 0);}
+  static inline bool longIntegerIsPositive(mpz_srcptr op)                                                                                  {return ((op)->_mp_size >  0);}
+  static inline bool longIntegerIsPositiveOrZero(mpz_srcptr op)                                                                            {return ((op)->_mp_size >= 0);}
+  static inline bool longIntegerIsNegative(mpz_srcptr op)                                                                                  {return ((op)->_mp_size <  0);}
+  static inline bool longIntegerIsNegativeOrZero(mpz_srcptr op)                                                                            {return ((op)->_mp_size <= 0);}
+  static inline bool longIntegerIsEven(mpz_srcptr op)                                                                                      {return mpz_even_p(op);}
+  static inline bool longIntegerIsOdd(mpz_srcptr op)                                                                                       {return mpz_odd_p(op);}
   static inline int longIntegerSign(mpz_srcptr op)                                                                                         {return mpz_sgn(op);}
   static inline longIntegerSign_t longIntegerSignTag(mpz_srcptr op)                                                                        {return ((op)->_mp_size == 0 ? liZero : ((op)->_mp_size > 0 ? liPositive : liNegative));}
   static inline size_t longIntegerBits(mpz_srcptr op)                                                                                      {return mpz_sizeinbase(op, 2);}

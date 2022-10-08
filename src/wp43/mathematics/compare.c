@@ -32,6 +32,7 @@
 #include "registerValueConversions.h"
 #include "sort.h"
 #include "stack.h"
+#include <stdbool.h>
 
 #include "wp43.h"
 
@@ -54,7 +55,7 @@ TO_QSPI void (* const cmpFunc[NUMBER_OF_DATA_TYPES_FOR_CALCULATIONS][NUMBER_OF_D
 
 
 
-bool_t registerCmp(calcRegister_t regist1, calcRegister_t regist2, int8_t *result) {
+bool registerCmp(calcRegister_t regist1, calcRegister_t regist2, int8_t *result) {
   void (*func)(calcRegister_t, calcRegister_t, int8_t*) = cmpFunc[getRegisterDataType(regist1)][getRegisterDataType(regist2)];
 
   if(func == NULL) {
@@ -307,7 +308,7 @@ void comparisonTypeError(uint16_t regist) {
 #define COMPARE_MODE_NOT_EQUAL     5
 #define COMPARE_MODE_GREATER_EQUAL 6
 
-static bool_t isEqualRealComplex(calcRegister_t registC, calcRegister_t registR) {
+static bool isEqualRealComplex(calcRegister_t registC, calcRegister_t registR) {
   int8_t result;
 
   if(!real34IsZero(REGISTER_IMAG34_DATA(registC))) {
@@ -485,10 +486,10 @@ static void almostEqualMatrix(uint16_t regist) {
       realMatrixFree(&x);
     }
     else {
-      const bool_t xIsCxma = getRegisterDataType(REGISTER_X) == dtComplex34Matrix;
-      const bool_t rIsCxma = getRegisterDataType(regist)     == dtComplex34Matrix;
+      const bool        xIsCxma = getRegisterDataType(REGISTER_X) == dtComplex34Matrix;
+      const bool        rIsCxma = getRegisterDataType(regist)     == dtComplex34Matrix;
       complex34Matrix_t x, r;
-      real34Matrix_t m;
+      real34Matrix_t    m;
 
       if(xIsCxma) {
         convertComplex34MatrixRegisterToComplex34Matrix(REGISTER_X, &x);

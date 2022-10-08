@@ -31,11 +31,12 @@
 #include "registers.h"
 #include "ui/screen.h"
 #include <assert.h>
+#include <stdbool.h>
 #include <string.h>
 
 #include "wp43.h"
 
-bool_t  showContent;
+bool    showContent;
 uint8_t rbrMode;
 int16_t currentRegisterBrowserScreen;
 
@@ -170,7 +171,7 @@ int16_t currentRegisterBrowserScreen;
 
 
 
-  static bool_t _registerBrowserKeyHandler(int16_t item) {
+  static bool _registerBrowserKeyHandler(int16_t item) {
     if(ITM_0 <= item && item <= ITM_9 && (rbrMode == RBR_GLOBAL || rbrMode == RBR_LOCAL)) {
       if(rbr1stDigit) {
         rbr1stDigit = false;

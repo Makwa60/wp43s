@@ -46,6 +46,7 @@
 #include "ui/softmenus.h"
 #include "ui/statusBar.h"
 #include "ui/tam.h"
+#include <stdbool.h>
 
 #include "wp43.h"
 
@@ -360,7 +361,7 @@ void fnStopProgram(uint16_t unusedButMandatoryParameter) {
 
   static void _executeOp(uint8_t *paramAddress, uint16_t op, uint16_t paramMode) {
     uint8_t opParam = *(uint8_t *)(paramAddress++);
-    bool_t tryAllocate = (op == ITM_STO || op == ITM_M_DIM || op == ITM_MVAR || op == ITM_INPUT);
+    bool    tryAllocate = (op == ITM_STO || op == ITM_M_DIM || op == ITM_MVAR || op == ITM_INPUT);
 
     switch(paramMode) {
       case PARAM_DECLARE_LABEL: {
@@ -764,9 +765,9 @@ int16_t executeOneStep(pgmPtr_t step) {
 
 
 
-void runProgram(bool_t singleStep, uint16_t menuLabel) {
+void runProgram(bool singleStep, uint16_t menuLabel) {
   #if !defined(TESTSUITE_BUILD)
-    bool_t nestedEngine = (programRunStop == PGM_RUNNING);
+    bool     nestedEngine = (programRunStop == PGM_RUNNING);
     uint16_t startingSubLevel = (nestedEngine && menuLabel == INVALID_VARIABLE) ? currentSubroutineLevel : 0;
     lastErrorCode = ERROR_NONE;
     hourGlassIconEnabled = true;

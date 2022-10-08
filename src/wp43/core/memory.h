@@ -20,9 +20,9 @@
 #if !defined(MEMORY_H)
   #define MEMORY_H
 
+  #include <stdbool.h>
   #include <stdint.h>
   #include <stddef.h>
-  #include "typeDefinitions.h"
 
   // The 6 followoing functions are only there to know who allocates and frees memory
   void    *allocWp43           (size_t sizeInBlocks);
@@ -35,7 +35,7 @@
 
   int32_t getFreeRamMemory      (void);
   void    resizeProgramMemory   (uint16_t newSizeInBlocks);
-  bool_t  isMemoryBlockAvailable(size_t sizeInBlocks);
+  bool    isMemoryBlockAvailable(size_t sizeInBlocks);
 
   #if !defined(DMCP_BUILD)
     void    debugMemory         (const char *message);

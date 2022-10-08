@@ -35,6 +35,7 @@
 #include "registers.h"
 #include "ui/screen.h"
 #include "ui/statusBar.h"
+#include <stdbool.h>
 
 #include "wp43.h"
 
@@ -46,7 +47,7 @@
 // Have to be careful here to ensure that every function we call can handle
 // the increased size of the numbers we're using.
 void WP34S_Cvt2RadSinCosTan(const real_t *an, angularMode_t angularMode, real_t *sinOut, real_t *cosOut, real_t *tanOut, realContext_t *realContext) {
-  bool_t sinNeg = false, cosNeg = false, swap = false;
+  bool   sinNeg = false, cosNeg = false, swap = false;
   real_t angle;
 
   if(realIsNaN(an)) {
@@ -177,10 +178,10 @@ void WP34S_Cvt2RadSinCosTan(const real_t *an, angularMode_t angularMode, real_t 
 
 
 // Calculate sin, cos by Taylor series and tan by division
-void WP34S_SinCosTanTaylor(const real_t *a, bool_t swap, real_t *sinOut, real_t *cosOut, real_t *tanOut, realContext_t *realContext) { // a in radian
+void WP34S_SinCosTanTaylor(const real_t *a, bool swap, real_t *sinOut, real_t *cosOut, real_t *tanOut, realContext_t *realContext) { // a in radian
   real_t angle, a2, t, j, z, sin, cos, compare;
   int i;
-  bool_t endSin = (sinOut == NULL), endCos = (cosOut == NULL);
+  bool endSin = (sinOut == NULL), endCos = (cosOut == NULL);
   int32_t savedContextDigits = realContext->digits;
 
   if(realContext->digits > 51) {
@@ -338,8 +339,8 @@ void WP34S_Atan(const real_t *x, real_t *angle, realContext_t *realContext) {
 
 void WP34S_Atan2(const real_t *y, const real_t *x, real_t *atan, realContext_t *realContext) {
   real_t r, t;
-  const bool_t xNeg = realIsNegative(x);
-  const bool_t yNeg = realIsNegative(y);
+  const bool xNeg = realIsNegative(x);
+  const bool yNeg = realIsNegative(y);
 
   if(realIsNaN(x) || realIsNaN(y)) {
     realCopy(const_NaN, atan);
@@ -504,7 +505,7 @@ void WP34S_Acos(const real_t *x, real_t *angle, realContext_t *realContext) {
 }
 
 
-static void WP34S_Calc_Gamma_LnGamma_Lanczos(const real_t *xin, real_t *res, bool_t calculateLnGamma, realContext_t *realContext) {
+static void WP34S_Calc_Gamma_LnGamma_Lanczos(const real_t *xin, real_t *res, bool calculateLnGamma, realContext_t *realContext) {
   real_t r, s, t, u, v, x;
   int32_t k, savedContextDigits;
 
@@ -550,9 +551,9 @@ static void WP34S_Calc_Gamma_LnGamma_Lanczos(const real_t *xin, real_t *res, boo
 
 
 // common code for the [GAMMA] and LN[GAMMA]
-static void WP34S_Gamma_LnGamma(const real_t *xin, const bool_t calculateLnGamma, real_t *res, realContext_t *realContext) {
+static void WP34S_Gamma_LnGamma(const real_t *xin, const bool calculateLnGamma, real_t *res, realContext_t *realContext) {
   real_t x, t;
-  bool_t reflect = false;
+  bool reflect = false;
 
   // Check for special cases
   if(realIsSpecial(xin)) {
@@ -787,7 +788,7 @@ void WP34S_Logxy(const real_t *yin, const real_t *xin, real_t *res, realContext_
 }
 
 
-bool_t WP34S_RelativeError(const real_t *x, const real_t *y, const real_t *tol, realContext_t *realContext) {
+bool WP34S_RelativeError(const real_t *x, const real_t *y, const real_t *tol, realContext_t *realContext) {
   real_t a;
 
   if(realCompareEqual(x, const_0)) {
@@ -802,14 +803,14 @@ bool_t WP34S_RelativeError(const real_t *x, const real_t *y, const real_t *tol, 
 }
 
 
-bool_t WP34S_AbsoluteError(const real_t *x, const real_t *y, const real_t *tol, realContext_t *realContext) {
+bool WP34S_AbsoluteError(const real_t *x, const real_t *y, const real_t *tol, realContext_t *realContext) {
   real_t a;
   realSubtract(x, y, &a, realContext);
   return realCompareAbsLessThan(&a, tol);
 }
 
 
-bool_t WP34S_ComplexAbsError(const real_t *xReal, const real_t *xImag, const real_t *yReal, const real_t *yImag, const real_t *tol, realContext_t *realContext) {
+bool WP34S_ComplexAbsError(const real_t *xReal, const real_t *xImag, const real_t *yReal, const real_t *yImag, const real_t *tol, realContext_t *realContext) {
   real_t a, b, r, t;
 
   realSubtract(xReal, yReal, &a, realContext), realSubtract(xImag, yImag, &b, realContext);
@@ -1023,10 +1024,10 @@ static void WP34S_CalcComplexLnGamma_Lanczos(const real_t *zReal, const real_t *
 }
 
 
-static void WP34S_ComplexGammaLnGamma(const real_t *zReal, const real_t *zImag, const bool_t calculateLnGamma, real_t *resReal, real_t *resImag, realContext_t *realContext) {
+static void WP34S_ComplexGammaLnGamma(const real_t *zReal, const real_t *zImag, const bool calculateLnGamma, real_t *resReal, real_t *resImag, realContext_t *realContext) {
   real_t sinPiZReal, tReal, uReal, xReal;
   real_t sinPiZImag, tImag, uImag, xImag;
-  bool_t reflect = false;
+  bool reflect = false;
 
   // Check for special cases
   if(realIsSpecial(zReal) || realIsSpecial(zImag)) {
@@ -1213,7 +1214,7 @@ static void gcf(const real_t *a, const real_t *x, const real_t *gln, real_t *res
 }
 
 
-void WP34S_GammaP(const real_t *x, const real_t *a, real_t *res, realContext_t *realContext, bool_t upper, bool_t regularised) {
+void WP34S_GammaP(const real_t *x, const real_t *a, real_t *res, realContext_t *realContext, bool upper, bool regularised) {
   real_t z, lga;
 
   if(realIsNegative(x) || realCompareLessEqual(a, const_0) || realIsNaN(x) || realIsNaN(a) || realIsInfinite(a)) {
@@ -1438,7 +1439,7 @@ void WP34S_betai(const real_t *b, const real_t *a, const real_t *x, real_t *res,
 }
 
 
-void WP34S_Bernoulli(const real_t *x, real_t *res, bool_t bn_star, realContext_t *realContext) {
+void WP34S_Bernoulli(const real_t *x, real_t *res, bool bn_star, realContext_t *realContext) {
   real_t p;
 
   if((!realIsAnInteger(x)) || realCompareLessThan(x, const_0)) {
@@ -1568,9 +1569,9 @@ void WP34S_Zeta(const real_t *x, real_t *res, realContext_t *realContext) {
  * for "Lambert W (HP-41)" starting on the 2 Sept 2012.  The actual code
  * is Dieter's from a message posted on the 23rd of Sept 2012.
  */
-void WP34S_LambertW(const real_t *x, real_t *res, bool_t negativeBranch, realContext_t *realContext) {
+void WP34S_LambertW(const real_t *x, real_t *res, bool negativeBranch, realContext_t *realContext) {
   real_t p, q, r, reg0, reg1, reg2;
-  bool_t converged = false;
+  bool converged = false;
 
   if(realIsSpecial(x)) {
    realCopy(const_NaN, res);
@@ -1736,7 +1737,7 @@ void WP34S_OrthoPoly(uint16_t kind, const real_t *rX, const real_t *rN, const re
   real_t a, b, c, d, i;
   real_t rT0, rT1, incB;
   real_t p, q;
-  bool_t incA = false, incC = false;
+  bool incA = false, incC = false;
 
   // ortho_default
   if(realIsSpecial(rX) || (!realIsAnInteger(rN)) || realIsNegative(rN)) {

@@ -22,6 +22,7 @@
 
   #include "realType.h"
   #include "typeDefinitions.h"
+  #include <stdbool.h>
   #include <stdint.h>
 
   /******************************************************
@@ -29,7 +30,7 @@
    ******************************************************/
 
   void   WP34S_Cvt2RadSinCosTan(const real_t *angle, angularMode_t am, real_t *sin, real_t *cos, real_t *tan, realContext_t *realContext);
-  void   WP34S_SinCosTanTaylor (const real_t *angle, bool_t swap, real_t *sinOut, real_t *cosOut, real_t *tanOut, realContext_t *realContext); // angle in radian
+  void   WP34S_SinCosTanTaylor (const real_t *angle, bool swap, real_t *sinOut, real_t *cosOut, real_t *tanOut, realContext_t *realContext); // angle in radian
   void   WP34S_Atan            (const real_t *x, real_t *angle, realContext_t *realContext);
   void   WP34S_Atan2           (const real_t *y, const real_t *x, real_t *angle, realContext_t *realContext);
   void   WP34S_Asin            (const real_t *x, real_t *angle, realContext_t *realContext);
@@ -52,16 +53,16 @@
   void   WP34S_ComplexLnGamma  (const real_t *zinReal, const real_t *zinImag, real_t *resReal, real_t *resImag, realContext_t *realContext);
   void   WP34S_Mod             (const real_t *x, const real_t *y, real_t *res, realContext_t *realContext);
   //void   WP34S_BigMod          (const real_t *x, const real_t *y, real_t *res);
-  bool_t WP34S_RelativeError   (const real_t *x, const real_t *y, const real_t *tol, realContext_t *realContext);
-  bool_t WP34S_AbsoluteError   (const real_t *x, const real_t *y, const real_t *tol, realContext_t *realContext);
-  bool_t WP34S_ComplexAbsError (const real_t *xReal, const real_t *xImag, const real_t *yReal, const real_t *yImag, const real_t *tol, realContext_t *realContext);
-  void   WP34S_GammaP          (const real_t *x, const real_t *a, real_t *res, realContext_t *realContext, bool_t upper, bool_t regularised);
+  bool   WP34S_RelativeError   (const real_t *x, const real_t *y, const real_t *tol, realContext_t *realContext);
+  bool   WP34S_AbsoluteError   (const real_t *x, const real_t *y, const real_t *tol, realContext_t *realContext);
+  bool   WP34S_ComplexAbsError (const real_t *xReal, const real_t *xImag, const real_t *yReal, const real_t *yImag, const real_t *tol, realContext_t *realContext);
+  void   WP34S_GammaP          (const real_t *x, const real_t *a, real_t *res, realContext_t *realContext, bool upper, bool regularised);
   void   WP34S_Erf             (const real_t *x, real_t *res, realContext_t *realContext);
   void   WP34S_Erfc            (const real_t *x, real_t *res, realContext_t *realContext);
   void   WP34S_betai           (const real_t *b, const real_t *a, const real_t *x, real_t *res, realContext_t *realContext);
-  void   WP34S_Bernoulli       (const real_t *x, real_t *res, bool_t bn_star, realContext_t *realContext);
+  void   WP34S_Bernoulli       (const real_t *x, real_t *res, bool bn_star, realContext_t *realContext);
   void   WP34S_Zeta            (const real_t *x, real_t *res, realContext_t *realContext);
-  void   WP34S_LambertW        (const real_t *x, real_t *res, bool_t negativeBranch, realContext_t *realContext);
+  void   WP34S_LambertW        (const real_t *x, real_t *res, bool negativeBranch, realContext_t *realContext);
   void   WP34S_ComplexLambertW (const real_t *xReal, const real_t *xImag, real_t *resReal, real_t *resImag, realContext_t *realContext);
   void   WP34S_InverseW        (const real_t *x, real_t *res, realContext_t *realContext);
   void   WP34S_InverseComplexW (const real_t *xReal, const real_t *xImag, real_t *resReal, real_t *resImag, realContext_t *realContext);

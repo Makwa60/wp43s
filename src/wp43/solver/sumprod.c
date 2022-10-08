@@ -34,12 +34,14 @@
 #include "registers.h"
 #include "solver/solve.h"
 #include "stack.h"
+#include <stdbool.h>
+
 #include "wp43.h"
 
 #if !defined(TESTSUITE_BUILD)
-  static void _programmableSumProd(uint16_t label, bool_t prod) {
+  static void _programmableSumProd(uint16_t label, bool prod) {
     real34_t counter, result;
-    bool_t finished = false;
+    bool     finished = false;
 
     real34Copy(prod ? const34_1 : const34_0, &result);
 
@@ -96,7 +98,7 @@
     }
   }
 
-  void _checkArgument(uint16_t label, bool_t prod) {
+  void _checkArgument(uint16_t label, bool prod) {
     if(label >= FIRST_LABEL && label <= LAST_LABEL) {
       _programmableSumProd(label, prod);
     }

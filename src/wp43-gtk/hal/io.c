@@ -23,7 +23,7 @@
 
 static FILE *_ioFileHandle = NULL;
 
-bool_t ioFileOpen(ioFilePath_t path, ioFileMode_t mode) {
+bool ioFileOpen(ioFilePath_t path, ioFileMode_t mode) {
   assert(_ioFileHandle == NULL);
   const char *filename, *filemode;
   switch(path) {

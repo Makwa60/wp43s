@@ -36,6 +36,7 @@
 #include "screen.h"
 #include "softmenus.h"
 #include "sort.h"
+#include <stdbool.h>
 #include <string.h>
 
 #include "wp43.h"
@@ -284,10 +285,10 @@
 
 
   static void _tamProcessInput(uint16_t item) {
-    int16_t min, max, min2, max2;
-    bool_t forceTry = false, tryOoR = false;
-    bool_t valueParameter = (tam.function == ITM_GTOP || tam.function == ITM_BESTF || tam.function == ITM_CNST);
-    char *forcedVar = NULL;
+    int16_t  min, max, min2, max2;
+    bool     forceTry = false, tryOoR = false;
+    bool     valueParameter = (tam.function == ITM_GTOP || tam.function == ITM_BESTF || tam.function == ITM_CNST);
+    char    *forcedVar = NULL;
 
     // Shuffle is handled completely differently to everything else
     if(tam.mode == TM_SHUFFLE) {
@@ -397,7 +398,7 @@
       return;
     }
     else if(item == ITM_alpha) {
-      bool_t allowAlphaMode = false, beginWithLowercase = false;
+      bool allowAlphaMode = false, beginWithLowercase = false;
       allowAlphaMode = allowAlphaMode || (!tam.digitsSoFar && !tam.dot && !valueParameter && (tam.mode == TM_STORCL || tam.mode == TM_M_DIM || tam.mode == TM_REGISTER || tam.mode == TM_CMP || tam.function == ITM_MVAR));
       allowAlphaMode = allowAlphaMode || (!tam.digitsSoFar && !tam.dot && tam.indirect);
       beginWithLowercase = allowAlphaMode;
@@ -704,7 +705,7 @@
       // Check whether it is possible to add any more digits: if not, execute the function
       if((tryOoR || (min2 <= tam.value && tam.value <= max2)) && (forceTry || tam.value*10 > max2)) {
         int16_t value = tam.value;
-        bool_t run = true;
+        bool    run = true;
         if(tam.dot) {
           value += FIRST_LOCAL_REGISTER;
         }
@@ -752,9 +753,9 @@
       }
     }
     else {
-      char *buffer = (forcedVar ? forcedVar : aimBuffer);
-      bool_t tryAllocate = ((tam.function == ITM_STO || tam.function == ITM_M_DIM || tam.function == ITM_MVAR || tam.function == ITM_INPUT) && !tam.indirect);
-      int16_t value;
+      char    *buffer = (forcedVar ? forcedVar : aimBuffer);
+      bool     tryAllocate = ((tam.function == ITM_STO || tam.function == ITM_M_DIM || tam.function == ITM_MVAR || tam.function == ITM_INPUT) && !tam.indirect);
+      int16_t  value;
       if(tam.mode == TM_NEWMENU) {
         value = 1;
       }

@@ -26,6 +26,7 @@
 #include "mathematics/wp34s.h"
 #include "registers.h"
 #include "registerValueConversions.h"
+#include <stdbool.h>
 
 #include "wp43.h"
 
@@ -60,10 +61,10 @@ void fnChangeBase(uint16_t base) {
   else if(getRegisterDataType(REGISTER_X) == dtReal34) {
     if(2 <= base && base <= 16) {
       longInteger_t lgInt;
-      real_t x, value;
-      bool_t isNegative;
-      uint32_t tmp32;
-      bool_t overflow;
+      real_t        x, value;
+      bool          isNegative;
+      uint32_t      tmp32;
+      bool          overflow;
 
       real34ToReal(REGISTER_REAL34_DATA(REGISTER_X), &x);
       isNegative = realIsNegative(&x);

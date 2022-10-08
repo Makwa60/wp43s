@@ -36,6 +36,7 @@
 #include "saveRestoreCalcState.h"
 #include "sort.h"
 #include "stack.h"
+#include <stdbool.h>
 #include <string.h>
 
 #include "wp43.h"
@@ -579,7 +580,7 @@ void allocateLocalRegisters(uint16_t numberOfRegistersToAllocate) {
 
 
 
-bool_t validateName(const char *name) {
+bool validateName(const char *name) {
   if(stringGlyphLength(name)  > 7) {
     return false; // Given name is too long
   }
@@ -658,7 +659,7 @@ bool_t validateName(const char *name) {
 
 
 
-bool_t isUniqueName(const char *name) {
+bool isUniqueName(const char *name) {
   // Built-in items
   for(uint32_t i = 0; i < LAST_ITEM; ++i) {
     switch(indexOfItems[i].status & CAT_STATUS) {
@@ -1070,9 +1071,9 @@ void fnGetLocR(uint16_t unusedButMandatoryParameter) {
 
 
 
-void adjustResult(calcRegister_t res, bool_t dropY, bool_t setCpxRes, calcRegister_t op1, calcRegister_t op2, calcRegister_t op3) {
+void adjustResult(calcRegister_t res, bool dropY, bool setCpxRes, calcRegister_t op1, calcRegister_t op2, calcRegister_t op3) {
   uint32_t resultDataType;
-  bool_t oneArgumentIsComplex = false;
+  bool     oneArgumentIsComplex = false;
 
   if(op1 >= 0) {
     oneArgumentIsComplex = oneArgumentIsComplex || getRegisterDataType(op1) == dtComplex34;
@@ -1393,7 +1394,7 @@ void copySourceRegisterToDestRegister(calcRegister_t sourceRegister, calcRegiste
 
 int16_t indirectAddressing(calcRegister_t regist, uint16_t parameterType, int16_t minValue, int16_t maxValue) {
   int16_t value;
-  bool_t isValidAlpha = false;
+  bool    isValidAlpha = false;
   printf("parameterType %u\n", parameterType); fflush(stdout);
   printf("currentNumberOfLocalFlags %u\n", currentNumberOfLocalFlags); fflush(stdout);
 
@@ -1899,13 +1900,13 @@ void fnToReal(uint16_t unusedButMandatoryParameter) {
 }
 
 
-bool_t saveLastX(void) {
+bool saveLastX(void) {
   copySourceRegisterToDestRegister(REGISTER_X, REGISTER_L);
   return lastErrorCode == ERROR_NONE;
 }
 
 
-static uint8_t getRegParam(bool_t *f, uint16_t *s, uint16_t *n, uint16_t *d) {
+static uint8_t getRegParam(bool *f, uint16_t *s, uint16_t *n, uint16_t *d) {
   real_t x, p;
 
   if(getRegisterDataType(REGISTER_X) == dtReal34) {
@@ -2113,7 +2114,7 @@ void fnRegSort(uint16_t unusedButMandatoryParameter) {
 
 
 void fnRegCopy(uint16_t unusedButMandatoryParameter) {
-  bool_t f;
+  bool     f;
   uint16_t s, n, d;
 
   if((lastErrorCode = getRegParam(&f, &s, &n, &d)) == ERROR_NONE) {

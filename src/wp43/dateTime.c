@@ -30,6 +30,7 @@
 #include "registers.h"
 #include "registerValueConversions.h"
 #include "stack.h"
+#include <stdbool.h>
 #include <string.h>
 
 #include "wp43.h"
@@ -88,7 +89,7 @@ void julianDayToInternalDate(const real34_t *source, real34_t *destination) {
   real34Add(destination, const34_43200, destination);
 }
 
-bool_t checkDateArgument(calcRegister_t regist, real34_t *jd) {
+bool checkDateArgument(calcRegister_t regist, real34_t *jd) {
   #pragma GCC diagnostic push
   #pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
   switch(getRegisterDataType(regist)) {
@@ -122,10 +123,10 @@ bool_t checkDateArgument(calcRegister_t regist, real34_t *jd) {
   #pragma GCC diagnostic pop
 }
 
-bool_t isLeapYear(const real34_t *year) {
+bool isLeapYear(const real34_t *year) {
   real34_t val, val2;
-  int32_t y400; // year mod 400
-  bool_t isGregorian;
+  int32_t  y400; // year mod 400
+  bool     isGregorian;
 
   composeJulianDay(year, const34_2, const34_28, &val);
   uInt32ToReal34(firstGregorianDay, &val2);
@@ -147,7 +148,7 @@ bool_t isLeapYear(const real34_t *year) {
 }
 
 
-bool_t isValidDay(const real34_t *year, const real34_t *month, const real34_t *day) {
+bool isValidDay(const real34_t *year, const real34_t *month, const real34_t *day) {
   real34_t val;
 
   // Year (this rejects year -4713 and earlier)

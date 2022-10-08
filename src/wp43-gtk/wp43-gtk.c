@@ -24,17 +24,18 @@
 #include "timer.h"
 #include "ui/keyboard.h"
 #include "ui/screen.h"
+#include <stdbool.h>
 
 #include "wp43.h"
 
-bool_t              calcLandscape;
-bool_t              calcAutoLandscapePortrait;
+bool                calcLandscape;
+bool                calcAutoLandscapePortrait;
 GtkWidget           *screen;
 GtkWidget           *frmCalc;
 int16_t             screenStride;
 int16_t             debugWindow;
 uint32_t            *screenData;
-bool_t              screenChange;
+bool                screenChange;
 char                debugString[10000];
 #if (DEBUG_REGISTER_L == 1)
   GtkWidget         *lblRegisterL1;

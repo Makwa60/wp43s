@@ -28,6 +28,7 @@
 #include "registers.h"
 #include "ui/screen.h"
 #include <assert.h>
+#include <stdbool.h>
 #include <string.h>
 
 #include "wp43.h"
@@ -38,7 +39,7 @@ uint8_t currentFlgScr;
 #if !defined(TESTSUITE_BUILD)
   TO_QSPI const char flagLetter[] = "XYZTABCDLIJK";
 
-  static void oneSystemFlag(uint16_t systemFlag, const char *systemFlagNamename, int16_t *line, bool_t *firstSystemFlag) {
+  static void oneSystemFlag(uint16_t systemFlag, const char *systemFlagNamename, int16_t *line, bool *firstSystemFlag) {
     if(getSystemFlag(systemFlag)) {
       if(stringWidth(tmpString + CHARS_PER_LINE * *line, &standardFont, true, true) + stringWidth(systemFlagNamename, &standardFont, true, false) <= SCREEN_WIDTH - 1 - 8) { // SPACE is 8 pixel wide
         if(!*firstSystemFlag) {
@@ -63,7 +64,7 @@ uint8_t currentFlgScr;
 
 
 
-  static bool_t _flagBrowserKeyHandler(int16_t item) {
+  static bool _flagBrowserKeyHandler(int16_t item) {
     if(item == ITM_UP || item == ITM_DOWN) {
       currentFlgScr = 3 - currentFlgScr;
       return true;
@@ -76,7 +77,7 @@ uint8_t currentFlgScr;
   static void _flagBrowserDraw(void) {
     static int16_t line;
     int16_t f;
-    bool_t firstFlag;
+    bool firstFlag;
 
     hourGlassIconEnabled = false;
 

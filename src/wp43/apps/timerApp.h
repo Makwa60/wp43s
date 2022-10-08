@@ -21,15 +21,16 @@
   #define TIMERAPP_H
 
   #include "typeDefinitions.h"
+  #include <stdbool.h>
   #include <stdint.h>
 
   typedef struct {
     uint32_t       startUptime     : 32;
     uint32_t       lapTime         : 32;
     uint32_t       totalTime       : 32;
-    bool_t         showDeciseconds :  1;
-    bool_t         isFirstDigit    :  1;
-    bool_t         started         :  1;
+    bool           showDeciseconds :  1;
+    bool           isFirstDigit    :  1;
+    bool           started         :  1;
     uint8_t        firstDigit      :  5;
     calcRegister_t currentRegister :  8;
   } timerAppState_t;

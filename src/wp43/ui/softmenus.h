@@ -22,6 +22,7 @@
   #define SOFTMENUS_H
 
   #include "typeDefinitions.h"
+  #include <stdbool.h>
   #include <stdint.h>
 
   uint8_t *getNthString           (uint8_t *ptr, int16_t n); // Starting with string 0 (the 1st string is returned for n=0)
@@ -39,7 +40,7 @@
      * \param[in] topLine    Draw a top line
      * \param[in] bottomLine Draw a bottom line
      */
-    void   showSoftkey            (const char *label, int16_t xSoftkey, int16_t ySoftKey, videoMode_t videoMode, bool_t topLine, bool_t bottomLine);
+    void   showSoftkey            (const char *label, int16_t xSoftkey, int16_t ySoftKey, videoMode_t videoMode, bool topLine, bool bottomLine);
 
     /**
      * Displays the current part of the displayed softmenu.
@@ -59,8 +60,8 @@
     void   popSoftmenu            (void);
 
     void   setCatalogLastPos      (void);
-    bool_t currentSoftmenuScrolls (void);
-    bool_t isAlphabeticSoftmenu   (void);
+    bool   currentSoftmenuScrolls (void);
+    bool   isAlphabeticSoftmenu   (void);
   #endif // !TESTSUITE_BUILD
   char    *dynmenuGetLabel        (int16_t menuitem);
 #endif // !SOFTMENUS_H

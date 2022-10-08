@@ -35,6 +35,7 @@
 #include "solver/equation.h"
 #include "stack.h"
 #include "ui/softmenus.h"
+#include <stdbool.h>
 
 #include "wp43.h"
 
@@ -254,7 +255,7 @@ static void _integratorIteration(void) {
 static void DEI_xeq_user(calcRegister_t regist, const real_t *x, real_t *res, realContext_t *realContext) {
   // call user's function  -------------------------------
   if(!realIsSpecial(x)) { // abscissa is good?
-    bool_t d = getSystemFlag(FLAG_SPCRES);
+    bool d = getSystemFlag(FLAG_SPCRES);
     clearSystemFlag(FLAG_SPCRES);
     reallocateRegister(regist, dtReal34, REAL34_SIZE, amNone);
     realToReal34(x, REGISTER_REAL34_DATA(regist));
@@ -293,12 +294,12 @@ static void _integrate(calcRegister_t regist, const real_t *a, const real_t *b, 
 
   real_t tmp, z, y, x;
 
-  bool_t rev   = false;   // b is < a
-  bool_t ES    = false;   // expsinh mode
-  bool_t bpa2z = false;   // bpa2 is zero in sinhsinh or expsinh modes
-  bool_t left  = false;   // expsinh case with -Infinite limit
-  bool_t TS    = false;   // tanhsinh mode
-  bool_t lg0   = false;   // true if level > 0
+  bool   rev   = false;   // b is < a
+  bool   ES    = false;   // expsinh mode
+  bool   bpa2z = false;   // bpa2 is zero in sinhsinh or expsinh modes
+  bool   left  = false;   // expsinh case with -Infinite limit
+  bool   TS    = false;   // tanhsinh mode
+  bool   lg0   = false;   // true if level > 0
 
   // check arguments  ************************************
   if(realIsNaN(a) || realIsNaN(b)) { // check for invalid limits
@@ -577,7 +578,7 @@ static void _integrate(calcRegister_t regist, const real_t *a, const real_t *b, 
 }
 
 void integrate(calcRegister_t regist, const real_t *a, const real_t *b, real_t *acc, real_t *res, realContext_t *realContext) {
-  bool_t was_solving = getSystemFlag(FLAG_SOLVING);
+  bool was_solving = getSystemFlag(FLAG_SOLVING);
   ++currentSolverNestingDepth;
   setSystemFlag(FLAG_INTING);
   clearSystemFlag(FLAG_SOLVING);
