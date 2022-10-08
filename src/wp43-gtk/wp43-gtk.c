@@ -14,6 +14,7 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "apps/timerApp.h"
 #include "core/memory.h"
 #include "flags.h"
 #include "gtkGui.h"
@@ -152,8 +153,9 @@ int main(int argc, char* argv[]) {
   gdk_threads_add_timeout(SCREEN_REFRESH_PERIOD, refreshLcdCallback, NULL); // refreshLcd is called every SCREEN_REFRESH_PERIOD ms
 
   timerReset();
-  timerConfig(TO_TIMER_APP, execTimerApp, 0);
-  //timerConfig(TO_SHOW_NOP, execNOPTimeout, TO_SHOW_NOP);
+  timerConfig(tidTimerAppRedraw,           cbTimerAppRedraw,           NOPARAM);
+  timerConfig(tidTimerAppDetectWrapAround, cbTimerAppDetectWrapAround, NOPARAM);
+  //timerConfig(tidShowNop,                  execNOPTimeout,             NOPARAM);
   gdk_threads_add_timeout(5, timerRefreshCallback, NULL);
 
   if(getSystemFlag(FLAG_AUTXEQ)) {

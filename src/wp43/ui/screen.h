@@ -42,8 +42,6 @@
 
   void     clearScreen                        (void);
 
-  void     execTimerApp                         (uint16_t timerType);
-
   #if !defined(TESTSUITE_BUILD)
     void     refreshScreen                      (void);
     //void     invertPixel                        (uint32_t x, uint32_t y);

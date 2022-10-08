@@ -119,7 +119,6 @@ uint8_t                nimNumberPart;
 uint8_t                hexDigits;
 temporaryInformation_t temporaryInformation;
 uint8_t                numScreensNumericFont;
-uint8_t                timerCraAndDeciseconds = 128u;
 uint8_t                programRunStop;
 uint8_t                lastKeyCode;
 uint8_t                entryStatus;
@@ -189,9 +188,6 @@ uint32_t               alphaSelectionTimer;
 uint32_t               xCursor;
 uint32_t               yCursor;
 uint32_t               tamOverPemYPos;
-uint32_t               timerValue;
-uint32_t               timerStartTime = TIMER_APP_STOPPED;
-uint32_t               timerTotalTime;
 uint32_t               pointerOfFlashPgmLibrary;
 uint32_t               sizeOfFlashPgmLibrary;
 

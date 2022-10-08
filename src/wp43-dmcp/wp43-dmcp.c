@@ -16,6 +16,7 @@
 
 #include "wp43.h"
 
+#include "apps/timerApp.h"
 #include "calcMode.h"
 #include "charString.h"
 #include "config.h"
@@ -243,10 +244,11 @@ void program_main(void) {
   //runner_key_tout_init(0); // Enables fast auto repeat
 
   timerReset();
-  timerConfig(TO_AUTO_REPEAT, execAutoRepeat, 0);
-  timerConfig(TO_TIMER_APP, execTimerApp, 0);
-  timerConfig(TO_KB_ACTV, timerDummyTest, TO_KB_ACTV);
-  //timerConfig(TO_SHOW_NOP, execNOPTimeout, TO_SHOW_NOP);
+  timerConfig(tidAutoRepeat,               execAutoRepeat,             NOPARAM);
+  timerConfig(tidTimerAppRedraw,           cbTimerAppRedraw,           NOPARAM);
+  timerConfig(tidTimerAppDetectWrapAround, cbTimerAppDetectWrapAround, NOPARAM);
+  timerConfig(tidKeyboardActive,           timerDummyTest,             NOPARAM);
+  //timerConfig(tidShowNop,                  execNOPTimeout,             NOPARAM);
   nextTimerRefresh = 0;
 
   // Status flags:
@@ -322,8 +324,8 @@ void program_main(void) {
       continue;
     }
     if(ST(STAT_POWER_CHANGE)) {
-      if(!ST(STAT_OFF) && (timerGetStatus(TO_KB_ACTV) != TMR_RUNNING)) {
-        timerStart(TO_KB_ACTV, TO_KB_ACTV, SCREEN_REFRESH_PERIOD+50);
+      if(!ST(STAT_OFF) && (timerGetStatus(tidKeyboardActive) != tsRunning)) {
+        timerStart(tidKeyboardActive, NOPARAM, SCREEN_REFRESH_PERIOD+50);
       }
       CLR_ST(STAT_POWER_CHANGE);
       continue;
@@ -401,15 +403,15 @@ void program_main(void) {
     if(key == 27 || key == 32) {
       //inDownUpPress = 1;
       //nextAutoRepeat = now + KEY_AUTOREPEAT_FIRST_PERIOD;
-      if(timerGetStatus(TO_AUTO_REPEAT) != TMR_RUNNING && (!shiftF || calcMode == cmPem) && !shiftG && (currentSoftmenuScrolls() || (calcMode != cmNormal && calcMode != cmNim && calcMode != cmAim))) {
-        timerStart(TO_AUTO_REPEAT, key, KEY_AUTOREPEAT_FIRST_PERIOD);
+      if(timerGetStatus(tidAutoRepeat) != tsRunning && (!shiftF || calcMode == cmPem) && !shiftG && (currentSoftmenuScrolls() || (calcMode != cmNormal && calcMode != cmNim && calcMode != cmAim))) {
+        timerStart(tidAutoRepeat, key, KEY_AUTOREPEAT_FIRST_PERIOD);
       }
     }
     else if(key == 0) {
       //inDownUpPress = 0;
       //repeatDownUpPress = 0;
       //nextAutoRepeat = 0;
-      timerStop(TO_AUTO_REPEAT);
+      timerStop(tidAutoRepeat);
     }
     //else if(repeatDownUpPress) {
     //  keyAutoRepeat = 1;
@@ -456,14 +458,14 @@ void program_main(void) {
 
     if(key >= 0) {                                        // Temporary intermediate solution to get some refreshLcd and go to sleep afterwards
       if(key > 0) {
-        timerStart(TO_KB_ACTV, TO_KB_ACTV, 60000);
+        timerStart(tidKeyboardActive, NOPARAM, 60000);
       }
       else if(cursorEnabled == true) {
-        timerStart(TO_KB_ACTV, TO_KB_ACTV, 4*FAST_SCREEN_REFRESH_PERIOD+50);
+        timerStart(tidKeyboardActive, NOPARAM, 4*FAST_SCREEN_REFRESH_PERIOD+50);
       }
       else
       {
-        timerStart(TO_KB_ACTV, TO_KB_ACTV, FAST_SCREEN_REFRESH_PERIOD+50);
+        timerStart(tidKeyboardActive, NOPARAM, FAST_SCREEN_REFRESH_PERIOD+50);
       }
     }
 

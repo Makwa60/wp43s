@@ -119,7 +119,6 @@
         if(!getSystemFlag(FLAG_AUTOFF) || (nextTimerRefresh != 0)) {
           reset_auto_off();
         }
-        timerAppPoll();
       #endif // DMCP_BUILD
     }
 
@@ -183,13 +182,6 @@
 
 void clearScreen(void) {
   lcd_fill_rect(0, 0, SCREEN_WIDTH, 240, LCD_SET_VALUE);
-}
-
-
-
-void execTimerApp(uint16_t timerType) {
-  timerStart(TO_TIMER_APP, TO_TIMER_APP, TIMER_APP_PERIOD);
-  timerAppUpdate();
 }
 
 

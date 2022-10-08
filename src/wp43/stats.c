@@ -661,45 +661,57 @@ void fnClSigma(uint16_t unusedButMandatoryParameter) {
 
 
 
+bool_t sigmaPlus(bool_t updateSaved, real_t *x, real_t *y) {
+  #if !defined(TESTSUITE_BUILD)
+    if(statisticalSumsPointer == NULL) {
+      initStatisticalSums();
+      if(lastErrorCode != ERROR_NONE) {
+        return false;
+      }
+    }
+    addSigma(x, y);
+    AddtoStatsMatrix(x, y);
+    if(updateSaved) {
+      realCopy(x, &SAVED_SIGMA_LASTX);
+      realCopy(y, &SAVED_SIGMA_LASTY);
+      SAVED_SIGMA_LAct = +1;
+    }
+  #endif // !TESTSUITE_BUILD
+  return true;
+}
+
+
+
 void fnSigma(uint16_t plusMinus) {
   #if !defined(TESTSUITE_BUILD)
     real_t x, y;
     realContext_t *realContext = &ctxtReal75; // Summation data with 75 digits
 
-  lrChosen = 0;
+    lrChosen = 0;
 
-  if(plusMinus == 1) { // SIGMA+
-    if(   (getRegisterDataType(REGISTER_X) == dtLongInteger || getRegisterDataType(REGISTER_X) == dtReal34)
-       && (getRegisterDataType(REGISTER_Y) == dtLongInteger || getRegisterDataType(REGISTER_Y) == dtReal34)) {
+    if(plusMinus == 1) { // SIGMA+
+      if(   (getRegisterDataType(REGISTER_X) == dtLongInteger || getRegisterDataType(REGISTER_X) == dtReal34)
+         && (getRegisterDataType(REGISTER_Y) == dtLongInteger || getRegisterDataType(REGISTER_Y) == dtReal34)) {
 
-        if(statisticalSumsPointer == NULL) {
-          initStatisticalSums();
-          if(lastErrorCode != ERROR_NONE) {
-            return;
-          }
+        if(getRegisterDataType(REGISTER_X) == dtLongInteger) {
+          convertLongIntegerRegisterToReal(REGISTER_X, &x, realContext);
+          convertLongIntegerRegisterToReal34Register(REGISTER_X, REGISTER_X);
+        }
+        else {
+          real34ToReal(REGISTER_REAL34_DATA(REGISTER_X), &x);
         }
 
-      if(getRegisterDataType(REGISTER_X) == dtLongInteger) {
-        convertLongIntegerRegisterToReal(REGISTER_X, &x, realContext);
-        convertLongIntegerRegisterToReal34Register(REGISTER_X, REGISTER_X);
-      }
-      else {
-        real34ToReal(REGISTER_REAL34_DATA(REGISTER_X), &x);
-    }
+        if(getRegisterDataType(REGISTER_Y) == dtLongInteger) {
+          convertLongIntegerRegisterToReal(REGISTER_Y, &y, realContext);
+          convertLongIntegerRegisterToReal34Register(REGISTER_Y, REGISTER_Y);
+        }
+        else {
+          real34ToReal(REGISTER_REAL34_DATA(REGISTER_Y), &y);
+        }
 
-      if(getRegisterDataType(REGISTER_Y) == dtLongInteger) {
-        convertLongIntegerRegisterToReal(REGISTER_Y, &y, realContext);
-        convertLongIntegerRegisterToReal34Register(REGISTER_Y, REGISTER_Y);
-      }
-      else {
-        real34ToReal(REGISTER_REAL34_DATA(REGISTER_Y), &y);
-      }
-
-        addSigma(&x, &y);
-        AddtoStatsMatrix(&x, &y);
-        realCopy(&x,      &SAVED_SIGMA_LASTX);
-        realCopy(&y,      &SAVED_SIGMA_LASTY);
-        SAVED_SIGMA_LAct = +1;
+        if(!sigmaPlus(true, &x, &y)) {
+          return;
+        }
 
         #if defined(DEBUGUNDO)
           calcRegister_t regStats = findNamedVariable(statMx);
@@ -713,21 +725,15 @@ void fnSigma(uint16_t plusMinus) {
         linkToRealMatrixRegister(REGISTER_X, &matrix);
 
         if(matrix.header.matrixColumns == 2) {
-          if(statisticalSumsPointer == NULL) {
-            initStatisticalSums();
-            if(lastErrorCode != ERROR_NONE) {
-              return;
-            }
-          }
-
           if(!saveLastX()) {
             return;
           }
           for(uint16_t i = 0; i < matrix.header.matrixRows; ++i) {
             real34ToReal(&matrix.matrixElements[i * 2    ], &y);
             real34ToReal(&matrix.matrixElements[i * 2 + 1], &x);
-            addSigma(&x, &y);
-            AddtoStatsMatrix(&x, &y);
+            if(!sigmaPlus(false, &x, &y)) {
+              return;
+            }
           }
 
           liftStack();
@@ -787,10 +793,16 @@ void fnSigma(uint16_t plusMinus) {
 
 
 
+real_t *statSum(uint16_t sum) {
+  return (real_t *)(statisticalSumsPointer + REAL_SIZE * sum);
+}
+
+
+
 void fnStatSum(uint16_t sum) {
   if(checkMinimumDataPoints(const_1)) {
     liftStack();
-    realToReal34((real_t *)(statisticalSumsPointer + REAL_SIZE * sum), REGISTER_REAL34_DATA(REGISTER_X));
+    realToReal34(statSum(sum), REGISTER_REAL34_DATA(REGISTER_X));
   }
 }
 

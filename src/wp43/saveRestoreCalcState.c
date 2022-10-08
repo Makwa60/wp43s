@@ -20,6 +20,7 @@
 #include "apps/flagBrowser.h"
 #include "apps/fontBrowser.h"
 #include "apps/registerBrowser.h"
+#include "apps/timerApp.h"
 #include "assign.h"
 #include "calcMode.h"
 #include "charString.h"
@@ -53,7 +54,7 @@
 
 #include "wp43.h"
 
-#define BACKUP_VERSION         82  // made roundingMode_t into an enum
+#define BACKUP_VERSION         83  // changed timer app state
 #define START_REGISTER_VALUE 1000  // was 1522, why?
 
 static char *tmpRegisterString = NULL;
@@ -281,9 +282,7 @@ static uint32_t restore(void *buffer, uint32_t size) {
     save(&numberOfUserMenus,                  sizeof(numberOfUserMenus));
     save(&currentUserMenu,                    sizeof(currentUserMenu));
     save(&userKeyLabelSize,                   sizeof(userKeyLabelSize));
-    save(&timerCraAndDeciseconds,             sizeof(timerCraAndDeciseconds));
-    save(&timerValue,                         sizeof(timerValue));
-    save(&timerTotalTime,                     sizeof(timerTotalTime));
+    save(&timerAppState,                      sizeof(timerAppState));
     save(&currentInputVariable,               sizeof(currentInputVariable));
     save(&SAVED_SIGMA_LASTX,                  sizeof(SAVED_SIGMA_LASTX));
     save(&SAVED_SIGMA_LASTY,                  sizeof(SAVED_SIGMA_LASTY));
@@ -543,9 +542,7 @@ static uint32_t restore(void *buffer, uint32_t size) {
       restore(&numberOfUserMenus,                  sizeof(numberOfUserMenus));
       restore(&currentUserMenu,                    sizeof(currentUserMenu));
       restore(&userKeyLabelSize,                   sizeof(userKeyLabelSize));
-      restore(&timerCraAndDeciseconds,             sizeof(timerCraAndDeciseconds));
-      restore(&timerValue,                         sizeof(timerValue));
-      restore(&timerTotalTime,                     sizeof(timerTotalTime));
+      restore(&timerAppState,                      sizeof(timerAppState));
       restore(&currentInputVariable,               sizeof(currentInputVariable));
       restore(&SAVED_SIGMA_LASTX,                  sizeof(SAVED_SIGMA_LASTX));
       restore(&SAVED_SIGMA_LASTY,                  sizeof(SAVED_SIGMA_LASTY));

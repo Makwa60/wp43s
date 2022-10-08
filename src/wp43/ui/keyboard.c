@@ -280,7 +280,7 @@
       uint8_t origScreenUpdatingMode = screenUpdatingMode;
       sprintf(charKey, "%02d", key -1);
 
-      timerStart(TO_AUTO_REPEAT, key, KEY_AUTOREPEAT_PERIOD);
+      timerStart(tidAutoRepeat, key, KEY_AUTOREPEAT_PERIOD);
 
       btnClicked(charKey);
       screenUpdatingMode = origScreenUpdatingMode;
@@ -990,7 +990,7 @@
     //    btnPressed(data);
     //  }
     //#endif // DMCP_BUILD
-    if(timerGetStatus(TO_AUTO_REPEAT) != TMR_RUNNING) {
+    if(timerGetStatus(tidAutoRepeat) != tsRunning) {
       refreshScreen();
     }
     screenUpdatingMode &= ~SCRUPD_ONE_TIME_FLAGS;
@@ -1373,7 +1373,6 @@
             }
 
             case cmTimerApp: {
-              printf("ITEM: %d\n", item);
               switch(item) {
                 case ITM_RS: {
                   timerAppStartStop();
