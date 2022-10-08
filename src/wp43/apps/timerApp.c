@@ -63,9 +63,16 @@ void timerAppResetState(void) {
 }
 
 #if !defined(TESTSUITE_BUILD)
+  static uint32_t _getTimerIncrement(uint32_t currTime) {
+    if(currTime < timerAppState.startUptime) {
+      return (UINT32_MAX - timerAppState.startUptime) + currTime + 1;
+    }
+    return currTime - timerAppState.startUptime;
+  }
+
   static uint32_t _getTimerValue(void) {
     if(timerAppState.started) {
-      return (timeUptimeMs() - timerAppState.startUptime) + timerAppState.lapTime;
+      return _getTimerIncrement(timeUptimeMs()) + timerAppState.lapTime;
     }
     return timerAppState.lapTime;
   }
@@ -330,16 +337,10 @@ void timerAppResetState(void) {
 
   void cbTimerAppDetectWrapAround(uint16_t unusedButMandatoryParameter) {
     if(timerAppState.started) {
-      uint32_t currTime = timeUptimeMs();
-      uint32_t timeIncrement;
-      if(currTime < timerAppState.startUptime) {
-        timeIncrement = (UINT32_MAX - timerAppState.startUptime) + currTime + 1;
-      }
-      else {
-        timeIncrement = currTime - timerAppState.startUptime;
-      }
-      timerAppState.startUptime = currTime;
-      timerAppState.lapTime += timeIncrement;
+      uint32_t currTime          = timeUptimeMs();
+      uint32_t timeIncrement     = _getTimerIncrement(currTime);
+      timerAppState.startUptime  = currTime;
+      timerAppState.lapTime     += timeIncrement;
       if(timerAppState.totalTime > 0) {
         timerAppState.totalTime += timeIncrement;
       }
