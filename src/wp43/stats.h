@@ -25,14 +25,18 @@
   #include "typeDefinitions.h"
   #include <stdint.h>
 
+  bool_t  sigmaPlus             (bool_t updateSaved, real_t *x, real_t *y);
+
   /**
    * Adds a value to the statistic registers.
    *
    * \param[in] unusedButMandatoryParameter
    */
-  void   fnSigma               (uint16_t plusMinus);
+  void    fnSigma               (uint16_t plusMinus);
 
-  void   fnStatSum             (uint16_t sum);
+  real_t *statSum               (uint16_t sum);
+
+  void    fnStatSum             (uint16_t sum);
 
   /**
    * SUM ==> regX, regY.
@@ -40,7 +44,7 @@
    *
    * \param[in] unusedButMandatoryParameter
    */
-  void   fnSumXY               (uint16_t unusedButMandatoryParameter);
+  void    fnSumXY               (uint16_t unusedButMandatoryParameter);
 
   /**
    * Xmin ==> regX, regY.
@@ -48,7 +52,7 @@
    *
    * \param[in] unusedButMandatoryParameter
    */
-  void   fnXmin                (uint16_t unusedButMandatoryParameter);
+  void    fnXmin                (uint16_t unusedButMandatoryParameter);
 
   /**
    * Xmax ==> regX, regY.
@@ -56,9 +60,9 @@
    *
    * \param[in] unusedButMandatoryParameter
    */
-  void   fnXmax                (uint16_t unusedButMandatoryParameter);
+  void    fnXmax                (uint16_t unusedButMandatoryParameter);
 
-  void   fnClSigma             (uint16_t unusedButMandatoryParameter);
+  void    fnClSigma             (uint16_t unusedButMandatoryParameter);
 
   /**
    * Verifies that the statistical registers are allocated and that there are enough data.
@@ -67,15 +71,15 @@
    * \param[in] unusedButMandatoryParameter
    * \return bool_t
    */
-  bool_t isStatsMatrix(uint16_t *rows, char *mx);
+  bool_t  isStatsMatrix(uint16_t *rows, char *mx);
 
-  bool_t checkMinimumDataPoints(const real_t *n);
-  void   initStatisticalSums   (void);
-  void   calcSigma             (uint16_t maxOffset);
+  bool_t  checkMinimumDataPoints(const real_t *n);
+  void    initStatisticalSums   (void);
+  void    calcSigma             (uint16_t maxOffset);
 
-  void   fnSetLoBin            (uint16_t unusedButMandatoryParameter);
-  void   fnSetHiBin            (uint16_t unusedButMandatoryParameter);
-  void   fnSetNBins            (uint16_t unusedButMandatoryParameter);
-  void   fnConvertStatsToHisto (uint16_t statsVariableToHistogram);
+  void    fnSetLoBin            (uint16_t unusedButMandatoryParameter);
+  void    fnSetHiBin            (uint16_t unusedButMandatoryParameter);
+  void    fnSetNBins            (uint16_t unusedButMandatoryParameter);
+  void    fnConvertStatsToHisto (uint16_t statsVariableToHistogram);
 
 #endif // STATS_H
