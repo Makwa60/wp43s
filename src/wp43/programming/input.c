@@ -82,7 +82,7 @@ void fnPause(uint16_t duration) {
             previousProgramRunStop = programRunStop = PGM_WAITING;
           }
           setLastKeyCode(key);
-          timerStart(TO_KB_ACTV, TO_KB_ACTV, 60000);
+          timerStart(tidKeyboardActive, NOPARAM, 60000);
           wait_for_key_release(0);
           key_pop();
           break;

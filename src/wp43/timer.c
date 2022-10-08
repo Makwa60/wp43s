@@ -29,7 +29,7 @@ typedef struct {
   timerStatus_t state;             ///<
 } kb_timer_t;
 
-static kb_timer_t  timer[TMR_NUMBER];
+static kb_timer_t  timer[MAX_TIMER_ID];
 static uint32_t    timerLastCalled;
 #if defined(DMCP_BUILD)
   static bool_t      mutexRefreshTimer = false;
@@ -43,8 +43,8 @@ static void _rebuildTimerRefresh(void) {
 
     if(mutexRefreshTimer == false) {
       nextTimerRefresh = 0;
-      for(int i = 0; i < TMR_NUMBER; i++) {
-        if(timer[i].state == TMR_RUNNING) {
+      for(int i = 0; i < MAX_TIMER_ID; i++) {
+        if(timer[i].state == tsRunning) {
           next = timer[i].timer_will_expire;
           if(nextTimerRefresh != 0 && next < nextTimerRefresh) {
             nextTimerRefresh = next;
@@ -66,9 +66,9 @@ void timerRefresh(void) {
   uint32_t now = timeUptimeMs();
 
   if(now < timerLastCalled) {
-    for(int i = 0; i < TMR_NUMBER; i++) {
-      if(timer[i].state == TMR_RUNNING) {
-        timer[i].state = TMR_COMPLETED;
+    for(int i = 0; i < MAX_TIMER_ID; i++) {
+      if(timer[i].state == tsRunning) {
+        timer[i].state = tsCompleted;
         #if defined(DMCP_BUILD)
           mutexRefreshTimer = true;
         #endif // DMCP_BUILD
@@ -80,10 +80,10 @@ void timerRefresh(void) {
     }
   }
   else {
-    for(int i = 0; i < TMR_NUMBER; i++) {
-      if(timer[i].state == TMR_RUNNING) {
+    for(int i = 0; i < MAX_TIMER_ID; i++) {
+      if(timer[i].state == tsRunning) {
         if(timer[i].timer_will_expire <= now) {
-          timer[i].state = TMR_COMPLETED;
+          timer[i].state = tsCompleted;
           #if defined(DMCP_BUILD)
             mutexRefreshTimer = true;
           #endif // DMCP_BUILD
@@ -118,8 +118,8 @@ void timerReset(void) {
     timerLastCalled = 0;
   #endif // !TESTSUITE_BUILD
 
-  for(int i = 0; i < TMR_NUMBER; i++) {
-    timer[i].state = TMR_UNUSED;
+  for(int i = 0; i < MAX_TIMER_ID; i++) {
+    timer[i].state = tsUnused;
     timer[i].func = timerDummyTest;
     timer[i].param = 0;
   }
@@ -132,21 +132,21 @@ void timerReset(void) {
 
 
 
-void timerConfig(uint8_t nr, void(*func)(uint16_t), uint16_t param) {
-  if(nr < TMR_NUMBER) {
+void timerConfig(timerId_t nr, void(*func)(uint16_t), uint16_t param) {
+  if(nr < MAX_TIMER_ID) {
     timer[nr].func  = func;
     timer[nr].param = param;
-    timer[nr].state = TMR_STOPPED;
+    timer[nr].state = tsStopped;
   }
   _rebuildTimerRefresh();
 }
 
 
 
-void timerStart(uint8_t nr, uint16_t param, uint32_t time) {
+void timerStart(timerId_t nr, uint16_t param, uint32_t time) {
   uint32_t now = timeUptimeMs();
 
-  if(nr < TMR_NUMBER) {
+  if(nr < MAX_TIMER_ID) {
     timer[nr].param = param;
     timer[nr].timer_will_expire = (uint32_t)(now + time);
     #if defined(PC_BUILD)
@@ -156,43 +156,43 @@ void timerStart(uint8_t nr, uint16_t param, uint32_t time) {
         timer[nr].timer_will_expire = time;
       }
     #endif // PC_BUILD
-    timer[nr].state = TMR_RUNNING;
+    timer[nr].state = tsRunning;
   }
   _rebuildTimerRefresh();
 }
 
 
 
-void timerStop(uint8_t nr) {
-  if(nr < TMR_NUMBER && timer[nr].state != TMR_UNUSED) {
-    timer[nr].state = TMR_STOPPED;
+void timerStop(timerId_t nr) {
+  if(nr < MAX_TIMER_ID && timer[nr].state != tsUnused) {
+    timer[nr].state = tsStopped;
   }
   _rebuildTimerRefresh();
 }
 
 
-void timerExec(uint8_t nr) {
-  if(nr < TMR_NUMBER && timer[nr].state == TMR_RUNNING) {
-    timer[nr].state = TMR_COMPLETED;
+void timerExec(timerId_t nr) {
+  if(nr < MAX_TIMER_ID && timer[nr].state == tsRunning) {
+    timer[nr].state = tsCompleted;
     timer[nr].func(timer[nr].param);        // Callback to configured function
   }
 }
 
 
 
-void timerDel(uint8_t nr) {
-  if(nr < TMR_NUMBER) {
-    timer[nr].state = TMR_UNUSED;
+void timerDel(timerId_t nr) {
+  if(nr < MAX_TIMER_ID) {
+    timer[nr].state = tsUnused;
   }
   _rebuildTimerRefresh();
 }
 
 
 
-uint16_t timerGetParam(uint8_t nr) {
+uint16_t timerGetParam(timerId_t nr) {
   uint16_t result = 0;
 
-  if(nr < TMR_NUMBER) {
+  if(nr < MAX_TIMER_ID) {
     result = timer[nr].param;
   }
 
@@ -201,10 +201,10 @@ uint16_t timerGetParam(uint8_t nr) {
 
 
 
-timerStatus_t timerGetStatus(uint8_t nr) {
-  timerStatus_t result = TMR_UNUSED;
+timerStatus_t timerGetStatus(timerId_t nr) {
+  timerStatus_t result = tsUnused;
 
-  if(nr < TMR_NUMBER) {
+  if(nr < MAX_TIMER_ID) {
     result = timer[nr].state;
   }
 
