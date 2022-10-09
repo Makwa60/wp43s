@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file reToCx.h
- ***********************************************/
+/**
+ * \file mathematics/reToCx.h
+ */
 #if !defined(RETOCX_H)
   #define RETOCX_H
 

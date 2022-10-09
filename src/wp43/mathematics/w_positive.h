@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file w_positive.h
- ***********************************************/
+/**
+ * \file mathematics/w_positive.h
+ */
 #if !defined(W_POSITIVE_H)
   #define W_POSITIVE_H
 

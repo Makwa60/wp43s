@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file 10pow.h
- ***********************************************/
+/**
+ * \file mathematics/10pow.h
+ */
 #if !defined(FILE_10POW_H)
   #define FILE_10POW_H
 

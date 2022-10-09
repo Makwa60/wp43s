@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file gcd.h
- ***********************************************/
+/**
+ * \file mathematics/gcd.h
+ */
 #if !defined(GCD_H)
   #define GCD_H
 

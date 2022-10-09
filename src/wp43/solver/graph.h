@@ -14,11 +14,10 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//** //JM
- * \file jmgraph.c Graphing module
- ***********************************************/
-
-
+/**
+ * \file solver/graph.c
+ * Graphing module
+ */
 #if !defined(GRAPH_H)
   #define GRAPH_H
 

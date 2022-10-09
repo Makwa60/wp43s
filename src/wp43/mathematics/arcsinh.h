@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file arcsinh.h
- ***********************************************/
+/**
+ * \file mathematics/arcsinh.h
+ */
 #if !defined(ARCSINH_H)
   #define ARCSINH_H
 

@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file power.h
- ***********************************************/
+/**
+ * \file mathematics/power.h
+ */
 #if !defined(POWER_H)
   #define POWER_H
 

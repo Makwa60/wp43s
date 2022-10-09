@@ -15,7 +15,7 @@
  */
 
 /**
- * \file lcd.h
+ * \file hal/lcd.h
  * LCD related functions.
  */
 #if !defined(LCD_H)

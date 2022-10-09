@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
+/**
  * \file flags.h
- ***********************************************/
+ */
 #if !defined(FLAGS_H)
   #define FLAGS_H
 

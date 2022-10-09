@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file ixyz.h
- ***********************************************/
+/**
+ * \file mathematics/ixyz.h
+ */
 #if !defined(IXYZ_H)
   #define IXYZ_H
 

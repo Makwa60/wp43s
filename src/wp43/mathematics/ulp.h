@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file ulp.h
- ***********************************************/
+/**
+ * \file mathematics/ulp.h
+ */
 #if !defined(ULP_H)
   #define ULP_H
 

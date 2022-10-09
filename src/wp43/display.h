@@ -13,6 +13,10 @@
  * You should have received a copy of the GNU General Public License
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
+
+/**
+ * \file display.h
+ */
 #if !defined(DISPLAY_H)
   #define DISPLAY_H
 

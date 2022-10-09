@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file integerPart.h
- ***********************************************/
+/**
+ * \file mathematics/integerPart.h
+ */
 #if !defined(INTEGERPART_H)
   #define INTEGERPART_H
 

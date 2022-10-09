@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file imaginaryPart.h
- ***********************************************/
+/**
+ * \file mathematics/imaginaryPart.h
+ */
 #if !defined(IMAGINARYPART_H)
   #define IMAGINARYPART_H
 

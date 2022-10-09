@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file random.h
- ***********************************************/
+/**
+ * \file mathematics/random.h
+ */
 #if !defined(RANDOM_H)
   #define RANDOM_H
 

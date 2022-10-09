@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file percentPlusMG.h
- ***********************************************/
+/**
+ * \file mathematics/percentPlusMG.h
+ */
 #if !defined(PERCENTPLUSMG_H)
   #define PERCENTPLUSMG_H
 

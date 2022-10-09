@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file t.h
- ***********************************************/
+/**
+ * \file distributions/t.h
+ */
 #if !defined(T_H)
   #define T_H
 

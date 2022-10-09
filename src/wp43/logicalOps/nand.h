@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file nand.h
- ***********************************************/
+/**
+ * \file logicalOps/nand.h
+ */
 #if !defined(NAND_H)
   #define NAND_H
 

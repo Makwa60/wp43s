@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file w_inverse.h
- ***********************************************/
+/**
+ * \file mathematics/w_inverse.h
+ */
 #if !defined(W_INVERSE_H)
   #define W_INVERSE_H
 

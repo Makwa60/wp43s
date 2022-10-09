@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file gammaXyLower.h
- ***********************************************/
+/**
+ * \file mathematics/gammaXyLower.h
+ */
 #if !defined(GAMMAXYLOWER_H)
   #define GAMMAXYLOWER_H
 

@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file wp34s.h
- ***********************************************/
+/**
+ * \file mathematics/wp34s.h
+ */
 #if !defined(WP34S_H)
   #define WP34S_H
 

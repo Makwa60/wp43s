@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file dot.h
- ***********************************************/
+/**
+ * \file mathematics/dot.h
+ */
 #if !defined(DOT_H)
   #define DOT_H
 

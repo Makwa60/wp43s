@@ -17,7 +17,6 @@
 /**
  * \file wp43.h
  */
-
 #if !defined(WP43_H)
   #define WP43_H
 

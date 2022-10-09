@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file min.h
- ***********************************************/
+/**
+ * \file mathematics/min.h
+ */
 #if !defined(MIN_H)
   #define MIN_H
 

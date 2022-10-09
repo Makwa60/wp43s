@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file toPolar.h
- ***********************************************/
+/**
+ * \file mathematics/toPolar.h
+ */
 #if !defined(TOPOLAR_H)
   #define TOPOLAR_H
 

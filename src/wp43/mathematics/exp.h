@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file exp.h
- ***********************************************/
+/**
+ * \file mathematics/exp.h
+ */
 #if !defined(EXP_H)
   #define EXP_H
 

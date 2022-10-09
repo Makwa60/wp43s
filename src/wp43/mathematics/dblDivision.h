@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file dblDivision.h
- ***********************************************/
+/**
+ * \file mathematics/dblDivision.h
+ */
 #if !defined(DBLDIVISION_H)
   #define DBLDIVISION_H
 

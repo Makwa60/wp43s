@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file unitVector.h
- ***********************************************/
+/**
+ * \file mathematics/unitVector.h
+ */
 #if !defined(UNITVECTOR_H)
   #define UNITVECTOR_H
 

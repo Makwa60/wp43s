@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file conjugate.h
- ***********************************************/
+/**
+ * \file mathematics/conjugate.h
+ */
 #if !defined(CONJUGATE_H)
   #define CONJUGATE_H
 

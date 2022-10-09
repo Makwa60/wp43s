@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file arctan.h
- ***********************************************/
+/**
+ * \file mathematics/arctan.h
+ */
 #if !defined(ARCTAN_H)
   #define ARCTAN_H
 

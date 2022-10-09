@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file bessel.h
- ***********************************************/
+/**
+ * \file mathematics/bessel.h
+ */
 #if !defined(BESSEL_H)
   #define BESSEL_H
 

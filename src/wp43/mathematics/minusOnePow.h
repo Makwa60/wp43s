@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file minusOnePow.h
- ***********************************************/
+/**
+ * \file mathematics/minusOnePow.h
+ */
 #if !defined(MINUSONEPOW_H)
   #define MINUSONEPOW_H
 

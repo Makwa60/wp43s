@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file floor.h
- ***********************************************/
+/**
+ * \file mathematics/floor.h
+ */
 #if !defined(FLOOR_H)
   #define FLOOR_H
 

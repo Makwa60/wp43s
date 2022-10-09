@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file sqrt.h
- ***********************************************/
+/**
+ * \file mathematics/sqrt.h
+ */
 #if !defined(SQUAREROOT_H)
   #define SQUAREROOT_H
 

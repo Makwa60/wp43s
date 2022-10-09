@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file flash.h
- ***********************************************/
+/**
+ * \file programming/flash.h
+ */
 #if !defined(FLASH_H)
   #define FLASH_H
 

@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file gammaP.h
- ***********************************************/
+/**
+ * \file mathematics/gammaP.h
+ */
 #if !defined(GAMMAP_H)
   #define GAMMAP_H
 

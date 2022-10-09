@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
+/**
  * \file error.h
- ***********************************************/
+ */
 #if !defined(ERROR_H)
   #define ERROR_H
 

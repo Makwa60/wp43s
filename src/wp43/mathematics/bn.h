@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file bn.h
- ***********************************************/
+/**
+ * \file mathematics/bn.h
+ */
 #if !defined(BN_H)
   #define BN_H
 

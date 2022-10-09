@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file realPart.h
- ***********************************************/
+/**
+ * \file mathematics/realPart.h
+ */
 #if !defined(REALPART_H)
   #define REALPART_H
 

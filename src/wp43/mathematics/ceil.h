@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file ceil.h
- ***********************************************/
+/**
+ * \file mathematics/ceil.h
+ */
 #if !defined(CEIL_H)
   #define CEIL_H
 
