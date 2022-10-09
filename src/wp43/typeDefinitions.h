@@ -448,6 +448,7 @@
     bool       keyInputFinished;
   } tamState_t;
 
+
   // Temporary information
   typedef enum {
     TI_NO_INFO             =  0,
@@ -507,6 +508,7 @@
     TI_2ND_DERIVATIVE      = 54
   } temporaryInformation_t;
 
+
   // Rounding mode 3 bits
   typedef enum {
     rmHalfEven  = 0,
@@ -517,5 +519,14 @@
     rmCeil      = 5,
     rmFloor     = 6
   } roundingMode_t;
+
+
+  typedef enum {
+    dfAll = 0,
+    dfFix = 1,
+    dfSci = 2,
+    dfEng = 3
+  } displayFormat_t;
+
 
 #endif // !TYPEDEFINITIONS_H

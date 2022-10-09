@@ -378,17 +378,6 @@
   #define SIM_2COMPL                                 2
   #define SIM_SIGNMT                                 3
 
-  // Display format 2 bits
-  #define DF_ALL                                     0
-  #define DF_FIX                                     1
-  #define DF_SCI                                     2
-  #define DF_ENG                                     3
-
-  // Date format 2 bits
-  #define DF_DMY                                     0
-  #define DF_YMD                                     1
-  #define DF_MDY                                     2
-
   // Curve fitting 10 bits
   #define CF_LINEAR_FITTING                          1
   #define CF_EXPONENTIAL_FITTING                     2
@@ -744,11 +733,6 @@
     #define EXTRA_INFO_MESSAGE(function, msg)  {sprintf(errorMessage, msg); moreInfoOnError("In function ", function, errorMessage, NULL);}
   #endif // EXTRA_INFO_ON_CALC_ERROR == 0 || TESTSUITE_BUILD || DMCP_BUILD
 
-  #define isSystemFlagWriteProtected(sf)       ((sf & 0x4000) != 0)
-  #define getSystemFlag(sf)                    ((systemFlags &   ((uint64_t)1 << (sf & 0x3fff))) != 0)
-  #define setSystemFlag(sf)                    { systemFlags |=  ((uint64_t)1 << (sf & 0x3fff)); systemFlagAction(sf, 1); }
-  #define clearSystemFlag(sf)                  { systemFlags &= ~((uint64_t)1 << (sf & 0x3fff)); systemFlagAction(sf, 0); }
-  #define flipSystemFlag(sf)                   { systemFlags ^=  ((uint64_t)1 << (sf & 0x3fff)); systemFlagAction(sf, 2); }
   #define shortIntegerIsZero(op)               (((*(uint64_t *)(op)) == 0) || (shortIntegerMode == SIM_SIGNMT && (((*(uint64_t *)(op)) == 1u<<((uint64_t)shortIntegerWordSize-1)))))
   #define getStackTop()                        (getSystemFlag(FLAG_SSIZE8) ? REGISTER_D : REGISTER_T)
   #define freeRegisterData(regist)             freeWp43((void *)getRegisterDataPointer(regist), getRegisterFullSize(regist))

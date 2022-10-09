@@ -44,7 +44,6 @@
 
     char * getDisplayFormatName               (uint16_t df);
     char * getTimeFormatName                  (bool tf);
-    char * getDateFormatName                  (uint16_t df);
     char * getBooleanName                     (bool b);
     char * getRbrModeName                     (uint16_t mode);
     char * getRoundingModeName                (uint16_t rm);

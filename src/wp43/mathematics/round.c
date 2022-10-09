@@ -23,6 +23,7 @@
 #include "config.h"
 #include "debug.h"
 #include "error.h"
+#include "flags.h"
 #include "items.h"
 #include "mathematics/toRect.h"
 #include "matrix.h"

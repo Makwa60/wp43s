@@ -23,6 +23,7 @@
 #include "dateTime.h"
 #include "display.h"
 #include "error.h"
+#include "flags.h"
 #include "integers.h"
 #include "matrix.h"
 #include "mathematics/rsd.h"

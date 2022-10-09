@@ -102,7 +102,7 @@ char                   dateTimeString[12];
 char                   displayValueX[DISPLAY_VALUE_LEN];
 
 uint8_t                numScreensStandardFont;
-uint8_t                displayFormat;
+displayFormat_t        displayFormat;
 uint8_t                displayFormatDigits;
 uint8_t                timeDisplayFormatDigits;
 uint8_t                shortIntegerWordSize;
@@ -194,7 +194,6 @@ uint32_t               sizeOfFlashPgmLibrary;
 
 uint64_t               shortIntegerMask;
 uint64_t               shortIntegerSignBit;
-uint64_t               systemFlags;
 uint64_t               savedSystemFlags;
 
 size_t                 gmpMemInBytes;
