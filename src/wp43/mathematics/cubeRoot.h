@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file cubeRoot.h
- ***********************************************/
+/**
+ * \file mathematics/cubeRoot.h
+ */
 #if !defined(CUBEROOT_H)
   #define CUBEROOT_H
 

@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file binomial.h
- ***********************************************/
+/**
+ * \file distributions/binomial.h
+ */
 #if !defined(BINOMIAL_H)
   #define BINOMIAL_H
 

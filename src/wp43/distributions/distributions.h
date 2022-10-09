@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file distributions.h
- ***********************************************/
+/**
+ * \file distributions/distributions.h
+ */
 #if !defined(DISTRIBUTIONS_H)
   #define DISTRIBUTIONS_H
 

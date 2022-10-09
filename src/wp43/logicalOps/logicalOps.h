@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file logicalOps.h
- ***********************************************/
+/**
+ * \file logicalOps/logicalOps.h
+ */
 #if !defined(LOGICALOPS_H)
   #define LOGICALOPS_H
 

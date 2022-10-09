@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file mathematics.h
- ***********************************************/
+/**
+ * \file mathematics/mathematics.h
+ */
 #if !defined(MATHEMATICS_H)
   #define MATHEMATICS_H
 

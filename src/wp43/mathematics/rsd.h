@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file rsd.h
- ***********************************************/
+/**
+ * \file mathematics/rsd.h
+ */
 #if !defined(RSD_H)
   #define RSD_H
 

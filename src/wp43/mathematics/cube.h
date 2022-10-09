@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file cube.h
- ***********************************************/
+/**
+ * \file mathematics/cube.h
+ */
 #if !defined(CUBE_H)
   #define CUBE_H
 

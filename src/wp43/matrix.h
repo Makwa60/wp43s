@@ -17,7 +17,6 @@
 /**
  * \file matrix.h
  */
-
 #if !defined(MATRIX_H)
   #define MATRIX_H
 

@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file nextStep.h
- ***********************************************/
+/**
+ * \file programming/nextStep.h
+ */
 #if !defined(NEXTSTEP_H)
   #define NEXTSTEP_H
 

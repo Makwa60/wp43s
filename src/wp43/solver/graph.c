@@ -1023,7 +1023,7 @@ void graph_eqn(uint16_t mode) {
     //}
 
     if(FLAG_FRACTN) {
-      setSystemFlag(FLAG_FRACT)
+      setSystemFlag(FLAG_FRACT);
     }
     else {
       clearSystemFlag(FLAG_FRACT);

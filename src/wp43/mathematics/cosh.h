@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file cosh.h
- ***********************************************/
+/**
+ * \file mathematics/cosh.h
+ */
 #if !defined(COSH_H)
   #define COSH_H
 

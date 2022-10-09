@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file and.h
- ***********************************************/
+/**
+ * \file logicalOps/and.h
+ */
 #if !defined(AND_H)
   #define AND_H
 

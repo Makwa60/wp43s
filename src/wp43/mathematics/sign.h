@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file sign.h
- ***********************************************/
+/**
+ * \file mathematics/sign.h
+ */
 #if !defined(SIGN_H)
   #define SIGN_H
 

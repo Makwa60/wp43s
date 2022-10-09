@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file lcm.h
- ***********************************************/
+/**
+ * \file mathematics/lcm.h
+ */
 #if !defined(LCM_H)
   #define LCM_H
 

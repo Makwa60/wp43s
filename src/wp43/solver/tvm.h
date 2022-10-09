@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file tvm.h
- ***********************************************/
+/**
+ * \file solver/tvm.h
+ */
 #if !defined(TVM_H)
   #define TVM_H
 

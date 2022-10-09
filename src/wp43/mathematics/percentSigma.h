@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file percentSigma.h
- ***********************************************/
+/**
+ * \file mathematics/percentSigma.h
+ */
 #if !defined(PERCENTSIGMA_H)
   #define PERCENTSIGMA_H
 

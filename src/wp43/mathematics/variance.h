@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file mean.h
- ***********************************************/
+/**
+ * \file mathematics/mean.h
+ */
 #if !defined(VARIANCE_H)
   #define VARIANCE_H
 

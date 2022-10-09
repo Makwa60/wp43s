@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file shiftDigits.h
- ***********************************************/
+/**
+ * \file mathematics/shiftDigits.h
+ */
 #if !defined(SHIFTDIGITS_H)
   #define SHIFTDIGITS_H
 

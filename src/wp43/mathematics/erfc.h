@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file erfc.h
- ***********************************************/
+/**
+ * \file mathematics/erfc.h
+ */
 #if !defined(ERFC_H)
   #define ERFC_H
 

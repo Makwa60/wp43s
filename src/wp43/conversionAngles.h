@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
+/**
  * \file conversionAngles.h
- ***********************************************/
+ */
 #if !defined(CONVERSIONANGLES_H)
   #define CONVERSIONANGLES_H
 

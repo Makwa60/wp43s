@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file changeSign.h
- ***********************************************/
+/**
+ * \file mathematics/changeSign.h
+ */
 #if !defined(CHANGESIGN_H)
   #define CHANGESIGN_H
 

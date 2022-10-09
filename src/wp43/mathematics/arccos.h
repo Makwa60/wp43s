@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file arccos.h
- ***********************************************/
+/**
+ * \file mathematics/arccos.h
+ */
 #if !defined(ARCCOS_H)
   #define ARCCOS_H
 

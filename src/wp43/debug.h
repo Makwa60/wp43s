@@ -13,6 +13,10 @@
  * You should have received a copy of the GNU General Public License
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
+
+/**
+ * \file debug.h
+ */
 #if !defined(DEBUG_H)
   #define DEBUG_H
 
@@ -44,7 +48,6 @@
 
     char * getDisplayFormatName               (uint16_t df);
     char * getTimeFormatName                  (bool tf);
-    char * getDateFormatName                  (uint16_t df);
     char * getBooleanName                     (bool b);
     char * getRbrModeName                     (uint16_t mode);
     char * getRoundingModeName                (uint16_t rm);

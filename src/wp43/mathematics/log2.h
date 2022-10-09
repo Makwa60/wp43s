@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file log2.h
- ***********************************************/
+/**
+ * \file mathematics/log2.h
+ */
 #if !defined(LOG2_H)
   #define LOG2_H
 

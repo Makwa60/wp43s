@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file ln.h
- ***********************************************/
+/**
+ * \file mathematics/ln.h
+ */
 #if !defined(LN_H)
   #define LN_H
 

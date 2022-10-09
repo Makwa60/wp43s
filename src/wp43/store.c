@@ -20,6 +20,7 @@
 #include "debug.h"
 #include "defines.h"
 #include "error.h"
+#include "flags.h"
 #include "items.h"
 #include "mathematics/compare.h"
 #include "mathematics/integerPart.h"

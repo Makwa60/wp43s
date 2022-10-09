@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file equation.h
- ***********************************************/
+/**
+ * \file solver/equation.h
+ */
 #if !defined(EQUATION_H)
   #define EQUATION_H
 

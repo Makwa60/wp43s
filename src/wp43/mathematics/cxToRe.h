@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file cxToRe.h
- ***********************************************/
+/**
+ * \file mathematics/cxToRe.h
+ */
 #if !defined(CXTORE_H)
   #define CXTORE_H
 

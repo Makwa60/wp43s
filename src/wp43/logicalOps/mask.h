@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file mask.h
- ***********************************************/
+/**
+ * \file logicalOps/mask.h
+ */
 #if !defined(MASK_H)
   #define MASK_H
 

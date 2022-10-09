@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file negBinom.h
- ***********************************************/
+/**
+ * \file distributions/negBinom.h
+ */
 #if !defined(NEGBINOM_H)
   #define NEGBINOM_H
 

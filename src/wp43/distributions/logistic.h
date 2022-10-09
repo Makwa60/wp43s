@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file logistic.h
- ***********************************************/
+/**
+ * \file distributions/logistic.h
+ */
 #if !defined(LOGISTIC_H)
   #define LOGISTIC_H
 

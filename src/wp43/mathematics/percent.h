@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file percent.h
- ***********************************************/
+/**
+ * \file mathematics/percent.h
+ */
 #if !defined(PERCENT_H)
   #define PERCENT_H
 

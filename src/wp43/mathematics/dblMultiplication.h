@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file dblMultiplication.h
- ***********************************************/
+/**
+ * \file mathematics/dblMultiplication.h
+ */
 #if !defined(DBLMULTIPLICATION_H)
   #define DBLMULTIPLICATION_H
 

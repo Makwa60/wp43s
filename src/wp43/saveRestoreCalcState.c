@@ -55,7 +55,7 @@
 
 #include "wp43.h"
 
-#define BACKUP_VERSION         83  // changed timer app state
+#define BACKUP_VERSION         84  // changed displayFormat into an enum
 #define START_REGISTER_VALUE 1000  // was 1522, why?
 
 static char *tmpRegisterString = NULL;
@@ -955,7 +955,7 @@ void fnSave(uint16_t unusedButMandatoryParameter) {
   save(tmpString, strlen(tmpString));
   sprintf(tmpString, "denMax\n%" PRIu32 "\n", denMax);
   save(tmpString, strlen(tmpString));
-  sprintf(tmpString, "displayFormat\n%" PRIu8 "\n", displayFormat);
+  sprintf(tmpString, "displayFormat\n%" PRIu8 "\n", (uint8_t)displayFormat);
   save(tmpString, strlen(tmpString));
   sprintf(tmpString, "displayFormatDigits\n%" PRIu8 "\n", displayFormatDigits);
   save(tmpString, strlen(tmpString));

@@ -617,16 +617,16 @@ void debugNIM(void) {
    ***********************************************/
   char * getDisplayFormatName(uint16_t df) {
     switch(df) {
-      case DF_ALL: {
+      case dfAll: {
         return "ALL";
       }
-      case DF_FIX: {
+      case dfFix: {
         return "FIX";
       }
-      case DF_SCI: {
+      case dfSci: {
         return "SCI";
       }
-      case DF_ENG: {
+      case dfEng: {
         return "ENG";
       }
       default: {
@@ -644,31 +644,6 @@ void debugNIM(void) {
    ***********************************************/
   char * getTimeFormatName(bool tf) {
     return (tf ? "H24" : "H12");
-  }
-
-
-  /********************************************//**
-   * \brief Returns the name of a date format
-   *
-   * \param[in] df uint16_t Date format
-   * \return char*          Name of the date format
-   *
-   ***********************************************/
-  char * getDateFormatName(uint16_t df) {
-    switch(df) {
-      case DF_DMY: {
-        return "D.MY";
-      }
-      case DF_MDY: {
-        return "M.DY";
-      }
-      case DF_YMD: {
-        return "Y.MD";
-      }
-      default: {
-        return "??? ";
-      }
-    }
   }
 
 

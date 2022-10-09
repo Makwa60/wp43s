@@ -20,11 +20,12 @@
 
 #include "mathematics/rsd.h"
 
+#include "config.h"
 #include "constantPointers.h"
+#include "conversionAngles.h"
 #include "debug.h"
 #include "error.h"
-#include "config.h"
-#include "conversionAngles.h"
+#include "flags.h"
 #include "items.h"
 #include "mathematics/comparisonReals.h"
 #include "mathematics/toPolar.h"

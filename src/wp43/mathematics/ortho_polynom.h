@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file ortho_polynom.h
- ***********************************************/
+/**
+ * \file mathematics/ortho_polynom.h
+ */
 #if !defined(ORTHO_POLYNOM_H)
   #define ORTHO_POLYNOM_H
 

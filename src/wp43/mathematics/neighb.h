@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file neighb.h
- ***********************************************/
+/**
+ * \file mathematics/neighb.h
+ */
 #if !defined(NEIGHB_H)
   #define NEIGHB_H
 

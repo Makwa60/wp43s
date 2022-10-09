@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file exponential.h
- ***********************************************/
+/**
+ * \file distributions/exponential.h
+ */
 #if !defined(EXPONENTIAL_H)
   #define EXPONENTIAL_H
 

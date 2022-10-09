@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file countBits.h
- ***********************************************/
+/**
+ * \file logicalOps/countBits.h
+ */
 #if !defined(COUNTBITS_H)
   #define COUNTBITS_H
 

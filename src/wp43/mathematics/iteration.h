@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file iteration.h
- ***********************************************/
+/**
+ * \file mathematics/iteration.h
+ */
 #if !defined(ITERATION_H)
   #define ITERATION_H
 

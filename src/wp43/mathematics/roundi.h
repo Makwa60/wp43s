@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file roundi.h
- ***********************************************/
+/**
+ * \file mathematics/roundi.h
+ */
 #if !defined(ROUNDI_H)
   #define ROUNDI_H
 

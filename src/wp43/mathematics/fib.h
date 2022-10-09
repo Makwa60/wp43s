@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file fib.h
- ***********************************************/
+/**
+ * \file mathematics/fib.h
+ */
 #if !defined(FIB_H)
   #define FIB_H
 

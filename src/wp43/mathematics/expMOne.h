@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file expMOne.h
- ***********************************************/
+/**
+ * \file mathematics/expMOne.h
+ */
 #if !defined(EXPMONE_H)
   #define EXPMONE_H
   // Coded by JM, based on exp.h

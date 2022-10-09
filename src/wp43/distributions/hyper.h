@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file hyper.h
- ***********************************************/
+/**
+ * \file distributions/hyper.h
+ */
 #if !defined(HYPER_H)
   #define HYPER_H
 

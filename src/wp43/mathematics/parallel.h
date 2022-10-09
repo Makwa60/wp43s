@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file parallel.h
- ***********************************************/
+/**
+ * \file mathematics/parallel.h
+ */
 #if !defined(PARALLEL_H)
   #define PARALLEL_H
 

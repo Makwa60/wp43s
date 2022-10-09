@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file fib.h
- ***********************************************/
+/**
+ * \file mathematics/fib.h
+ */
 #if !defined(GD_H)
   #define GD_H
 

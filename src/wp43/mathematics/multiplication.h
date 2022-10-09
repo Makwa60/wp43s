@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file multiplication.h
- ***********************************************/
+/**
+ * \file mathematics/multiplication.h
+ */
 #if !defined(MULTIPLICATION_H)
   #define MULTIPLICATION_H
 

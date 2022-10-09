@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file elliptic.h
- ***********************************************/
+/**
+ * \file mathematics/elliptic.h
+ */
 #if !defined(ELLIPTIC_H)
   #define ELLIPTIC_H
 

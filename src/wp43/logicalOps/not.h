@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file not.h
- ***********************************************/
+/**
+ * \file logicalOps/not.h
+ */
 #if !defined(NOT_H)
   #define NOT_H
 

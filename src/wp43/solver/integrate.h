@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file integrate.h
- ***********************************************/
+/**
+ * \file solver/integrate.h
+ */
 #if !defined(INTEGRATE_H)
   #define INTEGRATE_H
 

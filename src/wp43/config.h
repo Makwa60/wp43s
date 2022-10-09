@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
+/**
  * \file config.h
- ***********************************************/
+ */
 #if !defined(CONFIG_H)
   #define CONFIG_H
 

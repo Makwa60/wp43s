@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file decomp.h
- ***********************************************/
+/**
+ * \file mathematics/decomp.h
+ */
 #if !defined(DECOMP_H)
   #define DECOMP_H
 

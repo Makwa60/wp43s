@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file swapRealImaginary.h
- ***********************************************/
+/**
+ * \file mathematics/swapRealImaginary.h
+ */
 #if !defined(SWAPREALIMAGINARY_H)
   #define SWAPREALIMAGINARY_H
 

@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file rotateBits.h
- ***********************************************/
+/**
+ * \file logicalOps/rotateBits.h
+ */
 #if !defined(ROTATEBITS_H)
   #define ROTATEBITS_H
 
