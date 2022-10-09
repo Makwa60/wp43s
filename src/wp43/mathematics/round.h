@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file round.h
- ***********************************************/
+/**
+ * \file mathematics/round.h
+ */
 #if !defined(ROUND_H)
   #define ROUND_H
 

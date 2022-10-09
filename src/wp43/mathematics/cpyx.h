@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file cpyx.h
- ***********************************************/
+/**
+ * \file mathematics/cpyx.h
+ */
 #if !defined(CPYX_H)
   #define CPYX_H
 

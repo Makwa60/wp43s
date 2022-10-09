@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file or.h
- ***********************************************/
+/**
+ * \file logicalOps/or.h
+ */
 #if !defined(OR_H)
   #define OR_H
 

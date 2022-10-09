@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file decode.h
- ***********************************************/
+/**
+ * \file programming/decode.h
+ */
 #if !defined(DECODE_H)
   #define DECODE_H
 

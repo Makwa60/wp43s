@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file opmod.h
- ***********************************************/
+/**
+ * \file mathematics/opmod.h
+ */
 #if !defined(OPMOD_H)
   #define OPMOD_H
 

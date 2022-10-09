@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file subtraction.h
- ***********************************************/
+/**
+ * \file mathematics/subtraction.h
+ */
 #if !defined(SUBTRACTION_H)
   #define SUBTRACTION_H
 

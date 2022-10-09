@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file percentMRR.h
- ***********************************************/
+/**
+ * \file mathematics/percentMRR.h
+ */
 #if !defined(PERCENTMRR_H)
   #define PERCENTMRR_H
 

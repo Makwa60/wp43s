@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file xnor.h
- ***********************************************/
+/**
+ * \file logicalOps/xnor.h
+ */
 #if !defined(XNOR_H)
   #define XNOR_H
 

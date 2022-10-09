@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file lnPOne.h
- ***********************************************/
+/**
+ * \file mathematics/lnPOne.h
+ */
 #if !defined(LNPONE_H)
   #define LNPONE_H
   // Coded by JM, based on ln.h

@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
+/**
  * \file dateTime.h
- ***********************************************/
+ */
 #if !defined(DATETIME_H)
   #define DATETIME_H
 

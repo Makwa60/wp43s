@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file poisson.h
- ***********************************************/
+/**
+ * \file distributions/poisson.h
+ */
 #if !defined(POISSON_H)
   #define POISSON_H
 

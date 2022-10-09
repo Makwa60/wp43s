@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file solve.h
- ***********************************************/
+/**
+ * \file solver/solve.h
+ */
 #if !defined(SOLVE_H)
   #define SOLVE_H
 

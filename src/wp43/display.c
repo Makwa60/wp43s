@@ -52,7 +52,7 @@
  * \return void
  ***********************************************/
 void fnDisplayFormatFix(uint16_t displayFormatN) {
-  displayFormat = DF_FIX;
+  displayFormat = dfFix;
   displayFormatDigits = displayFormatN;
   clearSystemFlag(FLAG_FRACT);
 }
@@ -66,7 +66,7 @@ void fnDisplayFormatFix(uint16_t displayFormatN) {
  * \return void
  ***********************************************/
 void fnDisplayFormatSci(uint16_t displayFormatN) {
-  displayFormat = DF_SCI;
+  displayFormat = dfSci;
   displayFormatDigits = displayFormatN;
   clearSystemFlag(FLAG_FRACT);
 }
@@ -80,7 +80,7 @@ void fnDisplayFormatSci(uint16_t displayFormatN) {
  * \return void
  ***********************************************/
 void fnDisplayFormatEng(uint16_t displayFormatN) {
-  displayFormat = DF_ENG;
+  displayFormat = dfEng;
   displayFormatDigits = displayFormatN;
   clearSystemFlag(FLAG_FRACT);
 }
@@ -95,7 +95,7 @@ void fnDisplayFormatEng(uint16_t displayFormatN) {
  ***********************************************/
 void fnDisplayFormatAll(uint16_t displayFormatN) {
   //if(0 <= displayFormatN && displayFormatN <= 15) {
-  displayFormat = DF_ALL;
+  displayFormat = dfAll;
   displayFormatDigits = displayFormatN;
   clearSystemFlag(FLAG_FRACT);
 }
@@ -265,7 +265,7 @@ void real34ToDisplayString(const real34_t *real34, uint32_t tag, char *displaySt
   }
 
   while(stringWidth(displayString, font, true, true) > maxWidth) {
-    if(displayFormat == DF_ALL) {
+    if(displayFormat == dfAll) {
       if(displayHasNDigits == 2) {
         break;
       }
@@ -314,7 +314,7 @@ void real34ToDisplayString2(const real34_t *real34, char *displayString, int16_t
   real_t value;
 
   real34ToReal(real34, &value);
-  ctxtReal39.digits =  (displayFormat == DF_FIX ? 24 : displayHasNDigits); // This line is for FIX n displaying more than 16 digits. e.g. in FIX 15: 123 456.789 123 456 789 123
+  ctxtReal39.digits =  (displayFormat == dfFix ? 24 : displayHasNDigits); // This line is for FIX n displaying more than 16 digits. e.g. in FIX 15: 123 456.789 123 456 789 123
   //ctxtReal39.digits =  displayHasNDigits; // This line is for fixed number of displayed digits, e.g. in FIX 15: 123 456.789 123 456 8
   realPlus(&value, &value, &ctxtReal39);
   ctxtReal39.digits = 39;
@@ -451,7 +451,7 @@ void real34ToDisplayString2(const real34_t *real34, char *displayString, int16_t
   //////////////
   // ALL mode //
   //////////////
-  if(displayFormat == DF_ALL) {
+  if(displayFormat == dfAll) {
     if(noFix || exponent >= displayHasNDigits || (displayFormatDigits != 0 && exponent < -(int32_t)displayFormatDigits) || (displayFormatDigits == 0 && exponent < numDigits - displayHasNDigits)) { // Display in SCI or ENG format
       digitsToDisplay = numDigits - 1;
       digitToRound    = firstDigit + digitsToDisplay;
@@ -578,7 +578,7 @@ void real34ToDisplayString2(const real34_t *real34, char *displayString, int16_t
   //////////////
   // FIX mode //
   //////////////
-  if(displayFormat == DF_FIX) {
+  if(displayFormat == dfFix) {
     if(noFix || exponent >= displayHasNDigits || exponent < -(int32_t)displayFormatDigits) { // Display in SCI or ENG format
       digitsToDisplay = displayFormatDigits;
       digitToRound    = min(firstDigit + digitsToDisplay, lastDigit);
@@ -718,7 +718,7 @@ void real34ToDisplayString2(const real34_t *real34, char *displayString, int16_t
   //////////////
   // SCI mode //
   //////////////
-  if(ovrSCI  || displayFormat == DF_SCI) {
+  if(ovrSCI  || displayFormat == dfSci) {
     // Round the displayed number
     if(!ovrSCI) {
       digitsToDisplay = displayFormatDigits;
@@ -821,7 +821,7 @@ void real34ToDisplayString2(const real34_t *real34, char *displayString, int16_t
   //////////////
   // ENG mode //
   //////////////
-  if(ovrENG || displayFormat == DF_ENG) {
+  if(ovrENG || displayFormat == dfEng) {
     // Round the displayed number
     if(!ovrENG) {
       digitsToDisplay = displayFormatDigits;
@@ -948,7 +948,7 @@ void complex34ToDisplayString(const complex34_t *complex34, char *displayString,
 
   complex34ToDisplayString2(complex34, displayString, displayHasNDigits, limitExponent, separator, frontSpace);
   while(stringWidth(displayString, font, true, true) > maxWidth) {
-    if(displayFormat == DF_ALL) {
+    if(displayFormat == dfAll) {
       if(displayHasNDigits == 2) {
         break;
       }
@@ -1826,11 +1826,11 @@ void timeToDisplayString(calcRegister_t regist, char *displayString, bool ignore
   }
   if(realCompareAbsLessThan(&real, &value) || (ignoreTDisp && (!realIsZero(&tmp)))) {
     if(ignoreTDisp || (timeDisplayFormatDigits == 0)) {
-      displayFormat = DF_ALL;
+      displayFormat = dfAll;
       displayFormatDigits = 0;
     }
     else {
-      displayFormat = getSystemFlag(FLAG_ALLENG) ? DF_ENG : DF_SCI;
+      displayFormat = getSystemFlag(FLAG_ALLENG) ? dfEng : dfSci;
       displayFormatDigits = 3;
     }
     real34ToDisplayString(REGISTER_REAL34_DATA(regist), amSecond, displayString, &standardFont, 2000, ignoreTDisp ? 34 : 16, false, STD_SPACE_4_PER_EM, false);
@@ -2049,7 +2049,7 @@ void fnShow(uint16_t unusedButMandatoryParameter) {
   char    *separator;
   bool     thereIsANextLine;
 
-  displayFormat = DF_ALL;
+  displayFormat = dfAll;
   displayFormatDigits = 0;
 
   tmpString[   0] = 0; // L1
@@ -2168,7 +2168,7 @@ void mimShowElement(void) {
     int16_t i = getIRegisterAsInt(true);
     int16_t j = getJRegisterAsInt(true);
 
-    displayFormat = DF_ALL;
+    displayFormat = dfAll;
     displayFormatDigits = 0;
 
     tmpString[   0] = 0; // L1

@@ -21,6 +21,7 @@
 #include "charString.h"
 #include "core/memory.h"
 #include "error.h"
+#include "flags.h"
 #include "hal/lcd.h"
 #include "items.h"
 #include "programming/flash.h"

@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file idiv.h
- ***********************************************/
+/**
+ * \file mathematics/idiv.h
+ */
 #if !defined(IDIV_H)
   #define IDIV_H
 

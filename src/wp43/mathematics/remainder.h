@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file remainder.h
- ***********************************************/
+/**
+ * \file mathematics/remainder.h
+ */
 #if !defined(REMAINDER_H)
   #define REMAINDER_H
 

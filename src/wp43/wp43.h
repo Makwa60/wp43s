@@ -17,7 +17,6 @@
 /**
  * \file wp43.h
  */
-
 #if !defined(WP43_H)
   #define WP43_H
 
@@ -174,7 +173,7 @@
   extern char                   displayValueX[DISPLAY_VALUE_LEN];
 
   extern uint8_t                numScreensStandardFont;
-  extern uint8_t                displayFormat;
+  extern displayFormat_t        displayFormat;
   extern uint8_t                displayFormatDigits;
   extern uint8_t                timeDisplayFormatDigits;
   extern uint8_t                shortIntegerWordSize;
@@ -269,7 +268,6 @@
 
   extern uint64_t               shortIntegerMask;
   extern uint64_t               shortIntegerSignBit;
-  extern uint64_t               systemFlags;
   extern uint64_t               savedSystemFlags;
 
   extern size_t                 gmpMemInBytes;

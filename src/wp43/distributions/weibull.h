@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file weibull.h
- ***********************************************/
+/**
+ * \file distributions/weibull.h
+ */
 #if !defined(WEIBULL_H)
   #define WEIBULL_H
 

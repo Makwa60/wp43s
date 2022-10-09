@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file xor.h
- ***********************************************/
+/**
+ * \file logicalOps/xor.h
+ */
 #if !defined(XOR_H)
   #define XOR_H
 

@@ -2335,8 +2335,8 @@ smallFont:
     bool    noFix = (mtxWidth < 0);
     mtxWidth = abs(mtxWidth);
     totalWidth = baseWidth + mtxWidth;
-    if(displayFormat == DF_ALL && noFix) {
-      displayFormat = getSystemFlag(FLAG_ALLENG) ? DF_ENG : DF_SCI;
+    if(displayFormat == dfAll && noFix) {
+      displayFormat = getSystemFlag(FLAG_ALLENG) ? dfEng : dfSci;
       displayFormatDigits = digits;
     }
     if(totalWidth > maxWidth || leftEllipsis) {
@@ -2346,7 +2346,7 @@ smallFont:
         goto smallFont;
       }
       else {
-        displayFormat = DF_SCI;
+        displayFormat = dfSci;
         displayFormatDigits = 3;
         mtxWidth = getRealMatrixColumnWidths(matrix, prefixWidth, font, colWidth, rPadWidth, &digits, maxCols);
         noFix = (mtxWidth < 0);
@@ -2418,7 +2418,7 @@ smallFont:
           vm = vmNormal;
         }
         else {
-          real34ToDisplayString(&matrix->matrixElements[(i+sRow)*cols+j+sCol], amNone, tmpString, font, colWidth[j], displayFormat == DF_ALL ? digits : 15, true, STD_SPACE_4_PER_EM, true);
+          real34ToDisplayString(&matrix->matrixElements[(i+sRow)*cols+j+sCol], amNone, tmpString, font, colWidth[j], displayFormat == dfAll ? digits : 15, true, STD_SPACE_4_PER_EM, true);
           if(forEditor && matSelRow == (i + sRow) && matSelCol == (j + sCol)) {
             lcd_fill_rect(X_POS + colX, Y_POS - (maxRows -1 -i) * fontHeight, colWidth[j], font == &numericFont ? 32 : 20, 0xFF);
             vm = vmReverse;
@@ -2460,11 +2460,11 @@ smallFont:
 
     begin:
     for(int k = 15; k >= 1; k--) {
-      if(displayFormat == DF_ALL) {
+      if(displayFormat == dfAll) {
         *digits = k;
       }
-      if(displayFormat == DF_ALL && noFix) { // something like SCI
-        displayFormat = getSystemFlag(FLAG_ALLENG) ? DF_ENG : DF_SCI;
+      if(displayFormat == dfAll && noFix) { // something like SCI
+        displayFormat = getSystemFlag(FLAG_ALLENG) ? dfEng : dfSci;
         displayFormatDigits = k;
       }
       for(int i = 0; i < maxRows; i++) {
@@ -2472,8 +2472,8 @@ smallFont:
           real34_t r34Val;
           real34Copy(&matrix->matrixElements[(i+sRow)*cols+j+sCol], &r34Val);
           real34SetPositiveSign(&r34Val);
-          real34ToDisplayString(&r34Val, amNone, tmpString, font, maxWidth, displayFormat == DF_ALL ? k : 15, true, STD_SPACE_4_PER_EM, true);
-          if(displayFormat == DF_ALL && !noFix && strstr(tmpString, STD_SUB_10)) { // something like SCI
+          real34ToDisplayString(&r34Val, amNone, tmpString, font, maxWidth, displayFormat == dfAll ? k : 15, true, STD_SPACE_4_PER_EM, true);
+          if(displayFormat == dfAll && !noFix && strstr(tmpString, STD_SUB_10)) { // something like SCI
             noFix = true;
             totalWidth = 0;
             for(int p = 0; p < MATRIX_MAX_COLUMNS; ++p) {
@@ -2485,8 +2485,8 @@ smallFont:
           rPadWidth[i * MATRIX_MAX_COLUMNS + j] = 0;
           if(strstr(tmpString, ".") || strstr(tmpString, ",")) {
             for(char *xStr = tmpString; *xStr != 0; xStr++) {
-              if(((displayFormat != DF_ENG && (displayFormat != DF_ALL || !getSystemFlag(FLAG_ALLENG))) && (*xStr == '.' || *xStr == ',')) ||
-                 ((displayFormat == DF_ENG || (displayFormat == DF_ALL && getSystemFlag(FLAG_ALLENG))) && xStr[0] == (char)0x80 && (xStr[1] == (char)0x87 || xStr[1] == (char)0xd7))) {
+              if(((displayFormat != dfEng && (displayFormat != dfAll || !getSystemFlag(FLAG_ALLENG))) && (*xStr == '.' || *xStr == ',')) ||
+                 ((displayFormat == dfEng || (displayFormat == dfAll && getSystemFlag(FLAG_ALLENG))) && xStr[0] == (char)0x80 && (xStr[1] == (char)0x87 || xStr[1] == (char)0xd7))) {
                 rPadWidth[i * MATRIX_MAX_COLUMNS + j] = stringWidth(xStr, font, true, true) + 1;
                 if(maxRightWidth[j] < rPadWidth[i * MATRIX_MAX_COLUMNS + j]) {
                   maxRightWidth[j] = rPadWidth[i * MATRIX_MAX_COLUMNS + j];
@@ -2529,10 +2529,10 @@ smallFont:
       }
       totalWidth -= stringWidth(STD_SPACE_FIGURE, font, true, true);
       if(noFix) {
-        displayFormat = DF_ALL;
+        displayFormat = dfAll;
         displayFormatDigits = dspDigits;
       }
-      if(displayFormat != DF_ALL) {
+      if(displayFormat != dfAll) {
         break;
       }
       else if(totalWidth <= maxWidth) {
@@ -2624,7 +2624,7 @@ smallFont:
         goto smallFont;
       }
       else {
-        displayFormat = DF_SCI;
+        displayFormat = dfSci;
         displayFormatDigits = 2;
         clearSystemFlag(FLAG_MULTx);
         totalWidth = baseWidth + getComplexMatrixColumnWidths(matrix, prefixWidth, font, colWidth, colWidth_r, colWidth_i, rPadWidth_r, rPadWidth_i, &digits, maxCols);
@@ -2710,7 +2710,7 @@ smallFont:
         }
         else {
           tmpString[0] = 0;
-          real34ToDisplayString(&re, amNone, tmpString, font, colWidth_r[j], displayFormat == DF_ALL ? digits : 15, true, STD_SPACE_4_PER_EM, true);
+          real34ToDisplayString(&re, amNone, tmpString, font, colWidth_r[j], displayFormat == dfAll ? digits : 15, true, STD_SPACE_4_PER_EM, true);
           if(forEditor && matSelRow == (i + sRow) && matSelCol == (j + sCol)) {
             lcd_fill_rect(X_POS + colX, Y_POS - (maxRows -1 -i) * fontHeight, colWidth[j], font == &numericFont ? 32 : 20, 0xFF);
             vm = vmReverse;
@@ -2742,7 +2742,7 @@ smallFont:
           }
           showString(tmpString, font, X_POS + colX + colWidth_r[j] + (width - stringWidth(tmpString, font, true, true)), Y_POS - (maxRows -1 -i) * fontHeight, vm, true, false);
 
-          real34ToDisplayString(&im, getSystemFlag(FLAG_POLAR) ? currentAngularMode : amNone, tmpString, font, colWidth_i[j], displayFormat == DF_ALL ? digits : 15, true, STD_SPACE_4_PER_EM, false);
+          real34ToDisplayString(&im, getSystemFlag(FLAG_POLAR) ? currentAngularMode : amNone, tmpString, font, colWidth_i[j], displayFormat == dfAll ? digits : 15, true, STD_SPACE_4_PER_EM, false);
           width = stringWidth(tmpString, font, true, true) + 1;
           showString(tmpString, font, X_POS + colX + colWidth_r[j] + cpxUnitWidth + (((j == maxCols - 1) && rightEllipsis) ? 0 : (colWidth_i[j] - width) - rPadWidth_i[i * MATRIX_MAX_COLUMNS + j]), Y_POS - (maxRows -1 -i) * fontHeight, vm, true, false);
         }
@@ -2790,7 +2790,7 @@ smallFont:
     cpxUnitWidth = stringWidth(tmpString, font, true, true);
 
     for(int k = 15; k >= 1; k--) {
-      if(displayFormat == DF_ALL) {
+      if(displayFormat == dfAll) {
         *digits = k;
       }
       for(int i = 0; i < maxRows; i++) {
@@ -2809,12 +2809,12 @@ smallFont:
 
           rPadWidth_r[i * MATRIX_MAX_COLUMNS + j] = 0;
           real34SetPositiveSign(VARIABLE_REAL34_DATA(&c34Val));
-          real34ToDisplayString(VARIABLE_REAL34_DATA(&c34Val), amNone, tmpString, font, maxWidth, displayFormat == DF_ALL ? k : 15, true, STD_SPACE_4_PER_EM, true);
+          real34ToDisplayString(VARIABLE_REAL34_DATA(&c34Val), amNone, tmpString, font, maxWidth, displayFormat == dfAll ? k : 15, true, STD_SPACE_4_PER_EM, true);
           width = stringWidth(tmpString, font, true, true) + 1;
           if(strstr(tmpString, ".") || strstr(tmpString, ",")) {
             for(char *xStr = tmpString; *xStr != 0; xStr++) {
-              if(((displayFormat != DF_ENG && (displayFormat != DF_ALL || !getSystemFlag(FLAG_ALLENG))) && (*xStr == '.' || *xStr == ',')) ||
-                 ((displayFormat == DF_ENG || (displayFormat == DF_ALL && getSystemFlag(FLAG_ALLENG))) && xStr[0] == (char)0x80 && (xStr[1] == (char)0x87 || xStr[1] == (char)0xd7))) {
+              if(((displayFormat != dfEng && (displayFormat != dfAll || !getSystemFlag(FLAG_ALLENG))) && (*xStr == '.' || *xStr == ',')) ||
+                 ((displayFormat == dfEng || (displayFormat == dfAll && getSystemFlag(FLAG_ALLENG))) && xStr[0] == (char)0x80 && (xStr[1] == (char)0x87 || xStr[1] == (char)0xd7))) {
                 rPadWidth_r[i * MATRIX_MAX_COLUMNS + j] = stringWidth(xStr, font, true, true) + 1;
                 if(maxRightWidth_r[j] < rPadWidth_r[i * MATRIX_MAX_COLUMNS + j]) {
                   maxRightWidth_r[j] = rPadWidth_r[i * MATRIX_MAX_COLUMNS + j];
@@ -2834,12 +2834,12 @@ smallFont:
           if(!getSystemFlag(FLAG_POLAR)) {
             real34SetPositiveSign(VARIABLE_IMAG34_DATA(&c34Val));
           }
-          real34ToDisplayString(VARIABLE_IMAG34_DATA(&c34Val), getSystemFlag(FLAG_POLAR) ? currentAngularMode : amNone, tmpString, font, maxWidth, displayFormat == DF_ALL ? k : 15, true, STD_SPACE_4_PER_EM, false);
+          real34ToDisplayString(VARIABLE_IMAG34_DATA(&c34Val), getSystemFlag(FLAG_POLAR) ? currentAngularMode : amNone, tmpString, font, maxWidth, displayFormat == dfAll ? k : 15, true, STD_SPACE_4_PER_EM, false);
           width = stringWidth(tmpString, font, true, true) + 1;
           if(strstr(tmpString, ".") || strstr(tmpString, ",")) {
             for(char *xStr = tmpString; *xStr != 0; xStr++) {
-              if(((displayFormat != DF_ENG && (displayFormat != DF_ALL || !getSystemFlag(FLAG_ALLENG))) && (*xStr == '.' || *xStr == ',')) ||
-                 ((displayFormat == DF_ENG || (displayFormat == DF_ALL && getSystemFlag(FLAG_ALLENG))) && xStr[0] == (char)0x80 && (xStr[1] == (char)0x87 || xStr[1] == (char)0xd7))) {
+              if(((displayFormat != dfEng && (displayFormat != dfAll || !getSystemFlag(FLAG_ALLENG))) && (*xStr == '.' || *xStr == ',')) ||
+                 ((displayFormat == dfEng || (displayFormat == dfAll && getSystemFlag(FLAG_ALLENG))) && xStr[0] == (char)0x80 && (xStr[1] == (char)0x87 || xStr[1] == (char)0xd7))) {
                 rPadWidth_i[i * MATRIX_MAX_COLUMNS + j] = stringWidth(xStr, font, true, true) + 1;
                 if(maxRightWidth_i[j] < rPadWidth_i[i * MATRIX_MAX_COLUMNS + j]) {
                   maxRightWidth_i[j] = rPadWidth_i[i * MATRIX_MAX_COLUMNS + j];
@@ -2895,7 +2895,7 @@ smallFont:
         totalWidth += colWidth[j] + stringWidth(STD_SPACE_FIGURE, font, true, true) * 2;
       }
       totalWidth -= stringWidth(STD_SPACE_FIGURE, font, true, true);
-      if(displayFormat != DF_ALL) {
+      if(displayFormat != dfAll) {
         break;
       }
       else if(totalWidth <= maxWidth) {

@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file addition.h
- ***********************************************/
+/**
+ * \file mathematics/addition.h
+ */
 #if !defined(ADDITION_H)
   #define ADDITION_H
 

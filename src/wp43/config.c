@@ -834,7 +834,7 @@ void fnReset(uint16_t confirmation) {
     groupingGap = 3;
 
     systemFlags = 0;
-    displayFormat = DF_ALL;
+    displayFormat = dfAll;
     displayFormatDigits = 0;
     timeDisplayFormatDigits = 0;
     currentAngularMode = amDegree;

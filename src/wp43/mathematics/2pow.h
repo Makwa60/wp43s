@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file 2pow.h
- ***********************************************/
+/**
+ * \file mathematics/2pow.h
+ */
 #if !defined(FILE_2POW_H)
   #define FILE_2POW_H
 

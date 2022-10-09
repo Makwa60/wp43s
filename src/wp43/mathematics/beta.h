@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file beta.h
- ***********************************************/
+/**
+ * \file mathematics/beta.h
+ */
 #if !defined(BETA_H)
   #define BETA_H
 

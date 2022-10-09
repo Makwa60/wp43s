@@ -16,7 +16,7 @@
 
 /**
  * \file plot.h
- ***********************************************/
+ */
 #if !defined(PLOTSTAT_H)
   #define PLOTSTAT_H
 

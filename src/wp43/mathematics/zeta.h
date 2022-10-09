@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file zeta.h
- ***********************************************/
+/**
+ * \file mathematics/zeta.h
+ */
 #if !defined(ZETA_H)
   #define ZETA_H
 

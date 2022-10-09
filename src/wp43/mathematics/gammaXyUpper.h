@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file gammaXyUpper.h
- ***********************************************/
+/**
+ * \file mathematics/gammaXyUpper.h
+ */
 #if !defined(GAMMAXYUPPER_H)
   #define GAMMAXYUPPER_H
 

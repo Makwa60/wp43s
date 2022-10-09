@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file chi2.h
- ***********************************************/
+/**
+ * \file distributions/chi2.h
+ */
 #if !defined(CHI2_H)
   #define CHI2_H
 

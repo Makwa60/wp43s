@@ -16,9 +16,10 @@
 
 #include "ui/tone.h"
 
-#include <stdio.h>
+#include "flags.h"
 #include "hal/audio.h"
 #include "ui/screen.h"
+#include <stdio.h>
 
 #include "wp43.h"
 

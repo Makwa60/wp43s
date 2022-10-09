@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file max.h
- ***********************************************/
+/**
+ * \file mathematics/max.h
+ */
 #if !defined(MAX_H)
   #define MAX_H
 
