@@ -1,18 +1,5 @@
-/* This file is part of 43S.
- *
- * 43S is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * 43S is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
- */
+// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-FileCopyrightText: Copyright The WP43 Authors
 
 #include "saveRestoreCalcState.h"
 
@@ -49,8 +36,8 @@
 #include <stdbool.h>
 #include <string.h>
 #if defined(PC_BUILD)
-#include <stdio.h>
-#include <errno.h>
+  #include <stdio.h>
+  #include <errno.h>
 #endif
 
 #include "wp43.h"
@@ -618,6 +605,7 @@ static uint32_t restore(void *buffer, uint32_t size) {
 #endif // PC_BUILD
 
 
+
 static void registerToSaveString(calcRegister_t regist) {
   longInteger_t lgInt;
   int16_t sign;
@@ -736,6 +724,7 @@ static void registerToSaveString(calcRegister_t regist) {
     }
   }
 }
+
 
 
 static void saveMatrixElements(calcRegister_t regist) {
@@ -1242,6 +1231,7 @@ static void restoreRegister(calcRegister_t regist, char *type, char *value) {
 }
 
 
+
 static void restoreMatrixData(calcRegister_t regist) {
   #if !defined(TESTSUITE_BUILD)
     uint16_t rows, cols;
@@ -1276,6 +1266,7 @@ static void restoreMatrixData(calcRegister_t regist) {
     }
   #endif // !TESTSUITE_BUILD
 }
+
 
 
 static void skipMatrixData(char *type, char *value) {

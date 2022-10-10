@@ -1,18 +1,5 @@
-/* This file is part of 43S.
- *
- * 43S is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * 43S is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
- */
+// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-FileCopyrightText: Copyright The WP43 Authors
 
 #include "stack.h"
 
@@ -168,9 +155,11 @@ static void _swapRegs(uint16_t srcReg, uint16_t regist) {
 }
 
 
+
 void fnSwapX(uint16_t regist) {
   _swapRegs(REGISTER_X, regist);
 }
+
 
 
 void fnSwapY(uint16_t regist) {
@@ -178,14 +167,17 @@ void fnSwapY(uint16_t regist) {
 }
 
 
+
 void fnSwapZ(uint16_t regist) {
   _swapRegs(REGISTER_Z, regist);
 }
 
 
+
 void fnSwapT(uint16_t regist) {
   _swapRegs(REGISTER_T, regist);
 }
+
 
 
 void fnSwapXY(uint16_t unusedButMandatoryParameter) {
@@ -194,6 +186,8 @@ void fnSwapXY(uint16_t unusedButMandatoryParameter) {
   globalRegister[REGISTER_X] = globalRegister[REGISTER_Y];
   globalRegister[REGISTER_Y] = savedRegisterHeader;
 }
+
+
 
 void fnShuffle(uint16_t regist_order) {
   for(int i=0; i<4; i++) {

@@ -1,22 +1,5 @@
-/* This file is part of 43S.
- *
- * 43S is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * 43S is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-/********************************************//**
- * \file conversionUnits.c
- ***********************************************/
+// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-FileCopyrightText: Copyright The WP43 Authors
 
 #include "conversionUnits.h"
 
@@ -28,8 +11,6 @@
 #include "registerValueConversions.h"
 
 #include "wp43.h"
-
-
 
 static void unitConversion(const real_t * const coefficient, uint16_t multiplyDivide) {
   real_t reX;
@@ -67,13 +48,6 @@ static void unitConversion(const real_t * const coefficient, uint16_t multiplyDi
 
 
 
-/********************************************//**
- * \brief Converts °Celcius to °Fahrenheit: (°Celcius * 1,8) + 32.
- * Refreshes the stack. This is the exact formula.
- *
- * \param[in] unusedButMandatoryParameter uint16_t
- * \return void
- ***********************************************/
 void fnCvtCToF(uint16_t unusedButMandatoryParameter) {
   real_t reX;
 
@@ -105,13 +79,6 @@ void fnCvtCToF(uint16_t unusedButMandatoryParameter) {
 
 
 
-/********************************************//**
- * \brief Converts °Fahrenheit to °Celcius: (°Fahrenheit - 32) / 1,8.
- * Refreshes the stack. This is the exact formula.
- *
- * \param[in] unusedButMandatoryParameter uint16_t
- * \return void
- ***********************************************/
 void fnCvtFToC(uint16_t unusedButMandatoryParameter) {
   real_t reX;
 
@@ -419,13 +386,6 @@ void fnCvtLbfftNm(uint16_t multiplyDivide) {
 
 
 
-/********************************************//**
- * \brief Converts power or field ratio to dB
- * dB = (10 or 20) * log10((power or field) ratio) this is the exact formula
- *
- * \param[in] unusedButMandatoryParameter uint16_t
- * \return void
- ***********************************************/
 void fnCvtRatioDb(uint16_t tenOrTwenty) { // ten: power ratio   twenty: field ratio
   real_t reX;
 
@@ -458,13 +418,6 @@ void fnCvtRatioDb(uint16_t tenOrTwenty) { // ten: power ratio   twenty: field ra
 
 
 
-/********************************************//**
- * \brief Converts dB to power or field ratio
- * (power or field) ratio = 10^(dB / 10 or 20) this is the exact formula
- *
- * \param[in] unusedButMandatoryParameter uint16_t
- * \return void
- ***********************************************/
 void fnCvtDbRatio(uint16_t tenOrTwenty) { // ten: power ratio   twenty: field ratio
   real_t reX;
 

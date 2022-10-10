@@ -1,22 +1,5 @@
-/* This file is part of 43S.
- *
- * 43S is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * 43S is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-/********************************************//**
- * \file flags.c
- ***********************************************/
+// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-FileCopyrightText: Copyright The WP43 Authors
 
 #include "flags.h"
 
@@ -264,6 +247,8 @@ static void _setAlpha(void) {
   }
 }
 
+
+
 static void _clearAlpha(void) {
   if(calcMode == cmEim) {
     if(softmenu[softmenuStack[0].softmenuId].menuItem == -MNU_EQ_EDIT) {
@@ -282,12 +267,6 @@ static void _clearAlpha(void) {
 
 
 
-/********************************************//**
- * \brief Returns the status of a flag
- *
- * \param[in] flag uint16_t
- * \return bool
- ***********************************************/
 bool getFlag(uint16_t flag) {
   if(flag & 0x8000) { // System flag
     return getSystemFlag(flag);
@@ -313,16 +292,10 @@ bool getFlag(uint16_t flag) {
     #endif // PC_BUILD
   }
   return false;
- }
+}
 
 
 
-/********************************************//**
- * \brief Returns the status of a system flag
- *
- * \param[in] systemFlag uint16_t
- * \return void
- ***********************************************/
 void fnGetSystemFlag(uint16_t systemFlag) {
   if(getSystemFlag(systemFlag)) {
     temporaryInformation = TI_TRUE;
@@ -334,12 +307,6 @@ void fnGetSystemFlag(uint16_t systemFlag) {
 
 
 
-/********************************************//**
- * \brief Sets a flag
- *
- * \param[in] flag uint16_t
- * \return void
- ***********************************************/
 void fnSetFlag(uint16_t flag) {
   if(flag & 0x8000) { // System flag
     if(isSystemFlagWriteProtected(flag)) {
@@ -424,12 +391,6 @@ void fnSetFlag(uint16_t flag) {
 
 
 
-/********************************************//**
- * \brief Clears a flag
- *
- * \param[in] flags uint16_t
- * \return void
- ***********************************************/
 void fnClearFlag(uint16_t flag) {
   if(flag & 0x8000) { // System flag
     if(isSystemFlagWriteProtected(flag)) {
@@ -514,12 +475,6 @@ void fnClearFlag(uint16_t flag) {
 
 
 
-/********************************************//**
- * \brief Flips a flag
- *
- * \param[in] flags uint16_t
- * \return void
- ***********************************************/
 void fnFlipFlag(uint16_t flag) {
   if(flag & 0x8000) { // System flag
     if(isSystemFlagWriteProtected(flag)) {
@@ -609,12 +564,6 @@ void fnFlipFlag(uint16_t flag) {
 
 
 
-/********************************************//**
- * \brief Clear all global from 00 to 99 and the local flags
- *
- * \param[in] flags uint16_t
- * \return void
- ***********************************************/
 void fnClFAll(uint16_t confirmation) {
   if(confirmation == NOT_CONFIRMED) {
     setConfirmationMode(fnClAll);
@@ -665,7 +614,6 @@ void fnIsFlagSet(uint16_t flag) {
 
 
 
-
 void fnIsFlagSetClear(uint16_t flag) {
   temporaryInformation = (getFlag(flag) ? TI_TRUE : TI_FALSE);
   fnClearFlag(flag);
@@ -673,12 +621,10 @@ void fnIsFlagSetClear(uint16_t flag) {
 
 
 
-
 void fnIsFlagSetSet(uint16_t flag) {
   temporaryInformation = (getFlag(flag) ? TI_TRUE : TI_FALSE);
   fnSetFlag(flag);
 }
-
 
 
 

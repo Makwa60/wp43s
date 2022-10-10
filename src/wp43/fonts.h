@@ -1,18 +1,5 @@
-/* This file is part of 43S.
- *
- * 43S is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * 43S is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
- */
+// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-FileCopyrightText: Copyright The WP43 Authors
 
 /**
  * \file fonts.h
@@ -23,7 +10,24 @@
   #include "typeDefinitions.h"
   #include <stdint.h>
 
+  /**
+   * Finds a glyph in a font
+   *
+   * \param[in] font const Font
+   * \param[in] charCode Unicode code point
+   * \return
+   *   * Glyph index
+   *   * -1 when not found in the standard font
+   *   * -2 when not found in the numeric font
+   */
   int16_t findGlyph            (const font_t *font, uint16_t charCode);
+
+  /**
+   * Generates a glyph for a non found glyph containing the hexadecimal Unicoide code point
+   *
+   * \param[in] font Font for which generate the glyph
+   * \param[in] charCode Unicode code point
+   */
   void    generateNotFoundGlyph(const int16_t font, uint16_t charCode);
 
   //<------------ Numeric font glyphs -----------> Not used for now
@@ -649,4 +653,5 @@
   #define STD_SUB_Y                     "\xa4\xe8"
   #define STD_SUB_Z                     "\xa4\xe9"
   #define STD_CHECK_MARK                "\xa7\x13"
+
 #endif // !FONTS_H

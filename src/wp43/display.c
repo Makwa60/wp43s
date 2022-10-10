@@ -1,22 +1,5 @@
-/* This file is part of 43S.
- *
- * 43S is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * 43S is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-/********************************************//**
- * \file display.c
- ***********************************************/
+// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-FileCopyrightText: Copyright The WP43 Authors
 
 #include "display.h"
 
@@ -43,14 +26,6 @@
 
 #include "wp43.h"
 
-
-
-/********************************************//**
- * \brief Sets the display format FIX and refreshes the stack
- *
- * \param[in] displayFormatN uint16_t Display format
- * \return void
- ***********************************************/
 void fnDisplayFormatFix(uint16_t displayFormatN) {
   displayFormat = dfFix;
   displayFormatDigits = displayFormatN;
@@ -59,12 +34,6 @@ void fnDisplayFormatFix(uint16_t displayFormatN) {
 
 
 
-/********************************************//**
- * \brief Sets the display format SCI and refreshes the stack
- *
- * \param[in] displayFormatN uint16_t Display format
- * \return void
- ***********************************************/
 void fnDisplayFormatSci(uint16_t displayFormatN) {
   displayFormat = dfSci;
   displayFormatDigits = displayFormatN;
@@ -73,12 +42,6 @@ void fnDisplayFormatSci(uint16_t displayFormatN) {
 
 
 
-/********************************************//**
- * \brief Sets the display format ENG and refreshes the stack
- *
- * \param[in] displayFormatN uint16_t Display format
- * \return void
- ***********************************************/
 void fnDisplayFormatEng(uint16_t displayFormatN) {
   displayFormat = dfEng;
   displayFormatDigits = displayFormatN;
@@ -87,12 +50,6 @@ void fnDisplayFormatEng(uint16_t displayFormatN) {
 
 
 
-/********************************************//**
- * \brief Sets the display format ALL and refreshes the stack
- *
- * \param[in] displayFormatN uint16_t Display format
- * \return void
- ***********************************************/
 void fnDisplayFormatAll(uint16_t displayFormatN) {
   //if(0 <= displayFormatN && displayFormatN <= 15) {
   displayFormat = dfAll;
@@ -102,12 +59,6 @@ void fnDisplayFormatAll(uint16_t displayFormatN) {
 
 
 
-/********************************************//**
- * \brief Sets the number of digits afer the period and refreshes the stack
- *
- * \param[in] displayFormatN uint16_t Display format
- * \return void
- ***********************************************/
 void fnDisplayFormatDsp(uint16_t displayFormatN) {
   displayFormatDigits = displayFormatN;
   clearSystemFlag(FLAG_FRACT);
@@ -115,12 +66,6 @@ void fnDisplayFormatDsp(uint16_t displayFormatN) {
 
 
 
-/********************************************//**
- * \brief Sets the GAP in number represemtation and refreshes the stack
- *
- * \param[in] gap uint16_t
- * \return void
- ***********************************************/
 void fnDisplayFormatGap(uint16_t gap) {
   if(gap == 1 || gap == 2) {
     gap = 0;
@@ -129,25 +74,13 @@ void fnDisplayFormatGap(uint16_t gap) {
 }
 
 
-/********************************************//**
- * \brief Sets the display format for time and refreshes the stack
- *
- * \param[in] displayFormatN uint16_t Display format
- * \return void
- ***********************************************/
+
 void fnDisplayFormatTime(uint16_t displayFormatN) {
   timeDisplayFormatDigits = (uint8_t)displayFormatN;
 }
 
 
 
-/********************************************//**
- * \brief Adds the power of 10 using numeric font to displayString
- *
- * \param[out] displayString char*     Result string
- * \param[in]  exponent int32_t Power of 10 to format
- * \return void
- ***********************************************/
 void exponentToDisplayString(int32_t exponent, char *displayString, char *displayValueString, bool nimMode, const char *separator) {
   strcpy(displayString, PRODUCT_SIGN);
   displayString += 2;
@@ -294,13 +227,6 @@ void real34ToDisplayString(const real34_t *real34, uint32_t tag, char *displaySt
 
 
 
-/********************************************//**
- * \brief Formats a real
- *
- * \param[out] displayString char* Result string
- * \param[in]  x const real34_t*  Value to format
- * \return void
- ***********************************************/
 void real34ToDisplayString2(const real34_t *real34, char *displayString, int16_t displayHasNDigits, bool limitExponent, const char *separator, bool noFix, bool frontSpace) {
   #undef MAX_DIGITS
   #define MAX_DIGITS 37 // 34 + 1 before (used when rounding from 9.999 to 10.000) + 2 after (used for rounding and ENG display mode)
@@ -1028,13 +954,6 @@ void complex34ToDisplayString2(const complex34_t *complex34, char *displayString
 
 
 
-/********************************************//**
- * \brief formats a fraction
- *
- * \param regist calcRegister_t
- * \param displayString char*
- * \return void
- ***********************************************/
 void fractionToDisplayString(calcRegister_t regist, char *displayString) {
   int16_t  sign, lessEqualGreater;
   uint64_t intPart, numer, denom;
@@ -1990,15 +1909,21 @@ void timeToDisplayString(calcRegister_t regist, char *displayString, bool ignore
   }
 }
 
+
+
 void real34MatrixToDisplayString(calcRegister_t regist, char *displayString) {
   dataBlock_t* dblock = REGISTER_REAL34_MATRIX_DBLOCK(regist);
   sprintf(displayString, "[%" PRIu16 STD_CROSS "%" PRIu16" Matrix]", dblock->matrixRows, dblock->matrixColumns);
 }
 
+
+
 void complex34MatrixToDisplayString(calcRegister_t regist, char *displayString) {
   dataBlock_t* dblock = REGISTER_REAL34_MATRIX_DBLOCK(regist);
   sprintf(displayString, "[%" PRIu16 STD_CROSS "%" PRIu16 " " STD_COMPLEX_C " Matrix]", dblock->matrixRows, dblock->matrixColumns);
 }
+
+
 
 static void _complex34ToShowTmpString(const real34_t *r, const real34_t *i) {
   int16_t last;
@@ -2042,6 +1967,8 @@ static void _complex34ToShowTmpString(const real34_t *r, const real34_t *i) {
     tmpString[600] = 0;
   }
 }
+
+
 
 void fnShow(uint16_t unusedButMandatoryParameter) {
   uint8_t  savedDisplayFormat = displayFormat, savedDisplayFormatDigits = displayFormatDigits;
@@ -2161,6 +2088,8 @@ void fnShow(uint16_t unusedButMandatoryParameter) {
   displayFormatDigits = savedDisplayFormatDigits;
 }
 
+
+
 void mimShowElement(void) {
   #if !defined(TESTSUITE_BUILD)
     uint8_t savedDisplayFormat = displayFormat, savedDisplayFormatDigits = displayFormatDigits;
@@ -2194,6 +2123,8 @@ void mimShowElement(void) {
     displayFormatDigits = savedDisplayFormatDigits;
   #endif
 }
+
+
 
 void fnView(uint16_t regist) {
   if(regInRange(regist)) {

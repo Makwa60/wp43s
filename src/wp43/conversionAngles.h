@@ -1,18 +1,5 @@
-/* This file is part of 43S.
- *
- * 43S is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * 43S is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
- */
+// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-FileCopyrightText: Copyright The WP43 Authors
 
 /**
  * \file conversionAngles.h
@@ -38,6 +25,21 @@
   void     checkDms34                  (real34_t *angle34Dms);
   uint32_t getInfiniteComplexAngle     (real_t *x, real_t *y);
   void     setInfiniteComplexAngle     (uint32_t angle, real_t *x, real_t *y);
+
+  /**
+   * Converts a real34 from DMS to DEG
+   *
+   * \param[in]  angleDms Real to be conveted to DEG, the format of the real must be ddd.mm.ssfffffff e.g. 12.345678 = 12°34'56.78"
+   * \param[out] angleDec Converted real, from the example above the result is 12.58243888888888888888888888888889°
+   */
   void     real34FromDmsToDeg          (const real34_t *angleDms, real34_t *angleDec);
+
+  /**
+   * Converts a real34 from DEG to DMS
+   *
+   * \param[in]  angleDec Real to be conveted to DMS, 23.456789°
+   * \param[out] angleDms Converted real, from the example above the result 23.27244404 = 23°27'24.4404"
+   */
   void     real34FromDegToDms          (const real34_t *angleDec, real34_t *angleDms);
+
 #endif // !CONVERSIONANGLES_H
