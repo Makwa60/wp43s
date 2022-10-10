@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file square.h
- ***********************************************/
+/**
+ * \file mathematics/square.h
+ */
 #if !defined(SQUARE_H)
   #define SQUARE_H
 

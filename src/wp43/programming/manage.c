@@ -42,6 +42,7 @@
 #include "ui/bufferize.h"
 #include "ui/screen.h"
 #include "ui/softmenus.h"
+#include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -365,8 +366,8 @@ void fnPem(uint16_t unusedButMandatoryParameter) {
     uint16_t stepsThatWouldBeDisplayed = 7;
     uint8_t *step, *nextStep;
     uint8_t *tmpSteps = NULL;
-    bool_t lblOrEnd;
-    bool_t inTamMode = tam.mode && programList[currentProgramNumber - 1].step > 0;
+    bool     lblOrEnd;
+    bool     inTamMode = tam.mode && programList[currentProgramNumber - 1].step > 0;
     uint16_t numberOfSteps = getNumberOfSteps();
     uint16_t linesOfCurrentStep = 1;
 

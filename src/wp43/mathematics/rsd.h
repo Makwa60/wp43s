@@ -14,19 +14,19 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file rsd.h
- ***********************************************/
+/**
+ * \file mathematics/rsd.h
+ */
 #if !defined(RSD_H)
   #define RSD_H
 
   #include "realType.h"
-  #include "typeDefinitions.h"
+  #include <stdbool.h>
   #include <stdint.h>
 
   void roundToSignificantDigits(const real_t *source, real_t *destination, uint16_t digits, realContext_t *realContext);
-  void senaryDigitToDecimal    (bool_t pre_grouped, real_t *val, realContext_t *realContext);
-  void decimalDigitToSenary    (bool_t pre_grouped, real_t *val, realContext_t *realContext);
+  void senaryDigitToDecimal    (bool pre_grouped, real_t *val, realContext_t *realContext);
+  void decimalDigitToSenary    (bool pre_grouped, real_t *val, realContext_t *realContext);
   void fnRsd                   (uint16_t digits);
   void rsdError                (uint16_t unusedButMandatoryParameter);
   void rsdTime                 (uint16_t digits);

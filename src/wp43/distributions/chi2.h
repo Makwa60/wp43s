@@ -14,17 +14,18 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file chi2.h
- ***********************************************/
+/**
+ * \file distributions/chi2.h
+ */
 #if !defined(CHI2_H)
   #define CHI2_H
 
   #include "realType.h"
   #include "typeDefinitions.h"
+  #include <stdbool.h>
   #include <stdint.h>
 
-  bool_t checkRegisterNoFP(calcRegister_t reg);
+  bool checkRegisterNoFP(calcRegister_t reg);
 
   void fnChi2P        (uint16_t unusedButMandatoryParameter);
   void fnChi2L        (uint16_t unusedButMandatoryParameter);

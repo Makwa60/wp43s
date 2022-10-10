@@ -14,13 +14,13 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file equation.h
- ***********************************************/
+/**
+ * \file solver/equation.h
+ */
 #if !defined(EQUATION_H)
   #define EQUATION_H
 
-  #include "typeDefinitions.h"
+  #include <stdbool.h>
   #include <stdint.h>
 
   #define EQUATION_AIM_BUFFER  0xffff
@@ -62,7 +62,7 @@
    * \param[out] cursorShown     Unless `NULL` is specified, returns whether the cursor has been (or would be) shown
    * \param[out] rightEllipsis   Unless `NULL` is specified, returns whether the right ellipsis has been (or would be) shown
    */
-  void   showEquation   (uint16_t equationId, uint16_t startAt, uint16_t cursorAt, bool_t dryRun, bool_t *cursorShown, bool_t *rightEllipsis);
+  void   showEquation   (uint16_t equationId, uint16_t startAt, uint16_t cursorAt, bool dryRun, bool *cursorShown, bool *rightEllipsis);
 
   /**
    * Parses a formula.

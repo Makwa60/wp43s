@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file slvq.h
- ***********************************************/
+/**
+ * \file mathematics/slvq.h
+ */
 #if !defined(SLVQ_H)
   #define SLVQ_H
 

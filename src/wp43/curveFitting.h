@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
+/**
  * \file curveFitting.h
- ***********************************************/
+ */
 #if !defined(CURVEFITTING_H)
   #define CURVEFITTING_H
 

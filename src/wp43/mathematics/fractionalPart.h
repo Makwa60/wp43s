@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file fractionalPart.h
- ***********************************************/
+/**
+ * \file mathematics/fractionalPart.h
+ */
 #if !defined(FRACTIONALPART_H)
   #define FRACTIONALPART_H
 

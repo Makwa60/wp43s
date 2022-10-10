@@ -23,10 +23,12 @@
 #include "dateTime.h"
 #include "display.h"
 #include "error.h"
+#include "flags.h"
 #include "integers.h"
 #include "matrix.h"
 #include "mathematics/rsd.h"
 #include "registers.h"
+#include <stdbool.h>
 #include <string.h>
 
 #include "wp43.h"
@@ -347,7 +349,7 @@ void realToIntegralValue(const real_t *source, real_t *destination, realRounding
 
 
 
-void realToUInt32(const real_t *re, realRoundingMode_t mode, uint32_t *value32, bool_t *overflow) {
+void realToUInt32(const real_t *re, realRoundingMode_t mode, uint32_t *value32, bool *overflow) {
   uint8_t bcd[76], sign;
   real_t real;
   longInteger_t lgInt;
@@ -431,7 +433,7 @@ void convertLongIntegerRegisterToTimeRegister(calcRegister_t source, calcRegiste
 
 void convertDateRegisterToReal34Register(calcRegister_t source, calcRegister_t destination) {
   real34_t y, m, d, j, val;
-  bool_t isNegative;
+  bool     isNegative;
 
   internalDateToJulianDay(REGISTER_REAL34_DATA(source), &j);
   decomposeJulianDay(&j, &y, &m, &d);
@@ -463,7 +465,7 @@ void convertDateRegisterToReal34Register(calcRegister_t source, calcRegister_t d
 
 void convertReal34RegisterToDateRegister(calcRegister_t source, calcRegister_t destination) {
   real34_t part1, part2, part3, val;
-  bool_t isNegative;
+  bool     isNegative;
 
   isNegative = real34IsNegative(REGISTER_REAL34_DATA(source));
   real34CopyAbs(REGISTER_REAL34_DATA(source), &part2);
@@ -597,7 +599,7 @@ void convertReal34RegisterToDateRegister(calcRegister_t source, calcRegister_t d
   void convertDoubleToString(double x, int16_t n, char *buff) { //Reformatting real strings that are formatted according to different locale settings
     uint16_t i = 2;
     uint16_t j = 2;
-    bool_t error = false;
+    bool     error = false;
 
     snprintf(buff, n, "%.16e", x);
 

@@ -29,6 +29,7 @@
 #include "mathematics/toRect.h"
 #include "registers.h"
 #include "registerValueConversions.h"
+#include <stdbool.h>
 
 #include "wp43.h"
 
@@ -41,7 +42,7 @@
  * \return void
  ***********************************************/
 void fnSlvq(uint16_t unusedButMandatoryParameter) {
-  bool_t realCoefs=true, realRoots=true;
+  bool   realCoefs=true, realRoots=true;
   real_t aReal, bReal, cReal, rReal, x1Real, x2Real;
   real_t aImag, bImag, cImag, rImag, x1Imag, x2Imag;
 

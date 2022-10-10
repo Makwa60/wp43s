@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file cos.h
- ***********************************************/
+/**
+ * \file mathematics/cos.h
+ */
 #if !defined(COS_H)
   #define COS_H
 

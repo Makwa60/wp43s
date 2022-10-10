@@ -40,6 +40,7 @@
 #include "stack.h"
 #include "stats.h"
 #include "store.h"
+#include <stdbool.h>
 #include <string.h>
 #include <libgen.h>
 
@@ -61,8 +62,8 @@ int32_t lineNumber, numTestsFile, numTestsTotal, failedTests;
 int32_t functionIndex, funcType, correctSignificantDigits;
 void (*funcNoParam)(uint16_t);
 void (*funcCvt)(uint16_t);
-bool_t testStarted;
-bool_t testPassed;
+bool testStarted;
+bool testPassed;
 uint32_t testInFile;
 
 const funcTest_t funcTestNoParam[] = {
@@ -1088,7 +1089,7 @@ void setParameter(char *p) {
     }
     else if(strcmp(l, "TIME") == 0) {
       int32_t k = 0;
-      bool_t isHms = false;
+      bool isHms = false;
 
       // find the : separating hours and minutes
       i = 0;
@@ -1338,7 +1339,7 @@ void expectedAndShouldBeValue(calcRegister_t regist, char letter, char *expected
 
 
 
-bool_t real34AreEqual(real34_t *a, real34_t *b) {
+bool real34AreEqual(real34_t *a, real34_t *b) {
   if( real34IsNaN(a) &&  real34IsNaN(b)) {
     return true;
   }
@@ -1983,7 +1984,7 @@ void checkExpectedOutParameter(char *p) {
     }
     else if(strcmp(l, "TIME") == 0) {
       int32_t k = 0;
-      bool_t isHms = false;
+      bool isHms = false;
 
       // find the : separating hours and minutes
       i = 0;
@@ -2397,7 +2398,7 @@ void checkOneCatalogSorting(const int16_t *catalog, int16_t catalogId, const cha
     return;
   }
 
-  bool_t passed = true;
+  bool passed = true;
   for(i=1; i<nbElements; i++) {
     int32_t cmp;
     if((cmp = compareString(indexOfItems[abs(catalog[i - 1])].itemCatalogName, indexOfItems[abs(catalog[i])].itemCatalogName, CMP_EXTENSIVE)) >= 0) {
@@ -2453,7 +2454,7 @@ int processTests(const char *listPath) {
 
   fclose(fileList);
 
-  bool_t passed = reporterEndTestSuites();
+  bool passed = reporterEndTestSuites();
 
   free(listPathDup);
 

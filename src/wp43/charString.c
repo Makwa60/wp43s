@@ -23,6 +23,7 @@
 #include "apps/bugScreen.h"
 #include "error.h"
 #include "fonts.h"
+#include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -30,10 +31,10 @@
 
 
 
-int16_t stringWidth(const char *str, const font_t *font, bool_t withLeadingEmptyRows, bool_t withEndingEmptyRows) {
+int16_t stringWidth(const char *str, const font_t *font, bool withLeadingEmptyRows, bool withEndingEmptyRows) {
   int16_t ch, numPixels, charCode, glyphId;
   const glyph_t *glyph;
-  bool_t  firstChar;
+  bool  firstChar;
 
   glyph = NULL;
   firstChar = true;

@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file atan2.h
- ***********************************************/
+/**
+ * \file mathematics/atan2.h
+ */
 #if !defined(ATAN2_H)
   #define ATAN2_H
 

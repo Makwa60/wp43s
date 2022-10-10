@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file mean.h
- ***********************************************/
+/**
+ * \file mathematics/mean.h
+ */
 #if !defined(MEAN_H)
   #define MEAN_H
 

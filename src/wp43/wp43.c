@@ -17,9 +17,10 @@
 #include "wp43.h"
 
 #include "defines.h"
+#include <stdbool.h>
 
 #if defined(PC_BUILD) || defined(TESTSUITE_BUILD)
-  bool_t              debugMemAllocation;
+  bool                debugMemAllocation;
 #endif // PC_BUILD || TESTSUITE_BUILD
 
 const font_t          *fontForShortInteger;
@@ -32,21 +33,21 @@ real51_t               const *angle45;
 void                   (*confirmedFunction)(uint16_t);
 
 // Variables stored in RAM
-bool_t                 funcOK;
-bool_t                 keyActionProcessed;
-bool_t                 fnKeyInCatalog;
-bool_t                 hourGlassIconEnabled;
-bool_t                 watchIconEnabled;
-bool_t                 printerIconEnabled;
-bool_t                 shiftF;
-bool_t                 shiftG;
-bool_t                 rbr1stDigit;
-bool_t                 updateDisplayValueX;
-bool_t                 thereIsSomethingToUndo;
-bool_t                 lastProgramListEnd;
-bool_t                 programListEnd;
-bool_t                 serialIOIconEnabled;
-bool_t                 pemCursorIsZerothStep;
+bool                   funcOK;
+bool                   keyActionProcessed;
+bool                   fnKeyInCatalog;
+bool                   hourGlassIconEnabled;
+bool                   watchIconEnabled;
+bool                   printerIconEnabled;
+bool                   shiftF;
+bool                   shiftG;
+bool                   rbr1stDigit;
+bool                   updateDisplayValueX;
+bool                   thereIsSomethingToUndo;
+bool                   lastProgramListEnd;
+bool                   programListEnd;
+bool                   serialIOIconEnabled;
+bool                   pemCursorIsZerothStep;
 
 realContext_t          ctxtReal4;    //   limited digits: used for higher speed internal real calcs
 realContext_t          ctxtReal34;   //   34 digits
@@ -101,7 +102,7 @@ char                   dateTimeString[12];
 char                   displayValueX[DISPLAY_VALUE_LEN];
 
 uint8_t                numScreensStandardFont;
-uint8_t                displayFormat;
+displayFormat_t        displayFormat;
 uint8_t                displayFormatDigits;
 uint8_t                timeDisplayFormatDigits;
 uint8_t                shortIntegerWordSize;
@@ -193,7 +194,6 @@ uint32_t               sizeOfFlashPgmLibrary;
 
 uint64_t               shortIntegerMask;
 uint64_t               shortIntegerSignBit;
-uint64_t               systemFlags;
 uint64_t               savedSystemFlags;
 
 size_t                 gmpMemInBytes;

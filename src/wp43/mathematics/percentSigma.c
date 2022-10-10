@@ -23,8 +23,10 @@
 #include "constantPointers.h"
 #include "debug.h"
 #include "error.h"
+#include "flags.h"
 #include "registers.h"
 #include "registerValueConversions.h"
+#include <stdbool.h>
 
 #include "wp43.h"
 
@@ -90,7 +92,7 @@ void fnPercentSigma(uint16_t unusedButMandatoryParameter) {
 // PercentSigma calculation functions
 //-----------------------------------------------------------------------------
 
-static bool_t percentSigma(real_t *xReal, real_t *rReal, realContext_t *realContext) {
+static bool percentSigma(real_t *xReal, real_t *rReal, realContext_t *realContext) {
   real34ToReal(SIGMA_X, rReal);    // r = Sum(x)
 
   if(realIsZero(rReal)) {

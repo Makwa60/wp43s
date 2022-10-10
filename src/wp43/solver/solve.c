@@ -40,6 +40,7 @@
 #include "solver/tvm.h"
 #include "stack.h"
 #include "ui/softmenus.h"
+#include <stdbool.h>
 #include <math.h>
 
 #include "wp43.h"
@@ -94,7 +95,7 @@ void fnPgmSlv(uint16_t label) {
   }
 }
 
-static bool_t _realSolverFirstGuesses(calcRegister_t regist, real34_t *val) {
+static bool _realSolverFirstGuesses(calcRegister_t regist, real34_t *val) {
   if(getRegisterDataType(regist) == dtReal34 && getRegisterAngularMode(regist) == amNone) {
     real34Copy(REGISTER_REAL34_DATA(regist), val);
     return true;
@@ -332,12 +333,12 @@ static void _executeSolver(calcRegister_t variable, const real34_t *val, real34_
 int solver(calcRegister_t variable, const real34_t *y, const real34_t *x, real34_t *resZ, real34_t *resY, real34_t *resX) {
   #if !defined(TESTSUITE_BUILD)
     real34_t a, b, b1, b2, fa, fb, fb1, m, s, *bp1, fbp1, tmp;
-    real_t aa, bb, bb1, bb2, faa, fbb, fbb1, mm, ss, secantSlopeA, secantSlopeB, delta, deltaB, smb, tol;
-    bool_t extendRange = false;
-    bool_t originallyLevel = false;
-    bool_t extremum = false;
-    int result = SOLVER_RESULT_NORMAL;
-    bool_t was_inting = getSystemFlag(FLAG_INTING);
+    real_t   aa, bb, bb1, bb2, faa, fbb, fbb1, mm, ss, secantSlopeA, secantSlopeB, delta, deltaB, smb, tol;
+    bool     extendRange = false;
+    bool     originallyLevel = false;
+    bool     extremum = false;
+    int      result = SOLVER_RESULT_NORMAL;
+    bool     was_inting = getSystemFlag(FLAG_INTING);
 
     realCopy(const_1, &tol);
     tol.exponent -= (significantDigits == 0 || significantDigits >= 32) ? 32 : significantDigits;

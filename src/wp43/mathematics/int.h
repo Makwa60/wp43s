@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file int.h
- ***********************************************/
+/**
+ * \file mathematics/int.h
+ */
 #if !defined(INT_H)
   #define INT_H
 

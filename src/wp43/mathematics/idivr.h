@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file idivr.h
- ***********************************************/
+/**
+ * \file mathematics/idivr.h
+ */
 #if !defined(IDIVR_H)
   #define IDIVR_H
 

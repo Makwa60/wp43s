@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file sinh.h
- ***********************************************/
+/**
+ * \file mathematics/sinh.h
+ */
 #if !defined(SINH_H)
   #define SINH_H
 

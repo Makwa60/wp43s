@@ -24,11 +24,13 @@
 #include "charString.h"
 #include "dateTime.h"
 #include "display.h"
+#include "flags.h"
 #include "fonts.h"
 #include "items.h"
 #include "programming/flash.h"
 #include "programming/nextStep.h"
 #include "registers.h"
+#include <stdbool.h>
 #include <string.h>
 
 #include "wp43.h"
@@ -376,7 +378,7 @@ static void decodeOp(uint8_t *paramAddress, const char *op, uint16_t paramMode, 
 }
 
 
-static void _decodeNumeral(char *startPtr, const char *srcStartPtr, bool_t isLongInt, char **updatedTgtPtr, const char **updatedSrcPtr) {
+static void _decodeNumeral(char *startPtr, const char *srcStartPtr, bool isLongInt, char **updatedTgtPtr, const char **updatedSrcPtr) {
   int32_t digit;
   char *strPtr = startPtr;
   const char *srcStr = srcStartPtr;

@@ -52,7 +52,7 @@ TO_QSPI const uint8_t offsets[] = {  10,   2,   4,   2,   4,   6,   2,   6,   4,
 #define QUICK_CHECK (101*101-1)
 #define NUMBER_OF_SMALL_PRIMES 25
 
-static bool_t longIntegerIsPrime1(longInteger_t primeCandidate) {
+static bool longIntegerIsPrime1(longInteger_t primeCandidate) {
   uint32_t i;
   longInteger_t primeCandidateMinus1, s, temp, smallPrime, mod;
 
@@ -203,7 +203,7 @@ void fnNextPrime(uint16_t unusedButMandatoryParameter) {
 /*
 // Baillie-PSW primality test in python found here:
 // https://codegolf.stackexchange.com/questions/10701/fastest-code-to-find-the-next-prime
-bool_t isStrongProbablePrime(longInteger_t primeCandidate) {
+bool isStrongProbablePrime(longInteger_t primeCandidate) {
   longInteger_t two, d, x, primeCandidateMinus1;
   int32_t r, s;
 
@@ -251,7 +251,7 @@ bool_t isStrongProbablePrime(longInteger_t primeCandidate) {
 
 // Lucas probable prime
 // assumes D = 1 (mod 4), (D|primeCandidate) = -1
-bool_t isLucasProbablePrime(longInteger_t primeCandidate, longInteger_t D) {
+bool isLucasProbablePrime(longInteger_t primeCandidate, longInteger_t D) {
   longInteger_t Q, s, t, primeCandidatePlus1, inv2, oldU, U, V, q;
   uint32_t r = 0;
 
@@ -349,7 +349,7 @@ bool_t isLucasProbablePrime(longInteger_t primeCandidate, longInteger_t D) {
 
 
 // an 'almost certain' primality check
-bool_t longIntegerIsPrime2(longInteger_t primeCandidate) {
+bool longIntegerIsPrime2(longInteger_t primeCandidate) {
   longInteger_t primeCandidateMinus1, primeCandidateMinus1on2, a, s, temp;
   uint32_t i, j, pc;
 

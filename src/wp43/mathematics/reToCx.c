@@ -34,6 +34,7 @@
 #include "registers.h"
 #include "registerValueConversions.h"
 #include "stack.h"
+#include <stdbool.h>
 
 #include "wp43.h"
 
@@ -48,7 +49,7 @@
 void fnReToCx(uint16_t unusedButMandatoryParameter) {
   uint32_t dataTypeX = getRegisterDataType(REGISTER_X);
   uint32_t dataTypeY = getRegisterDataType(REGISTER_Y);
-  bool_t xIsAReal;
+  bool     xIsAReal;
 
   if(    (dataTypeX == dtReal34 || dataTypeX == dtLongInteger)
       && (dataTypeY == dtReal34 || dataTypeY == dtLongInteger)) {

@@ -31,6 +31,7 @@
 #include "fonts.h"
 #include "items.h"
 #include "registers.h"
+#include <stdbool.h>
 #include <string.h>
 
 #include "wp43.h"
@@ -46,7 +47,7 @@
  * \param[in] dt uint16_t Data type
  * \return char*          Name of the data type
  ***********************************************/
-char * getDataTypeName(uint16_t dt, bool_t article, bool_t padWithBlanks) {
+char * getDataTypeName(uint16_t dt, bool article, bool padWithBlanks) {
   if(article && padWithBlanks) {
     switch(dt) {
       case dtLongInteger: {
@@ -263,13 +264,13 @@ char * getDataTypeName(uint16_t dt, bool_t article, bool_t padWithBlanks) {
  * \param[in] dt calcRegister_t register
  * \return char* Name of the data type
  ***********************************************/
-char * getRegisterDataTypeName(calcRegister_t regist, bool_t article, bool_t padWithBlanks) {
+char * getRegisterDataTypeName(calcRegister_t regist, bool article, bool padWithBlanks) {
   return getDataTypeName(getRegisterDataType(regist), article, padWithBlanks);
 }
 
 
 
-char * getRegisterTagName(calcRegister_t regist, bool_t padWithBlanks) {
+char * getRegisterTagName(calcRegister_t regist, bool padWithBlanks) {
   static char base[9];
 
   switch(getRegisterDataType(regist)) {
@@ -616,16 +617,16 @@ void debugNIM(void) {
    ***********************************************/
   char * getDisplayFormatName(uint16_t df) {
     switch(df) {
-      case DF_ALL: {
+      case dfAll: {
         return "ALL";
       }
-      case DF_FIX: {
+      case dfFix: {
         return "FIX";
       }
-      case DF_SCI: {
+      case dfSci: {
         return "SCI";
       }
-      case DF_ENG: {
+      case dfEng: {
         return "ENG";
       }
       default: {
@@ -638,46 +639,21 @@ void debugNIM(void) {
   /********************************************//**
    * \brief Returns the name of a time format
    *
-   * \param[in] tf bool_t Time format
+   * \param[in] tf bool Time format
    * \return char*        Name of the time format
    ***********************************************/
-  char * getTimeFormatName(bool_t tf) {
+  char * getTimeFormatName(bool tf) {
     return (tf ? "H24" : "H12");
-  }
-
-
-  /********************************************//**
-   * \brief Returns the name of a date format
-   *
-   * \param[in] df uint16_t Date format
-   * \return char*          Name of the date format
-   *
-   ***********************************************/
-  char * getDateFormatName(uint16_t df) {
-    switch(df) {
-      case DF_DMY: {
-        return "D.MY";
-      }
-      case DF_MDY: {
-        return "M.DY";
-      }
-      case DF_YMD: {
-        return "Y.MD";
-      }
-      default: {
-        return "??? ";
-      }
-    }
   }
 
 
   /********************************************//**
    * \brief Returns the name of a boolean
    *
-   * \param[in] b bool_t Boolean
+   * \param[in] b bool Boolean
    * \return char*       Name of the boolean
    ***********************************************/
-  char * getBooleanName(bool_t b) {
+  char * getBooleanName(bool b) {
     return (b ? "true" : "false");
   }
 
@@ -870,10 +846,10 @@ void debugNIM(void) {
   /********************************************//**
    * \brief Returns the name of a complex unit
    *
-   * \param[in] cu bool_t Complex unit
+   * \param[in] cu bool Complex unit
    * \return char*        Name of the complex unit
    ***********************************************/
-  char * getComplexUnitName(bool_t cu) {
+  char * getComplexUnitName(bool cu) {
     return (cu ? "j" : "i");
   }
 
@@ -881,10 +857,10 @@ void debugNIM(void) {
   /********************************************//**
    * \brief Returns the name of a Product sign
    *
-   * \param[in] ps bool_t Product sign
+   * \param[in] ps bool Product sign
    * \return char*        Name of the product sign
    ***********************************************/
-  char * getProductSignName(bool_t ps) {
+  char * getProductSignName(bool ps) {
     return (ps ? "cross" : "dot  ");
   }
 
@@ -892,10 +868,10 @@ void debugNIM(void) {
   /********************************************//**
    * \brief returns the name of a fraction type
    *
-   * \param[in] ft bool_t Fraction type
+   * \param[in] ft bool Fraction type
    * \return char*        Name of the fraction type
    ***********************************************/
-  char * getFractionTypeName(bool_t ft) {
+  char * getFractionTypeName(bool ft) {
     return (ft ? "proper a b/c" : "improper d/c");
   }
 
@@ -903,10 +879,10 @@ void debugNIM(void) {
   /********************************************//**
    * \brief returns the name of denominator mode 1 type
    *
-   * \param[in] ft bool_t Fraction type
+   * \param[in] ft bool Fraction type
    * \return char*        Name of the fraction type
    ***********************************************/
-  char * getFractionDenom1ModeName(bool_t ft) {
+  char * getFractionDenom1ModeName(bool ft) {
     return (ft ? "up to D.MAX   " : "D.MAX or fact");
   }
 
@@ -914,10 +890,10 @@ void debugNIM(void) {
   /********************************************//**
    * \brief returns the name of denominator mode 2 type
    *
-   * \param[in] ft bool_t Fraction type
+   * \param[in] ft bool Fraction type
    * \return char*        Name of the fraction type
    ***********************************************/
-  char * getFractionDenom2ModeName(bool_t ft) {
+  char * getFractionDenom2ModeName(bool ft) {
     return (ft ? "D.MAX         " : "fact of D.MAX");
   }
 
@@ -925,10 +901,10 @@ void debugNIM(void) {
   /********************************************//**
    * \brief returns the name of a radix mark
    *
-   * \param[in] rm bool_t Radix mark
+   * \param[in] rm bool Radix mark
    * \return char*        Name of the radix mark
    ***********************************************/
-  char * getRadixMarkName(bool_t rm) {
+  char * getRadixMarkName(bool rm) {
     return (rm ? "period" :"comma ");
   }
 
@@ -936,10 +912,10 @@ void debugNIM(void) {
   /********************************************//**
    * \brief returns the name of a display override mode
    *
-   * \param[in] dio bool_t Display override mode
+   * \param[in] dio bool Display override mode
    * \return char*         Name of the override mode
    ***********************************************/
-  char * getDisplayOvrName(bool_t dio) {
+  char * getDisplayOvrName(bool dio) {
     return (dio ? "sciOvr" : "engOvr");
   }
 
@@ -947,10 +923,10 @@ void debugNIM(void) {
   /********************************************//**
    * \brief returns the name of a stack size
    *
-   * \param[in] ss bool_t Stack size
+   * \param[in] ss bool Stack size
    * \return char*        Name of the stack size
    ***********************************************/
-  char * getStackSizeName(bool_t ss) {
+  char * getStackSizeName(bool ss) {
     return (ss ? "8 levels" : "4 levels");
   }
 
@@ -958,10 +934,10 @@ void debugNIM(void) {
   /********************************************//**
    * \brief returns the name of a complex mode
    *
-   * \param[in] cm bool_t Complex mode
+   * \param[in] cm bool Complex mode
    * \return char*        Name of the complex mode
    ***********************************************/
-  char * getComplexModeName(bool_t cm) {
+  char * getComplexModeName(bool cm) {
     return (cm ? "rectangular" : "polar      ");
   }
 
@@ -2105,7 +2081,7 @@ void debugNIM(void) {
 #if defined(PC_BUILD ) || defined(TESTSUITE_BUILD)
   void testRegisters(const char *text) {
     calcRegister_t i;
-    bool_t situationIsBad;
+    bool situationIsBad;
 
     situationIsBad = false;
     for(i=0; i<FIRST_LOCAL_REGISTER; i++) {

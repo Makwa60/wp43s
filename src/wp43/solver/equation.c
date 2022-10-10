@@ -36,6 +36,7 @@
 #include "stack.h"
 #include "sort.h"
 #include "ui/screen.h"
+#include <stdbool.h>
 
 #include "wp43.h"
 
@@ -302,7 +303,7 @@ void deleteEquation(uint16_t equationId) {
   }
 
   static void _addSpace(char **bufPtr, int16_t *strWidth, uint32_t *doubleBytednessHistory) { // space between an operand and an operator
-    bool_t spaceShallBeAdded = true;
+    bool spaceShallBeAdded = true;
     if(((*bufPtr) >= (tmpString + 2)) && (compareChar((*bufPtr) - 2, STD_SPACE_PUNCTUATION) == 0)) {
       spaceShallBeAdded = false;
     }
@@ -321,24 +322,24 @@ void deleteEquation(uint16_t equationId) {
   }
 #endif // !TESTSUITE_BUILD
 
-void showEquation(uint16_t equationId, uint16_t startAt, uint16_t cursorAt, bool_t dryRun, bool_t *cursorShown, bool_t *rightEllipsis) {
+void showEquation(uint16_t equationId, uint16_t startAt, uint16_t cursorAt, bool dryRun, bool *cursorShown, bool *rightEllipsis) {
   #if !defined(TESTSUITE_BUILD)
     if(equationId < numberOfFormulae || equationId == EQUATION_AIM_BUFFER) {
-      char *bufPtr = tmpString;
+      char       *bufPtr = tmpString;
       const char *strPtr = equationId == EQUATION_AIM_BUFFER ? aimBuffer : (char *)TO_PCMEMPTR(allFormulae[equationId].pointerToFormulaData);
-      uint16_t strLength = 0;
-      int16_t strWidth = 0;
-      int16_t glyphWidth = 0;
-      uint32_t doubleBytednessHistory = 0;
-      uint32_t tmpVal = 0;
-      bool_t inLabel = false;
-      bool_t unaryMinus = true;
-      bool_t inNumeric = true;
-      bool_t beginningOfNumber = true;
-      bool_t inExponent = false;
+      uint16_t    strLength = 0;
+      int16_t     strWidth = 0;
+      int16_t     glyphWidth = 0;
+      uint32_t    doubleBytednessHistory = 0;
+      uint32_t    tmpVal = 0;
+      bool        inLabel = false;
+      bool        unaryMinus = true;
+      bool        inNumeric = true;
+      bool        beginningOfNumber = true;
+      bool        inExponent = false;
       const char *tmpPtr = strPtr;
 
-      bool_t _cursorShown, _rightEllipsis;
+      bool        _cursorShown, _rightEllipsis;
       if(cursorShown == NULL) {
         cursorShown = &_cursorShown;
       }
@@ -1184,10 +1185,10 @@ void showEquation(uint16_t equationId, uint16_t startAt, uint16_t cursorAt, bool
 void parseEquation(uint16_t equationId, uint16_t parseMode, char *buffer, char *mvarBuffer) {
   #if !defined(TESTSUITE_BUILD)
     const char *strPtr = (char *)TO_PCMEMPTR(allFormulae[equationId].pointerToFormulaData);
-    char *bufPtr = buffer;
-    int16_t numericCount = 0;
-    bool_t equalAppeared = false, labeled = false, afterClosingParenthesis = false, unaryMinusCanOccur = true, afterSpace = false;
-    bool_t inExponent = false, exponentSignCanOccur = false;
+    char       *bufPtr = buffer;
+    int16_t     numericCount = 0;
+    bool        equalAppeared = false, labeled = false, afterClosingParenthesis = false, unaryMinusCanOccur = true, afterSpace = false;
+    bool        inExponent = false, exponentSignCanOccur = false;
 
     for(uint32_t i = 0; i < PARSER_OPERATOR_STACK_SIZE; ++i) {
       PARSER_OPERATOR_STACK[i] = 0;

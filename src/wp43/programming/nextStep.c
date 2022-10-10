@@ -26,6 +26,7 @@
 #include "debug.h"
 #include "defines.h"
 #include "error.h"
+#include "flags.h"
 #include "fonts.h"
 #include "items.h"
 #include "longIntegerType.h"
@@ -40,6 +41,7 @@
 #include "stack.h"
 #include "store.h"
 #include "ui/screen.h"
+#include <stdbool.h>
 #include <stdint.h>
 
 #include "wp43.h"
@@ -375,7 +377,7 @@ pgmPtr_t findPreviousStep(pgmPtr_t step) {
 
 static void _showStep(void) {
   #if !defined(TESTSUITE_BUILD)
-    bool_t lblOrEnd;
+    bool     lblOrEnd;
     uint8_t *tmpStep;
 
     if(programList[currentProgramNumber - 1].step < 0) {

@@ -22,9 +22,10 @@
 #include "mathematics/sincpi.h"
 
 #include "constantPointers.h"
+#include "conversionAngles.h"
 #include "debug.h"
 #include "error.h"
-#include "conversionAngles.h"
+#include "flags.h"
 #include "fonts.h"
 #include "items.h"
 #include "mathematics/division.h"
@@ -169,9 +170,7 @@ void sincpiReal(void) {
       if(registerAngularMode != amNone) {
         convertAngleFromTo(&x, registerAngularMode, amRadian, &ctxtReal39);
       }
-      else {
-        realMultiply(&x, const_pi, &x, &ctxtReal39);
-      }
+      realMultiply(&x, const_pi, &x, &ctxtReal39);   //This pi is to convert sincpi to sinc for all input, regardless
       WP34S_Cvt2RadSinCosTan(&x, amRadian, &sine, NULL, NULL, &ctxtReal39);
       realDivide(&sine, &x, &x, &ctxtReal39);
     }

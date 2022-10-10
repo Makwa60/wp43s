@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file normal.h
- ***********************************************/
+/**
+ * \file distributions/normal.h
+ */
 #if !defined(NORMAL_H)
   #define NORMAL_H
 

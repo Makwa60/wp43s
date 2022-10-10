@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file xthRoot.h
- ***********************************************/
+/**
+ * \file mathematics/xthRoot.h
+ */
 #if !defined(XTHROOT_H)
   #define XTHROOT_H
   // Coded by JM, based on power.h

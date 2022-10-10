@@ -28,11 +28,12 @@
 #include "registers.h"
 #include "registerValueConversions.h"
 #include "stack.h"
+#include <stdbool.h>
 
 #include "wp43.h"
 
 
-static bool_t getOrthoPolyParam(calcRegister_t regist, real_t *val, realContext_t *realContext) {
+static bool getOrthoPolyParam(calcRegister_t regist, real_t *val, realContext_t *realContext) {
   #pragma GCC diagnostic push
   #pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
   switch(getRegisterDataType(regist)) {

@@ -34,6 +34,7 @@
 #include "realType.h"
 #include "registers.h"
 #include "registerValueConversions.h"
+#include <stdbool.h>
 #include <stdio.h>
 
 #include "wp43.h"
@@ -234,7 +235,7 @@
     }
   }
 
-  static bool_t _processOneStep(pgmPtr_t step) {
+  static bool _processOneStep(pgmPtr_t step) {
     uint16_t op;
     if(programList[currentProgramNumber - 1].step < 0) {
       readStepInFlashPgmLibrary((uint8_t *)(tmpString + 1600), 400, step.flash);

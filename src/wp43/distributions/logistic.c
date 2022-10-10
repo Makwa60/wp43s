@@ -22,16 +22,18 @@
 
 #include "constantPointers.h"
 #include "error.h"
+#include "flags.h"
 #include "fonts.h"
 #include "mathematics/comparisonReals.h"
 #include "mathematics/wp34s.h"
 #include "registers.h"
 #include "registerValueConversions.h"
+#include <stdbool.h>
 
 #include "wp43.h"
 
 
-static bool_t checkParamLogistic(real_t *x, real_t *i, real_t *j) {
+static bool checkParamLogistic(real_t *x, real_t *i, real_t *j) {
   if(   ((getRegisterDataType(REGISTER_X) != dtReal34) && (getRegisterDataType(REGISTER_X) != dtLongInteger))
      || ((getRegisterDataType(REGISTER_I) != dtReal34) && (getRegisterDataType(REGISTER_I) != dtLongInteger))
      || ((getRegisterDataType(REGISTER_J) != dtReal34) && (getRegisterDataType(REGISTER_J) != dtLongInteger))) {

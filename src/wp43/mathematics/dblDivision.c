@@ -29,11 +29,12 @@
 #include "registers.h"
 #include "registerValueConversions.h"
 #include "stack.h"
+#include <stdbool.h>
 
 #include "wp43.h"
 
 
-void dblDivide(bool_t remainder_mode) {
+void dblDivide(bool remainder_mode) {
   longInteger_t dividend, x, y, z, wd;
   int32_t base;
   const uint8_t sim = shortIntegerMode;

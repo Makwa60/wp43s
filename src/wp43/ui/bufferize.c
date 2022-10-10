@@ -43,6 +43,7 @@
 #include "sort.h"
 #include "stack.h"
 #include "ui/tam.h"
+#include <stdbool.h>
 #include <string.h>
 
 #include "wp43.h"
@@ -892,10 +893,10 @@
 
 
   void addItemToNimBuffer(int16_t item) {
-    int16_t lastChar, index;
-    uint8_t savedNimNumberPart;
-    bool_t done;
-    char *strBase;
+    int16_t  lastChar, index;
+    uint8_t  savedNimNumberPart;
+    bool     done;
+    char    *strBase;
 
     screenUpdatingMode &= ~(SCRUPD_MANUAL_STACK | SCRUPD_MANUAL_SHIFT_STATUS);
     currentSolverStatus &= ~SOLVER_STATUS_READY_TO_EXECUTE;

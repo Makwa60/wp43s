@@ -14,9 +14,10 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file constants.h functions for constant management
- ***********************************************/
+/**
+ * \file constants.h
+ * Functions for constant management
+ */
 #if !defined(CONSTANTS_H)
   #define CONSTANTS_H
 

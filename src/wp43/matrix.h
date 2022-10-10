@@ -17,11 +17,11 @@
 /**
  * \file matrix.h
  */
-
 #if !defined(MATRIX_H)
   #define MATRIX_H
 
   #include "typeDefinitions.h"
+  #include <stdbool.h>
 
   #if !defined(TESTSUITE_BUILD)
     #define MATRIX_LINE_WIDTH            380
@@ -231,14 +231,14 @@
    *
    * \return true if succeeded or not needed to backup, false if unsuccessful allocation
    */
-  bool_t   saveStatsMatrix                (void);
+  bool     saveStatsMatrix                (void);
 
   /**
    * Restores the STATS matrix if backed up STATS is available.
    *
    * \return true if succeeded, otherwise false
    */
-  bool_t   recallStatsMatrix              (void);
+  bool     recallStatsMatrix              (void);
 
   #if !defined(TESTSUITE_BUILD)
     /**
@@ -249,7 +249,7 @@
      * \param[in] cols
      * \return true if succeeded, false otherwise
      */
-    bool_t   realMatrixInit                 (real34Matrix_t *matrix, uint16_t rows, uint16_t cols);
+    bool     realMatrixInit                 (real34Matrix_t *matrix, uint16_t rows, uint16_t cols);
 
     /**
      * Free a real matrix.
@@ -280,7 +280,7 @@
      * \param[in] cols
      * \return true if succeeded, false otherwise
      */
-    bool_t   complexMatrixInit              (complex34Matrix_t *matrix, uint16_t rows, uint16_t cols);
+    bool     complexMatrixInit              (complex34Matrix_t *matrix, uint16_t rows, uint16_t cols);
 
     /**
      * Free a complex matrix.
@@ -307,7 +307,7 @@
      * Displays the matrix editor.
      */
     void     showMatrixEditor               (void);
-    void     mimEnter                       (bool_t commit);
+    void     mimEnter                       (bool commit);
     void     mimAddNumber                   (int16_t item);
     void     mimRunFunction                 (int16_t func, uint16_t param);
     void     mimFinalize                    (void);
@@ -372,7 +372,7 @@
      * \param[in] complex  true for complex matrix, false for real matrix.
      * \return true if succeeded, false otherwise
      */
-    bool_t   initMatrixRegister             (calcRegister_t regist, uint16_t rows, uint16_t cols, bool_t complex);
+    bool     initMatrixRegister             (calcRegister_t regist, uint16_t rows, uint16_t cols, bool complex);
 
     /**
      * Redimentions the matrix at given register.
@@ -387,7 +387,7 @@
      * \param[in] cols
      * \return true if succeeded, false otherwise
      */
-    bool_t   redimMatrixRegister            (calcRegister_t regist, uint16_t rows, uint16_t cols);
+    bool     redimMatrixRegister            (calcRegister_t regist, uint16_t rows, uint16_t cols);
 
     /**
      * Allocates a named matrix. Redimentions if the matrix already existed.
@@ -408,15 +408,15 @@
      * \param[in] regist
      * \return true if succeeded, false otherwise
      */
-    bool_t   appendRowAtMatrixRegister      (calcRegister_t regist);
+    bool     appendRowAtMatrixRegister      (calcRegister_t regist);
 
 
-    int16_t  getIRegisterAsInt              (bool_t asArrayPointer);
-    int16_t  getJRegisterAsInt              (bool_t asArrayPointer);
-    void     setIRegisterAsInt              (bool_t asArrayPointer, int16_t toStore);
-    void     setJRegisterAsInt              (bool_t asArrayPointer, int16_t toStore);
+    int16_t  getIRegisterAsInt              (bool asArrayPointer);
+    int16_t  getJRegisterAsInt              (bool asArrayPointer);
+    void     setIRegisterAsInt              (bool asArrayPointer, int16_t toStore);
+    void     setJRegisterAsInt              (bool asArrayPointer, int16_t toStore);
 
-    bool_t   wrapIJ                         (uint16_t rows, uint16_t cols);
+    bool     wrapIJ                         (uint16_t rows, uint16_t cols);
 
     void     copyRealMatrix                 (const real34Matrix_t *matrix, real34Matrix_t *res);
 
@@ -487,7 +487,7 @@
     void     complexEigenvalues             (const complex34Matrix_t *matrix, complex34Matrix_t *res);
     void     realEigenvectors               (const real34Matrix_t *matrix, real34Matrix_t *res, real34Matrix_t *ires);
     void     complexEigenvectors            (const complex34Matrix_t *matrix, complex34Matrix_t *res);
-    void     callByIndexedMatrix            (bool_t (*real_f)(real34Matrix_t *), bool_t (*complex_f)(complex34Matrix_t *));
+    void     callByIndexedMatrix            (bool (*real_f)(real34Matrix_t *), bool (*complex_f)(complex34Matrix_t *));
   #endif // !TESTSUITE_BUILD
 
   void       linkToRealMatrixRegister       (calcRegister_t regist, real34Matrix_t *linkedMatrix);

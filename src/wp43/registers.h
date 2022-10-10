@@ -23,6 +23,7 @@
   #include "longIntegerType.h"
   #include "realType.h"
   #include "typeDefinitions.h"
+  #include <stdbool.h>
   #include <stdint.h>
 
   /**
@@ -128,7 +129,7 @@
    * \param[in] name                 Name of variable/label/menu
    * \return `true` if given name is valid, `false` otherwise
    */
-  bool_t         validateName                    (const char *name);
+  bool           validateName                    (const char *name);
 
   /**
    * Check if the given name is not yet in use
@@ -136,7 +137,7 @@
    * \param[in] name                 Name of variable/label/menu
    * \return `true` if given name is unique, `false` if duplicate
    */
-  bool_t         isUniqueName                    (const char *name);
+  bool           isUniqueName                    (const char *name);
 
   /**
    * Allocates one named variable.
@@ -200,7 +201,7 @@
    */
   void           fnGetLocR                       (uint16_t unusedButMandatoryParameter);
 
-  void           adjustResult                    (calcRegister_t result, bool_t dropY, bool_t setCpxRes, calcRegister_t op1, calcRegister_t op2, calcRegister_t op3);
+  void           adjustResult                    (calcRegister_t result, bool dropY, bool setCpxRes, calcRegister_t op1, calcRegister_t op2, calcRegister_t op3);
 
   /**
    * Duplicates register source to register destination.
@@ -253,7 +254,7 @@
   static inline void              setRegisterShortIntegerBase(calcRegister_t reg, uint32_t base) {setRegisterTag(reg, base);}
   static inline longIntegerSign_t getRegisterLongIntegerSign(calcRegister_t reg)                 {return getRegisterTag(reg);}
   static inline void              setRegisterLongIntegerSign(calcRegister_t reg, longIntegerSign_t sign) {setRegisterTag(reg, sign);}
-  static inline bool_t            longIntegerIsZeroRegister(calcRegister_t regist)               {return (getRegisterLongIntegerSign(regist) == liZero);}
+  static inline bool              longIntegerIsZeroRegister(calcRegister_t regist)               {return (getRegisterLongIntegerSign(regist) == liZero);}
 
   /********************************************//**
    * \brief Prints the content of a register to a string
@@ -268,7 +269,7 @@
    *
    * \return true if succeeded
    ***********************************************/
-  bool_t  saveLastX                       (void);
+  bool      saveLastX                       (void);
 
   void      fnRegClr                        (uint16_t unusedButMandatoryParameter);
   void      fnRegCopy                       (uint16_t unusedButMandatoryParameter);

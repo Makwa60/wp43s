@@ -20,12 +20,13 @@
 
 #include "items.h"
 #include "sort.h"
+#include <stdbool.h>
 #include <stdlib.h>
 #include <unistd.h>
 
 #include "wp43.h"
 
-bool_t  funcOK;
+bool    funcOK;
 glyph_t glyphNotFound = {.charCode = 0x0000, .colsBeforeGlyph = 0, .colsGlyph = 13, .colsAfterGlyph = 0, .rowsGlyph = 19, .data = NULL};
 
 #define MAX_NUMBER_OF_ITEMS 1000

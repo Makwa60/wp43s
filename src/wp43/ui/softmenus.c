@@ -21,6 +21,7 @@
 #include "charString.h"
 #include "core/memory.h"
 #include "error.h"
+#include "flags.h"
 #include "hal/lcd.h"
 #include "items.h"
 #include "programming/flash.h"
@@ -31,6 +32,7 @@
 #include "sort.h"
 #include "ui/screen.h"
 #include <string.h>
+#include <stdbool.h>
 #include <stdlib.h>
 
 #include "wp43.h"
@@ -538,7 +540,7 @@ void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
 
 
 
-  static bool_t _filterDataType(calcRegister_t regist, dataType_t typeFilter, bool_t isAngular) {
+  static bool _filterDataType(calcRegister_t regist, dataType_t typeFilter, bool isAngular) {
     dataType_t dt = getRegisterDataType(regist);
     if(dt != dtReal34 && dt == typeFilter) {
       return true;
@@ -559,7 +561,7 @@ void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
 
 
 
-  static void _dynmenuConstructVars(int16_t menu, bool_t applyFilter, dataType_t typeFilter, bool_t isAngular) {
+  static void _dynmenuConstructVars(int16_t menu, bool applyFilter, dataType_t typeFilter, bool isAngular) {
     uint16_t numberOfBytes, numberOfVars;
     uint8_t *ptr;
     numberOfBytes = 1;
@@ -600,9 +602,9 @@ void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
 
 
   static void _dynmenuConstructMVarsFromPgm(uint16_t label, uint16_t *numberOfBytes, uint16_t *numberOfVars) {
-    bool_t inFlash = (labelList[label].program < 0);
-    uint16_t flashOffset = 0;
-    uint8_t *step;
+    bool      inFlash = (labelList[label].program < 0);
+    uint16_t  flashOffset = 0;
+    uint8_t  *step;
     if(inFlash) {
       step = allocWp43(TO_BLOCKS(400));
       if(step) {
@@ -942,7 +944,7 @@ void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
 
 
 
-  void showSoftkey(const char *label, int16_t xSoftkey, int16_t ySoftKey, videoMode_t videoMode, bool_t topLine, bool_t bottomLine) {
+  void showSoftkey(const char *label, int16_t xSoftkey, int16_t ySoftKey, videoMode_t videoMode, bool topLine, bool bottomLine) {
     int16_t x1, y1, x2, y2;
     int16_t w;
     char l[15];
@@ -1009,7 +1011,7 @@ void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
 
   void showSoftmenuCurrentPart(void) {
     int16_t x, y, yDotted=0, currentFirstItem, item, numberOfItems, m = softmenuStack[0].softmenuId;
-    bool_t dottedTopLine;
+    bool    dottedTopLine;
 
     if(tam.mode == TM_KEY && !tam.keyInputFinished) {
       for(y=0; y<=2; y++) {
@@ -1180,8 +1182,8 @@ void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
         yDotted = 2;
       }
       if(softmenu[m].menuItem == -MNU_EQ_EDIT) {
-        bool_t cursorShown;
-        bool_t rightEllipsis;
+        bool cursorShown;
+        bool rightEllipsis;
         while(1) {
           showEquation(EQUATION_AIM_BUFFER, yCursor, xCursor, true, &cursorShown, &rightEllipsis);
           if(cursorShown) {
@@ -1370,14 +1372,14 @@ void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
     }
   }
 
-  bool_t currentSoftmenuScrolls(void) {
+  bool currentSoftmenuScrolls(void) {
     int16_t menuId = softmenuStack[0].softmenuId;
     return (menuId > 1 &&
       (   (menuId <  NUMBER_OF_DYNAMIC_SOFTMENUS && dynamicSoftmenu[menuId].numItems > 18)
        || (menuId >= NUMBER_OF_DYNAMIC_SOFTMENUS &&        softmenu[menuId].numItems > 18)));
   }
 
-  bool_t isAlphabeticSoftmenu(void) {
+  bool isAlphabeticSoftmenu(void) {
     int16_t menuItem = softmenu[softmenuStack[0].softmenuId].menuItem;
     switch(menuItem) {
       case -MNU_ALPHAINTL:

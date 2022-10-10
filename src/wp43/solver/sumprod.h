@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file sumprod.h
- ***********************************************/
+/**
+ * \file solver/sumprod.h
+ */
 #if !defined(SUMPROD_H)
   #define SUMPROD_H
 

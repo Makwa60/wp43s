@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file arcsin.h
- ***********************************************/
+/**
+ * \file mathematics/arcsin.h
+ */
 #if !defined(ARCSIN_H)
   #define ARCSIN_H
 

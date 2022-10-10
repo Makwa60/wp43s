@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file mant.h
- ***********************************************/
+/**
+ * \file mathematics/mant.h
+ */
 #if !defined(MANT_H)
   #define MANT_H
 

@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file invert.h
- ***********************************************/
+/**
+ * \file mathematics/invert.h
+ */
 #if !defined(INVERT_H)
   #define INVERT_H
 

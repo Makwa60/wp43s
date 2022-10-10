@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file gammaQ.h
- ***********************************************/
+/**
+ * \file mathematics/gammaQ.h
+ */
 #if !defined(GAMMAQ_H)
   #define GAMMAQ_H
 

@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file prime.h
- ***********************************************/
+/**
+ * \file mathematics/prime.h
+ */
 #if !defined(PRIME_H)
   #define PRIME_H
 

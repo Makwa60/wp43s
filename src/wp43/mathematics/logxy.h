@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file logxy.h
- ***********************************************/
+/**
+ * \file mathematics/logxy.h
+ */
 #if !defined(LOGXY_H)
   #define LOGXY_H
 

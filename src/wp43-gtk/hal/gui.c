@@ -19,11 +19,12 @@
 #include "calcMode.h"
 #include "gtkGui.h"
 #include "items.h"
-#include "typeDefinitions.h"
+#include <stdbool.h>
+
 #include "wp43.h"
 
 #if (SCREEN_800X480 == 0)
-  static void _guiShowKey(guiLayout_t layout, int key, bool_t show) {
+  static void _guiShowKey(guiLayout_t layout, int key, bool show) {
     if(show) {
       gtk_fixed_move(GTK_FIXED(grid), calcKeyboard[key].keyImage[layout], calcKeyboard[key].x, calcKeyboard[key].y);
     } else {
@@ -31,7 +32,7 @@
     }
   }
 
-  bool_t _guiUseTamL(void) {
+  bool _guiUseTamL(void) {
     return (tam.mode == TM_LABEL || (tam.mode == TM_SOLVE && (tam.function != ITM_SOLVE || calcMode != cmPem)) || (tam.mode == TM_KEY && tam.keyInputFinished));
   }
 

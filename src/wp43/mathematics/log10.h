@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file log10.h
- ***********************************************/
+/**
+ * \file mathematics/log10.h
+ */
 #if !defined(LOG10_H)
   #define LOG10_H
 

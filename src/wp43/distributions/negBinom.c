@@ -25,16 +25,18 @@
 #include "distributions/f.h"
 #include "distributions/poisson.h"
 #include "error.h"
+#include "flags.h"
 #include "mathematics/comparisonReals.h"
 #include "mathematics/cpyx.h"
 #include "mathematics/wp34s.h"
 #include "registers.h"
 #include "registerValueConversions.h"
+#include <stdbool.h>
 
 #include "wp43.h"
 
 
-static bool_t checkParamNegBinom(real_t *x, real_t *i, real_t *j) {
+static bool checkParamNegBinom(real_t *x, real_t *i, real_t *j) {
   if(   ((getRegisterDataType(REGISTER_X) != dtReal34) && (getRegisterDataType(REGISTER_X) != dtLongInteger))
      || ((getRegisterDataType(REGISTER_I) != dtReal34) && (getRegisterDataType(REGISTER_I) != dtLongInteger))
      || ((getRegisterDataType(REGISTER_J) != dtReal34) && (getRegisterDataType(REGISTER_J) != dtLongInteger))) {
@@ -208,7 +210,7 @@ void fnNegBinomialI(uint16_t unusedButMandatoryParameter) {
 }
 
 
-bool_t negBinom_param(const real_t *r, real_t *res) {
+bool negBinom_param(const real_t *r, real_t *res) {
   if(realIsSpecial(r)) {
     realCopy(const_NaN, res);
     return false;

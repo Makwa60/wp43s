@@ -18,6 +18,7 @@
 
 #include <assert.h>
 #include <stdio.h>
+#include <stdint.h>
 #include <string.h>
 
 #define FILE_NAME            "testSuiteJunit.xml"
@@ -48,7 +49,7 @@ static void _junitStartTest(void) {
 //static void _junitTestError(const char *errorMsg) {
 //}
 
-static void _junitEndTest(bool_t passed, const char *errorMsg) {
+static void _junitEndTest(bool passed, const char *errorMsg) {
   char tmp[1000];
   if(passed) {
     sprintf(tmp, "\t\t<testcase time=\"0\" name=\"%s\" classname=\"%s\" />\n", _testName, _testSuiteName);
@@ -105,7 +106,7 @@ static void _stdoutTestError(const char *errorMsg) {
   printf("\nTest [%s]: %s", _testName, errorMsg);
 }
 
-static void _stdoutEndTest(bool_t passed, const char *errorMsg) {
+static void _stdoutEndTest(bool passed, const char *errorMsg) {
   if(!passed) {
     printf("\nTest [%s] failed: %s", _testName, errorMsg);
   }
@@ -149,7 +150,7 @@ void reporterTestError(const char *errorMsg) {
   //_junitTestError(errorMsg);
 }
 
-void reporterEndTest(bool_t passed, const char *errorMsg) {
+void reporterEndTest(bool passed, const char *errorMsg) {
   if(passed) {
     _passingTests++;
     _passingTestsInSuite++;
@@ -166,7 +167,7 @@ void reporterEndTestSuite(void) {
   _junitEndTestSuite();
 }
 
-bool_t reporterEndTestSuites(void) {
+bool reporterEndTestSuites(void) {
   _stdoutEndTestSuites();
   _junitEndTestSuites();
   return (_failingTests == 0);

@@ -42,6 +42,7 @@
 #include "ui/softmenus.h"
 #include "ui/statusBar.h"
 #include <math.h>
+#include <stdbool.h>
 #include <string.h>
 
 #include "wp43.h"
@@ -150,7 +151,7 @@ void fnPlot(uint16_t unusedButMandatoryParameter) {
     }
   }
 
-  static bool_t regIsLowerThanTol(calcRegister_t REG, calcRegister_t TOL) {
+  static bool regIsLowerThanTol(calcRegister_t REG, calcRegister_t TOL) {
     return (    (real34IsZero(REGISTER_REAL34_DATA(REG)) && (getRegisterDataType(REG) == dtComplex34 ? real34IsZero(REGISTER_IMAG34_DATA(REG)) : 1 ))
              || (    (real34CompareAbsLessThan(REGISTER_REAL34_DATA(REG), REGISTER_REAL34_DATA(TOL)))
                   && (getRegisterDataType(REG) == dtComplex34 ? real34CompareAbsLessThan(REGISTER_IMAG34_DATA(REG), REGISTER_REAL34_DATA(TOL)) : 1)
@@ -160,7 +161,7 @@ void fnPlot(uint16_t unusedButMandatoryParameter) {
 
 
   #define ADD_RAN true
-  static void divFunction(bool_t addRandom, calcRegister_t TOL) {
+  static void divFunction(bool addRandom, calcRegister_t TOL) {
     if(  (real34IsZero(REGISTER_REAL34_DATA(REGISTER_Y)) && (getRegisterDataType(REGISTER_Y) == dtComplex34 ? real34IsZero(REGISTER_IMAG34_DATA(REGISTER_Y)) : 1 ) )
        || real34IsNaN(REGISTER_REAL34_DATA(REGISTER_Y))
        || (getRegisterDataType(REGISTER_Y) == dtComplex34 ? real34IsNaN(REGISTER_IMAG34_DATA(REGISTER_Y)) : 0 ) ) {
@@ -399,8 +400,8 @@ void graph_eqn(uint16_t mode) {
     int16_t ix,ixd;
     int16_t oscillations = 0;
     int16_t convergent = 0;
-    bool_t checkNaN = false;
-    bool_t checkzero = false;
+    bool    checkNaN = false;
+    bool    checkzero = false;
     osc = 0;
     DXR = 0, DYR = 0, DXI = 0, DYI = 0;
     ix = 0; ixd = 0;
@@ -854,7 +855,7 @@ void graph_eqn(uint16_t mode) {
 
       /* Not in use
       //Experimental bisection method to kick out  in case of real arguments
-      bool_t bisect = false;
+      bool bisect = false;
       if(    !checkzero && !checkNaN
           && (    (getRegisterDataType(SREG_Y0) == dtReal34)
                && (getRegisterDataType(SREG_Y2) == dtReal34)
@@ -987,7 +988,7 @@ void graph_eqn(uint16_t mode) {
 
     //Iterations end
 
-    bool_t   FLAG_FRACTN;
+    bool FLAG_FRACTN;
     if(getSystemFlag(FLAG_FRACT)) {
       FLAG_FRACTN = true;
     }
@@ -1022,7 +1023,7 @@ void graph_eqn(uint16_t mode) {
     //}
 
     if(FLAG_FRACTN) {
-      setSystemFlag(FLAG_FRACT)
+      setSystemFlag(FLAG_FRACT);
     }
     else {
       clearSystemFlag(FLAG_FRACT);

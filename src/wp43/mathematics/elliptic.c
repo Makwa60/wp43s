@@ -44,6 +44,8 @@
 #include "realType.h"
 #include "registers.h"
 #include "registerValueConversions.h"
+#include <stdbool.h>
+
 #include "wp43.h"
 
 #define ELLIPTIC_N 16
@@ -243,7 +245,7 @@ static void elliptic_setup_cpx_real(real_t *r,
   realFMA(cnvki, cnvki, r, r, realContext);
 }
 
-static int jacobi_check_inputs(real_t *m, real_t *uReal, real_t *uImag, bool_t *realInput) {
+static int jacobi_check_inputs(real_t *m, real_t *uReal, real_t *uImag, bool *realInput) {
   *realInput = true;
 
   switch(getRegisterDataType(REGISTER_X)) {
@@ -575,7 +577,7 @@ static void _ellipticF_2(const real_t *phi, const real_t *m, real_t *res, realCo
   // assumes phi is real and 0 ≤ m ≤ 1
   // Abramowitz & Stegun §17.4.1, §17.4.3
   real_t phi1, phiQuotient, phiRemainder;
-  bool_t remainderNegative = false;
+  bool   remainderNegative = false;
 
   realCopyAbs(phi, &phi1);
   realDivide(&phi1, const_pi, &phiQuotient, realContext);
@@ -735,7 +737,7 @@ static void _ellipticF_5(const real_t *phi, const real_t *psi, const real_t *m, 
 void ellipticF(const real_t *phi, const real_t *psi, const real_t *m, real_t *res, real_t *resi, realContext_t *realContext) {
   // Abramowitz & Stegun §17.4.1, §17.4.3
   real_t phi1, phiQuotient, phiRemainder, psi1;
-  bool_t remainderNegative = false;
+  bool   remainderNegative = false;
 
   realCopy(phi, &phi1); realCopy(psi, &psi1);
   if(realIsNegative(phi)) {
@@ -940,7 +942,7 @@ void ellipticE(const real_t *phi, const real_t *psi, const real_t *m, real_t *re
     #define M1            (tmpVal + 24)
 
     if((tmpVal = allocWp43(25 * REAL_SIZE))) {
-      bool_t remainderNegative = realIsNegative(&phiRemainder);
+      bool           remainderNegative = realIsNegative(&phiRemainder);
       realContext_t *realContext2 = &ctxtReal51;
       realContext_t *realContext3 = &ctxtReal75;
 
@@ -1156,7 +1158,7 @@ static void _jacobiZeta(const real_t *phi, const real_t *psi, const real_t *m, r
 
 void jacobiZeta(const real_t *phi, const real_t *psi, const real_t *m, real_t *res, real_t *resi, realContext_t *realContext) {
   real_t v, vi;
-  bool_t negative = realIsNegative(phi);
+  bool   negative = realIsNegative(phi);
 
   if(realIsZero(m)) {
     realZero(res); realZero(resi);
@@ -1349,7 +1351,7 @@ void ellipticPi(const real_t *n, const real_t *m, real_t *res, real_t *resi, rea
 
 
 void fnJacobiSn(uint16_t unusedButMandatoryParameter) {
-  bool_t realInput;
+  bool   realInput;
   real_t m, uReal, uImag;
   real_t rReal, rImag;
 
@@ -1377,7 +1379,7 @@ void fnJacobiSn(uint16_t unusedButMandatoryParameter) {
 }
 
 void fnJacobiCn(uint16_t unusedButMandatoryParameter) {
-  bool_t realInput;
+  bool   realInput;
   real_t m, uReal, uImag;
   real_t rReal, rImag;
 
@@ -1405,7 +1407,7 @@ void fnJacobiCn(uint16_t unusedButMandatoryParameter) {
 }
 
 void fnJacobiDn(uint16_t unusedButMandatoryParameter) {
-  bool_t realInput;
+  bool   realInput;
   real_t m, uReal, uImag;
   real_t rReal, rImag;
 
@@ -1433,7 +1435,7 @@ void fnJacobiDn(uint16_t unusedButMandatoryParameter) {
 }
 
 void fnJacobiAmplitude(uint16_t unusedButMandatoryParameter) {
-  bool_t realInput;
+  bool   realInput;
   real_t m, uReal, uImag;
   real_t rReal, rImag;
 
@@ -1571,7 +1573,7 @@ void fnEllipticE(uint16_t unusedButMandatoryParameter) {
 
 void fnEllipticPi(uint16_t unusedButMandatoryParameter) {
   real_t m, ur, ui, rr, ri;
-  bool_t realInput;
+  bool   realInput;
 
   if(!jacobi_check_inputs(&m, &ur, &ui, &realInput)) {
     return;
@@ -1619,7 +1621,7 @@ void fnEllipticPi(uint16_t unusedButMandatoryParameter) {
 }
 
 void fnEllipticFphi(uint16_t unusedButMandatoryParameter) {
-  bool_t realInput;
+  bool   realInput;
   real_t m, uReal, uImag;
   real_t rReal, rImag;
 
@@ -1661,7 +1663,7 @@ void fnEllipticFphi(uint16_t unusedButMandatoryParameter) {
 }
 
 void fnEllipticEphi(uint16_t unusedButMandatoryParameter) {
-  bool_t realInput;
+  bool   realInput;
   real_t m, uReal, uImag;
   real_t rReal, rImag;
 
@@ -1703,7 +1705,7 @@ void fnEllipticEphi(uint16_t unusedButMandatoryParameter) {
 }
 
 void fnJacobiZeta(uint16_t unusedButMandatoryParameter) {
-  bool_t realInput;
+  bool   realInput;
   real_t m, uReal, uImag;
   real_t rReal, rImag;
 

@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file rdp.h
- ***********************************************/
+/**
+ * \file mathematics/rdp.h
+ */
 #if !defined(RDP_H)
   #define RDP_H
 

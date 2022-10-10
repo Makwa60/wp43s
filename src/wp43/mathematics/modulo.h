@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file modulo.h
- ***********************************************/
+/**
+ * \file mathematics/modulo.h
+ */
 #if !defined(MODULO_H)
   #define MODULO_H
 

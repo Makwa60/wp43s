@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file nor.h
- ***********************************************/
+/**
+ * \file logicalOps/nor.h
+ */
 #if !defined(NOR_H)
   #define NOR_H
 

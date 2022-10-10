@@ -13,12 +13,17 @@
  * You should have received a copy of the GNU General Public License
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
+
+/**
+ * \file debug.h
+ */
 #if !defined(DEBUG_H)
   #define DEBUG_H
 
   #include "defines.h"
   #include "realType.h"
   #include "typeDefinitions.h"
+  #include <stdbool.h>
   #include <stdint.h>
   #if defined(PC_BUILD)
     #include <gtk/gtk.h>
@@ -42,27 +47,26 @@
     void   refreshDebugPanel            (void);
 
     char * getDisplayFormatName               (uint16_t df);
-    char * getTimeFormatName                  (bool_t tf);
-    char * getDateFormatName                  (uint16_t df);
-    char * getBooleanName                     (bool_t b);
+    char * getTimeFormatName                  (bool tf);
+    char * getBooleanName                     (bool b);
     char * getRbrModeName                     (uint16_t mode);
     char * getRoundingModeName                (uint16_t rm);
     char * getCalcModeName                    (uint16_t cm);
     char * getNextCharName                    (uint16_t nc);
-    char * getComplexUnitName                 (bool_t cu);
-    char * getProductSignName                 (bool_t ps);
-    char * getFractionTypeName                (bool_t ft);
-    char * getFractionDenom1ModeName          (bool_t ft);
-    char * getFractionDenom2ModeName          (bool_t ft);
-    char * getRadixMarkName                   (bool_t rm);
-    char * getDisplayOvrName                  (bool_t dio);
-    char * getStackSizeName                   (bool_t ss);
-    char * getComplexModeName                 (bool_t cm);
+    char * getComplexUnitName                 (bool cu);
+    char * getProductSignName                 (bool ps);
+    char * getFractionTypeName                (bool ft);
+    char * getFractionDenom1ModeName          (bool ft);
+    char * getFractionDenom2ModeName          (bool ft);
+    char * getRadixMarkName                   (bool rm);
+    char * getDisplayOvrName                  (bool dio);
+    char * getStackSizeName                   (bool ss);
+    char * getComplexModeName                 (bool cm);
     char * getAlphaCaseName                   (uint16_t ac);
     char * getAlphaSelectionMenuName          (uint16_t alsm);
     char * getCursorFontName                  (uint16_t cf);
     char * getSystemFlagName                  (uint16_t sf);
-    void   memoryDump                         (bool_t bitFields, bool_t globalFlags, bool_t globalRegisters, bool_t localFlags, bool_t FIRSTLOCALREGISTERs, bool_t otherVars);
+    void   memoryDump                         (bool bitFields, bool globalFlags, bool globalRegisters, bool localFlags, bool FIRSTLOCALREGISTERs, bool otherVars);
   #endif // (DEBUG_PANEL == 1)
 
   #if (DEBUG_PANEL == 1) || (DEBUG_REGISTER_L == 1) || (DEBUG_STAT >= 1)
@@ -72,9 +76,9 @@
     void   formatComplex34Debug               (char *str, void *addr);
   #endif // (DEBUG_PANEL == 1) || (DEBUG_REGISTER_L == 1)  || (DEBUG_STAT >= 1)
 
-  char *getDataTypeName                     (uint16_t dt, bool_t article, bool_t padWithBlanks);
-  char *getRegisterDataTypeName             (calcRegister_t regist, bool_t article, bool_t padWithBlanks);
-  char *getRegisterTagName                  (calcRegister_t regist, bool_t padWithBlanks);
+  char *getDataTypeName                     (uint16_t dt, bool article, bool padWithBlanks);
+  char *getRegisterDataTypeName             (calcRegister_t regist, bool article, bool padWithBlanks);
+  char *getRegisterTagName                  (calcRegister_t regist, bool padWithBlanks);
   char *getShortIntegerModeName             (uint16_t im);
   char *getAngularModeName                  (angularMode_t angularMode);
   char *getCurveFitModeName                 (uint16_t selection);

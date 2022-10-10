@@ -22,17 +22,19 @@
 
 #include "constantPointers.h"
 #include "error.h"
+#include "flags.h"
 #include "fonts.h"
 #include "mathematics/comparisonReals.h"
 #include "mathematics/rsd.h"
 #include "mathematics/wp34s.h"
 #include "registers.h"
 #include "registerValueConversions.h"
+#include <stdbool.h>
 
 #include "wp43.h"
 
 
-static bool_t checkParamNormal(real_t *x, real_t *i, real_t *j) {
+static bool checkParamNormal(real_t *x, real_t *i, real_t *j) {
   if(   ((getRegisterDataType(REGISTER_X) != dtReal34) && (getRegisterDataType(REGISTER_X) != dtLongInteger))
      || ((getRegisterDataType(REGISTER_I) != dtReal34) && (getRegisterDataType(REGISTER_I) != dtLongInteger))
      || ((getRegisterDataType(REGISTER_J) != dtReal34) && (getRegisterDataType(REGISTER_J) != dtLongInteger))) {
@@ -79,7 +81,7 @@ static bool_t checkParamNormal(real_t *x, real_t *i, real_t *j) {
 }
 
 
-static void normalP(bool_t logNormal) {
+static void normalP(bool logNormal) {
   real_t val, alval, mu, sigma, ans;
 
   if(!saveLastX()) {
@@ -117,7 +119,7 @@ static void normalP(bool_t logNormal) {
 }
 
 
-static void normalL(bool_t logNormal) {
+static void normalL(bool logNormal) {
   real_t val, mu, sigma, ans;
 
   if(!saveLastX()) {
@@ -150,7 +152,7 @@ static void normalL(bool_t logNormal) {
 }
 
 
-static void normalR(bool_t logNormal) {
+static void normalR(bool logNormal) {
   real_t val, mu, sigma, ans;
 
   if(!saveLastX()) {
@@ -183,7 +185,7 @@ static void normalR(bool_t logNormal) {
 }
 
 
-static void normalI(bool_t logNormal) {
+static void normalI(bool logNormal) {
   real_t val, mu, sigma, ans;
 
   if(!saveLastX()) {
@@ -254,7 +256,7 @@ void fnLogNormalI(uint16_t unusedButMandatoryParameter) {
  * This functions are borrowed from the WP34S project
  ******************************************************/
 
-static void cdf_q(const real_t *x, real_t *res, realContext_t *realContext, bool_t upper) {
+static void cdf_q(const real_t *x, real_t *res, realContext_t *realContext, bool upper) {
   real_t p;
 
   if(upper) {
@@ -310,7 +312,7 @@ void WP34S_Cdf_Q(const real_t *x, real_t *res, realContext_t *realContext) {
  */
 void WP34S_qf_q_est(const real_t *x, real_t *res, real_t* resY, realContext_t *realContext) {
   real_t p, q, r, s;
-  bool_t isSmall = false;
+  bool   isSmall = false;
 
   // qf_q_int_est
   realMultiply(x, const__1, &p, realContext);
@@ -360,8 +362,8 @@ void WP34S_qf_q_est(const real_t *x, real_t *res, real_t* resY, realContext_t *r
 }
 
 void WP34S_Qf_Q(const real_t *x, real_t *res, realContext_t *realContext) {
-  real_t p, q, r, s, reg0;
-  bool_t half = false;
+  real_t  p, q, r, s, reg0;
+  bool    half = false;
   int32_t loops;
   WP34S_qf_q_est(x, &p, &reg0, realContext);
   if(realIsNegative(&p)) {

@@ -25,17 +25,19 @@
 #include "distributions/f.h"
 #include "distributions/poisson.h"
 #include "error.h"
+#include "flags.h"
 #include "fonts.h"
 #include "mathematics/comparisonReals.h"
 #include "mathematics/cpyx.h"
 #include "mathematics/wp34s.h"
 #include "registers.h"
 #include "registerValueConversions.h"
+#include <stdbool.h>
 
 #include "wp43.h"
 
 
-static bool_t checkParamHyper(real_t *x, real_t *i, real_t *j, real_t *k) {
+static bool checkParamHyper(real_t *x, real_t *i, real_t *j, real_t *k) {
   real_t ik, xmin, xmax;
 
   if(   ((getRegisterDataType(REGISTER_X) != dtReal34) && (getRegisterDataType(REGISTER_X) != dtLongInteger))
@@ -241,10 +243,10 @@ void pdf_Hypergeometric(const real_t *x, const real_t *p0, const real_t *n, cons
   realExp(&q, res, realContext);
 }
 
-static void cdf_Hypergeometric_common(const real_t *x, const real_t *p0, const real_t *n, const real_t *n0, bool_t complementary, real_t *res, realContext_t *realContext) {
+static void cdf_Hypergeometric_common(const real_t *x, const real_t *p0, const real_t *n, const real_t *n0, bool complementary, real_t *res, realContext_t *realContext) {
   real_t a, b, c, x0, binomPart;
   real_t a1, a2, a3, b1, b2, i, hypergeomPart, cvgTol;
-  bool_t signHgp = false;
+  bool   signHgp = false;
 
   realMultiply(p0, n0, &x0, realContext); // p0 == x0 / n0
   realCopy(const_1, &cvgTol), cvgTol.exponent -= realContext->digits - 2;

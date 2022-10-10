@@ -22,6 +22,7 @@
   #define SCREEN_H
 
   #include "typeDefinitions.h"
+  #include <stdbool.h>
   #include <stdint.h>
 
   void       fnScreenDump                       (uint16_t unusedButMandatoryParameter);
@@ -58,7 +59,7 @@
      * \param[in] showEndingCols  Display the ending empty columns
      * \return x coordinate for the next glyph
      */
-    uint32_t showString                         (const char *str,   const font_t *font, uint32_t x, uint32_t y, videoMode_t videoMode, bool_t showLeadingCols, bool_t showEndingCols);
+    uint32_t showString                         (const char *str,   const font_t *font, uint32_t x, uint32_t y, videoMode_t videoMode, bool showLeadingCols, bool showEndingCols);
 
     /**
      * Displays the first glyph of a string.
@@ -72,7 +73,7 @@
      * \param[in] showEndingCols  Display the ending empty columns
      * \return x coordinate for the next glyph
      */
-    uint32_t showGlyph                          (const char *ch,    const font_t *font, uint32_t x, uint32_t y, videoMode_t videoMode, bool_t showLeadingCols, bool_t showEndingCols);
+    uint32_t showGlyph                          (const char *ch,    const font_t *font, uint32_t x, uint32_t y, videoMode_t videoMode, bool showLeadingCols, bool showEndingCols);
 
     /**
      * Displays a glyph using it's Unicode code point.
@@ -86,7 +87,7 @@
      * \param[in] showEndingCols  Display the ending empty columns
      * \return x coordinate for the next glyph
      */
-    uint32_t showGlyphCode                      (uint16_t charCode, const font_t *font, uint32_t x, uint32_t y, videoMode_t videoMode, bool_t showLeadingCols, bool_t showEndingCols);
+    uint32_t showGlyphCode                      (uint16_t charCode, const font_t *font, uint32_t x, uint32_t y, videoMode_t videoMode, bool showLeadingCols, bool showEndingCols);
 
     /**
      * Hides the cursor.
@@ -115,7 +116,7 @@
      *
      * \param[in] yStart y coordinate from where starting to clear
      */
-    void     clearRegisterLine                  (calcRegister_t regist, bool_t clearTop, bool_t clearBottom);
+    void     clearRegisterLine                  (calcRegister_t regist, bool clearTop, bool clearBottom);
 
     /**
      * Updates matrix height cache.

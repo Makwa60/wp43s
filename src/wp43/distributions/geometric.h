@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file geometric.h
- ***********************************************/
+/**
+ * \file distributions/geometric.h
+ */
 #if !defined(GEOMETRIC_H)
   #define GEOMETRIC_H
 

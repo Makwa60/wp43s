@@ -24,16 +24,18 @@
 #include "distributions/f.h"
 #include "distributions/normal.h"
 #include "error.h"
+#include "flags.h"
 #include "fonts.h"
 #include "mathematics/comparisonReals.h"
 #include "mathematics/wp34s.h"
 #include "registers.h"
 #include "registerValueConversions.h"
+#include <stdbool.h>
 
 #include "wp43.h"
 
 
-static bool_t checkParamPoisson(real_t *x, real_t *i) {
+static bool checkParamPoisson(real_t *x, real_t *i) {
   if(   ((getRegisterDataType(REGISTER_X) != dtReal34) && (getRegisterDataType(REGISTER_X) != dtLongInteger))
      || ((getRegisterDataType(REGISTER_I) != dtReal34) && (getRegisterDataType(REGISTER_I) != dtLongInteger))) {
       displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, REGISTER_X);

@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
+/**
  * \file fonts.h
- ***********************************************/
+ */
 #if !defined(FONTS_H)
   #define FONTS_H
 

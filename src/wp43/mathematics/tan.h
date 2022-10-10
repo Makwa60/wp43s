@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file tan.h
- ***********************************************/
+/**
+ * \file mathematics/tan.h
+ */
 #if !defined(TAN_H)
   #define TAN_H
 

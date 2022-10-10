@@ -14,14 +14,15 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
+/**
  * \file dateTime.h
- ***********************************************/
+ */
 #if !defined(DATETIME_H)
   #define DATETIME_H
 
   #include "realType.h"
   #include "typeDefinitions.h"
+  #include <stdbool.h>
   #include <stdint.h>
 
   void fnTicks                 (uint16_t unusedButMandatoryParameter);
@@ -51,17 +52,17 @@
    *
    * \param[in] regist calcRegister_t register
    * \param[out] jd real34_t* Julian day (floored)
-   * \return bool_t true if valid
+   * \return bool true if valid
    ***********************************************/
-  bool_t checkDateArgument     (calcRegister_t regist, real34_t *jd);
+  bool checkDateArgument     (calcRegister_t regist, real34_t *jd);
 
   /********************************************//**
    * \brief Check for leap year
    *
    * \param[in] year real34_t*
-   * \return bool_t true if leap year
+   * \return bool true if leap year
    ***********************************************/
-  bool_t isLeapYear            (const real34_t *year);
+  bool isLeapYear            (const real34_t *year);
 
   /********************************************//**
    * \brief Check if date is valid (e.g. 30 Feb is invalid)
@@ -69,9 +70,9 @@
    * \param[in] year real34_t*
    * \param[in] month real34_t*
    * \param[in] day real34_t*
-   * \return bool_t true if valid
+   * \return bool true if valid
    ***********************************************/
-  bool_t isValidDay            (const real34_t *year, const real34_t *month, const real34_t *day);
+  bool isValidDay            (const real34_t *year, const real34_t *month, const real34_t *day);
 
   /********************************************//**
    * \brief Convert date into Julian day number floored

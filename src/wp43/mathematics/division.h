@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file division.h
- ***********************************************/
+/**
+ * \file mathematics/division.h
+ */
 #if !defined(DIVISION_H)
   #define DIVISION_H
 

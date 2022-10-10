@@ -47,13 +47,14 @@
 #include "ui/screen.h"
 #include "ui/softmenus.h"
 #include "ui/tam.h"
+#include <stdbool.h>
 #include <string.h>
 
 #include "wp43.h"
 
 #if !defined(TESTSUITE_BUILD)
   any34Matrix_t         openMatrixMIMPointer;
-  bool_t                matEditMode;
+  bool                  matEditMode;
   uint16_t              scrollRow;
   uint16_t              scrollColumn;
   uint16_t              tmpRow;
@@ -61,7 +62,7 @@
 
 
 
-  static bool_t getArg(calcRegister_t regist, real_t *arg) {
+  static bool getArg(calcRegister_t regist, real_t *arg) {
     if(getRegisterDataType(regist) == dtLongInteger) {
       convertLongIntegerRegisterToReal(regist, arg, &ctxtReal39);
     }
@@ -80,7 +81,7 @@
     return true;
   }
 
-  static bool_t getDimensionArg(uint32_t *rows, uint32_t *cols) {
+  static bool getDimensionArg(uint32_t *rows, uint32_t *cols) {
     longInteger_t tmp_lgInt;
 
     //Get Size from REGISTER_X and REGISTER_Y
@@ -136,7 +137,7 @@
 
 
 
-  static bool_t swapRowsReal(real34Matrix_t *matrix) {
+  static bool swapRowsReal(real34Matrix_t *matrix) {
     real_t ry, rx, rrows;
     uint16_t a, b;
 
@@ -165,7 +166,7 @@
     return true;
   }
 
-  static bool_t swapRowsComplex(complex34Matrix_t *matrix) {
+  static bool swapRowsComplex(complex34Matrix_t *matrix) {
     real_t ry, rx, rrows;
     uint16_t a, b;
 
@@ -196,7 +197,7 @@
 
 
 
-  static bool_t getMatrixReal(real34Matrix_t *matrix) {
+  static bool getMatrixReal(real34Matrix_t *matrix) {
     real_t ry, rx, rrows, rcols;
     uint16_t a, b, r, c;
 
@@ -242,7 +243,7 @@
     return false;
   }
 
-  static bool_t getMatrixComplex(complex34Matrix_t *matrix) {
+  static bool getMatrixComplex(complex34Matrix_t *matrix) {
     real_t ry, rx, rrows, rcols;
     uint16_t a, b, r, c;
 
@@ -289,7 +290,7 @@
 
 
 
-  static bool_t putMatrixReal(real34Matrix_t *matrix) {
+  static bool putMatrixReal(real34Matrix_t *matrix) {
     uint16_t r, c;
     real34Matrix_t mat;
 
@@ -325,7 +326,7 @@
     return true;
   }
 
-  static bool_t putMatrixComplex(complex34Matrix_t *matrix) {
+  static bool putMatrixComplex(complex34Matrix_t *matrix) {
     uint16_t r, c;
     complex34Matrix_t mat;
 
@@ -363,19 +364,19 @@
 
 
 
-  static bool_t incIReal(real34Matrix_t *matrix) {
+  static bool incIReal(real34Matrix_t *matrix) {
     setIRegisterAsInt(true, getIRegisterAsInt(true) + 1);
     wrapIJ(matrix->header.matrixRows, matrix->header.matrixColumns);
     return false;
   }
 
-  static bool_t decIReal(real34Matrix_t *matrix) {
+  static bool decIReal(real34Matrix_t *matrix) {
     setIRegisterAsInt(true, getIRegisterAsInt(true) - 1);
     wrapIJ(matrix->header.matrixRows, matrix->header.matrixColumns);
     return false;
   }
 
-  static bool_t incJReal(real34Matrix_t *matrix) {
+  static bool incJReal(real34Matrix_t *matrix) {
     setJRegisterAsInt(true, getJRegisterAsInt(true) + 1);
     if(wrapIJ(matrix->header.matrixRows, matrix->header.matrixColumns)) {
       insRowRealMatrix(matrix, matrix->header.matrixRows);
@@ -386,21 +387,21 @@
     }
   }
 
-  static bool_t decJReal(real34Matrix_t *matrix) {
+  static bool decJReal(real34Matrix_t *matrix) {
     setJRegisterAsInt(true, getJRegisterAsInt(true) - 1);
     wrapIJ(matrix->header.matrixRows, matrix->header.matrixColumns);
     return false;
   }
 
-  static bool_t incIComplex(complex34Matrix_t *matrix) {
+  static bool incIComplex(complex34Matrix_t *matrix) {
     return incIReal((real34Matrix_t *)matrix);
   }
 
-  static bool_t decIComplex(complex34Matrix_t *matrix) {
+  static bool decIComplex(complex34Matrix_t *matrix) {
     return decIReal((real34Matrix_t *)matrix);
   }
 
-  static bool_t incJComplex(complex34Matrix_t *matrix) {
+  static bool incJComplex(complex34Matrix_t *matrix) {
     setJRegisterAsInt(true, getJRegisterAsInt(true) + 1);
     if(wrapIJ(matrix->header.matrixRows, matrix->header.matrixColumns)) {
       insRowComplexMatrix(matrix, matrix->header.matrixRows);
@@ -411,7 +412,7 @@
     }
   }
 
-  static bool_t decJComplex(complex34Matrix_t *matrix) {
+  static bool decJComplex(complex34Matrix_t *matrix) {
     return decJReal((real34Matrix_t *)matrix);
   }
 #endif // !TESTSUITE_BUILD
@@ -447,7 +448,7 @@ void fnNewMatrix(uint16_t unusedParamButMandatory) {
 }
 
 
-bool_t saveStatsMatrix(void) {
+bool saveStatsMatrix(void) {
   #if !defined(TESTSUITE_BUILD)
     uint32_t rows, cols;
     calcRegister_t regStats = findNamedVariable("STATS");
@@ -496,7 +497,7 @@ bool_t saveStatsMatrix(void) {
 }
 
 
-bool_t recallStatsMatrix(void) {
+bool recallStatsMatrix(void) {
   #if !defined(TESTSUITE_BUILD)
     #if defined(DEBUGUNDO)
       printf(">>> recallStatsMatrix ...");
@@ -1716,7 +1717,7 @@ void fnEigenvectors(uint16_t unusedParamButMandatory) {
 
 
 #if !defined(TESTSUITE_BUILD)
-  bool_t realMatrixInit(real34Matrix_t *matrix, uint16_t rows, uint16_t cols) {
+  bool realMatrixInit(real34Matrix_t *matrix, uint16_t rows, uint16_t cols) {
     //Allocate Memory for Matrix
     const size_t neededSize = TO_BLOCKS((rows * cols) * sizeof(real34_t));
     if(!isMemoryBlockAvailable(neededSize)) {
@@ -1782,7 +1783,7 @@ void fnEigenvectors(uint16_t unusedParamButMandatory) {
   }
 
 
-  bool_t complexMatrixInit(complex34Matrix_t *matrix, uint16_t rows, uint16_t cols) {
+  bool complexMatrixInit(complex34Matrix_t *matrix, uint16_t rows, uint16_t cols) {
     //Allocate Memory for Matrix
     const size_t neededSize = TO_BLOCKS((rows * cols) * sizeof(complex34_t));
     if(!isMemoryBlockAvailable(neededSize)) {
@@ -1868,7 +1869,7 @@ void fnEigenvectors(uint16_t unusedParamButMandatory) {
       calcModeUpdateGui();
     }
 
-    bool_t colVector = false;
+    bool colVector = false;
     if(cols == 1 && rows > 1) {
       colVector = true;
       cols = rows;
@@ -1942,7 +1943,7 @@ void fnEigenvectors(uint16_t unusedParamButMandatory) {
     }
   }
 
-  void mimEnter(bool_t commit) {
+  void mimEnter(bool commit) {
     int cols = openMatrixMIMPointer.header.matrixColumns;
     int16_t row = getIRegisterAsInt(true);
     int16_t col = getJRegisterAsInt(true);
@@ -2134,12 +2135,12 @@ void fnEigenvectors(uint16_t unusedParamButMandatory) {
   }
 
   void mimRunFunction(int16_t func, uint16_t param) {
-    int16_t i = getIRegisterAsInt(true);
-    int16_t j = getJRegisterAsInt(true);
-    bool_t isComplex = (getRegisterDataType(matrixIndex) == dtComplex34Matrix);
+    int16_t  i = getIRegisterAsInt(true);
+    int16_t  j = getJRegisterAsInt(true);
+    bool     isComplex = (getRegisterDataType(matrixIndex) == dtComplex34Matrix);
     real34_t re, im, re1, im1;
-    bool_t converted = false;
-    bool_t liftStackFlag = getSystemFlag(FLAG_ASLIFT);
+    bool     converted = false;
+    bool     liftStackFlag = getSystemFlag(FLAG_ASLIFT);
 
     if(isComplex) {
       real34Copy(VARIABLE_REAL34_DATA(&openMatrixMIMPointer.complexMatrix.matrixElements[i * openMatrixMIMPointer.header.matrixColumns + j]), &re1);
@@ -2271,24 +2272,24 @@ void fnEigenvectors(uint16_t unusedParamButMandatory) {
 
 
   void showRealMatrix(const real34Matrix_t *matrix, int16_t prefixWidth) {
-    int rows = matrix->header.matrixRows;
-    int cols = matrix->header.matrixColumns;
-    int16_t Y_POS = Y_POSITION_OF_REGISTER_X_LINE;
-    int16_t X_POS = 0;
-    int16_t totalWidth = 0, width = 0;
-    const font_t *font;
-    int16_t fontHeight = NUMERIC_FONT_HEIGHT;
-    int16_t maxWidth = MATRIX_LINE_WIDTH - prefixWidth;
-    int16_t colWidth[MATRIX_MAX_COLUMNS] = {}, rPadWidth[MATRIX_MAX_ROWS * MATRIX_MAX_COLUMNS] = {};
-    const bool_t forEditor = matrix == &openMatrixMIMPointer.realMatrix;
-    const uint16_t sRow = forEditor ? scrollRow : 0;
-    uint16_t sCol = forEditor ? scrollColumn : 0;
-    const uint16_t tmpDisplayFormat = displayFormat;
-    const uint8_t tmpDisplayFormatDigits = displayFormatDigits;
+    int             rows = matrix->header.matrixRows;
+    int             cols = matrix->header.matrixColumns;
+    int16_t         Y_POS = Y_POSITION_OF_REGISTER_X_LINE;
+    int16_t         X_POS = 0;
+    int16_t         totalWidth = 0, width = 0;
+    const font_t   *font;
+    int16_t         fontHeight = NUMERIC_FONT_HEIGHT;
+    int16_t         maxWidth = MATRIX_LINE_WIDTH - prefixWidth;
+    int16_t         colWidth[MATRIX_MAX_COLUMNS] = {}, rPadWidth[MATRIX_MAX_ROWS * MATRIX_MAX_COLUMNS] = {};
+    const bool      forEditor = matrix == &openMatrixMIMPointer.realMatrix;
+    const uint16_t  sRow = forEditor ? scrollRow : 0;
+    uint16_t        sCol = forEditor ? scrollColumn : 0;
+    const uint16_t  tmpDisplayFormat = displayFormat;
+    const uint8_t   tmpDisplayFormatDigits = displayFormatDigits;
 
     Y_POS = Y_POSITION_OF_REGISTER_X_LINE - NUMERIC_FONT_HEIGHT;
 
-    bool_t colVector = false;
+    bool colVector = false;
     if(cols == 1 && rows > 1) {
       colVector = true;
       cols = rows;
@@ -2318,9 +2319,9 @@ smallFont:
     if(!forEditor) {
       Y_POS += REGISTER_LINE_HEIGHT;
     }
-    const bool_t rightEllipsis = (cols > maxCols) && (cols > maxCols + sCol);
-    const bool_t leftEllipsis = (sCol > 0);
-    int16_t digits;
+    const bool rightEllipsis = (cols > maxCols) && (cols > maxCols + sCol);
+    const bool leftEllipsis = (sCol > 0);
+    int16_t    digits;
 
     if(prefixWidth > 0) {
       Y_POS = Y_POSITION_OF_REGISTER_T_LINE - REGISTER_LINE_HEIGHT + 1 + maxRows * fontHeight;
@@ -2331,11 +2332,11 @@ smallFont:
 
     int16_t baseWidth = (leftEllipsis ? stringWidth(STD_ELLIPSIS " ", font, true, true) : 0) + (rightEllipsis ? stringWidth(" " STD_ELLIPSIS, font, true, true) : 0);
     int16_t mtxWidth = getRealMatrixColumnWidths(matrix, prefixWidth, font, colWidth, rPadWidth, &digits, maxCols);
-    bool_t noFix = (mtxWidth < 0);
+    bool    noFix = (mtxWidth < 0);
     mtxWidth = abs(mtxWidth);
     totalWidth = baseWidth + mtxWidth;
-    if(displayFormat == DF_ALL && noFix) {
-      displayFormat = getSystemFlag(FLAG_ALLENG) ? DF_ENG : DF_SCI;
+    if(displayFormat == dfAll && noFix) {
+      displayFormat = getSystemFlag(FLAG_ALLENG) ? dfEng : dfSci;
       displayFormatDigits = digits;
     }
     if(totalWidth > maxWidth || leftEllipsis) {
@@ -2345,7 +2346,7 @@ smallFont:
         goto smallFont;
       }
       else {
-        displayFormat = DF_SCI;
+        displayFormat = dfSci;
         displayFormatDigits = 3;
         mtxWidth = getRealMatrixColumnWidths(matrix, prefixWidth, font, colWidth, rPadWidth, &digits, maxCols);
         noFix = (mtxWidth < 0);
@@ -2417,7 +2418,7 @@ smallFont:
           vm = vmNormal;
         }
         else {
-          real34ToDisplayString(&matrix->matrixElements[(i+sRow)*cols+j+sCol], amNone, tmpString, font, colWidth[j], displayFormat == DF_ALL ? digits : 15, true, STD_SPACE_4_PER_EM, true);
+          real34ToDisplayString(&matrix->matrixElements[(i+sRow)*cols+j+sCol], amNone, tmpString, font, colWidth[j], displayFormat == dfAll ? digits : 15, true, STD_SPACE_4_PER_EM, true);
           if(forEditor && matSelRow == (i + sRow) && matSelCol == (j + sCol)) {
             lcd_fill_rect(X_POS + colX, Y_POS - (maxRows -1 -i) * fontHeight, colWidth[j], font == &numericFont ? 32 : 20, 0xFF);
             vm = vmReverse;
@@ -2442,27 +2443,28 @@ smallFont:
   }
 
   int16_t getRealMatrixColumnWidths(const real34Matrix_t *matrix, int16_t prefixWidth, const font_t *font, int16_t *colWidth, int16_t *rPadWidth, int16_t *digits, uint16_t maxCols) {
-    const bool_t colVector = matrix->header.matrixColumns == 1 && matrix->header.matrixRows > 1;
-    const int rows = colVector ? 1 : matrix->header.matrixRows;
-    const int cols = colVector ? matrix->header.matrixRows : matrix->header.matrixColumns;
-    const int maxRows = rows > MATRIX_MAX_ROWS ? MATRIX_MAX_ROWS : rows;
-    const bool_t forEditor = matrix == &openMatrixMIMPointer.realMatrix;
+    const bool     colVector = matrix->header.matrixColumns == 1 && matrix->header.matrixRows > 1;
+    const int      rows = colVector ? 1 : matrix->header.matrixRows;
+    const int      cols = colVector ? matrix->header.matrixRows : matrix->header.matrixColumns;
+    const int      maxRows = rows > MATRIX_MAX_ROWS ? MATRIX_MAX_ROWS : rows;
+    const bool     forEditor = matrix == &openMatrixMIMPointer.realMatrix;
     const uint16_t sRow = forEditor ? scrollRow : 0;
     const uint16_t sCol = forEditor ? scrollColumn : 0;
-    const int16_t maxWidth = MATRIX_LINE_WIDTH - prefixWidth;
-    int16_t totalWidth = 0, width = 0;
-    int16_t maxRightWidth[MATRIX_MAX_COLUMNS] = {};
-    int16_t maxLeftWidth[MATRIX_MAX_COLUMNS] = {};
-    const int16_t exponentOutOfRange = 0x4000;
-    bool_t noFix = false; const int16_t dspDigits = displayFormatDigits;
+    const int16_t  maxWidth = MATRIX_LINE_WIDTH - prefixWidth;
+    int16_t        totalWidth = 0, width = 0;
+    int16_t        maxRightWidth[MATRIX_MAX_COLUMNS] = {};
+    int16_t        maxLeftWidth[MATRIX_MAX_COLUMNS] = {};
+    const int16_t  exponentOutOfRange = 0x4000;
+    bool           noFix = false;
+    const int16_t  dspDigits = displayFormatDigits;
 
     begin:
     for(int k = 15; k >= 1; k--) {
-      if(displayFormat == DF_ALL) {
+      if(displayFormat == dfAll) {
         *digits = k;
       }
-      if(displayFormat == DF_ALL && noFix) { // something like SCI
-        displayFormat = getSystemFlag(FLAG_ALLENG) ? DF_ENG : DF_SCI;
+      if(displayFormat == dfAll && noFix) { // something like SCI
+        displayFormat = getSystemFlag(FLAG_ALLENG) ? dfEng : dfSci;
         displayFormatDigits = k;
       }
       for(int i = 0; i < maxRows; i++) {
@@ -2470,8 +2472,8 @@ smallFont:
           real34_t r34Val;
           real34Copy(&matrix->matrixElements[(i+sRow)*cols+j+sCol], &r34Val);
           real34SetPositiveSign(&r34Val);
-          real34ToDisplayString(&r34Val, amNone, tmpString, font, maxWidth, displayFormat == DF_ALL ? k : 15, true, STD_SPACE_4_PER_EM, true);
-          if(displayFormat == DF_ALL && !noFix && strstr(tmpString, STD_SUB_10)) { // something like SCI
+          real34ToDisplayString(&r34Val, amNone, tmpString, font, maxWidth, displayFormat == dfAll ? k : 15, true, STD_SPACE_4_PER_EM, true);
+          if(displayFormat == dfAll && !noFix && strstr(tmpString, STD_SUB_10)) { // something like SCI
             noFix = true;
             totalWidth = 0;
             for(int p = 0; p < MATRIX_MAX_COLUMNS; ++p) {
@@ -2483,8 +2485,8 @@ smallFont:
           rPadWidth[i * MATRIX_MAX_COLUMNS + j] = 0;
           if(strstr(tmpString, ".") || strstr(tmpString, ",")) {
             for(char *xStr = tmpString; *xStr != 0; xStr++) {
-              if(((displayFormat != DF_ENG && (displayFormat != DF_ALL || !getSystemFlag(FLAG_ALLENG))) && (*xStr == '.' || *xStr == ',')) ||
-                 ((displayFormat == DF_ENG || (displayFormat == DF_ALL && getSystemFlag(FLAG_ALLENG))) && xStr[0] == (char)0x80 && (xStr[1] == (char)0x87 || xStr[1] == (char)0xd7))) {
+              if(((displayFormat != dfEng && (displayFormat != dfAll || !getSystemFlag(FLAG_ALLENG))) && (*xStr == '.' || *xStr == ',')) ||
+                 ((displayFormat == dfEng || (displayFormat == dfAll && getSystemFlag(FLAG_ALLENG))) && xStr[0] == (char)0x80 && (xStr[1] == (char)0x87 || xStr[1] == (char)0xd7))) {
                 rPadWidth[i * MATRIX_MAX_COLUMNS + j] = stringWidth(xStr, font, true, true) + 1;
                 if(maxRightWidth[j] < rPadWidth[i * MATRIX_MAX_COLUMNS + j]) {
                   maxRightWidth[j] = rPadWidth[i * MATRIX_MAX_COLUMNS + j];
@@ -2527,10 +2529,10 @@ smallFont:
       }
       totalWidth -= stringWidth(STD_SPACE_FIGURE, font, true, true);
       if(noFix) {
-        displayFormat = DF_ALL;
+        displayFormat = dfAll;
         displayFormatDigits = dspDigits;
       }
-      if(displayFormat != DF_ALL) {
+      if(displayFormat != dfAll) {
         break;
       }
       else if(totalWidth <= maxWidth) {
@@ -2550,27 +2552,27 @@ smallFont:
 
 
   void showComplexMatrix(const complex34Matrix_t *matrix, int16_t prefixWidth) {
-    int rows = matrix->header.matrixRows;
-    int cols = matrix->header.matrixColumns;
-    int16_t Y_POS = Y_POSITION_OF_REGISTER_X_LINE;
-    int16_t X_POS = 0;
-    int16_t totalWidth = 0, width = 0;
-    const font_t *font;
-    int16_t fontHeight = NUMERIC_FONT_HEIGHT;
-    int16_t maxWidth = MATRIX_LINE_WIDTH - prefixWidth;
-    int16_t colWidth[MATRIX_MAX_COLUMNS] = {}, colWidth_r[MATRIX_MAX_COLUMNS] = {}, colWidth_i[MATRIX_MAX_COLUMNS] = {};
-    int16_t rPadWidth_r[MATRIX_MAX_ROWS * MATRIX_MAX_COLUMNS] = {}, rPadWidth_i[MATRIX_MAX_ROWS * MATRIX_MAX_COLUMNS] = {};
-    const bool_t forEditor = matrix == &openMatrixMIMPointer.complexMatrix;
-    const uint16_t sRow = forEditor ? scrollRow : 0;
-    uint16_t sCol = forEditor ? scrollColumn : 0;
-    const uint16_t tmpDisplayFormat = displayFormat;
-    const int16_t tmpExponentLimit = exponentLimit;
-    const uint8_t tmpDisplayFormatDigits = displayFormatDigits;
-    const bool_t tmpMultX = getSystemFlag(FLAG_MULTx);
+    int             rows = matrix->header.matrixRows;
+    int             cols = matrix->header.matrixColumns;
+    int16_t         Y_POS = Y_POSITION_OF_REGISTER_X_LINE;
+    int16_t         X_POS = 0;
+    int16_t         totalWidth = 0, width = 0;
+    const font_t   *font;
+    int16_t         fontHeight = NUMERIC_FONT_HEIGHT;
+    int16_t         maxWidth = MATRIX_LINE_WIDTH - prefixWidth;
+    int16_t         colWidth[MATRIX_MAX_COLUMNS] = {}, colWidth_r[MATRIX_MAX_COLUMNS] = {}, colWidth_i[MATRIX_MAX_COLUMNS] = {};
+    int16_t         rPadWidth_r[MATRIX_MAX_ROWS * MATRIX_MAX_COLUMNS] = {}, rPadWidth_i[MATRIX_MAX_ROWS * MATRIX_MAX_COLUMNS] = {};
+    const bool      forEditor = matrix == &openMatrixMIMPointer.complexMatrix;
+    const uint16_t  sRow = forEditor ? scrollRow : 0;
+    uint16_t        sCol = forEditor ? scrollColumn : 0;
+    const uint16_t  tmpDisplayFormat = displayFormat;
+    const int16_t   tmpExponentLimit = exponentLimit;
+    const uint8_t   tmpDisplayFormatDigits = displayFormatDigits;
+    const bool      tmpMultX = getSystemFlag(FLAG_MULTx);
 
     Y_POS = Y_POSITION_OF_REGISTER_X_LINE - NUMERIC_FONT_HEIGHT;
 
-    bool_t colVector = false;
+    bool colVector = false;
     if(cols == 1 && rows > 1) {
       colVector = true;
       cols = rows;
@@ -2600,8 +2602,8 @@ smallFont:
     if(!forEditor) {
       Y_POS += REGISTER_LINE_HEIGHT;
     }
-    bool_t rightEllipsis = (cols > maxCols) && (cols > maxCols + sCol);
-    bool_t leftEllipsis = (sCol > 0);
+    bool    rightEllipsis = (cols > maxCols) && (cols > maxCols + sCol);
+    bool    leftEllipsis = (sCol > 0);
     int16_t digits;
 
     if(prefixWidth > 0) {
@@ -2622,7 +2624,7 @@ smallFont:
         goto smallFont;
       }
       else {
-        displayFormat = DF_SCI;
+        displayFormat = dfSci;
         displayFormatDigits = 2;
         clearSystemFlag(FLAG_MULTx);
         totalWidth = baseWidth + getComplexMatrixColumnWidths(matrix, prefixWidth, font, colWidth, colWidth_r, colWidth_i, rPadWidth_r, rPadWidth_i, &digits, maxCols);
@@ -2708,7 +2710,7 @@ smallFont:
         }
         else {
           tmpString[0] = 0;
-          real34ToDisplayString(&re, amNone, tmpString, font, colWidth_r[j], displayFormat == DF_ALL ? digits : 15, true, STD_SPACE_4_PER_EM, true);
+          real34ToDisplayString(&re, amNone, tmpString, font, colWidth_r[j], displayFormat == dfAll ? digits : 15, true, STD_SPACE_4_PER_EM, true);
           if(forEditor && matSelRow == (i + sRow) && matSelCol == (j + sCol)) {
             lcd_fill_rect(X_POS + colX, Y_POS - (maxRows -1 -i) * fontHeight, colWidth[j], font == &numericFont ? 32 : 20, 0xFF);
             vm = vmReverse;
@@ -2720,7 +2722,7 @@ smallFont:
         width = stringWidth(tmpString, font, true, true) + 1;
         showString(tmpString, font, X_POS + colX + (((j == maxCols) && rightEllipsis) ? stringWidth(STD_SPACE_FIGURE, font, true, true) - width : (colWidth_r[j] - width) - rPadWidth_r[i * MATRIX_MAX_COLUMNS + j]), Y_POS - (maxRows -1 -i) * fontHeight, vm, true, false);
         if(strcmp(tmpString, STD_ELLIPSIS) != 0) {
-          bool_t neg = real34IsNegative(&im);
+          bool    neg = real34IsNegative(&im);
           int16_t cpxUnitWidth;
 
           if(getSystemFlag(FLAG_POLAR)) { // polar mode
@@ -2740,7 +2742,7 @@ smallFont:
           }
           showString(tmpString, font, X_POS + colX + colWidth_r[j] + (width - stringWidth(tmpString, font, true, true)), Y_POS - (maxRows -1 -i) * fontHeight, vm, true, false);
 
-          real34ToDisplayString(&im, getSystemFlag(FLAG_POLAR) ? currentAngularMode : amNone, tmpString, font, colWidth_i[j], displayFormat == DF_ALL ? digits : 15, true, STD_SPACE_4_PER_EM, false);
+          real34ToDisplayString(&im, getSystemFlag(FLAG_POLAR) ? currentAngularMode : amNone, tmpString, font, colWidth_i[j], displayFormat == dfAll ? digits : 15, true, STD_SPACE_4_PER_EM, false);
           width = stringWidth(tmpString, font, true, true) + 1;
           showString(tmpString, font, X_POS + colX + colWidth_r[j] + cpxUnitWidth + (((j == maxCols - 1) && rightEllipsis) ? 0 : (colWidth_i[j] - width) - rPadWidth_i[i * MATRIX_MAX_COLUMNS + j]), Y_POS - (maxRows -1 -i) * fontHeight, vm, true, false);
         }
@@ -2761,20 +2763,20 @@ smallFont:
   }
 
   int16_t getComplexMatrixColumnWidths(const complex34Matrix_t *matrix, int16_t prefixWidth, const font_t *font, int16_t *colWidth, int16_t *colWidth_r, int16_t *colWidth_i, int16_t *rPadWidth_r, int16_t *rPadWidth_i, int16_t *digits, uint16_t maxCols) {
-    const bool_t colVector = matrix->header.matrixColumns == 1 && matrix->header.matrixRows > 1;
-    const int rows = colVector ? 1 : matrix->header.matrixRows;
-    const int cols = colVector ? matrix->header.matrixRows : matrix->header.matrixColumns;
-    const int maxRows = rows > MATRIX_MAX_ROWS ? MATRIX_MAX_ROWS : rows;
-    const bool_t forEditor = matrix == &openMatrixMIMPointer.complexMatrix;
+    const bool     colVector = matrix->header.matrixColumns == 1 && matrix->header.matrixRows > 1;
+    const int      rows = colVector ? 1 : matrix->header.matrixRows;
+    const int      cols = colVector ? matrix->header.matrixRows : matrix->header.matrixColumns;
+    const int      maxRows = rows > MATRIX_MAX_ROWS ? MATRIX_MAX_ROWS : rows;
+    const bool     forEditor = matrix == &openMatrixMIMPointer.complexMatrix;
     const uint16_t sRow = forEditor ? scrollRow : 0;
     const uint16_t sCol = forEditor ? scrollColumn : 0;
-    const int16_t maxWidth = MATRIX_LINE_WIDTH - prefixWidth;
-    int16_t totalWidth = 0, width = 0;
-    int16_t maxRightWidth_r[MATRIX_MAX_COLUMNS] = {};
-    int16_t maxLeftWidth_r[MATRIX_MAX_COLUMNS] = {};
-    int16_t maxRightWidth_i[MATRIX_MAX_COLUMNS] = {};
-    int16_t maxLeftWidth_i[MATRIX_MAX_COLUMNS] = {};
-    const int16_t exponentOutOfRange = 0x4000;
+    const int16_t  maxWidth = MATRIX_LINE_WIDTH - prefixWidth;
+    int16_t        totalWidth = 0, width = 0;
+    int16_t        maxRightWidth_r[MATRIX_MAX_COLUMNS] = {};
+    int16_t        maxLeftWidth_r[MATRIX_MAX_COLUMNS] = {};
+    int16_t        maxRightWidth_i[MATRIX_MAX_COLUMNS] = {};
+    int16_t        maxLeftWidth_i[MATRIX_MAX_COLUMNS] = {};
+    const int16_t  exponentOutOfRange = 0x4000;
 
     uint16_t cpxUnitWidth;
     if(getSystemFlag(FLAG_POLAR)) { // polar mode
@@ -2788,7 +2790,7 @@ smallFont:
     cpxUnitWidth = stringWidth(tmpString, font, true, true);
 
     for(int k = 15; k >= 1; k--) {
-      if(displayFormat == DF_ALL) {
+      if(displayFormat == dfAll) {
         *digits = k;
       }
       for(int i = 0; i < maxRows; i++) {
@@ -2807,12 +2809,12 @@ smallFont:
 
           rPadWidth_r[i * MATRIX_MAX_COLUMNS + j] = 0;
           real34SetPositiveSign(VARIABLE_REAL34_DATA(&c34Val));
-          real34ToDisplayString(VARIABLE_REAL34_DATA(&c34Val), amNone, tmpString, font, maxWidth, displayFormat == DF_ALL ? k : 15, true, STD_SPACE_4_PER_EM, true);
+          real34ToDisplayString(VARIABLE_REAL34_DATA(&c34Val), amNone, tmpString, font, maxWidth, displayFormat == dfAll ? k : 15, true, STD_SPACE_4_PER_EM, true);
           width = stringWidth(tmpString, font, true, true) + 1;
           if(strstr(tmpString, ".") || strstr(tmpString, ",")) {
             for(char *xStr = tmpString; *xStr != 0; xStr++) {
-              if(((displayFormat != DF_ENG && (displayFormat != DF_ALL || !getSystemFlag(FLAG_ALLENG))) && (*xStr == '.' || *xStr == ',')) ||
-                 ((displayFormat == DF_ENG || (displayFormat == DF_ALL && getSystemFlag(FLAG_ALLENG))) && xStr[0] == (char)0x80 && (xStr[1] == (char)0x87 || xStr[1] == (char)0xd7))) {
+              if(((displayFormat != dfEng && (displayFormat != dfAll || !getSystemFlag(FLAG_ALLENG))) && (*xStr == '.' || *xStr == ',')) ||
+                 ((displayFormat == dfEng || (displayFormat == dfAll && getSystemFlag(FLAG_ALLENG))) && xStr[0] == (char)0x80 && (xStr[1] == (char)0x87 || xStr[1] == (char)0xd7))) {
                 rPadWidth_r[i * MATRIX_MAX_COLUMNS + j] = stringWidth(xStr, font, true, true) + 1;
                 if(maxRightWidth_r[j] < rPadWidth_r[i * MATRIX_MAX_COLUMNS + j]) {
                   maxRightWidth_r[j] = rPadWidth_r[i * MATRIX_MAX_COLUMNS + j];
@@ -2832,12 +2834,12 @@ smallFont:
           if(!getSystemFlag(FLAG_POLAR)) {
             real34SetPositiveSign(VARIABLE_IMAG34_DATA(&c34Val));
           }
-          real34ToDisplayString(VARIABLE_IMAG34_DATA(&c34Val), getSystemFlag(FLAG_POLAR) ? currentAngularMode : amNone, tmpString, font, maxWidth, displayFormat == DF_ALL ? k : 15, true, STD_SPACE_4_PER_EM, false);
+          real34ToDisplayString(VARIABLE_IMAG34_DATA(&c34Val), getSystemFlag(FLAG_POLAR) ? currentAngularMode : amNone, tmpString, font, maxWidth, displayFormat == dfAll ? k : 15, true, STD_SPACE_4_PER_EM, false);
           width = stringWidth(tmpString, font, true, true) + 1;
           if(strstr(tmpString, ".") || strstr(tmpString, ",")) {
             for(char *xStr = tmpString; *xStr != 0; xStr++) {
-              if(((displayFormat != DF_ENG && (displayFormat != DF_ALL || !getSystemFlag(FLAG_ALLENG))) && (*xStr == '.' || *xStr == ',')) ||
-                 ((displayFormat == DF_ENG || (displayFormat == DF_ALL && getSystemFlag(FLAG_ALLENG))) && xStr[0] == (char)0x80 && (xStr[1] == (char)0x87 || xStr[1] == (char)0xd7))) {
+              if(((displayFormat != dfEng && (displayFormat != dfAll || !getSystemFlag(FLAG_ALLENG))) && (*xStr == '.' || *xStr == ',')) ||
+                 ((displayFormat == dfEng || (displayFormat == dfAll && getSystemFlag(FLAG_ALLENG))) && xStr[0] == (char)0x80 && (xStr[1] == (char)0x87 || xStr[1] == (char)0xd7))) {
                 rPadWidth_i[i * MATRIX_MAX_COLUMNS + j] = stringWidth(xStr, font, true, true) + 1;
                 if(maxRightWidth_i[j] < rPadWidth_i[i * MATRIX_MAX_COLUMNS + j]) {
                   maxRightWidth_i[j] = rPadWidth_i[i * MATRIX_MAX_COLUMNS + j];
@@ -2893,7 +2895,7 @@ smallFont:
         totalWidth += colWidth[j] + stringWidth(STD_SPACE_FIGURE, font, true, true) * 2;
       }
       totalWidth -= stringWidth(STD_SPACE_FIGURE, font, true, true);
-      if(displayFormat != DF_ALL) {
+      if(displayFormat != dfAll) {
         break;
       }
       else if(totalWidth <= maxWidth) {
@@ -2960,7 +2962,7 @@ smallFont:
   }
 
 
-  bool_t initMatrixRegister(calcRegister_t regist, uint16_t rows, uint16_t cols, bool_t complex) {
+  bool initMatrixRegister(calcRegister_t regist, uint16_t rows, uint16_t cols, bool complex) {
     const size_t neededSize = (rows * cols) * (complex ? COMPLEX34_SIZE : REAL34_SIZE);
     reallocateRegister(regist, complex ? dtComplex34Matrix : dtReal34Matrix, neededSize, amNone);
     if(regist == INVALID_VARIABLE) {
@@ -2989,7 +2991,7 @@ smallFont:
   }
 
 
-  bool_t redimMatrixRegister(calcRegister_t regist, uint16_t rows, uint16_t cols) {
+  bool redimMatrixRegister(calcRegister_t regist, uint16_t rows, uint16_t cols) {
     const uint16_t origRows = REGISTER_REAL34_MATRIX_DBLOCK(regist)->matrixRows, origCols = REGISTER_REAL34_MATRIX_DBLOCK(regist)->matrixColumns;
     if(regist == INVALID_VARIABLE) {
       return false;
@@ -3089,7 +3091,7 @@ smallFont:
     }
   }
 
-  bool_t appendRowAtMatrixRegister(calcRegister_t regist) {
+  bool appendRowAtMatrixRegister(calcRegister_t regist) {
     const uint16_t rows = REGISTER_REAL34_MATRIX_DBLOCK(regist)->matrixRows, cols = REGISTER_REAL34_MATRIX_DBLOCK(regist)->matrixColumns;
     if(regist == INVALID_VARIABLE) {
       return false;
@@ -3103,7 +3105,7 @@ smallFont:
   }
 
   //Row of Matrix
-  int16_t getIRegisterAsInt(bool_t asArrayPointer) {
+  int16_t getIRegisterAsInt(bool asArrayPointer) {
     int16_t ret;
     longInteger_t tmp_lgInt;
 
@@ -3128,7 +3130,7 @@ smallFont:
   }
 
   //Col of Matrix
-  int16_t getJRegisterAsInt(bool_t asArrayPointer) {
+  int16_t getJRegisterAsInt(bool asArrayPointer) {
     int16_t ret;
     longInteger_t tmp_lgInt;
 
@@ -3153,7 +3155,7 @@ smallFont:
   }
 
   //Row of Matrix
-  void setIRegisterAsInt(bool_t asArrayPointer, int16_t toStore) {
+  void setIRegisterAsInt(bool asArrayPointer, int16_t toStore) {
     if(asArrayPointer) {
       toStore++;
     }
@@ -3167,7 +3169,7 @@ smallFont:
   }
 
   //ColOfMatrix
-  void setJRegisterAsInt(bool_t asArrayPointer, int16_t toStore) {
+  void setJRegisterAsInt(bool asArrayPointer, int16_t toStore) {
     if(asArrayPointer) {
       toStore++;
     }
@@ -3180,7 +3182,7 @@ smallFont:
     longIntegerFree(tmp_lgInt);
   }
 
-  bool_t wrapIJ(uint16_t rows, uint16_t cols) {
+  bool wrapIJ(uint16_t rows, uint16_t cols) {
     if(getIRegisterAsInt(true) < 0) {
       setIRegisterAsInt(true, rows - 1);
       setJRegisterAsInt(true, (getJRegisterAsInt(true) == 0) ? cols - 1 : getJRegisterAsInt(true) - 1);
@@ -3443,7 +3445,7 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
 
 
   /* Addition and subtraction */
-  static void addSubRealMatrices(const real34Matrix_t *y, const real34Matrix_t *x, bool_t subtraction, real34Matrix_t *res) {
+  static void addSubRealMatrices(const real34Matrix_t *y, const real34Matrix_t *x, bool subtraction, real34Matrix_t *res) {
     const uint16_t rows = y->header.matrixRows;
     const uint16_t cols = y->header.matrixColumns;
     int32_t i;
@@ -3481,7 +3483,7 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
   }
 
 
-  static void addSubComplexMatrices(const complex34Matrix_t *y, const complex34Matrix_t *x, bool_t subtraction, complex34Matrix_t *res) {
+  static void addSubComplexMatrices(const complex34Matrix_t *y, const complex34Matrix_t *x, bool subtraction, complex34Matrix_t *res) {
     const uint16_t rows = y->header.matrixRows;
     const uint16_t cols = y->header.matrixColumns;
     int32_t i;
@@ -3974,7 +3976,7 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
   }
 
 
-  static bool_t luCpxMat(real_t *tmpMat, uint16_t size, uint16_t *p, realContext_t *realContext) {
+  static bool luCpxMat(real_t *tmpMat, uint16_t size, uint16_t *p, realContext_t *realContext) {
     int i, j, k;
     int pvt;
     real_t max, t, u, v;
@@ -4389,7 +4391,7 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
   }
 
 
-  static bool_t invCpxMat(real_t *matrix, uint16_t n, realContext_t *realContext) {
+  static bool invCpxMat(real_t *matrix, uint16_t n, realContext_t *realContext) {
     real_t *x;
     real_t *lu;
     uint16_t *pivots;
@@ -5231,10 +5233,10 @@ void complex_QR_decomposition(const complex34Matrix_t *matrix, complex34Matrix_t
   }
 
 
-  static void calculateEigenvalues(real_t *a, real_t *q, real_t *r, real_t *eig, uint16_t size, bool_t shifted, bool_t reducedSignificantDigits, realContext_t *realContext) {
-    real_t shiftRe, shiftIm;
+  static void calculateEigenvalues(real_t *a, real_t *q, real_t *r, real_t *eig, uint16_t size, bool shifted, bool reducedSignificantDigits, realContext_t *realContext) {
+    real_t   shiftRe, shiftIm;
     uint16_t i, j;
-    bool_t converged;
+    bool     converged;
 
     if(size == 2) {
       calculateEigenvalues22(a, size, eig, eig + 1, eig + 6, eig + 7, realContext);
@@ -5303,12 +5305,12 @@ void complex_QR_decomposition(const complex34Matrix_t *matrix, complex34Matrix_t
   }
 
 
-  static void calculateEigenvectors(const any34Matrix_t *matrix, bool_t isComplex, real_t *a, real_t *q, real_t *r, real_t *eig, realContext_t *realContext) {
+  static void calculateEigenvectors(const any34Matrix_t *matrix, bool isComplex, real_t *a, real_t *q, real_t *r, real_t *eig, realContext_t *realContext) {
     // Call after the eigenvalues are calculated!
     const uint16_t size = matrix->header.matrixRows;
-    uint16_t i, j, k, l, mult, multIter, multTotal;
-    bool_t isIndeterminate = false;
-    bool_t tmpFlag = false;
+    uint16_t       i, j, k, l, mult, multIter, multTotal;
+    bool           isIndeterminate = false;
+    bool           tmpFlag = false;
 
     if(matrix->header.matrixRows == matrix->header.matrixColumns) {
       for(i = 0; i < size * size * 2; i++) {
@@ -5465,11 +5467,11 @@ void complex_QR_decomposition(const complex34Matrix_t *matrix, complex34Matrix_t
 
 void realEigenvalues(const real34Matrix_t *matrix, real34Matrix_t *res, real34Matrix_t *ires) {
   #if !defined(TESTSUITE_BUILD)
-    const uint16_t size = matrix->header.matrixRows;
-    real_t *bulk, *a, *q, *r, *eig;
-    uint16_t i;
-    bool_t isComplex;
-    bool_t shifted = true;
+    const uint16_t  size = matrix->header.matrixRows;
+    real_t         *bulk, *a, *q, *r, *eig;
+    uint16_t        i;
+    bool            isComplex;
+    bool            shifted = true;
 
     if(matrix->header.matrixRows == matrix->header.matrixColumns) {
       if((bulk = allocWp43(size * size * REAL_SIZE * 2 * 4))) {
@@ -5529,10 +5531,10 @@ void realEigenvalues(const real34Matrix_t *matrix, real34Matrix_t *res, real34Ma
 
 void complexEigenvalues(const complex34Matrix_t *matrix, complex34Matrix_t *res) {
   #if !defined(TESTSUITE_BUILD)
-    const uint16_t size = matrix->header.matrixRows;
-    real_t *bulk, *a, *q, *r, *eig;
-    uint16_t i;
-    bool_t shifted = true;
+    const uint16_t  size = matrix->header.matrixRows;
+    real_t         *bulk, *a, *q, *r, *eig;
+    uint16_t        i;
+    bool            shifted = true;
 
     if(matrix->header.matrixRows == matrix->header.matrixColumns) {
       if((bulk = allocWp43(size * size * REAL_SIZE * 2 * 4))) {
@@ -5574,11 +5576,11 @@ void complexEigenvalues(const complex34Matrix_t *matrix, complex34Matrix_t *res)
 
 void realEigenvectors(const real34Matrix_t *matrix, real34Matrix_t *res, real34Matrix_t *ires) {
   #if !defined(TESTSUITE_BUILD)
-    const uint16_t size = matrix->header.matrixRows;
-    real_t *bulk, *a, *q, *r, *eig;
-    uint16_t i, j;
-    bool_t isComplex;
-    bool_t shifted = true;
+    const uint16_t  size = matrix->header.matrixRows;
+    real_t         *bulk, *a, *q, *r, *eig;
+    uint16_t        i, j;
+    bool            isComplex;
+    bool            shifted = true;
 
     if(matrix->header.matrixRows == matrix->header.matrixColumns) {
       if((bulk = allocWp43(size * size * REAL_SIZE * 2 * 4))) {
@@ -5656,10 +5658,10 @@ void realEigenvectors(const real34Matrix_t *matrix, real34Matrix_t *res, real34M
 
 void complexEigenvectors(const complex34Matrix_t *matrix, complex34Matrix_t *res) {
   #if !defined(TESTSUITE_BUILD)
-    const uint16_t size = matrix->header.matrixRows;
-    real_t *bulk, *a, *q, *r, *eig;
-    uint16_t i;
-    bool_t shifted = true;
+    const uint16_t  size = matrix->header.matrixRows;
+    real_t         *bulk, *a, *q, *r, *eig;
+    uint16_t        i;
+    bool            shifted = true;
 
     if(matrix->header.matrixRows == matrix->header.matrixColumns) {
       if((bulk = allocWp43(size * size * REAL_SIZE * 2 * 4))) {
@@ -5702,7 +5704,7 @@ void complexEigenvectors(const complex34Matrix_t *matrix, complex34Matrix_t *res
 
 
 #if !defined(TESTSUITE_BUILD)
-  static void elementwiseRemaGetResult(bool_t *complex, real34Matrix_t *x, complex34Matrix_t *xc, int i) {
+  static void elementwiseRemaGetResult(bool *complex, real34Matrix_t *x, complex34Matrix_t *xc, int i) {
     if((!(*complex)) && (getRegisterDataType(REGISTER_X) != dtComplex34)) {
       if(getRegisterDataType(REGISTER_X) == dtLongInteger) {
         convertLongIntegerRegisterToReal34Register(REGISTER_X, REGISTER_X);
@@ -5737,9 +5739,9 @@ void complexEigenvectors(const complex34Matrix_t *matrix, complex34Matrix_t *res
 /* Elementwise function call */
 void elementwiseRema(void (*f)(void)) {
   #if !defined(TESTSUITE_BUILD)
-    real34Matrix_t x;
+    real34Matrix_t    x;
     complex34Matrix_t xc;
-    bool_t complex = false;
+    bool              complex = false;
 
     convertReal34MatrixRegisterToReal34Matrix(REGISTER_X, &x);
     const int numOfElements = x.header.matrixRows * x.header.matrixColumns;
@@ -5770,9 +5772,9 @@ void elementwiseRema(void (*f)(void)) {
 
 void elementwiseRema_UInt16(void (*f)(uint16_t), uint16_t param) {
   #if !defined(TESTSUITE_BUILD)
-    real34Matrix_t x;
+    real34Matrix_t    x;
     complex34Matrix_t xc;
-    bool_t complex = false;
+    bool              complex = false;
 
     convertReal34MatrixRegisterToReal34Matrix(REGISTER_X, &x);
     const int numOfElements = x.header.matrixRows * x.header.matrixColumns;
@@ -5803,10 +5805,10 @@ void elementwiseRema_UInt16(void (*f)(uint16_t), uint16_t param) {
 
 void elementwiseRemaLonI(void (*f)(void)) {
   #if !defined(TESTSUITE_BUILD)
-    real34Matrix_t y;
+    real34Matrix_t    y;
     complex34Matrix_t yc;
-    longInteger_t x;
-    bool_t complex = false;
+    longInteger_t     x;
+    bool              complex = false;
 
     convertReal34MatrixRegisterToReal34Matrix(REGISTER_Y, &y);
     convertLongIntegerRegisterToLongInteger(REGISTER_X, x);
@@ -5840,10 +5842,10 @@ void elementwiseRemaLonI(void (*f)(void)) {
 
 void elementwiseRemaReal(void (*f)(void)) {
   #if !defined(TESTSUITE_BUILD)
-    real34Matrix_t y;
+    real34Matrix_t    y;
     complex34Matrix_t yc;
-    real34_t x;
-    bool_t complex = false;
+    real34_t          x;
+    bool              complex = false;
 
     convertReal34MatrixRegisterToReal34Matrix(REGISTER_Y, &y);
     real34Copy(REGISTER_REAL34_DATA(REGISTER_X), &x);
@@ -5877,10 +5879,12 @@ void elementwiseRemaReal(void (*f)(void)) {
 
 void elementwiseRemaShoI(void (*f)(void)) {
   #if !defined(TESTSUITE_BUILD)
-    real34Matrix_t y;
+    real34Matrix_t    y;
     complex34Matrix_t yc;
-    uint64_t x; uint32_t base; int16_t sign;
-    bool_t complex = false;
+    uint64_t          x;
+    uint32_t          base;
+    int16_t           sign;
+    bool              complex = false;
 
     convertReal34MatrixRegisterToReal34Matrix(REGISTER_Y, &y);
     convertShortIntegerRegisterToUInt64(REGISTER_X, &sign, &x);
@@ -5914,10 +5918,10 @@ void elementwiseRemaShoI(void (*f)(void)) {
 
 void elementwiseRealRema(void (*f)(void)) {
   #if !defined(TESTSUITE_BUILD)
-    real34Matrix_t x;
+    real34Matrix_t    x;
     complex34Matrix_t xc;
-    real34_t y;
-    bool_t complex = false;
+    real34_t          y;
+    bool              complex = false;
 
     convertReal34MatrixRegisterToReal34Matrix(REGISTER_X, &x);
     real34Copy(REGISTER_REAL34_DATA(REGISTER_Y), &y);
@@ -6128,7 +6132,7 @@ void elementwiseRealCxma(void (*f)(void)) {
 
 
 #if !defined(TESTSUITE_BUILD)
-  void callByIndexedMatrix(bool_t (*real_f)(real34Matrix_t *), bool_t (*complex_f)(complex34Matrix_t *)) {
+  void callByIndexedMatrix(bool (*real_f)(real34Matrix_t *), bool (*complex_f)(complex34Matrix_t *)) {
     const int16_t i = getIRegisterAsInt(true);
     const int16_t j = getJRegisterAsInt(true);
 

@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file w_negative.h
- ***********************************************/
+/**
+ * \file mathematics/w_negative.h
+ */
 #if !defined(W_NEGATIVE_H)
   #define W_NEGATIVE_H
 

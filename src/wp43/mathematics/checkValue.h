@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file checkValue.h
- ***********************************************/
+/**
+ * \file mathematics/checkValue.h
+ */
 #if !defined(CHECKVALUE_H)
   #define CHECKVALUE_H
 

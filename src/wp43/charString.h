@@ -14,13 +14,14 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
+/**
  * \file charString.h
- ***********************************************/
+ */
 #if !defined(CHARSTRING_H)
   #define CHARSTRING_H
 
   #include "typeDefinitions.h"
+  #include <stdbool.h>
   #include <stdint.h>
 
   /********************************************//**
@@ -61,11 +62,11 @@
    *
    * \param[in] str const char*             String whose length is to calculate
    * \param[in] font font_t*                Font
-   * \param[in] withLeadingEmptyRows bool_t With the leading empty rows
-   * \param[in] withEndingEmptyRows bool_t  With the ending empty rows
+   * \param[in] withLeadingEmptyRows bool With the leading empty rows
+   * \param[in] withEndingEmptyRows bool  With the ending empty rows
    * \return int16_t                        Width in pixel of the string
    ***********************************************/
-  int16_t  stringWidth      (const char *str, const font_t *font, bool_t withLeadingEmptyRows, bool_t withEndingEmptyRows);
+  int16_t  stringWidth      (const char *str, const font_t *font, bool withLeadingEmptyRows, bool withEndingEmptyRows);
 
 
   /********************************************//**

@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file manage.h
- ***********************************************/
+/**
+ * \file programming/manage.h
+ */
 #if !defined(MANAGE_H)
   #define MANAGE_H
 

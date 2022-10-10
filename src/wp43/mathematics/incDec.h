@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file incDec.h
- ***********************************************/
+/**
+ * \file mathematics/incDec.h
+ */
 #if !defined(INCDEC_H)
   #define INCDEC_H
 

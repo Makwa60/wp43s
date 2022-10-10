@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file differentiate.h
- ***********************************************/
+/**
+ * \file solver/differentiate.h
+ */
 #if !defined(DIFFERENTIATE_H)
   #define DIFFERENTIATE_H
 

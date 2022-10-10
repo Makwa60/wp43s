@@ -22,16 +22,18 @@
 
 #include "constantPointers.h"
 #include "error.h"
+#include "flags.h"
 #include "fonts.h"
 #include "mathematics/comparisonReals.h"
 #include "mathematics/wp34s.h"
 #include "registers.h"
 #include "registerValueConversions.h"
+#include <stdbool.h>
 
 #include "wp43.h"
 
 
-static bool_t checkParamCauchy(real_t *x, real_t *i, real_t *j) {
+static bool checkParamCauchy(real_t *x, real_t *i, real_t *j) {
   if(   ((getRegisterDataType(REGISTER_X) != dtReal34) && (getRegisterDataType(REGISTER_X) != dtLongInteger))
      || ((getRegisterDataType(REGISTER_I) != dtReal34) && (getRegisterDataType(REGISTER_I) != dtLongInteger))
      || ((getRegisterDataType(REGISTER_J) != dtReal34) && (getRegisterDataType(REGISTER_J) != dtLongInteger))) {
@@ -188,7 +190,7 @@ void WP34S_Cdf_Cauchy(const real_t *x, const real_t *x0, const real_t *gamma, re
   WP34S_cdf_cauchy_common(x, x0, gamma, false, res, realContext);
 }
 
-void WP34S_cdf_cauchy_common(const real_t *x, const real_t *x0, const real_t *gamma, bool_t complementary, real_t *res, realContext_t *realContext) {
+void WP34S_cdf_cauchy_common(const real_t *x, const real_t *x0, const real_t *gamma, bool complementary, real_t *res, realContext_t *realContext) {
   real_t p;
 
   WP34S_cdf_cauchy_xform(x, x0, gamma, &p, realContext);

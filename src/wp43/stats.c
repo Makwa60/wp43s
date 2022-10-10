@@ -30,6 +30,7 @@
 #include "registers.h"
 #include "registerValueConversions.h"
 #include "stack.h"
+#include <stdbool.h>
 #include <string.h>
 
 #include "wp43.h"
@@ -41,7 +42,7 @@
 #endif // !TESTSUITE_BUILD
 
 
-bool_t isStatsMatrix(uint16_t *rows, char *mx) {
+bool isStatsMatrix(uint16_t *rows, char *mx) {
   #if !defined(TESTSUITE_BUILD)
     *rows = 0;
     calcRegister_t regStats = findNamedVariable(mx);
@@ -197,7 +198,7 @@ bool_t isStatsMatrix(uint16_t *rows, char *mx) {
   }
 
 
-  static bool_t ignoreMaxIfValid(real_t *r1, real_t *r2){
+  static bool ignoreMaxIfValid(real_t *r1, real_t *r2){
     if(realIsNaN (r1) || realIsNaN (r2) || realIsInfinite (r1) || realIsInfinite (r2) || realCompareEqual(r1, r2)) {
       calcMax(1);
       return false;
@@ -205,7 +206,7 @@ bool_t isStatsMatrix(uint16_t *rows, char *mx) {
     return true;
   }
 
-  static bool_t ignoreMinIfValid(real_t *r1, real_t *r2){
+  static bool ignoreMinIfValid(real_t *r1, real_t *r2){
     if(realIsNaN (r1) || realIsNaN (r2) || realIsInfinite (r1) || realIsInfinite (r2) || realCompareEqual(r1, r2)) {
       calcMin(1);
       return false;
@@ -214,7 +215,7 @@ bool_t isStatsMatrix(uint16_t *rows, char *mx) {
   }
 
 
-  static bool_t realSubtractIfValid(real_t *r1, real_t *r2, real_t *r3, realContext_t *ct){
+  static bool realSubtractIfValid(real_t *r1, real_t *r2, real_t *r3, realContext_t *ct){
     if(realIsNaN (r1) || realIsNaN (r2) || realIsInfinite (r1) || realIsInfinite (r2)) {
       calcSigma(1);
       return false;
@@ -404,7 +405,7 @@ bool_t isStatsMatrix(uint16_t *rows, char *mx) {
 
 
 
-bool_t checkMinimumDataPoints(const real_t *n) {
+bool checkMinimumDataPoints(const real_t *n) {
   if(statisticalSumsPointer == NULL) {
     displayCalcErrorMessage(ERROR_NO_SUMMATION_DATA, ERR_REGISTER_LINE, REGISTER_X);
     #if (EXTRA_INFO_ON_CALC_ERROR == 1)
@@ -661,7 +662,7 @@ void fnClSigma(uint16_t unusedButMandatoryParameter) {
 
 
 
-bool_t sigmaPlus(bool_t updateSaved, real_t *x, real_t *y) {
+bool sigmaPlus(bool updateSaved, real_t *x, real_t *y) {
   #if !defined(TESTSUITE_BUILD)
     if(statisticalSumsPointer == NULL) {
       initStatisticalSums();
@@ -856,7 +857,7 @@ void fnXmax(uint16_t unusedButMandatoryParameter) {
 
 
 #if !defined(TESTSUITE_BUILD)
-  static bool_t isHistoMatrix(uint16_t *rows, char *mx) {
+  static bool isHistoMatrix(uint16_t *rows, char *mx) {
     *rows = 0;
     calcRegister_t regHisto = findNamedVariable(mx);
     if(regHisto == INVALID_VARIABLE) {

@@ -24,10 +24,10 @@
 
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 
-static bool_t _ioWriteEnabled = false;
-static bool_t _ioReadEnabled  = false;
+static bool _ioWriteEnabled = false;
+static bool _ioReadEnabled  = false;
 
-bool_t ioFileOpen(ioFilePath_t path, ioFileMode_t mode) {
+bool ioFileOpen(ioFilePath_t path, ioFileMode_t mode) {
   assert(!_ioWriteEnabled && !_ioReadEnabled);
   const TCHAR *filename;
   BYTE filemode;

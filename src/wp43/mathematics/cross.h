@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file cross.h
- ***********************************************/
+/**
+ * \file mathematics/cross.h
+ */
 #if !defined(CROSS_H)
   #define CROSS_H
 

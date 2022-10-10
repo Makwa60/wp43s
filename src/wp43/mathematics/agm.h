@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file agm.h
- ***********************************************/
+/**
+ * \file mathematics/agm.h
+ */
 #if !defined(AGM_H)
   #define AGM_H
 

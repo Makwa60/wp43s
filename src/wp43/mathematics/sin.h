@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file sin.h
- ***********************************************/
+/**
+ * \file mathematics/sin.h
+ */
 #if !defined(SIN_H)
   #define SIN_H
 

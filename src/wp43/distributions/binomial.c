@@ -25,17 +25,19 @@
 #include "distributions/f.h"
 #include "distributions/poisson.h"
 #include "error.h"
+#include "flags.h"
 #include "fonts.h"
 #include "mathematics/comparisonReals.h"
 #include "mathematics/cpyx.h"
 #include "mathematics/wp34s.h"
 #include "registers.h"
 #include "registerValueConversions.h"
+#include <stdbool.h>
 
 #include "wp43.h"
 
 
-static bool_t checkParamBinomial(real_t *x, real_t *i, real_t *j) {
+static bool checkParamBinomial(real_t *x, real_t *i, real_t *j) {
   if(   ((getRegisterDataType(REGISTER_X) != dtReal34) && (getRegisterDataType(REGISTER_X) != dtLongInteger))
      || ((getRegisterDataType(REGISTER_I) != dtReal34) && (getRegisterDataType(REGISTER_I) != dtLongInteger))
      || ((getRegisterDataType(REGISTER_J) != dtReal34) && (getRegisterDataType(REGISTER_J) != dtLongInteger))) {
@@ -214,7 +216,7 @@ void fnBinomialI(uint16_t unusedButMandatoryParameter) {
  * This functions are borrowed from the WP34S project
  ******************************************************/
 
-bool_t binomial_param(const real_t *n, real_t *res) {
+bool binomial_param(const real_t *n, real_t *res) {
   if(realIsSpecial(n)) {
     realCopy(const_NaN, res);
     return false;

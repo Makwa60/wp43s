@@ -49,6 +49,7 @@
 #include "stats.h"
 #include "ui/bufferize.h"
 #include "ui/keyboard.h"
+#include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -206,7 +207,7 @@ void fnGetWordSize(uint16_t unusedButMandatoryParameter) {
 
 
 void fnSetWordSize(uint16_t WS) {
-  bool_t reduceWordSize;
+  bool reduceWordSize;
   if(WS == 0) {
     WS = 64;
   }
@@ -833,7 +834,7 @@ void fnReset(uint16_t confirmation) {
     groupingGap = 3;
 
     systemFlags = 0;
-    displayFormat = DF_ALL;
+    displayFormat = dfAll;
     displayFormatDigits = 0;
     timeDisplayFormatDigits = 0;
     currentAngularMode = amDegree;

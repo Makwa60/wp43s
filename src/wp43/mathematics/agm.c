@@ -34,6 +34,7 @@
 #include "mathematics/wp34s.h"
 #include "registers.h"
 #include "registerValueConversions.h"
+#include <stdbool.h>
 
 #include "wp43.h"
 
@@ -44,7 +45,7 @@
 #define AGM_MODE_F      3
 
 void fnAgm(uint16_t unusedButMandatoryParameter) {
-  bool_t realInput=true;
+  bool   realInput=true;
   real_t aReal, bReal;
   real_t aImag, bImag;
 

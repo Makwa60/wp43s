@@ -46,6 +46,7 @@
 #include "stats.h"
 #include "ui/screen.h"
 #include "ui/softmenus.h"
+#include <stdbool.h>
 #include <string.h>
 #if defined(PC_BUILD)
 #include <stdio.h>
@@ -54,7 +55,7 @@
 
 #include "wp43.h"
 
-#define BACKUP_VERSION         83  // changed timer app state
+#define BACKUP_VERSION         84  // changed displayFormat into an enum
 #define START_REGISTER_VALUE 1000  // was 1522, why?
 
 static char *tmpRegisterString = NULL;
@@ -954,7 +955,7 @@ void fnSave(uint16_t unusedButMandatoryParameter) {
   save(tmpString, strlen(tmpString));
   sprintf(tmpString, "denMax\n%" PRIu32 "\n", denMax);
   save(tmpString, strlen(tmpString));
-  sprintf(tmpString, "displayFormat\n%" PRIu8 "\n", displayFormat);
+  sprintf(tmpString, "displayFormat\n%" PRIu8 "\n", (uint8_t)displayFormat);
   save(tmpString, strlen(tmpString));
   sprintf(tmpString, "displayFormatDigits\n%" PRIu8 "\n", displayFormatDigits);
   save(tmpString, strlen(tmpString));
@@ -1057,7 +1058,7 @@ uint64_t stringToUint64(const char *str) {
 
 int16_t stringToInt16(const char *str) {
   int16_t value = 0;
-  bool_t sign = false;
+  bool    sign = false;
 
   if(*str == '-') {
     str++;
@@ -1081,7 +1082,7 @@ int16_t stringToInt16(const char *str) {
 
 int32_t stringToInt32(const char *str) {
   int32_t value = 0;
-  bool_t sign = false;
+  bool    sign = false;
 
   if(*str == '-') {
     str++;
@@ -1301,7 +1302,7 @@ static void skipMatrixData(char *type, char *value) {
 
 
 
-static bool_t restoreOneSection(uint16_t loadMode, uint16_t s, uint16_t n, uint16_t d) {
+static bool restoreOneSection(uint16_t loadMode, uint16_t s, uint16_t n, uint16_t d) {
   int16_t i, numberOfRegs;
   calcRegister_t regist;
   char *str;

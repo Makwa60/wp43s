@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file setClearFlipBits.h
- ***********************************************/
+/**
+ * \file logicalOps/setClearFlipBits.h
+ */
 #if !defined(SETCLEARFLIPBITS_H)
   #define SETCLEARFLIPBITS_H
 

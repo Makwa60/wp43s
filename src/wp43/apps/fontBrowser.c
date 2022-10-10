@@ -26,6 +26,7 @@
 #include "items.h"
 #include "ui/screen.h"
 #include <assert.h>
+#include <stdbool.h>
 #include <stdlib.h>
 
 #include "wp43.h"
@@ -80,7 +81,7 @@ uint8_t currentFntScr;
 
 
 
-  static bool_t _fontBrowserKeyHandler(int16_t item) {
+  static bool _fontBrowserKeyHandler(int16_t item) {
     if(item == ITM_UP) {
       if(currentFntScr >= 2) {
         currentFntScr--;

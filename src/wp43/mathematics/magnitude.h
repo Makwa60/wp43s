@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file magnitude.h
- ***********************************************/
+/**
+ * \file mathematics/magnitude.h
+ */
 #if !defined(MAGNITUDE_H)
   #define MAGNITUDE_H
 

@@ -19,6 +19,7 @@
  ***********************************************/
 
 #include "solver/differentiate.h"
+
 #include "constantPointers.h"
 #include "debug.h"
 #include "error.h"
@@ -31,6 +32,8 @@
 #include "registerValueConversions.h"
 #include "solver/equation.h"
 #include "stack.h"
+#include <stdbool.h>
+
 #include "wp43.h"
 
 void fn1stDeriv(uint16_t label) {
@@ -211,7 +214,7 @@ static void _differentiatorIteration(calcRegister_t label, real_t *r0) {
 
 
 /* Eval f(X + k h) k on stack */
-static bool_t deriv_eval_func(calcRegister_t label, real_t *r0, const real_t *r3, const real_t *r4, bool_t secondDeriv, realContext_t *realContext) {
+static bool deriv_eval_func(calcRegister_t label, real_t *r0, const real_t *r3, const real_t *r4, bool secondDeriv, realContext_t *realContext) {
   real_t tmpX, tmpY;
   realMultiply(r0, r4, &tmpX, realContext);
   realAdd(&tmpX, r3, &tmpX, realContext);

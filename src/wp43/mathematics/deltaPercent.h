@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file percentT.h
- ***********************************************/
+/**
+ * \file mathematics/percentT.h
+ */
 #if !defined(DELTAPERCENT_H)
   #define DELTAPERCENT_H
 

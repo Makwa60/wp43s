@@ -14,9 +14,9 @@
  * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********************************************//**
- * \file sinc.h
- ***********************************************/
+/**
+ * \file mathematics/sinc.h
+ */
 #if !defined(SINCPI_H)
   #define SINCPI_H
   // Coded by JM, based on sinc.h

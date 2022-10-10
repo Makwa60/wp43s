@@ -21,7 +21,7 @@
   #define APPS_H
 
   #include "hal/gui.h"
-  #include "typeDefinitions.h"
+  #include <stdbool.h>
   #include <stdint.h>
 
   // Interface for other modules
@@ -54,8 +54,8 @@
 
   // Interface for apps
 
-  typedef bool_t (*appsKeyHandler_t)(int16_t item);
-  typedef void   (*appsDraw_t)      (void);
+  typedef bool (*appsKeyHandler_t)(int16_t item);
+  typedef void (*appsDraw_t)      (void);
 
   void appsEnter(guiLayout_t layout, appsKeyHandler_t keyHandler, appsDraw_t draw);
 

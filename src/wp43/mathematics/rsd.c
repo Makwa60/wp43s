@@ -20,11 +20,12 @@
 
 #include "mathematics/rsd.h"
 
+#include "config.h"
 #include "constantPointers.h"
+#include "conversionAngles.h"
 #include "debug.h"
 #include "error.h"
-#include "config.h"
-#include "conversionAngles.h"
+#include "flags.h"
 #include "items.h"
 #include "mathematics/comparisonReals.h"
 #include "mathematics/toPolar.h"
@@ -122,7 +123,7 @@ void fnRsd(uint16_t digits) {
 
 
 
-void senaryDigitToDecimal(bool_t pre_grouped, real_t *val, realContext_t *realContext) {
+void senaryDigitToDecimal(bool pre_grouped, real_t *val, realContext_t *realContext) {
   real_t sixtieths, st;
   realDivide(const_100, const_60, &st, realContext);
 
@@ -140,7 +141,7 @@ void senaryDigitToDecimal(bool_t pre_grouped, real_t *val, realContext_t *realCo
   realAdd(val, &sixtieths, val, realContext);
 }
 
-void decimalDigitToSenary(bool_t pre_grouped, real_t *val, realContext_t *realContext) {
+void decimalDigitToSenary(bool pre_grouped, real_t *val, realContext_t *realContext) {
   real_t sixtieths, st;
   realDivide(const_60, const_100, &st, realContext);
 
