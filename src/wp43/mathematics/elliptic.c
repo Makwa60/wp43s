@@ -36,8 +36,8 @@
 #include "mathematics/ln.h"
 #include "mathematics/magnitude.h"
 #include "mathematics/multiplication.h"
-#include "mathematics/power.h"
 #include "mathematics/sin.h"
+#include "mathematics/squareRoot.h"
 #include "mathematics/tan.h"
 #include "mathematics/tanh.h"
 #include "mathematics/wp34s.h"
@@ -520,7 +520,7 @@ static void _ellipticFE_lambda_mu(const real_t *phi, const real_t *psi, const re
   }
   else {
     divRealComplex(const_1, &cot2Lambda, &cot2LambdaI, lambda, lambdaI, realContext);
-    PowerComplex(lambda, lambdaI, const_1on2, const_0, lambda, lambdaI, realContext);
+    sqrtComplex(lambda, lambdaI, lambda, lambdaI, realContext);
     ArctanComplex(lambda, lambdaI, lambda, lambdaI, realContext);
 
     if(realIsZero(&cot2Lambda) && realIsZero(&cot2LambdaI)) {
@@ -530,7 +530,7 @@ static void _ellipticFE_lambda_mu(const real_t *phi, const real_t *psi, const re
       realFMA(&tan2Phi, &cot2Lambda, const__1, mu, realContext); realMultiply(&tan2Phi, &cot2LambdaI, muI, realContext);
     }
     realDivide(mu, m, mu, realContext); realDivide(muI, m, muI, realContext);
-    PowerComplex(mu, muI, const_1on2, const_0, mu, muI, realContext);
+    sqrtComplex(mu, muI, mu, muI, realContext);
     ArctanComplex(mu, muI, mu, muI, realContext);
   }
 }
@@ -961,7 +961,7 @@ void ellipticE(const real_t *phi, const real_t *psi, const real_t *m, real_t *re
 
       realMultiply(m, SIN2_LAMBDA, B1, realContext2); realMultiply(m, SIN2_LAMBDA_I, B1_I, realContext2);
       realSubtract(const_1, B1, B2, realContext2); realSubtract(const_0, B1_I, B2_I, realContext2);
-      PowerComplex(B2, B2_I, const_1on2, const_0, B1, B1_I, realContext2);
+      sqrtComplex(B2, B2_I, B1, B1_I, realContext2);
       mulComplexComplex(SIN2_MU, SIN2_MU_I, B1, B1_I, B1, B1_I, realContext2);
       mulComplexComplex(COS_LAMBDA, COS_LAMBDA_I, B1, B1_I, B1, B1_I, realContext2);
       mulComplexComplex(SIN_LAMBDA, SIN_LAMBDA_I, B1, B1_I, B1, B1_I, realContext2);
@@ -969,7 +969,7 @@ void ellipticE(const real_t *phi, const real_t *psi, const real_t *m, real_t *re
 
       realMultiply(M1, SIN2_MU, B3, realContext2); realMultiply(M1, SIN2_MU_I, B3_I, realContext2);
       realSubtract(const_1, B3, B3, realContext2); realSubtract(const_0, B3_I, B3_I, realContext2);
-      PowerComplex(B3, B3_I, const_1on2, const_0, B3, B3_I, realContext2);
+      sqrtComplex(B3, B3_I, B3, B3_I, realContext2);
       mulComplexComplex(B2, B2_I, B3, B3_I, B2, B2_I, realContext2);
       mulComplexComplex(B2, B2_I, SIN_MU, SIN_MU_I, B2, B2_I, realContext2);
       mulComplexComplex(B2, B2_I, COS_MU, COS_MU_I, B2, B2_I, realContext2);
