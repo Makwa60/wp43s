@@ -1,22 +1,5 @@
-/* This file is part of 43S.
- *
- * 43S is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * 43S is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-/********************************************//**
- * \file error.c
- ***********************************************/
+// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-FileCopyrightText: Copyright The WP43 Authors
 
 #include "error.h"
 
@@ -98,16 +81,8 @@ TO_QSPI const char *errorMessages[NUMBER_OF_ERROR_CODES] = {
 };
 
 
+
 #if defined(PC_BUILD)
-  /********************************************//**
-   * \brief Displays an error message like a pop up
-   *
-   * \param[in] m1 const char* 1st part of the message
-   * \param[in] m2 const char* 2nd part of the message
-   * \param[in] m3 const char* 3rd part of the message
-   * \param[in] m4 const char* 4th part of the message
-   * \return void
-   ***********************************************/
   void moreInfoOnError(const char *m1, const char *m2, const char *m3, const char *m4) {
     uint8_t utf8m1[2000], utf8m2[2000], utf8m3[2000], utf8m4[2000];
 
@@ -217,12 +192,6 @@ void displayCalcErrorMessage(errorCode_t errorCode, calcRegister_t errMessageReg
 
 
 
-/********************************************//**
- * \brief Data type error, common function
- *
- * \param void
- * \return void
- ***********************************************/
 #if (EXTRA_INFO_ON_CALC_ERROR != 1)
   void typeError(void) {
     displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, REGISTER_X);

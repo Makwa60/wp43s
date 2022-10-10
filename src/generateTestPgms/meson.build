@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: GPL-3.0-only
+# SPDX-FileCopyrightText: Copyright The WP43 Authors
+
 generateTestPgms = executable(
   'generateTestPgms',
   build_by_default    : false,

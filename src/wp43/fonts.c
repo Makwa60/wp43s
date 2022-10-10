@@ -1,22 +1,5 @@
-/* This file is part of 43S.
- *
- * 43S is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * 43S is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-/********************************************//**
- * \file fonts.c
- ***********************************************/
+// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-FileCopyrightText: Copyright The WP43 Authors
 
 #include "fonts.h"
 
@@ -42,16 +25,6 @@ TO_QSPI const char *hexaFont = "\x69\x99\x99\x60"  // 0
 
 
 
-/********************************************//**
- * \brief Finds a glyph in a font
- *
- * \param[in] font const font_t* Font
- * \param[in] charCode uint16_t  Unicode code point
- * \return int16_t
- *                 * Glyph index
- *                 * -1 when not found in the standard font
- *                 * -2 when not found in the numeric font
- ***********************************************/
 int16_t findGlyph(const font_t *font, uint16_t charCode) {
   int16_t first, middle, last;
 
@@ -89,13 +62,6 @@ int16_t findGlyph(const font_t *font, uint16_t charCode) {
 
 
 
-/********************************************//**
- * \brief Generates a glyph for a non found glyph containing the hexadecimal Unicoide code point
- *
- * \param[in] font int16_t      Font for which generate the glyph
- * \param[in] charCode uint16_t Unicode code point
- * \return void
- ***********************************************/
 void generateNotFoundGlyph(int16_t font, uint16_t charCode) {
   int16_t i;
   uint8_t  nibble1, nibble2;

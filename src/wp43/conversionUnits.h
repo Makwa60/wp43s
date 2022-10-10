@@ -1,18 +1,5 @@
-/* This file is part of 43S.
- *
- * 43S is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * 43S is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
- */
+// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-FileCopyrightText: Copyright The WP43 Authors
 
 /**
  * \file conversionUnits.h
@@ -23,7 +10,22 @@
   #include <stdint.h>
 
   // Temperature
+
+  /**
+   * Converts °Celcius to °Fahrenheit: (°Celcius * 1,8) + 32.
+   * Refreshes the stack. This is the exact formula.
+   *
+   * \param[in] unusedButMandatoryParameter
+   * \return void
+   */
   void fnCvtCToF      (uint16_t unusedButMandatoryParameter);
+
+  /**
+   * Converts °Fahrenheit to °Celcius: (°Fahrenheit - 32) / 1,8.
+   * Refreshes the stack. This is the exact formula.
+   *
+   * \param[in] unusedButMandatoryParameter
+   */
   void fnCvtFToC      (uint16_t unusedButMandatoryParameter);
 
   // Duration
@@ -99,7 +101,23 @@
   void fnCvtMuM2      (uint16_t multiplyDivide);
 
   // ...
+
+  /**
+   * Converts power or field ratio to dB
+   * dB = (10 or 20) * log10((power or field) ratio) this is the exact formula
+   *
+   * \param[in] unusedButMandatoryParameter
+   */
   void fnCvtRatioDb   (uint16_t tenOrTwenty);
+
+  /**
+   * Converts dB to power or field ratio
+   * (power or field) ratio = 10^(dB / 10 or 20) this is the exact formula
+   *
+   * \param[in] unusedButMandatoryParameter
+   */
   void fnCvtDbRatio   (uint16_t tenOrTwenty);
+
   void fnCvtLbfftNm   (uint16_t multiplyDivide);
+
 #endif // !CONVERSIONUNITS_H

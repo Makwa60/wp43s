@@ -1,18 +1,5 @@
-/* This file is part of 43S.
- *
- * 43S is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * 43S is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
- */
+// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-FileCopyrightText: Copyright The WP43 Authors
 
 #include "store.h"
 
@@ -31,8 +18,6 @@
 #include <stdbool.h>
 
 #include "wp43.h"
-
-
 
 bool regInRange(uint16_t regist) {
   bool inRange = (
@@ -59,6 +44,8 @@ bool regInRange(uint16_t regist) {
   #endif // PC_BUILD
   return inRange;
 }
+
+
 
 static bool _checkReadOnlyVariable(uint16_t regist) {
   if(regist >= FIRST_RESERVED_VARIABLE && regist <= LAST_RESERVED_VARIABLE && allReservedVariables[regist - FIRST_RESERVED_VARIABLE].header.readOnly == 1) {
@@ -97,6 +84,8 @@ static bool _checkReadOnlyVariable(uint16_t regist) {
     }
     return true;
   }
+
+
 
   static bool storeElementComplex(complex34Matrix_t *matrix) {
     const int16_t i = getIRegisterAsInt(true);
@@ -161,6 +150,8 @@ static bool _checkReadOnlyVariable(uint16_t regist) {
     return false;
   }
 
+
+
   static bool storeIjComplex(complex34Matrix_t *matrix) {
     return storeIjReal((real34Matrix_t *)matrix);
   }
@@ -200,6 +191,8 @@ static void _storeValue(uint16_t regist) {
     copySourceRegisterToDestRegister(REGISTER_X, regist);
   }
 }
+
+
 
 void fnStore(uint16_t regist) {
   if(_checkReadOnlyVariable(regist) && regInRange(regist)) {

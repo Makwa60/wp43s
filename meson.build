@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: GPL-3.0-only
+# SPDX-FileCopyrightText: Copyright The WP43 Authors
+
 project('wp43', 'c',
   meson_version   : '>=0.56.0',
   license         : 'GPL-3.0-only',

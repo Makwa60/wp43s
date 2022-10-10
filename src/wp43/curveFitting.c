@@ -1,22 +1,5 @@
-/* This file is part of 43S.
- *
- * 43S is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * 43S is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-/********************************************//**
- * \file curveFitting.c
- ***********************************************/
+// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-FileCopyrightText: Copyright The WP43 Authors
 
 #include "curveFitting.h"
 
@@ -39,7 +22,6 @@
 
 #include "wp43.h"
 
-
 //#define STAT_DISPLAY_ABCDEFG                      //to display helper functions A-H
 
 static real_t RR, RR2, RRMAX, SMI, aa0, aa1, aa2;  // Curve fitting variables, available to the different functions
@@ -53,23 +35,6 @@ realContext_t *realContextForecast;
 #if defined(STATDEBUG) && defined(PC_BUILD)
   char ss[200];
 #endif // STATDEBUG && PC_BUILD
-
-/********************************************//**
- * \brief Sets the curve fitting mode
- *
- * \param[in] curveFitting uint16_t Curve fitting mode
- *
- *
- * \return void
- * \Input from defines, is "1" to exclude a method, examples:
- * \LinF=CF_LINEAR_FITTING = 1. This "1" excludes LinF
- * \448 = 1 1100 0000, Excluding 3 param models.
- * \0   = 0 0000 0000, Exlcluding nothing
- * \510 = 1 1111 1110, Excludes everything except LINF (default)
- * \511 not allowed from keyboard, as it is internally used to allow ORTHOF.
- *
- * \The internal representation reverses the logic, i.e. ones represent allowed methods
- ***********************************************/
 
 void fnCurveFitting(uint16_t curveFitting) {
   curveFitting = curveFitting & 0x01FF;
@@ -110,12 +75,6 @@ void fnCurveFitting(uint16_t curveFitting) {
 
 
 
-/********************************************//**
- * \brief Sets X to the set L.R.
- *
- * \param[in] unusedButMandatoryParameter uint16_t
- * \return void
- ***********************************************/
 void fnCurveFittingLR(uint16_t unusedButMandatoryParameter) {
   longInteger_t lr;
   liftStack();
@@ -126,6 +85,7 @@ void fnCurveFittingLR(uint16_t unusedButMandatoryParameter) {
 }
 
 
+
 uint16_t lrCountOnes(uint16_t curveFitting) { // count the number of allowed methods
   uint16_t numberOfOnes;
   numberOfOnes = curveFitting - ((curveFitting >> 1) & 0x5555);
@@ -134,6 +94,7 @@ uint16_t lrCountOnes(uint16_t curveFitting) { // count the number of allowed met
   numberOfOnes = (uint16_t)(numberOfOnes * 0x0101) >> 8;
   return numberOfOnes;
 }
+
 
 
 uint16_t minLRDataPoints(uint16_t selection) {
@@ -166,17 +127,8 @@ uint16_t minLRDataPoints(uint16_t selection) {
 }
 
 
-/********************************************//**
- * \brief Finds the best curve fit
- *
- * \param[in] curveFitting uint16_t Curve fitting mode. Binary positions indicate which curves to be considered.
- * \Do not convert from 0 to 511 here. Conversion only done after input.
- *
- * \default of 0 is defined in ReM to be the same as 511
- *
- * \return void
- ***********************************************/
-void fnProcessLRfind(uint16_t curveFitting){
+
+void fnProcessLRfind(uint16_t curveFitting) {
   int32_t nn;
   real_t NN;
 
@@ -260,7 +212,7 @@ void fnProcessLRfind(uint16_t curveFitting){
 
 //0010 0011 1111    //0x23F     (internal is inverted: '1' means enabled)
 //0001 1100 0000    //0x1C0
-void fnProcessLR (uint16_t unusedButMandatoryParameter){
+void fnProcessLR (uint16_t unusedButMandatoryParameter) {
   if(checkMinimumDataPoints(const_2)) {
     fnProcessLRfind(lrSelection);
   }
@@ -268,21 +220,22 @@ void fnProcessLR (uint16_t unusedButMandatoryParameter){
 
 
 
-void calc_BCD(real_t *BB, real_t *CC, real_t *DD){                        //Aux terms, calc_BCD must be run before calc_AEFG
-realContext = &ctxtReal75;
-real_t SS,TT;
+// Aux terms, calc_BCD must be run before calc_AEFG
+void calc_BCD(real_t *BB, real_t *CC, real_t *DD) {
+  realContext = &ctxtReal75;
+  real_t SS,TT;
 
-  //        B = nn * sumx2y - sumx2 * sumy;
+  // B = nn * sumx2y - sumx2 * sumy;
   realMultiply(SIGMA_N, SIGMA_X2Y, &SS, realContext);
   realMultiply(SIGMA_X2, SIGMA_Y, &TT, realContext);
   realSubtract(&SS, &TT, BB, realContext);
 
-  //        C = nn * sumx3 - sumx2 * sumx;
+  // C = nn * sumx3 - sumx2 * sumx;
   realMultiply(SIGMA_N, SIGMA_X3, &SS, realContext);
   realMultiply(SIGMA_X2, SIGMA_X, &TT, realContext);
   realSubtract(&SS, &TT, CC, realContext);
 
-  //        D = nn * sumxy - sumx * sumy;
+  // D = nn * sumxy - sumx * sumy;
   realMultiply(SIGMA_N, SIGMA_XY, &SS, realContext);
   realMultiply(SIGMA_X, SIGMA_Y, &TT, realContext);
   realSubtract(&SS, &TT, DD, realContext);
@@ -290,22 +243,23 @@ real_t SS,TT;
 
 
 
-void calc_AEFG(real_t *AA, real_t *BB, real_t *CC, real_t *DD, real_t *EE, real_t *FF, real_t *GG){                        //Aux terms, calc_AEFG must be run after calc_BCD
-realContext = &ctxtReal75;
-real_t SS,TT,UU;
+// Aux terms, calc_AEFG must be run after calc_BCD
+void calc_AEFG(real_t *AA, real_t *BB, real_t *CC, real_t *DD, real_t *EE, real_t *FF, real_t *GG) {
+  realContext = &ctxtReal75;
+  real_t SS,TT,UU;
 
-  //        A = nn * sumx2 - sumx * sumx;
+  // A = nn * sumx2 - sumx * sumx;
   realMultiply(SIGMA_N, SIGMA_X2, &SS, realContext);
   realMultiply(SIGMA_X, SIGMA_X, &TT, realContext);
   realSubtract(&SS, &TT, AA, realContext);
 
-  //        E = nn * sumx4 - sumx2 * sumx2;
+  // E = nn * sumx4 - sumx2 * sumx2;
   realMultiply(SIGMA_N, SIGMA_X4, &SS, realContext);
   realMultiply(SIGMA_X2, SIGMA_X2, &TT, realContext);
   realSubtract(&SS, &TT, EE, realContext);
 
   //USING COMPONENTS OF BCD
-  //        F = (A*B - C*D) / (A*E - C*C);    //interchangably the a2 in PARABF
+  // F = (A*B - C*D) / (A*E - C*C);    //interchangably the a2 in PARABF
   realMultiply(AA,       BB,        &SS, realContext);
   realMultiply(CC,       DD,        &TT, realContext);
   realSubtract(&SS,      &TT,       &UU, realContext);
@@ -314,7 +268,7 @@ real_t SS,TT,UU;
   realSubtract(&SS,      &TT,       &SS, realContext);
   realDivide  (&UU,      &SS,       FF,  realContext);
 
-  //        G = (D - F * C) / A;
+  // G = (D - F * C) / A;
   realMultiply(FF,      CC,         &SS, realContext);
   realSubtract(DD,      &SS,        &SS, realContext);
   realDivide  (&SS,     AA,         GG,  realContext);
@@ -322,18 +276,13 @@ real_t SS,TT,UU;
 
 
 
-void processCurvefitSelection(uint16_t selection, real_t *RR_, real_t *SMI_, real_t *aa0, real_t *aa1, real_t *aa2){
+void processCurvefitSelection(uint16_t selection, real_t *RR_, real_t *SMI_, real_t *aa0, real_t *aa1, real_t *aa2) {
   real_t MX, MX2, SX2, SY2;
   processCurvefitSelectionAll(selection, RR_, &MX, &MX2, &SX2, &SY2, SMI_, aa0, aa1, aa2);
 }
 
-/********************************************//**
- * \brief Calculates the curve fitting parameters r, smi, a0, a1, a2
- *
- * \param[in] curveFitting uint16_t Curve fitting mode, and pointers to the real variables
- * \return void
- *
- ***********************************************/
+
+
 void processCurvefitSelectionAll(uint16_t selection, real_t *RR_, real_t *MX, real_t *MX2,real_t *SX2, real_t *SY2, real_t *SMI_, real_t *aa0, real_t *aa1, real_t *aa2) {
   real_t AA, BB, CC, DD, EE, FF, GG, HH, RR2;   // Curve aux fitting variables
   real_t SS, TT, UU;             // Temporary curve fitting variables
@@ -967,7 +916,8 @@ void processCurvefitSelectionAll(uint16_t selection, real_t *RR_, real_t *MX, re
 }
 
 
-void yIsFnx(uint8_t USEFLOAT, uint16_t selection, double x, double *y, double a0, double a1, double a2, real_t *XX, real_t *YY, real_t *RR, real_t *SMI, real_t *aa0, real_t *aa1, real_t *aa2){
+
+void yIsFnx(uint8_t USEFLOAT, uint16_t selection, double x, double *y, double a0, double a1, double a2, real_t *XX, real_t *YY, real_t *RR, real_t *SMI, real_t *aa0, real_t *aa1, real_t *aa2) {
   *y = 0;
   float yf;
   real_t SS, TT, UU;
@@ -1101,7 +1051,8 @@ void yIsFnx(uint8_t USEFLOAT, uint16_t selection, double x, double *y, double a0
 }
 
 
-void fnYIsFnx(uint16_t unusedButMandatoryParameter){
+
+void fnYIsFnx(uint16_t unusedButMandatoryParameter) {
   real_t XX, YY, RR, SMI, aa0, aa1, aa2;
   double x=-99, y = 0, a0=-99, a1=-99, a2=-99;
 
@@ -1136,8 +1087,7 @@ void fnYIsFnx(uint16_t unusedButMandatoryParameter){
 
 
 
-
-void xIsFny(uint16_t selection, uint8_t rootNo, real_t *XX, real_t *YY, real_t *RR, real_t *SMI, real_t *aa0, real_t *aa1, real_t *aa2){
+void xIsFny(uint16_t selection, uint8_t rootNo, real_t *XX, real_t *YY, real_t *RR, real_t *SMI, real_t *aa0, real_t *aa1, real_t *aa2) {
   real_t SS, TT, UU;
 
   realCopy(const_0, XX);
@@ -1249,14 +1199,15 @@ void xIsFny(uint16_t selection, uint8_t rootNo, real_t *XX, real_t *YY, real_t *
 
 
 
-void fnXIsFny(uint16_t unusedButMandatoryParameter){
+void fnXIsFny(uint16_t unusedButMandatoryParameter) {
   real_t XX, YY, RR, SMI, aa0, aa1, aa2;
 
   realCopy(const_0, &aa0);
   realCopy(const_0, &aa1);
   realCopy(const_0, &aa2);
   if(checkMinimumDataPoints(const_2)) {
-    if(lrChosen == 0) {                    //if lrChosen contains something, the stat data exists, otherwise set it to linear. lrSelection still has 1 at this point, i.e. the * will not appear.
+    //if lrChosen contains something, the stat data exists, otherwise set it to linear. lrSelection still has 1 at this point, i.e. the * will not appear.
+    if(lrChosen == 0) {
       lrChosen = CF_LINEAR_FITTING;
     }
     processCurvefitSelection(lrChosen, &RR, &SMI, &aa0, &aa1, &aa2);

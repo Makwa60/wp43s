@@ -1,18 +1,5 @@
-/* This file is part of 43S.
- *
- * 43S is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * 43S is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
- */
+// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-FileCopyrightText: Copyright The WP43 Authors
 
 #include "registers.h"
 
@@ -70,8 +57,6 @@ const reservedVariableHeader_t allReservedVariables[] = { // MUST be in the same
 /* 25 */  { .header = {.pointerToRegisterData = 32,         .dataType = dtReal34,      .tag = amNone,      .readOnly = 0, .notUsed = 0}, .reservedVariableName = {2, 'P', 'V',  0,   0,   0,   0,   0} },
 /* 26 */  { .header = {.pointerToRegisterData = 36,         .dataType = dtLongInteger, .tag = liPositive,  .readOnly = 0, .notUsed = 0}, .reservedVariableName = {6, 'G', 'R', 'A', 'M', 'O', 'D',  0} },
 };
-
-
 
 static inline registerHeader_t *POINTER_TO_LOCAL_REGISTER(calcRegister_t a) {
   return ((registerHeader_t *)(currentLocalRegisters + (a)));
@@ -1900,10 +1885,12 @@ void fnToReal(uint16_t unusedButMandatoryParameter) {
 }
 
 
+
 bool saveLastX(void) {
   copySourceRegisterToDestRegister(REGISTER_X, REGISTER_L);
   return lastErrorCode == ERROR_NONE;
 }
+
 
 
 static uint8_t getRegParam(bool *f, uint16_t *s, uint16_t *n, uint16_t *d) {
@@ -2006,6 +1993,7 @@ static uint8_t getRegParam(bool *f, uint16_t *s, uint16_t *n, uint16_t *d) {
 }
 
 
+
 void fnRegClr(uint16_t unusedButMandatoryParameter) {
   uint16_t s, n;
 
@@ -2018,6 +2006,7 @@ void fnRegClr(uint16_t unusedButMandatoryParameter) {
     displayCalcErrorMessage(lastErrorCode, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
   }
 }
+
 
 
 static void sortReg(uint16_t range_start, uint16_t range_end) {
@@ -2075,6 +2064,7 @@ static void sortReg(uint16_t range_start, uint16_t range_end) {
 }
 
 
+
 void fnRegSort(uint16_t unusedButMandatoryParameter) {
   uint16_t s, n;
 
@@ -2113,6 +2103,7 @@ void fnRegSort(uint16_t unusedButMandatoryParameter) {
 }
 
 
+
 void fnRegCopy(uint16_t unusedButMandatoryParameter) {
   bool     f;
   uint16_t s, n, d;
@@ -2144,6 +2135,7 @@ void fnRegCopy(uint16_t unusedButMandatoryParameter) {
     displayCalcErrorMessage(lastErrorCode, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
   }
 }
+
 
 
 void fnRegSwap(uint16_t unusedButMandatoryParameter) {

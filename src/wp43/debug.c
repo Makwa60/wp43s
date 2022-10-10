@@ -1,22 +1,5 @@
-/* This file is part of 43S.
- *
- * 43S is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * 43S is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-/********************************************//**
- * \file debug.c
- ***********************************************/
+// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-FileCopyrightText: Copyright The WP43 Authors
 
 #include "debug.h"
 
@@ -40,14 +23,7 @@
   char debuggerString[1000];
 #endif
 
-
-/********************************************//**
- * \brief Returns the name of a data type
- *
- * \param[in] dt uint16_t Data type
- * \return char*          Name of the data type
- ***********************************************/
-char * getDataTypeName(uint16_t dt, bool article, bool padWithBlanks) {
+char *getDataTypeName(uint16_t dt, bool article, bool padWithBlanks) {
   if(article && padWithBlanks) {
     switch(dt) {
       case dtLongInteger: {
@@ -258,19 +234,13 @@ char * getDataTypeName(uint16_t dt, bool article, bool padWithBlanks) {
 
 
 
-/********************************************//**
- * \brief Returns the name of a data type of a register
- *
- * \param[in] dt calcRegister_t register
- * \return char* Name of the data type
- ***********************************************/
-char * getRegisterDataTypeName(calcRegister_t regist, bool article, bool padWithBlanks) {
+char *getRegisterDataTypeName(calcRegister_t regist, bool article, bool padWithBlanks) {
   return getDataTypeName(getRegisterDataType(regist), article, padWithBlanks);
 }
 
 
 
-char * getRegisterTagName(calcRegister_t regist, bool padWithBlanks) {
+char *getRegisterTagName(calcRegister_t regist, bool padWithBlanks) {
   static char base[9];
 
   switch(getRegisterDataType(regist)) {
@@ -346,56 +316,50 @@ char * getRegisterTagName(calcRegister_t regist, bool padWithBlanks) {
 }
 
 
-/********************************************//**
- * \brief Returns the single name of a curvefitting mode, or ??? if multiple names are defined in bits
- * \param[in] am uint16_t curvefitting mode
- * \return char*          Name of the curvefitting mode
- ***********************************************/
-char * getCurveFitModeName(uint16_t selection) {          //Can be only one bit. ??? if invalid.
-    switch(selection & 0x03FF) {
-      case CF_LINEAR_FITTING: {
-        return "Linear     ";
-      }
-      case CF_EXPONENTIAL_FITTING: {
-        return "Exponential";
-      }
-      case CF_LOGARITHMIC_FITTING: {
-        return "Logarithmic";
-      }
-      case CF_POWER_FITTING: {
-        return "Power      ";
-      }
-      case CF_ROOT_FITTING: {
-        return "Root       ";
-      }
-      case CF_HYPERBOLIC_FITTING: {
-        return "Hyperbolic ";
-      }
-      case CF_PARABOLIC_FITTING: {
-        return "Parabolic  ";
-      }
-      case CF_CAUCHY_FITTING: {
-        return "Cauchy peak";
-      }
-      case CF_GAUSS_FITTING: {
-        return "Gauss peak ";
-      }
-      case CF_ORTHOGONAL_FITTING: {
-        return "Orthogonal ";
-      }
-      default: {
-        return "???        ";
-        break;
-      }
+
+// Can be only one bit. ??? if invalid
+char *getCurveFitModeName(uint16_t selection) {
+  switch(selection & 0x03FF) {
+    case CF_LINEAR_FITTING: {
+      return "Linear     ";
+    }
+    case CF_EXPONENTIAL_FITTING: {
+      return "Exponential";
+    }
+    case CF_LOGARITHMIC_FITTING: {
+      return "Logarithmic";
+    }
+    case CF_POWER_FITTING: {
+      return "Power      ";
+    }
+    case CF_ROOT_FITTING: {
+      return "Root       ";
+    }
+    case CF_HYPERBOLIC_FITTING: {
+      return "Hyperbolic ";
+    }
+    case CF_PARABOLIC_FITTING: {
+      return "Parabolic  ";
+    }
+    case CF_CAUCHY_FITTING: {
+      return "Cauchy peak";
+    }
+    case CF_GAUSS_FITTING: {
+      return "Gauss peak ";
+    }
+    case CF_ORTHOGONAL_FITTING: {
+      return "Orthogonal ";
+    }
+    default: {
+      return "???        ";
+      break;
     }
   }
+}
 
 
-/********************************************//**
- * \brief Remove trailing spaces from the curvefitting mode name
- *
- ***********************************************/
-char * eatSpacesEnd(const char * ss) {
+
+char *eatSpacesEnd(const char * ss) {
   static char tmp_names[20];
   int8_t ix;
 
@@ -414,11 +378,8 @@ char * eatSpacesEnd(const char * ss) {
 }
 
 
-/********************************************//**
- * \brief Remove spaces from the curvefitting mode name
- *
- ***********************************************/
-char * eatSpacesMid(const char * ss) {
+
+char *eatSpacesMid(const char * ss) {
   static char tmp_names[20];
   char tt[50];
   int8_t ix = 0, iy = 0;
@@ -437,14 +398,8 @@ char * eatSpacesMid(const char * ss) {
 }
 
 
-/********************************************//**
- * \brief Returns all selected names of the curve fit types
- * \note that a single bit EXCLUDES a method
- *
- * \param[in] dt uint16_t Data type
- * \return char*          Name of the curvefit type
- ***********************************************/
-char * getCurveFitModeNames(uint16_t selection) {
+
+char *getCurveFitModeNames(uint16_t selection) {
   uint16_t ix;
 
   errorMessage[0] = 0;
@@ -461,13 +416,9 @@ char * getCurveFitModeNames(uint16_t selection) {
 }
 
 
-/********************************************//**
- * \brief Returns the formula of a curvefitting mode
- *
- * \param[in] am uint16_t curvefitting mode
- * \return char*          Formula of the curvefitting mode
- ***********************************************/
-char * getCurveFitModeFormula(uint16_t selection) {          //Can be only one bit. ??? if invalid.
+
+//Can be only one bit. ??? if invalid.
+char *getCurveFitModeFormula(uint16_t selection) {
   switch(selection & 0x03FF) {
     case CF_LINEAR_FITTING: {
       return "a" STD_SUB_0 STD_SPACE_3_PER_EM "+" STD_SPACE_3_PER_EM "a" STD_SUB_1 "x";
@@ -507,13 +458,7 @@ char * getCurveFitModeFormula(uint16_t selection) {          //Can be only one b
 
 
 
-/********************************************//**
- * \brief Returns the name of a angular mode
- *
- * \param[in] am uint16_t Angular mode
- * \return char*          Name of the angular mode
- ***********************************************/
-char * getAngularModeName(angularMode_t angularMode) {
+char *getAngularModeName(angularMode_t angularMode) {
   switch(angularMode) {
     case amRadian: {
       return "radian";
@@ -540,13 +485,8 @@ char * getAngularModeName(angularMode_t angularMode) {
 }
 
 
-/********************************************//**
- * \brief Returns the name of an integer mode
- *
- * \param[in] im uint16_t Integer mode
- * \return char*          Name of the integer mode
- ***********************************************/
-char * getShortIntegerModeName(uint16_t im) {
+
+char *getShortIntegerModeName(uint16_t im) {
   switch(im) {
     case SIM_1COMPL: {
       return "1compl";
@@ -565,6 +505,7 @@ char * getShortIntegerModeName(uint16_t im) {
     }
   }
 }
+
 
 
 /* Never used
@@ -608,14 +549,9 @@ void debugNIM(void) {
 */
 
 
+
 #if (DEBUG_PANEL == 1)
-  /********************************************//**
-   * \brief Returns the name of a display format
-   *
-   * \param[in] df uint16_t Display format
-   * \return char*          Name of the display format
-   ***********************************************/
-  char * getDisplayFormatName(uint16_t df) {
+  char *getDisplayFormatName(uint16_t df) {
     switch(df) {
       case dfAll: {
         return "ALL";
@@ -636,35 +572,20 @@ void debugNIM(void) {
   }
 
 
-  /********************************************//**
-   * \brief Returns the name of a time format
-   *
-   * \param[in] tf bool Time format
-   * \return char*        Name of the time format
-   ***********************************************/
-  char * getTimeFormatName(bool tf) {
+
+  char *getTimeFormatName(bool tf) {
     return (tf ? "H24" : "H12");
   }
 
 
-  /********************************************//**
-   * \brief Returns the name of a boolean
-   *
-   * \param[in] b bool Boolean
-   * \return char*       Name of the boolean
-   ***********************************************/
-  char * getBooleanName(bool b) {
+
+  char *getBooleanName(bool b) {
     return (b ? "true" : "false");
   }
 
 
-  /********************************************//**
-   * \brief Returns the name of a RBR mode
-   *
-   * \param[in] mode uint16_t
-   * \return char*         Name of the mode
-   ***********************************************/
-  char * getRbrModeName(uint16_t mode) {
+
+  char *getRbrModeName(uint16_t mode) {
     switch(mode) {
       case RBR_GLOBAL:  {
         return "RBR_GLOBAL";
@@ -682,13 +603,8 @@ void debugNIM(void) {
   }
 
 
-  /********************************************//**
-   * \brief Returns the name of a rounding mode
-   *
-   * \param[in] rm uint16_t Rounding mode
-   * \return char*          Name of the rounding mode
-   ***********************************************/
-  char * getRoundingModeName(uint16_t rm) {
+
+  char *getRoundingModeName(uint16_t rm) {
     switch(rm) {
       case rmHalfEven: {
         return "half even";
@@ -718,13 +634,8 @@ void debugNIM(void) {
   }
 
 
-  /********************************************//**
-   * \brief Returns the name of a calc mode
-   *
-   * \param[in] cm uint16_t Calc mode
-   * \return char*          Name of the calc mode
-   ***********************************************/
-  char * getCalcModeName(uint16_t cm) {
+
+  char *getCalcModeName(uint16_t cm) {
     switch(cm) {
       case cmNormal: {
         return "normal ";
@@ -775,13 +686,8 @@ void debugNIM(void) {
   }
 
 
-  /********************************************//**
-   * \brief Returns the name of a TAM mode
-   *
-   * \param[in] tmm uint16_t TAM mode
-   * \return char*          Name of the TAM mode
-   ***********************************************/
-  char * getTamModeName(uint16_t tmm) {
+
+  static char *getTamModeName(uint16_t tmm) {
     switch(tmm) {
       case TM_VALUE: {
         return "Value   ";
@@ -808,13 +714,8 @@ void debugNIM(void) {
   }
 
 
-  /********************************************//**
-   * \brief Returns the name of a "next char indicator"
-   *
-   * \param[in] nc uint16_t Next char indicator
-   * \return char*          Name of the "next char indicator"
-   ***********************************************/
-  char * getNextCharName(uint16_t nc) {
+
+  char *getNextCharName(uint16_t nc) {
     switch(nc) {
       case NC_NORMAL: {
         return "normal     ";
@@ -832,123 +733,68 @@ void debugNIM(void) {
   }
 
 
-  /********************************************//**
-   * \brief Returns the name of a system flag
-   *
-   * \param[in] sf uint16_t System flag
-   * \return char*          Name of the system flag
-   ***********************************************/
-  char * getSystemFlagName(uint16_t sf) {
+
+  char *getSystemFlagName(uint16_t sf) {
     return indexOfItems[SFL_TDM24 + (sf & 0x3fff)].itemCatalogName;
   }
 
 
-  /********************************************//**
-   * \brief Returns the name of a complex unit
-   *
-   * \param[in] cu bool Complex unit
-   * \return char*        Name of the complex unit
-   ***********************************************/
-  char * getComplexUnitName(bool cu) {
+
+  char *getComplexUnitName(bool cu) {
     return (cu ? "j" : "i");
   }
 
 
-  /********************************************//**
-   * \brief Returns the name of a Product sign
-   *
-   * \param[in] ps bool Product sign
-   * \return char*        Name of the product sign
-   ***********************************************/
-  char * getProductSignName(bool ps) {
+
+  char *getProductSignName(bool ps) {
     return (ps ? "cross" : "dot  ");
   }
 
 
-  /********************************************//**
-   * \brief returns the name of a fraction type
-   *
-   * \param[in] ft bool Fraction type
-   * \return char*        Name of the fraction type
-   ***********************************************/
-  char * getFractionTypeName(bool ft) {
+
+  char *getFractionTypeName(bool ft) {
     return (ft ? "proper a b/c" : "improper d/c");
   }
 
 
-  /********************************************//**
-   * \brief returns the name of denominator mode 1 type
-   *
-   * \param[in] ft bool Fraction type
-   * \return char*        Name of the fraction type
-   ***********************************************/
-  char * getFractionDenom1ModeName(bool ft) {
+
+  char *getFractionDenom1ModeName(bool ft) {
     return (ft ? "up to D.MAX   " : "D.MAX or fact");
   }
 
 
-  /********************************************//**
-   * \brief returns the name of denominator mode 2 type
-   *
-   * \param[in] ft bool Fraction type
-   * \return char*        Name of the fraction type
-   ***********************************************/
-  char * getFractionDenom2ModeName(bool ft) {
+
+  char *getFractionDenom2ModeName(bool ft) {
     return (ft ? "D.MAX         " : "fact of D.MAX");
   }
 
 
-  /********************************************//**
-   * \brief returns the name of a radix mark
-   *
-   * \param[in] rm bool Radix mark
-   * \return char*        Name of the radix mark
-   ***********************************************/
-  char * getRadixMarkName(bool rm) {
+
+  char *getRadixMarkName(bool rm) {
     return (rm ? "period" :"comma ");
   }
 
 
-  /********************************************//**
-   * \brief returns the name of a display override mode
-   *
-   * \param[in] dio bool Display override mode
-   * \return char*         Name of the override mode
-   ***********************************************/
-  char * getDisplayOvrName(bool dio) {
+
+  char *getDisplayOvrName(bool dio) {
     return (dio ? "sciOvr" : "engOvr");
   }
 
 
-  /********************************************//**
-   * \brief returns the name of a stack size
-   *
-   * \param[in] ss bool Stack size
-   * \return char*        Name of the stack size
-   ***********************************************/
-  char * getStackSizeName(bool ss) {
+
+  char *getStackSizeName(bool ss) {
     return (ss ? "8 levels" : "4 levels");
   }
 
 
-  /********************************************//**
-   * \brief returns the name of a complex mode
-   *
-   * \param[in] cm bool Complex mode
-   * \return char*        Name of the complex mode
-   ***********************************************/
-  char * getComplexModeName(bool cm) {
+
+  char *getComplexModeName(bool cm) {
     return (cm ? "rectangular" : "polar      ");
   }
 
 
-  /********************************************//**
-   * \brief returns the name of an alpha case mode
-   *
-   * \param[in] ac uint16_t Alphacase mode
-   * \return char*          Name of the alphacase mode
-   ***********************************************/
-  char * getAlphaCaseName(uint16_t ac) {
+
+  char *getAlphaCaseName(uint16_t ac) {
     if(ac == AC_LOWER) {
       return "lower";
     }
@@ -960,13 +806,8 @@ void debugNIM(void) {
   }
 
 
-  /********************************************//**
-   * \brief returns the name of an alpha selection menu
-   *
-   * \param[in] asm uint16_t Alpha selection menu
-   * \return char*          Name of the alpha selection menu
-   ***********************************************/
-  char * getAlphaSelectionMenuName(uint16_t alsm) {
+
+  char *getAlphaSelectionMenuName(uint16_t alsm) {
     switch(alsm) {
       case CATALOG_NONE: {
         return "CATALOG_NONE";
@@ -1033,16 +874,8 @@ void debugNIM(void) {
 
 
 
-  /********************************************//**
-   * \brief Fills the row th line of the debug window
-   * with the value of register r
-   *
-   * \param[in] r int   Register number
-   * \param[in] row int Row number
-   * \return void
-   *
-   ***********************************************/
-  void debugRegisterValue(calcRegister_t regist, int row) {
+  // Fills the row th line of the debug window with the value of register r
+  static void debugRegisterValue(calcRegister_t regist, int row) {
     char     string[3000], *p, tmpStr[1000];
     uint16_t i, k, n=0;
 
@@ -1132,12 +965,6 @@ void debugNIM(void) {
 
 
 
-  /********************************************//**
-   * \brief refreshes the debug window
-   *
-   * \param void
-   * \return void
-   ***********************************************/
   void refreshDebugPanel(void) {
     char string[200];
     int row;
@@ -1906,10 +1733,14 @@ void debugNIM(void) {
     }
   }
 
+
+
   void btnBitFieldsClicked(GtkWidget* w, gpointer data) {
     debugWindow = DBG_BIT_FIELDS;
     refreshDebugPanel();
   }
+
+
 
   void btnFlagsClicked(GtkWidget* w, gpointer data) {
     debugWindow = DBG_FLAGS;
@@ -1918,11 +1749,15 @@ void debugNIM(void) {
     refreshDebugPanel();
   }
 
+
+
   void btnRegistersClicked(GtkWidget* w, gpointer data) {
     debugWindow = DBG_REGISTERS;
     //gtk_label_set_label(GTK_LABEL(lbl1[0]), "Regis Addres   Type  Size Content");
     refreshDebugPanel();
   }
+
+
 
   void btnLocalRegistersClicked(GtkWidget* w, gpointer data) {
     debugWindow = DBG_LOCAL_REGISTERS;
@@ -1930,11 +1765,15 @@ void debugNIM(void) {
     refreshDebugPanel();
   }
 
+
+
   void btnStatisticalSumsClicked(GtkWidget* w, gpointer data) {
     debugWindow = DBG_STATISTICAL_SUMS;
     //gtk_label_set_label(GTK_LABEL(lbl1[0]), "Regis Addres   Type  Size Content");
     refreshDebugPanel();
   }
+
+
 
   void btnNamedVariablesClicked(GtkWidget* w, gpointer data) {
     debugWindow = DBG_NAMED_VARIABLES;
@@ -1942,11 +1781,15 @@ void debugNIM(void) {
     refreshDebugPanel();
   }
 
+
+
   void btnSavedStackRegistersClicked(GtkWidget* w, gpointer data) {
     debugWindow = DBG_TMP_SAVED_STACK_REGISTERS;
     //gtk_label_set_label(GTK_LABEL(lbl1[0]), "Regis Addres   Type  Size Content");
     refreshDebugPanel();
   }
+
+
 
   void chkHexaStringClicked(GtkWidget* w, gpointer data) {
     refreshDebugPanel();
@@ -1961,13 +1804,8 @@ void debugNIM(void) {
     return debuggerString;
   }
 
-  /********************************************//**
-   * \brief Formats a real34 for the debug window
-   *
-   * \param[in] str char*  String receiving the value
-   * \param[in] real34 real34_t* Value
-   * \return void
-   ***********************************************/
+
+
   void formatReal34Debug(char *str, real34_t *real34) {
     uint8_t ch, coef, digit;
     uint8_t bcd[DECQUAD_Pmax];
@@ -2023,13 +1861,6 @@ void debugNIM(void) {
 
 
 
-  /********************************************//**
-   * \brief Formats a real for the debug window
-   *
-   * \param[in] str char*  String receiving the value
-   * \param[in] real real_t* Value
-   * \return void
-   ***********************************************/
   void formatRealDebug(char *str, real_t *real) {
     if(realIsZero(real)) {
       xcopy(str, "0.", 3);
@@ -2041,13 +1872,6 @@ void debugNIM(void) {
 
 
 
-  /********************************************//**
-   * \brief Formats a complex34 for the debug window
-   *
-   * \param[in] str char*  String receiving the value
-   * \param[in] x real34_t* Value
-   * \return void
-   ***********************************************/
   void formatComplex34Debug(char *str, void *addr) {
     formatReal34Debug(str     , addr             );
     formatReal34Debug(str + 64, (real34_t *)((dataBlock_t *)addr + REAL34_SIZE));
@@ -2057,6 +1881,8 @@ void debugNIM(void) {
     strcat(str, "i");
   }
 #endif // DEBUG_PANEL == 1 || DEBUG_REGISTER_L == 1
+
+
 
 #if defined(PC_BUILD)
   void dumpScreenToConsole(void) {

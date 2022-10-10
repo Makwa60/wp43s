@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: GPL-3.0-only
+# SPDX-FileCopyrightText: Copyright The WP43 Authors
+
 font_files = files(
   '../../res/fonts/sortingOrder.csv',
   '../../res/fonts/WP43_NumericFont.ttf',
@@ -7,7 +10,8 @@ ttf2RasterFonts = executable(
   build_by_default : false,
   sources          : files('ttf2RasterFonts.c'),
   dependencies     : ft_dep,
-  native           : true)
+  native           : true,
+  override_options : ['b_coverage=false'])
 rasterFontsData_c = custom_target(
   'rasterFontsData.c',
   build_by_default : false,

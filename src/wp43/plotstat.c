@@ -1,18 +1,5 @@
-/* This file is part of 43S.
- *
- * 43S is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * 43S is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
- */
+// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-FileCopyrightText: Copyright The WP43 Authors
 
 #include "plotstat.h"
 
@@ -46,11 +33,8 @@
 
 #include "wp43.h"
 
-
 static char tmp_names1[30];
 void fnPlotRegressionLine(uint16_t plotMode);
-
-
 
 // This module originates and is part of the C43 fork, and is copied here.
 // Do not change the shared functions otherwise the C43 fork will break. JM 2021-03-20
