@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: GPL-3.0-only
+# SPDX-FileCopyrightText: Copyright The WP43 Authors
+
 wp43_src = files(
   'apps/apps.c',
   'apps/bugScreen.c',

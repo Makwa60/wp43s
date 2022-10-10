@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: GPL-3.0-only
+# SPDX-FileCopyrightText: Copyright The WP43 Authors
+
 sphinx =  find_program('sphinx-build',   required: false)
 doxygen = find_program('doxygen',        required: false)
 breathe = find_program('breathe-apidoc', required: false)

@@ -1,5 +1,8 @@
 # Doxyfile 1.9.1
 
+# SPDX-License-Identifier: GPL-3.0-only
+# SPDX-FileCopyrightText: Copyright The WP43 Authors
+
 DOXYFILE_ENCODING      = UTF-8
 PROJECT_NAME           = "WP43"
 

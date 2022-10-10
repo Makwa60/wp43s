@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: GPL-3.0-only
+# SPDX-FileCopyrightText: Copyright The WP43 Authors
+
 .PHONY: all clean sim test dmcp docs testPgms dist_windows dist_macos dist_dm42
 
 all: sim
