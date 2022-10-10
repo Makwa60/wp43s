@@ -283,6 +283,7 @@ const funcTest_t funcTestNoParam[] = {
   {"fnSlvq",                 fnSlvq                },
   {"fnSquare",               fnSquare              },
   {"fnStoreIJ",              fnStoreIJ             },
+  {"fnSqrt1Px2",             fnSqrt1Px2            },
   {"fnSquareRoot",           fnSquareRoot          },
   {"fnSubtract",             fnSubtract            },
   {"fnSumXY",                fnSumXY               },

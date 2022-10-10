@@ -122,6 +122,7 @@
   #include "sincpi.h"
   #include "sinh.h"
   #include "slvq.h"
+  #include "sqrt1Px2.h"
   #include "square.h"
   #include "squareRoot.h"
   #include "subtraction.h"

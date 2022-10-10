@@ -194,6 +194,7 @@ cxToRe
 
 square
 squareRoot
+sqrt1Px2
 cube
 cubeRoot
 xthRoot
