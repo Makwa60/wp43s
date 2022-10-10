@@ -195,11 +195,28 @@ void sqrtCplx(void) {
   real34ToReal(REGISTER_REAL34_DATA(REGISTER_X), &a);
   real34ToReal(REGISTER_IMAG34_DATA(REGISTER_X), &b);
 
-  realRectangularToPolar(&a, &b, &a, &b, &ctxtReal39);
-  realSquareRoot(&a, &a, &ctxtReal39);
-  realMultiply(&b, const_1on2, &b, &ctxtReal39);
-  realPolarToRectangular(&a, &b, &a, &b, &ctxtReal39);
+  sqrtComplex(&a, &b, &a, &b, &ctxtReal39);
 
   convertRealToReal34ResultRegister(&a, REGISTER_X);
   convertRealToImag34ResultRegister(&b, REGISTER_X);
+}
+
+
+
+void sqrtComplex(const real_t *real, const real_t *imag, real_t *resReal, real_t *resImag, realContext_t *realContext) {
+  if(realIsZero(imag) && realIsNegative(real)) {
+    realMinus(real, resImag, realContext);
+    realSquareRoot(resImag, resImag, realContext);
+    realZero(resReal);
+  }
+  else if(realIsZero(imag)) {
+    realSquareRoot(real, resReal, realContext);
+    realZero(resImag);
+  }
+  else {
+    realRectangularToPolar(real, imag, resReal, resImag, realContext);
+    realSquareRoot(resReal, resReal, realContext);
+    realMultiply(resImag, const_1on2, resImag, realContext);
+    realPolarToRectangular(resReal, resImag, resReal, resImag, realContext);
+  }
 }
