@@ -150,6 +150,7 @@ wp43_src = files(
   'mathematics/sincpi.c',
   'mathematics/sinh.c',
   'mathematics/slvq.c',
+  'mathematics/sqrt1Px2.c',
   'mathematics/square.c',
   'mathematics/squareRoot.c',
   'mathematics/subtraction.c',
