@@ -64,6 +64,8 @@ bool ioFileOpen(ioFilePath_t path, ioFileMode_t mode) {
     if(mode != ioModeRead) {
       sys_disk_write_enable(0);
     }
+    _ioWriteEnabled = false;
+    _ioReadEnabled  = false;
   }
   return (result == FR_OK);
 }
