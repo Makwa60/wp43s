@@ -150,13 +150,23 @@ void sqrt1Px2Cxma(void) {
 
 
 void sqrt1Px2ShoI(void) {
-  real_t x;
+  int16_t sign;
+  uint64_t value;
 
-  convertShortIntegerRegisterToReal(REGISTER_X, &x, &ctxtReal39);
-  realFMA(&x, &x, const_1, &x, &ctxtReal39);
-  realSquareRoot(&x, &x, &ctxtReal39);
-  reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE, amNone);
-  convertRealToReal34ResultRegister(&x, REGISTER_X);
+  convertShortIntegerRegisterToUInt64(REGISTER_X, &sign, &value);
+  if(value == 0) {
+    convertUInt64ToShortIntegerRegister(0, 1, getRegisterTag(REGISTER_X), REGISTER_X);
+  }
+  else {
+    real_t x;
+
+    convertShortIntegerRegisterToReal(REGISTER_X, &x, &ctxtReal39);
+    realFMA(&x, &x, const_1, &x, &ctxtReal39);
+    realSquareRoot(&x, &x, &ctxtReal39);
+    reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE, amNone);
+    convertRealToReal34ResultRegister(&x, REGISTER_X);
+  }
+
 }
 
 
