@@ -298,9 +298,6 @@
   #if defined(PC_BUILD) || defined(TESTSUITE_BUILD)
     void testRegisters    (const char *text);
     void memoryDump2      (const char *text);
-    void stackCheck       (const unsigned char *begin, const unsigned char *end, int size, const char *where);
-    void initStackCheck   (unsigned char *begin, unsigned char *end, int size);
-    void stackSmashingTest(void);
   #endif // PC_BUILD || TESTSUITE_BUILD
 
 #endif // !DEBUG_H
