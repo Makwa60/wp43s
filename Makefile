@@ -56,7 +56,7 @@ testPgms: build.sim
 	cp build.sim/src/generateTestPgms/testPgms.bin res/dmcp/
 
 build.rel/wiki: build.rel
-	git clone https://gitlab.com/Over_score/wp43s.wiki.git build.rel/wiki
+	git clone https://gitlab.com/wpcalculators/wp43.wiki.git build.rel/wiki
 
 ifeq ($(CI_COMMIT_TAG),)
   WIN_DIST_DIR = wp43-windows
