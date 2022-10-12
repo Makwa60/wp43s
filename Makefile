@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: GPL-3.0-only
+# SPDX-FileCopyrightText: Copyright The WP43 Authors
+
 .PHONY: all clean sim test dmcp docs testPgms dist_windows dist_macos dist_dm42
 
 all: sim
@@ -53,7 +56,7 @@ testPgms: build.sim
 	cp build.sim/src/generateTestPgms/testPgms.bin res/dmcp/
 
 build.rel/wiki: build.rel
-	git clone https://gitlab.com/Over_score/wp43s.wiki.git build.rel/wiki
+	git clone https://gitlab.com/wpcalculators/wp43.wiki.git build.rel/wiki
 
 ifeq ($(CI_COMMIT_TAG),)
   WIN_DIST_DIR = wp43-windows

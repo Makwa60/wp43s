@@ -1,22 +1,5 @@
-/* This file is part of 43S.
- *
- * 43S is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * 43S is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-/********************************************//**
- * \file dateTime.c
- ***********************************************/
+// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-FileCopyrightText: Copyright The WP43 Authors
 
 #include "dateTime.h"
 
@@ -78,16 +61,22 @@ void fnSetDateFormat(uint16_t dateFormat) {
   }
 }
 
+
+
 void internalDateToJulianDay(const real34_t *source, real34_t *destination) {
   real34Subtract(source, const34_43200, destination);
   real34Divide(destination, const34_86400, destination), real34ToIntegralValue(destination, destination, DEC_ROUND_FLOOR);
 }
+
+
 
 void julianDayToInternalDate(const real34_t *source, real34_t *destination) {
   real34ToIntegralValue(source, destination, DEC_ROUND_FLOOR);
   real34Multiply(destination, const34_86400, destination);
   real34Add(destination, const34_43200, destination);
 }
+
+
 
 bool checkDateArgument(calcRegister_t regist, real34_t *jd) {
   #pragma GCC diagnostic push
@@ -123,6 +112,8 @@ bool checkDateArgument(calcRegister_t regist, real34_t *jd) {
   #pragma GCC diagnostic pop
 }
 
+
+
 bool isLeapYear(const real34_t *year) {
   real34_t val, val2;
   int32_t  y400; // year mod 400
@@ -146,6 +137,7 @@ bool isLeapYear(const real34_t *year) {
 
   return (y400 % 4 == 0);
 }
+
 
 
 bool isValidDay(const real34_t *year, const real34_t *month, const real34_t *day) {
@@ -230,18 +222,27 @@ bool isValidDay(const real34_t *year, const real34_t *month, const real34_t *day
 }
 
 
+
 static void divInt(const real34_t *p, const real34_t *q, real34_t *r) {
   real34_t tmp;
   real34Divide(p, q, &tmp), real34ToIntegralValue(&tmp, r, DEC_ROUND_DOWN);
 }
+
+
+
 static void divInt2(const real34_t *p, const real34_t *q, real34_t *r) {
   real34_t tmp;
   real34Divide(p, q, &tmp), real34ToIntegralValue(&tmp, r, DEC_ROUND_FLOOR);
 }
+
+
+
 static void modInt(const real34_t *p, const real34_t *q, real34_t *r) {
   real34_t tmp;
   divInt2(p, q, &tmp), real34Multiply(&tmp, q, &tmp), real34Subtract(p, &tmp, r);
 }
+
+
 
 void composeJulianDay(const real34_t *year, const real34_t *month, const real34_t *day, real34_t *jd) {
   real34_t fg, y, m, d;
@@ -308,6 +309,8 @@ void composeJulianDay_j(const real34_t *year, const real34_t *month, const real3
   real34Add(jd, const34_1729777, jd);
 }
 
+
+
 void decomposeJulianDay(const real34_t *jd, real34_t *year, real34_t *month, real34_t *day) {
   real34_t e, h, tmp1;
 
@@ -348,6 +351,8 @@ void decomposeJulianDay(const real34_t *jd, real34_t *year, real34_t *month, rea
   real34Add(year, &tmp1, year);
 }
 
+
+
 uint32_t getDayOfWeek(calcRegister_t regist) {
   real34_t date34;
   if(checkDateArgument(regist, &date34)) {
@@ -360,6 +365,8 @@ uint32_t getDayOfWeek(calcRegister_t regist) {
   }
 }
 
+
+
 void checkDateRange(const real34_t *date34) {
   if(real34CompareGreaterEqual(date34, const34_maxDate) || real34IsNegative(date34)) {
     displayCalcErrorMessage(ERROR_OUT_OF_RANGE, ERR_REGISTER_LINE, REGISTER_X);
@@ -370,6 +377,7 @@ void checkDateRange(const real34_t *date34) {
     return;
   }
 }
+
 
 
 void hmmssToSeconds(const real34_t *src, real34_t *dest) {
@@ -401,6 +409,8 @@ void hmmssToSeconds(const real34_t *src, real34_t *dest) {
   }
 }
 
+
+
 void hmmssInRegisterToSeconds(calcRegister_t regist) {
   real34_t real34;
 
@@ -409,6 +419,8 @@ void hmmssInRegisterToSeconds(calcRegister_t regist) {
   hmmssToSeconds(&real34, REGISTER_REAL34_DATA(regist));
   checkTimeRange(REGISTER_REAL34_DATA(regist));
 }
+
+
 
 void checkTimeRange(const real34_t *time34) {
   real34_t t;
@@ -459,6 +471,8 @@ void fnJulianToDate(uint16_t unusedButMandatoryParameter) {
   }
 }
 
+
+
 void fnDateToJulian(uint16_t unusedButMandatoryParameter) {
   real34_t jd34;
 
@@ -471,6 +485,8 @@ void fnDateToJulian(uint16_t unusedButMandatoryParameter) {
   }
 }
 
+
+
 void fnIsLeap(uint16_t unusedButMandatoryParameter) {
   real34_t y, m, d, j;
 
@@ -479,6 +495,8 @@ void fnIsLeap(uint16_t unusedButMandatoryParameter) {
     temporaryInformation = (isLeapYear(&y) ? TI_TRUE : TI_FALSE);
   }
 }
+
+
 
 void fnSetFirstGregorianDay(uint16_t unusedButMandatoryParameter) {
   real34_t jd34;
@@ -507,6 +525,8 @@ void fnSetFirstGregorianDay(uint16_t unusedButMandatoryParameter) {
   }
 }
 
+
+
 void fnGetFirstGregorianDay(uint16_t unusedButMandatoryParameter) {
   real34_t j;
 
@@ -515,6 +535,8 @@ void fnGetFirstGregorianDay(uint16_t unusedButMandatoryParameter) {
   reallocateRegister(REGISTER_X, dtDate, REAL34_SIZE, amNone);
   julianDayToInternalDate(&j, REGISTER_REAL34_DATA(REGISTER_X));
 }
+
+
 
 void fnXToDate(uint16_t unusedButMandatoryParameter) {
   if(!saveLastX()) {
@@ -554,6 +576,7 @@ void fnXToDate(uint16_t unusedButMandatoryParameter) {
 }
 
 
+
 void fnYear(uint16_t unusedButMandatoryParameter) {
   real34_t y, m, d, j;
 
@@ -566,6 +589,8 @@ void fnYear(uint16_t unusedButMandatoryParameter) {
     convertReal34ToLongIntegerRegister(&y, REGISTER_X, DEC_ROUND_FLOOR);
   }
 }
+
+
 
 void fnMonth(uint16_t unusedButMandatoryParameter) {
   real34_t y, m, d, j;
@@ -580,6 +605,8 @@ void fnMonth(uint16_t unusedButMandatoryParameter) {
   }
 }
 
+
+
 void fnDay(uint16_t unusedButMandatoryParameter) {
   real34_t y, m, d, j;
 
@@ -592,6 +619,8 @@ void fnDay(uint16_t unusedButMandatoryParameter) {
     convertReal34ToLongIntegerRegister(&d, REGISTER_X, DEC_ROUND_FLOOR);
   }
 }
+
+
 
 void fnWday(uint16_t unusedButMandatoryParameter) {
   const uint32_t dayOfWeek = getDayOfWeek(REGISTER_X);
@@ -610,6 +639,8 @@ void fnWday(uint16_t unusedButMandatoryParameter) {
   }
 }
 
+
+
 void fnDateTo(uint16_t unusedButMandatoryParameter) {
   real34_t y, m, d, j;
 
@@ -626,6 +657,8 @@ void fnDateTo(uint16_t unusedButMandatoryParameter) {
     convertReal34ToLongIntegerRegister(&d, getSystemFlag(FLAG_DMY) ? REGISTER_Z : getSystemFlag(FLAG_MDY) ? REGISTER_Y : REGISTER_X, DEC_ROUND_FLOOR);
   }
 }
+
+
 
 void fnToDate(uint16_t unusedButMandatoryParameter) {
   real34_t y, m, d, j;
@@ -709,6 +742,7 @@ void fnToDate(uint16_t unusedButMandatoryParameter) {
 }
 
 
+
 void fnToHr(uint16_t unusedButMandatoryParameter) {
   if(!saveLastX()) {
     return;
@@ -730,6 +764,8 @@ void fnToHr(uint16_t unusedButMandatoryParameter) {
     }
   }
 }
+
+
 
 void fnToHms(uint16_t unusedButMandatoryParameter) {
   if(!saveLastX()) {
@@ -774,6 +810,7 @@ void fnToHms(uint16_t unusedButMandatoryParameter) {
 }
 
 
+
 void fnDate(uint16_t unusedButMandatoryParameter) {
   real34_t y, m, d, j;
   dateInfo_t dateInfo;
@@ -790,6 +827,8 @@ void fnDate(uint16_t unusedButMandatoryParameter) {
   temporaryInformation = TI_DAY_OF_WEEK;
 }
 
+
+
 void fnTime(uint16_t unusedButMandatoryParameter) {
   real34_t time34;
   timeInfo_t timeInfo;
@@ -801,6 +840,7 @@ void fnTime(uint16_t unusedButMandatoryParameter) {
   reallocateRegister(REGISTER_X, dtTime, REAL34_SIZE, amNone);
   real34Copy(&time34, REGISTER_REAL34_DATA(REGISTER_X));
 }
+
 
 
 void fnSetDate(uint16_t unusedButMandatoryParameter) {
@@ -823,6 +863,8 @@ void fnSetDate(uint16_t unusedButMandatoryParameter) {
     #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
   #endif // DMCP_BUILD
 }
+
+
 
 void fnSetTime(uint16_t unusedButMandatoryParameter) {
   #if defined(DMCP_BUILD)
@@ -876,6 +918,7 @@ void fnSetTime(uint16_t unusedButMandatoryParameter) {
     #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
   #endif // DMCP_BUILD
 }
+
 
 
 void getDateString(char *dateString) {

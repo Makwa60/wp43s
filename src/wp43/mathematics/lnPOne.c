@@ -27,6 +27,7 @@
 #include "flags.h"
 #include "fonts.h"
 #include "items.h"
+#include "mathematics/comparisonReals.h"
 #include "mathematics/toPolar.h"
 #include "mathematics/wp34s.h"
 #include "matrix.h"
@@ -86,6 +87,10 @@ void lnP1Complex(const real_t *real, const real_t *imag, real_t *lnReal, real_t 
   realAdd(real, const_1, &r, realContext);
   if(realIsZero(&r) && realIsZero(imag)) {
     realCopy(const_minusInfinity, lnReal);
+    realZero(lnImag);
+  }
+  else if(realIsPositive(&r) && realIsZero(imag)) {
+    WP34S_Ln1P(real, lnReal, realContext);
     realZero(lnImag);
   }
   else {
@@ -213,10 +218,14 @@ void lnP1ShoI(void) {
 
 
 void lnP1Real(void) {
-  real34_t r;
-  int32ToReal34(1, &r);
-  real34Add(REGISTER_REAL34_DATA(REGISTER_X),&r,&r);
-  if(real34IsZero(&r)) {
+  real_t x;
+  real34ToReal(REGISTER_REAL34_DATA(REGISTER_X), &x);
+
+  if(realIsNaN(&x)) {
+    convertRealToReal34ResultRegister(const_NaN, REGISTER_X);
+  }
+
+  else if(realCompareEqual(&x, const__1)) {
     if(getSystemFlag(FLAG_SPCRES)) {
       convertRealToReal34ResultRegister(const_minusInfinity, REGISTER_X);
     }
@@ -228,7 +237,7 @@ void lnP1Real(void) {
     }
   }
 
-  else if(real34IsInfinite(&r)) {
+  else if(realIsInfinite(&x)) {
     if(!getSystemFlag(FLAG_SPCRES)) {
       displayCalcErrorMessage(ERROR_ARG_EXCEEDS_FUNCTION_DOMAIN, ERR_REGISTER_LINE, REGISTER_X);
       #if (EXTRA_INFO_ON_CALC_ERROR == 1)
@@ -237,7 +246,7 @@ void lnP1Real(void) {
       return;
     }
     else if(getFlag(FLAG_CPXRES)) {
-      if(real34IsPositive(&r)) {
+      if(realIsPositive(&x)) {
         convertRealToReal34ResultRegister(const_plusInfinity, REGISTER_X);
       }
       else {
@@ -252,14 +261,12 @@ void lnP1Real(void) {
   }
 
   else {
-    real_t x;
-
-    real34ToReal(&r, &x);
-    if(real34IsPositive(&r)) {
-      WP34S_Ln(&x, &x, &ctxtReal39);
+    if(realCompareGreaterThan(&x, const__1)) {
+      WP34S_Ln1P(&x, &x, &ctxtReal39);
       convertRealToReal34ResultRegister(&x, REGISTER_X);
-     }
+    }
     else if(getFlag(FLAG_CPXRES)) {
+      realAdd(&x, const_1, &x, &ctxtReal39);
       realSetPositiveSign(&x);
       WP34S_Ln(&x, &x, &ctxtReal39);
       reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE, amNone);

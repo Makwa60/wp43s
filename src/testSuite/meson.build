@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: GPL-3.0-only
+# SPDX-FileCopyrightText: Copyright The WP43 Authors
+
 testSuite_src = files(
   'reporter.c',
   'testSuite.c',

@@ -27,6 +27,7 @@
 #include "flags.h"
 #include "fonts.h"
 #include "items.h"
+#include "mathematics/comparisonReals.h"
 #include "mathematics/wp34s.h"
 #include "matrix.h"
 #include "registers.h"
@@ -91,6 +92,11 @@ void expM1Complex(const real_t *real, const real_t *imag, real_t *resReal, real_
       realZero(resImag);
       return;
     }
+    if(realCompareAbsLessThan(real, const_1)) {
+      WP34S_ExpM1(real, resReal, realContext);
+      realZero(resImag);
+      return;
+    }
     realExp(real, resReal, realContext);
     realSubtract(resReal, const_1, resReal, realContext);
     realZero(resImag);
@@ -103,11 +109,11 @@ void expM1Complex(const real_t *real, const real_t *imag, real_t *resReal, real_
     return;
   }
 
- realExp(real, &expa, realContext);
- WP34S_Cvt2RadSinCosTan(imag, amRadian, &sin, &cos, NULL, realContext);
- realMultiply(&expa, &cos, resReal, realContext);
- realMultiply(&expa, &sin, resImag, realContext);
- realSubtract(resReal, const_1, resReal, realContext);
+  realExp(real, &expa, realContext);
+  WP34S_Cvt2RadSinCosTan(imag, amRadian, &sin, &cos, NULL, realContext);
+  realMultiply(&expa, &cos, resReal, realContext);
+  realMultiply(&expa, &sin, resImag, realContext);
+  realSubtract(resReal, const_1, resReal, realContext);
 }
 
 
@@ -176,6 +182,9 @@ void expM1Real(void) {
   }
   else if(realIsSpecial(&x)) {
     realCopy(const_NaN, &x);
+  }
+  else if(realCompareAbsLessThan(&x, const_1)) {
+    WP34S_ExpM1(&x, &x, &ctxtReal51);
   }
   else {
     realExp(&x, &x, &ctxtReal51);

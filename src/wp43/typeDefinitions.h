@@ -1,18 +1,5 @@
-/* This file is part of 43S.
- *
- * 43S is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * 43S is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
- */
+// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-FileCopyrightText: Copyright The WP43 Authors
 
 /**
  * \file typeDefinitions.h
@@ -34,6 +21,7 @@
   } multiplyDivide_t;
 
 
+
   /**
    * \struct calcKey_t
    * Structure keeping the informations for one key.
@@ -49,6 +37,7 @@
     int16_t gShiftedAim; ///< ID of the g shifted AIM function: greek letters
     int16_t primaryTam;  ///< ID of the primary TAM function of the key
   } calcKey_t;
+
 
 
   /**
@@ -70,6 +59,7 @@
   } glyph_t;
 
 
+
   /**
    * \struct font_t
    * Font description.
@@ -81,6 +71,7 @@
   } font_t;
 
 
+
   /**
    * \struct freeMemoryRegion_t
    * Keeps track of free memory regions.
@@ -89,6 +80,7 @@
     uint16_t address;      ///< Address of the free memory region
     uint16_t sizeInBlocks; ///< Size in blocks of the free memory region
   } freeMemoryRegion_t;
+
 
 
   /**
@@ -114,6 +106,7 @@
   } dataType_t; // 4 bits (NOT 5 BITS)
 
 
+
   /**
    * \enum angularMode_t
    * Angular units.
@@ -127,6 +120,7 @@
     amNone   =  5,
     amSecond =  6  // not an angular but a time unit: for the routine unified with the real type
   } angularMode_t;
+
 
 
   /**
@@ -153,6 +147,7 @@
   } dtConfigDescriptor_t;
 
 
+
   /**
    * \union registerHeader_t
    * 32 bits describing the register.
@@ -167,6 +162,7 @@
       uint32_t notUsed               :  6; ///< 6 bits free
     };
   } registerHeader_t;
+
 
 
   /**
@@ -220,6 +216,7 @@
   } dataBlock_t;
 
 
+
   /**
    * \struct namedVariableHeader_t
    * Header for named variables.
@@ -230,6 +227,7 @@
   } namedVariableHeader_t;
 
 
+
   /**
    * \struct reservedVariableHeader_t
    * Header for system named variables.
@@ -238,6 +236,7 @@
     registerHeader_t header;         ///< Header
     uint8_t reservedVariableName[8]; ///< Variable name
   } reservedVariableHeader_t;
+
 
 
   /**
@@ -251,6 +250,7 @@
   } formulaHeader_t;
 
 
+
   /**
    * \enum videoMode_t
    * Video mode: normal video or reverse video.
@@ -259,6 +259,7 @@
     vmNormal,  ///< Normal mode: black on white background
     vmReverse  ///< Reverse mode: white on black background
   } videoMode_t; // 1 bit
+
 
 
   /**
@@ -272,6 +273,7 @@
   } softmenu_t;
 
 
+
   /**
    * \struct dynamicSoftmenu_t
    * Structure keeping the informations for one variable softmenu.
@@ -281,6 +283,7 @@
     int16_t numItems;           ///< Number of items in the dynamic softmenu (must be a multiple of 6 for now)
     uint8_t *menuContent;       ///< Pointer to the menu content
   } dynamicSoftmenu_t;
+
 
 
   /**
@@ -293,11 +296,14 @@
   } softmenuStack_t;
 
 
+
   /**
    * \typedef calcRegister_t
    * A type for calculator registers.
    */
   typedef int16_t calcRegister_t;
+
+
 
   /**
    * \struct real34Matrix_t
@@ -308,6 +314,8 @@
      real34_t    *matrixElements;
   } real34Matrix_t;
 
+
+
   /**
    * \struct complex34Matrix_t
    * A type for complex34Matrix.
@@ -316,6 +324,8 @@
      dataBlock_t header;
      complex34_t *matrixElements;
   } complex34Matrix_t;
+
+
 
   /**
    * \union any34Matrix_t
@@ -326,6 +336,8 @@
      real34Matrix_t    realMatrix;
      complex34Matrix_t complexMatrix;
   } any34Matrix_t;
+
+
 
   /**
    * \struct item_t
@@ -346,6 +358,7 @@
   } item_t;
 
 
+
   /**
    * \struct userMenuItem_t
    * Structure keeping the information for one item of MyMenu and MyAlpha.
@@ -356,6 +369,8 @@
     char     argumentName[16];   ///< Name of variable or label
   } userMenuItem_t;
 
+
+
   /**
    * \struct userMenu_t
    * Structure keeping the information for a user-defined menu.
@@ -364,6 +379,7 @@
     char           menuName[16];  ///< Name of menu
     userMenuItem_t menuItem[18];  ///< Items
   } userMenu_t;
+
 
 
   /**
@@ -377,6 +393,7 @@
   } programmableMenu_t;
 
 
+
   /**
    * \union pgmPtr_t
    * Stores a pointer to program step in RAM or flash
@@ -386,6 +403,7 @@
     uint8_t  *ram;
     uintptr_t flash;
   } pgmPtr_t;
+
 
 
   /**
@@ -400,6 +418,7 @@
   } labelList_t;
 
 
+
   /**
    * \struct programList_t
    * Structure keeping the information for a program.
@@ -408,6 +427,7 @@
     int32_t  step;                ///< (Step number + 1) of the program begin: <0 for a FLASH program and >0 for a RAM program
     pgmPtr_t instructionPointer;  ///< Pointer to the program begin
   } programList_t;
+
 
 
   /**
@@ -447,6 +467,7 @@
     bool       keyIndirect;
     bool       keyInputFinished;
   } tamState_t;
+
 
 
   // Temporary information
@@ -509,6 +530,7 @@
   } temporaryInformation_t;
 
 
+
   // Rounding mode 3 bits
   typedef enum {
     rmHalfEven  = 0,
@@ -521,12 +543,12 @@
   } roundingMode_t;
 
 
+
   typedef enum {
     dfAll = 0,
     dfFix = 1,
     dfSci = 2,
     dfEng = 3
   } displayFormat_t;
-
 
 #endif // !TYPEDEFINITIONS_H

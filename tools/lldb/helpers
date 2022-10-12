@@ -1,2 +1,5 @@
+# SPDX-License-Identifier: GPL-3.0-only
+# SPDX-FileCopyrightText: Copyright The WP43 Authors
+
 command script import tools/lldb/formatters.py
 type summary add real34_t -F formatters.real34formatter

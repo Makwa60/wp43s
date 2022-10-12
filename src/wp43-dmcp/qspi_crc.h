@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-FileCopyrightText: Copyright The WP43 Authors
+
 // This file is used in the first pass of the DMCP build so that the real QSPI
 // size can be determined
 

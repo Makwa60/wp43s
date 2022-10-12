@@ -1,18 +1,5 @@
-/* This file is part of 43S.
- *
- * 43S is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * 43S is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
- */
+// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-FileCopyrightText: Copyright The WP43 Authors
 
 #include "integers.h"
 
@@ -179,9 +166,6 @@ void longIntegerSubtract(longInteger_t opY, longInteger_t opX, longInteger_t res
 
 
 
-
-
-
 /*
  * The functions below are borrowed
  * from the WP34S project and sligtly
@@ -248,6 +232,7 @@ static int32_t WP34S_calc_overflow(uint64_t xv, uint64_t yv, int32_t neg) {
 }
 
 
+
 /* Utility routine to convert a binary integer into separate sign and
  * value components.  The sign returned is 1 for negative and 0 for positive.
  */
@@ -279,6 +264,7 @@ uint64_t WP34S_extract_value(const uint64_t val, int32_t *const sign) {
 }
 
 
+
 /* Helper routine to construct a value from the magnitude and sign
  */
 int64_t WP34S_build_value(const uint64_t x, const int32_t sign) {
@@ -300,6 +286,7 @@ int64_t WP34S_build_value(const uint64_t x, const int32_t sign) {
 }
 
 
+
 static uint64_t WP34S_multiply_with_overflow(uint64_t multiplier, uint64_t multiplicand, int32_t *overflow) {
   const uint64_t product = (multiplier * multiplicand) & shortIntegerMask;
 
@@ -312,6 +299,8 @@ static uint64_t WP34S_multiply_with_overflow(uint64_t multiplier, uint64_t multi
   }
   return product;
 }
+
+
 
 uint64_t WP34S_intAdd(uint64_t y, uint64_t x) {
   int32_t termXSign, termYSign;
@@ -364,6 +353,7 @@ uint64_t WP34S_intAdd(uint64_t y, uint64_t x) {
 }
 
 
+
 uint64_t WP34S_intSubtract(uint64_t y, uint64_t x) {
   int32_t termXSign, termYSign;
   uint64_t termX = WP34S_extract_value(x, &termXSign);
@@ -414,6 +404,7 @@ uint64_t WP34S_intSubtract(uint64_t y, uint64_t x) {
 }
 
 
+
 uint64_t WP34S_intMultiply(uint64_t y, uint64_t x) {
   uint64_t product;
   int32_t multiplicandSign, multiplierSign;
@@ -435,6 +426,7 @@ uint64_t WP34S_intMultiply(uint64_t y, uint64_t x) {
   }
   return WP34S_build_value(product & ~shortIntegerSignBit, multiplicandSign ^ multiplierSign);
 }
+
 
 
 uint64_t WP34S_intDivide(uint64_t y, uint64_t x) {
@@ -487,6 +479,8 @@ uint64_t WP34S_intDivide(uint64_t y, uint64_t x) {
   return WP34S_build_value(quotient, divisorSign ^ dividendSign);
 }
 
+
+
 /* never used
 uint64_t WP34S_intSqr(uint64_t x) {
   return WP34S_intMultiply(x, x);
@@ -505,6 +499,8 @@ uint64_t WP34S_intCube(uint64_t x) {
 }
 */
 
+
+
 static uint64_t WP34S_int_gcd(uint64_t a, uint64_t b) {
   while(b != 0) {
     uint64_t t = b;
@@ -513,6 +509,7 @@ static uint64_t WP34S_int_gcd(uint64_t a, uint64_t b) {
   }
   return a;
 }
+
 
 
 uint64_t WP34S_intGCD(uint64_t y, uint64_t x) {
@@ -534,6 +531,7 @@ uint64_t WP34S_intGCD(uint64_t y, uint64_t x) {
 }
 
 
+
 uint64_t WP34S_intLCM(uint64_t y, uint64_t x) {
   int32_t s;
   uint64_t xv = WP34S_extract_value(x, &s);
@@ -549,6 +547,7 @@ uint64_t WP34S_intLCM(uint64_t y, uint64_t x) {
 }
 
 
+
 uint64_t WP34S_intChs(uint64_t x) {
   int32_t signValue;
   uint64_t value = WP34S_extract_value(x, &signValue);
@@ -561,6 +560,7 @@ uint64_t WP34S_intChs(uint64_t x) {
   clearSystemFlag(FLAG_OVERFLOW);
   return WP34S_build_value(value, !signValue);
 }
+
 
 
 /* Integer floor(sqrt())
@@ -603,6 +603,7 @@ uint64_t WP34S_intSqrt(uint64_t x) {
 }
 
 
+
 uint64_t WP34S_intAbs(uint64_t x) {
   int32_t signValue;
   uint64_t value = WP34S_extract_value(x, &signValue);
@@ -616,9 +617,11 @@ uint64_t WP34S_intAbs(uint64_t x) {
 }
 
 
+
 //uint64_t WP34S_intNot(uint64_t x) {
 //  return (~x) & shortIntegerMask;
 //}
+
 
 
 /* Fraction and integer parts are very easy for integers.
@@ -628,9 +631,11 @@ uint64_t WP34S_intAbs(uint64_t x) {
 //}
 
 
+
 //uint64_t WP34S_intIP(uint64_t x) {
 //  return x;
 //}
+
 
 
 uint64_t WP34S_intSign(uint64_t x) {
@@ -645,6 +650,7 @@ uint64_t WP34S_intSign(uint64_t x) {
   }
   return WP34S_build_value(value, signValue);
 }
+
 
 
 static uint64_t WP34S_int_power_helper(uint64_t base, uint64_t exponent, int32_t overflow) {
@@ -675,6 +681,7 @@ static uint64_t WP34S_int_power_helper(uint64_t base, uint64_t exponent, int32_t
 
   return power;
 }
+
 
 
 /* Integer power y^x
@@ -710,6 +717,7 @@ uint64_t WP34S_intPower(uint64_t b, uint64_t e) {
   powerSign = (baseSign && (exponent & 1))?1:0; // Determine the sign of the result
   return WP34S_build_value(WP34S_int_power_helper(base, exponent, 0), powerSign);
 }
+
 
 
 /* 2^x
@@ -749,6 +757,7 @@ uint64_t WP34S_int2pow(uint64_t x) {
 }
 
 
+
 /* 10^x
  */
 uint64_t WP34S_int10pow(uint64_t x) {
@@ -772,6 +781,7 @@ uint64_t WP34S_int10pow(uint64_t x) {
   }
   return WP34S_build_value(WP34S_int_power_helper(10, x, overflow), 0);
 }
+
 
 
 /* Integer floor(log2())
@@ -802,6 +812,7 @@ uint64_t WP34S_intLog2(uint64_t x) {
 
   return WP34S_build_value(log2, signValue);
 }
+
 
 
 /* Integer floor(log10())
@@ -837,6 +848,8 @@ uint64_t WP34S_intLog10(uint64_t x) {
 
   return WP34S_build_value(r, signValue);
 }
+
+
 
 /* Calculate (a . b) mod c taking care to avoid overflow */
 uint64_t WP34S_mulmod(const uint64_t a, uint64_t b, const uint64_t c) {
@@ -891,10 +904,13 @@ uint64_t WP34S_expmod(const uint64_t a, uint64_t b, const uint64_t c) {
     setX_int((int64_t)c);
   }
 
+
+
   void int_justify(enum nilop op) {
     const uint64_t mask = (op == OP_LJ) ? shortIntegerSignBit : 1LL;
     justify((op == OP_LJ) ? &intLSL : &intLSR, mask);
   }
+
 
 
   /* Create n bit masks at either end of the word.
@@ -932,6 +948,7 @@ uint64_t WP34S_expmod(const uint64_t a, uint64_t b, const uint64_t c) {
     setX_int(x);
     set_carry(carry);
   }
+
 
 
   /* Set, clear, flip and test bits */
@@ -972,6 +989,8 @@ uint64_t WP34S_expmod(const uint64_t a, uint64_t b, const uint64_t c) {
 
     setX_int(x);
   }
+
+
 
   int64_t intFib(int64_t x) {
     int32_t sx, s;
@@ -1022,6 +1041,7 @@ uint64_t WP34S_expmod(const uint64_t a, uint64_t b, const uint64_t c) {
 
     return build_value(a1, s);
   }
+
 
 
   int64_t intmodop(int64_t z, int64_t y, int64_t x) {
@@ -1080,6 +1100,8 @@ uint64_t WP34S_expmod(const uint64_t a, uint64_t b, const uint64_t c) {
 
     return d;
   }
+
+
 
   uint64_t doFactor(uint64_t n) {
     /* find the least prime factor of `n'.
@@ -1176,12 +1198,15 @@ uint64_t WP34S_expmod(const uint64_t a, uint64_t b, const uint64_t c) {
   #undef MAX_TERMS
 
 
+
   int64_t intFactor(int64_t x) {
     int32_t sx;
     uint64_t vx = extract_value(x, &sx);
     uint64_t r = doFactor(vx);
     return build_value(r, sx);
   }
+
+
 
   int64_t intRecv(int64_t x) {
     int32_t sx;
@@ -1203,6 +1228,8 @@ uint64_t WP34S_expmod(const uint64_t a, uint64_t b, const uint64_t c) {
     return build_value(c, sx);
   }
 
+
+
   /* Some utility routines for saving and restoring carry and overflow.
    * Some operations don't change these flags but their subcomponents might.
    */
@@ -1210,15 +1237,20 @@ uint64_t WP34S_expmod(const uint64_t a, uint64_t b, const uint64_t c) {
     return (getSystemFlag(FLAG_OVERFLOW) == ON ? 2 : 0) | (getSystemFlag(FLAG_CARRY) == ON ? 1 : 0);
   }
 
+
+
   void restore_flags(int32_t co) {
     set_carry(co & 1);
     set_overflow(co & 2);
   }
 
+
+
   /* Utility routine to check if a value has overflowed or not */
   int32_t check_overflow(int64_t x) {
     return ((x) & shortIntegerMask) != x || (shortIntegerMode != SIM_UNSIGN && (x & shortIntegerSignBit) != 0);
   }
+
 
 
   int64_t intMod(int64_t y, int64_t x) {
@@ -1242,6 +1274,7 @@ uint64_t WP34S_expmod(const uint64_t a, uint64_t b, const uint64_t c) {
 
     return build_value(r, sy);
   }
+
 
 
   int64_t intMin(int64_t y, int64_t x) {
@@ -1268,6 +1301,8 @@ uint64_t WP34S_expmod(const uint64_t a, uint64_t b, const uint64_t c) {
     return y;
   }
 
+
+
   int64_t intMax(int64_t y, int64_t x) {
     int32_t sx, sy;
     uint64_t xv = extract_value(x, &sx);
@@ -1293,6 +1328,7 @@ uint64_t WP34S_expmod(const uint64_t a, uint64_t b, const uint64_t c) {
   }
 
 
+
   int64_t intMAdd(int64_t z, int64_t y, int64_t x) {
     int64_t t = intMultiply(x, y);
     const int32_t of = (getSystemFlag(FLAG_OVERFLOW) == ON ? 1 : 0);
@@ -1305,6 +1341,8 @@ uint64_t WP34S_expmod(const uint64_t a, uint64_t b, const uint64_t c) {
     return t;
    }
 
+
+
   void breakup(uint64_t x, uint16_t xv[4]) {
     xv[0] = x & 0xffff;
     xv[1] = (x >> 16) & 0xffff;
@@ -1312,9 +1350,13 @@ uint64_t WP34S_expmod(const uint64_t a, uint64_t b, const uint64_t c) {
     xv[3] = (x >> 48) & 0xffff;
    }
 
+
+
   uint64_t packup(uint16_t x[4]) {
     return (((uint64_t)x[3]) << 48) | (((uint64_t)x[2]) << 32) | (((uint32_t)x[1]) << 16) | x[0];
    }
+
+
 
   void intDblMul(void) {
     uint64_t xv, yv;
@@ -1400,6 +1442,7 @@ uint64_t WP34S_expmod(const uint64_t a, uint64_t b, const uint64_t c) {
   }
 
 
+
   int32_t nlz(uint16_t x) {
     int32_t n;
 
@@ -1421,6 +1464,8 @@ uint64_t WP34S_expmod(const uint64_t a, uint64_t b, const uint64_t c) {
     }
     return n;
   }
+
+
 
   /* q[0], r[0], u[0], and v[0] contain the LEAST significant halfwords.
   (The sequence is in little-endian order).
@@ -1522,6 +1567,8 @@ again:
     }
   }
 
+
+
   uint64_t divmod(const int64_t z, const int64_t y, const int64_t x, int32_t *sx, int32_t *sy, uint64_t *rem) {
     uint64_t d, h, l;
     uint16_t denom[4];
@@ -1589,6 +1636,8 @@ again:
     return packup(quot);
   }
 
+
+
   int64_t intDblDiv(int64_t z, int64_t y, int64_t x) {
     uint64_t q, r;
     int32_t sx, sy;
@@ -1599,6 +1648,8 @@ again:
     return build_value(q, sx != sy);
   }
 
+
+
   int64_t intDblRmdr(int64_t z, int64_t y, int64_t x) {
     uint64_t r;
     int32_t sx, sy;
@@ -1606,6 +1657,7 @@ again:
     divmod(z, y, x, &sx, &sy, &r);
     return build_value(r, sy);
   }
+
 
 
   int64_t intBooleanOp(int64_t y, int64_t x) {
@@ -1634,19 +1686,24 @@ again:
     return result & shortIntegerMask;
   }
 
+
+
   /* Single bit shifts are special internal version.
    * The multi-bit shifts vector through these.
    */
-
   int64_t intLSL(int64_t x) {
     set_carry(0 != (shortIntegerSignBit & x));
     return ((x << 1) & ~1) & shortIntegerMask;
   }
 
+
+
   int64_t intLSR(int64_t x) {
     set_carry(0 != (x & 1));
     return ((x >> 1) & ~shortIntegerSignBit) & shortIntegerMask;
   }
+
+
 
   int64_t intASR(int64_t x) {
     int64_t y;
@@ -1664,12 +1721,16 @@ again:
     return y;
   }
 
+
+
   int64_t intRL(int64_t x) {
     const int32_t cry = (shortIntegerSignBit & x)?1:0;
 
     set_carry(cry);
     return (intLSL(x) | cry) & shortIntegerMask;
   }
+
+
 
   int64_t intRR(int64_t x) {
     const int32_t cry = x & 1;
@@ -1683,12 +1744,16 @@ again:
     return x & shortIntegerMask;
   }
 
+
+
   int64_t intRLC(int64_t x) {
     const int32_t cin = (getSystemFlag(FLAG_CARRY) == ON ? 1 : 0);
     set_carry((shortIntegerSignBit & x)?1:0);
 
     return (intLSL(x) | cin) & shortIntegerMask;
  }
+
+
 
   int64_t intRRC(int64_t x) {
     const int32_t cin = (getSystemFlag(FLAG_CARRY) == ON ? 1 : 0);
@@ -1701,6 +1766,8 @@ again:
 
     return x & shortIntegerMask;
   }
+
+
 
   /* Like the above but taking the count argument from the opcode.
    * Also possibly register indirect but that is dealt with elsewhere.
@@ -1767,6 +1834,7 @@ again:
   }
 
 
+
   /* Some code to count bits.  We start with a routine to count bits in a single
    * 32 bit word and call this twice.
    */
@@ -1776,9 +1844,13 @@ again:
    return (((v + (v >> 4)) & 0xF0F0F0F) * 0x1010101) >> 24;
   }
 
+
+
   uint32_t count64bits(int64_t x) {
    return count32bits(x & 0xffffffff) + count32bits((x >> 32) & 0xffffffff);
   }
+
+
 
   int64_t intNumBits(int64_t x) {
    return count64bits(x) & shortIntegerMask;
