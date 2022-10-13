@@ -1,0 +1,96 @@
+// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-FileCopyrightText: Copyright The WP43 Authors
+
+/**
+ * \file recall.h
+ */
+#if !defined(RECALL_H)
+  #define RECALL_H
+
+  #include <stdint.h>
+
+  /**
+   * Recalls a register in X.
+   *
+   * \param[in] regist
+   */
+  void         fnRecall       (uint16_t r);
+
+  /**
+   * Recalls register L in X.
+   *
+   * \param[in] unusedButMandatoryParameter
+   */
+  void         fnLastX        (uint16_t unusedButMandatoryParameter);
+
+  /**
+   * Adds a register to X.
+   *
+   * \param[in] regist
+   */
+  void         fnRecallAdd    (uint16_t r);
+
+  /**
+   * Subtracts a register from X.
+   *
+   * \param[in] regist
+   */
+  void         fnRecallSub    (uint16_t r);
+
+  /**
+   * Multiplies X by a register.
+   *
+   * \param[in] regist
+   */
+  void         fnRecallMult   (uint16_t r);
+
+  /**
+   * Divides X by a register.
+   *
+   * \param[in] regist
+   */
+  void         fnRecallDiv    (uint16_t r);
+
+  /**
+   * Keeps in X min(X, register).
+   *
+   * \param[in] regist
+   */
+  void         fnRecallMin    (uint16_t r);
+
+  /**
+   * Keeps in X max(X, register).
+   *
+   * \param[in] regist
+   */
+  void         fnRecallMax    (uint16_t r);
+
+  /**
+   * Recalls a configuration.
+   *
+   * \param[in] regist
+   */
+  void         fnRecallConfig (uint16_t r);
+
+  /**
+   * Recalls a stack.
+   *
+   * \param[in] regist
+   */
+  void         fnRecallStack  (uint16_t r);
+
+  /**
+   * Recalls the matrix element I,J in X.
+   *
+   * \param[in] regist
+   */
+  void         fnRecallElement(uint16_t unusedButMandatoryParameter);
+
+  /**
+   * Recalls the indexes I and J in X and Y.
+   *
+   * \param[in] regist
+   */
+  void         fnRecallIJ     (uint16_t unusedButMandatoryParameter);
+
+#endif // !RECALL_H

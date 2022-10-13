@@ -1,18 +1,22 @@
-# WP43S project specific files
+# SPDX-License-Identifier: GPL-3.0-only
+# SPDX-FileCopyrightText: Copyright The WP43 Authors
+
+# WP43 project specific files
 /build
 /build.sim
 /dep/gmp-6.2.0
-/wp43s
+/wp43
 /testSuite
 /generate*
 /ttf2RasterFonts
-/wp43s.exe
+/wp43.exe
 /testSuite.exe
 /generate*.exe
 /ttf2RasterFonts.exe
 backup.bin
-wp43s.sav
-wp43s.dat
+wp43.sav
+wp43.dat
+testSuiteJunit.xml
 
 # Created by https://www.toptal.com/developers/gitignore/api/macos,windows,linux,codeblocks,valgrind,vscode
 # Edit at https://www.toptal.com/developers/gitignore?templates=macos,windows,linux,codeblocks,valgrind,vscode

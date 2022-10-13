@@ -1,9 +1,13 @@
+# SPDX-License-Identifier: GPL-3.0-only
+# SPDX-FileCopyrightText: Copyright The WP43 Authors
+
 generateConstants = executable(
   'generateConstants',
   build_by_default    : false,
   sources             : files('generateConstants.c') + decNumber_src,
-  include_directories : [decNumber_inc, wp43s_inc],
-  native              : true)
+  include_directories : [decNumber_inc, wp43_inc],
+  native              : true,
+  override_options    : ['b_coverage=false'])
 constantPointers_ch = custom_target(
   'constantPointers.ch',
   build_by_default : false,

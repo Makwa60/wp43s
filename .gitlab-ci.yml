@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: GPL-3.0-only
+# SPDX-FileCopyrightText: Copyright The WP43 Authors
+
 default:
   image: ubuntu:latest
 
@@ -8,7 +11,7 @@ stages:
   - release
 
 variables:
-  PACKAGE_REGISTRY_URL: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/wp43s/${CI_COMMIT_TAG}"
+  PACKAGE_REGISTRY_URL: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/wp43/${CI_COMMIT_TAG}"
   GIT_SUBMODULE_STRATEGY: recursive
   DEBIAN_FRONTEND: noninteractive
 
@@ -19,7 +22,7 @@ macOS:
   artifacts:
     expire_in: 1 day
     paths:
-      - wp43s-macos.zip
+      - wp43-macos.zip
   tags:
     - macos
 
@@ -40,9 +43,9 @@ windows:
   artifacts:
     expire_in: 1 day
     paths:
-      - wp43s-windows.zip
+      - wp43-windows.zip
   tags:
-    - wp43s_windows
+    - wp43_windows
 
 dm42:
   stage: build
@@ -54,17 +57,28 @@ dm42:
   artifacts:
     expire_in: 1 day
     paths:
-      - wp43s-dm42.zip
+      - wp43-dm42.zip
   tags:
     - linux
 
 testSuite:
   stage: test
+  coverage: '/^TOTAL.*\s+(\d+\%)$/'
   script:
     - apt-get update -qq
-    - apt-get install -qq -y git python3-pip ninja-build pkg-config build-essential libgtk-3-dev libgmp-dev
+    - apt-get install -qq -y git python3-pip ninja-build pkg-config build-essential libgtk-3-dev libgmp-dev gcovr
     - python3 -m pip install meson
     - make test
+    - make coverage
+  artifacts:
+    expire_in: 5 day
+    paths:
+      - testSuiteJunit.xml
+    reports:
+      junit: testSuiteJunit.xml
+      coverage_report:
+        coverage_format: cobertura
+        path: build.sim/meson-logs/coverage.xml
   tags:
     - linux
 
@@ -83,15 +97,15 @@ upload:
     - if: $CI_COMMIT_TAG
   script:
     - |
-      curl --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file wp43s-dm42.zip ${PACKAGE_REGISTRY_URL}/wp43s-dm42-${CI_COMMIT_TAG}.zip
+      curl --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file wp43-dm42.zip ${PACKAGE_REGISTRY_URL}/wp43-dm42-${CI_COMMIT_TAG}.zip
     - |
-      curl --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file wp43s-macos.zip ${PACKAGE_REGISTRY_URL}/wp43s-macos-${CI_COMMIT_TAG}.zip
+      curl --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file wp43-macos.zip ${PACKAGE_REGISTRY_URL}/wp43-macos-${CI_COMMIT_TAG}.zip
     - |
-      curl --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file wp43s-windows.zip ${PACKAGE_REGISTRY_URL}/wp43s-windows-${CI_COMMIT_TAG}.zip
+      curl --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file wp43-windows.zip ${PACKAGE_REGISTRY_URL}/wp43-windows-${CI_COMMIT_TAG}.zip
     - |
-      curl --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file docs/ReferenceManual.pdf ${PACKAGE_REGISTRY_URL}/wp43s-reference-manual-${CI_COMMIT_TAG}.pdf
+      curl --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file docs/ReferenceManual.pdf ${PACKAGE_REGISTRY_URL}/wp43-reference-manual-${CI_COMMIT_TAG}.pdf
     - |
-      curl --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file docs/OwnersManual.pdf ${PACKAGE_REGISTRY_URL}/wp43s-owners-manual-${CI_COMMIT_TAG}.pdf
+      curl --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file docs/OwnersManual.pdf ${PACKAGE_REGISTRY_URL}/wp43-owners-manual-${CI_COMMIT_TAG}.pdf
   tags:
     - linux
 
@@ -103,9 +117,9 @@ release:
   script:
     - |
       release-cli create --name "Release $CI_COMMIT_TAG" --tag-name $CI_COMMIT_TAG \
-        --assets-link "{\"name\":\"Windows Simulator\",\"url\":\"${PACKAGE_REGISTRY_URL}/wp43s-windows-${CI_COMMIT_TAG}.zip\"}" \
-        --assets-link "{\"name\":\"Firmware for DM42\",\"url\":\"${PACKAGE_REGISTRY_URL}/wp43s-dm42-${CI_COMMIT_TAG}.zip\"}" \
-        --assets-link "{\"name\":\"Reference Manual\",\"url\":\"${PACKAGE_REGISTRY_URL}/wp43s-reference-manual-${CI_COMMIT_TAG}.pdf\"}" \
-        --assets-link "{\"name\":\"Owner's Manual\",\"url\":\"${PACKAGE_REGISTRY_URL}/wp43s-owners-manual-${CI_COMMIT_TAG}.pdf\"}"
+        --assets-link "{\"name\":\"Windows Simulator\",\"url\":\"${PACKAGE_REGISTRY_URL}/wp43-windows-${CI_COMMIT_TAG}.zip\"}" \
+        --assets-link "{\"name\":\"Firmware for DM42\",\"url\":\"${PACKAGE_REGISTRY_URL}/wp43-dm42-${CI_COMMIT_TAG}.zip\"}" \
+        --assets-link "{\"name\":\"Reference Manual\",\"url\":\"${PACKAGE_REGISTRY_URL}/wp43-reference-manual-${CI_COMMIT_TAG}.pdf\"}" \
+        --assets-link "{\"name\":\"Owner's Manual\",\"url\":\"${PACKAGE_REGISTRY_URL}/wp43-owners-manual-${CI_COMMIT_TAG}.pdf\"}"
   tags:
     - linux

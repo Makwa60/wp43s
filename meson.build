@@ -1,7 +1,11 @@
-project('wp43s', 'c',
+# SPDX-License-Identifier: GPL-3.0-only
+# SPDX-FileCopyrightText: Copyright The WP43 Authors
+
+project('wp43', 'c',
   meson_version   : '>=0.56.0',
   license         : 'GPL-3.0-only',
-  default_options : ['warning_level=2']
+  default_options : ['warning_level=2',
+                     'b_ndebug=if-release']
 )
 
 # Simulator and generate tools arguments
@@ -33,7 +37,7 @@ add_project_arguments('-DDMCP_BUILD', native : false, language : 'c')
 add_project_arguments('-DOS32BIT',    native : false, language : 'c')
 
 git = find_program('git')
-run_command(git, 'submodule', 'update', '--init', '--recursive', meson.project_source_root())
+run_command(git, 'submodule', 'update', '--init', '--recursive', meson.project_source_root(), check: true)
 
 cc = meson.get_compiler('c')
 ft_dep  = dependency('freetype2', native : true)
@@ -54,7 +58,7 @@ endif
 
 conf_data = configuration_data()
 commit_tag = get_option('CI_COMMIT_TAG')
-today = run_command('date', '+%Y-%m-%d')
+today = run_command('date', '+%Y-%m-%d', check: true)
 conf_data.set('TODAY', today.stdout().strip())
 if commit_tag != ''
   conf_data.set('CI_USE_TAG',    true)
@@ -65,13 +69,13 @@ endif
 
 subdir('docs/code')
 subdir('dep')
-subdir('src/wp43s')
+subdir('src/wp43')
 subdir('src/ttf2RasterFonts')
 subdir('src/generateConstants')
 subdir('src/generateCatalogs')
 subdir('src/generateTestPgms')
 subdir('src/testSuite')
-subdir('src/wp43s-gtk')
+subdir('src/wp43-gtk')
 
 # Only attempt to include the DMCP target if we have set-up the cross compiler
 if meson.is_cross_build()
@@ -82,5 +86,5 @@ if meson.is_cross_build()
   bash          = find_program('bash')
   subproject('gmp-6.2.0')
   arm_gmp_dep   = dependency('arm-gmp-6.2.0', native : false)
-  subdir('src/wp43s-dmcp')
+  subdir('src/wp43-dmcp')
 endif

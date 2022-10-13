@@ -1,29 +1,13 @@
-/* This file is part of 43S.
- *
- * 43S is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * 43S is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
- */
+// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-FileCopyrightText: Copyright The WP43 Authors
 
-/********************************************//**
- * \file generateTestPgms.c
- ***********************************************/
-
-#include <stdlib.h>
+#include "defines.h"
+#include "error.h"
 #include "fonts.h"
 #include "items.h"
-#include "defines.h"
+#include <stdlib.h>
 
-#include "wp43s.h"
+#include "wp43.h"
 
 
 int main(int argc, char* argv[]) {
@@ -14964,8 +14948,8 @@ int main(int argc, char* argv[]) {
     *(currentStep++) = (ITM_M_INV >> 8) | 0x80;
     *(currentStep++) =  ITM_M_INV       & 0xff;
 
-    *(currentStep++) = (ITM_ANGLE >> 8) | 0x80;
-    *(currentStep++) =  ITM_ANGLE       & 0xff;
+    *(currentStep++) = (ITM_ARG >> 8) | 0x80;
+    *(currentStep++) =  ITM_ARG       & 0xff;
 
     *(currentStep++) = (ITM_MULPIto >> 8) | 0x80;
     *(currentStep++) =  ITM_MULPIto       & 0xff;

@@ -1,0 +1,17 @@
+// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-FileCopyrightText: Copyright The WP43 Authors
+
+#include <gdk/gdk.h>
+#include <glib.h>
+#include <gmp.h>
+#include <gtk/gtk.h>
+#include <inttypes.h>
+#include <locale.h>
+#include <math.h>
+#include <stddef.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
+#include <unistd.h>

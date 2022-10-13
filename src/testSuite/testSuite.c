@@ -1,22 +1,5 @@
-/* This file is part of 43S.
- *
- * 43S is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * 43S is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-/********************************************//**
- * \file testSuite.c
- ***********************************************/
+// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-FileCopyrightText: Copyright The WP43 Authors
 
 #include "testSuite.h"
 
@@ -25,28 +8,30 @@
 #include "constants.h"
 #include "conversionAngles.h"
 #include "conversionUnits.h"
+#include "core/memory.h"
 #include "dateTime.h"
 #include "debug.h"
 #include "display.h"
 #include "distributions/distributions.h"
+#include "error.h"
 #include "flags.h"
 #include "fractions.h"
-#include "gui.h"
 #include "items.h"
 #include "logicalOps/logicalOps.h"
 #include "mathematics/mathematics.h"
-#include "memory.h"
 #include "recall.h"
 #include "registers.h"
 #include "registerValueConversions.h"
+#include "reporter.h"
 #include "sort.h"
 #include "stack.h"
 #include "stats.h"
 #include "store.h"
+#include <stdbool.h>
 #include <string.h>
 #include <libgen.h>
 
-#include "wp43s.h"
+#include "wp43.h"
 
 #define NUMBER_OF_CORRECT_SIGNIFICANT_DIGITS_EXPECTED 34
 
@@ -59,11 +44,14 @@ extern const int16_t menu_alpha_INTL[];
 extern const int16_t menu_alpha_intl[];
 extern const int16_t menu_REGIST[];
 extern const softmenu_t softmenu[];
-char line[100000], lastInParameters[10000], fileName[1000], *filePath, filePathName[2000], registerExpectedAndValue[1000], realString[1000];
+char msgString[200], line[100000], lastInParameters[10000], fileName[1000], *filePath, filePathName[2000], registerExpectedAndValue[1000], realString[1000];
 int32_t lineNumber, numTestsFile, numTestsTotal, failedTests;
 int32_t functionIndex, funcType, correctSignificantDigits;
 void (*funcNoParam)(uint16_t);
 void (*funcCvt)(uint16_t);
+bool testStarted;
+bool testPassed;
+uint32_t testInFile;
 
 const funcTest_t funcTestNoParam[] = {
   {"fn10Pow",                fn10Pow               },
@@ -282,6 +270,7 @@ const funcTest_t funcTestNoParam[] = {
   {"fnSlvq",                 fnSlvq                },
   {"fnSquare",               fnSquare              },
   {"fnStoreIJ",              fnStoreIJ             },
+  {"fnSqrt1Px2",             fnSqrt1Px2            },
   {"fnSquareRoot",           fnSquareRoot          },
   {"fnSubtract",             fnSubtract            },
   {"fnSumXY",                fnSumXY               },
@@ -377,8 +366,7 @@ char *endOfString(char *string) { // string must point on the 1st "
     string++;
   }
   else {
-    printf("Unterminated string\n");
-    abortTest();
+    processError("unterminated string");
   }
 
   return string; // pointer to the 1st char after the ending "
@@ -405,21 +393,19 @@ void strToShortInteger(char *nimBuffer, calcRegister_t regist) {
 
   for(i=posHash+1; i<lg; i++) {
     if(nimBuffer[i]<'0' || nimBuffer[i]>'9') {
-      printf("\nError while initializing a short integer: there is a non numeric character in the base of the integer!\n");
-      abortTest();
+      processError("error while initializing a short integer: there is a non numeric character in the base of the integer!");
     }
   }
 
   base = atoi(nimBuffer + posHash + 1);
   if(base < 2 || base > 16) {
-    printf("\nError while initializing a short integer: the base of the integer must be from 2 to 16!\n");
-    abortTest();
+    processError("error while initializing a short integer: the base of the integer must be from 2 to 16!");
   }
 
   for(i=nimBuffer[0] == '-' ? 1 : 0; i<posHash; i++) {
     if((nimBuffer[i] > '9' ? nimBuffer[i] - 'A' + 10 : nimBuffer[i] - '0') >= base) {
-      printf("\nError while initializing a short integer: digit %c is not allowed in base %d!\n", nimBuffer[i], base);
-      abortTest();
+      sprintf(msgString, "error while initializing a short integer: digit %c is not allowed in base %d!\n", nimBuffer[i], base);
+      processError(msgString);
     }
   }
 
@@ -433,8 +419,7 @@ void strToShortInteger(char *nimBuffer, calcRegister_t regist) {
     longInteger2Pow(shortIntegerWordSize, maxVal);
   }
   else {
-    printf("\nError while initializing a short integer: shortIntegerWordSize must be fom 1 to 64\n");
-    abortTest();
+    processError("error while initializing a short integer: shortIntegerWordSize must be fom 1 to 64");
   }
 
   // minVal = -maxVal/2
@@ -460,8 +445,8 @@ void strToShortInteger(char *nimBuffer, calcRegister_t regist) {
     char strMin[22], strMax[22];
     longIntegerToAllocatedString(minVal, strMin, sizeof(strMin));
     longIntegerToAllocatedString(maxVal, strMax, sizeof(strMax));
-    printf("\nError while initializing a short integer: for a word size of %d bit%s and integer mode %s, the entered number must be from %s to %s!\n", shortIntegerWordSize, shortIntegerWordSize>1 ? "s" : "", getShortIntegerModeName(shortIntegerMode), strMin, strMax);
-    abortTest();
+    sprintf(msgString, "error while initializing a short integer: for a word size of %d bit%s and integer mode %s, the entered number must be from %s to %s!", shortIntegerWordSize, shortIntegerWordSize>1 ? "s" : "", getShortIntegerModeName(shortIntegerMode), strMin, strMax);
+    processError(msgString);
   }
 
   reallocateRegister(regist, dtShortInteger, SHORT_INTEGER_SIZE, base);
@@ -489,8 +474,7 @@ void strToShortInteger(char *nimBuffer, calcRegister_t regist) {
     }
   }
   else {
-    printf("\nBad integer mode while initializing a short integer\n");
-    abortTest();
+    processError("bad integer mode while initializing a short integer");
   }
 
   *(REGISTER_SHORT_INTEGER_DATA(regist)) = val;
@@ -529,8 +513,8 @@ char hexToChar(const char *string) {
     }
   }
   else {
-    printf("\nMissformed parameter setting. The hexadecimal char \\x%c%c is erroneous.\n", string[0], string[1]);
-    abortTest();
+    sprintf(msgString, "missformed parameter setting. The hexadecimal char \\x%c%c is erroneous", string[0], string[1]);
+    processError(msgString);
   }
 
   return ch;
@@ -578,8 +562,7 @@ void setParameter(char *p) {
     i++;
   }
   if(p[i] == 0) {
-    printf("\nMissformed parameter setting. Missing equal sign, remember that no space is allowed around the equal sign.\n");
-    abortTest();
+    processError("missformed parameter setting. Missing equal sign, remember that no space is allowed around the equal sign.");
   }
 
   p[i] = 0;
@@ -587,15 +570,13 @@ void setParameter(char *p) {
   strcpy(r, p + i + 1);
 
   if(r[0] == 0) {
-    printf("\nMissformed parameter setting. Missing value after equal sign, remember that no space is allowed around the equal sign.\n");
-    abortTest();
+    processError("missformed parameter setting. Missing value after equal sign, remember that no space is allowed around the equal sign.");
   }
 
   //Setting a flag
   if(!strncmp(l, "FL_", 3)) {
     if(r[0] != '0' && r[0] != '1' && r[1] != 0) {
-      printf("\nMissformed flag setting. The rvalue must be 0 or 1\n");
-      abortTest();
+      processError("missformed flag setting. The rvalue must be 0 or 1");
     }
 
     //Lettered flag
@@ -619,8 +600,7 @@ void setParameter(char *p) {
         }
       }
       else {
-        printf("\nMissformed flag setting. After FL_ there shall be a number from 0 to 111, a lettered, or a system flag.\n");
-        abortTest();
+        processError("missformed flag setting. After FL_ there shall be a number from 0 to 111, a lettered, or a system flag.");
       }
     }
 
@@ -640,40 +620,77 @@ void setParameter(char *p) {
         }
       }
       else {
-        printf("\nMissformed flag setting. After FL_ there shall be a number from 0 to 111, a lettered, or a system flag.\n");
-        abortTest();
+        processError("missformed flag setting. After FL_ there shall be a number from 0 to 111, a lettered, or a system flag.");
       }
     }
 
     //System flag
     else {
       if(!strcmp(l+3, "SPCRES")) {
-        if(r[0] == '0') {clearSystemFlag(FLAG_SPCRES);}   else {setSystemFlag(FLAG_SPCRES);}
+        if(r[0] == '0') {
+          clearSystemFlag(FLAG_SPCRES);
+        }
+        else {
+          setSystemFlag(FLAG_SPCRES);
+        }
       }
       else if(!strcmp(l+3, "CPXRES")) {
-        if(r[0] == '0') {clearSystemFlag(FLAG_CPXRES);}   else {setSystemFlag(FLAG_CPXRES);}
+        if(r[0] == '0') {
+          clearSystemFlag(FLAG_CPXRES);
+        }
+        else {
+          setSystemFlag(FLAG_CPXRES);
+        }
       }
       else if(!strcmp(l+3, "CARRY")) {
-        if(r[0] == '0') {clearSystemFlag(FLAG_CARRY);}    else {setSystemFlag(FLAG_CARRY);}
+        if(r[0] == '0') {
+          clearSystemFlag(FLAG_CARRY);
+        }
+        else {
+          setSystemFlag(FLAG_CARRY);
+        }
       }
       else if(!strcmp(l+3, "OVERFL")) {
-        if(r[0] == '0') {clearSystemFlag(FLAG_OVERFLOW);} else {setSystemFlag(FLAG_OVERFLOW);}
+        if(r[0] == '0') {
+          clearSystemFlag(FLAG_OVERFLOW);
+        }
+        else {
+          setSystemFlag(FLAG_OVERFLOW);
+        }
       }
       else if(!strcmp(l+3, "ASLIFT")) {
-        if(r[0] == '0') {clearSystemFlag(FLAG_ASLIFT);}   else {setSystemFlag(FLAG_ASLIFT);}
+        if(r[0] == '0') {
+          clearSystemFlag(FLAG_ASLIFT);
+        }
+        else {
+          setSystemFlag(FLAG_ASLIFT);
+        }
       }
       else if(!strcmp(l+3, "YMD")) {
-        if(r[0] == '0') {clearSystemFlag(FLAG_YMD);}      else {setSystemFlag(FLAG_YMD);}
+        if(r[0] == '0') {
+          clearSystemFlag(FLAG_YMD);
+        }
+        else {
+          setSystemFlag(FLAG_YMD);
+        }
       }
       else if(!strcmp(l+3, "MDY")) {
-        if(r[0] == '0') {clearSystemFlag(FLAG_MDY);}      else {setSystemFlag(FLAG_MDY);}
+        if(r[0] == '0') {
+          clearSystemFlag(FLAG_MDY);}
+        else {
+          setSystemFlag(FLAG_MDY);
+        }
       }
       else if(!strcmp(l+3, "DMY")) {
-        if(r[0] == '0') {clearSystemFlag(FLAG_DMY);}      else {setSystemFlag(FLAG_DMY);}
+        if(r[0] == '0') {
+          clearSystemFlag(FLAG_DMY);
+        }
+        else {
+          setSystemFlag(FLAG_DMY);
+        }
       }
       else {
-        printf("\nMissformed numbered flag setting. After FL_ there shall be a number from 0 to 111, a lettered, or a system flag.\n");
-        abortTest();
+        processError("missformed numbered flag setting. After FL_ there shall be a number from 0 to 111, a lettered, or a system flag.");
       }
     }
   }
@@ -696,8 +713,7 @@ void setParameter(char *p) {
       //printf("  Set integer mode to SIGNMT\n");
     }
     else {
-      printf("\nMissformed integer mode setting. The rvalue must be 1COMPL, 2COMPL, UNSIGN or SIGNMT.\n");
-      abortTest();
+      processError("missformed integer mode setting. The rvalue must be 1COMPL, 2COMPL, UNSIGN or SIGNMT.");
     }
   }
 
@@ -712,8 +728,7 @@ void setParameter(char *p) {
       //printf("  Set complex mode to POLAR\n");
     }
     else {
-      printf("\nMissformed complex mode setting. The rvalue must be RECT or POLAR.\n");
-      abortTest();
+      processError("missformed complex mode setting. The rvalue must be RECT or POLAR.");
     }
   }
 
@@ -740,8 +755,7 @@ void setParameter(char *p) {
       //printf("  Set angular mode to GRAD\n");
     }
     else {
-      printf("\nMissformed angular mode setting. The rvalue must be DEG, DMS, GRAD, RAD or MULTPI.\n");
-      abortTest();
+      processError("missformed angular mode setting. The rvalue must be DEG, DMS, GRAD, RAD or MULTPI.");
     }
   }
 
@@ -756,8 +770,7 @@ void setParameter(char *p) {
       //printf("  Set stack size to 8\n");
     }
     else {
-      printf("\nMissformed stack size setting. The rvalue must be 4 or 8.\n");
-      abortTest();
+      processError("missformed stack size setting. The rvalue must be 4 or 8.");
     }
   }
 
@@ -775,13 +788,11 @@ void setParameter(char *p) {
         //printf("  Set word size to %d bit\n", ws);
       }
       else {
-        printf("\nMissformed word size setting. The rvalue must be from 0 to 64 (0 is the same as 64).\n");
-        abortTest();
+        processError("missformed word size setting. The rvalue must be from 0 to 64 (0 is the same as 64).");
       }
     }
     else {
-      printf("\nMissformed word size setting. The rvalue must be a number from 0 to 64 (0 is the same as 64).\n");
-      abortTest();
+      processError("missformed word size setting. The rvalue must be a number from 0 to 64 (0 is the same as 64).");
     }
   }
 
@@ -796,13 +807,11 @@ void setParameter(char *p) {
         //printf("  Set grouping gap to %d\n", gap);
       }
       else {
-        printf("\nMissformed grouping gap setting. The rvalue must be from 0 to 15.\n");
-        abortTest();
+        processError("missformed grouping gap setting. The rvalue must be from 0 to 15.");
       }
     }
     else {
-      printf("\nMissformed grouping gap setting. The rvalue must be a number from 0 to 15.\n");
-      abortTest();
+      processError("missformed grouping gap setting. The rvalue must be a number from 0 to 15.");
     }
   }
 
@@ -821,8 +830,7 @@ void setParameter(char *p) {
       firstGregorianDay = atoi(r);
     }
     else {
-      printf("\nMissformed J/G setting. The rvalue must be a number.\n");
-      abortTest();
+      processError("missformed J/G setting. The rvalue must be a number.");
     }
   }
 
@@ -837,13 +845,11 @@ void setParameter(char *p) {
         //printf("  Set significant digits to %d\n", sd);
       }
       else {
-        printf("\nMissformed significant digits setting. The rvalue must be from 0 to 34 (0 is the same as 34).\n");
-        abortTest();
+        processError("missformed significant digits setting. The rvalue must be from 0 to 34 (0 is the same as 34).");
       }
     }
     else {
-      printf("\nMissformed significant digits setting. The rvalue must be a number from 0 to 34 (0 is the same as 34).\n");
-      abortTest();
+      processError("missformed significant digits setting. The rvalue must be a number from 0 to 34 (0 is the same as 34).");
     }
   }
 
@@ -858,13 +864,11 @@ void setParameter(char *p) {
         //printf("  Set rounding mode to %d\n", rm);
       }
       else {
-        printf("\nMissformed rounding mode setting. The rvalue must be a number from 0 to 6.\n");
-        abortTest();
+        processError("missformed rounding mode setting. The rvalue must be a number from 0 to 6.");
       }
     }
     else {
-      printf("\nMissformed rounding mode setting. The rvalue must be a number from 0 to 6.\n");
-      abortTest();
+      processError("missformed rounding mode setting. The rvalue must be a number from 0 to 6.");
     }
   }
 
@@ -883,8 +887,7 @@ void setParameter(char *p) {
                                l[1] + 12;
       }
       else {
-        printf("\nMissformed lettered register setting. The letter after R is not a lettered register.\n");
-        abortTest();
+        processError("missformed lettered register setting. The letter after R is not a lettered register.");
       }
     }
 
@@ -894,15 +897,13 @@ void setParameter(char *p) {
             || (l[1] >= '0' && l[1] <= '9' && l[2] >= '0' && l[2] <= '9' && l[3] >= '0' && l[3] <= '9' && l[4] == 0)) {
       regist = atoi(l + 1);
       if(regist > 111 || regist < 0) {
-        printf("\nMissformed numbered register setting. Th number after R shall be a number from 0 to 111.\n");
-        abortTest();
+        processError("missformed numbered register setting. Th number after R shall be a number from 0 to 111.");
       }
       //letter = 0;
     }
 
     else {
-      printf("\nMissformed register setting. After R there shall be a number from 0 to 111 or a lettered register.\n");
-      abortTest();
+      processError("missformed register setting. After R there shall be a number from 0 to 111 or a lettered register.");
     }
 
     // find the : separating the data type and the value
@@ -911,8 +912,7 @@ void setParameter(char *p) {
       i++;
     }
     if(r[i] == 0) {
-      printf("\nMissformed register value. Missing colon between data type and value.\n");
-      abortTest();
+      processError("missformed register value. Missing colon between data type and value.");
     }
 
     // separating the data type and the value
@@ -949,20 +949,34 @@ void setParameter(char *p) {
       r[i] = 0;
       strcpy(angMod, r + i + 1);
 
-           if(strcmp(angMod, "DEG"   ) == 0) am = amDegree;
-      else if(strcmp(angMod, "DMS"   ) == 0) am = amDMS;
-      else if(strcmp(angMod, "RAD"   ) == 0) am = amRadian;
-      else if(strcmp(angMod, "MULTPI") == 0) am = amMultPi;
-      else if(strcmp(angMod, "GRAD"  ) == 0) am = amGrad;
-      else if(strcmp(angMod, "NONE"  ) == 0) am = amNone;
+      if(strcmp(angMod, "DEG"   ) == 0) {
+        am = amDegree;
+      }
+      else if(strcmp(angMod, "DMS"   ) == 0) {
+        am = amDMS;
+      }
+      else if(strcmp(angMod, "RAD"   ) == 0) {
+        am = amRadian;
+      }
+      else if(strcmp(angMod, "MULTPI") == 0) {
+        am = amMultPi;
+      }
+      else if(strcmp(angMod, "GRAD"  ) == 0) {
+        am = amGrad;
+      }
+      else if(strcmp(angMod, "NONE"  ) == 0) {
+        am = amNone;
+      }
       else {
-        printf("\nMissformed register real%d angular mode. Unknown angular mode after real value.\n", strcmp(l, "RE16") == 0 ? 16 : 34);
-        abortTest();
+        sprintf(msgString, "missformed register real%d angular mode. Unknown angular mode after real value", strcmp(l, "RE16") == 0 ? 16 : 34);
+        processError(msgString);
       }
 
       // remove beginning and ending " and removing leading spaces
       xcopy(r, r + 1, strlen(r));
-      while(r[0] == ' ') xcopy(r, r + 1, strlen(r));
+      while(r[0] == ' ') {
+        xcopy(r, r + 1, strlen(r));
+      }
       r[strlen(r) - 1] = 0;
 
       // replace , with .
@@ -987,8 +1001,7 @@ void setParameter(char *p) {
         i++;
       }
       if(r[i] == 0) {
-        printf("\nMissformed register short integer value. Missing # between value and base.\n");
-        abortTest();
+        processError("missformed register short integer value. Missing # between value and base.");
       }
 
       // remove beginning and ending " and removing leading spaces
@@ -1021,8 +1034,7 @@ void setParameter(char *p) {
         i++;
       }
       if(r[i] == 0) {
-        printf("\nMissformed register complex34 value. Missing i between real and imaginary part.\n");
-        abortTest();
+        processError("missformed register complex34 value. Missing i between real and imaginary part.");
       }
 
       // separate real and imaginary part
@@ -1065,7 +1077,7 @@ void setParameter(char *p) {
     }
     else if(strcmp(l, "TIME") == 0) {
       int32_t k = 0;
-      bool_t isHms = false;
+      bool isHms = false;
 
       // find the : separating hours and minutes
       i = 0;
@@ -1125,8 +1137,8 @@ void setParameter(char *p) {
       convertReal34RegisterToDateRegister(regist, regist);
     }
     else {
-      printf("\nMissformed register value. Unknown data type %s for register %s\n", l, p+1);
-      abortTest();
+      sprintf(msgString, "missformed register value. Unknown data type %s for register %s", l, p+1);
+      processError(msgString);
     }
 
     //if(letter == 0) {
@@ -1141,8 +1153,8 @@ void setParameter(char *p) {
   }
 
   else {
-    printf("\nUnknown setting %s.\n", l);
-    abortTest();
+    sprintf(msgString, "unknown setting %s", l);
+    processError(msgString);
   }
 }
 
@@ -1191,7 +1203,7 @@ void checkRegisterType(calcRegister_t regist, char letter, uint32_t expectedData
       printf("R%c = ", letter);
     }
     printRegisterToConsole(regist, "", "\n");
-    abortTest();
+    processError("wrong register type");
   }
 
   if(getRegisterTag(regist) != expectedTag) {
@@ -1205,7 +1217,7 @@ void checkRegisterType(calcRegister_t regist, char letter, uint32_t expectedData
         printf("R%c = ", letter);
       }
       printRegisterToConsole(regist, "", "\n");
-      abortTest();
+      processError("wrong register type");
     }
     else if(getRegisterDataType(regist) == dtReal34) {
       if(letter == 0) {
@@ -1217,7 +1229,7 @@ void checkRegisterType(calcRegister_t regist, char letter, uint32_t expectedData
         printf("R%c = ", letter);
       }
       printRegisterToConsole(regist, "", "\n");
-      abortTest();
+      processError("wrong register type");
     }
     else if(getRegisterDataType(regist) == dtLongInteger) {
       if(letter == 0) {
@@ -1229,7 +1241,7 @@ void checkRegisterType(calcRegister_t regist, char letter, uint32_t expectedData
         printf("R%c = ", letter);
       }
       printRegisterToConsole(regist, "", "\n");
-      abortTest();
+      processError("wrong register type");
     }
   }
 }
@@ -1292,7 +1304,7 @@ void wrongRegisterValue(calcRegister_t regist, char letter, char *expectedValue)
   }
   printf("%s\nbut it is ", expectedValue);
   printRegisterToConsole(regist, "", "\n");
-  abortTest();
+  processError("wrong register value");
 }
 
 
@@ -1315,16 +1327,30 @@ void expectedAndShouldBeValue(calcRegister_t regist, char letter, char *expected
 
 
 
-bool_t real34AreEqual(real34_t *a, real34_t *b) {
-  if( real34IsNaN(a) &&  real34IsNaN(b)) return true;
-  if( real34IsNaN(a) && !real34IsNaN(b)) return false;
-  if(!real34IsNaN(a) &&  real34IsNaN(b)) return false;
+bool real34AreEqual(real34_t *a, real34_t *b) {
+  if( real34IsNaN(a) &&  real34IsNaN(b)) {
+    return true;
+  }
+  if( real34IsNaN(a) && !real34IsNaN(b)) {
+    return false;
+  }
+  if(!real34IsNaN(a) &&  real34IsNaN(b)) {
+    return false;
+  }
 
-  if( real34IsInfinite(a) && !real34IsInfinite(b)) return false;
-  if(!real34IsInfinite(a) &&  real34IsInfinite(b)) return false;
+  if( real34IsInfinite(a) && !real34IsInfinite(b)) {
+    return false;
+  }
+  if(!real34IsInfinite(a) &&  real34IsInfinite(b)) {
+    return false;
+  }
   if( real34IsInfinite(a) &&  real34IsInfinite(b)) {
-    if(real34IsPositive(a) && real34IsPositive(b)) return true;
-    if(real34IsNegative(a) && real34IsNegative(b)) return true;
+    if(real34IsPositive(a) && real34IsPositive(b)) {
+      return true;
+    }
+    if(real34IsNegative(a) && real34IsNegative(b)) {
+      return true;
+    }
     return false;
   }
 
@@ -1346,8 +1372,7 @@ void checkExpectedOutParameter(char *p) {
     i++;
   }
   if(p[i] == 0) {
-    printf("\nMissformed out parameter. Missing equal sign, remember that no space is allowed around the equal sign.\n");
-    abortTest();
+    processError("missformed out parameter. Missing equal sign, remember that no space is allowed around the equal sign.");
   }
 
   p[i] = 0;
@@ -1355,15 +1380,13 @@ void checkExpectedOutParameter(char *p) {
   strcpy(r, p + i + 1);
 
   if(r[0] == 0) {
-    printf("\nMissformed out parameter. Missing value after equal sign, remember that no space is allowed around the equal sign.\n");
-    abortTest();
+    processError("missformed out parameter. Missing value after equal sign, remember that no space is allowed around the equal sign.");
   }
 
   //Checking a flag
   if(!strncmp(l, "FL_", 3)) {
     if(r[0] != '0' && r[0] != '1' && r[1] != 0) {
-      printf("\nMissformed flag checking. The rvalue must be 0 or 1.\n");
-      abortTest();
+      processError("missformed flag checking. The rvalue must be 0 or 1.");
     }
 
     //Lettered flag
@@ -1379,20 +1402,19 @@ void checkExpectedOutParameter(char *p) {
 
         if(r[0] == '1') {
           if(!getFlag(flg)) {
-            printf("\nFlag %c should be set but it is clear!\n", l[1]);
-            abortTest();
+            sprintf(msgString, "flag %c should be set but it is clear!", l[1]);
+            processError(msgString);
           }
         }
         else {
           if(getFlag(flg)) {
-            printf("\nFlag %c should be clear but it is set!\n", l[1]);
-            abortTest();
+            sprintf(msgString, "flag %c should be clear but it is set!", l[1]);
+            processError(msgString);
           }
         }
       }
       else {
-        printf("\nMissformed flag checking. After FL_ there shall be a number from 0 to 111, a lettered, or a system flag.\n");
-        abortTest();
+        processError("missformed flag checking. After FL_ there shall be a number from 0 to 111, a lettered, or a system flag.");
       }
     }
 
@@ -1403,17 +1425,16 @@ void checkExpectedOutParameter(char *p) {
       uint16_t flg = atoi(l + 3);
       if(flg <= 111) {
         if(r[0] == '1' && !getFlag(flg)) {
-          printf("\nFlag %d should be set but it is clear!\n", flg);
-          abortTest();
+          sprintf(msgString, "flag %d should be set but it is clear!", flg);
+          processError(msgString);
         }
         else if(r[0] == '0' && getFlag(flg)) {
-          printf("\nFlag %d should be clear but it is set!\n", flg);
-          abortTest();
+          sprintf(msgString, "flag %d should be clear but it is set!", flg);
+          processError(msgString);
         }
       }
       else {
-        printf("\nMissformed flag checking in line. After FL_ there shall be a number from 0 to 111, a lettered, or a system flag.\n");
-        abortTest();
+        processError("missformed flag checking in line. After FL_ there shall be a number from 0 to 111, a lettered, or a system flag.");
       }
     }
 
@@ -1421,87 +1442,70 @@ void checkExpectedOutParameter(char *p) {
     else {
       if(!strcmp(l+3, "SPCRES")) {
         if(r[0] == '1' && !getSystemFlag(FLAG_SPCRES)) {
-          printf("\nSystem flag SPCRES should be set but it is clear!\n");
-          abortTest();
+          processError("system flag SPCRES should be set but it is clear!");
         }
         else if(r[0] == '0' && getSystemFlag(FLAG_SPCRES)) {
-          printf("\nSystem flag SPCRES should be clear but it is set!\n");
-          abortTest();
+          processError("system flag SPCRES should be clear but it is set!");
         }
       }
       else if(!strcmp(l+3, "CPXRES")) {
         if(r[0] == '1' && !getSystemFlag(FLAG_CPXRES)) {
-          printf("\nSystem flag CPXRES should be set but it is clear!\n");
-          abortTest();
+          processError("system flag CPXRES should be set but it is clear!");
         }
         else if(r[0] == '0' && getSystemFlag(FLAG_CPXRES)) {
-          printf("\nSystem flag CPXRES should be clear but it is set!\n");
-          abortTest();
+          processError("system flag CPXRES should be clear but it is set!");
         }
       }
       else if(!strcmp(l+3, "CARRY")) {
         if(r[0] == '1' && !getSystemFlag(FLAG_CARRY)) {
-          printf("\nSystem flag CARRY should be set but it is clear!\n");
-          abortTest();
+          processError("system flag CARRY should be set but it is clear!");
         }
         else if(r[0] == '0' && getSystemFlag(FLAG_CARRY)) {
-          printf("\nSystem flag CARRY should be clear but it is set!\n");
-          abortTest();
+          processError("system flag CARRY should be clear but it is set!");
         }
       }
       else if(!strcmp(l+3, "OVERFL")) {
         if(r[0] == '1' && !getSystemFlag(FLAG_OVERFLOW)) {
-          printf("\nSystem flag OVERFL should be set but it is clear!\n");
-          abortTest();
+          processError("system flag OVERFL should be set but it is clear!");
         }
         else if(r[0] == '0' && getSystemFlag(FLAG_OVERFLOW)) {
-          printf("\nSystem flag OVERFL should be clear but it is set!\n");
-          abortTest();
+          processError("system flag OVERFL should be clear but it is set!");
         }
       }
       else if(!strcmp(l+3, "ASLIFT")) {
         if(r[0] == '1' && !getSystemFlag(FLAG_ASLIFT)) {
-          printf("\nSystem flag ASLIFT should be set but it is clear!\n");
-          abortTest();
+          processError("system flag ASLIFT should be set but it is clear!");
         }
         else if(r[0] == '0' && getSystemFlag(FLAG_ASLIFT)) {
-          printf("\nSystem flag ASLIFT should be clear but it is set!\n");
-          abortTest();
+          processError("system flag ASLIFT should be clear but it is set!");
         }
       }
       else if(!strcmp(l+3, "YMD")) {
         if(r[0] == '1' && !getSystemFlag(FLAG_YMD)) {
-          printf("\nSystem flag YMD should be set but it is clear!\n");
-          abortTest();
+          processError("system flag YMD should be set but it is clear!");
         }
         else if(r[0] == '0' && getSystemFlag(FLAG_YMD)) {
-          printf("\nSystem flag YMD should be clear but it is set!\n");
-          abortTest();
+          processError("system flag YMD should be clear but it is set!");
         }
       }
       else if(!strcmp(l+3, "MDY")) {
         if(r[0] == '1' && !getSystemFlag(FLAG_MDY)) {
-          printf("\nSystem flag MDY should be set but it is clear!\n");
-          abortTest();
+          processError("system flag MDY should be set but it is clear!");
         }
         else if(r[0] == '0' && getSystemFlag(FLAG_MDY)) {
-          printf("\nSystem flag MDY should be clear but it is set!\n");
-          abortTest();
+          processError("system flag MDY should be clear but it is set!");
         }
       }
       else if(!strcmp(l+3, "DMY")) {
         if(r[0] == '1' && !getSystemFlag(FLAG_DMY)) {
-          printf("\nSystem flag DMY should be set but it is clear!\n");
-          abortTest();
+          processError("system flag DMY should be set but it is clear!");
         }
         else if(r[0] == '0' && getSystemFlag(FLAG_DMY)) {
-          printf("\nSystem flag DMY should be clear but it is set!\n");
-          abortTest();
+          processError("system flag DMY should be clear but it is set!");
         }
       }
       else {
-        printf("\nMissformed numbered flag checking. After FL_ there shall be a number from 0 to 111, a lettered, or a system flag.\n");
-        abortTest();
+        processError("missformed numbered flag checking. After FL_ there shall be a number from 0 to 111, a lettered, or a system flag.");
       }
     }
   }
@@ -1510,31 +1514,26 @@ void checkExpectedOutParameter(char *p) {
   else if(strcmp(l, "IM") == 0) {
     if(strcmp(r, "1COMPL") == 0) {
       if(shortIntegerMode != SIM_1COMPL) {
-        printf("\nInteger mode should be 1COMPL but it is not!\n");
-        abortTest();
+        processError("integer mode should be 1COMPL but it is not!");
       }
     }
     else if(strcmp(r, "2COMPL") == 0) {
       if(shortIntegerMode != SIM_2COMPL) {
-        printf("\nInteger mode should be 2COMPL but it is not!\n");
-        abortTest();
+        processError("integer mode should be 2COMPL but it is not!");
       }
     }
     else if(strcmp(r, "UNSIGN") == 0) {
       if(shortIntegerMode != SIM_UNSIGN) {
-        printf("\nInteger mode should be UNSIGN but it is not!\n");
-        abortTest();
+        processError("integer mode should be UNSIGN but it is not!");
       }
     }
     else if(strcmp(r, "SIGNMT") == 0) {
       if(shortIntegerMode != SIM_SIGNMT) {
-        printf("\nInteger mode should be SIGNMT but it is not!\n");
-        abortTest();
+        processError("integer mode should be SIGNMT but it is not!");
       }
     }
     else {
-      printf("\nMissformed integer mode checking. The rvalue must be 1COMPL, 2COMPL, UNSIGN or SIGNMT.\n");
-      abortTest();
+      processError("missformed integer mode checking. The rvalue must be 1COMPL, 2COMPL, UNSIGN or SIGNMT.");
     }
   }
 
@@ -1542,19 +1541,16 @@ void checkExpectedOutParameter(char *p) {
   else if(strcmp(l, "CM") == 0) {
     if(strcmp(r, "RECT") == 0) {
       if(getSystemFlag(FLAG_POLAR)) {
-        printf("\ncomplex mode should be RECT but it is not!\n");
-        abortTest();
+        processError("Complex mode should be RECT but it is not!");
       }
     }
     else if(strcmp(r, "POLAR") == 0) {
       if(!getSystemFlag(FLAG_POLAR)) {
-        printf("\ncomplex mode should be POLAR but it is not!\n");
-        abortTest();
+        processError("Complex mode should be POLAR but it is not!");
       }
     }
     else {
-      printf("\nMissformed complex mode checking. The rvalue must be RECT or POLAR.\n");
-      abortTest();
+      processError("missformed complex mode checking. The rvalue must be RECT or POLAR.");
     }
   }
 
@@ -1562,37 +1558,31 @@ void checkExpectedOutParameter(char *p) {
   else if(strcmp(l, "AM") == 0) {
     if(strcmp(r, "DEG") == 0) {
       if(currentAngularMode != amDegree) {
-        printf("\nAngular mode should be DEGREE but it is not!\n");
-        abortTest();
+        processError("angular mode should be DEGREE but it is not!");
       }
     }
     else if(strcmp(r, "DMS") == 0) {
       if(currentAngularMode != amDMS) {
-        printf("\nAngular mode should be DMS but it is not!\n");
-        abortTest();
+        processError("angular mode should be DMS but it is not!");
       }
     }
     else if(strcmp(r, "RAD") == 0) {
       if(currentAngularMode != amRadian) {
-        printf("\nAngular mode should be RAD but it is not!\n");
-        abortTest();
+        processError("angular mode should be RAD but it is not!");
       }
     }
     else if(strcmp(r, "MULTPI") == 0) {
       if(currentAngularMode != amMultPi) {
-        printf("\nAngular mode should be MULTPI but it is not!\n");
-        abortTest();
+        processError("angular mode should be MULTPI but it is not!");
       }
     }
     else if(strcmp(r, "GRAD") == 0) {
       if(currentAngularMode != amGrad) {
-        printf("\nAngular mode should be GRAD but it is not!\n");
-        abortTest();
+        processError("angular mode should be GRAD but it is not!");
       }
     }
     else {
-      printf("\nMissformed angular mode checking. The rvalue must be DEG, DMS, GRAD, RAD or MULTPI.\n");
-      abortTest();
+      processError("missformed angular mode checking. The rvalue must be DEG, DMS, GRAD, RAD or MULTPI.");
     }
   }
 
@@ -1600,19 +1590,16 @@ void checkExpectedOutParameter(char *p) {
   else if(strcmp(l, "SS") == 0) {
     if(strcmp(r, "4") == 0) {
       if(getSystemFlag(FLAG_SSIZE8)) {
-        printf("\nStack size should be 4 but it is not!\n");
-        abortTest();
+        processError("stack size should be 4 but it is not!");
       }
     }
     else if(strcmp(r, "8") == 0) {
       if(!getSystemFlag(FLAG_SSIZE8)) {
-        printf("\nStack size should be 8 but it is not!\n");
-        abortTest();
+        processError("stack size should be 8 but it is not!");
       }
     }
     else {
-      printf("\nMissformed stack size checking. The rvalue must be 4 or 8.\n");
-      abortTest();
+      processError("missformed stack size checking. The rvalue must be 4 or 8.");
     }
   }
 
@@ -1627,18 +1614,16 @@ void checkExpectedOutParameter(char *p) {
       }
       if(ws <= 64) {
         if(shortIntegerWordSize != ws) {
-          printf("\nShort integer word size should be %u but it is %u!\n", ws, shortIntegerWordSize);
-          abortTest();
+          sprintf(msgString, "short integer word size should be %u but it is %u!", ws, shortIntegerWordSize);
+          processError(msgString);
         }
       }
       else {
-        printf("\nMissformed word size checking. The rvalue must be from 0 to 64 (0 is the same as 64).\n");
-        abortTest();
+        processError("missformed word size checking. The rvalue must be from 0 to 64 (0 is the same as 64).");
       }
     }
     else {
-      printf("\nMissformed word size checking. The rvalue must be a number from 0 to 64 (0 is the same as 64).\n");
-      abortTest();
+      processError("missformed word size checking. The rvalue must be a number from 0 to 64 (0 is the same as 64).");
     }
   }
 
@@ -1656,14 +1641,13 @@ void checkExpectedOutParameter(char *p) {
         ((r[9] == 0) ))))))))))))))))))) {
       uint32_t jg = atoi(r);
       if(firstGregorianDay != jg) {
-        printf("\nJ/G should be %u but it is %u!\n", jg, firstGregorianDay);
-        abortTest();
+        sprintf(msgString, "j/G should be %u but it is %u!", jg, firstGregorianDay);
+        processError(msgString);
       }
       firstGregorianDay = atoi(r);
     }
     else {
-      printf("\nMissformed J/G setting. The rvalue must be a number.\n");
-      abortTest();
+      processError("missformed J/G setting. The rvalue must be a number.");
     }
   }
 
@@ -1675,18 +1659,16 @@ void checkExpectedOutParameter(char *p) {
 
       if(sd <= 34) {
         if(significantDigits != sd) {
-          printf("\nNumber of significant digits should be %u but it is %u!\n", sd, significantDigits);
-          abortTest();
+          sprintf(msgString, "number of significant digits should be %u but it is %u!", sd, significantDigits);
+          processError(msgString);
         }
       }
       else {
-        printf("\nMissformed significant digits checking. The rvalue must be from 0 to 34 (0 is the same as 34).\n");
-        abortTest();
+        processError("missformed significant digits checking. The rvalue must be from 0 to 34 (0 is the same as 34).");
       }
     }
     else {
-      printf("\nMissformed significant digits checking. The rvalue must be a number from 0 to 34 (0 is the same as 34).\n");
-      abortTest();
+      processError("missformed significant digits checking. The rvalue must be a number from 0 to 34 (0 is the same as 34).");
     }
   }
 
@@ -1697,18 +1679,16 @@ void checkExpectedOutParameter(char *p) {
 
       if(rm <= 6) {
         if(roundingMode != rm) {
-          printf("\nRounding mode should be %u but it is %u!\n", rm, roundingMode);
-          abortTest();
+          sprintf(msgString, "rounding mode should be %u but it is %u!", rm, roundingMode);
+          processError(msgString);
         }
       }
       else {
-        printf("\nMissformed rounding mode checking. The rvalue must be a number from 0 to 6.\n");
-        abortTest();
+        processError("missformed rounding mode checking. The rvalue must be a number from 0 to 6.");
       }
     }
     else {
-      printf("\nMissformed rounding mode checking. The rvalue must be a number from 0 to 6.\n");
-      abortTest();
+      processError("missformed rounding mode checking. The rvalue must be a number from 0 to 6.");
     }
   }
 
@@ -1720,18 +1700,16 @@ void checkExpectedOutParameter(char *p) {
 
       if(ec <= 28) {
         if(lastErrorCode != ec) {
-          printf("\nLast error code should be %u (%s) but it is %u (%s)!\n", ec, errorMessages[ec], lastErrorCode, errorMessages[lastErrorCode]);
-          abortTest();
+          sprintf(msgString, "last error code should be %d (%s) but it is %d (%s)!", ec, errorMessages[ec], lastErrorCode, errorMessages[lastErrorCode]);
+          processError(msgString);
         }
       }
       else {
-        printf("\nMissformed error code checking. The rvalue must be a number from 0 to 28.\n");
-        abortTest();
+        processError("missformed error code checking. The rvalue must be a number from 0 to 28.");
       }
     }
     else {
-      printf("\nMissformed error code checking. The rvalue must be a number from 0 to 28.\n");
-      abortTest();
+      processError("missformed error code checking. The rvalue must be a number from 0 to 28.");
     }
   }
 
@@ -1750,8 +1728,7 @@ void checkExpectedOutParameter(char *p) {
                                l[1] + 12;
       }
       else {
-        printf("\nMissformed lettered register checking. The letter after R is not a lettered register.\n");
-        abortTest();
+        processError("missformed lettered register checking. The letter after R is not a lettered register.");
       }
     }
 
@@ -1761,15 +1738,13 @@ void checkExpectedOutParameter(char *p) {
             || (l[1] >= '0' && l[1] <= '9' && l[2] >= '0' && l[2] <= '9' && l[3] >= '0' && l[3] <= '9' && l[4] == 0)) {
       regist = atoi(l + 1);
       if(regist > 111 || regist < 0) {
-        printf("\nMissformed numbered register checking. The number after R shall be a number from 0 to 111.\n");
-        abortTest();
+        processError("missformed numbered register checking. The number after R shall be a number from 0 to 111.");
       }
       letter = 0;
     }
 
     else {
-      printf("\nMissformed register checking. After R there shall be a number from 0 to 111 or a lettered register.\n");
-      abortTest();
+      processError("missformed register checking. After R there shall be a number from 0 to 111 or a lettered register.");
     }
 
     // find the : separating the data type and the value
@@ -1778,8 +1753,7 @@ void checkExpectedOutParameter(char *p) {
       i++;
     }
     if(r[i] == 0) {
-      printf("\nMissformed register value. Missing colon between data type and value.\n");
-      abortTest();
+      processError("missformed register value. Missing colon between data type and value.");
     }
 
     // separating the data type and the value
@@ -1829,8 +1803,8 @@ void checkExpectedOutParameter(char *p) {
       else if(strcmp(angMod, "GRAD"  ) == 0) am = amGrad;
       else if(strcmp(angMod, "NONE"  ) == 0) am = amNone;
       else {
-        printf("\nMissformed register real%d angular mode. Unknown angular mode after real value.\n", strcmp(l, "RE16") == 0 ? 16 : 34);
-        abortTest();
+        sprintf(msgString, "missformed register real%d angular mode. Unknown angular mode after real value.", strcmp(l, "RE16") == 0 ? 16 : 34);
+        processError(msgString);
       }
 
 
@@ -1875,7 +1849,7 @@ void checkExpectedOutParameter(char *p) {
           printf("%02x ", (unsigned char)r[i]);
         }
         printf("\n");
-        abortTest();
+        processError("strings not the same size");
       }
 
       for(i=stringByteLength(r + 1), expected=r + 1, is=REGISTER_STRING_DATA(regist); i>0; i--, expected++, is++) {
@@ -1890,7 +1864,7 @@ void checkExpectedOutParameter(char *p) {
             printf("%02x ", (unsigned char)r[i]);
           }
           printf("\n");
-          abortTest();
+          processError("strings different");
         }
       }
     }
@@ -1901,8 +1875,7 @@ void checkExpectedOutParameter(char *p) {
         i++;
       }
       if(r[i] == 0) {
-        printf("\nMissformed register short integer value. Missing # between value and base.\n");
-        abortTest();
+        processError("missformed register short integer value. Missing # between value and base.");
       }
 
       // remove beginning and ending " and removing leading spaces
@@ -1941,8 +1914,7 @@ void checkExpectedOutParameter(char *p) {
         i++;
       }
       if(r[i] == 0) {
-        printf("\nMissformed register complex34 value. Missing i between real and imaginary part.\n");
-        abortTest();
+        processError("missformed register complex34 value. Missing i between real and imaginary part.");
       }
 
       // separate real and imaginary part
@@ -2000,7 +1972,7 @@ void checkExpectedOutParameter(char *p) {
     }
     else if(strcmp(l, "TIME") == 0) {
       int32_t k = 0;
-      bool_t isHms = false;
+      bool isHms = false;
 
       // find the : separating hours and minutes
       i = 0;
@@ -2074,14 +2046,14 @@ void checkExpectedOutParameter(char *p) {
       }
     }
     else {
-      printf("\nMissformed register value. Unknown data type %s for register %s\n", l, p+1);
-      abortTest();
+      sprintf(msgString, "missformed register value. Unknown data type %s for register %s", l, p+1);
+      processError(msgString);
     }
   }
 
   else {
-    printf("\nUnknown checking %s\n", l);
-    abortTest();
+    sprintf(msgString, "unknown checking %s", l);
+    processError(msgString);
   }
 }
 
@@ -2177,8 +2149,8 @@ void functionToCall(char *functionName) {
     }
 
     if(functionIndex >= LAST_ITEM) {
-      printf("\nThe function %s must be somewhere in the indexOfItems array!\n", functionName);
-      abortTest();
+      sprintf(msgString, "the function %s must be somewhere in the indexOfItems array!", functionName);
+      processError(msgString);
     }
 
     //printf("%s=%d\n", functionName, functionIndex);
@@ -2203,27 +2175,28 @@ void functionToCall(char *functionName) {
       }
 
       if(functionIndex >= LAST_ITEM) {
-        printf("\nThe function %s must be somewhere in the indexOfItems array!\n", functionName);
-        abortTest();
+        sprintf(msgString, "the function %s must be somewhere in the indexOfItems array!", functionName);
+        processError(msgString);
       }
 
       return;
     }
   }
 
-  printf("\nCannot find the function to test: check spelling of the function name and remember the name is case sensitive\n");
-  abortTest();
+  processError("cannot find the function to test: check spelling of the function name and remember the name is case sensitive");
 }
 
 
 
-void abortTest(void) {
-  numTestsTotal--;
-  failedTests++;
-  printf("\n%s\n", lastInParameters);
-  printf("%s\n", line);
-  printf("in file %s line %d\n-------------------------------------------------------------------------------------------------------------------------------------\n", fileName, lineNumber);
-  //exit(-1);
+void processError(const char *msg) {
+  char testName[100];
+  if(!testStarted) {
+    sprintf(testName, "parsing test %d", testInFile++);
+    reporterStartTest(testName);
+    testStarted = true;
+  }
+  reporterTestError(msg);
+  testPassed = false;
 }
 
 
@@ -2320,20 +2293,24 @@ void processLine(void) {
   }
 
   else if(strncmp(line, "OUT: ", 5) == 0) {
-    //printf("%s\n", line);
-    callFunction();
-
-    if((numTestsFile++ % 10) == 0) {
-      printf(".");
+    if(testStarted) {
+      reporterEndTest(false, "see error messages");
     }
+    testStarted = true;
+    testPassed = true;
+    sprintf(msgString, "test number %d", testInFile++);
+    reporterStartTest(msgString);
+    callFunction();
 
     numTestsTotal++;
     outParameters(line + 5);
+    reporterEndTest(testPassed, "see error messages");
+    testStarted = false;
   }
 
   else if(line[0] != 0) {
-    printf("\nLine cannot be processed\n%s\n", line);
-    abortTest();
+    printf(msgString, "line %d cannot be processed [%s]", lineNumber, line);
+    processError(msgString);
   }
 }
 
@@ -2348,13 +2325,18 @@ void processOneFile(void) {
   strcat(fileName, ".txt");
   sprintf(filePathName, "%s/%s", filePath, fileName);
 
-  printf("Performing tests from file %s ", filePathName);
+  reporterStartTestSuite(line);
 
   testSuite = fopen(filePathName, "rb");
   if(testSuite == NULL) {
-    printf("Cannot open file %s!\n", fileName);
-    exit(-1);
+    reporterStartTest("test file present");
+    reporterEndTest(false, "no test file found");
+    reporterEndTestSuite();
+    return;
   }
+
+  testInFile = 1;
+  testStarted = false;
 
   // Default function to call
   functionIndex = ITM_NOP;
@@ -2377,11 +2359,12 @@ void processOneFile(void) {
     ignore_result(fgets(line, 9999, testSuite));
     lineNumber++;
   }
+  if(testStarted) {
+    reporterEndTest(false, "see error messages");
+  }
 
   fclose(testSuite);
-
-  //printf(" %d passed successfully\n", numTestsFile);
-  printf("\n");
+  reporterEndTestSuite();
 }
 
 
@@ -2395,32 +2378,37 @@ void checkOneCatalogSorting(const int16_t *catalog, int16_t catalogId, const cha
       break;
     }
   }
+  sprintf(msgString, "catalog %s (%d elements) sort order", catalogName, nbElements);
+  reporterStartTest(msgString);
+
   if(nbElements == 0) {
-    printf("MNU_%s (-%d) not found in structure softmenu!\n", catalogName, catalogId);
-    //exit(1);
+    reporterEndTest(false, "menu not found in structure softmenu!");
+    return;
   }
 
-  printf("Checking sort order of catalog %s (%d elements)\n", catalogName, nbElements);
-
+  bool passed = true;
   for(i=1; i<nbElements; i++) {
     int32_t cmp;
     if((cmp = compareString(indexOfItems[abs(catalog[i - 1])].itemCatalogName, indexOfItems[abs(catalog[i])].itemCatalogName, CMP_EXTENSIVE)) >= 0) {
-      printf("In catalog %s, element %d (item %d) should be after element %d (item %d). cmp = %d\n",
-                         catalogName, i - 1,  catalog[i - 1],             i,       catalog[i],cmp);
-      //exit(1);
+      sprintf(msgString, "element %d (item %d) should be after element %d (item %d); cmp = %d\n",
+                                  i - 1,   catalog[i - 1],             i,       catalog[i],cmp);
+      reporterTestError(msgString);
+      passed = false;
     }
   }
+  reporterEndTest(passed, "elements out of order");
 }
 
 
 
 void checkCatalogsSorting(void) {
-  //compareString(indexOfItems[1048].itemCatalogName, indexOfItems[1049].itemCatalogName, CMP_EXTENSIVE);
+  reporterStartTestSuite("catalogs in sorted order");
   checkOneCatalogSorting(menu_FCNS,       MNU_FCNS,      "FCNS");
   checkOneCatalogSorting(menu_CONST,      MNU_CONST,     "CONST");
   checkOneCatalogSorting(menu_SYSFL,      MNU_SYSFL,     "SYS.FL");
   checkOneCatalogSorting(menu_alpha_INTL, MNU_ALPHAINTL, "alphaINTL");
   checkOneCatalogSorting(menu_alpha_intl, MNU_ALPHAintl, "alphaIntl");
+  reporterEndTestSuite();
 }
 
 
@@ -2430,8 +2418,6 @@ int processTests(const char *listPath) {
   char *listPathDup = strdup(listPath);
   filePath = dirname(listPathDup);
 
-  checkCatalogsSorting();
-
   numTestsTotal = 0;
   failedTests = 0;
 
@@ -2440,6 +2426,10 @@ int processTests(const char *listPath) {
     printf("Cannot open file testSuiteList.txt!\n");
     exit(-1);
   }
+
+  reporterStartTestSuites();
+
+  checkCatalogsSorting();
 
   ignore_result(fgets(line, 9999, fileList));
   while(!feof(fileList)) {
@@ -2452,49 +2442,28 @@ int processTests(const char *listPath) {
 
   fclose(fileList);
 
-  printf("\n************************************\n");
-  printf("* %6d TESTS PASSED SUCCESSFULLY *\n", numTestsTotal);
-  printf("* %6d TEST%c FAILED              *\n", failedTests, failedTests == 1 ? ' ' : 'S');
-  printf("************************************\n");
+  bool passed = reporterEndTestSuites();
 
   free(listPathDup);
 
-  return failedTests > 0;
+  return !passed;
 }
 
 int main(int argc, char* argv[]) {
   int exitCode;
+
+  testStarted = false;
 
   if(argc < 2) {
     printf("Usage: testSuite <list file>\n");
     return 1;
   }
 
-  wp43sMemInBlocks = 0;
+  wp43MemInBlocks = 0;
   gmpMemInBytes = 0;
   mp_set_memory_functions(allocGmp, reallocGmp, freeGmp);
 
   fnReset(CONFIRMED);
-
-  /*
-  longInteger_t li;
-  longIntegerInit(li);
-  uIntToLongInteger(1, li);
-  convertLongIntegerToLongIntegerRegister(li, REGISTER_Z);
-  uIntToLongInteger(2, li);
-  convertLongIntegerToLongIntegerRegister(li, REGISTER_Y);
-  uIntToLongInteger(2203, li);
-  convertLongIntegerToLongIntegerRegister(li, REGISTER_X);
-  fnPower(NOPARAM);
-  fnSwapXY(NOPARAM);
-  fnSubtract(NOPARAM);
-  printf("a\n");
-  fnIsPrime(NOPARAM);
-  printf("b\n");
-  longIntegerFree(li);
-  return 0;
-  */
-
 
   exitCode = processTests(argv[1]);
   printf("The memory owned by GMP should be 0 bytes. Else report a bug please!\n");

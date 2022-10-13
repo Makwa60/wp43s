@@ -1,0 +1,86 @@
+/* SPDX-License-Identifier: GPL-3.0-only */
+/* SPDX-FileCopyrightText: Copyright The WP43 Authors */
+
+/****************************************************/
+/* Replacement of following strings made in WP34S.c */
+/****************************************************/
+/* Replace $radius               with 3px     */
+/**********************************************/
+
+#mainWindow {
+  background:  #000000;
+}
+
+#debugWP43 {
+  font-family: WP43_StandardFont;
+  font-style:  normal;
+  font-weight: normal;
+  font-size:   14px;
+  padding:     0px;
+  color:       white;
+}
+
+#registerL {
+  font-family: WP43_StandardFont;
+  font-style:  normal;
+  font-weight: normal;
+  font-size:   14px;
+  padding:     0px;
+  color:       white;
+}
+
+#memoryStatus {
+  font-family: WP43_StandardFont;
+  font-style:  normal;
+  font-weight: normal;
+  font-size:   13px;
+  padding:     0px;
+  color:       white;
+}
+
+#debugDejaVu {
+  font-family: DejaVu sans mono;
+  font-style:  normal;
+  font-weight: normal;
+  font-size:   10px;
+  padding:     0px;
+  color:       white;
+}
+
+#debugButton {
+  border-radius: $radius;
+  padding:       2px;
+  padding-left:  2px;
+  padding-top:   0px;
+  padding-bottom:0px;
+}
+
+#debugCheckbox {
+  border-radius: $radius;
+  padding:       2px;
+  padding-left:  2px;
+  padding-top:   0px;
+  padding-bottom:0px;
+  color:         white;
+}
+
+#errorBox {
+  font-family:   WP43_StandardFont;
+  font-style:    normal;
+  font-weight:   normal;
+  font-size:     18px;
+}
+
+tooltip {
+  font-family:      WP43_StandardFont;
+  font-size:        20px;
+  background-color: #808080;
+  color:            black;
+  font-weight:      normal;
+  padding:          0px 0px 0px 0px;
+  margin:           0px 0px 0px 0px;
+  border-width:     0px;
+  border-style:     solid;
+  border-color:     #808080;
+  /* text-shadow: 5px 5px 3px #bbbbbb, 7px 7px 3px #ccccFF; */
+}
