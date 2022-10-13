@@ -10,7 +10,7 @@ dmcp_linkargs = [
   '-Wl,--gc-sections',
   '-Wl,--wrap=_malloc_r',
   '-Wl,-Map=' + meson.current_build_dir() + '/WP43.map,--cref',
-  '-T' + meson.current_source_dir() + '/stm32_program.ld']
+  '-T' + meson.current_source_dir() + '/stm32l4.ld']
 
 wp43_dmcp_src = files(
   'hal/audio.c',

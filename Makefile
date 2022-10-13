@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: GPL-3.0-only
 # SPDX-FileCopyrightText: Copyright The WP43 Authors
 
-.PHONY: all clean sim test dmcp docs testPgms dist_windows dist_macos dist_dm42
+.PHONY: all clean sim test dmcp docs testPgms dist_windows dist_macos dist_dmcp
 
 all: sim
 
@@ -12,7 +12,7 @@ endif
 
 clean:
 	rm -f wp43$(EXE)
-	rm -rf wp43-windows* wp43-macos* wp43-dm42*
+	rm -rf wp43-windows* wp43-macos* wp43-dmcp*
 	rm -rf build build.sim build.dmcp build.rel
 
 build.sim:
@@ -22,7 +22,7 @@ build.rel:
 	meson setup build.rel --buildtype=release -DCI_COMMIT_TAG=$(CI_COMMIT_TAG)
 
 build.dmcp:
-	meson setup build.dmcp --cross-file=cross_arm_gcc.build -DCI_COMMIT_TAG=$(CI_COMMIT_TAG)
+	meson setup build.dmcp --cross-file=src/wp43-dmcp/cross_stm32l4_gcc.build -DCI_COMMIT_TAG=$(CI_COMMIT_TAG)
 
 sim: build.sim
 	cd build.sim && ninja sim
@@ -61,11 +61,11 @@ build.rel/wiki: build.rel
 ifeq ($(CI_COMMIT_TAG),)
   WIN_DIST_DIR = wp43-windows
   MAC_DIST_DIR = wp43-macos
-  DM_DIST_DIR = wp43-dm42
+  DM_DIST_DIR = wp43-dmcp
 else
   WIN_DIST_DIR = wp43-windows-$(CI_COMMIT_TAG)
   MAC_DIST_DIR = wp43-macos-$(CI_COMMIT_TAG)
-  DM_DIST_DIR = wp43-dm42-$(CI_COMMIT_TAG)
+  DM_DIST_DIR = wp43-dmcp-$(CI_COMMIT_TAG)
 endif
 
 dist_windows: testPgms build.rel/wiki
@@ -94,12 +94,12 @@ dist_macos: testPgms build.rel
 	zip -r wp43-macos.zip $(MAC_DIST_DIR)
 	rm -rf $(MAC_DIST_DIR)
 
-dist_dm42: dmcp testPgms build.rel/wiki
+dist_dmcp: dmcp testPgms build.rel/wiki
 	mkdir -p $(DM_DIST_DIR)
 	cp build.dmcp/src/wp43-dmcp/WP43.pgm build.dmcp/src/wp43-dmcp/WP43_qspi.bin $(DM_DIST_DIR)
 	cp -r res/offimg $(DM_DIST_DIR)
 	cp res/dmcp/keymap.bin res/dmcp/original_DM42_keymap.bin res/dmcp/testPgms.bin $(DM_DIST_DIR)
 	cp res/artwork/WP43_layout.svg $(DM_DIST_DIR)/WP43_layout.svg
 	cp build.rel/wiki/Installation-on-a-DM42.md $(DM_DIST_DIR)/readme.txt
-	zip -r wp43-dm42.zip $(DM_DIST_DIR)
+	zip -r wp43-dmcp.zip $(DM_DIST_DIR)
 	rm -rf $(DM_DIST_DIR)
