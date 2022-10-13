@@ -1,22 +1,5 @@
-/* This file is part of 43S.
- *
- * 43S is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * 43S is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-/********************************************//**
- * \file differentiate.c
- ***********************************************/
+// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-FileCopyrightText: Copyright The WP43 Authors
 
 #include "solver/differentiate.h"
 
@@ -86,6 +69,8 @@ void fn1stDeriv(uint16_t label) {
   }
 }
 
+
+
 void fn2ndDeriv(uint16_t label) {
   if(label >= FIRST_LABEL && label <= LAST_LABEL) {
     secondDerivative(label);
@@ -132,11 +117,15 @@ void fn2ndDeriv(uint16_t label) {
   }
 }
 
+
+
 void fn1stDerivEq(uint16_t unusedButMandatoryParameter) {
   currentSolverStatus |= SOLVER_STATUS_USES_FORMULA;
   firstDerivative(INVALID_VARIABLE);
   temporaryInformation = TI_1ST_DERIVATIVE;
 }
+
+
 
 void fn2ndDerivEq(uint16_t unusedButMandatoryParameter) {
   currentSolverStatus |= SOLVER_STATUS_USES_FORMULA;
@@ -159,6 +148,8 @@ static void deriv_found_lbl(calcRegister_t deltaX, real_t *h) {
     realCopy(const_1on10, h);
   }
 }
+
+
 
 static void deriv_default_h(real_t *h) {
   calcRegister_t deltaX;
@@ -186,6 +177,7 @@ static void deriv_default_h(real_t *h) {
 }
 
 
+
 static void _differentiatorIteration(calcRegister_t label, real_t *r0) {
   reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE, amNone);
   realToReal34(r0, REGISTER_REAL34_DATA(REGISTER_X));
@@ -211,6 +203,7 @@ static void _differentiatorIteration(calcRegister_t label, real_t *r0) {
     realCopy(const_NaN, r0);
   }
 }
+
 
 
 /* Eval f(X + k h) k on stack */
@@ -241,6 +234,7 @@ static bool deriv_eval_func(calcRegister_t label, real_t *r0, const real_t *r3, 
 }
 
 
+
 static void deriv2_4point(real_t *r1, const real_t *r4, realContext_t *realContext) {
   real_t tmpX;
   realMultiply(const_12, r4, &tmpX, realContext);
@@ -248,6 +242,7 @@ static void deriv2_4point(real_t *r1, const real_t *r4, realContext_t *realConte
   realDivide(const_1, &tmpX, &tmpX, realContext);
   realMultiply(r1, &tmpX, r1, realContext);
 }
+
 
 
 static void _1stDerivative(calcRegister_t label, const real_t *x, real_t *res, realContext_t *realContext) {
@@ -417,6 +412,8 @@ void firstDerivative(calcRegister_t label) {
   fnFillStack(NOPARAM);
   convertRealToReal34ResultRegister(&x, REGISTER_X);
 }
+
+
 
 void secondDerivative(calcRegister_t label) {
   real_t x;

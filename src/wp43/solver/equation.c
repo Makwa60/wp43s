@@ -1,22 +1,5 @@
-/* This file is part of 43S.
- *
- * 43S is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * 43S is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-/********************************************//**
- * \file equation.c
- ***********************************************/
+// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-FileCopyrightText: Copyright The WP43 Authors
 
 #include "solver/equation.h"
 
@@ -39,8 +22,6 @@
 #include <stdbool.h>
 
 #include "wp43.h"
-
-
 
 #if !defined(TESTSUITE_BUILD)
   typedef struct {
@@ -88,7 +69,6 @@
   };
 #endif // !TESTSUITE_BUILD
 
-
 void fnEqNew(uint16_t unusedButMandatoryParameter) {
   if(numberOfFormulae == 0) {
     allFormulae = allocWp43(TO_BLOCKS(sizeof(formulaHeader_t)));
@@ -132,6 +112,8 @@ void fnEqNew(uint16_t unusedButMandatoryParameter) {
   fnEqEdit(NOPARAM);
 }
 
+
+
 void fnEqEdit(uint16_t unusedButMandatoryParameter) {
   #if !defined(TESTSUITE_BUILD)
     const char *equationString = TO_PCMEMPTR(allFormulae[currentFormula].pointerToFormulaData);
@@ -150,9 +132,13 @@ void fnEqEdit(uint16_t unusedButMandatoryParameter) {
   #endif // !TESTSUITE_BUILD
 }
 
+
+
 void fnEqDelete(uint16_t unusedButMandatoryParameter) {
   deleteEquation(currentFormula);
 }
+
+
 
 void fnEqCursorLeft(uint16_t unusedButMandatoryParameter) {
   if(xCursor > 0) {
@@ -160,11 +146,15 @@ void fnEqCursorLeft(uint16_t unusedButMandatoryParameter) {
   }
 }
 
+
+
 void fnEqCursorRight(uint16_t unusedButMandatoryParameter) {
   if(xCursor < (uint32_t)stringGlyphLength(aimBuffer)) {
     ++xCursor;
   }
 }
+
+
 
 void fnEqCalc(uint16_t unusedButMandatoryParameter) {
   #if defined(DEBUGUNDO)
@@ -202,6 +192,8 @@ void setEquation(uint16_t equationId, const char *equationString) {
   allFormulae[equationId].sizeInBlocks = newSizeInBlocks;
   xcopy(TO_PCMEMPTR(allFormulae[equationId].pointerToFormulaData), equationString, stringByteLength(equationString) + 1);
 }
+
+
 
 void deleteEquation(uint16_t equationId) {
   if(equationId < numberOfFormulae) {
@@ -262,6 +254,8 @@ void deleteEquation(uint16_t equationId) {
     (*bufPtr) += 2;
   }
 
+
+
   static uint32_t _checkExponent(const char *strPtr) {
     uint32_t digits = 0;
     while(1) {
@@ -302,6 +296,8 @@ void deleteEquation(uint16_t equationId) {
     }
   }
 
+
+
   static void _addSpace(char **bufPtr, int16_t *strWidth, uint32_t *doubleBytednessHistory) { // space between an operand and an operator
     bool spaceShallBeAdded = true;
     if(((*bufPtr) >= (tmpString + 2)) && (compareChar((*bufPtr) - 2, STD_SPACE_PUNCTUATION) == 0)) {
@@ -321,6 +317,8 @@ void deleteEquation(uint16_t equationId) {
     }
   }
 #endif // !TESTSUITE_BUILD
+
+
 
 void showEquation(uint16_t equationId, uint16_t startAt, uint16_t cursorAt, bool dryRun, bool *cursorShown, bool *rightEllipsis) {
   #if !defined(TESTSUITE_BUILD)
@@ -701,6 +699,8 @@ void showEquation(uint16_t equationId, uint16_t startAt, uint16_t cursorAt, bool
     }
   }
 
+
+
   static void _pushNumericStack(char *mvarBuffer, const real34_t *re, const real34_t *im) {
     if((*PARSER_NUMERIC_STACK_POINTER) < PARSER_NUMERIC_STACK_SIZE) {
       real34Copy(re, &PARSER_NUMERIC_STACK[*PARSER_NUMERIC_STACK_POINTER * 2    ]);
@@ -714,6 +714,8 @@ void showEquation(uint16_t equationId, uint16_t startAt, uint16_t cursorAt, bool
       #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
     }
   }
+
+
 
   static void _popNumericStack(char *mvarBuffer, real34_t *re, real34_t *im) {
     if((*PARSER_NUMERIC_STACK_POINTER) > 0) {
@@ -734,6 +736,8 @@ void showEquation(uint16_t equationId, uint16_t startAt, uint16_t cursorAt, bool
       }
     }
   }
+
+
 
   static void _runDyadicFunction(char *mvarBuffer, uint16_t item) {
     real34_t re, im;
@@ -773,6 +777,8 @@ void showEquation(uint16_t equationId, uint16_t startAt, uint16_t cursorAt, bool
     fnDrop(NOPARAM);
   }
 
+
+
   static void _runMonadicFunction(char *mvarBuffer, uint16_t item) {
     real34_t re, im;
     liftStack();
@@ -799,6 +805,8 @@ void showEquation(uint16_t equationId, uint16_t startAt, uint16_t cursorAt, bool
     }
     fnDrop(NOPARAM);
   }
+
+
 
   static void _runEqFunction(char *mvarBuffer, uint16_t item) {
     switch(item) {
@@ -832,6 +840,8 @@ void showEquation(uint16_t equationId, uint16_t startAt, uint16_t cursorAt, bool
       }
     }
   }
+
+
 
   static void _processOperator(uint16_t func, char *mvarBuffer) {
     uint32_t opStackTop = 0xffffffffu;
@@ -994,6 +1004,8 @@ void showEquation(uint16_t equationId, uint16_t startAt, uint16_t cursorAt, bool
       #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
     }
   }
+
+
 
   static void _parseWord(char *strPtr, uint16_t parseMode, uint16_t parserHint, char *mvarBuffer) {
     uint32_t tmpVal = 0;
@@ -1181,6 +1193,8 @@ void showEquation(uint16_t equationId, uint16_t startAt, uint16_t cursorAt, bool
     }
   }
 #endif // !TESTSUITE_BUILD
+
+
 
 void parseEquation(uint16_t equationId, uint16_t parseMode, char *buffer, char *mvarBuffer) {
   #if !defined(TESTSUITE_BUILD)

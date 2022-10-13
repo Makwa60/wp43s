@@ -1,22 +1,5 @@
-/* This file is part of 43S.
- *
- * 43S is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * 43S is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-/********************************************//**
- * \file manage.c
- ***********************************************/
+// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-FileCopyrightText: Copyright The WP43 Authors
 
 #include "programming/manage.h"
 
@@ -99,8 +82,6 @@
 //  +-----+------+----+----------+
 //
 //  freeProgramBytes = 1
-
-
 
 void scanLabelsAndPrograms(void) {
   uint32_t stepNumber = 0;
@@ -337,6 +318,8 @@ void scrollPemBackwards(void) {
     --firstDisplayedLocalStepNumber;
   defineFirstDisplayedStep();
 }
+
+
 
 void scrollPemForwards(void) {
   if(getNumberOfSteps() > 6) {
@@ -583,6 +566,8 @@ static void _insertInProgram(const uint8_t *dat, uint16_t size) {
   dynamicMenuItem = _dynamicMenuItem;
 }
 
+
+
 void pemAlpha(int16_t item) {
   #if !defined(TESTSUITE_BUILD)
     if(!getSystemFlag(FLAG_ALPHA)) {
@@ -660,6 +645,8 @@ void pemAlpha(int16_t item) {
   #endif // !TESTSUITE_BUILD
 }
 
+
+
 void pemCloseAlphaInput(void) {
   #if !defined(TESTSUITE_BUILD)
     aimBuffer[0] = 0;
@@ -671,6 +658,8 @@ void pemCloseAlphaInput(void) {
     firstDisplayedStep = findNextStep(firstDisplayedStep);
   #endif // !TESTSUITE_BUILD
 }
+
+
 
 void pemAddNumber(int16_t item) {
   #if !defined(TESTSUITE_BUILD)
@@ -780,6 +769,8 @@ void pemAddNumber(int16_t item) {
   #endif // !TESTSUITE_BUILD
 }
 
+
+
 void pemCloseNumberInput(void) {
   #if !defined(TESTSUITE_BUILD)
     deleteStepsFromTo(currentStep.ram, findNextStep_ram(currentStep.ram));
@@ -827,6 +818,8 @@ void pemCloseNumberInput(void) {
   #endif // TESTSUITE_BUILD
 }
 
+
+
 static void _pemCloseTimeInput(void) {
   #if !defined(TESTSUITE_BUILD)
     switch(nimNumberPart) {
@@ -849,6 +842,8 @@ static void _pemCloseTimeInput(void) {
     }
   #endif // !TESTSUITE_BUILD
 }
+
+
 
 static void _pemCloseDateInput(void) {
   #if !defined(TESTSUITE_BUILD)
@@ -877,6 +872,8 @@ static void _pemCloseDateInput(void) {
   #endif // !TESTSUITE_BUILD
 }
 
+
+
 static void _pemCloseDmsInput(void) {
   #if !defined(TESTSUITE_BUILD)
     switch(nimNumberPart) {
@@ -899,6 +896,8 @@ static void _pemCloseDmsInput(void) {
     }
   #endif // !TESTSUITE_BUILD
 }
+
+
 
 void insertStepInProgram(int16_t func) {
   uint32_t opBytes = (func >= 128) ? 2 : 1;

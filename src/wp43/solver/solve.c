@@ -1,22 +1,5 @@
-/* This file is part of 43S.
- *
- * 43S is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * 43S is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-/********************************************//**
- * \file solve.c
- ***********************************************/
+// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-FileCopyrightText: Copyright The WP43 Authors
 
 #include "solver/solve.h"
 
@@ -95,6 +78,8 @@ void fnPgmSlv(uint16_t label) {
   }
 }
 
+
+
 static bool _realSolverFirstGuesses(calcRegister_t regist, real34_t *val) {
   if(getRegisterDataType(regist) == dtReal34 && getRegisterAngularMode(regist) == amNone) {
     real34Copy(REGISTER_REAL34_DATA(regist), val);
@@ -106,6 +91,8 @@ static bool _realSolverFirstGuesses(calcRegister_t regist, real34_t *val) {
   }
   return false;
 }
+
+
 
 void fnSolve(uint16_t labelOrVariable) {
   if((labelOrVariable >= FIRST_LABEL && labelOrVariable <= LAST_LABEL) || (labelOrVariable >= REGISTER_X && labelOrVariable <= REGISTER_T)) {
@@ -217,6 +204,8 @@ void fnSolve(uint16_t labelOrVariable) {
   }
 }
 
+
+
 void fnSolveVar(uint16_t unusedButMandatoryParameter) {
   #if !defined(TESTSUITE_BUILD)
   const char *var = (char *)getNthString(dynamicSoftmenu[softmenuStack[0].softmenuId].menuContent, dynamicMenuItem);
@@ -240,6 +229,8 @@ void fnSolveVar(uint16_t unusedButMandatoryParameter) {
   }
   #endif // !TESTSUITE_BUILD
 }
+
+
 
 #if !defined(TESTSUITE_BUILD)
   static void _solverIteration(real34_t *res) {
@@ -275,18 +266,22 @@ void fnSolveVar(uint16_t unusedButMandatoryParameter) {
     }
   }
 
-static void _executeSolver(calcRegister_t variable, const real34_t *val, real34_t *res) {
-  reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE, amNone);
-  real34Copy(val, REGISTER_REAL34_DATA(REGISTER_X));
-  if(currentSolverStatus & SOLVER_STATUS_TVM_APPLICATION) {
-    copySourceRegisterToDestRegister(REGISTER_X, variable);
+
+
+  static void _executeSolver(calcRegister_t variable, const real34_t *val, real34_t *res) {
+    reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE, amNone);
+    real34Copy(val, REGISTER_REAL34_DATA(REGISTER_X));
+    if(currentSolverStatus & SOLVER_STATUS_TVM_APPLICATION) {
+      copySourceRegisterToDestRegister(REGISTER_X, variable);
+    }
+    else {
+      reallyRunFunction(ITM_STO, variable);
+      fnFillStack(NOPARAM);
+    }
+    _solverIteration(res);
   }
-  else {
-    reallyRunFunction(ITM_STO, variable);
-    fnFillStack(NOPARAM);
-  }
-  _solverIteration(res);
-}
+
+
 
   static void _linearInterpolation(const real_t *a, const real_t *b, const real_t *fa, const real_t *fb, real_t *res, real_t *slope, realContext_t *realContext) {
     real_t amb, famfb;
@@ -301,6 +296,8 @@ static void _executeSolver(calcRegister_t variable, const real34_t *val, real34_
       realSubtract(b, &amb, res, realContext);
     }
   }
+
+
 
   static void _inverseQuadraticInterpolation(const real_t *a, const real_t *b, const real_t *c, const real_t *fa, const real_t *fb, const real_t *fc, real_t *res, realContext_t *realContext) {
     real_t val, num, den, tmp;
@@ -329,6 +326,8 @@ static void _executeSolver(calcRegister_t variable, const real34_t *val, real34_
     realFMA(&num, &den, &val, res, realContext);
   }
 #endif // !TESTSUITE_BUILD
+
+
 
 int solver(calcRegister_t variable, const real34_t *y, const real34_t *x, real34_t *resZ, real34_t *resY, real34_t *resX) {
   #if !defined(TESTSUITE_BUILD)
