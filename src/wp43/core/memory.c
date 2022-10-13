@@ -1,18 +1,5 @@
-/* This file is part of 43S.
- *
- * 43S is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * 43S is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
- */
+// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-FileCopyrightText: Copyright The WP43 Authors
 
 #include "core/memory.h"
 
@@ -38,6 +25,8 @@ int32_t getFreeRamMemory(void) {
   return TO_BYTES(freeMem);
 }
 
+
+
 #if !defined(DMCP_BUILD)
   void debugMemory(const char *message) {
     printf("\n%s\nWP43 owns %6" PRIu64 " bytes and GMP owns %6" PRIu64 " bytes (%" PRId32 " bytes free)\n", message, (uint64_t)TO_BYTES(wp43MemInBlocks), (uint64_t)gmpMemInBytes, getFreeRamMemory());
@@ -48,6 +37,8 @@ int32_t getFreeRamMemory(void) {
     printf("\n");
   }
 #endif // !DMCP_BUILD
+
+
 
 bool isMemoryBlockAvailable(size_t sizeInBlocks) {
   int i;
@@ -60,8 +51,6 @@ bool isMemoryBlockAvailable(size_t sizeInBlocks) {
 
   return false;
 }
-
-
 
 
 
@@ -91,6 +80,8 @@ void *allocWp43(size_t sizeInBlocks) {
   }
 }
 
+
+
 void *reallocWp43(void *pcMemPtr, size_t oldSizeInBlocks, size_t newSizeInBlocks) {
   #if !defined(DMCP_BUILD)
     //if(debugMemAllocation) {
@@ -117,6 +108,8 @@ void *reallocWp43(void *pcMemPtr, size_t oldSizeInBlocks, size_t newSizeInBlocks
   }
 }
 
+
+
 void freeWp43(void *pcMemPtr, size_t sizeInBlocks) {
   if(pcMemPtr == NULL) {
     return;
@@ -140,8 +133,6 @@ void freeWp43(void *pcMemPtr, size_t sizeInBlocks) {
 
 
 
-
-
 void *allocGmp(size_t sizeInBytes) {
   #if !defined(DMCP_BUILD)
     //if(debugMemAllocation) {
@@ -160,6 +151,8 @@ void *allocGmp(size_t sizeInBytes) {
   //return freeListAlloc(TO_BLOCKS(sizeInBytes));
   return malloc(sizeInBytes);
 }
+
+
 
 void *reallocGmp(void *pcMemPtr, size_t oldSizeInBytes, size_t newSizeInBytes) {
   #if !defined(DMCP_BUILD)
@@ -181,6 +174,8 @@ void *reallocGmp(void *pcMemPtr, size_t oldSizeInBytes, size_t newSizeInBytes) {
   //return freeListRealloc(pcMemPtr, TO_BLOCKS(oldSizeInBytes), TO_BLOCKS(newSizeInBytes));
   return realloc(pcMemPtr, newSizeInBytes);
 }
+
+
 
 void freeGmp(void *pcMemPtr, size_t sizeInBytes) {
   #if !defined(DMCP_BUILD)
@@ -255,6 +250,7 @@ void resizeProgramMemory(uint16_t newSizeInBlocks) {
   beginOfProgramMemory = newProgramMemoryPointer;
   //debugMemory("resizeProgramMemory : end");
 }
+
 
 
 #if defined(PC_BUILD)
@@ -676,6 +672,8 @@ void resizeProgramMemory(uint16_t newSizeInBlocks) {
       }
     }
   }
+
+
 
   void ramDump(void) {
     for(calcRegister_t regist=0; regist<FIRST_LOCAL_REGISTER; regist++) {

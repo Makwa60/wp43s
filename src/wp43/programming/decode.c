@@ -1,22 +1,5 @@
-/* This file is part of 43S.
- *
- * 43S is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * 43S is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-/********************************************//**
- * \file decode.c
- ***********************************************/
+// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-FileCopyrightText: Copyright The WP43 Authors
 
 #include "programming/decode.h"
 
@@ -99,6 +82,7 @@ TO_QSPI const char baseChars[36] = "??" STD_BASE_1 STD_BASE_2 STD_BASE_3 STD_BAS
   }
 
 
+
   void listLabelsAndPrograms(void) {
     printf("\nContent of labelList\n");
     printf("num program  step label\n");
@@ -158,11 +142,13 @@ TO_QSPI const char baseChars[36] = "??" STD_BASE_1 STD_BASE_2 STD_BASE_3 STD_BAS
 #endif // !DMCP_BUILD
 
 
+
 static void getStringLabelOrVariableName(uint8_t *stringAddress) {
   uint8_t stringLength = *(uint8_t *)(stringAddress++);
   xcopy(tmpStringLabelOrVariableName, stringAddress, stringLength);
   tmpStringLabelOrVariableName[stringLength] = 0;
 }
+
 
 
 static void getIndirectRegister(uint8_t *paramAddress, const char *op) {
@@ -182,10 +168,12 @@ static void getIndirectRegister(uint8_t *paramAddress, const char *op) {
 }
 
 
+
 static void getIndirectVariable(uint8_t *stringAddress, const char *op) {
   getStringLabelOrVariableName(stringAddress);
   sprintf(tmpString, "%s " STD_RIGHT_ARROW STD_LEFT_SINGLE_QUOTE "%s" STD_RIGHT_SINGLE_QUOTE, op, tmpStringLabelOrVariableName);
 }
+
 
 
 static void decodeOp(uint8_t *paramAddress, const char *op, uint16_t paramMode, uint16_t tamMax) {
@@ -378,6 +366,7 @@ static void decodeOp(uint8_t *paramAddress, const char *op, uint16_t paramMode, 
 }
 
 
+
 static void _decodeNumeral(char *startPtr, const char *srcStartPtr, bool isLongInt, char **updatedTgtPtr, const char **updatedSrcPtr) {
   int32_t digit;
   char *strPtr = startPtr;
@@ -450,6 +439,8 @@ static void _decodeNumeral(char *startPtr, const char *srcStartPtr, bool isLongI
     *updatedSrcPtr = srcStr;
   }
 }
+
+
 
 static void decodeLiteral(uint8_t *literalAddress) {
   switch(*(uint8_t *)(literalAddress++)) {
@@ -677,6 +668,7 @@ static void decodeLiteral(uint8_t *literalAddress) {
 }
 
 
+
 void decodeOneStep(pgmPtr_t step) {
   if(currentProgramNumber > (numberOfPrograms - numberOfProgramsInFlash)) { // Flash
     readStepInFlashPgmLibrary((uint8_t *)(tmpString + 1600), 400, step.flash);
@@ -686,6 +678,8 @@ void decodeOneStep(pgmPtr_t step) {
     decodeOneStep_ram(step.ram);
   }
 }
+
+
 
 void decodeOneStep_ram(uint8_t *step) {
   uint16_t op = *(step++);

@@ -1,22 +1,5 @@
-/* This file is part of 43S.
- *
- * 43S is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * 43S is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-/********************************************//**
- * \file clcvar.c
- ***********************************************/
+// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-FileCopyrightText: Copyright The WP43 Authors
 
 #include "programming/clcvar.h"
 
@@ -38,8 +21,6 @@
 #include <stdio.h>
 
 #include "wp43.h"
-
-
 
 #if !defined(TESTSUITE_BUILD)
   static void _clearVar(calcRegister_t regist) {
@@ -109,11 +90,15 @@
     }
   }
 
+
+
   static void _getStringLabelOrVariableName(uint8_t *stringAddress) {
     uint8_t stringLength = *(uint8_t *)(stringAddress++);
     xcopy(tmpStringLabelOrVariableName, stringAddress, stringLength);
     tmpStringLabelOrVariableName[stringLength] = 0;
   }
+
+
 
   static void _indirectRegister(uint8_t *paramAddress) {
     uint8_t opParam = *(uint8_t *)paramAddress;
@@ -125,12 +110,16 @@
     }
   }
 
+
+
   static void _indirectVariable(uint8_t *stringAddress) {
     calcRegister_t regist;
     _getStringLabelOrVariableName(stringAddress);
     regist = findOrAllocateNamedVariable(tmpStringLabelOrVariableName);
     _clearVar(regist);
   }
+
+
 
   static void _processOp(uint8_t *paramAddress, uint16_t op, uint16_t paramMode) {
     uint8_t opParam = *(uint8_t *)(paramAddress++);
@@ -234,6 +223,8 @@
       }
     }
   }
+
+
 
   static bool _processOneStep(pgmPtr_t step) {
     uint16_t op;

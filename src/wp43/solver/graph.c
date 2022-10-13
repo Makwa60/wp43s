@@ -1,22 +1,5 @@
-/* This file is part of 43S.
- *
- * 43S is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * 43S is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with 43S.  If not, see <htempp://www.gnu.org/licenses/>.
- */
-
-/********************************************//** //JM
- * \file graph.c Graphing module
- ***********************************************/
+// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-FileCopyrightText: Copyright The WP43 Authors
 
 #include "solver/graph.h"
 
@@ -60,14 +43,12 @@
   #undef VERBOSE_SOLVER2
 #endif // PC_BUILD
 
-
-//Todo: involve https://en.wikipedia.org/wiki/Brent%27s_method#Brent's_method
+// TODO: involve https://en.wikipedia.org/wiki/Brent%27s_method#Brent's_method
 
 #define COMPLEXKICKER true       //flag to allow conversion to complex plane if no convergenge found
 #define CHANGE_TO_MOD_SECANT 0   //at iteration nn go to the modified secant method. 0 means immediately
 #define CONVERGE_FACTOR 1.0f        //
 #define NUMBERITERATIONS 35      // Must be smaller than LIM (see STATS)
-
 
 void fnPlot(uint16_t unusedButMandatoryParameter) {
   lastPlotMode = PLOT_NOTHING;
@@ -75,8 +56,9 @@ void fnPlot(uint16_t unusedButMandatoryParameter) {
 }
 
 
+
 #if !defined(TESTSUITE_BUILD)
-  static void fnRCL(int16_t inp) { //DONE
+  static void fnRCL(int16_t inp) {
     setSystemFlag(FLAG_ASLIFT);
     if(inp == TEMP_REGISTER_1) {
       liftStack();
@@ -87,6 +69,8 @@ void fnPlot(uint16_t unusedButMandatoryParameter) {
     }
   }
 
+
+
   static void convertDoubleToReal34RegisterPush(double x, calcRegister_t destination) {
     setSystemFlag(FLAG_ASLIFT);
     liftStack();
@@ -95,7 +79,8 @@ void fnPlot(uint16_t unusedButMandatoryParameter) {
   }
 
 
-  static void initialize_function(void){
+
+  static void initialize_function(void) {
     if(graphVariable > 0) {
       #if defined(PC_BUILD)
         //printf(">>> graphVariable = %i\n", graphVariable);
@@ -118,7 +103,8 @@ void fnPlot(uint16_t unusedButMandatoryParameter) {
   }
 
 
-  static void execute_rpn_function(void){
+
+  static void execute_rpn_function(void) {
     if(graphVariable <= 0 || graphVariable > 65535) {
       return;
     }
@@ -151,6 +137,8 @@ void fnPlot(uint16_t unusedButMandatoryParameter) {
     }
   }
 
+
+
   static bool regIsLowerThanTol(calcRegister_t REG, calcRegister_t TOL) {
     return (    (real34IsZero(REGISTER_REAL34_DATA(REG)) && (getRegisterDataType(REG) == dtComplex34 ? real34IsZero(REGISTER_IMAG34_DATA(REG)) : 1 ))
              || (    (real34CompareAbsLessThan(REGISTER_REAL34_DATA(REG), REGISTER_REAL34_DATA(TOL)))
@@ -160,7 +148,9 @@ void fnPlot(uint16_t unusedButMandatoryParameter) {
   }
 
 
+
   #define ADD_RAN true
+
   static void divFunction(bool addRandom, calcRegister_t TOL) {
     if(  (real34IsZero(REGISTER_REAL34_DATA(REGISTER_Y)) && (getRegisterDataType(REGISTER_Y) == dtComplex34 ? real34IsZero(REGISTER_IMAG34_DATA(REGISTER_Y)) : 1 ) )
        || real34IsNaN(REGISTER_REAL34_DATA(REGISTER_Y))
@@ -195,11 +185,11 @@ void fnPlot(uint16_t unusedButMandatoryParameter) {
   }
 
 
+
   int16_t osc = 0;
   uint8_t DXR = 0, DYR = 0, DXI = 0, DYI = 0;
 
-
-  void check_osc(uint8_t ii){
+  void check_osc(uint8_t ii) {
      switch(ii & 0b00111111) {
        case 0b001111:
        case 0b011110:
@@ -224,6 +214,8 @@ void fnPlot(uint16_t unusedButMandatoryParameter) {
        }
      }
   }
+
+
 
   //###################################################################################
   //PLOTTER
@@ -267,6 +259,8 @@ void fnPlot(uint16_t unusedButMandatoryParameter) {
       #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
     }
   }
+
+
 
   static void AddtoDrawMx() {
     real_t x, y;
@@ -344,9 +338,10 @@ void graph_eqn(uint16_t mode) {
   #endif // !TESTSUITE_BUILD
 }
 
+
+
 //###################################################################################
 //SOLVER
-
 #define __STARTX0 81
 #define __STARTX1 82
 #define __TICKS  83
@@ -365,7 +360,6 @@ void graph_eqn(uint16_t mode) {
 #define __F      96
 #define __TOL    97
 #define __L1     98
-
 
 #if !defined(TESTSUITE_BUILD)
   static void graph_solver() {         //Input parameters in registers SREG_STARTX0, SREG_STARTX1
@@ -1038,9 +1032,6 @@ void graph_eqn(uint16_t mode) {
   }
 #endif // !TESTSUITE_BUILD
 
-
-
-//-----------------------------------------------------//-----------------------------------------------------
 
 
 void fnEqSolvGraph (uint16_t func) {
