@@ -711,8 +711,12 @@ void clearScreen(void) {
       }
 
       else if(temporaryInformation == TI_WHO && regist == REGISTER_X) {
-        showString(whoStr1, &standardFont, 1, Y_POSITION_OF_REGISTER_X_LINE - REGISTER_LINE_HEIGHT*(regist - REGISTER_X) - 3, vmNormal, true, true);
-        showString(whoStr2, &standardFont, 1, Y_POSITION_OF_REGISTER_X_LINE - REGISTER_LINE_HEIGHT*(regist - REGISTER_X) + 17, vmNormal, true, true);
+        #if defined(DMCP_BUILD)
+          showString(whoStr1, &standardFont, 1, Y_POSITION_OF_REGISTER_X_LINE - REGISTER_LINE_HEIGHT*(regist - REGISTER_X) - 3, vmNormal, true, true);
+          showString(whoStr2, &standardFont, 1, Y_POSITION_OF_REGISTER_X_LINE - REGISTER_LINE_HEIGHT*(regist - REGISTER_X) + 17, vmNormal, true, true);
+        #else // !DMCP_BUILD
+          showString(whoStr1, &standardFont, 1, Y_POSITION_OF_REGISTER_X_LINE - REGISTER_LINE_HEIGHT*(regist - REGISTER_X) + 6, vmNormal, true, true);
+        #endif // DMCP_BUILD
       }
 
       else if(temporaryInformation == TI_VERSION && regist == REGISTER_X) {
