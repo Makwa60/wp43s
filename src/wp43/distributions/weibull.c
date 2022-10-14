@@ -1,22 +1,5 @@
-/* This file is part of 43S.
- *
- * 43S is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * 43S is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-/********************************************//**
- * \file weibull.c
- ***********************************************/
+// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-FileCopyrightText: Copyright The WP43 Authors
 
 #include "distributions/weibull.h"
 
@@ -31,7 +14,6 @@
 #include <stdbool.h>
 
 #include "wp43.h"
-
 
 static bool checkParamWeibull(real_t *x, real_t *i, real_t *j) {
   if(   ((getRegisterDataType(REGISTER_X) != dtReal34) && (getRegisterDataType(REGISTER_X) != dtLongInteger))
@@ -87,6 +69,7 @@ static bool checkParamWeibull(real_t *x, real_t *i, real_t *j) {
 }
 
 
+
 void fnWeibullP(uint16_t unusedButMandatoryParameter) {
   real_t val, shape, lifetime, ans;
 
@@ -102,6 +85,8 @@ void fnWeibullP(uint16_t unusedButMandatoryParameter) {
 
   adjustResult(REGISTER_X, false, false, REGISTER_X, -1, -1);
 }
+
+
 
 void fnWeibullL(uint16_t unusedButMandatoryParameter) {
   real_t val, shape, lifetime, ans;
@@ -119,6 +104,8 @@ void fnWeibullL(uint16_t unusedButMandatoryParameter) {
   adjustResult(REGISTER_X, false, false, REGISTER_X, -1, -1);
 }
 
+
+
 void fnWeibullR(uint16_t unusedButMandatoryParameter) {
   real_t val, shape, lifetime, ans;
 
@@ -134,6 +121,8 @@ void fnWeibullR(uint16_t unusedButMandatoryParameter) {
 
   adjustResult(REGISTER_X, false, false, REGISTER_X, -1, -1);
 }
+
+
 
 void fnWeibullI(uint16_t unusedButMandatoryParameter) {
   real_t val, shape, lifetime, ans;
@@ -182,6 +171,8 @@ void WP34S_Pdf_Weib(const real_t *x, const real_t *b, const real_t *t, real_t *r
   realDivide(&r, b, res, realContext);
 }
 
+
+
 void WP34S_Cdfu_Weib(const real_t *x, const real_t *b, const real_t *t, real_t *res, realContext_t *realContext) {
   real_t p;
 
@@ -198,6 +189,8 @@ void WP34S_Cdfu_Weib(const real_t *x, const real_t *b, const real_t *t, real_t *
   realChangeSign(&p);
   realExp(&p, res, realContext);
 }
+
+
 
 void WP34S_Cdf_Weib(const real_t *x, const real_t *b, const real_t *t, real_t *res, realContext_t *realContext) {
   real_t p;
@@ -216,6 +209,8 @@ void WP34S_Cdf_Weib(const real_t *x, const real_t *b, const real_t *t, real_t *r
   WP34S_ExpM1(&p, res, realContext);
   realChangeSign(res);
 }
+
+
 
 void WP34S_Qf_Weib(const real_t *x, const real_t *b, const real_t *t, real_t *res, realContext_t *realContext) {
   /* (-ln(1-p) ^ (1/k)) * J */

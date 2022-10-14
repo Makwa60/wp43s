@@ -1,22 +1,5 @@
-/* This file is part of 43S.
- *
- * 43S is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * 43S is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-/********************************************//**
- * \file logistic.c
- ***********************************************/
+// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-FileCopyrightText: Copyright The WP43 Authors
 
 #include "distributions/logistic.h"
 
@@ -31,7 +14,6 @@
 #include <stdbool.h>
 
 #include "wp43.h"
-
 
 static bool checkParamLogistic(real_t *x, real_t *i, real_t *j) {
   if(   ((getRegisterDataType(REGISTER_X) != dtReal34) && (getRegisterDataType(REGISTER_X) != dtLongInteger))
@@ -80,6 +62,7 @@ static bool checkParamLogistic(real_t *x, real_t *i, real_t *j) {
 }
 
 
+
 void fnLogisticP(uint16_t unusedButMandatoryParameter) {
   real_t val, mu, s, ans;
 
@@ -95,6 +78,8 @@ void fnLogisticP(uint16_t unusedButMandatoryParameter) {
 
   adjustResult(REGISTER_X, false, false, REGISTER_X, -1, -1);
 }
+
+
 
 void fnLogisticL(uint16_t unusedButMandatoryParameter) {
   real_t val, mu, s, ans;
@@ -112,6 +97,8 @@ void fnLogisticL(uint16_t unusedButMandatoryParameter) {
   adjustResult(REGISTER_X, false, false, REGISTER_X, -1, -1);
 }
 
+
+
 void fnLogisticR(uint16_t unusedButMandatoryParameter) {
   real_t val, mu, s, ans;
 
@@ -127,6 +114,8 @@ void fnLogisticR(uint16_t unusedButMandatoryParameter) {
 
   adjustResult(REGISTER_X, false, false, REGISTER_X, -1, -1);
 }
+
+
 
 void fnLogisticI(uint16_t unusedButMandatoryParameter) {
   real_t val, mu, s, ans;
@@ -166,6 +155,8 @@ static void cdf_logit_common(const real_t *x, real_t *res, realContext_t *realCo
   realDivide(&p, const_2, res, realContext);
 }
 
+
+
 /* Extra the logistic rescaled parameter (x-J) / 2K */
 static void logistic_param(const real_t *x, const real_t *mu, const real_t *s, real_t *res, realContext_t *realContext) {
   real_t p;
@@ -174,6 +165,8 @@ static void logistic_param(const real_t *x, const real_t *mu, const real_t *s, r
   realAdd(s, s, &p, realContext);
   realDivide(res, &p, res, realContext);
 }
+
+
 
 void WP34S_Pdf_Logit(const real_t *x, const real_t *mu, const real_t *s, real_t *res, realContext_t *realContext) {
   real_t xx, p;
@@ -188,6 +181,8 @@ void WP34S_Pdf_Logit(const real_t *x, const real_t *mu, const real_t *s, real_t 
   realMultiply(&p, const_4, &p, realContext);
   realDivide(const_1, &p, res, realContext);
 }
+
+
 
 void WP34S_Cdfu_Logit(const real_t *x, const real_t *mu, const real_t *s, real_t *res, realContext_t *realContext) {
   real_t xx;
@@ -204,6 +199,8 @@ void WP34S_Cdfu_Logit(const real_t *x, const real_t *mu, const real_t *s, real_t
   cdf_logit_common(&xx, res, realContext);
 }
 
+
+
 void WP34S_Cdf_Logit(const real_t *x, const real_t *mu, const real_t *s, real_t *res, realContext_t *realContext) {
   /* (1 + tanh( (x-J) / 2K)) / 2 */
   real_t xx;
@@ -218,6 +215,8 @@ void WP34S_Cdf_Logit(const real_t *x, const real_t *mu, const real_t *s, real_t 
   //}
   cdf_logit_common(&xx, res, realContext);
 }
+
+
 
 void WP34S_Qf_Logit(const real_t *x, const real_t *mu, const real_t *s, real_t *res, realContext_t *realContext) {
   /* archtanh(2p - 1) * 2K + J */

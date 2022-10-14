@@ -1,22 +1,5 @@
-/* This file is part of 43S.
- *
- * 43S is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * 43S is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-/********************************************//**
- * \file hyper.c
- ***********************************************/
+// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-FileCopyrightText: Copyright The WP43 Authors
 
 #include "distributions/hyper.h"
 
@@ -35,7 +18,6 @@
 #include <stdbool.h>
 
 #include "wp43.h"
-
 
 static bool checkParamHyper(real_t *x, real_t *i, real_t *j, real_t *k) {
   real_t ik, xmin, xmax;
@@ -116,6 +98,7 @@ static bool checkParamHyper(real_t *x, real_t *i, real_t *j, real_t *k) {
 }
 
 
+
 void fnHypergeometricP(uint16_t unusedButMandatoryParameter) {
   real_t val, ans, prob, samp, batch;
 
@@ -146,6 +129,7 @@ void fnHypergeometricP(uint16_t unusedButMandatoryParameter) {
 }
 
 
+
 void fnHypergeometricL(uint16_t unusedButMandatoryParameter) {
   real_t val, ans, prob, samp, batch;
 
@@ -171,6 +155,7 @@ void fnHypergeometricL(uint16_t unusedButMandatoryParameter) {
 }
 
 
+
 void fnHypergeometricR(uint16_t unusedButMandatoryParameter) {
   real_t val, ans, prob, samp, batch;
 
@@ -194,6 +179,7 @@ void fnHypergeometricR(uint16_t unusedButMandatoryParameter) {
 
   adjustResult(REGISTER_X, false, false, REGISTER_X, -1, -1);
 }
+
 
 
 void fnHypergeometricI(uint16_t unusedButMandatoryParameter) {
@@ -229,6 +215,7 @@ void fnHypergeometricI(uint16_t unusedButMandatoryParameter) {
 }
 
 
+
 // PDF(k; n, K, N) = (K C k) ((N-K) C (n-k)) / (N C n)
 void pdf_Hypergeometric(const real_t *x, const real_t *p0, const real_t *n, const real_t *n0, real_t *res, realContext_t *realContext) {
   real_t a, b, c, q, x0;
@@ -242,6 +229,8 @@ void pdf_Hypergeometric(const real_t *x, const real_t *p0, const real_t *n, cons
   logCyxReal(&a, &b, &c, realContext), realSubtract(&q, &c, &q, realContext);  // N C n
   realExp(&q, res, realContext);
 }
+
+
 
 static void cdf_Hypergeometric_common(const real_t *x, const real_t *p0, const real_t *n, const real_t *n0, bool complementary, real_t *res, realContext_t *realContext) {
   real_t a, b, c, x0, binomPart;
@@ -318,6 +307,8 @@ static void cdf_Hypergeometric_common(const real_t *x, const real_t *p0, const r
   realSetPositiveSign(res);
 }
 
+
+
 void cdfu_Hypergeometric(const real_t *x, const real_t *p0, const real_t *n, const real_t *n0, real_t *res, realContext_t *realContext) {
   real_t p;
 
@@ -331,12 +322,16 @@ void cdfu_Hypergeometric(const real_t *x, const real_t *p0, const real_t *n, con
   cdf_Hypergeometric_common(&p, p0, n, n0, true, res, realContext);
 }
 
+
+
 void cdf_Hypergeometric(const real_t *x, const real_t *p0, const real_t *n, const real_t *n0, real_t *res, realContext_t *realContext) {
   real_t p;
 
   realToIntegralValue(x, &p, DEC_ROUND_FLOOR, realContext);
   cdf_Hypergeometric2(&p, p0, n, n0, res, realContext);
 }
+
+
 
 static void mode_Hypergeometric(const real_t *p0, const real_t *n, const real_t *n0, real_t *res, realContext_t *realContext) {
   real_t x0, a, q;
@@ -352,6 +347,8 @@ static void mode_Hypergeometric(const real_t *p0, const real_t *n, const real_t 
   realExp(&q, &q, realContext);
   realToIntegralValue(&q, res, DEC_ROUND_FLOOR, realContext);
 }
+
+
 
 void cdf_Hypergeometric2(const real_t *x, const real_t *p0, const real_t *n, const real_t *n0, real_t *res, realContext_t *realContext) {
   real_t x0, mode, pdf, i, cdf, cdf0;
@@ -379,6 +376,8 @@ void cdf_Hypergeometric2(const real_t *x, const real_t *p0, const real_t *n, con
     cdf_Hypergeometric_common(x, p0, n, n0, false, res, realContext);
   }
 }
+
+
 
 void qf_Hypergeometric(const real_t *x, const real_t *p0, const real_t *n, const real_t *n0, real_t *res, realContext_t *realContext) {
   real_t x0, mean, var, s;
