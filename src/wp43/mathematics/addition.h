@@ -1,18 +1,5 @@
-/* This file is part of 43S.
- *
- * 43S is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * 43S is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
- */
+// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-FileCopyrightText: Copyright The WP43 Authors
 
 /**
  * \file mathematics/addition.h
@@ -23,6 +10,12 @@
   #include "defines.h"
   #include <stdint.h>
 
+  /**
+   * regX ==> regL and regY + regX ==> regX
+   * Drops Y, enables stack lift and refreshes the stack
+   *
+   * \param[in] unusedButMandatoryParameter
+   */
   void fnAdd      (uint16_t unusedButMandatoryParameter);
 
   #if (EXTRA_INFO_ON_CALC_ERROR == 1)
@@ -31,75 +24,4 @@
     #define addError typeError
   #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
 
-  //      RegYRegX
-  void addLonILonI(void);
-  void addLonIRema(void);
-  void addLonICxma(void);
-  void addLonITime(void);
-  void addLonIDate(void);
-  void addLonIShoI(void);
-  void addLonIReal(void);
-  void addLonICplx(void);
-
-  //      RegYRegX
-  void addTimeLonI(void);
-  void addTimeTime(void);
-  void addTimeReal(void);
-
-  //      RegYRegX
-  void addDateLonI(void);
-  void addDateReal(void);
-
-  //      RegYRegX
-  void addStriLonI(void);
-  void addStriTime(void);
-  void addStriStri(void);
-  void addStriRema(void);
-  void addStriCxma(void);
-  void addStriDate(void);
-  void addStriShoI(void);
-  void addStriReal(void);
-  void addStriCplx(void);
-
-  //      RegYRegX
-  void addRemaLonI(void);
-  void addRemaRema(void);
-  void addRemaCxma(void);
-  void addRemaShoI(void);
-  void addRemaReal(void);
-  void addRemaCplx(void);
-
-  //      RegYRegX
-  void addCxmaLonI(void);
-  void addCxmaRema(void);
-  void addCxmaCxma(void);
-  void addCxmaShoI(void);
-  void addCxmaReal(void);
-  void addCxmaCplx(void);
-
-  //      RegYRegX
-  void addShoILonI(void);
-  void addShoIRema(void);
-  void addShoICxma(void);
-  void addShoIShoI(void);
-  void addShoIReal(void);
-  void addShoICplx(void);
-
-  //      RegYRegX
-  void addRealLonI(void);
-  void addRealRema(void);
-  void addRealCxma(void);
-  void addRealTime(void);
-  void addRealDate(void);
-  void addRealShoI(void);
-  void addRealReal(void);
-  void addRealCplx(void);
-
-  //      RegYRegX
-  void addCplxLonI(void);
-  void addCplxRema(void);
-  void addCplxCxma(void);
-  void addCplxShoI(void);
-  void addCplxReal(void);
-  void addCplxCplx(void);
 #endif // !ADDITION_H
