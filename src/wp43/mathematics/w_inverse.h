@@ -7,19 +7,14 @@
 #if !defined(W_INVERSE_H)
   #define W_INVERSE_H
 
-  #include "defines.h"
   #include <stdint.h>
 
+  /**
+   * regX ==> regL and W^(-1)(regX) ==> regX
+   * enables stack lift and refreshes the stack
+   *
+   * \param[in] unusedButMandatoryParameter
+   */
   void fnWinverse(uint16_t unusedButMandatoryParameter);
-
-  #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-    void wInvError  (void);
-  #else // (EXTRA_INFO_ON_CALC_ERROR == 1)
-    #define wInvError typeError
-  #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
-
-  void wInvLonI   (void);
-  void wInvReal   (void);
-  void wInvCplx   (void);
 
 #endif // !W_INVERSE_H

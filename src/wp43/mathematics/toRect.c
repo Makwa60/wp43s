@@ -85,6 +85,7 @@ void fnToRect(uint16_t unusedButMandatoryParameter) {
 }
 
 
+
 /* never used
 void real34PolarToRectangular(const real34_t *magnitude34, const real34_t *theta34, real34_t *real34, real34_t *imag34) {
   real_t real, imag, magnitude, theta;
@@ -98,6 +99,8 @@ void real34PolarToRectangular(const real34_t *magnitude34, const real34_t *theta
   realToReal34(&imag, imag34);
 }
 */
+
+
 
 void realPolarToRectangular(const real_t *mag, const real_t *the, real_t *real, real_t *imag, realContext_t *realContext) {
   ///////////////////////////////////////////

@@ -21,10 +21,12 @@
 
 #include "wp43.h"
 
-#define AGM_MODE_NORMAL 0
-#define AGM_MODE_E      1
-#define AGM_MODE_STEP   2
-#define AGM_MODE_F      3
+typedef enum {
+  agmModeNormal = 0,
+  agmModeE      = 1,
+  agmModeStep   = 2,
+  agmModeF      = 3
+} agmMode_t;
 
 void fnAgm(uint16_t unusedButMandatoryParameter) {
   bool   realInput=true;
@@ -120,21 +122,23 @@ void fnAgm(uint16_t unusedButMandatoryParameter) {
   adjustResult(REGISTER_X, true, true, REGISTER_X, -1, -1);
 }
 
-static int _realAgm(int mode, const real_t *a, const real_t *b, real_t *c, real_t *res, real_t *_a, real_t *_b, size_t _sz, realContext_t *realContext) {
+
+
+static int _realAgm(agmMode_t mode, const real_t *a, const real_t *b, real_t *c, real_t *res, real_t *_a, real_t *_b, size_t _sz, realContext_t *realContext) {
   real_t aReal, bReal, cReal;
   real_t cCoeff, prevDelta, z;
   int n = 0;
 
   realCopy(a, &aReal);
   realCopy(b, &bReal);
-  if(mode==AGM_MODE_E) {
+  if(mode==agmModeE) {
     realCopy(const_1, &cCoeff);
   }
-  if(mode==AGM_MODE_STEP) {
+  if(mode==agmModeStep) {
     realCopy(&aReal, _a);
     realCopy(&bReal, _b);
   }
-  if(mode==AGM_MODE_F) {
+  if(mode==agmModeF) {
     realCopy(const_plusInfinity, &prevDelta);
     realCopy(const_0, &z);
     realDivide(c, const_pi, &cCoeff, realContext);
@@ -143,14 +147,14 @@ static int _realAgm(int mode, const real_t *a, const real_t *b, real_t *c, real_
   }
 
   while(!realCompareEqual(&aReal, &bReal) && realIdenticalDigits(&aReal, &bReal) <= 34) {
-    if(mode==AGM_MODE_E) {
+    if(mode==agmModeE) {
       realMultiply(&cCoeff, const_2, &cCoeff, realContext);
       realSubtract(&aReal, &bReal, &cReal, realContext);     // c = a - b
       realMultiply(&cReal, const_1on2, &cReal, realContext); // c = (a - b) / 2
       realMultiply(&cReal, &cReal, &cReal, realContext);     // c^2
       realFMA(&cReal, &cCoeff, c, c, realContext);
     }
-    if(mode==AGM_MODE_F) {
+    if(mode==agmModeF) {
       real_t d, e, tanphi, ba;
       WP34S_Cvt2RadSinCosTan(c, amRadian, &d, &e, &tanphi, realContext);
       realDivide(&bReal, &aReal, &ba, realContext);
@@ -171,7 +175,7 @@ static int _realAgm(int mode, const real_t *a, const real_t *b, real_t *c, real_
     realSquareRoot(&bReal, &bReal, realContext);           // b = sqrt(a * b)
     realMultiply(&cReal, const_1on2, &aReal, realContext); // a = (a + b) / 2
     ++n;
-    if(mode==AGM_MODE_STEP) {
+    if(mode==agmModeStep) {
       realCopy(&aReal, _a + n);
       realCopy(&bReal, _b + n);
       if(n >= (int)_sz - 1) {
@@ -180,10 +184,10 @@ static int _realAgm(int mode, const real_t *a, const real_t *b, real_t *c, real_
     }
   }
 
-  if(mode==AGM_MODE_E) {
+  if(mode==agmModeE) {
     realMultiply(c, const_1on2, c, realContext);
   }
-  if(mode==AGM_MODE_F) {
+  if(mode==agmModeF) {
     realFMA(&cCoeff, const_pi, c, c, realContext);
   }
 
@@ -191,7 +195,9 @@ static int _realAgm(int mode, const real_t *a, const real_t *b, real_t *c, real_
   return n;
 }
 
-static int _complexAgm(int mode, const real_t *ar, const real_t *ai, const real_t *br, const real_t *bi, real_t *cr, real_t *ci, real_t *resr, real_t *resi, real_t *_ar, real_t *_ai, real_t *_br, real_t *_bi, size_t _sz, realContext_t *realContext) {
+
+
+static int _complexAgm(agmMode_t mode, const real_t *ar, const real_t *ai, const real_t *br, const real_t *bi, real_t *cr, real_t *ci, real_t *resr, real_t *resi, real_t *_ar, real_t *_ai, real_t *_br, real_t *_bi, size_t _sz, realContext_t *realContext) {
   real_t aReal, bReal, cReal;
   real_t aImag, bImag, cImag;
   real_t cCoeff;
@@ -199,10 +205,10 @@ static int _complexAgm(int mode, const real_t *ar, const real_t *ai, const real_
 
   realCopy(ar, &aReal); realCopy(ai, &aImag);
   realCopy(br, &bReal); realCopy(bi, &bImag);
-  if(mode==AGM_MODE_E) {
+  if(mode==agmModeE) {
     realCopy(const_1, &cCoeff);
   }
-  if(mode==AGM_MODE_STEP) {
+  if(mode==agmModeStep) {
     realCopy(&aReal, _ar);
     realCopy(&aImag, _ai);
     realCopy(&bReal, _br);
@@ -210,7 +216,7 @@ static int _complexAgm(int mode, const real_t *ar, const real_t *ai, const real_
   }
 
   while((!realCompareEqual(&aReal, &bReal) && realIdenticalDigits(&aReal, &bReal) <= 34) || (!realCompareEqual(&aImag, &bImag) && realIdenticalDigits(&aImag, &bImag) <= 34)) {
-    if(mode==AGM_MODE_E) {
+    if(mode==agmModeE) {
       realMultiply(&cCoeff, const_2, &cCoeff, realContext);
       realSubtract(&aReal, &bReal, &cReal, realContext); realSubtract(&aImag, &bImag, &cImag, realContext);     // c = a - b
       realMultiply(&cReal, const_1on2, &cReal, realContext); realMultiply(&cImag, const_1on2, &cImag, realContext); // c = (a - b) / 2
@@ -234,7 +240,7 @@ static int _complexAgm(int mode, const real_t *ar, const real_t *ai, const real_
     realMultiply(&cImag, const_1on2, &aImag, realContext); // a = (a + b) / 2 imag part
 
     ++n;
-    if(mode==AGM_MODE_STEP) {
+    if(mode==agmModeStep) {
       realCopy(&aReal, _ar + n);
       realCopy(&aImag, _ai + n);
       realCopy(&bReal, _br + n);
@@ -245,7 +251,7 @@ static int _complexAgm(int mode, const real_t *ar, const real_t *ai, const real_
     }
   }
 
-  if(mode==AGM_MODE_E) {
+  if(mode==agmModeE) {
     realMultiply(cr, const_1on2, cr, realContext); realMultiply(ci, const_1on2, ci, realContext);
   }
 
@@ -253,30 +259,44 @@ static int _complexAgm(int mode, const real_t *ar, const real_t *ai, const real_
   return n;
 }
 
+
+
 size_t realAgm(const real_t *a, const real_t *b, real_t *res, realContext_t *realContext) {
-  return _realAgm(AGM_MODE_NORMAL, a, b, NULL, res, NULL, NULL, 0, realContext);
+  return _realAgm(agmModeNormal, a, b, NULL, res, NULL, NULL, 0, realContext);
 }
+
+
 
 size_t complexAgm(const real_t *ar, const real_t *ai, const real_t *br, const real_t *bi, real_t *resr, real_t *resi, realContext_t *realContext) {
-  return _complexAgm(AGM_MODE_NORMAL, ar, ai, br, bi, NULL, NULL, resr, resi, NULL, NULL, NULL, NULL, 0, realContext);
+  return _complexAgm(agmModeNormal, ar, ai, br, bi, NULL, NULL, resr, resi, NULL, NULL, NULL, NULL, 0, realContext);
 }
+
+
 
 size_t realAgmForE(const real_t *a, const real_t *b, real_t *c, real_t *res, realContext_t *realContext) {
-  return _realAgm(AGM_MODE_E, a, b, c, res, NULL, NULL, 0, realContext);
+  return _realAgm(agmModeE, a, b, c, res, NULL, NULL, 0, realContext);
 }
+
+
 
 size_t complexAgmForE(const real_t *ar, const real_t *ai, const real_t *br, const real_t *bi, real_t *cr, real_t *ci, real_t *resr, real_t *resi, realContext_t *realContext) {
-  return _complexAgm(AGM_MODE_E, ar, ai, br, bi, cr, ci, resr, resi, NULL, NULL, NULL, NULL, 0, realContext);
+  return _complexAgm(agmModeE, ar, ai, br, bi, cr, ci, resr, resi, NULL, NULL, NULL, NULL, 0, realContext);
 }
+
+
 
 size_t realAgmForF(const real_t *a, const real_t *b, real_t *c, real_t *res, realContext_t *realContext) {
-  return _realAgm(AGM_MODE_F, a, b, c, res, NULL, NULL, 0, realContext);
+  return _realAgm(agmModeF, a, b, c, res, NULL, NULL, 0, realContext);
 }
+
+
 
 size_t realAgmStep(const real_t *a, const real_t *b, real_t *res, real_t *aStep, real_t *bStep, size_t bufSize, realContext_t *realContext) {
-  return _realAgm(AGM_MODE_STEP, a, b, NULL, res, aStep, bStep, bufSize, realContext);
+  return _realAgm(agmModeStep, a, b, NULL, res, aStep, bStep, bufSize, realContext);
 }
 
+
+
 size_t complexAgmStep(const real_t *ar, const real_t *ai, const real_t *br, const real_t *bi, real_t *resr, real_t *resi, real_t *aStep, real_t *aiStep, real_t *bStep, real_t *biStep, size_t bufSize, realContext_t *realContext){
-  return _complexAgm(AGM_MODE_STEP, ar, ai, br, bi, NULL, NULL, resr, resi, aStep, aiStep, bStep, biStep, bufSize, realContext);
+  return _complexAgm(agmModeStep, ar, ai, br, bi, NULL, NULL, resr, resi, aStep, aiStep, bStep, biStep, bufSize, realContext);
 }

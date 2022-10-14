@@ -54,6 +54,8 @@ static void do_stddev(const real_t *sumXX, const real_t *sumX, const real_t *num
   realToReal34(p, REGISTER_REAL34_DATA(regIndex));
 }
 
+
+
 static void calculateStandardDeviation(const real_t *sumX2, const real_t *sumX,
                                        const real_t *number,
                                        const real_t *sumY2, const real_t *sumY,
@@ -71,31 +73,45 @@ static void calculateStandardDeviation(const real_t *sumX2, const real_t *sumX,
   }
 }
 
+
+
 /* Standard deviation (sample and population) and standard error for arithmetic mean */
 void fnSampleStdDev(uint16_t unusedButMandatoryParameter) {
   calculateStandardDeviation(SIGMA_X2, SIGMA_X, SIGMA_N, SIGMA_Y2, SIGMA_Y, 1, 0, 0, TI_SAMPLSTDDEV);
 }
 
+
+
 void fnPopulationStdDev(uint16_t unusedButMandatoryParameter) {
   calculateStandardDeviation(SIGMA_X2, SIGMA_X, SIGMA_N, SIGMA_Y2, SIGMA_Y, 0, 0, 0, TI_POPLSTDDEV);
 }
 
+
+
 void fnStandardError(uint16_t unusedButMandatoryParameter) {
   calculateStandardDeviation(SIGMA_X2, SIGMA_X, SIGMA_N, SIGMA_Y2, SIGMA_Y, 1, 1, 0, TI_STDERR);
 }
+
+
 
 /* Standard deviation (sample and population) and standard error for geometric mean */
 void fnGeometricSampleStdDev(uint16_t unusedButMandatoryParameter) {
   calculateStandardDeviation(SIGMA_ln2X, SIGMA_lnX, SIGMA_N, SIGMA_ln2Y, SIGMA_lnY, 1, 0, 1, TI_GEOMSAMPLSTDDEV);
 }
 
+
+
 void fnGeometricPopulationStdDev(uint16_t unusedButMandatoryParameter) {
   calculateStandardDeviation(SIGMA_ln2X, SIGMA_lnX, SIGMA_N, SIGMA_ln2Y, SIGMA_lnY, 0, 0, 1, TI_GEOMPOPLSTDDEV);
 }
 
+
+
 void fnGeometricStandardError(uint16_t unusedButMandatoryParameter) {
   calculateStandardDeviation(SIGMA_ln2X, SIGMA_lnX, SIGMA_N, SIGMA_ln2Y, SIGMA_lnY, 1, 1, 1, TI_GEOMSTDERR);
 }
+
+
 
 // Weighted standard deviation, standard error
 static void calculateWeightedStandardDeviation(int sample, int rootn, int exp, int display) {
@@ -108,19 +124,27 @@ static void calculateWeightedStandardDeviation(int sample, int rootn, int exp, i
   }
 }
 
+
+
 void fnWeightedSampleStdDev(uint16_t unusedButMandatoryParameter) {
   calculateWeightedStandardDeviation(1, 0, 0, TI_WEIGHTEDSAMPLSTDDEV);
 }
+
+
 
 void fnWeightedPopulationStdDev(uint16_t unusedButMandatoryParameter) {
   calculateWeightedStandardDeviation(0, 0, 0, TI_WEIGHTEDPOPLSTDDEV);
 }
 
+
+
 void fnWeightedStandardError(uint16_t unusedButMandatoryParameter) {
   calculateWeightedStandardDeviation(1, 1, 0, TI_WEIGHTEDSTDERR);
 }
 
-void fnStatSX_SY(real_t *SX, real_t *SY){
+
+
+void fnStatSX_SY(real_t *SX, real_t *SY) {
   realContext_t *realContext = &ctxtReal75; // Summation data with 75 digits
   real_t TT,UU;
   if(checkMinimumDataPoints(const_2)) {
@@ -142,7 +166,9 @@ void fnStatSX_SY(real_t *SX, real_t *SY){
   }
 }
 
-void fnStatSXY(real_t *SXY){
+
+
+void fnStatSXY(real_t *SXY) {
   realContext_t *realContext = &ctxtReal75; // Summation data with 75 digits
   real_t SS,TT;
   if(checkMinimumDataPoints(const_2)) {
@@ -155,7 +181,9 @@ void fnStatSXY(real_t *SXY){
   }
 }
 
-void fnPopulationCovariance(uint16_t unusedButMandatoryParameter){    //COVxy
+
+
+void fnPopulationCovariance(uint16_t unusedButMandatoryParameter) {    //COVxy
   realContext_t *realContext = &ctxtReal75; // Summation data with 75 digits
   real_t TT,SXY;
   if(checkMinimumDataPoints(const_2)) {
@@ -172,7 +200,9 @@ void fnPopulationCovariance(uint16_t unusedButMandatoryParameter){    //COVxy
   }
 }
 
-void fnSampleCovariance(uint16_t unusedButMandatoryParameter){    //sxy
+
+
+void fnSampleCovariance(uint16_t unusedButMandatoryParameter) {    //sxy
   real_t SXY;
   if(checkMinimumDataPoints(const_2)) {
     fnStatSXY(&SXY);
@@ -184,7 +214,9 @@ void fnSampleCovariance(uint16_t unusedButMandatoryParameter){    //sxy
   }
 }
 
-void fnStatR(real_t *RR, real_t *SXY, real_t *SX, real_t *SY){
+
+
+void fnStatR(real_t *RR, real_t *SXY, real_t *SX, real_t *SY) {
   realContext_t *realContext = &ctxtReal75; // Summation data with 75 digits
   if(checkMinimumDataPoints(const_2)) {
     fnStatSX_SY(SX,SY);
@@ -194,7 +226,9 @@ void fnStatR(real_t *RR, real_t *SXY, real_t *SX, real_t *SY){
   }
 }
 
-void fnCoefficientDetermination(uint16_t unusedButMandatoryParameter){  //r
+
+
+void fnCoefficientDetermination(uint16_t unusedButMandatoryParameter) {  //r
   real_t RR,SMI,aa0,aa1,aa2;
   if(checkMinimumDataPoints(const_2)) {
     if(lrChosen == 0) {                    //if lrChosen contains something, the stat data exists, otherwise set it to linear. lrSelection still has 1 at this point, i.e. the * will not appear.
@@ -209,7 +243,9 @@ void fnCoefficientDetermination(uint16_t unusedButMandatoryParameter){  //r
   }
 }
 
-void fnStatSMI(real_t *SMI){
+
+
+void fnStatSMI(real_t *SMI) {
   realContext_t *realContext = &ctxtReal75; // Summation data with 75 digits
   real_t RR,SXY,SX,SY,RR2,SX2,SY2,UU,SS,TT;
   if(checkMinimumDataPoints(const_2)) {
@@ -228,7 +264,9 @@ void fnStatSMI(real_t *SMI){
   }
 }
 
-void fnMinExpStdDev(uint16_t unusedButMandatoryParameter){ //smi
+
+
+void fnMinExpStdDev(uint16_t unusedButMandatoryParameter) { //smi
   real_t SMI,RR,aa0,aa1,aa2,const_30;
   uInt32ToReal(30,&const_30);
   if(checkMinimumDataPoints(&const_30)) {
@@ -244,13 +282,7 @@ void fnMinExpStdDev(uint16_t unusedButMandatoryParameter){ //smi
 }
 
 
-/********************************************//**
- * \brief s(a) ==> regX, regY
- * regX = s(a0), regY = s(a1)
- *
- * \param[in] unusedButMandatoryParameter uint16_t
- * \return void
- ***********************************************/
+
 void processCurvefitSA(real_t *SA0, real_t *SA1) {
   realContext_t *realContext = &ctxtReal75; // Summation data with 75 digits
   real_t RR,MX,SX,SY,RR2,MX2,SX2,SY2,UU,SS,TT,aa0,aa1,aa2,SMI;
@@ -321,6 +353,7 @@ void processCurvefitSA(real_t *SA0, real_t *SA1) {
     realMultiply  (&SS, SA1, SA0, &ctxtReal39);
   }
 }
+
 
 
 void fnStatSa(uint16_t unusedButMandatoryParameter) {

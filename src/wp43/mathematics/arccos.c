@@ -6,6 +6,7 @@
 #include "constantPointers.h"
 #include "conversionAngles.h"
 #include "debug.h"
+#include "defines.h"
 #include "error.h"
 #include "flags.h"
 #include "items.h"
@@ -19,20 +20,24 @@
 
 #include "wp43.h"
 
+#if (EXTRA_INFO_ON_CALC_ERROR == 1)
+  void arccosError(void);
+#else // (EXTRA_INFO_ON_CALC_ERROR == 1)
+  #define arccosError typeError
+#endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+
+void arccosLonI (void);
+void arccosRema (void);
+void arccosCxma (void);
+void arccosReal (void);
+void arccosCplx (void);
+
 TO_QSPI void (* const arccos[NUMBER_OF_DATA_TYPES_FOR_CALCULATIONS])(void) = {
 // regX ==> 1            2           3           4            5            6            7           8           9             10
 //          Long integer Real34      Complex34   Time         Date         String       Real34 mat  Complex34 m Short integer Config data
             arccosLonI,  arccosReal, arccosCplx, arccosError, arccosError, arccosError, arccosRema, arccosCxma, arccosError,  arccosError
 };
 
-
-
-/********************************************//**
- * \brief Data type error in arccos
- *
- * \param void
- * \return void
- ***********************************************/
 #if (EXTRA_INFO_ON_CALC_ERROR == 1)
   void arccosError(void) {
     displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, REGISTER_X);
@@ -43,13 +48,6 @@ TO_QSPI void (* const arccos[NUMBER_OF_DATA_TYPES_FOR_CALCULATIONS])(void) = {
 
 
 
-/********************************************//**
- * \brief regX ==> regL and arccos(regX) ==> regX
- * enables stack lift and refreshes the stack
- *
- * \param[in] unusedButMandatoryParameter uint16_t
- * \return void
- ***********************************************/
 void fnArccos(uint16_t unusedButMandatoryParameter) {
   if(!saveLastX()) {
     return;

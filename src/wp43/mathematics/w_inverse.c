@@ -5,6 +5,7 @@
 
 #include "constantPointers.h"
 #include "debug.h"
+#include "defines.h"
 #include "error.h"
 #include "fonts.h"
 #include "mathematics/wp34s.h"
@@ -13,20 +14,21 @@
 
 #include "wp43.h"
 
+void wInvLonI   (void);
+void wInvReal   (void);
+void wInvCplx   (void);
+#if (EXTRA_INFO_ON_CALC_ERROR == 1)
+  void wInvError  (void);
+#else // (EXTRA_INFO_ON_CALC_ERROR == 1)
+  #define wInvError typeError
+#endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+
 TO_QSPI void (* const WInverse[NUMBER_OF_DATA_TYPES_FOR_CALCULATIONS])(void) = {
 // regX ==> 1            2         3          4          5          6          7          8           9             10
 //          Long integer Real34    Complex34  Time       Date       String     Real34 mat Complex34 m Short integer Config data
             wInvLonI,    wInvReal, wInvCplx,  wInvError, wInvError, wInvError, wInvError, wInvError,  wInvError,    wInvError
 };
 
-
-
-/********************************************//**
- * \brief Data type error in W
- *
- * \param void
- * \return void
- ***********************************************/
 #if (EXTRA_INFO_ON_CALC_ERROR == 1)
   void wInvError(void) {
     displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, REGISTER_X);
@@ -37,13 +39,6 @@ TO_QSPI void (* const WInverse[NUMBER_OF_DATA_TYPES_FOR_CALCULATIONS])(void) = {
 
 
 
-/********************************************//**
- * \brief regX ==> regL and W^(-1)(regX) ==> regX
- * enables stack lift and refreshes the stack
- *
- * \param[in] unusedButMandatoryParameter uint16_t
- * \return void
- ***********************************************/
 void fnWinverse(uint16_t unusedButMandatoryParameter) {
   if(!saveLastX()) {
     return;

@@ -7,21 +7,14 @@
 #if !defined(ARCCOS_H)
   #define ARCCOS_H
 
-  #include "defines.h"
   #include <stdint.h>
 
-  void fnArccos   (uint16_t unusedButMandatoryParameter);
-
-  #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-    void arccosError(void);
-  #else // (EXTRA_INFO_ON_CALC_ERROR == 1)
-    #define arccosError typeError
-  #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
-
-  void arccosLonI (void);
-  void arccosRema (void);
-  void arccosCxma (void);
-  void arccosReal (void);
-  void arccosCplx (void);
+  /**
+   * regX ==> regL and arccos(regX) ==> regX
+   * enables stack lift and refreshes the stack
+   *
+   * \param[in] unusedButMandatoryParameter
+   */
+  void fnArccos(uint16_t unusedButMandatoryParameter);
 
 #endif // !ARCCOS_H

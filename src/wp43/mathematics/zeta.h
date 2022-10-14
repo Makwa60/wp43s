@@ -7,20 +7,14 @@
 #if !defined(ZETA_H)
   #define ZETA_H
 
-  #include "defines.h"
-  #include "realType.h"
   #include <stdint.h>
 
-  void fnZeta     (uint16_t unusedButMandatoryParameter);
-
-  #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-    void zetaError  (void);
-  #else // (EXTRA_INFO_ON_CALC_ERROR == 1)
-    #define zetaError typeError
-  #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
-
-  void zetaReal   (void);
-  void zetaCplx   (void);
-  void ComplexZeta(const real_t *xReal, const real_t *xImag, real_t *resReal, real_t *resImag, realContext_t *realContext);
+  /**
+   * regX ==> regL and zeta(regX) ==> regX
+   * enables stack lift and refreshes the stack
+   *
+   * \param[in] unusedButMandatoryParameter
+   */
+  void fnZeta(uint16_t unusedButMandatoryParameter);
 
 #endif // !ZETA_H

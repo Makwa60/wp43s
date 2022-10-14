@@ -7,21 +7,14 @@
 #if !defined(ARCTANH_H)
   #define ARCTANH_H
 
-  #include "defines.h"
   #include <stdint.h>
 
+  /**
+   * regX ==> regL and arctanh(regX) ==> regX
+   * enables stack lift and refreshes the stack
+   *
+   * \param[in] unusedButMandatoryParameter
+   */
   void fnArctanh   (uint16_t unusedButMandatoryParameter);
-
-  #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-    void arctanhError(void);
-  #else // (EXTRA_INFO_ON_CALC_ERROR == 1)
-    #define arctanhError typeError
-  #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
-
-  void arctanhLonI (void);
-  void arctanhRema (void);
-  void arctanhCxma (void);
-  void arctanhReal (void);
-  void arctanhCplx (void);
 
 #endif // !ARCTANH_H

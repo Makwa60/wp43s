@@ -7,22 +7,14 @@
 #if !defined(FILE_10POW_H)
   #define FILE_10POW_H
 
-  #include "defines.h"
   #include <stdint.h>
 
-  void fn10Pow    (uint16_t unusedButMandatoryParameter);
-
-  #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-    void tenPowError(void);
-  #else // (EXTRA_INFO_ON_CALC_ERROR == 1)
-    #define tenPowError typeError
-  #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
-
-  void tenPowLonI (void);
-  void tenPowRema (void);
-  void tenPowCxma (void);
-  void tenPowShoI (void);
-  void tenPowReal (void);
-  void tenPowCplx (void);
+  /**
+   * regX ==> regL and 10^regX ==> regX
+   * enables stack lift and refreshes the stack
+   *
+   * \param[in] unusedButMandatoryParameter
+   */
+  void fn10Pow(uint16_t unusedButMandatoryParameter);
 
 #endif // !FILE_10POW_H

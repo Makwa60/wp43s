@@ -10,19 +10,12 @@
   #include "defines.h"
   #include <stdint.h>
 
+  /**
+   * regX ==> regL and 2^regX ==> regX
+   * enables stack lift and refreshes the stack
+   *
+   * \param[in] unusedButMandatoryParameter
+   */
   void fn2Pow     (uint16_t unusedButMandatoryParameter);
-
-  #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-    void twoPowError(void);
-  #else // (EXTRA_INFO_ON_CALC_ERROR == 1)
-    #define twoPowError typeError
-  #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
-
-  void twoPowLonI (void);
-  void twoPowRema (void);
-  void twoPowCxma (void);
-  void twoPowShoI (void);
-  void twoPowReal (void);
-  void twoPowCplx (void);
 
 #endif // !FILE_2POW_H

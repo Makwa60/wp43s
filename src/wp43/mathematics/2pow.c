@@ -17,18 +17,24 @@
 
 #include "wp43.h"
 
+void twoPowLonI (void);
+void twoPowRema (void);
+void twoPowCxma (void);
+void twoPowShoI (void);
+void twoPowReal (void);
+void twoPowCplx (void);
+#if (EXTRA_INFO_ON_CALC_ERROR == 1)
+  void twoPowError(void);
+#else // (EXTRA_INFO_ON_CALC_ERROR == 1)
+  #define twoPowError typeError
+#endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+
 TO_QSPI void (* const twoPow[NUMBER_OF_DATA_TYPES_FOR_CALCULATIONS])(void) = {
 // regX ==> 1            2           3           4            5            6            7           8           9             10
 //          Long integer Real34      Complex34   Time         Date         String       Real34 mat  Complex34 m Short integer Config data
             twoPowLonI,  twoPowReal, twoPowCplx, twoPowError, twoPowError, twoPowError, twoPowRema, twoPowCxma, twoPowShoI,   twoPowError
 };
 
-/********************************************//**
- * \brief Data type error in exp
- *
- * \param void
- * \return void
- ***********************************************/
 #if (EXTRA_INFO_ON_CALC_ERROR == 1)
   void twoPowError(void) {
     displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, REGISTER_X);
@@ -39,13 +45,6 @@ TO_QSPI void (* const twoPow[NUMBER_OF_DATA_TYPES_FOR_CALCULATIONS])(void) = {
 
 
 
-/********************************************//**
- * \brief regX ==> regL and 2^regX ==> regX
- * enables stack lift and refreshes the stack
- *
- * \param[in] unusedButMandatoryParameter uint16_t
- * \return void
- ***********************************************/
 void fn2Pow(uint16_t unusedButMandatoryParameter) {
   if(!saveLastX()) {
     return;

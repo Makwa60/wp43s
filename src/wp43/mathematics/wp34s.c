@@ -159,6 +159,7 @@ void WP34S_Cvt2RadSinCosTan(const real_t *an, angularMode_t angularMode, real_t 
 }
 
 
+
 // Calculate sin, cos by Taylor series and tan by division
 void WP34S_SinCosTanTaylor(const real_t *a, bool swap, real_t *sinOut, real_t *cosOut, real_t *tanOut, realContext_t *realContext) { // a in radian
   real_t angle, a2, t, j, z, sin, cos, compare;
@@ -240,6 +241,7 @@ void WP34S_SinCosTanTaylor(const real_t *a, bool swap, real_t *sinOut, real_t *c
 }
 
 
+
 void WP34S_Atan(const real_t *x, real_t *angle, realContext_t *realContext) {
   real_t a, b, a2, t, j, z, last;
   int doubles = 0;
@@ -317,6 +319,7 @@ void WP34S_Atan(const real_t *x, real_t *angle, realContext_t *realContext) {
     realChangeSign(angle);
   }
 }
+
 
 
 void WP34S_Atan2(const real_t *y, const real_t *x, real_t *atan, realContext_t *realContext) {
@@ -432,6 +435,7 @@ void WP34S_Atan2(const real_t *y, const real_t *x, real_t *atan, realContext_t *
 }
 
 
+
 void WP34S_Asin(const real_t *x, real_t *angle, realContext_t *realContext) {
   real_t abx, z;
 
@@ -455,6 +459,7 @@ void WP34S_Asin(const real_t *x, real_t *angle, realContext_t *realContext) {
   WP34S_Atan(&z, &abx, realContext);
   realAdd(&abx, &abx, angle, realContext);
 }
+
 
 
 void WP34S_Acos(const real_t *x, real_t *angle, realContext_t *realContext) {
@@ -485,6 +490,7 @@ void WP34S_Acos(const real_t *x, real_t *angle, realContext_t *realContext) {
     realAdd(&abx, &abx, angle, realContext);
   }
 }
+
 
 
 static void WP34S_Calc_Gamma_LnGamma_Lanczos(const real_t *xin, real_t *res, bool calculateLnGamma, realContext_t *realContext) {
@@ -530,6 +536,7 @@ static void WP34S_Calc_Gamma_LnGamma_Lanczos(const real_t *xin, real_t *res, boo
 
   realPlus(&x, res, realContext);
 }
+
 
 
 // common code for the [GAMMA] and LN[GAMMA]
@@ -610,12 +617,14 @@ static void WP34S_Gamma_LnGamma(const real_t *xin, const bool calculateLnGamma, 
 }
 
 
+
 void WP34S_Factorial(const real_t *xin, real_t *res, realContext_t *realContext) {
   real_t x;
 
   realAdd(xin, const_1, &x, realContext);
   WP34S_Gamma_LnGamma(&x, false, res, realContext);
 }
+
 
 
 void WP34S_Gamma(const real_t *xin, real_t *res, realContext_t *realContext) {
@@ -626,12 +635,14 @@ void WP34S_Gamma(const real_t *xin, real_t *res, realContext_t *realContext) {
 }
 
 
+
 void WP34S_LnGamma(const real_t *xin, real_t *res, realContext_t *realContext) {
   real_t x;
 
   realCopy(xin, &x);
   WP34S_Gamma_LnGamma(&x, true, res, realContext);
 }
+
 
 
 /* Natural logarithm.
@@ -731,6 +742,7 @@ void WP34S_Ln(const real_t *xin, real_t *res, realContext_t *realContext) {
 }
 
 
+
 void WP34S_Log(const real_t *xin, const real_t *base, real_t *res, realContext_t *realContext) {
   real_t y;
 
@@ -750,6 +762,7 @@ void WP34S_Log(const real_t *xin, const real_t *base, real_t *res, realContext_t
 }
 
 
+
 /* never used
 void WP34S_Log2(const real_t *xin, real_t *res, realContext_t *realContext) {
   WP34S_Log(xin, const_ln2, res, realContext);
@@ -757,9 +770,11 @@ void WP34S_Log2(const real_t *xin, real_t *res, realContext_t *realContext) {
 */
 
 
+
 void WP34S_Log10(const real_t *xin, real_t *res, realContext_t *realContext) {
   WP34S_Log(xin, const_ln10, res, realContext);
 }
+
 
 
 void WP34S_Logxy(const real_t *yin, const real_t *xin, real_t *res, realContext_t *realContext) {
@@ -768,6 +783,7 @@ void WP34S_Logxy(const real_t *yin, const real_t *xin, real_t *res, realContext_
   WP34S_Ln(xin, &lx, realContext);
   WP34S_Log(yin, &lx, res, realContext);
 }
+
 
 
 bool WP34S_RelativeError(const real_t *x, const real_t *y, const real_t *tol, realContext_t *realContext) {
@@ -785,11 +801,13 @@ bool WP34S_RelativeError(const real_t *x, const real_t *y, const real_t *tol, re
 }
 
 
+
 bool WP34S_AbsoluteError(const real_t *x, const real_t *y, const real_t *tol, realContext_t *realContext) {
   real_t a;
   realSubtract(x, y, &a, realContext);
   return realCompareAbsLessThan(&a, tol);
 }
+
 
 
 bool WP34S_ComplexAbsError(const real_t *xReal, const real_t *xImag, const real_t *yReal, const real_t *yImag, const real_t *tol, realContext_t *realContext) {
@@ -799,6 +817,7 @@ bool WP34S_ComplexAbsError(const real_t *xReal, const real_t *xImag, const real_
   realRectangularToPolar(&a, &b, &r, &t, realContext);
   return realCompareAbsLessThan(&r, tol);
 }
+
 
 
 /* Hyperbolic functions.
@@ -846,6 +865,7 @@ void WP34S_SinhCosh(const real_t *x, real_t *sinhOut, real_t *coshOut, realConte
 }
 
 
+
 void WP34S_Tanh(const real_t *x, real_t *res, realContext_t *realContext) {
   if(realIsNaN(x)) {
     realCopy(const_NaN, res);
@@ -864,6 +884,7 @@ void WP34S_Tanh(const real_t *x, real_t *res, realContext_t *realContext) {
 }
 
 
+
 /* never used
 void WP34S_ArcSinh(const real_t *x, real_t *res, realContext_t *realContext) {
   real_t a;
@@ -880,6 +901,7 @@ void WP34S_ArcSinh(const real_t *x, real_t *res, realContext_t *realContext) {
 */
 
 
+
 /* never used
 void WP34S_ArcCosh(const real_t *xin, real_t *res, realContext_t *realContext) {
   real_t x, z;
@@ -892,6 +914,7 @@ void WP34S_ArcCosh(const real_t *xin, real_t *res, realContext_t *realContext) {
   WP34S_Ln(&z, res, realContext);              // res = ln(x + sqrt(x²-1))
 }
 */
+
 
 
 void WP34S_ArcTanh(const real_t *x, real_t *res, realContext_t *realContext) {
@@ -908,6 +931,7 @@ void WP34S_ArcTanh(const real_t *x, real_t *res, realContext_t *realContext) {
   WP34S_Ln1P(&z, &y, realContext);                // y = ln(1 + 2x / (1-x))
   realMultiply(&y, const_1on2, res, realContext); // res = ln(1 + 2x / (1-x)) / 2
 }
+
 
 
 /* ln(1+x) */
@@ -930,6 +954,7 @@ void WP34S_Ln1P(const real_t *x, real_t *res, realContext_t *realContext) {
     }
   }
 }
+
 
 
 /* exp(x)-1 */
@@ -961,6 +986,7 @@ void WP34S_ExpM1(const real_t *x, real_t *res, realContext_t *realContext) {
     }
   }
 }
+
 
 
 static void WP34S_CalcComplexLnGamma_Lanczos(const real_t *zReal, const real_t *zImag, real_t *resReal, real_t *resImag, realContext_t *realContext) {
@@ -1004,6 +1030,7 @@ static void WP34S_CalcComplexLnGamma_Lanczos(const real_t *zReal, const real_t *
   realAdd(&uReal, &sReal, resReal, realContext);
   realAdd(&uImag, &sImag, resImag, realContext);
 }
+
 
 
 static void WP34S_ComplexGammaLnGamma(const real_t *zReal, const real_t *zImag, const bool calculateLnGamma, real_t *resReal, real_t *resImag, realContext_t *realContext) {
@@ -1078,6 +1105,7 @@ static void WP34S_ComplexGammaLnGamma(const real_t *zReal, const real_t *zImag, 
 }
 
 
+
 void WP34S_ComplexGamma(const real_t *zinReal, const real_t *zinImag, real_t *resReal, real_t *resImag, realContext_t *realContext) {
   real_t zReal, zImag;
 
@@ -1087,6 +1115,7 @@ void WP34S_ComplexGamma(const real_t *zinReal, const real_t *zinImag, real_t *re
 }
 
 
+
 void WP34S_ComplexLnGamma(const real_t *zinReal, const real_t *zinImag, real_t *resReal, real_t *resImag, realContext_t *realContext) {
   real_t zReal, zImag;
 
@@ -1094,6 +1123,7 @@ void WP34S_ComplexLnGamma(const real_t *zinReal, const real_t *zinImag, real_t *
   realCopy(zinImag, &zImag);
   WP34S_ComplexGammaLnGamma(&zReal, &zImag, true, resReal, resImag, realContext);
 }
+
 
 
 void WP34S_Mod(const real_t *x, const real_t *y, real_t *res, realContext_t *realContext) {
@@ -1107,6 +1137,7 @@ void WP34S_Mod(const real_t *x, const real_t *y, real_t *res, realContext_t *rea
 }
 
 
+
 //void WP34S_BigMod(const real_t *x, const real_t *y, real_t *res, realContext_t *realContext) {
 //  /* Declare a structure large enough to hold a really long number.
 //   * This structure is likely to be larger than is required.
@@ -1116,6 +1147,7 @@ void WP34S_Mod(const real_t *x, const real_t *y, real_t *res, realContext_t *rea
 //  realDivideRemainder(x, y, &out, &ctxtReal2139);
 //  realPlus((real_t *)&out, res, realContext);
 //}
+
 
 
 static void gser(const real_t *a, const real_t *x, const real_t *gln, real_t *res, realContext_t *realContext) {
@@ -1149,11 +1181,13 @@ static void gser(const real_t *a, const real_t *x, const real_t *gln, real_t *re
 }
 
 
+
 static void gcheckSmall(real_t *v, realContext_t *realContext) {
   if(realCompareAbsLessThan(v, const_1e_10000)) {
     realCopy(const_1e_10000, v);
   }
 }
+
 
 
 static void gcf(const real_t *a, const real_t *x, const real_t *gln, real_t *res, realContext_t *realContext) {
@@ -1194,6 +1228,7 @@ static void gcf(const real_t *a, const real_t *x, const real_t *gln, real_t *res
   realMultiply(&t, &h, res, realContext);
   return;
 }
+
 
 
 void WP34S_GammaP(const real_t *x, const real_t *a, real_t *res, realContext_t *realContext, bool upper, bool regularised) {
@@ -1263,6 +1298,7 @@ void WP34S_GammaP(const real_t *x, const real_t *a, real_t *res, realContext_t *
 }
 
 
+
 // erf and erfc were embedded library functions on WP 34S
 void WP34S_Erf(const real_t *x, real_t *res, realContext_t *realContext) {
   real_t p, q;
@@ -1284,6 +1320,7 @@ void WP34S_Erf(const real_t *x, real_t *res, realContext_t *realContext) {
 }
 
 
+
 void WP34S_Erfc(const real_t *x, real_t *res, realContext_t *realContext) {
   real_t p;
 
@@ -1295,6 +1332,7 @@ void WP34S_Erfc(const real_t *x, real_t *res, realContext_t *realContext) {
 }
 
 
+
 static void check_low(real_t *d) {
   real_t real_1e_32;
 
@@ -1303,6 +1341,7 @@ static void check_low(real_t *d) {
     realCopy(d, &real_1e_32);
   }
 }
+
 
 
 static void ib_step(const real_t *aa, real_t *d, real_t *c, realContext_t *realContext) {
@@ -1316,6 +1355,7 @@ static void ib_step(const real_t *aa, real_t *d, real_t *c, realContext_t *realC
   realAdd(&t, const_1, c, realContext);    // c = 1+aa/c
   check_low(c);
 }
+
 
 
 static void betacf(const real_t *a, const real_t *b, const real_t *x, real_t *r, realContext_t *realContext) {
@@ -1365,6 +1405,7 @@ static void betacf(const real_t *a, const real_t *b, const real_t *x, real_t *r,
     }
   }
 }
+
 
 
 // Regularised incomplete beta function Ix(a, b)
@@ -1421,6 +1462,7 @@ void WP34S_betai(const real_t *b, const real_t *a, const real_t *x, real_t *res,
 }
 
 
+
 void WP34S_Bernoulli(const real_t *x, real_t *res, bool bn_star, realContext_t *realContext) {
   real_t p;
 
@@ -1463,13 +1505,13 @@ void WP34S_Bernoulli(const real_t *x, real_t *res, bool bn_star, realContext_t *
 }
 
 
+
 /**************************************************************************/
 /* Zeta function implementation based on Jean-Marc Baillard's from:
  * http://hp41programs.yolasite.com/zeta.php
  * This is the same algorithm as the C version uses, just with fewer terms and
  * with the constants computed on the fly.
  */
-
 static void zeta_calc(const real_t *x, real_t *reg1, real_t *reg7, real_t *res, realContext_t *realContext) {
   real_t p, q, r, s, reg0, reg3, reg4, reg5, reg6;
 
@@ -1508,6 +1550,7 @@ static void zeta_calc(const real_t *x, real_t *reg1, real_t *reg7, real_t *res, 
 }
 
 
+
 void WP34S_Zeta(const real_t *x, real_t *res, realContext_t *realContext) {
   real_t p, q, r, reg1, reg7;
 
@@ -1539,6 +1582,7 @@ void WP34S_Zeta(const real_t *x, real_t *res, realContext_t *realContext) {
     realMultiply(&r, &p, res, realContext);
   }
 }
+
 
 
 /**************************************************************************/
@@ -1655,6 +1699,7 @@ void WP34S_LambertW(const real_t *x, real_t *res, bool negativeBranch, realConte
 }
 
 
+
 /**************************************************************************/
 /* The positive branch of the complex W function.
  *
@@ -1693,11 +1738,10 @@ void WP34S_ComplexLambertW(const real_t *xReal, const real_t *xImag, real_t *res
 }
 
 
+
 /**************************************************************************/
 /* The inverse W function in both real and complex domains.
  */
-
-
 void WP34S_InverseW(const real_t *x, real_t *res, realContext_t *realContext) {
   real_t p;
 
@@ -1706,12 +1750,14 @@ void WP34S_InverseW(const real_t *x, real_t *res, realContext_t *realContext) {
 }
 
 
+
 void WP34S_InverseComplexW(const real_t *xReal, const real_t *xImag, real_t *resReal, real_t *resImag, realContext_t *realContext) {
   real_t p, q;
 
   expComplex(xReal, xImag, &p, &q, realContext);
   mulComplexComplex(&p, &q, xReal, xImag, resReal, resImag, realContext);
 }
+
 
 
 // Orthogonal Polynomials, common function

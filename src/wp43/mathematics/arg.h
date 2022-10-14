@@ -7,19 +7,15 @@
 #if !defined(ARG_H)
   #define ARG_H
 
-  #include "defines.h"
   #include <stdint.h>
 
+  /**
+   * regX ==> regL and arctan(regX) ==> regX
+   * regX ==> regL and arg(regX) = arctan(Im(regX) / Re(regX)) ==> regX
+   * enables stack lift and refreshes the stack
+   *
+   * \param[in] unusedButMandatoryParameter uint16_t
+   */
   void fnArg      (uint16_t unusedButMandatoryParameter);
-
-  #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-    void argError   (void);
-  #else // (EXTRA_INFO_ON_CALC_ERROR == 1)
-    #define argError typeError
-  #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
-
-  void argReal    (void);
-  void argCplx    (void);
-  void argCxma    (void);
 
 #endif // !ARG_H

@@ -6,6 +6,7 @@
 #include "constantPointers.h"
 #include "conversionAngles.h"
 #include "debug.h"
+#include "defines.h"
 #include "error.h"
 #include "flags.h"
 #include "items.h"
@@ -19,20 +20,23 @@
 
 #include "wp43.h"
 
+void arcsinLonI (void);
+void arcsinRema (void);
+void arcsinCxma (void);
+void arcsinReal (void);
+void arcsinCplx (void);
+#if (EXTRA_INFO_ON_CALC_ERROR == 1)
+  void arcsinError(void);
+#else // (EXTRA_INFO_ON_CALC_ERROR == 1)
+  #define arcsinError typeError
+#endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+
 TO_QSPI void (* const arcsin[NUMBER_OF_DATA_TYPES_FOR_CALCULATIONS])(void) = {
 // regX ==> 1            2           3           4            5            6            7           8           9             10
 //          Long integer Real34      Complex34   Time         Date         String       Real34 mat  Complex34 m Short integer Config data
             arcsinLonI,  arcsinReal, arcsinCplx, arcsinError, arcsinError, arcsinError, arcsinRema, arcsinCxma, arcsinError,  arcsinError
 };
 
-
-
-/********************************************//**
- * \brief Data type error in arcsin
- *
- * \param void
- * \return void
- ***********************************************/
 #if (EXTRA_INFO_ON_CALC_ERROR == 1)
   void arcsinError(void) {
     displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, REGISTER_X);
@@ -43,13 +47,6 @@ TO_QSPI void (* const arcsin[NUMBER_OF_DATA_TYPES_FOR_CALCULATIONS])(void) = {
 
 
 
-/********************************************//**
- * \brief regX ==> regL and arcsin(regX) ==> regX
- * enables stack lift and refreshes the stack
- *
- * \param[in] unusedButMandatoryParameter uint16_t
- * \return void
- ***********************************************/
 void fnArcsin(uint16_t unusedButMandatoryParameter) {
   if(!saveLastX()) {
     return;
@@ -144,6 +141,8 @@ void arcsinReal(void) {
   convertAngleFromTo(&x, amRadian, currentAngularMode, &ctxtReal39);
   convertRealToReal34ResultRegister(&x, REGISTER_X);
 }
+
+
 
 void arcsinCplx(void) {
   real_t xReal, xImag, rReal, rImag;

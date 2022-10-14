@@ -21,6 +21,61 @@
 
 #include "wp43.h"
 
+void addLonILonI(void);
+void addLonIRema(void);
+void addLonICxma(void);
+void addLonITime(void);
+void addLonIDate(void);
+void addLonIShoI(void);
+void addLonIReal(void);
+void addLonICplx(void);
+void addTimeLonI(void);
+void addTimeTime(void);
+void addTimeReal(void);
+void addDateLonI(void);
+void addDateReal(void);
+void addStriLonI(void);
+void addStriTime(void);
+void addStriStri(void);
+void addStriRema(void);
+void addStriCxma(void);
+void addStriDate(void);
+void addStriShoI(void);
+void addStriReal(void);
+void addStriCplx(void);
+void addRemaLonI(void);
+void addRemaRema(void);
+void addRemaCxma(void);
+void addRemaShoI(void);
+void addRemaReal(void);
+void addRemaCplx(void);
+void addCxmaLonI(void);
+void addCxmaRema(void);
+void addCxmaCxma(void);
+void addCxmaShoI(void);
+void addCxmaReal(void);
+void addCxmaCplx(void);
+void addShoILonI(void);
+void addShoIRema(void);
+void addShoICxma(void);
+void addShoIShoI(void);
+void addShoIReal(void);
+void addShoICplx(void);
+void addRealLonI(void);
+void addRealRema(void);
+void addRealCxma(void);
+void addRealTime(void);
+void addRealDate(void);
+void addRealShoI(void);
+void addRealReal(void);
+void addRealCplx(void);
+void addCplxLonI(void);
+void addCplxRema(void);
+void addCplxCxma(void);
+void addCplxShoI(void);
+void addCplxReal(void);
+void addCplxCplx(void);
+
 TO_QSPI void (* const addition[NUMBER_OF_DATA_TYPES_FOR_CALCULATIONS][NUMBER_OF_DATA_TYPES_FOR_CALCULATIONS])(void) = {
 // regX |    regY ==>   1            2            3            4            5            6            7            8            9             10
 //      V               Long integer Real34       Complex34    Time         Date         String       Real34 mat   Complex34 m  Short integer Config data
@@ -36,14 +91,6 @@ TO_QSPI void (* const addition[NUMBER_OF_DATA_TYPES_FOR_CALCULATIONS][NUMBER_OF_
 /* 10 Config data   */ {addError,    addError,    addError,    addError,    addError,    addError,    addError,    addError,    addError,     addError}
 };
 
-
-
-/********************************************//**
- * \brief Data type error in addition
- *
- * \param void
- * \return void
- ***********************************************/
 #if (EXTRA_INFO_ON_CALC_ERROR == 1)
   void addError(void) {
     displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, REGISTER_X);
@@ -55,13 +102,6 @@ TO_QSPI void (* const addition[NUMBER_OF_DATA_TYPES_FOR_CALCULATIONS][NUMBER_OF_
 
 
 
-/********************************************//**
- * \brief regX ==> regL and regY + regX ==> regX
- * Drops Y, enables stack lift and refreshes the stack
- *
- * \param[in] unusedButMandatoryParameter uint16_t
- * \return void
- ***********************************************/
 void fnAdd(uint16_t unusedButMandatoryParameter) {
   if(!saveLastX()) {
     return;
@@ -74,16 +114,6 @@ void fnAdd(uint16_t unusedButMandatoryParameter) {
 
 
 
-/******************************************************************************************************************************************************************************************/
-/* long integer + ...                                                                                                                                                                     */
-/******************************************************************************************************************************************************************************************/
-
-/********************************************//**
- * \brief Y(long integer) + X(long integer) ==> X(long integer)
- *
- * \param void
- * \return void
- ***********************************************/
 void addLonILonI(void) {
   longInteger_t y, x;
 
@@ -100,12 +130,6 @@ void addLonILonI(void) {
 
 
 
-/********************************************//**
- * \brief Y(long integer) + X(time) ==> X(time)
- *
- * \param void
- * \return void
- ***********************************************/
 void addLonITime(void) {
   convertLongIntegerRegisterToTimeRegister(REGISTER_Y, REGISTER_Y);
   real34Add(REGISTER_REAL34_DATA(REGISTER_Y), REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X));
@@ -113,12 +137,6 @@ void addLonITime(void) {
 
 
 
-/********************************************//**
- * \brief Y(time) + X(long integer) ==> X(time)
- *
- * \param void
- * \return void
- ***********************************************/
 void addTimeLonI(void) {
   convertLongIntegerRegisterToTimeRegister(REGISTER_X, REGISTER_X);
   real34Add(REGISTER_REAL34_DATA(REGISTER_Y), REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X));
@@ -126,12 +144,6 @@ void addTimeLonI(void) {
 
 
 
-/********************************************//**
- * \brief Y(long integer) + X(date) ==> X(date)
- *
- * \param void
- * \return void
- ***********************************************/
 void addLonIDate(void) {
   real34_t val;
   convertLongIntegerRegisterToReal34Register(REGISTER_Y, REGISTER_Y);
@@ -142,12 +154,6 @@ void addLonIDate(void) {
 
 
 
-/********************************************//**
- * \brief Y(date) + X(long integer) ==> X(date)
- *
- * \param void
- * \return void
- ***********************************************/
 void addDateLonI(void) {
   real34_t val;
   convertLongIntegerRegisterToReal34Register(REGISTER_X, REGISTER_X);
@@ -159,12 +165,6 @@ void addDateLonI(void) {
 
 
 
-/********************************************//**
- * \brief Y(long integer) + X(short integer) ==> X(long integer)
- *
- * \param void
- * \return void
- ***********************************************/
 void addLonIShoI(void) {
   longInteger_t y, x;
 
@@ -181,12 +181,6 @@ void addLonIShoI(void) {
 
 
 
-/********************************************//**
- * \brief Y(short integer) + X(long integer) ==> X(long integer)
- *
- * \param void
- * \return void
- ***********************************************/
 void addShoILonI(void) {
   longInteger_t y, x;
 
@@ -203,12 +197,6 @@ void addShoILonI(void) {
 
 
 
-/********************************************//**
- * \brief Y(long integer) + X(real34) ==> X(real34)
- *
- * \param void
- * \return void
- ***********************************************/
 void addLonIReal(void) {
   real_t y, x;
   angularMode_t xAngularMode;
@@ -234,12 +222,6 @@ void addLonIReal(void) {
 
 
 
-/********************************************//**
- * \brief Y(real34) + X(long integer) ==> X(real34)
- *
- * \param void
- * \return void
- ***********************************************/
 void addRealLonI(void) {
   real_t y, x;
   angularMode_t yAngularMode;
@@ -266,12 +248,6 @@ void addRealLonI(void) {
 
 
 
-/********************************************//**
- * \brief Y(long integer) + X(complex34) ==> X(complex34)
- *
- * \param void
- * \return void
- ***********************************************/
 void addLonICplx(void) {
   real_t a, c;
 
@@ -285,12 +261,6 @@ void addLonICplx(void) {
 
 
 
-/********************************************//**
- * \brief Y(complex34) + X(long integer) ==> X(complex34)
- *
- * \param void
- * \return void
- ***********************************************/
 void addCplxLonI(void) {
   real_t a, c;
   real34_t b;
@@ -308,28 +278,12 @@ void addCplxLonI(void) {
 
 
 
-/******************************************************************************************************************************************************************************************/
-/* time + ...                                                                                                                                                                             */
-/******************************************************************************************************************************************************************************************/
-
-/********************************************//**
- * \brief Y(time) + X(time) ==> X(time)
- *
- * \param void
- * \return void
- ***********************************************/
 void addTimeTime(void) {
   real34Add(REGISTER_REAL34_DATA(REGISTER_Y), REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X));
 }
 
 
 
-/********************************************//**
- * \brief Y(time) + X(real34) ==> X(time)
- *
- * \param void
- * \return void
- ***********************************************/
 void addTimeReal(void) {
   angularMode_t xAngularMode;
 
@@ -346,12 +300,6 @@ void addTimeReal(void) {
 
 
 
-/********************************************//**
- * \brief Y(real34) + X(time) ==> X(time)
- *
- * \param void
- * \return void
- ***********************************************/
 void addRealTime(void) {
   angularMode_t yAngularMode;
 
@@ -368,16 +316,6 @@ void addRealTime(void) {
 
 
 
-/******************************************************************************************************************************************************************************************/
-/* date + ...                                                                                                                                                                             */
-/******************************************************************************************************************************************************************************************/
-
-/********************************************//**
- * \brief Y(date) + X(real34) ==> X(date)
- *
- * \param void
- * \return void
- ***********************************************/
 void addDateReal(void) {
   angularMode_t xAngularMode;
   real34_t val;
@@ -398,12 +336,6 @@ void addDateReal(void) {
 
 
 
-/********************************************//**
- * \brief Y(real34) + X(date) ==> X(date)
- *
- * \param void
- * \return void
- ***********************************************/
 void addRealDate(void) {
   angularMode_t yAngularMode;
   real34_t val;
@@ -423,16 +355,6 @@ void addRealDate(void) {
 
 
 
-/******************************************************************************************************************************************************************************************/
-/* string + ...                                                                                                                                                                           */
-/******************************************************************************************************************************************************************************************/
-
-/********************************************//**
- * \brief Y(string) + X(long integer) ==> X(string)
- *
- * \param void
- * \return void
- ***********************************************/
 void addStriLonI(void) {
   int16_t len1, len2;
 
@@ -461,12 +383,6 @@ void addStriLonI(void) {
 
 
 
-/********************************************//**
- * \brief Y(string) + X(time) ==> X(string)
- *
- * \param void
- * \return void
- ***********************************************/
 void addStriTime(void) {
   int16_t len1, len2;
 
@@ -495,12 +411,6 @@ void addStriTime(void) {
 
 
 
-/********************************************//**
- * \brief Y(string) + X(date) ==> X(string)
- *
- * \param void
- * \return void
- ***********************************************/
 void addStriDate(void) {
   int16_t len1, len2;
 
@@ -529,12 +439,6 @@ void addStriDate(void) {
 
 
 
-/********************************************//**
- * \brief Y(string) + X(string) ==> X(string)
- *
- * \param void
- * \return void
- ***********************************************/
 void addStriStri(void) {
   int16_t len1, len2;
 
@@ -563,12 +467,6 @@ void addStriStri(void) {
 
 
 
-/********************************************//**
- * \brief Y(string) + X(real34 matrix) ==> X(string)
- *
- * \param void
- * \return void
- ***********************************************/
 void addStriRema(void) {
   int16_t len1, len2;
 
@@ -597,12 +495,6 @@ void addStriRema(void) {
 
 
 
-/********************************************//**
- * \brief Y(string) + X(complex34 matrix) ==> X(string)
- *
- * \param void
- * \return void
- ***********************************************/
 void addStriCxma(void) {
   int16_t len1, len2;
 
@@ -631,12 +523,6 @@ void addStriCxma(void) {
 
 
 
-/********************************************//**
- * \brief Y(string) + X(short integer) ==> X(string)
- *
- * \param void
- * \return void
- ***********************************************/
 void addStriShoI(void) {
   int16_t len1, len2;
 
@@ -665,12 +551,6 @@ void addStriShoI(void) {
 
 
 
-/********************************************//**
- * \brief Y(string) + X(real34) ==> X(string)
- *
- * \param void
- * \return void
- ***********************************************/
 void addStriReal(void) {
   int16_t len1, len2;
 
@@ -699,12 +579,6 @@ void addStriReal(void) {
 
 
 
-/********************************************//**
- * \brief Y(string) + X(complex34) ==> X(string)
- *
- * \param void
- * \return void
- ***********************************************/
 void addStriCplx(void) {
   int16_t len1, len2;
 
@@ -733,16 +607,6 @@ void addStriCplx(void) {
 
 
 
-/******************************************************************************************************************************************************************************************/
-/* real34 matrix + ...                                                                                                                                                                    */
-/******************************************************************************************************************************************************************************************/
-
-/********************************************//**
- * \brief Y(real34 matrix) + X(long integer) ==> X(real34 matrix)
- *
- * \param void
- * \return void
- ***********************************************/
 void addRemaLonI(void) {
   #if !defined(TESTSUITE_BUILD)
     real34Matrix_t ym;
@@ -767,12 +631,6 @@ void addRemaLonI(void) {
 
 
 
-/********************************************//**
- * \brief Y(long integer) + X(real34 matrix) ==> X(real34 matrix)
- *
- * \param void
- * \return void
- ***********************************************/
 void addLonIRema(void) {
   #if !defined(TESTSUITE_BUILD)
     real34Matrix_t xm;
@@ -796,12 +654,6 @@ void addLonIRema(void) {
 
 
 
-/********************************************//**
- * \brief Y(real34 matrix) + X(real34 matrix) ==> X(real34 matrix)
- *
- * \param void
- * \return void
- ***********************************************/
 void addRemaRema(void) {
   #if !defined(TESTSUITE_BUILD)
     real34Matrix_t y, x;
@@ -829,12 +681,6 @@ void addRemaRema(void) {
 
 
 
-/********************************************//**
- * \brief Y(real34 matrix) + X(complex34 matrix) ==> X(complex34 matrix)
- *
- * \param void
- * \return void
- ***********************************************/
 void addRemaCxma(void) {
   #if !defined(TESTSUITE_BUILD)
     convertReal34MatrixRegisterToComplex34MatrixRegister(REGISTER_Y, REGISTER_Y);
@@ -844,12 +690,6 @@ void addRemaCxma(void) {
 
 
 
-/********************************************//**
- * \brief Y(complex34 matrix) + X(real34 matrix) ==> X(complex34 matrix)
- *
- * \param void
- * \return void
- ***********************************************/
 void addCxmaRema(void) {
   #if !defined(TESTSUITE_BUILD)
     convertReal34MatrixRegisterToComplex34MatrixRegister(REGISTER_X, REGISTER_X);
@@ -859,12 +699,6 @@ void addCxmaRema(void) {
 
 
 
-/********************************************//**
- * \brief Y(real34 matrix) + X(short integer) ==> X(real34 matrix)
- *
- * \param void
- * \return void
- ***********************************************/
 void addRemaShoI(void) {
   #if !defined(TESTSUITE_BUILD)
     real34Matrix_t ym;
@@ -889,12 +723,6 @@ void addRemaShoI(void) {
 
 
 
-/********************************************//**
- * \brief Y(short integer) + X(real34 matrix) ==> X(real34 matrix)
- *
- * \param void
- * \return void
- ***********************************************/
 void addShoIRema(void) {
   #if !defined(TESTSUITE_BUILD)
     real34Matrix_t xm;
@@ -918,12 +746,6 @@ void addShoIRema(void) {
 
 
 
-/********************************************//**
- * \brief Y(real34 matrix) + X(real34) ==> X(real34 matrix)
- *
- * \param void
- * \return void
- ***********************************************/
 void addRemaReal(void) {
   #if !defined(TESTSUITE_BUILD)
     real34Matrix_t y;
@@ -950,12 +772,6 @@ void addRemaReal(void) {
 
 
 
-/********************************************//**
- * \brief Y(real34) + X(real34 matrix) ==> X(real34 matrix)
- *
- * \param void
- * \return void
- ***********************************************/
 void addRealRema(void) {
   #if !defined(TESTSUITE_BUILD)
     real34Matrix_t x;
@@ -981,12 +797,6 @@ void addRealRema(void) {
 
 
 
-/********************************************//**
- * \brief Y(real34 matrix) + X(complex34) ==> X(complex34 matrix)
- *
- * \param void
- * \return void
- ***********************************************/
 void addRemaCplx(void) {
   #if !defined(TESTSUITE_BUILD)
     convertReal34MatrixRegisterToComplex34MatrixRegister(REGISTER_Y, REGISTER_Y);
@@ -996,12 +806,6 @@ void addRemaCplx(void) {
 
 
 
-/********************************************//**
- * \brief Y(complex34) + X(real34 matrix) ==> X(complex34 matrix)
- *
- * \param void
- * \return void
- ***********************************************/
 void addCplxRema(void) {
   #if !defined(TESTSUITE_BUILD)
     convertReal34MatrixRegisterToComplex34MatrixRegister(REGISTER_X, REGISTER_X);
@@ -1011,16 +815,6 @@ void addCplxRema(void) {
 
 
 
-/******************************************************************************************************************************************************************************************/
-/* complex34 matrix + ...                                                                                                                                                                 */
-/******************************************************************************************************************************************************************************************/
-
-/********************************************//**
- * \brief Y(complex34 matrix) + X(long integer) ==> X(complex34 matrix)
- *
- * \param void
- * \return void
- ***********************************************/
 void addCxmaLonI(void) {
   #if !defined(TESTSUITE_BUILD)
     complex34Matrix_t ym;
@@ -1045,12 +839,6 @@ void addCxmaLonI(void) {
 
 
 
-/********************************************//**
- * \brief Y(long integer) + X(complex34 matrix) ==> X(complex34 matrix)
- *
- * \param void
- * \return void
- ***********************************************/
 void addLonICxma(void) {
   #if !defined(TESTSUITE_BUILD)
     complex34Matrix_t xm;
@@ -1074,12 +862,6 @@ void addLonICxma(void) {
 
 
 
-/********************************************//**
- * \brief Y(complex34 matrix) + X(complex34 matrix) ==> X(complex34 matrix)
- *
- * \param void
- * \return void
- ***********************************************/
 void addCxmaCxma(void) {
   #if !defined(TESTSUITE_BUILD)
     complex34Matrix_t y, x;
@@ -1107,12 +889,6 @@ void addCxmaCxma(void) {
 
 
 
-/********************************************//**
- * \brief Y(complex34 matrix) + X(short integer) ==> X(complex34 matrix)
- *
- * \param void
- * \return void
- ***********************************************/
 void addCxmaShoI(void) {
   #if !defined(TESTSUITE_BUILD)
     complex34Matrix_t ym;
@@ -1137,12 +913,6 @@ void addCxmaShoI(void) {
 
 
 
-/********************************************//**
- * \brief Y(short integer) + X(complex34 matrix) ==> X(complex34 matrix)
- *
- * \param void
- * \return void
- ***********************************************/
 void addShoICxma(void) {
   #if !defined(TESTSUITE_BUILD)
     complex34Matrix_t xm;
@@ -1166,12 +936,6 @@ void addShoICxma(void) {
 
 
 
-/********************************************//**
- * \brief Y(complex34 matrix) + X(real34) ==> X(complex34 matrix)
- *
- * \param void
- * \return void
- ***********************************************/
 void addCxmaReal(void) {
   #if !defined(TESTSUITE_BUILD)
     complex34Matrix_t y;
@@ -1198,12 +962,6 @@ void addCxmaReal(void) {
 
 
 
-/********************************************//**
- * \brief Y(real34) + X(complex34 matrix) ==> X(complex34 matrix)
- *
- * \param void
- * \return void
- ***********************************************/
 void addRealCxma(void) {
   #if !defined(TESTSUITE_BUILD)
     complex34Matrix_t x;
@@ -1229,12 +987,6 @@ void addRealCxma(void) {
 
 
 
-/********************************************//**
- * \brief Y(complex34 matrix) + X(complex34) ==> X(complex34 matrix)
- *
- * \param void
- * \return void
- ***********************************************/
 void addCxmaCplx(void) {
   #if !defined(TESTSUITE_BUILD)
     complex34Matrix_t y;
@@ -1255,12 +1007,6 @@ void addCxmaCplx(void) {
 
 
 
-/********************************************//**
- * \brief Y(complex34) + X(complex34 matrix) ==> X(complex34 matrix)
- *
- * \param void
- * \return void
- ***********************************************/
 void addCplxCxma(void) {
   #if !defined(TESTSUITE_BUILD)
     complex34Matrix_t x;
@@ -1280,16 +1026,6 @@ void addCplxCxma(void) {
 
 
 
-/******************************************************************************************************************************************************************************************/
-/* short integer + ...                                                                                                                                                                    */
-/******************************************************************************************************************************************************************************************/
-
-/********************************************//**
- * \brief Y(short integer) + X(short integer) ==> X(short integer)
- *
- * \param void
- * \return void
- ***********************************************/
 void addShoIShoI(void) {
   setRegisterTag(REGISTER_X, getRegisterTag(REGISTER_Y));
   *(REGISTER_SHORT_INTEGER_DATA(REGISTER_X)) = WP34S_intAdd(*(REGISTER_SHORT_INTEGER_DATA(REGISTER_Y)), *(REGISTER_SHORT_INTEGER_DATA(REGISTER_X)));
@@ -1297,12 +1033,6 @@ void addShoIShoI(void) {
 
 
 
-/********************************************//**
- * \brief Y(short integer) + X(real34) ==> X(real34)
- *
- * \param void
- * \return void
- ***********************************************/
 void addShoIReal(void) {
   real_t y, x;
   angularMode_t xAngularMode;
@@ -1328,12 +1058,6 @@ void addShoIReal(void) {
 
 
 
-/********************************************//**
- * \brief Y(real34) + X(short integer) ==> X(real34)
- *
- * \param void
- * \return void
- ***********************************************/
 void addRealShoI(void) {
   real_t y, x;
   angularMode_t yAngularMode;
@@ -1360,12 +1084,6 @@ void addRealShoI(void) {
 
 
 
-/********************************************//**
- * \brief Y(short integer) + X(complex34) ==> X(complex34)
- *
- * \param void
- * \return void
- ***********************************************/
 void addShoICplx(void) {
   convertShortIntegerRegisterToReal34Register(REGISTER_Y, REGISTER_Y);
   real34Add(REGISTER_REAL34_DATA(REGISTER_Y), REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X)); // real part
@@ -1373,12 +1091,6 @@ void addShoICplx(void) {
 
 
 
-/********************************************//**
- * \brief Y(complex34) + X(short integer) ==> X(complex34)
- *
- * \param void
- * \return void
- ***********************************************/
 void addCplxShoI(void) {
   convertShortIntegerRegisterToReal34Register(REGISTER_X, REGISTER_X);
   real34Add(REGISTER_REAL34_DATA(REGISTER_Y), REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_Y)); // real part
@@ -1388,16 +1100,6 @@ void addCplxShoI(void) {
 
 
 
-/******************************************************************************************************************************************************************************************/
-/* real34 + ...                                                                                                                                                                           */
-/******************************************************************************************************************************************************************************************/
-
-/********************************************//**
- * \brief Y(real34) + X(real34) ==> X(real34)
- *
- * \param void
- * \return void
- ***********************************************/
 void addRealReal(void) {
   angularMode_t yAngularMode, xAngularMode;
 
@@ -1437,24 +1139,12 @@ void addRealReal(void) {
 
 
 
-/********************************************//**
- * \brief Y(real34) + X(complex34) ==> X(complex34)
- *
- * \param void
- * \return void
- ***********************************************/
 void addRealCplx(void) {
   real34Add(REGISTER_REAL34_DATA(REGISTER_Y), REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X)); // real part
 }
 
 
 
-/********************************************//**
- * \brief Y(complex34) + X(real34) ==> X(complex34)
- *
- * \param void
- * \return void
- ***********************************************/
 void addCplxReal(void) {
   real34Add(REGISTER_REAL34_DATA(REGISTER_Y), REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_Y)); // real part
   reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE, amNone);
@@ -1463,16 +1153,6 @@ void addCplxReal(void) {
 
 
 
-/******************************************************************************************************************************************************************************************/
-/* complex34 + ...                                                                                                                                                                        */
-/******************************************************************************************************************************************************************************************/
-
-/********************************************//**
- * \brief Y(complex34) + X(complex34) ==> X(complex34)
- *
- * \param void
- * \return void
- ***********************************************/
 void addCplxCplx(void) {
   real34Add(REGISTER_REAL34_DATA(REGISTER_Y), REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X)); // real part
   real34Add(REGISTER_IMAG34_DATA(REGISTER_Y), REGISTER_IMAG34_DATA(REGISTER_X), REGISTER_IMAG34_DATA(REGISTER_X)); // imaginary part

@@ -5,6 +5,7 @@
 
 #include "constantPointers.h"
 #include "debug.h"
+#include "defines.h"
 #include "error.h"
 #include "conversionAngles.h"
 #include "mathematics/toPolar.h"
@@ -14,20 +15,21 @@
 
 #include "wp43.h"
 
+void argReal    (void);
+void argCplx    (void);
+void argCxma    (void);
+#if (EXTRA_INFO_ON_CALC_ERROR == 1)
+  void argError   (void);
+#else // (EXTRA_INFO_ON_CALC_ERROR == 1)
+  #define argError typeError
+#endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+
 TO_QSPI void (* const arg[NUMBER_OF_DATA_TYPES_FOR_CALCULATIONS])(void) = {
 // regX ==> 1            2           3           4            5            6            7            8            9             10
 //          Long integer Real34      Complex34   Time         Date         String       Real34 mat   Complex34 m  Short integer Config data
             argError,    argReal,    argCplx,    argError,    argError,    argError,    argError,    argCxma,     argError,     argError
 };
 
-
-
-/********************************************//**
- * \brief Data type error in arctan
- *
- * \param void
- * \return void
- ***********************************************/
 #if (EXTRA_INFO_ON_CALC_ERROR == 1)
   void argError(void) {
     displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, REGISTER_X);
@@ -38,14 +40,6 @@ TO_QSPI void (* const arg[NUMBER_OF_DATA_TYPES_FOR_CALCULATIONS])(void) = {
 
 
 
-
-/********************************************//**
- * \brief regX ==> regL and arctan(regX) ==> regX
- * enables stack lift and refreshes the stack
- *
- * \param[in] unusedButMandatoryParameter uint16_t
- * \return void
- ***********************************************/
 void fnArg(uint16_t unusedButMandatoryParameter) {
   if(!saveLastX()) {
     return;
@@ -58,13 +52,6 @@ void fnArg(uint16_t unusedButMandatoryParameter) {
 
 
 
-/********************************************//**
- * \brief regX ==> regL and arg(regX) = arctan(Im(regX) / Re(regX)) ==> regX
- * enables stack lift and refreshes the stack
- *
- * \param[in] unusedButMandatoryParameter uint16_t
- * \return void
- ***********************************************/
 void argReal(void) {
   if(real34IsNaN(REGISTER_REAL34_DATA(REGISTER_X))) {
     //let it stay NAN
@@ -85,6 +72,7 @@ void argReal(void) {
       }
   }
 }
+
 
 
 void argCplx(void) {

@@ -5,6 +5,7 @@
 
 #include "constantPointers.h"
 #include "debug.h"
+#include "defines.h"
 #include "error.h"
 #include "flags.h"
 #include "fonts.h"
@@ -17,13 +18,22 @@
 
 #include "wp43.h"
 
+void tanLonI(void);
+void tanRema(void);
+void tanCxma(void);
+void tanReal(void);
+void tanCplx(void);
+#if (EXTRA_INFO_ON_CALC_ERROR == 1)
+  void tanError(void);
+#else // (EXTRA_INFO_ON_CALC_ERROR != 1)
+  #define tanError typeError
+#endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+
 TO_QSPI void (* const Tan[NUMBER_OF_DATA_TYPES_FOR_CALCULATIONS])(void) = {
 // regX ==> 1            2        3        4         5         6         7        8           9             10
 //          Long integer Real     complex  Time      Date      String    Real mat Complex mat short integer Config data
             tanLonI,     tanReal, tanCplx, tanError, tanError, tanError, tanRema, tanCxma,    tanError,     tanError
 };
-
-
 
 void longIntegerAngleReduction(calcRegister_t regist, angularMode_t angularMode, real_t *reducedAngle) {
   uint32_t oneTurn;
@@ -57,12 +67,6 @@ void longIntegerAngleReduction(calcRegister_t regist, angularMode_t angularMode,
 
 
 
-/********************************************//**
- * \brief Data type error in tan
- *
- * \param void
- * \return void
- ***********************************************/
 #if (EXTRA_INFO_ON_CALC_ERROR == 1)
   void tanError(void) {
     displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, REGISTER_X);
@@ -73,13 +77,6 @@ void longIntegerAngleReduction(calcRegister_t regist, angularMode_t angularMode,
 
 
 
-/********************************************//**
- * \brief regX ==> regL and tan(regX) ==> regX
- * enables stack lift and refreshes the stack
- *
- * \param[in] unusedButMandatoryParameter uint16_t
- * \return void
- ***********************************************/
 void fnTan(uint16_t unusedButMandatoryParameter) {
   if(!saveLastX()) {
     return;
@@ -193,6 +190,8 @@ void tanCplx(void) {
   convertRealToReal34ResultRegister(&xReal, REGISTER_X);
   convertRealToImag34ResultRegister(&xImag, REGISTER_X);
 }
+
+
 
 uint8_t TanComplex(const real_t *xReal, const real_t *xImag, real_t *rReal, real_t *rImag, realContext_t *realContext) {
   real_t sina, cosa, sinhb, coshb;

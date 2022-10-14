@@ -7,23 +7,16 @@
 #if !defined(ARCSINH_H)
   #define ARCSINH_H
 
-  #include "defines.h"
   #include "realType.h"
   #include <stdint.h>
 
+  /**
+   * regX ==> regL and arcsinh(regX) ==> regX
+   * enables stack lift and refreshes the stack
+   *
+   * \param[in] unusedButMandatoryParameter
+   */
   void fnArcsinh   (uint16_t unusedButMandatoryParameter);
-
-  #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-    void arcsinhError(void);
-  #else // (EXTRA_INFO_ON_CALC_ERROR == 1)
-    #define arcsinhError typeError
-  #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
-
-  void arcsinhLonI (void);
-  void arcsinhRema (void);
-  void arcsinhCxma (void);
-  void arcsinhReal (void);
-  void arcsinhCplx (void);
 
   uint8_t ArcsinhReal(const real_t *x, real_t *res, realContext_t *realContext);
   uint8_t ArcsinhComplex(const real_t *xReal, const real_t *xImag, real_t *rReal, real_t *rImag, realContext_t *realContext);

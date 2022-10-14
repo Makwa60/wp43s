@@ -27,7 +27,14 @@
   void fnStatR                    (real_t *RR, real_t *SXY, real_t *SX, real_t *SY);
   void fnStatSXY                  (real_t *SXY);
   void fnStatSX_SY                (real_t *SX, real_t *SY);
-  void processCurvefitSA          (real_t *SA0, real_t *SA1);
   void fnStatSa                   (uint16_t unusedButMandatoryParameter);
+
+  /**
+   * s(a) ==> regX, regY
+   * regX = s(a0), regY = s(a1)
+   *
+   * \param[in] unusedButMandatoryParameter
+   */
+  void processCurvefitSA          (real_t *SA0, real_t *SA1);
 
 #endif // !VARIANCE_H

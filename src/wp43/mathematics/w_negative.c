@@ -5,6 +5,7 @@
 
 #include "constantPointers.h"
 #include "debug.h"
+#include "defines.h"
 #include "error.h"
 #include "mathematics/comparisonReals.h"
 #include "mathematics/wp34s.h"
@@ -13,20 +14,21 @@
 
 #include "wp43.h"
 
+void wNegLonI(void);
+void wNegReal(void);
+void wNegCplx(void);
+#if (EXTRA_INFO_ON_CALC_ERROR == 1)
+  void wNegError  (void);
+#else // (EXTRA_INFO_ON_CALC_ERROR == 1)
+  #define wNegError typeError
+#endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+
 TO_QSPI void (* const WNegative[NUMBER_OF_DATA_TYPES_FOR_CALCULATIONS])(void) = {
 // regX ==> 1            2         3          4          5          6          7          8           9             10
 //          Long integer Real34    Complex34  Time       Date       String     Real34 mat Complex34 m Short integer Config data
             wNegLonI,    wNegReal, wNegCplx,  wNegError, wNegError, wNegError, wNegError, wNegError,  wNegError,    wNegError
 };
 
-
-
-/********************************************//**
- * \brief Data type error in W
- *
- * \param void
- * \return void
- ***********************************************/
 #if (EXTRA_INFO_ON_CALC_ERROR == 1)
   void wNegError(void) {
     displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, REGISTER_X);
@@ -37,13 +39,6 @@ TO_QSPI void (* const WNegative[NUMBER_OF_DATA_TYPES_FOR_CALCULATIONS])(void) = 
 
 
 
-/********************************************//**
- * \brief regX ==> regL and W(regX) ==> regX
- * enables stack lift and refreshes the stack
- *
- * \param[in] unusedButMandatoryParameter uint16_t
- * \return void
- ***********************************************/
 void fnWnegative(uint16_t unusedButMandatoryParameter) {
   if(!saveLastX()) {
     return;
