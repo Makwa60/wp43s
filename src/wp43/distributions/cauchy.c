@@ -1,22 +1,5 @@
-/* This file is part of 43S.
- *
- * 43S is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * 43S is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-/********************************************//**
- * \file cauchy.c
- ***********************************************/
+// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-FileCopyrightText: Copyright The WP43 Authors
 
 #include "distributions/cauchy.h"
 
@@ -31,7 +14,6 @@
 #include <stdbool.h>
 
 #include "wp43.h"
-
 
 static bool checkParamCauchy(real_t *x, real_t *i, real_t *j) {
   if(   ((getRegisterDataType(REGISTER_X) != dtReal34) && (getRegisterDataType(REGISTER_X) != dtLongInteger))
@@ -80,6 +62,7 @@ static bool checkParamCauchy(real_t *x, real_t *i, real_t *j) {
 }
 
 
+
 void fnCauchyP(uint16_t unusedButMandatoryParameter) {
   real_t val, ans, x0, gamma;
 
@@ -95,6 +78,7 @@ void fnCauchyP(uint16_t unusedButMandatoryParameter) {
 
   adjustResult(REGISTER_X, false, false, REGISTER_X, -1, -1);
 }
+
 
 
 void fnCauchyL(uint16_t unusedButMandatoryParameter) {
@@ -114,6 +98,7 @@ void fnCauchyL(uint16_t unusedButMandatoryParameter) {
 }
 
 
+
 void fnCauchyR(uint16_t unusedButMandatoryParameter) {
   real_t val, ans, x0, gamma;
 
@@ -129,6 +114,7 @@ void fnCauchyR(uint16_t unusedButMandatoryParameter) {
 
   adjustResult(REGISTER_X, false, false, REGISTER_X, -1, -1);
 }
+
 
 
 void fnCauchyI(uint16_t unusedButMandatoryParameter) {
@@ -182,13 +168,19 @@ void WP34S_Pdf_Cauchy(const real_t *x, const real_t *x0, const real_t *gamma, re
   realDivide(const_1, res, res, realContext);
 }
 
+
+
 void WP34S_Cdfu_Cauchy(const real_t *x, const real_t *x0, const real_t *gamma, real_t *res, realContext_t *realContext) {
   WP34S_cdf_cauchy_common(x, x0, gamma, true, res, realContext);
 }
 
+
+
 void WP34S_Cdf_Cauchy(const real_t *x, const real_t *x0, const real_t *gamma, real_t *res, realContext_t *realContext) {
   WP34S_cdf_cauchy_common(x, x0, gamma, false, res, realContext);
 }
+
+
 
 void WP34S_cdf_cauchy_common(const real_t *x, const real_t *x0, const real_t *gamma, bool complementary, real_t *res, realContext_t *realContext) {
   real_t p;
@@ -206,10 +198,14 @@ void WP34S_cdf_cauchy_common(const real_t *x, const real_t *x0, const real_t *ga
   realAdd(&p, const_1on2, res, realContext);
 }
 
+
+
 void WP34S_cdf_cauchy_xform(const real_t *x, const real_t *x0, const real_t *gamma, real_t *res, realContext_t *realContext) {
   realSubtract(x, x0, res, realContext);
   realDivide(res, gamma, res, realContext);
 }
+
+
 
 void WP34S_Qf_Cauchy(const real_t *x, const real_t *x0, const real_t *gamma, real_t *res, realContext_t *realContext) {
   real_t p, s, c;
