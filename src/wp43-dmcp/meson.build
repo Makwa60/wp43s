@@ -97,3 +97,13 @@ wp43_qspi = custom_target(
   command          : [bash, modify_crc, forcecrc32, '@INPUT@', '@OUTPUT@'])
 
 alias_target('dmcp', wp43_pgm, wp43_qspi)
+
+# Build keymap.bin for DMCP
+keymap = custom_target(
+  'keymap.bin',
+  build_by_default : false,
+  input            : files('keymap.txt'),
+  output           : 'keymap.bin',
+  command          : [mk_keymap, 'WP43', '@INPUT@'])
+
+alias_target('keymap', keymap)

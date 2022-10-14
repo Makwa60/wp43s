@@ -58,6 +58,9 @@ testPgms: build.sim
 build.rel/wiki: build.rel
 	git clone https://gitlab.com/wpcalculators/wp43.wiki.git build.rel/wiki
 
+build.dmcp/keymap: build.dmcp
+	cd build.dmcp && ninja keymap
+
 ifeq ($(CI_COMMIT_TAG),)
   WIN_DIST_DIR = wp43-windows
   MAC_DIST_DIR = wp43-macos
@@ -94,11 +97,13 @@ dist_macos: testPgms build.rel
 	zip -r wp43-macos.zip $(MAC_DIST_DIR)
 	rm -rf $(MAC_DIST_DIR)
 
-dist_dmcp: dmcp testPgms build.rel/wiki
+dist_dmcp: dmcp testPgms build.dmcp/keymap build.rel/wiki
 	mkdir -p $(DM_DIST_DIR)
 	cp build.dmcp/src/wp43-dmcp/WP43.pgm build.dmcp/src/wp43-dmcp/WP43_qspi.bin $(DM_DIST_DIR)
 	cp -r res/offimg $(DM_DIST_DIR)
-	cp res/dmcp/keymap.bin res/dmcp/original_DM42_keymap.bin res/dmcp/testPgms.bin $(DM_DIST_DIR)
+	cp res/dmcp/testPgms.bin $(DM_DIST_DIR)
+	cp build.dmcp/keymap.bin $(DM_DIST_DIR)
+	cp dep/DMCP_SDK/keymap_utils/keymaps/empty/keymap.bin $(DM_DIST_DIR)/original_DM42_keymap.bin
 	cp res/artwork/WP43_layout.svg $(DM_DIST_DIR)/WP43_layout.svg
 	cp build.rel/wiki/Installation-on-a-DM42.md $(DM_DIST_DIR)/readme.txt
 	zip -r wp43-dmcp.zip $(DM_DIST_DIR)
