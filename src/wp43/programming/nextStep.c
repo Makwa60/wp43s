@@ -1,22 +1,5 @@
-/* This file is part of 43S.
- *
- * 43S is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * 43S is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-/********************************************//**
- * \file nextStep.c
- ***********************************************/
+// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-FileCopyrightText: Copyright The WP43 Authors
 
 #include "programming/nextStep.h"
 
@@ -45,7 +28,6 @@
 #include <stdint.h>
 
 #include "wp43.h"
-
 
 uint8_t *countOpBytes(uint8_t *step, uint16_t paramMode) {
   uint8_t opParam = *(uint8_t *)(step++);
@@ -175,6 +157,7 @@ uint8_t *countOpBytes(uint8_t *step, uint16_t paramMode) {
 }
 
 
+
 uint8_t *countLiteralBytes(uint8_t *step) {
   switch(*(uint8_t *)(step++)) {
     case BINARY_SHORT_INTEGER: {
@@ -225,6 +208,7 @@ uint8_t *countLiteralBytes(uint8_t *step) {
 }
 
 
+
 uint8_t *findNextStep_ram(uint8_t *step) {
   if((*step == ((ITM_KEY >> 8) | 0x80)) && (*(step + 1) == (ITM_KEY & 0xff))) {
     return findKey2ndParam_ram(findKey2ndParam_ram(step));
@@ -233,6 +217,7 @@ uint8_t *findNextStep_ram(uint8_t *step) {
     return findKey2ndParam_ram(step);
   }
 }
+
 
 
 pgmPtr_t findNextStep(pgmPtr_t step) {
@@ -254,6 +239,7 @@ pgmPtr_t findNextStep(pgmPtr_t step) {
     return ptr;
   }
 }
+
 
 
 uint8_t *findKey2ndParam_ram(uint8_t *step) {
@@ -452,6 +438,8 @@ static void _bstInPem(void) {
   defineFirstDisplayedStep();
 }
 
+
+
 void fnBst(uint16_t unusedButMandatoryParameter) {
   screenUpdatingMode = SCRUPD_AUTO;
   if(calcMode == cmPem) {
@@ -512,6 +500,8 @@ static void _sstInPem(void) {
 
   defineFirstDisplayedStep();
 }
+
+
 
 void fnSst(uint16_t unusedButMandatoryParameter) {
   screenUpdatingMode = SCRUPD_AUTO;
@@ -622,7 +612,6 @@ void fnCase(uint16_t regist) {
     fnSkip(real34ToUInt32(&arg) - 1);
   }
 }
-
 
 
 

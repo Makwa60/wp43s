@@ -1,22 +1,5 @@
-/* This file is part of 43S.
- *
- * 43S is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * 43S is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-/********************************************//**
- * \file programmableMenu.c
- ***********************************************/
+// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-FileCopyrightText: Copyright The WP43 Authors
 
 #include "programming/programmableMenu.h"
 
@@ -50,6 +33,8 @@
     tmpStringLabelOrVariableName[stringLength] = 0;
   }
 
+
+
   static uint16_t _indirectRegister(uint8_t *paramAddress) {
     uint8_t opParam = *(uint8_t *)paramAddress;
     if(opParam <= LAST_LOCAL_REGISTER) { // Local register from .00 to .98
@@ -63,6 +48,8 @@
     }
     return INVALID_VARIABLE;
   }
+
+
 
   static uint16_t _indirectVariable(uint8_t *stringAddress) {
     calcRegister_t regist;
@@ -83,6 +70,8 @@
     }
     return INVALID_VARIABLE;
   }
+
+
 
   static uint16_t _get2ndParamOfKey(uint8_t *paramAddress) {
     uint8_t opParam = *(uint8_t *)(paramAddress++);
@@ -116,6 +105,8 @@
     return INVALID_VARIABLE;
   }
 
+
+
   void fnKeyGtoXeq(uint16_t keyNum) {
     pgmPtr_t secondParam = findKey2ndParam(currentStep);
     pgmPtr_t opParam;
@@ -145,9 +136,13 @@
     }
   }
 
+
+
   void fnKeyGto(uint16_t unusedButMandatoryParameter) {
     keyGto(tam.key, tam.value);
   }
+
+
 
   void fnKeyXeq(uint16_t unusedButMandatoryParameter) {
     keyXeq(tam.key, tam.value);

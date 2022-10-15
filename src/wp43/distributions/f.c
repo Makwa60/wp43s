@@ -1,22 +1,5 @@
-/* This file is part of 43S.
- *
- * 43S is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * 43S is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-/********************************************//**
- * \file f.c
- ***********************************************/
+// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-FileCopyrightText: Copyright The WP43 Authors
 
 #include "distributions/f.h"
 
@@ -39,7 +22,6 @@
 #include <stdbool.h>
 
 #include "wp43.h"
-
 
 static bool checkParamF(real_t *x, real_t *i, real_t *j) {
   if(   ((getRegisterDataType(REGISTER_X) != dtReal34) && (getRegisterDataType(REGISTER_X) != dtLongInteger))
@@ -102,6 +84,7 @@ static bool checkParamF(real_t *x, real_t *i, real_t *j) {
 }
 
 
+
 void fnF_P(uint16_t unusedButMandatoryParameter) {
   real_t val, ans, d1, d2;
 
@@ -117,6 +100,7 @@ void fnF_P(uint16_t unusedButMandatoryParameter) {
 
   adjustResult(REGISTER_X, false, false, REGISTER_X, -1, -1);
 }
+
 
 
 void fnF_L(uint16_t unusedButMandatoryParameter) {
@@ -136,6 +120,7 @@ void fnF_L(uint16_t unusedButMandatoryParameter) {
 }
 
 
+
 void fnF_R(uint16_t unusedButMandatoryParameter) {
   real_t val, ans, d1, d2;
 
@@ -151,6 +136,7 @@ void fnF_R(uint16_t unusedButMandatoryParameter) {
 
   adjustResult(REGISTER_X, false, false, REGISTER_X, -1, -1);
 }
+
 
 
 void fnF_I(uint16_t unusedButMandatoryParameter) {
@@ -214,6 +200,8 @@ void WP34S_Pdf_F(const real_t *x, const real_t *d1, const real_t *d2, real_t *re
   realDivide(&p, x, res, realContext);
 }
 
+
+
 void WP34S_Cdfu_F(const real_t *x, const real_t *d1, const real_t *d2, real_t *res, realContext_t *realContext) {
   real_t p, q, r;
 
@@ -234,6 +222,8 @@ void WP34S_Cdfu_F(const real_t *x, const real_t *d1, const real_t *d2, real_t *r
   WP34S_betai(&r, &q, &p, res, realContext);
 }
 
+
+
 void WP34S_Cdf_F(const real_t *x, const real_t *d1, const real_t *d2, real_t *res, realContext_t *realContext) {
   real_t p, q, r;
 
@@ -253,6 +243,8 @@ void WP34S_Cdf_F(const real_t *x, const real_t *d1, const real_t *d2, real_t *re
   realDivide(d1, const_2, &r, realContext);
   WP34S_betai(&q, &r, &p, res, realContext);
 }
+
+
 
 void WP34S_Qf_F(const real_t *x, const real_t *d1, const real_t *d2, real_t *res, realContext_t *realContext) {
   real_t p, q, r, s, reg0, reg1, reg2;
@@ -295,6 +287,7 @@ void WP34S_Qf_F(const real_t *x, const real_t *d1, const real_t *d2, real_t *res
 
   WP34S_Qf_Newton(QF_NEWTON_F, &reg0, &q, d1, d2, NULL, res, realContext);
 }
+
 
 
 /**************************************************************************/

@@ -1,22 +1,5 @@
-/* This file is part of 43S.
- *
- * 43S is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * 43S is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-/********************************************//**
- * \file binomial.c
- ***********************************************/
+// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-FileCopyrightText: Copyright The WP43 Authors
 
 #include "distributions/binomial.h"
 
@@ -35,7 +18,6 @@
 #include <stdbool.h>
 
 #include "wp43.h"
-
 
 static bool checkParamBinomial(real_t *x, real_t *i, real_t *j) {
   if(   ((getRegisterDataType(REGISTER_X) != dtReal34) && (getRegisterDataType(REGISTER_X) != dtLongInteger))
@@ -98,6 +80,7 @@ static bool checkParamBinomial(real_t *x, real_t *i, real_t *j) {
 }
 
 
+
 void fnBinomialP(uint16_t unusedButMandatoryParameter) {
   real_t val, ans, prob, num;
 
@@ -128,6 +111,7 @@ void fnBinomialP(uint16_t unusedButMandatoryParameter) {
 }
 
 
+
 void fnBinomialL(uint16_t unusedButMandatoryParameter) {
   real_t val, ans, prob, num;
 
@@ -153,6 +137,7 @@ void fnBinomialL(uint16_t unusedButMandatoryParameter) {
 }
 
 
+
 void fnBinomialR(uint16_t unusedButMandatoryParameter) {
   real_t val, ans, prob, num;
 
@@ -176,6 +161,7 @@ void fnBinomialR(uint16_t unusedButMandatoryParameter) {
 
   adjustResult(REGISTER_X, false, false, REGISTER_X, -1, -1);
 }
+
 
 
 void fnBinomialI(uint16_t unusedButMandatoryParameter) {
@@ -228,6 +214,8 @@ bool binomial_param(const real_t *n, real_t *res) {
   return true;
 }
 
+
+
 void WP34S_Pdf_Binomial(const real_t *x, const real_t *p0, const real_t *n, real_t *res, realContext_t *realContext) {
   real_t p, q, nn, xx;
 
@@ -253,6 +241,8 @@ void WP34S_Pdf_Binomial(const real_t *x, const real_t *p0, const real_t *n, real
   realExp(&p, res, realContext);
 }
 
+
+
 void WP34S_Cdfu_Binomial(const real_t *x, const real_t *p0, const real_t *n, real_t *res, realContext_t *realContext) {
   real_t p, q, r;
 
@@ -275,6 +265,8 @@ void WP34S_Cdfu_Binomial(const real_t *x, const real_t *p0, const real_t *n, rea
   WP34S_betai(&q, &r, p0, res, realContext);
 }
 
+
+
 void WP34S_Cdf_Binomial(const real_t *x, const real_t *p0, const real_t *n, real_t *res, realContext_t *realContext) {
   real_t p;
 
@@ -284,6 +276,8 @@ void WP34S_Cdf_Binomial(const real_t *x, const real_t *p0, const real_t *n, real
   realToIntegralValue(x, &p, DEC_ROUND_FLOOR, realContext);
   WP34S_Cdf_Binomial2(&p, p0, n, res, realContext);
 }
+
+
 
 void WP34S_Cdf_Binomial2(const real_t *x, const real_t *p0, const real_t *n, real_t *res, realContext_t *realContext) {
   real_t p, q, r;
@@ -302,6 +296,8 @@ void WP34S_Cdf_Binomial2(const real_t *x, const real_t *p0, const real_t *n, rea
   realSubtract(const_1, p0, &p, realContext);
   WP34S_betai(&r, &q, &p, res, realContext);
 }
+
+
 
 void WP34S_Qf_Binomial(const real_t *x, const real_t *p0, const real_t *n, real_t *res, realContext_t *realContext) {
   real_t p, q, r;

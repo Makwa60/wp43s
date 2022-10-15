@@ -1,22 +1,5 @@
-/* This file is part of 43S.
- *
- * 43S is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * 43S is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-/********************************************//**
- * \file negBinom.c
- ***********************************************/
+// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-FileCopyrightText: Copyright The WP43 Authors
 
 #include "distributions/negBinom.h"
 
@@ -34,7 +17,6 @@
 #include <stdbool.h>
 
 #include "wp43.h"
-
 
 static bool checkParamNegBinom(real_t *x, real_t *i, real_t *j) {
   if(   ((getRegisterDataType(REGISTER_X) != dtReal34) && (getRegisterDataType(REGISTER_X) != dtLongInteger))
@@ -97,6 +79,7 @@ static bool checkParamNegBinom(real_t *x, real_t *i, real_t *j) {
 }
 
 
+
 void fnNegBinomialP(uint16_t unusedButMandatoryParameter) {
   real_t val, ans, prob, num;
 
@@ -127,6 +110,7 @@ void fnNegBinomialP(uint16_t unusedButMandatoryParameter) {
 }
 
 
+
 void fnNegBinomialL(uint16_t unusedButMandatoryParameter) {
   real_t val, ans, prob, num;
 
@@ -152,6 +136,7 @@ void fnNegBinomialL(uint16_t unusedButMandatoryParameter) {
 }
 
 
+
 void fnNegBinomialR(uint16_t unusedButMandatoryParameter) {
   real_t val, ans, prob, num;
 
@@ -175,6 +160,7 @@ void fnNegBinomialR(uint16_t unusedButMandatoryParameter) {
 
   adjustResult(REGISTER_X, false, false, REGISTER_X, -1, -1);
 }
+
 
 
 void fnNegBinomialI(uint16_t unusedButMandatoryParameter) {
@@ -210,6 +196,7 @@ void fnNegBinomialI(uint16_t unusedButMandatoryParameter) {
 }
 
 
+
 bool negBinom_param(const real_t *r, real_t *res) {
   if(realIsSpecial(r)) {
     realCopy(const_NaN, res);
@@ -221,6 +208,8 @@ bool negBinom_param(const real_t *r, real_t *res) {
   }
   return true;
 }
+
+
 
 // PDF[NB(r, p)](k) = [(k + r - 1) C k] p^k (1 - p)^r
 void pdf_NegBinomial(const real_t *x, const real_t *p0, const real_t *r, real_t *res, realContext_t *realContext) {
@@ -251,6 +240,8 @@ void pdf_NegBinomial(const real_t *x, const real_t *p0, const real_t *r, real_t 
   realExp(&p, res, realContext);
 }
 
+
+
 // I[p](k, r)
 void cdfu_NegBinomial(const real_t *x, const real_t *p0, const real_t *r, real_t *res, realContext_t *realContext) {
   real_t p;
@@ -267,6 +258,8 @@ void cdfu_NegBinomial(const real_t *x, const real_t *p0, const real_t *r, real_t
   WP34S_betai(r, &p, p0, res, realContext);
 }
 
+
+
 // 1 - I[p](k + 1, r)
 void cdf_NegBinomial(const real_t *x, const real_t *p0, const real_t *r, real_t *res, realContext_t *realContext) {
   real_t p;
@@ -277,6 +270,8 @@ void cdf_NegBinomial(const real_t *x, const real_t *p0, const real_t *r, real_t 
   realToIntegralValue(x, &p, DEC_ROUND_FLOOR, realContext);
   cdf_NegBinomial2(&p, p0, r, res, realContext);
 }
+
+
 
 void cdf_NegBinomial2(const real_t *x, const real_t *p0, const real_t *r, real_t *res, realContext_t *realContext) {
   real_t p, q;
@@ -291,6 +286,8 @@ void cdf_NegBinomial2(const real_t *x, const real_t *p0, const real_t *r, real_t
   realAdd(x, const_1, &q, realContext);
   WP34S_betai(&q, r, &p, res, realContext);
 }
+
+
 
 void qf_NegBinomial(const real_t *x, const real_t *p0, const real_t *r, real_t *res, realContext_t *realContext) {
   real_t p0c, pr, mean, var, s;

@@ -1,22 +1,5 @@
-/* This file is part of 43S.
- *
- * 43S is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * 43S is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-/********************************************//**
- * \file geometric.c
- ***********************************************/
+// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-FileCopyrightText: Copyright The WP43 Authors
 
 #include "distributions/geometric.h"
 
@@ -35,7 +18,6 @@
 #include <stdbool.h>
 
 #include "wp43.h"
-
 
 static bool checkParamGeometric(real_t *x, real_t *i) {
   if(   ((getRegisterDataType(REGISTER_X) != dtReal34) && (getRegisterDataType(REGISTER_X) != dtLongInteger))
@@ -83,6 +65,7 @@ static bool checkParamGeometric(real_t *x, real_t *i) {
 }
 
 
+
 void fnGeometricP(uint16_t unusedButMandatoryParameter) {
   real_t val, ans, prob;
 
@@ -98,6 +81,7 @@ void fnGeometricP(uint16_t unusedButMandatoryParameter) {
 
   adjustResult(REGISTER_X, false, false, REGISTER_X, -1, -1);
 }
+
 
 
 void fnGeometricL(uint16_t unusedButMandatoryParameter) {
@@ -117,6 +101,7 @@ void fnGeometricL(uint16_t unusedButMandatoryParameter) {
 }
 
 
+
 void fnGeometricR(uint16_t unusedButMandatoryParameter) {
   real_t val, ans, prob;
 
@@ -132,6 +117,7 @@ void fnGeometricR(uint16_t unusedButMandatoryParameter) {
 
   adjustResult(REGISTER_X, false, false, REGISTER_X, -1, -1);
 }
+
 
 
 void fnGeometricI(uint16_t unusedButMandatoryParameter) {
@@ -178,6 +164,8 @@ void WP34S_Pdf_Geom(const real_t *x, const real_t *p0, real_t *res, realContext_
   realMultiply(&p, p0, res, realContext);
 }
 
+
+
 void WP34S_Cdfu_Geom(const real_t *x, const real_t *p0, real_t *res, realContext_t *realContext) {
   real_t p, q;
 
@@ -193,6 +181,8 @@ void WP34S_Cdfu_Geom(const real_t *x, const real_t *p0, real_t *res, realContext
   realSubtract(const_1, p0, &q, realContext);
   realPower(&q, &p, res, realContext);
 }
+
+
 
 void WP34S_Cdf_Geom(const real_t *x, const real_t *p0, real_t *res, realContext_t *realContext) {
   real_t p, q;
@@ -214,6 +204,8 @@ void WP34S_Cdf_Geom(const real_t *x, const real_t *p0, real_t *res, realContext_
   realChangeSign(res);
 }
 
+
+
 void WP34S_Qf_Geom(const real_t *x, const real_t *p0, real_t *res, realContext_t *realContext) {
   real_t p, q;
 
@@ -230,6 +222,8 @@ void WP34S_Qf_Geom(const real_t *x, const real_t *p0, real_t *res, realContext_t
   realToIntegralValue(&p, &p, DEC_ROUND_FLOOR, realContext);
   WP34S_qf_discrete_final(QF_DISCRETE_CDF_GEOMETRIC, &p, x, p0, NULL, NULL, res, realContext);
 }
+
+
 
 void WP34S_qf_discrete_final(uint16_t dist, const real_t *r, const real_t *p, const real_t *i, const real_t *j, const real_t *k, real_t *res, realContext_t *realContext) {
   real_t q;

@@ -1,18 +1,5 @@
-/* This file is part of 43S.
- *
- * 43S is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * 43S is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
- */
+// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-FileCopyrightText: Copyright The WP43 Authors
 
 #include "apps/timerApp.h"
 
@@ -62,6 +49,8 @@ void timerAppResetState(void) {
   timerAppState.currentRegister = 0;
 }
 
+
+
 #if !defined(TESTSUITE_BUILD)
   static uint32_t _getTimerIncrement(uint32_t currTime) {
     if(currTime < timerAppState.startUptime) {
@@ -70,12 +59,16 @@ void timerAppResetState(void) {
     return currTime - timerAppState.startUptime;
   }
 
+
+
   static uint32_t _getTimerValue(void) {
     if(timerAppState.started) {
       return _getTimerIncrement(timeUptimeMs()) + timerAppState.lapTime;
     }
     return timerAppState.lapTime;
   }
+
+
 
   static void _timerAppResetExceptTotal(void) {
     if(timerAppState.started) {
@@ -84,6 +77,8 @@ void timerAppResetState(void) {
     timerAppState.lapTime   = 0;
     timerAppState.isFirstDigit = true;
   }
+
+
 
   void fnTimerApp(uint16_t unusedButMandatoryParameter) {
     timerAppState.isFirstDigit = true;
@@ -96,14 +91,20 @@ void timerAppResetState(void) {
     calcModeUpdateGui();
   }
 
+
+
   void fnDecisecondTimerApp(uint16_t unusedButMandatoryParameter) {
     timerAppState.showDeciseconds = !timerAppState.showDeciseconds;
   }
+
+
 
   void fnResetTimerApp(uint16_t unusedButMandatoryParameter) {
     _timerAppResetExceptTotal();
     timerAppState.totalTime = 0;
   }
+
+
 
   void timerAppStartStop(void) {
     if(timerAppState.started) {
@@ -120,6 +121,8 @@ void timerAppResetState(void) {
     timerAppState.isFirstDigit = true;
   }
 
+
+
   void timerAppStop(void) {
     if(timerAppState.started) {
       clearSystemFlag(FLAG_RUNTIM);
@@ -135,6 +138,8 @@ void timerAppResetState(void) {
       _timerAppUpdate();
     }
   }
+
+
 
   void timerAppDraw(void) {
     assert(calcMode == cmTimerApp);
@@ -170,6 +175,8 @@ void timerAppResetState(void) {
     showString(tmpString, &numericFont, 1, Y_POSITION_OF_REGISTER_T_LINE, vmNormal, true, true);
   }
 
+
+
   void _timerAppUpdate(void) {
     if(calcMode == cmTimerApp) {
       timerAppDraw();
@@ -183,10 +190,14 @@ void timerAppResetState(void) {
     }
   }
 
+
+
   static void _timerAppGetLapTimeReal(real_t *lapTimeReal) {
     uInt32ToReal(_getTimerValue() / 100u, lapTimeReal);
     lapTimeReal->exponent -= 1;
   }
+
+
 
   void fnAddTimerApp(uint16_t unusedButMandatoryParameter) {
     real_t lapTimeReal, numberOfSamplePoints;
@@ -204,6 +215,8 @@ void timerAppResetState(void) {
     sigmaPlus(true, &numberOfSamplePoints, &lapTimeReal);
   }
 
+
+
   void timerAppEnter(void) {
     if(timerAppState.isFirstDigit) {
       real_t lapTimeReal;
@@ -217,6 +230,8 @@ void timerAppResetState(void) {
       timerAppState.currentRegister = timerAppState.firstDigit;
     }
   }
+
+
 
   void timerAppDot(void) {
     if(timerAppState.isFirstDigit) {
@@ -233,12 +248,16 @@ void timerAppResetState(void) {
     }
   }
 
+
+
   void timerAppPlus(void) {
     if(timerAppState.isFirstDigit) {
       fnAddTimerApp(NOPARAM);
       timerAppDot();
     }
   }
+
+
 
   void timerAppUp(void) {
     if(timerAppState.currentRegister >= 99) {
@@ -250,6 +269,8 @@ void timerAppResetState(void) {
     timerAppState.isFirstDigit = true;
   }
 
+
+
   void timerAppDown(void) {
     if(timerAppState.currentRegister == 0) {
       timerAppState.currentRegister = 99;
@@ -259,6 +280,8 @@ void timerAppResetState(void) {
     }
     timerAppState.isFirstDigit = true;
   }
+
+
 
   void timerAppDigitKey(uint16_t digit) {
     if(timerAppState.isFirstDigit) {
@@ -270,6 +293,8 @@ void timerAppResetState(void) {
       timerAppState.currentRegister = timerAppState.firstDigit * 10u + digit;
     }
   }
+
+
 
   void fnRecallTimerApp(uint16_t regist) {
     real_t regValueReal;
@@ -319,6 +344,8 @@ void timerAppResetState(void) {
     }
   }
 
+
+
   void timerAppBackspace(void) {
     if(timerAppState.isFirstDigit) {
       fnResetTimerApp(NOPARAM);
@@ -328,12 +355,16 @@ void timerAppResetState(void) {
     }
   }
 
+
+
   void timerAppLeave(void) {
     popSoftmenu();
     calcModeLeave();
     timerAppState.isFirstDigit = true;
     watchIconEnabled = timerAppState.started;
   }
+
+
 
   void cbTimerAppDetectWrapAround(uint16_t unusedButMandatoryParameter) {
     if(timerAppState.started) {
