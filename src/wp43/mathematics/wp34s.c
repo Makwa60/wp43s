@@ -885,7 +885,6 @@ void WP34S_Tanh(const real_t *x, real_t *res, realContext_t *realContext) {
 
 
 
-/* never used
 void WP34S_ArcSinh(const real_t *x, real_t *res, realContext_t *realContext) {
   real_t a;
 
@@ -898,7 +897,6 @@ void WP34S_ArcSinh(const real_t *x, real_t *res, realContext_t *realContext) {
   realMultiply(x, &a, &a, realContext);  // y = x * (x / (sqrt(x²+1)+1) + 1)
   WP34S_Ln1P(&a, res, realContext);      // res = ln(1 + (x * (x / (sqrt(x²+1)+1) + 1)))
 }
-*/
 
 
 
