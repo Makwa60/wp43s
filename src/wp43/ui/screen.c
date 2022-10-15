@@ -47,7 +47,9 @@
 
 #if !defined(TESTSUITE_BUILD)
   static const char *whoStr1 = "WP43" STD_SPACE_3_PER_EM "by" STD_SPACE_3_PER_EM "Pauli," STD_SPACE_3_PER_EM "Walter," STD_SPACE_3_PER_EM "Mihail," STD_SPACE_3_PER_EM "Jaco," STD_SPACE_3_PER_EM "and" STD_SPACE_3_PER_EM "Martin";
-  static const char *whoStr2 = "Hardware" STD_SPACE_3_PER_EM "by" STD_SPACE_3_PER_EM "SwissMicros";
+  #if defined(DMCP_BUILD)
+    static const char *whoStr2 = "Hardware" STD_SPACE_3_PER_EM "by" STD_SPACE_3_PER_EM "SwissMicros";
+  #endif // DMCP_BUILD
   static const char *versionStr = "WP43" STD_SPACE_3_PER_EM VERSION_STRING;
 
   /* Names of day of week */
