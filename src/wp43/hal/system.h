@@ -14,4 +14,12 @@
    */
   void systemScreenshot(void);
 
+  /**
+   * Identify the maker of the platform.
+   *
+   * \return string identifying the maker that will appear in the WHO?
+   * screen
+   */
+  const char *systemMaker(void);
+
 #endif // !SYSTEM_H
