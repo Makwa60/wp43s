@@ -7,7 +7,8 @@
             "name": "Debug (LLDB)",
             "program": "${workspaceFolder}/build.sim/src/wp43-gtk/wp43",
             "args": [],
-            "cwd": "${workspaceFolder}"
+            "cwd": "${workspaceFolder}",
+            "preLaunchTask": "Meson: Build src/wp43-gtk/wp43"
         }
     ]
 }
