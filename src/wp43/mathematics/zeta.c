@@ -1,27 +1,11 @@
-/* This file is part of 43S.
- *
- * 43S is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * 43S is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-/********************************************//**
- * \file zeta.c
- ***********************************************/
+// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-FileCopyrightText: Copyright The WP43 Authors
 
 #include "mathematics/zeta.h"
 
 #include "constantPointers.h"
 #include "debug.h"
+#include "defines.h"
 #include "error.h"
 #include "mathematics/comparisonReals.h"
 #include "mathematics/division.h"
@@ -29,12 +13,21 @@
 #include "mathematics/power.h"
 #include "mathematics/toRect.h"
 #include "mathematics/wp34s.h"
+#include "realType.h"
 #include "registers.h"
 #include "registerValueConversions.h"
 
 #include "wp43.h"
 
+#if (EXTRA_INFO_ON_CALC_ERROR == 1)
+  void zetaError  (void);
+#else // (EXTRA_INFO_ON_CALC_ERROR == 1)
+  #define zetaError typeError
+#endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
 
+void zetaReal   (void);
+void zetaCplx   (void);
+void ComplexZeta(const real_t *xReal, const real_t *xImag, real_t *resReal, real_t *resImag, realContext_t *realContext);
 
 TO_QSPI void (* const Zeta[NUMBER_OF_DATA_TYPES_FOR_CALCULATIONS])(void) = {
 // regX ==> 1            2         3          4          5          6          7          8           9             10
@@ -42,14 +35,6 @@ TO_QSPI void (* const Zeta[NUMBER_OF_DATA_TYPES_FOR_CALCULATIONS])(void) = {
             zetaError,   zetaReal, zetaCplx,  zetaError, zetaError, zetaError, zetaError, zetaError,  zetaError,    zetaError
 };
 
-
-
-/********************************************//**
- * \brief Data type error in zeta
- *
- * \param void
- * \return void
- ***********************************************/
 #if (EXTRA_INFO_ON_CALC_ERROR == 1)
   void zetaError(void) {
     displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, REGISTER_X);
@@ -60,13 +45,6 @@ TO_QSPI void (* const Zeta[NUMBER_OF_DATA_TYPES_FOR_CALCULATIONS])(void) = {
 
 
 
-/********************************************//**
- * \brief regX ==> regL and zeta(regX) ==> regX
- * enables stack lift and refreshes the stack
- *
- * \param[in] unusedButMandatoryParameter uint16_t
- * \return void
- ***********************************************/
 void fnZeta(uint16_t unusedButMandatoryParameter) {
   if(!saveLastX()) return;
 
@@ -104,11 +82,9 @@ void zetaCplx(void) {
 
 
 
-/**************************************************************************/
 /* Complex zeta function implementation based on Jean-Marc Baillard's from:
  * http://hp41programs.yolasite.com/zeta.php
  */
-
 static void zeta_calc_complex(real_t *reg4, real_t *reg5, real_t *reg6, real_t *reg7, realContext_t *realContext) {
   real_t s, p, q, r, reg0, reg1, reg2, reg3, reg8, reg9;
 
@@ -172,6 +148,8 @@ static void zeta_calc_complex(real_t *reg4, real_t *reg5, real_t *reg6, real_t *
 
   divComplexComplex(&reg8, &reg9, &q, &s, reg4, reg5, realContext);
 }
+
+
 
 void ComplexZeta(const real_t *xReal, const real_t *xImag, real_t *resReal, real_t *resImag, realContext_t *realContext) {
   real_t p, q, r, s, reg4, reg5, reg6, reg7, reg10, reg11;

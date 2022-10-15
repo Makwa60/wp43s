@@ -1,22 +1,5 @@
-/* This file is part of 43S.
- *
- * 43S is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * 43S is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-/********************************************//**
- * \file normal.c
- ***********************************************/
+// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-FileCopyrightText: Copyright The WP43 Authors
 
 #include "distributions/normal.h"
 
@@ -32,7 +15,6 @@
 #include <stdbool.h>
 
 #include "wp43.h"
-
 
 static bool checkParamNormal(real_t *x, real_t *i, real_t *j) {
   if(   ((getRegisterDataType(REGISTER_X) != dtReal34) && (getRegisterDataType(REGISTER_X) != dtLongInteger))
@@ -81,6 +63,7 @@ static bool checkParamNormal(real_t *x, real_t *i, real_t *j) {
 }
 
 
+
 static void normalP(bool logNormal) {
   real_t val, alval, mu, sigma, ans;
 
@@ -119,6 +102,7 @@ static void normalP(bool logNormal) {
 }
 
 
+
 static void normalL(bool logNormal) {
   real_t val, mu, sigma, ans;
 
@@ -152,6 +136,7 @@ static void normalL(bool logNormal) {
 }
 
 
+
 static void normalR(bool logNormal) {
   real_t val, mu, sigma, ans;
 
@@ -183,6 +168,7 @@ static void normalR(bool logNormal) {
 
   adjustResult(REGISTER_X, false, false, REGISTER_X, -1, -1);
 }
+
 
 
 static void normalI(bool logNormal) {
@@ -220,13 +206,19 @@ void fnNormalP(uint16_t unusedButMandatoryParameter) {
   normalP(false);
 }
 
+
+
 void fnNormalL(uint16_t unusedButMandatoryParameter) {
   normalL(false);
 }
 
+
+
 void fnNormalR(uint16_t unusedButMandatoryParameter) {
   normalR(false);
 }
+
+
 
 void fnNormalI(uint16_t unusedButMandatoryParameter) {
   normalI(false);
@@ -238,13 +230,19 @@ void fnLogNormalP(uint16_t unusedButMandatoryParameter) {
   normalP(true);
 }
 
+
+
 void fnLogNormalL(uint16_t unusedButMandatoryParameter) {
   normalL(true);
 }
 
+
+
 void fnLogNormalR(uint16_t unusedButMandatoryParameter) {
   normalR(true);
 }
+
+
 
 void fnLogNormalI(uint16_t unusedButMandatoryParameter) {
   normalI(true);
@@ -288,6 +286,8 @@ static void cdf_q(const real_t *x, real_t *res, realContext_t *realContext, bool
   }
 }
 
+
+
 void WP34S_Pdf_Q(const real_t *x, real_t *res, realContext_t *realContext) {
   real_t p;
   realPower(x, const_2, res, realContext);
@@ -298,13 +298,19 @@ void WP34S_Pdf_Q(const real_t *x, real_t *res, realContext_t *realContext) {
   realDivide(res, &p, res, realContext);
 }
 
+
+
 void WP34S_Cdfu_Q(const real_t *x, real_t *res, realContext_t *realContext) {
   cdf_q(x, res, realContext, true);
 }
 
+
+
 void WP34S_Cdf_Q(const real_t *x, real_t *res, realContext_t *realContext) {
   cdf_q(x, res, realContext, false);
 }
+
+
 
 /* This routine that returns a signed guess for the Normal quantile.
  * GNQ takes any 0 < p < 1 and returns a positive or negative estimate
@@ -360,6 +366,8 @@ void WP34S_qf_q_est(const real_t *x, real_t *res, real_t* resY, realContext_t *r
     realChangeSign(res);
   }
 }
+
+
 
 void WP34S_Qf_Q(const real_t *x, real_t *res, realContext_t *realContext) {
   real_t  p, q, r, s, reg0;

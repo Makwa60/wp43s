@@ -1,22 +1,5 @@
-/* This file is part of 43S.
- *
- * 43S is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * 43S is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-/********************************************//**
- * \file chi2.c
- ***********************************************/
+// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-FileCopyrightText: Copyright The WP43 Authors
 
 #include "distributions/chi2.h"
 
@@ -33,7 +16,6 @@
 
 #include "wp43.h"
 
-
 bool checkRegisterNoFP(calcRegister_t reg) {
   real34_t flooredI;
 
@@ -48,6 +30,9 @@ bool checkRegisterNoFP(calcRegister_t reg) {
     return false;
   }
 }
+
+
+
 static bool checkParamChi2(real_t *x, real_t *i) {
   if(   ((getRegisterDataType(REGISTER_X) != dtReal34) && (getRegisterDataType(REGISTER_X) != dtLongInteger))
      || ((getRegisterDataType(REGISTER_I) != dtReal34) && (getRegisterDataType(REGISTER_I) != dtLongInteger))) {
@@ -101,6 +86,7 @@ static bool checkParamChi2(real_t *x, real_t *i) {
 }
 
 
+
 void fnChi2P(uint16_t unusedButMandatoryParameter) {
   real_t val, ans, dof;
 
@@ -116,6 +102,7 @@ void fnChi2P(uint16_t unusedButMandatoryParameter) {
 
   adjustResult(REGISTER_X, false, false, REGISTER_X, -1, -1);
 }
+
 
 
 void fnChi2L(uint16_t unusedButMandatoryParameter) {
@@ -135,6 +122,7 @@ void fnChi2L(uint16_t unusedButMandatoryParameter) {
 }
 
 
+
 void fnChi2R(uint16_t unusedButMandatoryParameter) {
   real_t val, ans, dof;
 
@@ -150,6 +138,7 @@ void fnChi2R(uint16_t unusedButMandatoryParameter) {
 
   adjustResult(REGISTER_X, false, false, REGISTER_X, -1, -1);
 }
+
 
 
 void fnChi2I(uint16_t unusedButMandatoryParameter) {
@@ -212,6 +201,8 @@ void WP34S_Pdf_Chi2(const real_t *x, const real_t *k, real_t *res, realContext_t
   realExp(&q, res, realContext);
 }
 
+
+
 void WP34S_Cdfu_Chi2(const real_t *x, const real_t *k, real_t *res, realContext_t *realContext) {
   real_t p, q;
 
@@ -229,6 +220,8 @@ void WP34S_Cdfu_Chi2(const real_t *x, const real_t *k, real_t *res, realContext_
   WP34S_GammaP(&p, &q, res, realContext, true, true);
 }
 
+
+
 void WP34S_Cdf_Chi2(const real_t *x, const real_t *k, real_t *res, realContext_t *realContext) {
   real_t p, q;
 
@@ -245,6 +238,8 @@ void WP34S_Cdf_Chi2(const real_t *x, const real_t *k, real_t *res, realContext_t
   realDivide(k, const_2, &q, realContext);
   WP34S_GammaP(&p, &q, res, realContext, false, true);
 }
+
+
 
 void WP34S_Qf_Chi2(const real_t *x, const real_t *k, real_t *res, realContext_t *realContext) {
   real_t p, q, r, s, t, reg0;

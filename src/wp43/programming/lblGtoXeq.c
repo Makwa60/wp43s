@@ -1,22 +1,5 @@
-/* This file is part of 43S.
- *
- * 43S is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * 43S is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-/********************************************//**
- * \file lblGtoXeq.c
- ***********************************************/
+// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-FileCopyrightText: Copyright The WP43 Authors
 
 #include "programming/lblGtoXeq.h"
 
@@ -49,8 +32,6 @@
 #include <stdbool.h>
 
 #include "wp43.h"
-
-
 
 void fnGoto(uint16_t label) {
   if(tam.mode || calcMode != cmPem) {
@@ -340,6 +321,8 @@ void fnStopProgram(uint16_t unusedButMandatoryParameter) {
     }
   }
 
+
+
   static void _executeWithIndirectVariable(uint8_t *stringAddress, uint16_t op) {
     calcRegister_t regist;
     _getStringLabelOrVariableName(stringAddress);
@@ -358,6 +341,8 @@ void fnStopProgram(uint16_t unusedButMandatoryParameter) {
       #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
     }
   }
+
+
 
   static void _executeOp(uint8_t *paramAddress, uint16_t op, uint16_t paramMode) {
     uint8_t opParam = *(uint8_t *)(paramAddress++);
@@ -521,6 +506,8 @@ void fnStopProgram(uint16_t unusedButMandatoryParameter) {
     }
   }
 
+
+
   static void _putLiteral(uint8_t *literalAddress) {
     switch(*(uint8_t *)(literalAddress++)) {
       case BINARY_SHORT_INTEGER: {
@@ -673,6 +660,8 @@ void fnStopProgram(uint16_t unusedButMandatoryParameter) {
     }
   }
 #endif // !TESTSUITE_BUILD
+
+
 
 int16_t executeOneStep(pgmPtr_t step) {
   #if defined(TESTSUITE_BUILD)

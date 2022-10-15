@@ -15,6 +15,8 @@ dmcp_src = files(
   'DMCP_SDK/dmcp/startup_pgm.s')
 dmcp_inc = include_directories('DMCP_SDK/dmcp')
 
+mk_keymap = files('DMCP_SDK/keymap_utils/bin/mk_keymap')[0]
+
 forcecrc32 = executable(
   'forcecrc32',
   build_by_default : false,

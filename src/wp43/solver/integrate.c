@@ -1,22 +1,5 @@
-/* This file is part of 43S.
- *
- * 43S is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * 43S is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-/********************************************//**
- * \file integrate.c
- ***********************************************/
+// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-FileCopyrightText: Copyright The WP43 Authors
 
 #include "solver/integrate.h"
 
@@ -89,6 +72,8 @@ void fnPgmInt(uint16_t label) {
   }
 }
 
+
+
 void fnIntegrate(uint16_t labelOrVariable) {
   if((labelOrVariable >= FIRST_LABEL && labelOrVariable <= LAST_LABEL) || (labelOrVariable >= REGISTER_X && labelOrVariable <= REGISTER_T)) {
     // Interactive mode
@@ -141,6 +126,8 @@ void fnIntegrate(uint16_t labelOrVariable) {
   }
 }
 
+
+
 void fnIntVar(uint16_t unusedButMandatoryParameter) {
   #if !defined(TESTSUITE_BUILD)
     const char *var = (char *)getNthString(dynamicSoftmenu[softmenuStack[0].softmenuId].menuContent, dynamicMenuItem);
@@ -173,7 +160,6 @@ static void _integratorIteration(void) {
 
 // The following routine is ported from WP34s.
 // The description below is as is. May not applicable for WP43.
-
 
 // Double Exponential Integration for the wp34s calculator
 //
@@ -275,6 +261,8 @@ static void DEI_xeq_user(calcRegister_t regist, const real_t *x, real_t *res, re
     realZero(res);
   }
 }
+
+
 
 static void _integrate(calcRegister_t regist, const real_t *a, const real_t *b, real_t *acc, real_t *res, realContext_t *realContext) { // Double-Exponential Integration
   real_t bma2;            // (b - a)/2, a & b are the integration limits
@@ -576,6 +564,8 @@ static void _integrate(calcRegister_t regist, const real_t *a, const real_t *b, 
   realCopy(&x, res);
   realCopy(&y, acc);
 }
+
+
 
 void integrate(calcRegister_t regist, const real_t *a, const real_t *b, real_t *acc, real_t *res, realContext_t *realContext) {
   bool was_solving = getSystemFlag(FLAG_SOLVING);

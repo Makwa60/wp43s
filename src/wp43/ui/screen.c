@@ -1,18 +1,5 @@
-/* This file is part of 43S.
- *
- * 43S is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * 43S is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
- */
+// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-FileCopyrightText: Copyright The WP43 Authors
 
 #include "ui/screen.h"
 
@@ -59,7 +46,8 @@
 #include "wp43.h"
 
 #if !defined(TESTSUITE_BUILD)
-  static const char *whoStr = "WP43" STD_SPACE_3_PER_EM "by" STD_SPACE_3_PER_EM "Pauli," STD_SPACE_3_PER_EM "Walter," STD_SPACE_3_PER_EM "Mihail," STD_SPACE_3_PER_EM "Jaco," STD_SPACE_3_PER_EM "and" STD_SPACE_3_PER_EM "Martin";
+  static const char *whoStr1 = "WP43" STD_SPACE_3_PER_EM "by" STD_SPACE_3_PER_EM "Pauli," STD_SPACE_3_PER_EM "Walter," STD_SPACE_3_PER_EM "Mihail," STD_SPACE_3_PER_EM "Jaco," STD_SPACE_3_PER_EM "and" STD_SPACE_3_PER_EM "Martin";
+  static const char *whoStr2 = "Hardware" STD_SPACE_3_PER_EM "by" STD_SPACE_3_PER_EM "SwissMicros";
   static const char *versionStr = "WP43" STD_SPACE_3_PER_EM VERSION_STRING;
 
   /* Names of day of week */
@@ -72,8 +60,6 @@
   TO_QSPI static const char *nameOfWday_pt[8] = {"dia inv" STD_a_ACUTE "lido da semana",                  "segunda-feira",     "ter" STD_c_CEDILLA "a-feira", "quarta-feira",            "quinta-feira",       "sexta-feira",        "s" STD_a_ACUTE "bado", "domingo"};
   */
 #endif // !TESTSUITE_BUILD
-
-
 
 #if defined(TESTSUITE_BUILD) && !defined(GENERATE_CATALOGS)
   void refreshLcd(void) {}
@@ -442,6 +428,7 @@ void clearScreen(void) {
   }
 
 
+
   static void viewRegName(char *prefix, int16_t *prefixWidth) {
     if(currentViewRegister < REGISTER_X) {
       sprintf(prefix, "R%02" PRIu16 STD_SPACE_4_PER_EM "=" STD_SPACE_4_PER_EM, currentViewRegister);
@@ -466,6 +453,8 @@ void clearScreen(void) {
     *prefixWidth = stringWidth(prefix, &standardFont, true, true) + 1;
   }
 
+
+
   static void inputRegName(char *prefix, int16_t *prefixWidth) {
     if((currentInputVariable & 0x3fff) < REGISTER_X) {
       sprintf(prefix, "R%02" PRIu16 "?", (uint16_t)(currentInputVariable & 0x3fff));
@@ -489,6 +478,7 @@ void clearScreen(void) {
     }
     *prefixWidth = stringWidth(prefix, &standardFont, true, true) + 1;
   }
+
 
 
   void updateMatrixHeightCache(void) {
@@ -584,6 +574,8 @@ void clearScreen(void) {
       cachedDisplayStack += 1;
     }
   }
+
+
 
   void refreshRegisterLine(calcRegister_t regist) {
     int16_t       w, wLastBaseNumeric, wLastBaseStandard, prefixWidth, lineWidth = 0;
@@ -719,7 +711,12 @@ void clearScreen(void) {
       }
 
       else if(temporaryInformation == TI_WHO && regist == REGISTER_X) {
-        showString(whoStr, &standardFont, 1, Y_POSITION_OF_REGISTER_X_LINE - REGISTER_LINE_HEIGHT*(regist - REGISTER_X) + 6, vmNormal, true, true);
+        #if defined(DMCP_BUILD)
+          showString(whoStr1, &standardFont, 1, Y_POSITION_OF_REGISTER_X_LINE - REGISTER_LINE_HEIGHT*(regist - REGISTER_X) - 3, vmNormal, true, true);
+          showString(whoStr2, &standardFont, 1, Y_POSITION_OF_REGISTER_X_LINE - REGISTER_LINE_HEIGHT*(regist - REGISTER_X) + 17, vmNormal, true, true);
+        #else // !DMCP_BUILD
+          showString(whoStr1, &standardFont, 1, Y_POSITION_OF_REGISTER_X_LINE - REGISTER_LINE_HEIGHT*(regist - REGISTER_X) + 6, vmNormal, true, true);
+        #endif // DMCP_BUILD
       }
 
       else if(temporaryInformation == TI_VERSION && regist == REGISTER_X) {
@@ -1766,9 +1763,13 @@ void clearScreen(void) {
     }
   }
 
+
+
   void clearShiftState(void) {
     lcd_fill_rect(0, Y_POSITION_OF_REGISTER_T_LINE, 15, NUMERIC_FONT_HEIGHT, LCD_SET_VALUE);
   }
+
+
 
   void displayShiftAndTamBuffer(void) {
     if(calcMode == cmAssign) {
@@ -2029,11 +2030,15 @@ void fnScreenDump(uint16_t unusedButMandatoryParameter) {
   return value;
 }
 
+
+
 static void getPixelPos(int32_t *x, int32_t *y) {
   *x = _getPositionFromRegister(REGISTER_X, SCREEN_WIDTH  - 1);
   *y = _getPositionFromRegister(REGISTER_Y, SCREEN_HEIGHT - 1);
 }
 #endif // !TESTSUITE_BUILD
+
+
 
 void fnClLcd(uint16_t unusedButMandatoryParameter) {
   #if !defined(TESTSUITE_BUILD)
@@ -2045,6 +2050,8 @@ void fnClLcd(uint16_t unusedButMandatoryParameter) {
     }
   #endif // !TESTSUITE_BUILD
 }
+
+
 
 void fnPixel(uint16_t unusedButMandatoryParameter) {
   #if !defined(TESTSUITE_BUILD)
@@ -2060,6 +2067,8 @@ void fnPixel(uint16_t unusedButMandatoryParameter) {
   #endif // TESTSUITE_BUILD
 }
 
+
+
 void fnPoint(uint16_t unusedButMandatoryParameter) {
 #if !defined(TESTSUITE_BUILD)
   int32_t x, y;
@@ -2073,6 +2082,8 @@ void fnPoint(uint16_t unusedButMandatoryParameter) {
   }
 #endif // TESTSUITE_BUILD
 }
+
+
 
 void fnAGraph(uint16_t regist) {
   #if !defined(TESTSUITE_BUILD)

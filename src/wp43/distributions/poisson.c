@@ -1,22 +1,5 @@
-/* This file is part of 43S.
- *
- * 43S is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * 43S is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-/********************************************//**
- * \file poisson.c
- ***********************************************/
+// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-FileCopyrightText: Copyright The WP43 Authors
 
 #include "distributions/poisson.h"
 
@@ -33,7 +16,6 @@
 #include <stdbool.h>
 
 #include "wp43.h"
-
 
 static bool checkParamPoisson(real_t *x, real_t *i) {
   if(   ((getRegisterDataType(REGISTER_X) != dtReal34) && (getRegisterDataType(REGISTER_X) != dtLongInteger))
@@ -81,6 +63,7 @@ static bool checkParamPoisson(real_t *x, real_t *i) {
 }
 
 
+
 void fnPoissonP(uint16_t unusedButMandatoryParameter) {
   real_t val, ans, prob;
 
@@ -96,6 +79,7 @@ void fnPoissonP(uint16_t unusedButMandatoryParameter) {
 
   adjustResult(REGISTER_X, false, false, REGISTER_X, -1, -1);
 }
+
 
 
 void fnPoissonL(uint16_t unusedButMandatoryParameter) {
@@ -115,6 +99,7 @@ void fnPoissonL(uint16_t unusedButMandatoryParameter) {
 }
 
 
+
 void fnPoissonR(uint16_t unusedButMandatoryParameter) {
   real_t val, ans, prob;
 
@@ -130,6 +115,7 @@ void fnPoissonR(uint16_t unusedButMandatoryParameter) {
 
   adjustResult(REGISTER_X, false, false, REGISTER_X, -1, -1);
 }
+
 
 
 void fnPoissonI(uint16_t unusedButMandatoryParameter) {
@@ -179,6 +165,8 @@ void WP34S_normal_moment_approx(const real_t *prob, const real_t *var, const rea
   realAdd(&p, mean, res, realContext);
 }
 
+
+
 /* One parameter Poission distribution
  * Real parameter lambda in I.
  */
@@ -197,6 +185,8 @@ void WP34S_Pdf_Poisson(const real_t *x, const real_t *lambda, real_t *res, realC
   realSubtract(&p, &r, &q, realContext); // ln(PDF) = x*ln(lambda) - lambda - lngamma(x+1)
   realExp(&q, res, realContext);
 }
+
+
 
 void WP34S_Cdfu_Poisson(const real_t *x, const real_t *lambda, real_t *res, realContext_t *realContext) {
   real_t p;
@@ -218,6 +208,8 @@ void WP34S_Cdfu_Poisson(const real_t *x, const real_t *lambda, real_t *res, real
   WP34S_GammaP(lambda, &p, res, realContext, false, true);
 }
 
+
+
 void WP34S_Cdf_Poisson(const real_t *x, const real_t *lambda, real_t *res, realContext_t *realContext) {
   real_t p;
 
@@ -229,6 +221,9 @@ void WP34S_Cdf_Poisson(const real_t *x, const real_t *lambda, real_t *res, realC
   realToIntegralValue(x, &p, DEC_ROUND_FLOOR, realContext);
   WP34S_Cdf_Poisson2(&p, lambda, res, realContext);
 }
+
+
+
 void WP34S_Cdf_Poisson2(const real_t *x, const real_t *lambda, real_t *res, realContext_t *realContext) {
   real_t p;
 
@@ -244,6 +239,8 @@ void WP34S_Cdf_Poisson2(const real_t *x, const real_t *lambda, real_t *res, real
   realAdd(x, const_1, &p, realContext);
   WP34S_GammaP(lambda, &p, res, realContext, true, true);
 }
+
+
 
 void WP34S_Qf_Poisson(const real_t *x, const real_t *lambda, real_t *res, realContext_t *realContext) {
   real_t p, q;

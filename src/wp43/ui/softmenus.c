@@ -1,18 +1,5 @@
-/* This file is part of 43S.
- *
- * 43S is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * 43S is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
- */
+// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-FileCopyrightText: Copyright The WP43 Authors
 
 #include "ui/softmenus.h"
 
@@ -491,7 +478,6 @@ TO_QSPI const softmenu_t softmenu[] = {
 /* 104 */  {.menuItem =  0,               .numItems = 0,                                        .softkeyItem = NULL             }
 };
 
-
 dynamicSoftmenu_t dynamicSoftmenu[NUMBER_OF_DYNAMIC_SOFTMENUS] = {
 /*   0 */  {.menuItem = -MNU_MyMenu,  .numItems = 0, .menuContent = NULL},
 /*   1 */  {.menuItem = -MNU_MyAlpha, .numItems = 0, .menuContent = NULL},
@@ -513,8 +499,6 @@ dynamicSoftmenu_t dynamicSoftmenu[NUMBER_OF_DYNAMIC_SOFTMENUS] = {
 /*  17 */  {.menuItem = -MNU_DYNAMIC, .numItems = 0, .menuContent = NULL},
 /*  18 */  {.menuItem = -ITM_MENU   , .numItems = 0, .menuContent = NULL},
 };
-
-
 
 uint8_t *getNthString(uint8_t *ptr, int16_t n) { // Starting with string 0 (the 1st string is returned for n=0)
   while(n) {
@@ -1372,12 +1356,16 @@ void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
     }
   }
 
+
+
   bool currentSoftmenuScrolls(void) {
     int16_t menuId = softmenuStack[0].softmenuId;
     return (menuId > 1 &&
       (   (menuId <  NUMBER_OF_DYNAMIC_SOFTMENUS && dynamicSoftmenu[menuId].numItems > 18)
        || (menuId >= NUMBER_OF_DYNAMIC_SOFTMENUS &&        softmenu[menuId].numItems > 18)));
   }
+
+
 
   bool isAlphabeticSoftmenu(void) {
     int16_t menuItem = softmenu[softmenuStack[0].softmenuId].menuItem;
@@ -1397,6 +1385,8 @@ void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
     }
   }
 #endif // !TESTSUITE_BUILD
+
+
 
 char *dynmenuGetLabel(int16_t menuitem) {
   if(menuitem < 0 || menuitem >= dynamicSoftmenu[softmenuStack[0].softmenuId].numItems) {

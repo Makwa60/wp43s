@@ -1,22 +1,5 @@
-/* This file is part of 43S.
- *
- * 43S is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * 43S is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-/********************************************//**
- * \file exponential.c
- ***********************************************/
+// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-FileCopyrightText: Copyright The WP43 Authors
 
 #include "distributions/exponential.h"
 
@@ -31,7 +14,6 @@
 #include <stdbool.h>
 
 #include "wp43.h"
-
 
 static bool checkParamExponential(real_t *x, real_t *i) {
   if(   ((getRegisterDataType(REGISTER_X) != dtReal34) && (getRegisterDataType(REGISTER_X) != dtLongInteger))
@@ -79,6 +61,7 @@ static bool checkParamExponential(real_t *x, real_t *i) {
 }
 
 
+
 void fnExponentialP(uint16_t unusedButMandatoryParameter) {
   real_t val, ans, dof;
 
@@ -94,6 +77,7 @@ void fnExponentialP(uint16_t unusedButMandatoryParameter) {
 
   adjustResult(REGISTER_X, false, false, REGISTER_X, -1, -1);
 }
+
 
 
 void fnExponentialL(uint16_t unusedButMandatoryParameter) {
@@ -113,6 +97,7 @@ void fnExponentialL(uint16_t unusedButMandatoryParameter) {
 }
 
 
+
 void fnExponentialR(uint16_t unusedButMandatoryParameter) {
   real_t val, ans, dof;
 
@@ -128,6 +113,7 @@ void fnExponentialR(uint16_t unusedButMandatoryParameter) {
 
   adjustResult(REGISTER_X, false, false, REGISTER_X, -1, -1);
 }
+
 
 
 void fnExponentialI(uint16_t unusedButMandatoryParameter) {
@@ -183,6 +169,8 @@ void WP34S_Pdf_Expon(const real_t *x, const real_t *lambda, real_t *res, realCon
   realMultiply(res, lambda, res, realContext);
 }
 
+
+
 void WP34S_Cdfu_Expon(const real_t *x, const real_t *lambda, real_t *res, realContext_t *realContext) {
   if(realCompareLessEqual(x, const_0)) {
     realCopy(const_1, res);
@@ -200,6 +188,8 @@ void WP34S_Cdfu_Expon(const real_t *x, const real_t *lambda, real_t *res, realCo
   realChangeSign(res);
   realExp(res, res, realContext);
 }
+
+
 
 void WP34S_Cdf_Expon(const real_t *x, const real_t *lambda, real_t *res, realContext_t *realContext) {
   if(realCompareLessEqual(x, const_0)) {
@@ -219,6 +209,8 @@ void WP34S_Cdf_Expon(const real_t *x, const real_t *lambda, real_t *res, realCon
   WP34S_ExpM1(res, res, realContext);
   realChangeSign(res);
 }
+
+
 
 void WP34S_Qf_Expon(const real_t *x, const real_t *lambda, real_t *res, realContext_t *realContext) {
   real_t p;
