@@ -47,9 +47,6 @@
 
 #if !defined(TESTSUITE_BUILD)
   static const char *whoStr1 = "WP43" STD_SPACE_3_PER_EM "by" STD_SPACE_3_PER_EM "Pauli," STD_SPACE_3_PER_EM "Walter," STD_SPACE_3_PER_EM "Mihail," STD_SPACE_3_PER_EM "Jaco," STD_SPACE_3_PER_EM "and" STD_SPACE_3_PER_EM "Martin";
-  #if defined(DMCP_BUILD)
-    static const char *whoStr2 = "Hardware" STD_SPACE_3_PER_EM "by" STD_SPACE_3_PER_EM "SwissMicros";
-  #endif // DMCP_BUILD
   static const char *versionStr = "WP43" STD_SPACE_3_PER_EM VERSION_STRING;
 
   /* Names of day of week */
@@ -713,12 +710,13 @@ void clearScreen(void) {
       }
 
       else if(temporaryInformation == TI_WHO && regist == REGISTER_X) {
-        #if defined(DMCP_BUILD)
+        const char *whoStr2 = systemMaker();
+        if(whoStr2 != NULL) {
           showString(whoStr1, &standardFont, 1, Y_POSITION_OF_REGISTER_X_LINE - REGISTER_LINE_HEIGHT*(regist - REGISTER_X) - 3, vmNormal, true, true);
           showString(whoStr2, &standardFont, 1, Y_POSITION_OF_REGISTER_X_LINE - REGISTER_LINE_HEIGHT*(regist - REGISTER_X) + 17, vmNormal, true, true);
-        #else // !DMCP_BUILD
+        } else {
           showString(whoStr1, &standardFont, 1, Y_POSITION_OF_REGISTER_X_LINE - REGISTER_LINE_HEIGHT*(regist - REGISTER_X) + 6, vmNormal, true, true);
-        #endif // DMCP_BUILD
+        }
       }
 
       else if(temporaryInformation == TI_VERSION && regist == REGISTER_X) {
