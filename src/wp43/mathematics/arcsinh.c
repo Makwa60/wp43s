@@ -112,18 +112,11 @@ void arcsinhCplx(void) {
 
 
 uint8_t ArcsinhReal(const real_t *x, real_t *res, realContext_t *realContext) {
-  real_t xSquared;
-
-  if(realIsInfinite(x) && realIsNegative(x)) {
-    realCopy(const_minusInfinity, res);
+  if(realIsInfinite(x)) {
+    realCopy(x, res);
   }
   else {
-    // arcsinh(x) = ln(x + sqrt(x� + 1))
-    realMultiply(x, x, &xSquared, realContext);
-    realAdd(&xSquared, const_1, &xSquared, realContext);
-    realSquareRoot(&xSquared, &xSquared, realContext);
-    realAdd(&xSquared, x, res, realContext);
-    WP34S_Ln(res, res, realContext);
+    WP34S_ArcSinh(x, res, realContext);
   }
 
   return ERROR_NONE;

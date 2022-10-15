@@ -1,0 +1,13 @@
+{
+    "mesonbuild.setupOptions": [
+        "-Db_coverage=true"
+    ],
+    "mesonbuild.buildFolder": "build.sim",
+    "mesonbuild.configureOptions": [
+        "--buildtype=debug"
+    ],
+    "mesonbuild.configureOnOpen": true,
+    "lldb.launch.initCommands": [
+        "command source -s true tools/lldb/helpers"
+    ]
+}

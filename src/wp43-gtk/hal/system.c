@@ -119,3 +119,9 @@ void systemScreenshot(void) {
 
   fclose(bmp);
 }
+
+
+
+const char *systemMaker(void) {
+  return NULL;
+}
