@@ -730,8 +730,8 @@ void fnSigma(uint16_t plusMinus) {
             return;
           }
           for(uint16_t i = 0; i < matrix.header.matrixRows; ++i) {
-            real34ToReal(&matrix.matrixElements[i * 2    ], &y);
-            real34ToReal(&matrix.matrixElements[i * 2 + 1], &x);
+            real34ToReal(&matrix.matrixElements[i * 2    ], &x);
+            real34ToReal(&matrix.matrixElements[i * 2 + 1], &y);
             if(!sigmaPlus(false, &x, &y)) {
               return;
             }
