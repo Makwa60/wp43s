@@ -191,9 +191,9 @@ void frmCalcMouseButtonReleased(GtkWidget *notUsed, GdkEvent *event, gpointer da
     int calcKey;
     char textLine[1000], skinDirectory[213]="", fileName[412], parameter[100], value[200];
 
-    skin = fopen("res/artwork/skin.cfg", "rb");
+    skin = fopen(BASEPATH "res/artwork/skin.cfg", "rb");
     if(skin == NULL) {
-      moreInfoOnError("In function prepareSkin:", "error opening file res/artwork/skin.cfg!", NULL, NULL);
+      moreInfoOnError("In function prepareSkin:", "error opening file " BASEPATH "res/artwork/skin.cfg!", NULL, NULL);
       exit(1);
     }
 
@@ -202,7 +202,7 @@ void frmCalcMouseButtonReleased(GtkWidget *notUsed, GdkEvent *event, gpointer da
       getParameter(textLine, parameter, value);
 
       if(!strcmp(parameter, "skinDirectory") && value[0] != 0) {
-        sprintf(skinDirectory, "res/artwork/%s/", value);
+        sprintf(skinDirectory, BASEPATH "res/artwork/%s/", value);
       }
 
       fgets(textLine, 1000, skin);
