@@ -26,7 +26,6 @@ build.dmcp:
 
 sim: build.sim
 	cd build.sim && ninja sim
-	cp build.sim/src/wp43-gtk/wp43$(EXE) ./
 	cp build.sim/src/generateCatalogs/softmenuCatalogs.h src/generated/
 	cp build.sim/src/generateConstants/constantPointers.* src/generated/
 	cp build.sim/src/ttf2RasterFonts/rasterFontsData.c src/generated/
