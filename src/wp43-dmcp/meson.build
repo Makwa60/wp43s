@@ -10,7 +10,7 @@ dmcp_linkargs = [
   '-Wl,--gc-sections',
   '-Wl,--wrap=_malloc_r',
   '-Wl,-Map=' + meson.current_build_dir() + '/WP43.map,--cref',
-  '-T' + meson.current_source_dir() + '/stm32_program.ld']
+  '-T' + meson.current_source_dir() + '/stm32l4.ld']
 
 wp43_dmcp_src = files(
   'hal/audio.c',
@@ -97,3 +97,13 @@ wp43_qspi = custom_target(
   command          : [bash, modify_crc, forcecrc32, '@INPUT@', '@OUTPUT@'])
 
 alias_target('dmcp', wp43_pgm, wp43_qspi)
+
+# Build keymap.bin for DMCP
+keymap = custom_target(
+  'keymap.bin',
+  build_by_default : false,
+  input            : files('keymap.txt'),
+  output           : 'keymap.bin',
+  command          : [mk_keymap, 'WP43', '@INPUT@'])
+
+alias_target('keymap', keymap)

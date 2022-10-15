@@ -1,28 +1,11 @@
-/* This file is part of 43S.
- *
- * 43S is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * 43S is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-/********************************************//**
- * \file xthRoot.c
- ***********************************************/
-// Coded by JM, based on power.c, with reference to cuberoot.c
+// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-FileCopyrightText: Copyright The WP43 Authors
 
 #include "mathematics/xthRoot.h"
 
 #include "constantPointers.h"
 #include "debug.h"
+#include "defines.h"
 #include "display.h"
 #include "error.h"
 #include "flags.h"
@@ -36,9 +19,39 @@
 #include "matrix.h"
 #include "registers.h"
 #include "registerValueConversions.h"
+#include "typeDefinitions.h"
 
 #include "wp43.h"
 
+void xthRootLonILonI(void);
+void xthRootLonIShoI(void);
+void xthRootLonIReal(void);
+void xthRootLonICplx(void);
+void xthRootRemaLonI(void);
+void xthRootRemaShoI(void);
+void xthRootRemaReal(void);
+void xthRootRemaCplx(void);
+void xthRootCxmaLonI(void);
+void xthRootCxmaShoI(void);
+void xthRootCxmaReal(void);
+void xthRootCxmaCplx(void);
+void xthRootShoILonI(void);
+void xthRootShoIShoI(void);
+void xthRootShoIReal(void);
+void xthRootShoICplx(void);
+void xthRootRealLonI(void);
+void xthRootRealShoI(void);
+void xthRootRealReal(void);
+void xthRootRealCplx(void);
+void xthRootCplxLonI(void);
+void xthRootCplxShoI(void);
+void xthRootCplxReal(void);
+void xthRootCplxCplx(void);
+#if (EXTRA_INFO_ON_CALC_ERROR == 1)
+  void xthRootError   (void);
+#else // (EXTRA_INFO_ON_CALC_ERROR == 1)
+  #define xthRootError typeError
+#endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
 
 TO_QSPI void (* const xthRoot[NUMBER_OF_DATA_TYPES_FOR_CALCULATIONS][NUMBER_OF_DATA_TYPES_FOR_CALCULATIONS])(void) = {
 // regX |    regY ==>   1                2                3                4             5             6             7                8                9                10
@@ -55,14 +68,6 @@ TO_QSPI void (* const xthRoot[NUMBER_OF_DATA_TYPES_FOR_CALCULATIONS][NUMBER_OF_D
 /* 10 Config data   */ {xthRootError,    xthRootError,    xthRootError,    xthRootError, xthRootError, xthRootError, xthRootError,    xthRootError,    xthRootError,    xthRootError}
 };
 
-
-
-/********************************************//**
- * \brief Data type error in xthRoot
- *
- * \param[in] unusedButMandatoryParameter
- * \return void
- ***********************************************/
 #if (EXTRA_INFO_ON_CALC_ERROR == 1)
   void xthRootError(void) {
     displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, REGISTER_X);
@@ -74,13 +79,6 @@ TO_QSPI void (* const xthRoot[NUMBER_OF_DATA_TYPES_FOR_CALCULATIONS][NUMBER_OF_D
 
 
 
-/********************************************//**
- * \brief regX ==> regL and regY ^ (1/regX) ==> regX
- * Drops Y, enables stack lift and refreshes the stack
- *
- * \param[in] unusedButMandatoryParameter
- * \return void
- ***********************************************/
 void fnXthRoot(uint16_t unusedButMandatoryParameter) {
   if(!saveLastX()) {
     return;
@@ -93,13 +91,12 @@ void fnXthRoot(uint16_t unusedButMandatoryParameter) {
 
 
 
-/********************************************//**
- * \brief (a+ib) ^ (1/(c+id))
+/* (a+ib) ^ (1/(c+id))
  *
  * \param[in] Expecting a,b,c,d:   Y = a +ib;   X = c +id
  * \return REGISTER Y unchanged. REGISTER X with result of (a+ib) ^ (1/(c+id))
- ***********************************************/
-void xthRootComplex(const real_t *aa, const real_t *bb, const real_t *cc, const real_t *dd, realContext_t *realContext) {
+ */
+static void _xthRootComplex(const real_t *aa, const real_t *bb, const real_t *cc, const real_t *dd, realContext_t *realContext) {
   real_t theta, a, b, c, d;
 
   realCopy(aa, &a);
@@ -146,12 +143,7 @@ void xthRootComplex(const real_t *aa, const real_t *bb, const real_t *cc, const 
 }
 
 
-/********************************************//**
- * \brief y^(1/x)
- *
- * \param[in] Expecting x,y
- * \return REGISTER Y unchanged. REGISTER X with result of y^x
- ***********************************************/
+
 void xthRootReal(real_t *yy, real_t *xx, realContext_t *realContext) {
   real_t r, o, x, y;
   uint8_t telltale;
@@ -249,7 +241,7 @@ void xthRootReal(real_t *yy, real_t *xx, realContext_t *realContext) {
           return;
         }
         else {
-          xthRootComplex(&y, const_0, &x, const_0, realContext);
+          _xthRootComplex(&y, const_0, &x, const_0, realContext);
         }
       } //fall through after Root CC
       else {
@@ -276,7 +268,7 @@ void xthRootReal(real_t *yy, real_t *xx, realContext_t *realContext) {
             return;
           }
           else {
-            xthRootComplex(&y, const_0, &x, const_0, realContext);
+            _xthRootComplex(&y, const_0, &x, const_0, realContext);
           }
         }
       } //fall through
@@ -299,16 +291,8 @@ void xthRootReal(real_t *yy, real_t *xx, realContext_t *realContext) {
 }
 
 
-/******************************************************************************************************************************************************************************************/
-/* long integer ^ ...                                                                                                                                                                     */
-/******************************************************************************************************************************************************************************************/
+/* long integer ^ ... */
 
-/********************************************//**
- * \brief Y(long integer) ^ 1/X(long integer) ==> X(long integer)
- *
- * \param void
- * \return void
- ***********************************************/
 void xthRootLonILonI(void) {
   real_t x, y;
   longInteger_t base, exponent, l;
@@ -382,12 +366,6 @@ void xthRootLonILonI(void) {
 
 
 
-/********************************************//**
- * \brief Y(long integer) ^ 1/X(short integer) ==> X(long integer)
- *
- * \param void
- * \return void
- ***********************************************/
 void xthRootLonIShoI(void) {
   convertShortIntegerRegisterToLongIntegerRegister(REGISTER_X, REGISTER_X);
   xthRootLonILonI();
@@ -395,12 +373,6 @@ void xthRootLonIShoI(void) {
 
 
 
-/********************************************//**
- * \brief Y(short integer) ^ 1/X(long integer) ==> X(long integer)
- *
- * \param void
- * \return void
- ***********************************************/
 void xthRootShoILonI(void) {
   uint32_t base = getRegisterShortIntegerBase(REGISTER_Y);
 
@@ -415,12 +387,7 @@ void xthRootShoILonI(void) {
 }
 
 
-/********************************************//**
- * \brief Y(long integer) ^ 1/X(real34) ==> X(real34)
- *
- * \param void
- * \return void
- ***********************************************/
+
 void xthRootLonIReal(void) {
   real_t x, y;
 
@@ -438,12 +405,6 @@ void xthRootLonIReal(void) {
 
 
 
-/********************************************//**
- * \brief Y(real34) ^ 1/X(long integer) ==> X(real34)
- *
- * \param void
- * \return void
- ***********************************************/
 void xthRootRealLonI(void) {
   real_t x, y;
 
@@ -455,12 +416,6 @@ void xthRootRealLonI(void) {
 
 
 
-/********************************************//**
- * \brief Y(long integer) ^ 1/X(complex34) ==> X(complex34)
- *
- * \param void
- * \return void
- ***********************************************/
 void xthRootLonICplx(void) {
   real_t a, b, c, d;
 
@@ -469,17 +424,11 @@ void xthRootLonICplx(void) {
   real34ToReal(REGISTER_REAL34_DATA(REGISTER_X), &c);
   real34ToReal(REGISTER_IMAG34_DATA(REGISTER_X), &d);
 
-  xthRootComplex(&a, &b, &c, &d, &ctxtReal39);
+  _xthRootComplex(&a, &b, &c, &d, &ctxtReal39);
  }
 
 
 
-/********************************************//**
- * \brief Y(complex34) ^ 1/X(long integer) ==> X(complex34)
- *
- * \param void
- * \return void
- ***********************************************/
 void xthRootCplxLonI(void) {
   real_t a, b, c, d;
 
@@ -488,69 +437,37 @@ void xthRootCplxLonI(void) {
   convertLongIntegerRegisterToReal(REGISTER_X, &c, &ctxtReal39);
   real34ToReal(const_0, &d);
 
-  xthRootComplex(&a, &b, &c, &d, &ctxtReal39);
+  _xthRootComplex(&a, &b, &c, &d, &ctxtReal39);
 }
 
 
 
-/******************************************************************************************************************************************************************************************/
-/* time ^ ...                                                                                                                                                                             */
-/******************************************************************************************************************************************************************************************/
+/* time ^ ... */
 
-/******************************************************************************************************************************************************************************************/
-/* date ^ ...                                                                                                                                                                             */
-/******************************************************************************************************************************************************************************************/
+/* date ^ ... */
 
-/******************************************************************************************************************************************************************************************/
-/* string ^ ...                                                                                                                                                                           */
-/******************************************************************************************************************************************************************************************/
+/* string ^ ... */
 
-/******************************************************************************************************************************************************************************************/
-/* real34 matrix ^ ...                                                                                                                                                                    */
-/******************************************************************************************************************************************************************************************/
+/* real34 matrix ^ ... */
 
-/********************************************//**
- * \brief Y(real34 matrix) ^ 1/X(long integer) ==> X(real34 matrix)
- *
- * \param void
- * \return void
- ***********************************************/
 void xthRootRemaLonI(void) {
   elementwiseRemaLonI(xthRootRealLonI);
 }
 
 
 
-/********************************************//**
- * \brief Y(real34 matrix) ^ 1/X(short integer) ==> X(real34 matrix)
- *
- * \param void
- * \return void
- ***********************************************/
 void xthRootRemaShoI(void) {
   elementwiseRemaShoI(xthRootRealShoI);
 }
 
 
 
-/********************************************//**
- * \brief Y(real34 matrix) ^ 1/X(real34) ==> X(real34 matrix)
- *
- * \param void
- * \return void
- ***********************************************/
 void xthRootRemaReal(void) {
   elementwiseRemaReal(xthRootRealReal);
 }
 
 
 
-/********************************************//**
- * \brief Y(real34 matrix) ^ 1/X(complex34) ==> X(complex34 matrix)
- *
- * \param void
- * \return void
- ***********************************************/
 void xthRootRemaCplx(void) {
   #if !defined(TESTSUITE_BUILD)
     convertReal34MatrixRegisterToComplex34MatrixRegister(REGISTER_Y, REGISTER_Y);
@@ -560,68 +477,32 @@ void xthRootRemaCplx(void) {
 
 
 
-/******************************************************************************************************************************************************************************************/
-/* complex34 matrix ^ ...                                                                                                                                                                 */
-/******************************************************************************************************************************************************************************************/
+/* complex34 matrix ^ ... */
 
-/********************************************//**
- * \brief Y(complex34 matrix) ^ 1/X(long integer) ==> X(complex34 matrix)
- *
- * \param void
- * \return void
- ***********************************************/
 void xthRootCxmaLonI(void) {
   elementwiseCxmaLonI(xthRootCplxLonI);
 }
 
 
 
-/********************************************//**
- * \brief Y(complex34 matrix) ^ 1/X(short integer) ==> X(complex34 matrix)
- *
- * \param void
- * \return void
- ***********************************************/
 void xthRootCxmaShoI(void) {
   elementwiseCxmaShoI(xthRootCplxShoI);
 }
 
 
 
-/********************************************//**
- * \brief Y(complex34 matrix) ^ 1/X(real34) ==> X(complex34 matrix)
- *
- * \param void
- * \return void
- ***********************************************/
 void xthRootCxmaReal(void) {
   elementwiseCxmaReal(xthRootCplxReal);
 }
 
 
 
-/********************************************//**
- * \brief Y(complex34 matrix) ^ 1/X(complex34) ==> X(complex34 matrix)
- *
- * \param void
- * \return void
- ***********************************************/
 void xthRootCxmaCplx(void) {
   elementwiseCxmaCplx(xthRootCplxCplx);
 }
 
 
 
-/******************************************************************************************************************************************************************************************/
-/* short integer ^ ...                                                                                                                                                                    */
-/******************************************************************************************************************************************************************************************/
-
-/********************************************//**
- * \brief Y(short integer) ^ 1/X(short integer) ==> X(short integer)
- *
- * \param void
- * \return void
- ***********************************************/
 void xthRootShoIShoI(void) {
   uint32_t base = getRegisterShortIntegerBase(REGISTER_Y);
 
@@ -638,12 +519,6 @@ void xthRootShoIShoI(void) {
 
 
 
-/********************************************//**
- * \brief Y(short integer) ^ 1/X(real34) ==> X(real34)
- *
- * \param void
- * \return void
- ***********************************************/
 void xthRootShoIReal(void) {
   real_t x, y;
 
@@ -668,13 +543,6 @@ void xthRootShoIReal(void) {
 
 
 
-
-/********************************************//**
- * \brief Y(real34) ^ 1/X(short integer) ==> X(real34)
- *
- * \param void
- * \return void
- ***********************************************/
 void xthRootRealShoI(void) {
   real_t x, y;
 
@@ -686,13 +554,6 @@ void xthRootRealShoI(void) {
 
 
 
-
-/********************************************//**
- * \brief Y(short integer) ^ 1/X(complex34) ==> X(complex34)
- *
- * \param void
- * \return void
- ***********************************************/
 void xthRootShoICplx(void) {
   real_t a, b, c, d;
 
@@ -701,18 +562,11 @@ void xthRootShoICplx(void) {
   real34ToReal(REGISTER_REAL34_DATA(REGISTER_X), &c);
   real34ToReal(REGISTER_IMAG34_DATA(REGISTER_X), &d);
 
-  xthRootComplex(&a, &b, &c, &d, &ctxtReal39);
+  _xthRootComplex(&a, &b, &c, &d, &ctxtReal39);
 }
 
 
 
-
-/********************************************//**
- * \brief Y(complex34) ^ 1/X(short integer) ==> X(complex34)
- *
- * \param void
- * \return void
- ***********************************************/
 void xthRootCplxShoI(void) {
   real_t a, b, c, d;
 
@@ -721,22 +575,11 @@ void xthRootCplxShoI(void) {
   convertShortIntegerRegisterToReal(REGISTER_X, &c, &ctxtReal39);
   real34ToReal(const_0, &d);
 
-  xthRootComplex(&a, &b, &c, &d, &ctxtReal39);
+  _xthRootComplex(&a, &b, &c, &d, &ctxtReal39);
 }
 
 
 
-
-/******************************************************************************************************************************************************************************************/
-/* real34 ^ ...                                                                                                                                                                           */
-/******************************************************************************************************************************************************************************************/
-
-/********************************************//**
- * \brief Y(real34) ^ 1/X(real34) ==> X(real34)
- *
- * \param void
- * \return void
- ***********************************************/
 void xthRootRealReal(void) {
   real_t x, y;
 
@@ -756,12 +599,6 @@ void xthRootRealReal(void) {
 
 
 
-/********************************************//**
- * \brief Y(real34) ^ 1/X(complex34) ==> X(complex34)
- *
- * \param void
- * \return void
- ***********************************************/
 void xthRootRealCplx(void) {
   real_t a, b, c, d;
 
@@ -784,17 +621,11 @@ void xthRootRealCplx(void) {
   real34ToReal(REGISTER_REAL34_DATA(REGISTER_X), &c);
   real34ToReal(REGISTER_IMAG34_DATA(REGISTER_X), &d);
 
-  xthRootComplex(&a, &b, &c, &d, &ctxtReal39);
+  _xthRootComplex(&a, &b, &c, &d, &ctxtReal39);
 }
 
 
 
-/********************************************//**
- * \brief Y(complex34) ^ 1/X(real34) ==> X(complex34)
- *
- * \param void
- * \return void
- ***********************************************/
 void xthRootCplxReal(void) {
   real_t a, b, c, d;
 
@@ -817,22 +648,12 @@ void xthRootCplxReal(void) {
   real34ToReal(REGISTER_REAL34_DATA(REGISTER_X), &c);
   real34ToReal(const_0, &d);
 
-  xthRootComplex(&a, &b, &c, &d, &ctxtReal39);
+  _xthRootComplex(&a, &b, &c, &d, &ctxtReal39);
 }
 
 
 
-/******************************************************************************************************************************************************************************************/
-/* complex34 + ...                                                                                                                                                                        */
-/******************************************************************************************************************************************************************************************/
-
-/********************************************//**
- * \brief Y(complex34) ^ 1/X(complex34) ==> X(complex34)
- *
- * \param void
- * \return void
- ***********************************************/
-void xthRootCplxCplx(void) {                       //checked
+void xthRootCplxCplx(void) {
   real_t a, b, c, d;
 
   if(real34IsInfinite(REGISTER_REAL34_DATA(REGISTER_Y)) || real34IsInfinite(REGISTER_IMAG34_DATA(REGISTER_Y))) {
@@ -854,5 +675,5 @@ void xthRootCplxCplx(void) {                       //checked
   real34ToReal(REGISTER_REAL34_DATA(REGISTER_X), &c);
   real34ToReal(REGISTER_IMAG34_DATA(REGISTER_X), &d);
 
-  xthRootComplex(&a, &b, &c, &d, &ctxtReal39);
+  _xthRootComplex(&a, &b, &c, &d, &ctxtReal39);
 }

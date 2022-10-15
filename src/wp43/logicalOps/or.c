@@ -1,22 +1,5 @@
-/* This file is part of 43S.
- *
- * 43S is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * 43S is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-/********************************************//**
- * \file or.c
- ***********************************************/
+// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-FileCopyrightText: Copyright The WP43 Authors
 
 #include "logicalOps/or.h"
 
@@ -28,11 +11,6 @@
 #include "stack.h"
 
 #include "wp43.h"
-
-
-
-
-
 
 TO_QSPI void (* const logicalOr[NUMBER_OF_DATA_TYPES_FOR_CALCULATIONS][NUMBER_OF_DATA_TYPES_FOR_CALCULATIONS])(void) = {
 // regX |    regY ==>   1            2            3          4          5          6          7           8            9             10
@@ -49,14 +27,6 @@ TO_QSPI void (* const logicalOr[NUMBER_OF_DATA_TYPES_FOR_CALCULATIONS][NUMBER_OF
 /* 10 Config data   */ {orError24,   orError24,   orError24, orError24, orError24, orError24, orError24,  orError24,   orError24,    orError24}
 };
 
-
-
-/********************************************//**
- * \brief Data type error in OR
- *
- * \param void
- * \return void
- ***********************************************/
 #if (EXTRA_INFO_ON_CALC_ERROR == 1)
   void orError24(void) {
     displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, REGISTER_X);
@@ -65,6 +35,8 @@ TO_QSPI void (* const logicalOr[NUMBER_OF_DATA_TYPES_FOR_CALCULATIONS][NUMBER_OF
     moreInfoOnError("In function orError24:", errorMessage, errorMessage + ERROR_MESSAGE_LENGTH/2, NULL);
   }
 #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+
+
 
 void orError31(void) {
   displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, REGISTER_X);
@@ -77,13 +49,6 @@ void orError31(void) {
 
 
 
-/********************************************//**
- * \brief regX ==> regL OR regY ÷ regX ==> regX
- * Drops Y, enables stack lift and refreshes the stack
- *
- * \param[in] unusedButMandatoryParameter
- * \return void
- ***********************************************/
 void fnLogicalOr(uint16_t unusedButMandatoryParameter) {
   if(!saveLastX()) {
     return;

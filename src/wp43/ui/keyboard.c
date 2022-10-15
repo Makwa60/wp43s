@@ -1,18 +1,5 @@
-/* This file is part of 43S.
- *
- * 43S is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * 43S is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
- */
+// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-FileCopyrightText: Copyright The WP43 Authors
 
 #include "ui/keyboard.h"
 
@@ -273,6 +260,7 @@
   }
 
 
+
   void execAutoRepeat(uint16_t key) {
     #if defined(DMCP_BUILD)
       char    charKey[6];
@@ -292,6 +280,7 @@
       lcd_refresh_dma();
     #endif // DMCP_BUILD
   }
+
 
 
   static void _closeCatalog(void) {
@@ -320,6 +309,8 @@
       }
     }
   }
+
+
 
   static void processAimInput(int16_t item) {
     if(alphaCase == AC_LOWER && (ITM_A <= item && item <= ITM_Z)) {
@@ -353,8 +344,8 @@
   }
 
 
-  uint8_t asnKey[4] = {0, 0, 0, 0};
 
+  uint8_t asnKey[4] = {0, 0, 0, 0};
 
   void btnFnPressed(char *data) {
     asnKey[0] = ((uint8_t *)data)[0];
@@ -521,6 +512,8 @@
       }
     }
   }
+
+
 
   void btnFnReleased(char *data) {
     if(programRunStop == PGM_KEY_PRESSED_WHILE_PAUSED) {
@@ -839,6 +832,8 @@
     btnPressed(data);
     btnReleased(data);
   }
+
+
 
   #if defined(PC_BUILD)
     char key[3] = {0, 0, 0};

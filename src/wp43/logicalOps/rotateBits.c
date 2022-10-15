@@ -1,22 +1,5 @@
-/* This file is part of 43S.
- *
- * 43S is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * 43S is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-/********************************************//**
- * \file rotateBits.c
- ***********************************************/
+// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-FileCopyrightText: Copyright The WP43 Authors
 
 #include "logicalOps/rotateBits.h"
 
@@ -29,15 +12,6 @@
 
 #include "wp43.h"
 
-
-
-/********************************************//**
- * \brief regX ==> regL and ASR(regX) ==> regX
- * enables stack lift and refreshes the stack
- *
- * \param[in] unusedButMandatoryParameter uint16_t
- * \return void
- ***********************************************/
 void fnAsr(uint16_t numberOfShifts) {
   int32_t i;
   uint64_t sign;
@@ -73,13 +47,6 @@ void fnAsr(uint16_t numberOfShifts) {
 
 
 
-/********************************************//**
- * \brief regX ==> regL and SL(regX) ==> regX
- * enables stack lift and refreshes the stack
- *
- * \param[in] unusedButMandatoryParameter uint16_t
- * \return void
- ***********************************************/
 void fnSl(uint16_t numberOfShifts) {
   int32_t i;
 
@@ -113,13 +80,6 @@ void fnSl(uint16_t numberOfShifts) {
 
 
 
-/********************************************//**
- * \brief regX ==> regL and SR(regX) ==> regX
- * enables stack lift and refreshes the stack
- *
- * \param[in] unusedButMandatoryParameter uint16_t
- * \return void
- ***********************************************/
 void fnSr(uint16_t numberOfShifts) {
   int32_t i;
 
@@ -153,13 +113,6 @@ void fnSr(uint16_t numberOfShifts) {
 
 
 
-/********************************************//**
- * \brief regX ==> regL and RL(regX) ==> regX
- * enables stack lift and refreshes the stack
- *
- * \param[in] unusedButMandatoryParameter uint16_t
- * \return void
- ***********************************************/
 void fnRl(uint16_t numberOfShifts) {
   int32_t i;
   uint64_t sign;
@@ -195,13 +148,6 @@ void fnRl(uint16_t numberOfShifts) {
 
 
 
-/********************************************//**
- * \brief regX ==> regL and RR(regX) ==> regX
- * enables stack lift and refreshes the stack
- *
- * \param[in] unusedButMandatoryParameter uint16_t
- * \return void
- ***********************************************/
 void fnRr(uint16_t numberOfShifts) {
   int32_t i;
 
@@ -235,13 +181,6 @@ void fnRr(uint16_t numberOfShifts) {
 
 
 
-/********************************************//**
- * \brief regX ==> regL and RLC(regX) ==> regX
- * enables stack lift and refreshes the stack
- *
- * \param[in] unusedButMandatoryParameter uint16_t
- * \return void
- ***********************************************/
 void fnRlc(uint16_t numberOfShifts) {
   int32_t i;
   uint64_t sign, carry;
@@ -277,13 +216,6 @@ void fnRlc(uint16_t numberOfShifts) {
 
 
 
-/********************************************//**
- * \brief regX ==> regL and RRC(regX) ==> regX
- * enables stack lift and refreshes the stack
- *
- * \param[in] unusedButMandatoryParameter uint16_t
- * \return void
- ***********************************************/
 void fnRrc(uint16_t numberOfShifts) {
   int32_t i;
   uint64_t lsb, carry;
@@ -319,13 +251,6 @@ void fnRrc(uint16_t numberOfShifts) {
 
 
 
-/********************************************//**
- * \brief regX ==> regL and LJ(regX) ==> regX
- * enables stack lift and refreshes the stack
- *
- * \param[in] unusedButMandatoryParameter uint16_t
- * \return void
- ***********************************************/
 void fnLj(uint16_t numberOfShifts) {
   int32_t count;
   longInteger_t regX;
@@ -360,13 +285,6 @@ void fnLj(uint16_t numberOfShifts) {
 
 
 
-/********************************************//**
- * \brief regX ==> regL and RJ(regX) ==> regX
- * enables stack lift and refreshes the stack
- *
- * \param[in] unusedButMandatoryParameter uint16_t
- * \return void
- ***********************************************/
 void fnRj(uint16_t numberOfShifts) {
   int32_t count;
   longInteger_t regX;

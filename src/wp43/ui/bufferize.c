@@ -1,18 +1,5 @@
-/* This file is part of 43S.
- *
- * 43S is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * 43S is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with 43S.  If not, see <http://www.gnu.org/licenses/>.
- */
+// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-FileCopyrightText: Copyright The WP43 Authors
 
 #include "bufferize.h"
 
@@ -285,6 +272,7 @@
       }
     }
   }
+
 
 
   void resetAlphaSelectionBuffer(void) {
@@ -1826,6 +1814,8 @@
     return 0;
   }
 
+
+
   static int16_t insertGapFP(char *displayBuffer, int16_t numDigits, int16_t nth) {
     if(groupingGap == 0) {
       return 0; // no gap when none is required!
@@ -1970,6 +1960,8 @@
     }
   }
 
+
+
   void closeNimWithComplex(real34_t *dest_r, real34_t *dest_i) {
     int16_t imaginarySign;
 
@@ -2010,6 +2002,8 @@
     }
     fnSetFlag(FLAG_CPXRES);
   }
+
+
 
   void closeNim(void) {
     setSystemFlag(FLAG_ASLIFT);
@@ -2228,6 +2222,8 @@
       }
     }
   }
+
+
 
   void closeAim(void) {
     calcModeEnter(cmNormal);
