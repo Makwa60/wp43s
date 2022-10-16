@@ -1701,9 +1701,9 @@ void debugNIM(void) {
       gtk_widget_show(lbl1[row]);
       gtk_widget_show(lbl2[row++]);
 
-      for(uint16_t i=1000; i<1000 + numberOfNamedVariables; i++) {
+      for(uint16_t i=FIRST_NAMED_VARIABLE; i<FIRST_NAMED_VARIABLE + numberOfNamedVariables; i++) {
         if(row < DEBUG_LINES) {
-          sprintf(string, "%03d   %s %7d %7d", i-1000, getRegisterDataTypeName(i, false, true), TO_WP43MEMPTR(getRegisterDataPointer(i)), TO_BYTES(getRegisterFullSize(i)));
+          sprintf(string, "%03d   %s %7d %7d", i-FIRST_NAMED_VARIABLE, getRegisterDataTypeName(i, false, true), TO_WP43MEMPTR(getRegisterDataPointer(i)), TO_BYTES(getRegisterFullSize(i)));
           gtk_label_set_label(GTK_LABEL(lbl1[row]), string);
           gtk_widget_show(lbl1[row]);
           debugRegisterValue(i, row++);
