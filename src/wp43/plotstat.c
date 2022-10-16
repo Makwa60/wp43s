@@ -319,12 +319,9 @@ void clearScreenPixels(void) {
   }
 
 
-  static void plotHisto_col(uint16_t ix, uint16_t ixn, uint16_t x, uint16_t y, uint16_t x_min, uint16_t x_wid, uint16_t y_min, uint16_t y_wid) {  //x is 0..(n-1)
-    float col_width = (int16_t)(x_wid*(float)(1.0f) / (float)(ixn + 2)) - 0.6f;              // Scaled to always have the histogram in the same scale as the STATS ASSESS graph
-
-    plotrect(x - (int)((+0.1f + col_width)/2), y_min + y_wid,  x + (int)((-0.1f + col_width)/2), y);
-  }
-
+  static void plotHisto_col(uint16_t x, uint16_t y, uint16_t y_min, uint16_t y_wid, int16_t colw) {  //x is 0..(n-1)
+    plotrect(x - colw, y_min + y_wid,  x + colw, y);
+    }
 
 
   void plotbox_fat(uint16_t xn, uint8_t yn) {                                         // Plots line from xo,yo to xn,yn; uses temporary x1,y1
@@ -1076,11 +1073,22 @@ void graphPlotstat(uint16_t selection) {
         x_min = x_max - dx;
       }
 
+      /*
+      (pow(4.5f, (int8_t)(PLOT_ZOOM & 0x03))) / 20
+      0 1/20      = 0.05  * 2 = 0.10    width: dx * 1.10       Reference 1
+      1 4,5/20    = 0.23  * 2 = 0.45    width: dx * 1.45       factor 1.32
+      2 20,25/20  = 1.01  * 2 = 2.03    width: dx * 2.03       factor 2.75
+      3 91,125/20 = 4.56  * 2 = 9.11    width: dx * 10.11      factor 9.19
+      ( (int8_t)(PLOT_ZOOM & 0x03) == 0 ? 1.0f : (int8_t)(PLOT_ZOOM & 0x03) == 1 ? 4.5f : (int8_t)(PLOT_ZOOM & 0x03) == 2 ? 20.25f : 91.125f )
+      */
       float histofactor = drawHistogram == 0 ? 1 : 1/zoomfactor * (((float)statnum + 2.0f)  /  ((float)(statnum) - 1.0f) - 1)/2;     //Create space on the sides of the graph for the wider histogram columns
       x_min = x_min - dx * histofactor * zoomfactor * (pow(4.5f, (int8_t)(PLOT_ZOOM & 0x03)));
       y_min = y_min - dy * histofactor * zoomfactor * (pow(4.5f, (int8_t)(PLOT_ZOOM & 0x03)));
       x_max = x_max + dx * histofactor * zoomfactor * (pow(4.5f, (int8_t)(PLOT_ZOOM & 0x03)));
       y_max = y_max + dy * histofactor * zoomfactor * (pow(4.5f, (int8_t)(PLOT_ZOOM & 0x03)));
+      if(drawHistogram == 1) {
+        y_min = 0;
+      }
       #if defined(STATDEBUG) && defined(PC_BUILD)
         printf("Axis3a: x: %f -> %f y: %f -> %f   \n", x_min, x_max, y_min, y_max);
       #endif // STATDEBUG && PC_BUILD
@@ -1102,7 +1110,9 @@ void graphPlotstat(uint16_t selection) {
         printf("Axis3c: x: %f -> %f y: %f -> %f   \n",x_min, x_max, y_min, y_max);
       #endif // STATDEBUG && PC_BUILD
 
-
+      int16_t colw = (int16_t) (
+                                 (  (screen_window_x(x_min,grf_x(1),x_max) - screen_window_x(x_min,grf_x(0),x_max))  / 2.0f  )
+                                ) - 1;
       //#################################################### vvv MAIN GRAPH LOOP vvv
       for(ix = 0; (ix < statnum); ++ix) {
         x = grf_x(ix);
@@ -1130,7 +1140,7 @@ void graphPlotstat(uint16_t selection) {
           xn = xN;
 
           if(drawHistogram != 0) {
-            plotHisto_col(ix, statnum, xN, yN, minN_x, SCREEN_WIDTH_GRAPH - minN_x, minN_y, SCREEN_HEIGHT_GRAPH - minN_y);
+            plotHisto_col(xN, yN, minN_y, SCREEN_HEIGHT_GRAPH - minN_y, colw);
           }
 
           if(PLOT_CROSS) {
@@ -1219,13 +1229,14 @@ void graphPlotstat(uint16_t selection) {
       eformat_eng2(ss, "(", x_max, 2, "");
       eformat_eng2(tt,radixProcess("#"),y_max,2,")");
       strcat(tt, ss);
-      n = showString(padEquals(ss), &standardFont, 160-2 - stringWidth(tt, &standardFont, false, false), Y_POSITION_OF_REGISTER_Z_LINE + autoinc*index + 2       +autoshift, vmNormal, false, false);
+      n = showString(padEquals(ss), &standardFont, 160-2 - stringWidth(tt, &standardFont, false, false), Y_POSITION_OF_REGISTER_Z_LINE + autoinc*index + 2   -3  +autoshift, vmNormal, false, false);
       eformat_eng2(ss, radixProcess("#"), y_max, 2, ")");
-      showString(padEquals(ss), &standardFont, n+3,           Y_POSITION_OF_REGISTER_Z_LINE + autoinc*index++      + autoshift + 2, vmNormal, false, false);
+      showString(padEquals(ss), &standardFont, n+3,           Y_POSITION_OF_REGISTER_Z_LINE + autoinc*index++  -3  + autoshift + 2, vmNormal, false, false);
+      
       eformat_eng2(ss, "(", x_min, 2, "");
-      n = showString(padEquals(ss), &standardFont, horOffset, Y_POSITION_OF_REGISTER_Z_LINE + autoinc*index    -2  + autoshift + 2, vmNormal, false, false);
+      n = showString(padEquals(ss), &standardFont, horOffset, Y_POSITION_OF_REGISTER_Z_LINE + autoinc*index    -6  + autoshift + 2, vmNormal, false, false);
       eformat_eng2(ss, radixProcess("#"), y_min, 2, ")");
-      showString(padEquals(ss), &standardFont, n+3,           Y_POSITION_OF_REGISTER_Z_LINE + autoinc*index++  -2  + autoshift + 2, vmNormal, false, false);
+      showString(padEquals(ss), &standardFont, n+3,           Y_POSITION_OF_REGISTER_Z_LINE + autoinc*index++  -6  + autoshift + 2, vmNormal, false, false);
 
       strcpy(ss,"Bin centres:");
       showString(padEquals(ss), &standardFont, horOffset, Y_POSITION_OF_REGISTER_Z_LINE + autoinc*index++   -4 +autoshift, vmNormal, false, false);
@@ -1605,27 +1616,11 @@ static  void drawline(uint16_t selection, real_t *RR, real_t *SMI, real_t *aa0, 
 #endif // !TESTSUITE_BUILD
 
 
-void fnPlotClose(uint16_t unusedButMandatoryParameter){
-  lastPlotMode = PLOT_NOTHING;
-  plotSelection = 0;
-  calcMode = cmNormal;
-  fnKeyExit(0);
-  #if defined(DEBUGUNDO)
-    printf(">>> Undo from fnPlotClose\n");
-  #endif // DEBUGUNDO
-  fnUndo(NOPARAM);
-}
-
-
 void fnPlotCloseSmi(uint16_t unusedButMandatoryParameter){
-  lastPlotMode = PLOT_NOTHING;
-  plotSelection = 0;
-  calcMode = cmNormal;
   fnKeyExit(0);
   #if defined(DEBUGUNDO)
     printf(">>> Undo from fnPlotCloseSmi\n");
   #endif // DEBUGUNDO
-  fnUndo(NOPARAM);
   fnMinExpStdDev(0);
 }
 
@@ -1664,7 +1659,7 @@ void fnPlotStat(uint16_t plotMode){
       }
       case H_NORM: {
         drawHistogram = 1;
-        if(plotStatMx[0] != 'S') {
+        if(plotStatMx[0] != 'H') { //???
           strcpy(plotStatMx, "HISTO");
         }
         strcpy(statMx,"HISTO");
@@ -1759,33 +1754,32 @@ void fnPlotStat(uint16_t plotMode){
         #endif // DMCP_BUILD
 
         switch(plotMode) {
+          case H_PLOT:
+          case H_NORM: {
+              showSoftmenu(-MNU_HPLOT);
+            break;
+          }
           case PLOT_GRAPH: {
-            if(softmenu[softmenuStack[0].softmenuId].menuItem != -MNU_GRAPH) {
               showSoftmenu(-MNU_GRAPH);
+            break;
+          }
+          case PLOT_LR: {
+            if(drawHistogram == 0) {
+                showSoftmenu(-MNU_PLOT_LR);
+            } else {
+                showSoftmenu(-MNU_HPLOT);
             }
             break;
           }
-          case PLOT_LR:
           case PLOT_NXT:
           case PLOT_REV: {
-            if(softmenu[softmenuStack[0].softmenuId].menuItem != -MNU_PLOT_LR) {
               showSoftmenu(-MNU_PLOT_LR);
-            }
             break;
           }
           case PLOT_ORTHOF:
           case PLOT_START: {
             PLOT_SCALE = true;
-            if(softmenu[softmenuStack[0].softmenuId].menuItem != -MNU_PLOT_STAT) {
               showSoftmenu(-MNU_PLOT_STAT);
-            }
-            break;
-          }
-          case H_PLOT:
-          case H_NORM: {
-            if(softmenu[softmenuStack[0].softmenuId].menuItem != -MNU_HPLOT) {
-              showSoftmenu(-MNU_HPLOT);
-            }
             break;
           }
           case PLOT_NOTHING: {

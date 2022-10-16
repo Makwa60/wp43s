@@ -5,9 +5,11 @@
 
 #include "charString.h"
 #include "error.h"
-#include "wp43.h"
+#include "fonts.h"
 #include <stdio.h>
 #include <dmcp.h>
+
+#include "wp43.h"
 
 void systemScreenshot(void) {
   uint16_t currentVolumeSetting, savedVolumeSetting; // used for beep signaling screen shot
@@ -34,4 +36,10 @@ void systemScreenshot(void) {
     beep_volume_down();
     currentVolumeSetting = get_beep_volume();
   }
+}
+
+
+
+const char *systemMaker(void) {
+  return "Hardware" STD_SPACE_3_PER_EM "by" STD_SPACE_3_PER_EM "SwissMicros";
 }

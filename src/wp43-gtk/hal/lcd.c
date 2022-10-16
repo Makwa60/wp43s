@@ -37,12 +37,7 @@ void flipPixel(uint32_t x, uint32_t y) {
     return;
   }
 
-  if(*(screenData + y*screenStride + x) == OFF_PIXEL) {
-    *(screenData + y*screenStride + x) = ON_PIXEL;
-  }
-  else {
-    *(screenData + y*screenStride + x) = OFF_PIXEL;
-  }
+  *(screenData + y*screenStride + x) ^= (ON_PIXEL ^ OFF_PIXEL);
   screenChange = true;
 }
 

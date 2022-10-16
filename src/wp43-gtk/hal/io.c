@@ -3,6 +3,7 @@
 
 #include "hal/io.h"
 
+#include "defines.h"
 #include <assert.h>
 #include <stdio.h>
 
@@ -21,7 +22,7 @@ bool ioFileOpen(ioFilePath_t path, ioFileMode_t mode) {
       filename = "wp43.dat";
       break;
     case ioPathTestPgms:
-      filename = "res/dmcp/testPgms.bin";
+      filename = BASEPATH "res/dmcp/testPgms.bin";
       break;
     case ioPathBackup:
       filename = "backup.bin";
