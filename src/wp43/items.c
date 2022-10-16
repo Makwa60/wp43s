@@ -99,7 +99,9 @@ void fnNop(uint16_t unusedButMandatoryParameter) {
     }
 
     if(programRunStop != PGM_RUNNING) {
-      hourGlassIconEnabled = true;
+      if(func != ITM_SNAP) {
+         hourGlassIconEnabled = true;
+       }
       showHideHourGlass();
 
       if(func == ITM_GTO || func == ITM_XEQ || func == ITM_GTOP) {

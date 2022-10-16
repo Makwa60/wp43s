@@ -811,7 +811,7 @@
       result = (getSystemFlag(FLAG_MULTx) ? ITM_CROSS : ITM_DOT);
     }
 
-    if(shiftF || shiftG) {
+    if((shiftF || shiftG) && result != ITM_SNAP) {
       screenUpdatingMode &= ~SCRUPD_MANUAL_SHIFT_STATUS;
       clearShiftState();
     }
@@ -1264,6 +1264,10 @@
 
             case cmGraph:
             case cmPlotStat: {
+              if(item == ITM_SNAP) {
+                runFunction(item);
+                keyActionProcessed = true;
+              }
               break;
             }
 
@@ -1849,13 +1853,16 @@ void fnKeyExit(uint16_t unusedButMandatoryParameter) {
 
       case cmGraph:
       case cmPlotStat: {
-        //Temporary - TODO JM
         restoreStats();
-        printf(">>> ####@@@@ D %" PRIu8 "\n", (uint8_t)calcMode);
-        if(lastPlotMode == H_PLOT && calcMode == cmPlotStat) {
+        if(calcMode == cmPlotStat) {
+          for(int16_t ii = 0; ii < 3; ii++) {
+            if( (softmenuStack[0].softmenuId > 1) && !((-softmenu[softmenuStack[0].softmenuId].menuItem == MNU_HIST) || (-softmenu[softmenuStack[0].softmenuId].menuItem == MNU_STAT))) {
+              popSoftmenu();
+            }
+          }
+        } else {
           popSoftmenu();
         }
-        //TODO
         lastPlotMode = PLOT_NOTHING;
         plotSelection = 0;
         calcMode = cmNormal;
@@ -1864,7 +1871,6 @@ void fnKeyExit(uint16_t unusedButMandatoryParameter) {
         #endif // DEBUGUNDO
         fnUndo(NOPARAM);
         fnClDrawMx();
-        popSoftmenu();
         break;
       }
 
@@ -2042,7 +2048,24 @@ void fnKeyBackspace(uint16_t unusedButMandatoryParameter) {
 
       case cmPlotStat:
       case cmGraph: {
-        calcMode = previousCalcMode;
+        restoreStats();
+        if(calcMode == cmPlotStat) {
+          for(int16_t ii = 0; ii < 3; ii++) {
+            if( (softmenuStack[0].softmenuId > 1) && !((-softmenu[softmenuStack[0].softmenuId].menuItem == MNU_HIST) || (-softmenu[softmenuStack[0].softmenuId].menuItem == MNU_STAT))) {
+              popSoftmenu();
+            }
+          }
+        } else {
+          popSoftmenu();
+        }
+        lastPlotMode = PLOT_NOTHING;
+        plotSelection = 0;
+        calcMode = cmNormal;
+        #if defined(DEBUGUNDO)
+          printf(">>> Undo from fnKeyExit\n");
+        #endif // DEBUGUNDO
+        fnUndo(NOPARAM);
+        fnClDrawMx();
         break;
       }
 
