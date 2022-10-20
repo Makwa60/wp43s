@@ -5054,7 +5054,7 @@ void complex_QR_decomposition(const complex34Matrix_t *matrix, complex34Matrix_t
 
 #if !defined(TESTSUITE_BUILD)
   static void calculateEigenvalues22(const real_t *mat, uint16_t size, real_t *t1r, real_t *t1i, real_t *t2r, real_t *t2i, realContext_t *realContext) {
-    // Calculate eigenvalue of 2x2-submatrix
+    // Calculate eigenvalue of 2x2 bottom right submatrix
     // Characteristic equation of A = [[a b] [c d]] : t^2 - trace(A) t +      det(A) = 0
     //                                                t^2 -  (a + d) t + (a d - b c) = 0
     //                                            t = ((a + d) ± √(a^2 + 2 a d + d^2 - 4 (a d - b c))) / 2
@@ -5154,7 +5154,10 @@ void complex_QR_decomposition(const complex34Matrix_t *matrix, complex34Matrix_t
     realSubtract(&t2r, dr, &tmp, realContext), realSubtract(&t2i, di, &tmpI, realContext);
     complexMagnitude(&tmp, &tmpI, &tmp, realContext);
 
-    if(realCompareLessThan(&tmpR, &tmp)) {
+    if(realCompareEqual(&t1r, &t2r) && realCompareEqual(&t1i, &t2i)) {
+      realCopy(const_0, re); realCopy(const_0, im); // disable shift
+    }
+    else if(realCompareLessThan(&tmpR, &tmp)) {
       realCopy(&t1r, re); realCopy(&t1i, im);
     }
     else {
@@ -5244,9 +5247,14 @@ void complex_QR_decomposition(const complex34Matrix_t *matrix, complex34Matrix_t
       while(true) {
         if(shifted) {
           calculateQrShift(a, size, &shiftRe, &shiftIm, realContext);
-          for(i = 0; i < size; i++) {
-            realSubtract(a + (i * size + i) * 2,     &shiftRe, a + (i * size + i) * 2,     realContext);
-            realSubtract(a + (i * size + i) * 2 + 1, &shiftIm, a + (i * size + i) * 2 + 1, realContext);
+          if((realIsZero(&shiftRe) && realIsZero(&shiftIm)) || realIsSpecial(&shiftRe) || realIsSpecial(&shiftIm)) {
+            shifted = false;
+          }
+          else {
+            for(i = 0; i < size; i++) {
+              realSubtract(a + (i * size + i) * 2,     &shiftRe, a + (i * size + i) * 2,     realContext);
+              realSubtract(a + (i * size + i) * 2 + 1, &shiftIm, a + (i * size + i) * 2 + 1, realContext);
+            }
           }
         }
         QR_decomposition_householder(a, size, q, r, realContext);
