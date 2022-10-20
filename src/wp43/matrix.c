@@ -5054,7 +5054,7 @@ void complex_QR_decomposition(const complex34Matrix_t *matrix, complex34Matrix_t
 
 #if !defined(TESTSUITE_BUILD)
   static void calculateEigenvalues22(const real_t *mat, uint16_t size, real_t *t1r, real_t *t1i, real_t *t2r, real_t *t2i, realContext_t *realContext) {
-    // Calculate eigenvalue of 2x2 bottom right submatrix
+    // Calculate eigenvalues of 2x2 bottom right submatrix
     // Characteristic equation of A = [[a b] [c d]] : t^2 - trace(A) t +      det(A) = 0
     //                                                t^2 -  (a + d) t + (a d - b c) = 0
     //                                            t = ((a + d) ± √(a^2 + 2 a d + d^2 - 4 (a d - b c))) / 2
@@ -5673,7 +5673,7 @@ void complexEigenvectors(const complex34Matrix_t *matrix, complex34Matrix_t *res
         // Calculate eigenvalues
         calculateEigenvalues(a, q, r, eig, size, shifted, false, &ctxtReal75);
         shifted = false;
-        calculateEigenvectors((any34Matrix_t *)matrix, false, a, q, r, eig, &ctxtReal75);
+        calculateEigenvectors((any34Matrix_t *)matrix, true, a, q, r, eig, &ctxtReal75);
 
         // Write back
         if(matrix == res || complexMatrixInit(res, size, size)) {
