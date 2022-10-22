@@ -200,7 +200,7 @@ void fnNop(uint16_t unusedButMandatoryParameter) {
         }
         return;
       }
-      else if(tamIsActive() && tmValue <= indexOfItems[func].param && indexOfItems[func].param <= tmCmp) {
+      else if(!tamIsActive() && tmValue <= indexOfItems[func].param && indexOfItems[func].param <= tmCmp) {
         tamEnterMode(func);
         return;
       }
