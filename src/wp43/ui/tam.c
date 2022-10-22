@@ -30,6 +30,11 @@
 
 tamState_t tam;
 
+void tamReset(void) {
+  tam.mode = 0;
+  tam.alpha = false;
+}
+
 #if !defined(TESTSUITE_BUILD)
   int16_t tamOperation(void) {
     switch(tam.function) {
@@ -839,13 +844,6 @@ tamState_t tam;
         }
       }
     }
-  }
-
-
-
-  void tamReset(void) {
-    tam.mode = 0;
-    tam.alpha = false;
   }
 
 

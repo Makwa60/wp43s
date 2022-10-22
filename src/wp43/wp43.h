@@ -19,12 +19,6 @@
     #include <unistd.h>
   #endif // OSX
 
-  #if defined(PC_BUILD)
-    #include <glib.h>
-    #include <gtk/gtk.h>
-    #include <gdk/gdk.h>
-  #endif // PC_BUILD
-
   #if defined(WIN32)
     #include <locale.h>
   #endif // WIN32
@@ -52,22 +46,9 @@
   #endif // PC_BUILD || TESTSUITE_BUILD
 
   #if defined(PC_BUILD)
-    extern bool                 calcLandscape;
-    extern bool                 calcAutoLandscapePortrait;
-    extern GtkWidget           *screen;
-    extern GtkWidget           *frmCalc;
     extern int16_t              screenStride;
-    extern int16_t              debugWindow;
     extern uint32_t            *screenData;
     extern bool                 screenChange;
-    extern char                 debugString[10000];
-    #if (DEBUG_REGISTER_L == 1)
-      extern GtkWidget         *lblRegisterL1;
-      extern GtkWidget         *lblRegisterL2;
-    #endif // (DEBUG_REGISTER_L == 1)
-    #if (SHOW_MEMORY_STATUS == 1)
-      extern GtkWidget         *lblMemoryStatus;
-    #endif // (SHOW_MEMORY_STATUS == 1)
   #endif //PC_BUILD
 
   // Variables stored in FLASH

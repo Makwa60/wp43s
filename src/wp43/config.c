@@ -17,6 +17,7 @@
 #include "error.h"
 #include "fonts.h"
 #include "flags.h"
+#include "hal/debug.h"
 #include "hal/io.h"
 #include "items.h"
 #include "matrix.h"
@@ -744,11 +745,6 @@ void fnReset(uint16_t confirmation) {
       matrixIndex = INVALID_VARIABLE; // Unset matrix index
     #endif // !TESTSUITE_BUILD
 
-
-    #if defined(PC_BUILD)
-      debugWindow = DBG_REGISTERS;
-    #endif // PC_BUILD
-
     decContextDefault(&ctxtReal34, DEC_INIT_DECQUAD);
 
     decContextDefault(&ctxtReal4, DEC_INIT_DECSINGLE);
@@ -945,9 +941,7 @@ void fnReset(uint16_t confirmation) {
     timerAppResetState();
 
     #if (DEBUG_PANEL == 1)
-      debugWindow = DBG_REGISTERS;
-      gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(chkHexaString), false);
-      refreshDebugPanel();
+      debugInit();
     #endif // DEBUG_PANEL == 1
   }
 }

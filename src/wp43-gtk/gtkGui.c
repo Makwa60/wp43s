@@ -9,12 +9,14 @@
 #include "debug.h"
 #include "defines.h"
 #include "error.h"
+#include "gtkDebug.h"
 #include "gtkScreen.h"
 #include "items.h"
 #include "saveRestoreCalcState.h"
 #include "ui/keyboard.h"
 #include "ui/screen.h"
 #include "ui/tam.h"
+#include "wp43-gtk.h"
 #include <stdbool.h>
 
 #include "wp43.h"

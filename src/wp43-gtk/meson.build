@@ -3,6 +3,7 @@
 
 wp43_gtk_src = files(
   'wp43-gtk.c',
+  'gtkDebug.c',
   'gtkGui.c',
   'gtkScreen.c',
   'hal/audio.c',

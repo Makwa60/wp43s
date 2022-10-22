@@ -4,6 +4,7 @@
 #include "hal/system.h"
 
 #include "defines.h"
+#include <gtk/gtk.h>
 
 #include "wp43.h"
 
@@ -124,4 +125,10 @@ void systemScreenshot(void) {
 
 const char *systemMaker(void) {
   return NULL;
+}
+
+
+
+void systemQuit(void) {
+  gtk_main_quit();
 }

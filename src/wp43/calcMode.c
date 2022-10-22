@@ -9,6 +9,7 @@
 #include "error.h"
 #include "flags.h"
 #include "hal/gui.h"
+#include "hal/system.h"
 #include "items.h"
 #include "matrix.h"
 #include "registers.h"
@@ -82,7 +83,7 @@ calcMode_t calcMode;
         }
       }
       saveCalc();
-      gtk_main_quit();
+      systemQuit();
     #endif // PC_BUILD
 
     #if defined(DMCP_BUILD)

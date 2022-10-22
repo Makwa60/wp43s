@@ -71,21 +71,21 @@
 
   extern tamState_t tam;
 
+  /**
+   * Reset the TAM state.
+   */
+  void tamReset        (void);
+
+  /**
+   * Return whether the calculator is currently waiting for TAM input.
+   *
+   * \return true if currently in TAM
+   */
+  static inline bool tamIsActive(void) {
+    return tam.mode;
+  }
+
   #if !defined(TESTSUITE_BUILD)
-    /**
-     * Reset the TAM state.
-     */
-    void tamReset        (void);
-
-    /**
-     * Return whether the calculator is currently waiting for TAM input.
-     *
-     * \return true if currently in TAM
-     */
-    static inline bool tamIsActive(void) {
-      return tam.mode;
-    }
-
     /**
      * Return whether TAM is waiting for a key assignment.
      *

@@ -21,6 +21,7 @@
 #include "ui/softmenus.h"
 #include "ui/tam.h"
 #if defined(PC_BUILD)
+  #include <gtk/gtk.h>
   #include <unistd.h>
 #endif // PC_BUILD
 
