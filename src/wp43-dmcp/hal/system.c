@@ -43,3 +43,8 @@ void systemScreenshot(void) {
 const char *systemMaker(void) {
   return "Hardware" STD_SPACE_3_PER_EM "by" STD_SPACE_3_PER_EM "SwissMicros";
 }
+
+
+
+void systemQuit(void) {
+}

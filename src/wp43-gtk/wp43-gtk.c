@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // SPDX-FileCopyrightText: Copyright The WP43 Authors
 
+#include "wp43-gtk.h"
 #include "apps/timerApp.h"
 #include "core/memory.h"
 #include "flags.h"
@@ -20,7 +21,6 @@ bool                calcAutoLandscapePortrait;
 GtkWidget           *screen;
 GtkWidget           *frmCalc;
 int16_t             screenStride;
-int16_t             debugWindow;
 uint32_t            *screenData;
 bool                screenChange;
 char                debugString[10000];

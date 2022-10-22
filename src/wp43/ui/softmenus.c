@@ -18,6 +18,7 @@
 #include "solver/equation.h"
 #include "sort.h"
 #include "ui/screen.h"
+#include "ui/tam.h"
 #include <string.h>
 #include <stdbool.h>
 #include <stdlib.h>
@@ -997,7 +998,7 @@ void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
     int16_t x, y, yDotted=0, currentFirstItem, item, numberOfItems, m = softmenuStack[0].softmenuId;
     bool    dottedTopLine;
 
-    if(tam.mode == TM_KEY && !tam.keyInputFinished) {
+    if(tamIsWaitingKey()) {
       for(y=0; y<=2; y++) {
         for(x=0; x<6; x++) {
           showSoftkey("", x, y, vmReverse, true, true);
@@ -1336,7 +1337,7 @@ void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
       bugScreen(errorMessage);
     }
     else {
-      if(tam.mode || (calcMode == cmAssign && tam.alpha)) {
+      if(tamIsActive() || (calcMode == cmAssign && tam.alpha)) {
         numberOfTamMenusToPop++;
       }
       pushSoftmenu(m);

@@ -33,6 +33,7 @@
 #include "stats.h"
 #include "ui/screen.h"
 #include "ui/softmenus.h"
+#include "ui/tam.h"
 #include <stdbool.h>
 #include <string.h>
 #if defined(PC_BUILD)

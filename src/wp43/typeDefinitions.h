@@ -430,46 +430,6 @@
 
 
 
-  /**
-   * \struct tamState_t
-   * State for TAM mode. Most of this state is internal and so not documented.
-   */
-  typedef struct {
-    /**
-     * The mode used by TAM processing. If non-zero then TAM mode is active.
-     * This should be used to determine whether the calculator is in TAM mode:
-     *
-     *     if(tam.mode) {
-     *       // the calculator is in TAM mode
-     *     }
-     */
-    uint16_t   mode;
-    int16_t    function;
-    /**
-     * Whether input is a string rather than a number. For example, a named variable.
-     * If the calculator is in alpha mode then additional details apply. See
-     * ::tamProcessInput for further details.
-     */
-    bool       alpha;
-    int16_t    currentOperation;
-    bool       dot;
-    bool       indirect;
-    int16_t    digitsSoFar;
-    int16_t    value;
-    int16_t    min;
-    int16_t    max;
-    /**
-     * Only used for KEYG and KEYX
-     */
-    int16_t    key;
-    bool       keyAlpha;
-    bool       keyDot;
-    bool       keyIndirect;
-    bool       keyInputFinished;
-  } tamState_t;
-
-
-
   // Temporary information
   typedef enum {
     TI_NO_INFO             =  0,

@@ -362,11 +362,11 @@
       programRunStop = PGM_KEY_PRESSED_WHILE_PAUSED;
       return;
     }
-    if(tam.mode == TM_KEY && !tam.keyInputFinished) {
+    if(tamIsWaitingKey()) {
       // not processed here
       return;
     }
-    if(calcMode == cmAssign && itemToBeAssigned != 0 && !(tam.alpha && tam.mode != TM_NEWMENU)) {
+    if(calcMode == cmAssign && itemToBeAssigned != 0 && !(tam.alpha && tam.mode != tmNewMenu)) {
       int16_t item = determineFunctionKeyItem((char *)data);
 
       #pragma GCC diagnostic push
@@ -414,7 +414,7 @@
         // If we are in the catalog then a normal key press should affect the Alpha Selection Buffer to choose
         // an item from the catalog, but a function key press should put the item in the AIM (or TAM) buffer
         // Use this variable to distinguish between the two
-        if(calcMode == cmPem && !tam.mode) {
+        if(calcMode == cmPem && !tamIsActive()) {
           if(getSystemFlag(FLAG_ALPHA)) {
             pemAlpha(item);
           }
@@ -428,7 +428,7 @@
           addItemToBuffer(item);
           fnKeyInCatalog = 0;
         }
-        if(calcMode == cmEim && !tam.mode) {
+        if(calcMode == cmEim && !tamIsActive()) {
           while(softmenu[softmenuStack[0].softmenuId].menuItem != -MNU_EQ_EDIT) {
             popSoftmenu();
           }
@@ -522,7 +522,7 @@
       return;
     }
     if(calcMode != cmApp) {
-      if(tam.mode == TM_KEY && !tam.keyInputFinished) {
+      if(tamIsWaitingKey()) {
         if(tam.digitsSoFar == 0) {
           switch(data[0]) {
             case '1': {
@@ -563,7 +563,7 @@
         return;
       }
 
-      if(calcMode == cmAssign && itemToBeAssigned != 0 && !(tam.alpha && tam.mode != TM_NEWMENU)) {
+      if(calcMode == cmAssign && itemToBeAssigned != 0 && !(tam.alpha && tam.mode != tmNewMenu)) {
         if(_assignToMenu((uint8_t *)data)) {
           return;
         }
@@ -607,7 +607,7 @@
             screenUpdatingMode &= ~SCRUPD_ONE_TIME_FLAGS;
             return;
           }
-          if(tam.mode && catalog && (tam.digitsSoFar || tam.function == ITM_BESTF || tam.function == ITM_CNST || (!tam.indirect && (tam.mode == TM_VALUE || tam.mode == TM_VALUE_CHB || (tam.mode == TM_KEY && !tam.keyInputFinished))))) {
+          if(tamIsActive() && catalog && (tam.digitsSoFar || tam.function == ITM_BESTF || tam.function == ITM_CNST || (!tam.indirect && (tam.mode == tmValue || tam.mode == tmValueChb || tamIsWaitingKey())))) {
             // disabled
           }
           else if(tam.function == ITM_GTOP && catalog == CATALOG_PROG) {
@@ -620,14 +620,14 @@
             return;
           }
           else if(calcMode == cmPem && catalog && catalog != CATALOG_MVAR) { // TODO: is that correct
-            if(indexOfItems[item].func == fnGetSystemFlag && (tam.mode == TM_FLAGR || tam.mode == TM_FLAGW) && !tam.indirect) {
+            if(indexOfItems[item].func == fnGetSystemFlag && (tam.mode == tmFlagR || tam.mode == tmFlagW) && !tam.indirect) {
               tam.value = (indexOfItems[item].param & 0xff);
               tam.alpha = true;
               addStepInProgram(tamOperation());
               tamLeaveMode();
               hourGlassIconEnabled = false;
             }
-            else if(tam.mode) {
+            else if(tamIsActive()) {
               const char *itmLabel = dynmenuGetLabel(dynamicMenuItem);
               uint16_t nameLength = stringByteLength(itmLabel);
               xcopy(aimBuffer, itmLabel, nameLength + 1);
@@ -649,10 +649,10 @@
           // an item from the catalog, but a function key press should put the item in the AIM (or TAM) buffer
           // Use this variable to distinguish between the two
           fnKeyInCatalog = 1;
-          if(tam.mode && catalog && (tam.digitsSoFar || tam.function == ITM_BESTF || tam.function == ITM_CNST || (!tam.indirect && (tam.mode == TM_VALUE || tam.mode == TM_VALUE_CHB)))) {
+          if(tamIsActive() && catalog && (tam.digitsSoFar || tam.function == ITM_BESTF || tam.function == ITM_CNST || (!tam.indirect && (tam.mode == tmValue || tam.mode == tmValueChb)))) {
             // disabled
           }
-          else if(tam.mode && (!tam.alpha || isAlphabeticSoftmenu())) {
+          else if(tamIsActive() && (!tam.alpha || isAlphabeticSoftmenu())) {
             addItemToBuffer(item);
           }
           else if((calcMode == cmNormal || calcMode == cmAim) && isAlphabeticSoftmenu()) {
@@ -685,7 +685,7 @@
             if(calcMode == cmAim && !isAlphabeticSoftmenu()) {
               closeAim();
             }
-            if(tam.alpha && calcMode != cmAssign && tam.mode != TM_NEWMENU) {
+            if(tam.alpha && calcMode != cmAssign && tam.mode != tmNewMenu) {
               tamLeaveMode();
             }
 
@@ -716,7 +716,7 @@
                   itemToBeAssigned = item;
                 }
               }
-              else if(calcMode == cmAssign && tam.alpha && tam.mode != TM_NEWMENU && item != ITM_NOP) {
+              else if(calcMode == cmAssign && tam.alpha && tam.mode != tmNewMenu && item != ITM_NOP) {
                 processAimInput(item);
                 if(stringGlyphLength(aimBuffer) > 6) {
                   assignLeaveAlpha();
@@ -794,7 +794,7 @@
                         key->primaryAim;
 
     }
-    else if(tam.mode) {
+    else if(tamIsActive()) {
       result = key->primaryTam; // No shifted function in TAM
     }
     else if(calcMode == cmNormal || calcMode == cmNim || calcMode == cmMim || calcMode == cmConfirmation || calcMode == cmPem || calcMode == cmPlotStat || calcMode == cmGraph || calcMode == cmAssign || calcMode == cmTimerApp) {
@@ -1139,7 +1139,7 @@
             }
           }
           else {
-            if(tam.alpha && tam.mode != TM_NEWMENU) {
+            if(tam.alpha && tam.mode != tmNewMenu) {
               assignLeaveAlpha();
               assignGetName2();
             }
@@ -1149,7 +1149,7 @@
           }
           keyActionProcessed = true;
         }
-        else if(tam.mode) {
+        else if(tamIsActive()) {
           tamProcessInput(ITM_ENTER);
           keyActionProcessed = true;
         }
@@ -1196,7 +1196,7 @@
           }
           break;
         }
-        else if(tam.mode) {
+        else if(tamIsActive()) {
           if(tam.alpha) {
             processAimInput(item);
           }
@@ -1342,7 +1342,7 @@
                 keyActionProcessed = true;
               }
               else if(item != 0 && itemToBeAssigned != 0) {
-                if(tam.alpha && tam.mode != TM_NEWMENU) {
+                if(tam.alpha && tam.mode != tmNewMenu) {
                   if(item > 0) {
                     processAimInput(item);
                     if(stringGlyphLength(aimBuffer) > 6) {
@@ -1404,7 +1404,7 @@
                   break;
                 }
                 case ITM_SHIFTf: {
-                  if(!tam.mode) {
+                  if(!tamIsActive()) {
                     fnScreenDump(NOPARAM);
                   }
                   break;
@@ -1652,7 +1652,7 @@ ram_full:
 
 void fnKeyExit(uint16_t unusedButMandatoryParameter) {
   #if !defined(TESTSUITE_BUILD)
-    if(tam.mode == TM_KEY && !tam.keyInputFinished) {
+    if(tamIsWaitingKey()) {
       if(tam.digitsSoFar == 0) {
         tamProcessInput(ITM_2);
         tamProcessInput(ITM_1);
@@ -1680,7 +1680,7 @@ void fnKeyExit(uint16_t unusedButMandatoryParameter) {
           else {
             leaveAsmMode();
             popSoftmenu();
-            if(tam.mode) {
+            if(tamIsActive()) {
               numberOfTamMenusToPop--;
             }
           }
@@ -1689,7 +1689,7 @@ void fnKeyExit(uint16_t unusedButMandatoryParameter) {
       }
     }
 
-    if(tam.mode) {
+    if(tamIsActive()) {
       if(numberOfTamMenusToPop > 1) {
         popSoftmenu();
         numberOfTamMenusToPop--;
@@ -1790,12 +1790,12 @@ void fnKeyExit(uint16_t unusedButMandatoryParameter) {
       }
 
       case cmPem: {
-        if(getSystemFlag(FLAG_ALPHA) && aimBuffer[0] == 0 && !tam.mode) {
+        if(getSystemFlag(FLAG_ALPHA) && aimBuffer[0] == 0 && !tamIsActive()) {
           pemAlpha(ITM_BACKSPACE);
           fnBst(NOPARAM); // Set the PGM pointer to the original position
           break;
         }
-        if(aimBuffer[0] != 0 && !tam.mode) {
+        if(aimBuffer[0] != 0 && !tamIsActive()) {
           if(getSystemFlag(FLAG_ALPHA)) {
             pemCloseAlphaInput();
           }
@@ -1983,7 +1983,7 @@ void fnKeyBackspace(uint16_t unusedButMandatoryParameter) {
     uint16_t lg;
     uint8_t *nextStep;
 
-    if(tam.mode) {
+    if(tamIsActive()) {
       tamProcessInput(ITM_BACKSPACE);
       return;
     }
@@ -2193,7 +2193,7 @@ void fnKeyBackspace(uint16_t unusedButMandatoryParameter) {
 
 void fnKeyUp(uint16_t unusedButMandatoryParameter) {
   #if !defined(TESTSUITE_BUILD)
-    if(tam.mode == TM_KEY && !tam.keyInputFinished) {
+    if(tamIsWaitingKey()) {
       if(tam.digitsSoFar == 0) {
         tamProcessInput(ITM_1);
         tamProcessInput(ITM_9);
@@ -2202,7 +2202,7 @@ void fnKeyUp(uint16_t unusedButMandatoryParameter) {
       }
       return;
     }
-    if(tam.mode && !catalog) {
+    if(tamIsActive() && !catalog) {
       if(tam.alpha) {
         resetAlphaSelectionBuffer();
         if(currentSoftmenuScrolls()) {
@@ -2319,7 +2319,7 @@ void fnKeyUp(uint16_t unusedButMandatoryParameter) {
         if(currentSoftmenuScrolls()) {
           menuUp();
         }
-        else if(!tam.mode) {
+        else if(!tamIsActive()) {
           timerAppUp();
         }
         break;
@@ -2337,7 +2337,7 @@ void fnKeyUp(uint16_t unusedButMandatoryParameter) {
 
 void fnKeyDown(uint16_t unusedButMandatoryParameter) {
   #if !defined(TESTSUITE_BUILD)
-    if(tam.mode == TM_KEY && !tam.keyInputFinished) {
+    if(tamIsWaitingKey()) {
       if(tam.digitsSoFar == 0) {
         tamProcessInput(ITM_2);
         tamProcessInput(ITM_0);
@@ -2346,7 +2346,7 @@ void fnKeyDown(uint16_t unusedButMandatoryParameter) {
       }
       return;
     }
-    if(tam.mode && !catalog) {
+    if(tamIsActive() && !catalog) {
       if(tam.alpha) {
         resetAlphaSelectionBuffer();
         if(currentSoftmenuScrolls()) {
@@ -2431,7 +2431,7 @@ void fnKeyDown(uint16_t unusedButMandatoryParameter) {
         if(currentSoftmenuScrolls()) {
           menuDown();
         }
-        else if(tam.alpha && (itemToBeAssigned == 0 || tam.mode == TM_NEWMENU) && alphaCase == AC_UPPER) {
+        else if(tam.alpha && (itemToBeAssigned == 0 || tam.mode == tmNewMenu) && alphaCase == AC_UPPER) {
           alphaCase = AC_LOWER;
         }
         else if(tam.alpha && itemToBeAssigned == 0 && aimBuffer[0] == 0) {
@@ -2458,7 +2458,7 @@ void fnKeyDown(uint16_t unusedButMandatoryParameter) {
         if(currentSoftmenuScrolls()) {
           menuDown();
         }
-        else if(!tam.mode) {
+        else if(!tamIsActive()) {
           timerAppDown();
         }
         break;

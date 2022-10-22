@@ -22,6 +22,7 @@
 #include "error.h"
 #include "flags.h"
 #include "fonts.h"
+#include "hal/debug.h"
 #include "hal/lcd.h"
 #include "hal/time.h"
 #include "hal/system.h"
@@ -39,7 +40,11 @@
 #include "ui/keyboard.h"
 #include "ui/softmenus.h"
 #include "ui/statusBar.h"
+#include "ui/tam.h"
 #include "version.h"
+#if defined(PC_BUILD)
+  #include <gtk/gtk.h>
+#endif // PC_BUILD
 #include <stdbool.h>
 #include <string.h>
 
@@ -113,11 +118,11 @@
       if(screenChange) {
         #if defined(LINUX) && (DEBUG_PANEL == 1)
           if(programRunStop != PGM_RUNNING) {
-            refreshDebugPanel();
+            debugRefresh();
           }
         #endif // defined(LINUX) && (DEBUG_PANEL == 1)
 
-        gtk_widget_queue_draw(screen);
+        lcd_refresh();
         while(gtk_events_pending()) {
           gtk_main_iteration();
         }
@@ -586,100 +591,12 @@ void clearScreen(void) {
 
     #if (DEBUG_PANEL == 1)
       if(programRunStop != PGM_RUNNING) {
-        refreshDebugPanel();
+        debugRefresh();
       }
     #endif // (DEBUG_PANEL == 1)
 
     if((calcMode != cmPlotStat) && (calcMode != cmGraph)) {
       clearRegisterLine(regist, true, (regist != REGISTER_Y));
-
-      #if defined(PC_BUILD)
-        #if (DEBUG_REGISTER_L == 1 || SHOW_MEMORY_STATUS == 1)
-          char tmpStr[1000];
-        #endif // (DEBUG_REGISTER_L == 1 || SHOW_MEMORY_STATUS == 1)
-        #if (DEBUG_REGISTER_L == 1)
-          char string1[1000], string2[1000], *p;
-          uint16_t i;
-
-          strcpy(string1, "L = ");
-
-          if(getRegisterDataType(REGISTER_L) == dtReal34) {
-            strcat(string1, "real34 = ");
-            formatReal34Debug(string2, (real34_t *)getRegisterDataPointer(REGISTER_L));
-            strcat(string2, " ");
-            strcat(string2, getAngularModeName(getRegisterAngularMode(REGISTER_L)));
-          }
-
-          else if(getRegisterDataType(REGISTER_L) == dtComplex34) {
-            strcat(string1, "complex34 = ");
-            formatComplex34Debug(string2, (void *)getRegisterDataPointer(REGISTER_L));
-          }
-
-          else if(getRegisterDataType(REGISTER_L) == dtString) {
-            strcat(string1, "string = ");
-            for(i=0, p=REGISTER_STRING_DATA(REGISTER_L); i<=stringByteLength(REGISTER_STRING_DATA(REGISTER_L)); i++, p++) {
-              string2[i] = *p;
-            }
-          }
-
-          else if(getRegisterDataType(REGISTER_L) == dtShortInteger) {
-            strcat(string1, "short integer = ");
-            shortIntegerToDisplayString(REGISTER_L, string2, false);
-            strcat(string2, STD_SPACE_3_PER_EM);
-            strcat(string2, getShortIntegerModeName(shortIntegerMode));
-          }
-
-          else if(getRegisterDataType(REGISTER_L) == dtLongInteger) {
-            strcat(string1, "long integer = ");
-            longIntegerRegisterToDisplayString(REGISTER_L, string2, sizeof(string2), SCREEN_WIDTH, 50, STD_SPACE_PUNCTUATION);
-          }
-
-          else if(getRegisterDataType(REGISTER_L) == dtTime) {
-            strcat(string1, "time = ");
-            formatReal34Debug(string2, (real34_t *)getRegisterDataPointer(REGISTER_L));
-          }
-
-          else if(getRegisterDataType(REGISTER_L) == dtDate) {
-            strcat(string1, "date = ");
-            formatReal34Debug(string2, (real34_t *)getRegisterDataPointer(REGISTER_L));
-          }
-
-          else if(getRegisterDataType(REGISTER_L) == dtReal34Matrix) {
-            sprintf(&string1[strlen(string1)], "real34 %" PRIu16 STD_CROSS "%" PRIu16 " matrix = ", REGISTER_REAL34_MATRIX_DBLOCK(REGISTER_L)->matrixRows, REGISTER_REAL34_MATRIX_DBLOCK(REGISTER_L)->matrixColumns);
-            formatReal34Debug(string2, REGISTER_REAL34_MATRIX_M_ELEMENTS(REGISTER_L));
-          }
-
-          else if(getRegisterDataType(REGISTER_L) == dtComplex34Matrix) {
-            sprintf(&string1[strlen(string1)], "complex34 %" PRIu16 STD_CROSS "%" PRIu16 " matrix = ", REGISTER_COMPLEX34_MATRIX_DBLOCK(REGISTER_L)->matrixRows, REGISTER_COMPLEX34_MATRIX_DBLOCK(REGISTER_L)->matrixColumns);
-            formatComplex34Debug(string2, REGISTER_COMPLEX34_MATRIX_M_ELEMENTS(REGISTER_L));
-          }
-
-          else if(getRegisterDataType(REGISTER_L) == dtConfig) {
-            strcat(string1, "Configuration data");
-            string2[0] = 0;
-          }
-
-          else {
-            sprintf(string2, "data type %s not supported for now!", getRegisterDataTypeName(REGISTER_L, false, false));
-          }
-
-          stringToUtf8(string1, (uint8_t *)tmpStr);
-          stringToUtf8(string2, (uint8_t *)tmpStr + 500);
-
-          gtk_label_set_label(GTK_LABEL(lblRegisterL1), tmpStr);
-          gtk_label_set_label(GTK_LABEL(lblRegisterL2), tmpStr + 500);
-          gtk_widget_show(lblRegisterL1);
-          gtk_widget_show(lblRegisterL2);
-        #endif // (DEBUG_REGISTER_L == 1)
-        #if (SHOW_MEMORY_STATUS == 1)
-          char string[1000];
-
-          sprintf(string, "%" PRId32 " bytes free (%" PRId32 " region%s), 43 %" PRIu64 " bytes, GMP %" PRIu64 " bytes -> should always be 0", getFreeRamMemory(), numberOfFreeMemoryRegions, numberOfFreeMemoryRegions==1 ? "" : "s", TO_BYTES((uint64_t)wp43MemInBlocks), (uint64_t)gmpMemInBytes);
-          stringToUtf8(string, (uint8_t *)tmpStr);
-          gtk_label_set_label(GTK_LABEL(lblMemoryStatus), tmpStr);
-          gtk_widget_show(lblMemoryStatus);
-        #endif // (SHOW_MEMORY_STATUS == 1)
-      #endif // PC_BUILD
 
       if(getRegisterDataType(REGISTER_X) == dtReal34Matrix || (calcMode == cmMim && getRegisterDataType(matrixIndex) == dtReal34Matrix)) {
         displayStack = cachedDisplayStack;
@@ -842,7 +759,7 @@ void clearScreen(void) {
           displayNim(nimBufferDisplay, lastBase, wLastBaseNumeric, wLastBaseStandard);
         }
 
-        else if(regist == AIM_REGISTER_LINE && calcMode == cmAim && !tam.mode) {
+        else if(regist == AIM_REGISTER_LINE && calcMode == cmAim && !tamIsActive()) {
           if(stringWidth(aimBuffer, &standardFont, true, true) < SCREEN_WIDTH - 8) { // 8 is the standard font cursor width
             xCursor = showString(aimBuffer, &standardFont, 1, Y_POSITION_OF_NIM_LINE + 6, vmNormal, true, true);
             yCursor = Y_POSITION_OF_NIM_LINE + 6;
@@ -1785,7 +1702,7 @@ void clearScreen(void) {
       }
     }
 
-    if(tam.mode || calcMode == cmAssign) {
+    if(tamIsActive() || calcMode == cmAssign) {
       if(calcMode == cmPem) { // Variable line to display TAM informations
         lcd_fill_rect(45+20, tamOverPemYPos, 168, 20, LCD_SET_VALUE);
         showString(tamBuffer, &standardFont, 75+20, tamOverPemYPos, vmNormal,  false, false);

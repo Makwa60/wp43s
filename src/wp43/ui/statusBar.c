@@ -12,6 +12,7 @@
 #include "hal/lcd.h"
 #include "items.h"
 #include "screen.h"
+#include "ui/tam.h"
 
 #include "wp43.h"
 
@@ -169,7 +170,7 @@
 
 
   void showHideAlphaMode(void) {
-    if(calcMode == cmAim || calcMode == cmEim || (catalog && catalog != CATALOG_MVAR) || (tam.mode != 0 && tam.alpha) || ((calcMode == cmPem || calcMode == cmAssign) && getSystemFlag(FLAG_ALPHA))) {
+    if(calcMode == cmAim || calcMode == cmEim || (catalog && catalog != CATALOG_MVAR) || (tamIsActive() && tam.alpha) || ((calcMode == cmPem || calcMode == cmAssign) && getSystemFlag(FLAG_ALPHA))) {
       if(alphaCase == AC_UPPER) {
         showString(STD_ALPHA, &standardFont, X_ALPHA_MODE, 0, vmNormal, true, false); // STD_ALPHA is 0+9+2 pixel wide
         setSystemFlag(FLAG_alphaCAP);
@@ -362,7 +363,7 @@
       }
     }
     #if (DEBUG_INSTEAD_STATUS_BAR == 1)
-      sprintf(tmpString, "%s%d %s/%s  mnu:%s fi:%d", catalog ? "asm:" : "", catalog, tam.mode ? "/tam" : "", getCalcModeName(calcMode),indexOfItems[-softmenu[softmenuStack[0].softmenuId].menuItem].itemCatalogName, softmenuStack[0].firstItem);
+      sprintf(tmpString, "%s%d %s/%s  mnu:%s fi:%d", catalog ? "asm:" : "", catalog, tamIsActive() ? "/tam" : "", getCalcModeName(calcMode),indexOfItems[-softmenu[softmenuStack[0].softmenuId].menuItem].itemCatalogName, softmenuStack[0].firstItem);
       showString(tmpString, &standardFont, X_DATE, 0, vmNormal, true, true);
     #else // DEBUG_INSTEAD_STATUS_BAR != 1
       showDateTime();

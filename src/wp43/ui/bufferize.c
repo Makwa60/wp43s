@@ -297,7 +297,7 @@
       if(calcMode == cmNormal && fnKeyInCatalog && isAlphabeticSoftmenu()) {
         fnAim(NOPARAM);
       }
-      if((fnKeyInCatalog || !catalog || catalog == CATALOG_MVAR) && (((calcMode == cmAim || calcMode == cmEim) && !tam.mode) || tam.alpha)) {
+      if((fnKeyInCatalog || !catalog || catalog == CATALOG_MVAR) && (((calcMode == cmAim || calcMode == cmEim) && !tamIsActive()) || tam.alpha)) {
         item = convertItemToSubOrSup(item, nextChar);
         if(stringByteLength(aimBuffer) + stringByteLength(indexOfItems[item].itemSoftmenuName) >= AIM_BUFFER_LENGTH) { /// TODO this error should never happen but who knows!
           sprintf(errorMessage, "In function addItemToBuffer: the AIM input buffer is full! %d bytes for now", AIM_BUFFER_LENGTH);
@@ -371,7 +371,7 @@
         }
       }
 
-      else if(tam.mode) {
+      else if(tamIsActive()) {
         tamProcessInput(item);
       }
 

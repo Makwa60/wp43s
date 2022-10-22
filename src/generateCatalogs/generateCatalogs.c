@@ -5,6 +5,7 @@
 #include "sort.h"
 #include <stdbool.h>
 #include <stdlib.h>
+#include <string.h>
 #include <unistd.h>
 
 #include "wp43.h"

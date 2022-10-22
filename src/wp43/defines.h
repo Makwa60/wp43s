@@ -413,22 +413,6 @@
   #define AC_UPPER                                   0
   #define AC_LOWER                                   1
 
-  // TAM mode
-  #define TM_VALUE                               10001 // TM_VALUE must be the 1st in this list
-  #define TM_VALUE_CHB                           10002 // same as TM_VALUE but for ->INT (#) change base
-  #define TM_REGISTER                            10003
-  #define TM_FLAGR                               10004
-  #define TM_FLAGW                               10005
-  #define TM_STORCL                              10006
-  #define TM_M_DIM                               10007
-  #define TM_SHUFFLE                             10008
-  #define TM_LABEL                               10009
-  #define TM_SOLVE                               10010
-  #define TM_NEWMENU                             10011
-  #define TM_KEY                                 10012
-  #define TM_INTEGRATE                           10013
-  #define TM_CMP                                 10014 // TM_CMP must be the last in this list
-
   // NIM number part
   #define NP_EMPTY                                   0
   #define NP_INT_10                                  1 // Integer base 10

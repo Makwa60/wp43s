@@ -8,6 +8,7 @@
   #define GTKGUI_H
 
   #include "hal/gui.h"
+  #include <stdbool.h>
 
   // One extra layout is sometimes needed for one key in TAM
   #define MAX_GTK_LAYOUTS (MAX_GUI_LAYOUTS + 1)
@@ -28,6 +29,7 @@
    * Creates the calc's GUI window with all the widgets.
    */
   void setupUI(void);
+  bool guiUseTamL(void);
 
   extern GtkWidget      *grid;
   extern calcKeyboard_t  calcKeyboard[MAX_KEYS];
