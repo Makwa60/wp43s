@@ -32,6 +32,7 @@
 #include "stats.h"
 #include "ui/bufferize.h"
 #include "ui/keyboard.h"
+#include "ui/tam.h"
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
@@ -836,7 +837,6 @@ void fnReset(uint16_t confirmation) {
     printerIconEnabled = false;
     thereIsSomethingToUndo = false;
     pemCursorIsZerothStep = true;
-    tam.alpha = false;
     fnKeyInCatalog = false;
     shiftF = false;
     shiftG = false;
@@ -880,7 +880,7 @@ void fnReset(uint16_t confirmation) {
     // RNG initialisation
     pcg32_srandom(0x1963073019931121ULL, 0x1995062319981019ULL);
 
-    tam.mode = 0;
+    tamReset();
     catalog = CATALOG_NONE;
     memset(lastCatalogPosition, 0, NUMBER_OF_CATALOGS * sizeof(lastCatalogPosition[0]));
     firstGregorianDay = 2361222 /* 14 Sept 1752 */;

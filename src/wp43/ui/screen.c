@@ -39,6 +39,7 @@
 #include "ui/keyboard.h"
 #include "ui/softmenus.h"
 #include "ui/statusBar.h"
+#include "ui/tam.h"
 #include "version.h"
 #include <stdbool.h>
 #include <string.h>
@@ -842,7 +843,7 @@ void clearScreen(void) {
           displayNim(nimBufferDisplay, lastBase, wLastBaseNumeric, wLastBaseStandard);
         }
 
-        else if(regist == AIM_REGISTER_LINE && calcMode == cmAim && !tam.mode) {
+        else if(regist == AIM_REGISTER_LINE && calcMode == cmAim && !tamIsActive()) {
           if(stringWidth(aimBuffer, &standardFont, true, true) < SCREEN_WIDTH - 8) { // 8 is the standard font cursor width
             xCursor = showString(aimBuffer, &standardFont, 1, Y_POSITION_OF_NIM_LINE + 6, vmNormal, true, true);
             yCursor = Y_POSITION_OF_NIM_LINE + 6;
@@ -1785,7 +1786,7 @@ void clearScreen(void) {
       }
     }
 
-    if(tam.mode || calcMode == cmAssign) {
+    if(tamIsActive() || calcMode == cmAssign) {
       if(calcMode == cmPem) { // Variable line to display TAM informations
         lcd_fill_rect(45+20, tamOverPemYPos, 168, 20, LCD_SET_VALUE);
         showString(tamBuffer, &standardFont, 75+20, tamOverPemYPos, vmNormal,  false, false);

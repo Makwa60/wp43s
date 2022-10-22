@@ -114,7 +114,6 @@ uint8_t                screenUpdatingMode;
 uint8_t               *beginOfProgramMemory;
 uint8_t               *firstFreeProgramByte;
 
-tamState_t             tam;
 int16_t                lineTWidth;
 int16_t                rbrRegister;
 int16_t                catalog;

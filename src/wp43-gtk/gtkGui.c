@@ -14,6 +14,7 @@
 #include "saveRestoreCalcState.h"
 #include "ui/keyboard.h"
 #include "ui/screen.h"
+#include "ui/tam.h"
 #include <stdbool.h>
 
 #include "wp43.h"
@@ -62,6 +63,12 @@ static gint destroyCalc(GtkWidget* w, GdkEventAny* e, gpointer data) {
 
 
 
+bool guiUseTamL(void) {
+  return (tam.mode == tmLabel || (tam.mode == tmSolve && (tam.function != ITM_SOLVE || calcMode != cmPem)) || tamIsWaitingKey());
+}
+
+
+
 static void convertXYToKey(int x, int y) {
   int xMin, xMax, yMin, yMax;
   key[0] = 0;
@@ -71,7 +78,7 @@ static void convertXYToKey(int x, int y) {
   for(int i=0; i<MAX_KEYS; i++) {
     xMin = calcKeyboard[i].x;
     yMin = calcKeyboard[i].y;
-    if(i == 10 && currentBezel == glTam && (tam.mode == TM_LABEL || (tam.mode == TM_SOLVE && (tam.function != ITM_SOLVE || calcMode != cmPem)) || (tam.mode == TM_KEY && tam.keyInputFinished))) {
+    if(i == 10 && currentBezel == glTam && guiUseTamL()) {
       xMax = xMin + calcKeyboard[10].width[TAM_L_LAYOUT];
       yMax = yMin + calcKeyboard[10].height[TAM_L_LAYOUT];
     }

@@ -25,6 +25,7 @@
 #include "ui/bufferize.h"
 #include "ui/screen.h"
 #include "ui/softmenus.h"
+#include "ui/tam.h"
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
@@ -350,7 +351,7 @@ void fnPem(uint16_t unusedButMandatoryParameter) {
     uint8_t *step, *nextStep;
     uint8_t *tmpSteps = NULL;
     bool     lblOrEnd;
-    bool     inTamMode = tam.mode && programList[currentProgramNumber - 1].step > 0;
+    bool     inTamMode = tamIsActive() && programList[currentProgramNumber - 1].step > 0;
     uint16_t numberOfSteps = getNumberOfSteps();
     uint16_t linesOfCurrentStep = 1;
 
@@ -381,7 +382,7 @@ void fnPem(uint16_t unusedButMandatoryParameter) {
     lastProgramListEnd       = false;
 
     if(firstDisplayedLocalStepNumber == 0) {
-      showString("0000:" STD_SPACE_4_PER_EM, &standardFont, 1, Y_POSITION_OF_REGISTER_T_LINE, (pemCursorIsZerothStep && !tam.mode && aimBuffer[0] == 0) ? vmReverse : vmNormal, false, true);
+      showString("0000:" STD_SPACE_4_PER_EM, &standardFont, 1, Y_POSITION_OF_REGISTER_T_LINE, (pemCursorIsZerothStep && !tamIsActive() && aimBuffer[0] == 0) ? vmReverse : vmNormal, false, true);
       sprintf(tmpString, "{ Prgm #%d: %" PRIu32 " bytes / %" PRIu16 " step%s }", currentProgramNumber, _getProgramSize(),
                                                                                numberOfSteps, numberOfSteps == 1 ? "" : "s");
       showString(tmpString, &standardFont, 42, Y_POSITION_OF_REGISTER_T_LINE, vmNormal, false, false);
@@ -405,7 +406,7 @@ void fnPem(uint16_t unusedButMandatoryParameter) {
       sprintf(tmpString, "%04d:" STD_SPACE_4_PER_EM, firstDisplayedLocalStepNumber + line - lineOffset + lineOffsetTam);
       if(firstDisplayedStepNumber + line - lineOffset == currentStepNumber) {
         tamOverPemYPos = Y_POSITION_OF_REGISTER_T_LINE + 21 * line;
-        showString(tmpString, &standardFont, 1, tamOverPemYPos, ((pemCursorIsZerothStep && !tam.mode && aimBuffer[0] == 0) || (tam.mode && (programList[currentProgramNumber - 1].step > 0))) ? vmNormal : vmReverse, false, true);
+        showString(tmpString, &standardFont, 1, tamOverPemYPos, ((pemCursorIsZerothStep && !tamIsActive() && aimBuffer[0] == 0) || (tamIsActive() && (programList[currentProgramNumber - 1].step > 0))) ? vmNormal : vmReverse, false, true);
         if(programList[currentProgramNumber - 1].step < 0) { // Flash
           currentStep.flash = step - tmpSteps + firstDisplayedStep.flash;
         }
@@ -418,9 +419,9 @@ void fnPem(uint16_t unusedButMandatoryParameter) {
       }
       lblOrEnd = (*step == ITM_LBL) || ((*step == ((ITM_END >> 8) | 0x80)) && (*(step + 1) == (ITM_END & 0xff))) || ((*step == 0xff) && (*(step + 1) == 0xff));
       if(programList[currentProgramNumber - 1].step > 0) {
-        if((!pemCursorIsZerothStep && firstDisplayedStepNumber + line - lineOffset == currentStepNumber + 1) || (line == 1 && tam.mode && pemCursorIsZerothStep)) {
+        if((!pemCursorIsZerothStep && firstDisplayedStepNumber + line - lineOffset == currentStepNumber + 1) || (line == 1 && tamIsActive() && pemCursorIsZerothStep)) {
           tamOverPemYPos = Y_POSITION_OF_REGISTER_T_LINE + 21 * line;
-          if(tam.mode) {
+          if(tamIsActive()) {
             line += 1;
             lineOffset += 1;
             lineOffsetTam += 1;
@@ -433,7 +434,7 @@ void fnPem(uint16_t unusedButMandatoryParameter) {
           }
         }
         else if(firstDisplayedStepNumber + line - lineOffset == currentStepNumber && lblOrEnd && (*step != ITM_LBL)) {
-          if(tam.mode) {
+          if(tamIsActive()) {
             line += 1;
             lineOffset += 1;
             lineOffsetTam += 1;
@@ -447,7 +448,7 @@ void fnPem(uint16_t unusedButMandatoryParameter) {
         }
       }
       decodeOneStep_ram(step);
-      if(firstDisplayedStepNumber + line - lineOffset == currentStepNumber && !tam.mode) {
+      if(firstDisplayedStepNumber + line - lineOffset == currentStepNumber && !tamIsActive()) {
         if(getSystemFlag(FLAG_ALPHA)) {
           char *tstr = tmpString + stringByteLength(tmpString) - 2;
           *(tstr++) = STD_CURSOR[0];
@@ -908,12 +909,12 @@ void insertStepInProgram(int16_t func) {
     return;
   }
 
-  if(func == ITM_AIM || (!tam.mode && getSystemFlag(FLAG_ALPHA))) {
+  if(func == ITM_AIM || (!tamIsActive() && getSystemFlag(FLAG_ALPHA))) {
     pemAlpha(func);
     pemCursorIsZerothStep = false;
     return;
   }
-  if(indexOfItems[func].func == addItemToBuffer || (!tam.mode && aimBuffer[0] != 0 && (func == ITM_CHS || func == ITM_CC || func == ITM_toINT || (nimNumberPart == NP_INT_BASE && (func == ITM_YX || func == ITM_LN || func == ITM_RCL))))) {
+  if(indexOfItems[func].func == addItemToBuffer || (!tamIsActive() && aimBuffer[0] != 0 && (func == ITM_CHS || func == ITM_CC || func == ITM_toINT || (nimNumberPart == NP_INT_BASE && (func == ITM_YX || func == ITM_LN || func == ITM_RCL))))) {
     pemAddNumber(func);
     return;
   }
@@ -928,7 +929,7 @@ void insertStepInProgram(int16_t func) {
     aimBuffer[0] = 0;
     return;
   }
-  if(!tam.mode && !tam.alpha && aimBuffer[0] != 0 && func != ITM_toHMS) {
+  if(!tamIsActive() && !tam.alpha && aimBuffer[0] != 0 && func != ITM_toHMS) {
     if(func == ITM_dotD) {
       _pemCloseDateInput();
       if(aimBuffer[0] == '!') {
@@ -1086,11 +1087,11 @@ void insertStepInProgram(int16_t func) {
     }
 
     default: {
-      if(tam.mode == TM_CMP && tam.value == TEMP_REGISTER_1) {
+      if(tam.mode == tmCmp && tam.value == TEMP_REGISTER_1) {
         tmpString[opBytes    ] = (char)(real34IsZero(REGISTER_REAL34_DATA(TEMP_REGISTER_1)) ? VALUE_0 : VALUE_1);
         _insertInProgram((uint8_t *)tmpString, opBytes + 1);
       }
-      else if((tam.mode == TM_FLAGR || tam.mode == TM_FLAGW) && tam.alpha && !tam.indirect) {
+      else if((tam.mode == tmFlagR || tam.mode == tmFlagW) && tam.alpha && !tam.indirect) {
         tmpString[opBytes    ] = (char)SYSTEM_FLAG_NUMBER;
         tmpString[opBytes + 1] = tam.value;
         _insertInProgram((uint8_t *)tmpString, opBytes + 2);
@@ -1130,12 +1131,12 @@ void addStepInProgram(int16_t func) {
     aimBuffer[0] = 0;
     return;
   }
-  if((!pemCursorIsZerothStep) && ((aimBuffer[0] == 0 && !getSystemFlag(FLAG_ALPHA)) || tam.mode) && ((*currentStep.ram != ((ITM_END >> 8) | 0x80)) || (*(currentStep.ram + 1) != (ITM_END & 0xff))) && ((*currentStep.ram != 0xff) || (*(currentStep.ram + 1) != 0xff))) {
+  if((!pemCursorIsZerothStep) && ((aimBuffer[0] == 0 && !getSystemFlag(FLAG_ALPHA)) || tamIsActive()) && ((*currentStep.ram != ((ITM_END >> 8) | 0x80)) || (*(currentStep.ram + 1) != (ITM_END & 0xff))) && ((*currentStep.ram != 0xff) || (*(currentStep.ram + 1) != 0xff))) {
     currentStep = findNextStep(currentStep);
     ++currentLocalStepNumber;
   }
   insertStepInProgram(func);
-  if((aimBuffer[0] == 0 && !getSystemFlag(FLAG_ALPHA)) || tam.mode) {
+  if((aimBuffer[0] == 0 && !getSystemFlag(FLAG_ALPHA)) || tamIsActive()) {
     currentStep = findPreviousStep(currentStep);
     --currentLocalStepNumber;
     pemCursorIsZerothStep = false;

@@ -14,6 +14,7 @@
 #include "fonts.h"
 #include "items.h"
 #include "registers.h"
+#include "ui/tam.h"
 #include <stdbool.h>
 #include <string.h>
 
@@ -689,23 +690,47 @@ void debugNIM(void) {
 
   static char *getTamModeName(uint16_t tmm) {
     switch(tmm) {
-      case TM_VALUE: {
+      case tmValue: {
         return "Value   ";
       }
-      case TM_VALUE_CHB: {
-        return "Valuechb"; // change base (->#)
+      case tmValueChb: {
+        return "ValueChb"; // change base (->#)
       }
-      case TM_REGISTER: {
+      case tmRegister: {
         return "Register";
       }
-      case TM_CMP: {
-        return "Compare ";
+      case tmFlagR: {
+        return "FlagR   ";
       }
-      case TM_STORCL: {
-        return "STORCL  ";
+      case tmFlagW: {
+        return "FlagW   ";
       }
-      case TM_M_DIM: {
-        return "M_DIM   ";
+      case tmStoRcl: {
+        return "StoRcl  ";
+      }
+      case tmMDim: {
+        return "MDim    ";
+      }
+      case tmShuffle: {
+        return "Shuffle ";
+      }
+      case tmLabel: {
+        return "Label   ";
+      }
+      case tmSolve: {
+        return "Solve   ";
+      }
+      case tmNewMenu: {
+        return "NewMenu ";
+      }
+      case tmKey: {
+        return "Key     ";
+      }
+      case tmIntegrate: {
+        return "Integrat";
+      }
+      case tmCmp: {
+        return "Cmp     ";
       }
       default: {
         return "???     ";

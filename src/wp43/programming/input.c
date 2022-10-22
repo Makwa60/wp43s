@@ -48,7 +48,7 @@ void fnVarMnu(uint16_t label) {
 void fnPause(uint16_t duration) {
   #if !defined(TESTSUITE_BUILD)
     uint8_t previousProgramRunStop = programRunStop;
-    if(tam.mode) {
+    if(tamIsActive()) {
       tamLeaveMode();
     }
     programRunStop = PGM_PAUSED;

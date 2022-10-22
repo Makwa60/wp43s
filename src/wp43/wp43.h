@@ -185,10 +185,6 @@
   extern uint8_t               *beginOfProgramMemory;
   extern uint8_t               *firstFreeProgramByte;
 
-  /**
-   * Instance of the internal state for TAM.
-   */
-  extern tamState_t             tam;
   extern int16_t                lineTWidth;
   extern int16_t                rbrRegister;
   extern int16_t                catalog;

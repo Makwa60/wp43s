@@ -17,6 +17,7 @@
 #include "ui/bufferize.h"
 #include "ui/keyboard.h"
 #include "ui/screen.h"
+#include "ui/tam.h"
 #include <string.h>
 #include <unistd.h>
 
@@ -36,13 +37,13 @@ calcMode_t calcMode;
           newLayout = appsGetLayout();
           break;
         default:
-          if(tam.mode && !tam.alpha) {
+          if(tamIsActive() && !tam.alpha) {
             newLayout = glTam;
           }
           else if(catalog && calcMode != cmPem && catalog != CATALOG_MVAR) {
             newLayout = glAim;
           }
-          else if(calcMode == cmAim || (tam.mode && tam.alpha) || getSystemFlag(FLAG_ALPHA)) {
+          else if(calcMode == cmAim || (tamIsActive() && tam.alpha) || getSystemFlag(FLAG_ALPHA)) {
             newLayout = glAim;
           }
           else if(calcMode == cmNormal || calcMode == cmPem || calcMode == cmMim || calcMode == cmAssign) {
@@ -109,7 +110,7 @@ calcMode_t calcMode;
     alphaCase = AC_UPPER;
     nextChar = NC_NORMAL;
 
-    if(!tam.mode && calcMode != cmAssign) {
+    if(!tamIsActive() && calcMode != cmAssign) {
       calcMode = cmAim;
       liftStack();
 

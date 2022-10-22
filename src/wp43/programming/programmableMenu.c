@@ -17,6 +17,7 @@
 #include "registers.h"
 #include "typeDefinitions.h"
 #include "ui/softmenus.h"
+#include "ui/tam.h"
 
 #include "wp43.h"
 

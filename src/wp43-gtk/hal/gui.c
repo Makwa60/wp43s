@@ -6,6 +6,7 @@
 #include "calcMode.h"
 #include "gtkGui.h"
 #include "items.h"
+#include "ui/tam.h"
 #include <stdbool.h>
 
 #include "wp43.h"
@@ -19,9 +20,7 @@
     }
   }
 
-  bool _guiUseTamL(void) {
-    return (tam.mode == TM_LABEL || (tam.mode == TM_SOLVE && (tam.function != ITM_SOLVE || calcMode != cmPem)) || (tam.mode == TM_KEY && tam.keyInputFinished));
-  }
+
 
   void guiSetLayout(guiLayout_t layout) {
     currentBezel = layout;
@@ -31,7 +30,7 @@
         gtk_fixed_move(GTK_FIXED(grid), bezelImage[i], bezelX[i], bezelY[i]);
         for (int key = 0; key < MAX_KEYS; key++) {
           if(key == 10) {
-            if(layout == glTam && _guiUseTamL()) {
+            if(layout == glTam && guiUseTamL()) {
               _guiShowKey(TAM_L_LAYOUT, key, true);
               _guiShowKey(i,            key, false);
             } else {
