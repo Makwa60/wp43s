@@ -240,6 +240,7 @@
   extern const real_t * const const_ln2;
   extern const real_t * const const_root2on2;
   extern const real_t * const const_piOn4;
+  extern const real_t * const const_root3on2;
   extern const real_t * const const_9on10;
   extern const real_t * const const_1;
   extern const real_t * const const_3on2;
@@ -253,6 +254,7 @@
   extern const real_t * const const_4;
   extern const real_t * const const_3piOn2;
   extern const real_t * const const_5;
+  extern const real_t * const const_6;
   extern const real_t * const const_2pi;
   extern const real_t * const const_8;
   extern const real_t * const const_9;
@@ -261,6 +263,7 @@
   extern const real_t * const const_16;
   extern const real_t * const const_20;
   extern const real_t * const const_25;
+  extern const real_t * const const_27;
   extern const real_t * const const_29;
   extern const real_t * const const_30;
   extern const real_t * const const_gammaR;

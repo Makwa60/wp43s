@@ -1790,6 +1790,9 @@
           showFunctionName(item, 1000); // 1000ms = 1s
         }
       }
+      else {
+        keyActionProcessed = true;
+      }
     }
   }
 

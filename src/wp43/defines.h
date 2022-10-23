@@ -352,7 +352,7 @@
   #define NUMBER_OF_DATA_TYPES_FOR_CALCULATIONS     10
 
   // Number of constants
-  #define NUMBER_OF_CONSTANTS_39                   198
+  #define NUMBER_OF_CONSTANTS_39                   201
   #define NUMBER_OF_CONSTANTS_51                    39
   #define NUMBER_OF_CONSTANTS_1071                   1
   #define NUMBER_OF_CONSTANTS_34                    44
