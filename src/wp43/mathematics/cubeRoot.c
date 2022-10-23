@@ -182,7 +182,7 @@ void curtComplex(const real_t *real, const real_t *imag, real_t *resReal, real_t
     }
     else {
       realSetPositiveSign(&a);
-      realPower(&a, const_1on3, &a, realContext);
+      realPower(&a, const_1on3, resReal, realContext);
       realSetNegativeSign(resReal);
     }
     realZero(resImag);

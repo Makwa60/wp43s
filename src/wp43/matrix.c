@@ -1568,6 +1568,7 @@ void fnEigenvalues(uint16_t unusedParamButMandatory) {
       else {
         setSystemFlag(FLAG_ASLIFT);
         liftStack();
+        linkToRealMatrixRegister(REGISTER_Y, &x);
         ires.header.matrixRows = ires.header.matrixColumns = 0;
         ires.matrixElements = NULL;
         realEigenvalues(&x, &res, &ires);
