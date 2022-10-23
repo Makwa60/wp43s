@@ -1071,7 +1071,7 @@ void fnInvertMatrix(uint16_t unusedParamButMandatory) {
         #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
       }
       else {
-        WP34S_matrix_inverse(&x, &res);
+        invertRealMatrix(&x, &res);
         if(lastErrorCode == ERROR_NONE) {
           if(res.matrixElements) {
             convertReal34MatrixToReal34MatrixRegister(&res, REGISTER_X);
@@ -1108,7 +1108,7 @@ void fnInvertMatrix(uint16_t unusedParamButMandatory) {
         #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
       }
       else {
-        complex_matrix_inverse(&x, &res);
+        invertComplexMatrix(&x, &res);
         if(lastErrorCode == ERROR_NONE) {
           if(res.matrixElements) {
             convertComplex34MatrixToComplex34MatrixRegister(&res, REGISTER_X);
@@ -4256,42 +4256,6 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
    * matrix with unity along the diagonal.  Then we solve the linear system
    * Ux = y, where U is the upper triangular matrix.
    */
-  static void WP34S_matrix_pivoting_solve(const real34Matrix_t *LU, real_t *b, uint16_t *pivot, real_t *x, realContext_t *realContext) {
-    const uint16_t n = LU->header.matrixColumns;
-    uint16_t i, k;
-    real_t r, t;
-
-    /* Solve the first linear equation Ly = b */
-    for(k = 0; k < n; k++) {
-      if(k != pivot[k]) {
-        real_t swap;
-        realCopy(&b[k], &swap);
-        realCopy(&b[pivot[k]], &b[k]);
-        realCopy(&swap, &b[pivot[k]]);
-      }
-      realCopy(&b[k], x + k);
-      for(i = 0; i < k; i++) {
-        real34ToReal(&LU->matrixElements[k * n + i], &r);
-        realMultiply(&r, x + i, &t, realContext);
-        realSubtract(x + k, &t, x + k, realContext);
-      }
-    }
-
-    /* Solve the second linear equation Ux = y */
-    for(k = n; k > 0; k--) {
-      --k;
-      for(i = k + 1; i < n; i++) {
-        real34ToReal(&LU->matrixElements[k * n + i], &r);
-        realMultiply(&r, x + i, &t, realContext);
-        realSubtract(x + k, &t, x + k, realContext);
-      }
-      real34ToReal(&LU->matrixElements[k * n + k], &r);
-      realDivide(x + k, &r, x + k, realContext);
-      ++k;
-    }
-  }
-
-
   static void complex_matrix_pivoting_solve(const real_t *LU, uint16_t n, real_t *b, uint16_t *pivot, real_t *x, realContext_t *realContext) {
     uint16_t i, k;
     real_t rr, ri, tr, ti;
@@ -4340,96 +4304,6 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
    * Do this by calculating the LU decomposition and solving lots of systems
    * of linear equations.
    */
-  void WP34S_matrix_inverse(const real34Matrix_t *matrix, real34Matrix_t *res) {
-    const uint16_t n = matrix->header.matrixColumns;
-    real_t *x;
-    real34Matrix_t lu;
-    uint16_t *pivots;
-    uint16_t i, j;
-    real_t *b;
-
-    if(matrix->header.matrixRows != matrix->header.matrixColumns) {
-      if(matrix != res) {
-        res->matrixElements = NULL; // Matrix is not square
-        res->header.matrixRows = res->header.matrixColumns = 0;
-      }
-      return;
-    }
-
-    if((pivots = allocWp43(TO_BLOCKS(matrix->header.matrixRows * sizeof(uint16_t))))) {
-      WP34S_LU_decomposition(matrix, &lu, pivots);
-      if(lu.matrixElements == NULL) {
-        freeWp43(pivots, TO_BLOCKS(matrix->header.matrixRows * sizeof(uint16_t)));
-        if(matrix != res) {
-          res->matrixElements = NULL; // Singular matrix
-          res->header.matrixRows = res->header.matrixColumns = 0;
-        }
-        return;
-      }
-
-      {
-        real34_t maxVal, minVal;
-        real_t p, q;
-        real34CopyAbs(&lu.matrixElements[0], &maxVal);
-        real34CopyAbs(&lu.matrixElements[0], &minVal);
-        for(i = 1; i < n; ++i) {
-          if(real34CompareAbsLessThan(&lu.matrixElements[i * n + i], &minVal)) {
-            real34CopyAbs(&lu.matrixElements[i * n + i], &minVal);
-          }
-          if(real34CompareAbsGreaterThan(&lu.matrixElements[i * n + i], &maxVal)) {
-            real34CopyAbs(&lu.matrixElements[i * n + i], &maxVal);
-          }
-        }
-        real34ToReal(&maxVal, &p);
-        real34ToReal(&minVal, &q);
-        WP34S_Log10(&p, &p, &ctxtReal39);
-        WP34S_Log10(&q, &q, &ctxtReal39);
-        realSubtract(&p, &q, &p, &ctxtReal39);
-        int32ToReal(33 - displayFormatDigits, &q);
-        if(realCompareLessEqual(&q, &p)) {
-          temporaryInformation = TI_INACCURATE;
-        }
-      }
-
-      if(matrix != res) {
-        copyRealMatrix(matrix, res);
-      }
-
-      if(res->matrixElements) {
-        if((x = allocWp43(res->header.matrixRows * REAL_SIZE))) {
-          if((b = allocWp43(res->header.matrixRows * REAL_SIZE))) {
-            for(i = 0; i < n; i++) {
-              for(j = 0; j < n; j++) {
-                realCopy((i == j) ? const_1 : const_0, &b[j]);
-              }
-              WP34S_matrix_pivoting_solve(&lu, b, pivots, x, &ctxtReal39);
-              for(j = 0; j < n; j++) {
-                realToReal34(x + j, &res->matrixElements[j * n + i]);
-              }
-            }
-            realMatrixFree(&lu);
-            freeWp43(b, res->header.matrixRows * REAL_SIZE);
-          }
-          else {
-            displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
-          }
-          freeWp43(x, res->header.matrixRows * REAL_SIZE);
-        }
-        else {
-          displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
-        }
-      }
-      else {
-        displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
-      }
-      freeWp43(pivots, TO_BLOCKS(matrix->header.matrixRows * sizeof(uint16_t)));
-    }
-    else {
-      displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
-    }
-  }
-
-
   static bool invCpxMat(real_t *matrix, uint16_t n, realContext_t *realContext) {
     real_t *x;
     real_t *lu;
@@ -4513,7 +4387,52 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
   }
 
 
-  void complex_matrix_inverse(const complex34Matrix_t *matrix, complex34Matrix_t *res) {
+  void invertRealMatrix(const real34Matrix_t *matrix, real34Matrix_t *res) {
+    const uint16_t n = matrix->header.matrixColumns;
+    real_t *tmpMat;
+    uint16_t i, j;
+
+    if(matrix->header.matrixRows != matrix->header.matrixColumns) {
+      if(matrix != res) {
+        res->matrixElements = NULL; // Matrix is not square
+        res->header.matrixRows = res->header.matrixColumns = 0;
+      }
+      return;
+    }
+
+    if((tmpMat = allocWp43(n * n * REAL_SIZE * 2))) {
+      for(i = 0; i < n; i++) {
+        for(j = 0; j < n; j++) {
+          real34ToReal(&matrix->matrixElements[i * n + j], &tmpMat[(i * n + j) * 2    ]);
+          real34ToReal(const_0,                            &tmpMat[(i * n + j) * 2 + 1]);
+        }
+      }
+
+      if(invCpxMat(tmpMat, n, &ctxtReal39)) {
+        if(matrix != res) {
+          copyRealMatrix(matrix, res);
+        }
+        if(res->matrixElements) {
+          for(i = 0; i < n; i++) {
+            for(j = 0; j < n; j++) {
+              realToReal34(&tmpMat[(i * n + j) * 2    ], &res->matrixElements[i * n + j]);
+            }
+          }
+        }
+        else {
+          displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
+        }
+      }
+
+      freeWp43(tmpMat, n * n * REAL_SIZE * 2);
+    }
+    else {
+      displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
+    }
+  }
+
+
+  void invertComplexMatrix(const complex34Matrix_t *matrix, complex34Matrix_t *res) {
     const uint16_t n = matrix->header.matrixColumns;
     real_t *tmpMat;
     uint16_t i, j;
@@ -4639,7 +4558,7 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
       return;
     }
 
-    WP34S_matrix_inverse(x, &invX);
+    invertRealMatrix(x, &invX);
     if(lastErrorCode == ERROR_NONE && invX.matrixElements) {
       multiplyRealMatrices(y, &invX, res);
     }
@@ -4720,7 +4639,7 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
       return;
     }
 
-    complex_matrix_inverse(x, &invX);
+    invertComplexMatrix(x, &invX);
     if(lastErrorCode == ERROR_NONE && invX.matrixElements) {
       multiplyComplexMatrices(y, &invX, res);
     }
@@ -4755,7 +4674,7 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
       return;
     }
 
-    WP34S_matrix_inverse(a, &inv_a);
+    invertRealMatrix(a, &inv_a);
     if(lastErrorCode != ERROR_NONE) {
       return;
     }
@@ -4793,7 +4712,7 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
       return;
     }
 
-    complex_matrix_inverse(a, &inv_a);
+    invertComplexMatrix(a, &inv_a);
     if(lastErrorCode != ERROR_NONE) {
       return;
     }
