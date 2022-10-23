@@ -198,7 +198,7 @@ void frmCalcMouseButtonReleased(GtkWidget *notUsed, GdkEvent *event, gpointer da
   static void prepareSkin(void) {
     FILE *skin;
     int calcKey;
-    char textLine[1000], skinDirectory[222]="", fileName[412], parameter[100], value[200];
+    char textLine[1000], skinDirectory[222]="", fileName[421], parameter[100], value[200];
 
     skin = fopen(BASEPATH "res/artwork/skin.cfg", "rb");
     if(skin == NULL) {

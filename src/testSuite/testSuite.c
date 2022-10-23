@@ -44,7 +44,7 @@ extern const int16_t menu_alpha_INTL[];
 extern const int16_t menu_alpha_intl[];
 extern const int16_t menu_REGIST[];
 extern const softmenu_t softmenu[];
-char msgString[200], line[100000], lastInParameters[10000], fileName[1000], *filePath, filePathName[2000], registerExpectedAndValue[1000], realString[1000];
+char msgString[2060], line[100000], lastInParameters[10000], fileName[1000], *filePath, filePathName[2000], registerExpectedAndValue[1000], realString[1000];
 int32_t lineNumber, numTestsFile, numTestsTotal, failedTests;
 int32_t functionIndex, funcType, correctSignificantDigits;
 void (*funcNoParam)(uint16_t);
