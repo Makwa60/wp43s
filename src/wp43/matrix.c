@@ -5602,7 +5602,7 @@ void complex_QR_decomposition(const complex34Matrix_t *matrix, complex34Matrix_t
 
       for(k = 0; k < size; k++) {
         if((v = allocWp43(size * REAL_SIZE * 2))) {
-          for(i = 0; i < size; i++) {
+          for(i = 0; i < size * size; i++) {
             for(j = 0; j < size * 2; j++) {
               realCopy(const_NaN, v + j);
             }
@@ -5631,10 +5631,10 @@ void complex_QR_decomposition(const complex34Matrix_t *matrix, complex34Matrix_t
 
             // Make the equation matrices
             for(j = 0; j < size; j++) {
-              realCopy(j ? const_0 : const_1, a + (k * size + (i + j) % size) * 2    );
-              realCopy(    const_0,           a + (k * size + (i + j) % size) * 2 + 1);
+              realCopy(j ? const_0 : const_1, a + ((k + i / size) * size + (i + j) % size) * 2    );
+              realCopy(    const_0,           a + ((k + i / size) * size + (i + j) % size) * 2 + 1);
             }
-            realCopy(const_1, q + k * 2);
+            realCopy(const_1, q + (k + i / size) * 2);
 
             // Solve linear equations from the submatrix
             lastErrorCode = ERROR_NONE;
