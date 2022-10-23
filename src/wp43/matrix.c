@@ -4338,10 +4338,10 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
             realCopy(lu + (i * n + i) * 2 + 1, &q);
             complexMagnitude(&p, &q, &p, realContext);
             if(realCompareLessThan(&p, &minVal)) {
-              real34Copy(&p, &minVal);
+              realCopy(&p, &minVal);
             }
             if(realCompareGreaterThan(&p, &maxVal)) {
-              real34Copy(&p, &maxVal);
+              realCopy(&p, &maxVal);
             }
           }
           WP34S_Log10(&maxVal, &p, realContext);
