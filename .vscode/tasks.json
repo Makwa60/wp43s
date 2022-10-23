@@ -10,6 +10,16 @@
 			],
 			"group": "build",
 			"label": "Meson: Build src/wp43-gtk/wp43"
+		},
+		{
+			"type": "meson",
+			"target": "src/tests/tests",
+			"mode": "build",
+			"problemMatcher": [
+				"$meson-gcc"
+			],
+			"group": "build",
+			"label": "Meson: Build src/tests/tests"
 		}
 	]
 }
