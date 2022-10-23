@@ -141,14 +141,6 @@
   #define FLAG_FRCSRN                           0x802a
   #define NUMBER_OF_SYSTEM_FLAGS                    43
 
-  // PC GUI
-  #if defined(NDEBUG)
-    #define BASEPATH                   "./"
-  #else
-    #define BASEPATH                   "../../../"
-  #endif
-  #define CSSFILE                      BASEPATH "res/wp43_pre.css"
-
   #define TAM_MAX_BITS                              14
   #define TAM_MAX_MASK                          0x3fff
 
