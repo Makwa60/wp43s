@@ -4209,8 +4209,8 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
 
     if((lu = allocWp43(n * n * REAL_SIZE * 2))) {
       for(int i = 0; i < n * n; ++i) {
-        real34ToReal(&matrix->matrixElements[i], &lu[i * 2    ]);
-        real34ToReal(const_0,                    &lu[i * 2 + 1]);
+        real34ToReal(&matrix->matrixElements[i], &lu[i * 2]);
+        realZero(&lu[i * 2 + 1]);
       }
       detCpxMat(lu, n, &tr, &ti, &ctxtReal51);
       freeWp43(lu, n * n * REAL_SIZE * 2);
