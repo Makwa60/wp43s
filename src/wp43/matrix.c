@@ -5406,9 +5406,8 @@ void complex_QR_decomposition(const complex34Matrix_t *matrix, complex34Matrix_t
   static void calculateEigenvectors(const any34Matrix_t *matrix, bool isComplex, real_t *a, real_t *q, real_t *r, real_t *eig, realContext_t *realContext) {
     // Call after the eigenvalues are calculated!
     const uint16_t size = matrix->header.matrixRows;
-    uint16_t       i, j, k, l, mult, multIter, multTotal;
-    bool           isIndeterminate = false;
-    bool           tmpFlag = false;
+    uint16_t       i, j, k;
+    real_t         *v = NULL;
 
     if(matrix->header.matrixRows == matrix->header.matrixColumns) {
       for(i = 0; i < size * size * 2; i++) {
@@ -5421,140 +5420,61 @@ void complex_QR_decomposition(const complex34Matrix_t *matrix, complex34Matrix_t
       }
 
       for(k = 0; k < size; k++) {
-        // Restore the original matrix
-        if(isComplex) {
-          for(i = 0; i < size * size; i++) {
-            real34ToReal(VARIABLE_REAL34_DATA(&matrix->complexMatrix.matrixElements[i]), a + i * 2    );
-            real34ToReal(VARIABLE_IMAG34_DATA(&matrix->complexMatrix.matrixElements[i]), a + i * 2 + 1);
+        if((v = allocWp43(size * REAL_SIZE * 2))) {
+          for(i = 0; i < size; i++) {
+            for(j = 0; j < size * 2; j++) {
+              realCopy(const_NaN, v + j);
+            }
+
+            // Restore the original matrix
+            if(isComplex) {
+              for(j = 0; j < size * size; j++) {
+                real34ToReal(VARIABLE_REAL34_DATA(&matrix->complexMatrix.matrixElements[j]), a + j * 2    );
+                real34ToReal(VARIABLE_IMAG34_DATA(&matrix->complexMatrix.matrixElements[j]), a + j * 2 + 1);
+              }
+            }
+            else {
+              for(j = 0; j < size * size; j++) {
+                real34ToReal(&matrix->realMatrix.matrixElements[j], a + j * 2);
+                realZero(a + j * 2 + 1);
+              }
+            }
+
+            // Subtract an eigenvalue
+            for(j = 0; j < size; j++) {
+              realSubtract(a + (j * size + j) * 2,     eig + (k * size + k) * 2,     a + (j * size + j) * 2,     realContext);
+              realSubtract(a + (j * size + j) * 2 + 1, eig + (k * size + k) * 2 + 1, a + (j * size + j) * 2 + 1, realContext);
+              realCopy(const_0, q + j * 2    );
+              realCopy(const_0, q + j * 2 + 1);
+            }
+
+            // Make the equation matrices
+            for(j = 0; j < size; j++) {
+              realCopy(j ? const_0 : const_1, a + (k * size + (i + j) % size) * 2    );
+              realCopy(    const_0,           a + (k * size + (i + j) % size) * 2 + 1);
+            }
+            realCopy(const_1, q + k * 2);
+
+            // Solve linear equations from the submatrix
+            lastErrorCode = ERROR_NONE;
+            cpxLinearEqn(a, q, v, size, realContext);
+            if(lastErrorCode != ERROR_SINGULAR_MATRIX) {
+              break;
+            }
           }
+          for(i = 0; i < size; i++) {
+            realCopy(v + i * 2,     r + (i * size + k) * 2    );
+            realCopy(v + i * 2 + 1, r + (i * size + k) * 2 + 1);
+          }
+
+          freeWp43(v, size * REAL_SIZE * 2);
+          v = NULL;
         }
         else {
-          for(i = 0; i < size * size; i++) {
-            real34ToReal(&matrix->realMatrix.matrixElements[i], a + i * 2);
-            realZero(a + i * 2 + 1);
-          }
-        }
-
-        // Check for multiples
-        mult = k; multIter = 0; multTotal = 0;
-        for(i = 0; i < k; i++) {
-          if(realCompareEqual(eig + (i * size + i) * 2, eig + (k * size + k) * 2) && realCompareEqual(eig + (i * size + i) * 2 + 1, eig + (k * size + k) * 2 + 1)) {
-            mult = i;
-            multIter++;
-            multTotal++;
-          }
-        }
-        for(i = k; i < size; i++) {
-          if(realCompareEqual(eig + (i * size + i) * 2, eig + (k * size + k) * 2) && realCompareEqual(eig + (i * size + i) * 2 + 1, eig + (k * size + k) * 2 + 1)) {
-            multTotal++;
-          }
-        }
-
-        // Make the equation matrices
-        for(i = 0; i < size; i++) {
-          // Subtract an eigenvalue
-          realSubtract(a + (i * size + i) * 2,     eig + (k * size + k) * 2,     a + (i * size + i) * 2,     realContext);
-          realSubtract(a + (i * size + i) * 2 + 1, eig + (k * size + k) * 2 + 1, a + (i * size + i) * 2 + 1, realContext);
-          realCopy(const_0, q + i * 2    );
-          realCopy(const_0, q + i * 2 + 1);
-          // Singular (a variant not mentioned)
-          isIndeterminate = true;
-          for(j = 0; j < size; j++) {
-            if(!realIsZero(a + (j * size + i) * 2) || !realIsZero(a + (j * size + i) * 2 + 1)) {
-              isIndeterminate = false;
-            }
-          }
-          if(isIndeterminate) {
-            for(j = 0; j < size; j++) {
-              realCopy(const_0, a + (i * size + j) * 2    );
-              realCopy(const_0, a + (i * size + j) * 2 + 1);
-            }
-            realCopy(const_1, a + (i * size + i) * 2);
-            multTotal--;
-          }
-        }
-        if(mult == k) { // distinct
-          for(j = 0; j < size; j++) {
-            realCopy(const_0, a + ((size - 1) * size + j) * 2    );
-            realCopy(const_0, a + ((size - 1) * size + j) * 2 + 1);
-          }
-          realCopy(const_1, a + ((size - 1) * size + (size - 1)) * 2);
-          realCopy(const_1, q + (size - 1) * 2    );
-          realCopy(const_0, q + (size - 1) * 2 + 1);
-        }
-        else if(multIter < multTotal) { // multiples
-          i = size - 1;
-          for(l = 1; l <= multIter + 1; ++l) {
-            --i;
-            isIndeterminate = true; tmpFlag = false;
-            for(j = 0; j < size; j++) {
-              if(isIndeterminate && !tmpFlag && realCompareEqual(a + (j * size + i) * 2, const_1) && realIsZero(a + (j * size + i) * 2 + 1)) {
-                tmpFlag = true;
-              }
-              else if(!realIsZero(a + (j * size + i) * 2) || !realIsZero(a + (j * size + i) * 2 + 1)) {
-                isIndeterminate = false;
-              }
-            }
-            if(isIndeterminate && tmpFlag) {
-              --l;
-            }
-          }
-          for(j = 0; j < size; j++) {
-            realCopy(const_0, a + (i * size + j) * 2    );
-            realCopy(const_0, a + (i * size + j) * 2 + 1);
-          }
-          realCopy(const_1, a + (i * size + i) * 2);
-          realCopy(const_1, q + (size - 1) * 2    );
-          realCopy(const_0, q + (size - 1) * 2 + 1);
-        }
-        else { // orphan elements
-          i = size - 1;
-          for(l = 1; l <= multIter - multTotal + 1; ++l) {
-            --i;
-            isIndeterminate = true; tmpFlag = false;
-            for(j = 0; j < size; j++) {
-              if((int16_t)i < 0) { // scalar or non-diagonalizable
-                for(i = 0; i < size * size * 2; i++) {
-                  realCopy(const_NaN, q + i * 2    );
-                  realCopy(const_0,   q + i * 2 + 1);
-                }
-                return;
-              }
-              if(isIndeterminate && !tmpFlag && realCompareEqual(a + (j * size + i) * 2, const_1) && realIsZero(a + (j * size + i) * 2 + 1)) {
-                tmpFlag = true;
-              }
-              else if(!realIsZero(a + (j * size + i) * 2) || !realIsZero(a + (j * size + i) * 2 + 1)) {
-                isIndeterminate = false;
-              }
-            }
-            if(!isIndeterminate || !tmpFlag) {
-              --l;
-            }
-          }
-          for(j = 0; j < size; j++) {
-            realCopy(const_0, a + ((size - 1) * size + j) * 2    );
-            realCopy(const_0, a + ((size - 1) * size + j) * 2 + 1);
-          }
-          realCopy(const_1, a + ((size - 1) * size + (size - 1)) * 2);
-          realCopy(const_1, q + i * 2    );
-          realCopy(const_0, q + i * 2 + 1);
-        }
-
-        // Solve linear equations from the submatrix
-        if(invCpxMat(a, size, &ctxtReal51)) {
-          for(i = 0; i < size; ++i) {
-            real_t sumr, sumi, prodr, prodi;
-            realCopy(const_0, &sumr);  realCopy(const_0, &sumi);
-            realCopy(const_0, &prodr); realCopy(const_0, &prodi);
-            for(j = 0; j < size; ++j) {
-              mulComplexComplex(a + (i * size + j) * 2, a + (i * size + j) * 2 + 1,
-                q + j * 2, q + j * 2 + 1,
-                &prodr, &prodi, realContext);
-              realAdd(&sumr, &prodr, &sumr, realContext);
-              realAdd(&sumi, &prodi, &sumi, realContext);
-            }
-            realCopy(&sumr, r + (i * size + k) * 2    );
-            realCopy(&sumi, r + (i * size + k) * 2 + 1);
+          displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
+          for(i = 0; i < size; i++) {
+            realCopy(const_NaN, r + (i * size + k) * 2    );
+            realCopy(const_NaN, r + (i * size + k) * 2 + 1);
           }
         }
       }
