@@ -3,6 +3,7 @@
 
 tests_src = files(
   'catalogTests.cpp',
+  'itemTests.cpp',
   '../testSuite/hal/audio.c',
   '../testSuite/hal/gui.c',
   '../testSuite/hal/io.c',

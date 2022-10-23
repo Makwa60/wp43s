@@ -37,7 +37,7 @@ TEST_P(CatalogSortTest, IsSorted) {
     }
   }
 
-  EXPECT_NE(nbElements, 0) << "Menu not found in structure softmenu";
+  ASSERT_NE(nbElements, 0) << "Menu not found in structure softmenu";
 
   auto getItemName = [&] (int32_t i) {
     return indexOfItems[abs(catalog.contents[i])].itemCatalogName;
