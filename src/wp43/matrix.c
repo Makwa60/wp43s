@@ -3606,6 +3606,34 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
   }
 
 
+  static void mulCpxMat(const real_t *y, const real_t *x, uint16_t sizeY, uint16_t sizeYX, uint16_t sizeX, real_t *res, realContext_t *realContext) {
+    int32_t i, j, k;
+    real_t *sumr, prodr;
+    real_t *sumi, prodi;
+
+    for(i = 0; i < sizeY; ++i) {
+      for(j = 0; j < sizeX; ++j) {
+        sumr = res + (i * sizeX + j) * 2;
+        sumi = sumr + 1;
+        realCopy(const_0, sumr);   realCopy(const_0, sumi);
+        realCopy(const_0, &prodr); realCopy(const_0, &prodi);
+        for(k = 0; k < sizeYX; ++k) {
+          if(realIsZero(y + (i * sizeYX + k) * 2 + 1) && realIsZero(x + (k * sizeX + j) * 2 + 1)) {
+            realFMA(y + (i * sizeYX + k) * 2, x + (k * sizeX + j) * 2, sumr, sumr, realContext);
+          }
+          else {
+            mulComplexComplex(y + (i * sizeYX + k) * 2, y + (i * sizeYX + k) * 2 + 1,
+                              x + (k * sizeX  + j) * 2, x + (k * sizeX  + j) * 2 + 1,
+                              &prodr, &prodi, realContext);
+            realAdd(sumr, &prodr, sumr, realContext);
+            realAdd(sumi, &prodi, sumi, realContext);
+          }
+        }
+      }
+    }
+  }
+
+
   void multiplyComplexMatrices(const complex34Matrix_t *y, const complex34Matrix_t *x, complex34Matrix_t *res) {
     const uint16_t rows = y->header.matrixRows;
     const uint16_t iter = y->header.matrixColumns;
@@ -4770,34 +4798,6 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
   }
 
 
-  static void mulCpxMat(const real_t *y, const real_t *x, uint16_t size, real_t *res, realContext_t *realContext) {
-    int32_t i, j, k;
-    real_t *sumr, prodr;
-    real_t *sumi, prodi;
-
-    for(i = 0; i < size; ++i) {
-      for(j = 0; j < size; ++j) {
-        sumr = res + (i * size + j) * 2;
-        sumi = sumr + 1;
-        realCopy(const_0, sumr);   realCopy(const_0, sumi);
-        realCopy(const_0, &prodr); realCopy(const_0, &prodi);
-        for(k = 0; k < size; ++k) {
-          if(realIsZero(y + (i * size + k) * 2 + 1) && realIsZero(x + (k * size + j) * 2 + 1)) {
-            realMultiply(y + (i * size + k) * 2, x + (k * size + j) * 2, &prodr, realContext);
-          }
-          else {
-            mulComplexComplex(y + (i * size + k) * 2, y + (i * size + k) * 2 + 1,
-                              x + (k * size + j) * 2, x + (k * size + j) * 2 + 1,
-                              &prodr, &prodi, realContext);
-          }
-          realAdd(sumr, &prodr, sumr, realContext);
-          realAdd(sumi, &prodi, sumi, realContext);
-        }
-      }
-    }
-  }
-
-
   static void QR_decomposition_householder(const real_t *mat, uint16_t size, real_t *q, real_t *r, realContext_t *realContext) {
     uint32_t i, j, k;
 
@@ -4908,7 +4908,7 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
         }
 
         // Calculate R
-        mulCpxMat(qq, matr, size, newMat, realContext);
+        mulCpxMat(qq, matr, size, size, size, newMat, realContext);
         for(i = 0; i < size * size; i++) {
           realCopy(newMat + i * 2,     matr + i * 2    );
           realCopy(newMat + i * 2 + 1, matr + i * 2 + 1);
@@ -4916,7 +4916,7 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
 
         // Calculate Q
         adjCpxMat(qq, size, qt);
-        mulCpxMat(matq, qt, size, newMat, realContext);
+        mulCpxMat(matq, qt, size, size, size, newMat, realContext);
         for(i = 0; i < size * size; i++) {
           realCopy(newMat + i * 2,     matq + i * 2    );
           realCopy(newMat + i * 2 + 1, matq + i * 2 + 1);
@@ -5258,7 +5258,7 @@ void complex_QR_decomposition(const complex34Matrix_t *matrix, complex34Matrix_t
           }
         }
         QR_decomposition_householder(a, size, q, r, realContext);
-        mulCpxMat(r, q, size, eig, realContext);
+        mulCpxMat(r, q, size, size, size, eig, realContext);
         if(shifted) {
           for(i = 0; i < size; i++) {
             realAdd(a   + (i * size + i) * 2,     &shiftRe, a   + (i * size + i) * 2,     realContext);
