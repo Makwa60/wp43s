@@ -4654,48 +4654,88 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
 
 
   // Solve a system of linear equations Ac = b
-  void real_matrix_linear_eqn(const real34Matrix_t *a, const real34Matrix_t *b, real34Matrix_t *r) {
-    real34Matrix_t inv_a;
+  static void cpxLinearEqn(const real_t *a, const real_t *b, real_t *r, uint16_t size, realContext_t *realContext) {
+    real_t *inv_a;
 
-    if(a->header.matrixColumns != a->header.matrixRows) {
+    if((inv_a = allocWp43(size * size * REAL_SIZE * 2))) {
+      xcopy(inv_a, a, TO_BYTES(size * size * REAL_SIZE * 2));
+      if(invCpxMat(inv_a, size, realContext)) {
+        mulCpxMat(inv_a, b, size, size, 1, r, realContext);
+      }
+      else if(lastErrorCode != ERROR_RAM_FULL) {
+        displayCalcErrorMessage(ERROR_SINGULAR_MATRIX, ERR_REGISTER_LINE, REGISTER_X);
+        #if (EXTRA_INFO_ON_CALC_ERROR == 1)
+          sprintf(errorMessage, "attempt to invert a singular matrix");
+          moreInfoOnError("In function cpxLinearEqn:", errorMessage, NULL, NULL);
+        #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+      }
+      freeWp43(inv_a, size * size * REAL_SIZE * 2);
+    }
+    else {
+      displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
+    }
+  }
+
+
+  void real_matrix_linear_eqn(const real34Matrix_t *a, const real34Matrix_t *b, real34Matrix_t *r) {
+    const uint16_t size = a->header.matrixColumns;
+    real_t *aa, *bb, *rr;
+
+    if(size != a->header.matrixRows) {
       displayCalcErrorMessage(ERROR_MATRIX_MISMATCH, ERR_REGISTER_LINE, REGISTER_X);
       #if (EXTRA_INFO_ON_CALC_ERROR == 1)
         sprintf(errorMessage, "not a square matrix (%d" STD_CROSS "%d)", a->header.matrixRows, a->header.matrixColumns);
-        moreInfoOnError("In function complex_matrix_linear_eqn:", errorMessage, NULL, NULL);
+        moreInfoOnError("In function real_matrix_linear_eqn:", errorMessage, NULL, NULL);
       #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
       return;
     }
-    if(b->header.matrixRows != a->header.matrixRows || b->header.matrixColumns != 1) {
+    if(b->header.matrixRows != size || b->header.matrixColumns != 1) {
       displayCalcErrorMessage(ERROR_MATRIX_MISMATCH, ERR_REGISTER_LINE, REGISTER_X);
       #if (EXTRA_INFO_ON_CALC_ERROR == 1)
         sprintf(errorMessage, "not a column vector or size mismatch (%d" STD_CROSS "%d)", b->header.matrixRows, b->header.matrixColumns);
-        moreInfoOnError("In function complex_matrix_linear_eqn:", errorMessage, NULL, NULL);
+        moreInfoOnError("In function real_matrix_linear_eqn:", errorMessage, NULL, NULL);
       #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
       return;
     }
 
-    invertRealMatrix(a, &inv_a);
-    if(lastErrorCode != ERROR_NONE) {
-      return;
+    if((aa = allocWp43(size * size * REAL_SIZE * 2))) {
+      if((bb = allocWp43(size * REAL_SIZE * 2))) {
+        if((rr = allocWp43(size * REAL_SIZE * 2))) {
+          for(int i = 0; i < size * size; ++i) {
+            real34ToReal(&a->matrixElements[i], &aa[i * 2    ]);
+            real34ToReal(const_0,               &aa[i * 2 + 1]);
+          }
+          for(int i = 0; i < size; ++i) {
+            real34ToReal(&b->matrixElements[i], &bb[i * 2    ]);
+            real34ToReal(const_0,               &bb[i * 2 + 1]);
+          }
+          cpxLinearEqn(aa, bb, rr, size, &ctxtReal51);
+          for(int i = 0; i < size; ++i) {
+            realToReal34(&rr[i * 2], &r->matrixElements[i]);
+          }
+          freeWp43(rr, size * REAL_SIZE * 2);
+        }
+        else {
+          displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
+        }
+        freeWp43(bb, size * REAL_SIZE * 2);
+      }
+      else {
+        displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
+      }
+      freeWp43(aa, size * size * REAL_SIZE * 2);
     }
-    if(!inv_a.matrixElements) {
-      displayCalcErrorMessage(ERROR_SINGULAR_MATRIX, ERR_REGISTER_LINE, REGISTER_X);
-      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-        sprintf(errorMessage, "attempt to invert a singular matrix");
-        moreInfoOnError("In function complex_matrix_linear_eqn:", errorMessage, NULL, NULL);
-      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
-      return;
+    else {
+      displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
     }
-
-    multiplyRealMatrices(&inv_a, b, r);
-    realMatrixFree(&inv_a);
   }
 
 
   void complex_matrix_linear_eqn(const complex34Matrix_t *a, const complex34Matrix_t *b, complex34Matrix_t *r) {
-    complex34Matrix_t inv_a;
+    const uint16_t size = a->header.matrixColumns;
+    real_t *aa, *bb, *rr;
 
-    if(a->header.matrixColumns != a->header.matrixRows) {
+    if(size != a->header.matrixRows) {
       displayCalcErrorMessage(ERROR_MATRIX_MISMATCH, ERR_REGISTER_LINE, REGISTER_X);
       #if (EXTRA_INFO_ON_CALC_ERROR == 1)
         sprintf(errorMessage, "not a square matrix (%d" STD_CROSS "%d)", a->header.matrixRows, a->header.matrixColumns);
@@ -4703,7 +4743,7 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
       #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
       return;
     }
-    if(b->header.matrixRows != a->header.matrixRows || b->header.matrixColumns != 1) {
+    if(b->header.matrixRows != size || b->header.matrixColumns != 1) {
       displayCalcErrorMessage(ERROR_MATRIX_MISMATCH, ERR_REGISTER_LINE, REGISTER_X);
       #if (EXTRA_INFO_ON_CALC_ERROR == 1)
         sprintf(errorMessage, "not a column vector or size mismatch (%d" STD_CROSS "%d)", b->header.matrixRows, b->header.matrixColumns);
@@ -4712,21 +4752,37 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
       return;
     }
 
-    invertComplexMatrix(a, &inv_a);
-    if(lastErrorCode != ERROR_NONE) {
-      return;
+    if((aa = allocWp43(size * size * REAL_SIZE * 2))) {
+      if((bb = allocWp43(size * REAL_SIZE * 2))) {
+        if((rr = allocWp43(size * REAL_SIZE * 2))) {
+          for(int i = 0; i < size * size; ++i) {
+            real34ToReal(VARIABLE_REAL34_DATA(&a->matrixElements[i]), &aa[i * 2    ]);
+            real34ToReal(VARIABLE_IMAG34_DATA(&a->matrixElements[i]), &aa[i * 2 + 1]);
+          }
+          for(int i = 0; i < size; ++i) {
+            real34ToReal(VARIABLE_REAL34_DATA(&b->matrixElements[i]), &bb[i * 2    ]);
+            real34ToReal(VARIABLE_IMAG34_DATA(&b->matrixElements[i]), &bb[i * 2 + 1]);
+          }
+          cpxLinearEqn(aa, bb, rr, size, &ctxtReal51);
+          for(int i = 0; i < size; ++i) {
+            realToReal34(&rr[i * 2    ], VARIABLE_REAL34_DATA(&r->matrixElements[i]));
+            realToReal34(&rr[i * 2 + 1], VARIABLE_IMAG34_DATA(&r->matrixElements[i]));
+          }
+          freeWp43(rr, size * REAL_SIZE * 2);
+        }
+        else {
+          displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
+        }
+        freeWp43(bb, size * REAL_SIZE * 2);
+      }
+      else {
+        displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
+      }
+      freeWp43(aa, size * size * REAL_SIZE * 2);
     }
-    if(!inv_a.matrixElements) {
-      displayCalcErrorMessage(ERROR_SINGULAR_MATRIX, ERR_REGISTER_LINE, REGISTER_X);
-      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-        sprintf(errorMessage, "attempt to invert a singular matrix");
-        moreInfoOnError("In function complex_matrix_linear_eqn:", errorMessage, NULL, NULL);
-      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
-      return;
+    else {
+      displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
     }
-
-    multiplyComplexMatrices(&inv_a, b, r);
-    complexMatrixFree(&inv_a);
   }
 
 
@@ -5216,9 +5272,8 @@ void complex_QR_decomposition(const complex34Matrix_t *matrix, complex34Matrix_t
         converged = true;
         for(i = 0; i < size; i++) {
           if(realIsNaN(eig + i * 2) || realIsNaN(eig + i * 2 + 1)) {
-            for(j = 0; j < size * size; j++) {
-              realCopy(a + j * 2,     eig + j * 2    );
-              realCopy(a + j * 2 + 1, eig + j * 2 + 1);
+            for(j = 0; j < size * size * 2; j++) {
+              realCopy(a + j, eig + j);
             }
             converged = true;
             break;
@@ -5231,9 +5286,8 @@ void complex_QR_decomposition(const complex34Matrix_t *matrix, complex34Matrix_t
           break;
         }
         else {
-          for(i = 0; i < size * size; i++) {
-            realCopy(eig + i * 2,     a + i * 2    );
-            realCopy(eig + i * 2 + 1, a + i * 2 + 1);
+          for(i = 0; i < size * size * 2; i++) {
+            realCopy(eig + i, a + i);
           }
         }
       }
