@@ -4399,14 +4399,15 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
         res->matrixElements = NULL; // Matrix is not square
         res->header.matrixRows = res->header.matrixColumns = 0;
       }
+      displayCalcErrorMessage(ERROR_MATRIX_MISMATCH, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
       return;
     }
 
     if((tmpMat = allocWp43(n * n * REAL_SIZE * 2))) {
       for(i = 0; i < n; i++) {
         for(j = 0; j < n; j++) {
-          real34ToReal(&matrix->matrixElements[i * n + j], &tmpMat[(i * n + j) * 2    ]);
-          real34ToReal(const_0,                            &tmpMat[(i * n + j) * 2 + 1]);
+          real34ToReal(&matrix->matrixElements[i * n + j], &tmpMat[(i * n + j) * 2]);
+          realZero(&tmpMat[(i * n + j) * 2 + 1]);
         }
       }
 
@@ -4417,12 +4418,18 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
         if(res->matrixElements) {
           for(i = 0; i < n; i++) {
             for(j = 0; j < n; j++) {
-              realToReal34(&tmpMat[(i * n + j) * 2    ], &res->matrixElements[i * n + j]);
+              realToReal34(&tmpMat[(i * n + j) * 2], &res->matrixElements[i * n + j]);
             }
           }
         }
         else {
           displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
+        }
+      }
+      else { // singular matrix
+        if(matrix != res) {
+          res->matrixElements = NULL;
+          res->header.matrixRows = res->header.matrixColumns = 0;
         }
       }
 
@@ -4444,6 +4451,7 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
         res->matrixElements = NULL; // Matrix is not square
         res->header.matrixRows = res->header.matrixColumns = 0;
       }
+      displayCalcErrorMessage(ERROR_MATRIX_MISMATCH, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
       return;
     }
 
@@ -4469,6 +4477,12 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
         }
         else {
           displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
+        }
+      }
+      else { // singular matrix
+        if(matrix != res) {
+          res->matrixElements = NULL;
+          res->header.matrixRows = res->header.matrixColumns = 0;
         }
       }
 
