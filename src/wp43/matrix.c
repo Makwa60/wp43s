@@ -4810,30 +4810,59 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
       if((bb = allocWp43(size * REAL_SIZE * 2))) {
         if((rr = allocWp43(size * REAL_SIZE * 2))) {
           for(int i = 0; i < size * size; ++i) {
-            real34ToReal(&a->matrixElements[i], &aa[i * 2    ]);
-            real34ToReal(const_0,               &aa[i * 2 + 1]);
+            real34ToReal(&a->matrixElements[i], &aa[i * 2]);
+            realZero(&aa[i * 2 + 1]);
           }
           for(int i = 0; i < size; ++i) {
-            real34ToReal(&b->matrixElements[i], &bb[i * 2    ]);
-            real34ToReal(const_0,               &bb[i * 2 + 1]);
+            real34ToReal(&b->matrixElements[i], &bb[i * 2]);
+            realZero(&bb[i * 2 + 1]);
           }
           cpxLinearEqn(aa, bb, rr, size, &ctxtReal51);
-          for(int i = 0; i < size; ++i) {
-            realToReal34(&rr[i * 2], &r->matrixElements[i]);
+          if(lastErrorCode == ERROR_NONE) {
+            if(realMatrixInit(r, size, 1)) {
+              for(int i = 0; i < size; ++i) {
+                realToReal34(&rr[i * 2], &r->matrixElements[i]);
+              }
+            }
+            else {
+              if(a != r && b != r) {
+                r->matrixElements = NULL;
+                r->header.matrixRows = r->header.matrixColumns = 0;
+              }
+              displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
+            }
+          }
+          else { // singular
+            if(a != r && b != r) {
+              r->matrixElements = NULL;
+              r->header.matrixRows = r->header.matrixColumns = 0;
+            }
           }
           freeWp43(rr, size * REAL_SIZE * 2);
         }
         else {
+          if(a != r && b != r) {
+            r->matrixElements = NULL;
+            r->header.matrixRows = r->header.matrixColumns = 0;
+          }
           displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
         }
         freeWp43(bb, size * REAL_SIZE * 2);
       }
       else {
+        if(a != r && b != r) {
+          r->matrixElements = NULL;
+          r->header.matrixRows = r->header.matrixColumns = 0;
+        }
         displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
       }
       freeWp43(aa, size * size * REAL_SIZE * 2);
     }
     else {
+      if(a != r && b != r) {
+        r->matrixElements = NULL;
+        r->header.matrixRows = r->header.matrixColumns = 0;
+      }
       displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
     }
   }
@@ -4872,23 +4901,52 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
             real34ToReal(VARIABLE_IMAG34_DATA(&b->matrixElements[i]), &bb[i * 2 + 1]);
           }
           cpxLinearEqn(aa, bb, rr, size, &ctxtReal51);
-          for(int i = 0; i < size; ++i) {
-            realToReal34(&rr[i * 2    ], VARIABLE_REAL34_DATA(&r->matrixElements[i]));
-            realToReal34(&rr[i * 2 + 1], VARIABLE_IMAG34_DATA(&r->matrixElements[i]));
+          if(lastErrorCode == ERROR_NONE) {
+            if(complexMatrixInit(r, size, 1)) {
+              for(int i = 0; i < size; ++i) {
+                realToReal34(&rr[i * 2    ], VARIABLE_REAL34_DATA(&r->matrixElements[i]));
+                realToReal34(&rr[i * 2 + 1], VARIABLE_IMAG34_DATA(&r->matrixElements[i]));
+              }
+            }
+            else {
+              if(a != r && b != r) {
+                r->matrixElements = NULL;
+                r->header.matrixRows = r->header.matrixColumns = 0;
+              }
+              displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
+            }
+          }
+          else { // singular
+            if(a != r && b != r) {
+              r->matrixElements = NULL;
+              r->header.matrixRows = r->header.matrixColumns = 0;
+            }
           }
           freeWp43(rr, size * REAL_SIZE * 2);
         }
         else {
+          if(a != r && b != r) {
+            r->matrixElements = NULL;
+            r->header.matrixRows = r->header.matrixColumns = 0;
+          }
           displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
         }
         freeWp43(bb, size * REAL_SIZE * 2);
       }
       else {
+        if(a != r && b != r) {
+          r->matrixElements = NULL;
+          r->header.matrixRows = r->header.matrixColumns = 0;
+        }
         displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
       }
       freeWp43(aa, size * size * REAL_SIZE * 2);
     }
     else {
+      if(a != r && b != r) {
+        r->matrixElements = NULL;
+        r->header.matrixRows = r->header.matrixColumns = 0;
+      }
       displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
     }
   }
