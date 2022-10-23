@@ -19,11 +19,13 @@
 #include "items.h"
 #include "longIntegerType.h"
 #include "mathematics/comparisonReals.h"
+#include "mathematics/cubeRoot.h"
 #include "mathematics/division.h"
 #include "mathematics/magnitude.h"
 #include "mathematics/multiplication.h"
 #include "mathematics/toPolar.h"
 #include "mathematics/toRect.h"
+#include "mathematics/squareRoot.h"
 #include "mathematics/wp34s.h"
 #include "realType.h"
 #include "registers.h"
@@ -5246,6 +5248,109 @@ void complex_QR_decomposition(const complex34Matrix_t *matrix, complex34Matrix_t
   }
 
 
+  static void calculateEigenvalues33(const real_t *mat, uint16_t size, real_t *t1r, real_t *t1i, real_t *t2r, real_t *t2i, real_t *t3r, real_t *t3i, realContext_t *realContext) {
+    // Calculate eigenvalues of 3x3 (bottom right sub-)matrix
+    // Characteristic equation of A = [[a b c] [d e f] [g h k]] : t^3 -    trace(A) t^2 +                                   c t -                                        det(A) = 0
+    //                                                            t^3 - (a + e + k) t^2 + (a e - b d + a k - c g + e k - f h) t - a e k - b f g - c d h + c e g + b d k + a f h = 0
+
+    const real_t *mr[9], *mi[9];
+    real_t br, bi, cr, ci, dr, di;
+    {
+      real_t aekr, aeki, bfgr, bfgi, cdhr, cdhi, cegr, cegi, bdkr, bdki, afhr, afhi;
+
+      mr[0] = mat + ((size - 3) * size + (size - 3)) * 2; mr[1] = mr[0] + 2; mr[2] = mr[1] + 2;
+      mr[3] = mat + ((size - 2) * size + (size - 3)) * 2; mr[4] = mr[3] + 2; mr[5] = mr[4] + 2;
+      mr[6] = mat + ((size - 1) * size + (size - 3)) * 2; mr[7] = mr[6] + 2; mr[8] = mr[7] + 2;
+      for(int i = 0; i < 9; ++i) {
+        mi[i] = mr[i] + 1;
+      }
+
+      // quadratic coefficient: trace
+      realAdd(mr[0], mr[4], &br, realContext); realAdd(mi[0], mi[4], &bi, realContext);
+      realAdd(&br, mr[8], &br, realContext); realAdd(&bi, mi[8], &bi, realContext);
+      realChangeSign(&br); realChangeSign(&bi);
+
+      // linear coefficient: sum of determinant of principal minors
+      mulComplexComplex(mr[0], mi[0], mr[4], mi[4], &aekr, &aeki, realContext);
+      mulComplexComplex(mr[1], mi[1], mr[3], mi[3], &bdkr, &bdki, realContext);
+      mulComplexComplex(mr[0], mi[0], mr[8], mi[8], &cdhr, &cdhi, realContext);
+      mulComplexComplex(mr[2], mi[2], mr[6], mi[6], &cegr, &cegi, realContext);
+      mulComplexComplex(mr[4], mi[4], mr[8], mi[8], &bfgr, &bfgi, realContext);
+      mulComplexComplex(mr[5], mi[5], mr[7], mi[7], &afhr, &afhi, realContext);
+      realAdd(&aekr, &cdhr, &cr, realContext); realAdd(&aeki, &cdhi, &ci, realContext);
+      realAdd(&cr, &bfgr, &cr, realContext); realAdd(&ci, &bfgi, &ci, realContext);
+      realSubtract(&cr, &bdkr, &cr, realContext); realSubtract(&ci, &bdki, &ci, realContext);
+      realSubtract(&cr, &cegr, &cr, realContext); realSubtract(&ci, &cegi, &ci, realContext);
+      realSubtract(&cr, &afhr, &cr, realContext); realSubtract(&ci, &afhi, &ci, realContext);
+
+      // constant term: determinant
+      mulComplexComplex(&aekr, &aeki, mr[8], mi[8], &aekr, &aeki, realContext);
+      mulComplexComplex(mr[1], mi[1], mr[5], mi[5], &bfgr, &bfgi, realContext);
+      mulComplexComplex(&bfgr, &bfgi, mr[6], mi[6], &bfgr, &bfgi, realContext);
+      mulComplexComplex(mr[2], mi[2], mr[3], mi[3], &cdhr, &cdhi, realContext);
+      mulComplexComplex(&cdhr, &cdhi, mr[7], mi[7], &cdhr, &cdhi, realContext);
+      mulComplexComplex(&cegr, &cegi, mr[4], mi[4], &cegr, &cegi, realContext);
+      mulComplexComplex(&bdkr, &bdki, mr[8], mi[8], &bdkr, &bdki, realContext);
+      mulComplexComplex(&afhr, &afhi, mr[0], mi[0], &afhr, &afhi, realContext);
+      realAdd(&aekr, &bfgr, &dr, realContext); realAdd(&aeki, &bfgi, &di, realContext);
+      realAdd(&dr, &cdhr, &dr, realContext); realAdd(&di, &cdhi, &di, realContext);
+      realSubtract(&dr, &cegr, &dr, realContext); realSubtract(&di, &cegi, &di, realContext);
+      realSubtract(&dr, &bdkr, &dr, realContext); realSubtract(&di, &bdki, &di, realContext);
+      realSubtract(&dr, &afhr, &dr, realContext); realSubtract(&di, &afhi, &di, realContext);
+      realChangeSign(&dr); realChangeSign(&di);
+    }
+
+    {
+      // x^3 + b x^2 + c x + d = 0
+      // Abramowitz & Stegun §3.8.2
+      real_t qr, qi, rr, ri, q3r2r, q3r2i, s1r, s1i, s2r, s2i, ar, ai;
+
+      // q = (c - b^2 / 3) / 3
+      mulComplexComplex(&br, &bi, &br, &bi, &qr, &qi, realContext);
+      realDivide(&qr, const_3, &qr, realContext), realDivide(&qi, const_3, &qi, realContext);
+      realSubtract(&cr, &qr, &qr, realContext), realSubtract(&ci, &qi, &qi, realContext);
+      realDivide(&qr, const_3, &qr, realContext), realDivide(&qi, const_3, &qi, realContext);
+
+      // r = (b c - 3 d) / 6 - b^3 / 27
+      mulComplexComplex(&br, &bi, &cr, &ci, &rr, &ri, realContext);
+      realMultiply(&dr, const_3, &ar, realContext), realMultiply(&di, const_3, &ai, realContext);
+      realSubtract(&rr, &ar, &rr, realContext), realSubtract(&ri, &ai, &ri, realContext);
+      realDivide(&rr, const_6, &rr, realContext), realDivide(&ri, const_6, &ri, realContext);
+      mulComplexComplex(&br, &bi, &br, &bi, &ar, &ai, realContext);
+      mulComplexComplex(&ar, &ai, &br, &bi, &ar, &ai, realContext);
+      realDivide(&ar, const_27, &ar, realContext), realDivide(&ai, const_27, &ai, realContext);
+      realSubtract(&rr, &ar, &rr, realContext), realSubtract(&ri, &ai, &ri, realContext);
+
+      // q^3 + r^2
+      mulComplexComplex(&qr, &qi, &qr, &qi, &q3r2r, &q3r2i, realContext);
+      mulComplexComplex(&q3r2r, &q3r2i, &qr, &qi, &q3r2r, &q3r2i, realContext);
+      mulComplexComplex(&rr, &ri, &rr, &ri, &ar, &ai, realContext);
+      realAdd(&q3r2r, &ar, &q3r2r, realContext), realAdd(&q3r2i, &ai, &q3r2i, realContext);
+
+      // s1, s2 = cbrt(r ± sqrt(q^3 + r^2))
+      sqrtComplex(&q3r2r, &q3r2i, &s1r, &s1i, realContext);
+      realSubtract(&rr, &s1r, &s2r, realContext), realSubtract(&ri, &s1i, &s2i, realContext);
+      realAdd(&rr, &s1r, &s1r, realContext), realAdd(&ri, &s1i, &s1i, realContext);
+      curtComplex(&s1r, &s1i, &s1r, &s1i, realContext);
+      curtComplex(&s2r, &s2i, &s2r, &s2i, realContext);
+
+      // reusing q, r for (s1 ± s2)
+      realAdd(&s1r, &s2r, &qr, realContext), realAdd(&s1i, &s2i, &qi, realContext);
+      realSubtract(&s1r, &s2r, &rr, realContext), realSubtract(&s1i, &s2i, &ri, realContext);
+      mulComplexComplex(&rr, &ri, const_0, const_root3on2, &rr, &ri, realContext);
+
+      // roots
+      realDivide(&br, const_3, t2r, realContext), realDivide(&bi, const_3, t2i, realContext);
+      realSubtract(&qr, t2r, t1r, realContext), realSubtract(&qi, t2i, t1i, realContext);
+      realMultiply(&qr, const_1on2, t3r, realContext), realMultiply(&qi, const_1on2, t3i, realContext);
+      realAdd(t3r, t2r, t3r, realContext), realAdd(t3i, t2i, t3i, realContext);
+      realChangeSign(t3r); realChangeSign(t3i);
+      realAdd(t3r, &rr, t2r, realContext), realAdd(t3i, &ri, t2i, realContext);
+      realSubtract(t3r, &rr, t3r, realContext), realSubtract(t3i, &ri, t3i, realContext);
+    }
+  }
+
+
   static void calculateQrShift(const real_t *mat, uint16_t size, real_t *re, real_t *im, realContext_t *realContext) {
     real_t t1r, t1i, t2r, t2i;
     real_t tmp, tmpR, tmpI;
@@ -5335,6 +5440,9 @@ void complex_QR_decomposition(const complex34Matrix_t *matrix, complex34Matrix_t
 
     if(size == 2) {
       calculateEigenvalues22(a, size, eig, eig + 1, eig + 6, eig + 7, realContext);
+    }
+    else if(size == 3) {
+      calculateEigenvalues33(a, size, eig, eig + 1, eig + 8, eig + 9, eig + 16, eig + 17, realContext);
     }
     else {
       real_t tol;
@@ -5461,6 +5569,13 @@ void complex_QR_decomposition(const complex34Matrix_t *matrix, complex34Matrix_t
             if(lastErrorCode != ERROR_SINGULAR_MATRIX) {
               break;
             }
+          }
+          if(lastErrorCode == ERROR_SINGULAR_MATRIX) {
+            for(i = 0; i < size; i++) {
+              realCopy(const_0, v + i * 2    );
+              realCopy(const_0, v + i * 2 + 1);
+            }
+            lastErrorCode = ERROR_NONE;
           }
           for(i = 0; i < size; i++) {
             realCopy(v + i * 2,     r + (i * size + k) * 2    );
