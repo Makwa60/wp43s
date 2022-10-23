@@ -10,6 +10,13 @@
   #include <gtk/gtk.h>
   #include <stdbool.h>
 
+  #if defined(NDEBUG)
+    #define BASEPATH "./"
+  #else
+    #define BASEPATH "../../../"
+  #endif
+  #define CSSFILE    BASEPATH "res/wp43_pre.css"
+
   extern bool       calcLandscape;
   extern bool       calcAutoLandscapePortrait;
   extern char       debugString[10000];

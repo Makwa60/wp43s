@@ -9,5 +9,13 @@
     "mesonbuild.configureOnOpen": true,
     "lldb.launch.initCommands": [
         "command source -s true tools/lldb/helpers"
+    ],
+    "testMate.cpp.test.advancedExecutables": [
+        {
+            "pattern": "build.sim/src/tests/tests",
+            "runTask": {
+                "before": ["Meson: Build src/tests/tests"]
+            }
+        }
     ]
 }

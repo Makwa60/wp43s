@@ -44,7 +44,7 @@ extern const int16_t menu_alpha_INTL[];
 extern const int16_t menu_alpha_intl[];
 extern const int16_t menu_REGIST[];
 extern const softmenu_t softmenu[];
-char msgString[200], line[100000], lastInParameters[10000], fileName[1000], *filePath, filePathName[2000], registerExpectedAndValue[1000], realString[1000];
+char msgString[2060], line[100000], lastInParameters[10000], fileName[1000], *filePath, filePathName[2000], registerExpectedAndValue[1000], realString[1000];
 int32_t lineNumber, numTestsFile, numTestsTotal, failedTests;
 int32_t functionIndex, funcType, correctSignificantDigits;
 void (*funcNoParam)(uint16_t);
@@ -2369,50 +2369,6 @@ void processOneFile(void) {
 
 
 
-void checkOneCatalogSorting(const int16_t *catalog, int16_t catalogId, const char *catalogName) {
-  int32_t i, nbElements;
-
-  for(nbElements=0, i=0; softmenu[i].menuItem; i++) {
-    if(softmenu[i].menuItem == -catalogId) {
-      nbElements = softmenu[i].numItems;
-      break;
-    }
-  }
-  sprintf(msgString, "catalog %s (%d elements) sort order", catalogName, nbElements);
-  reporterStartTest(msgString);
-
-  if(nbElements == 0) {
-    reporterEndTest(false, "menu not found in structure softmenu!");
-    return;
-  }
-
-  bool passed = true;
-  for(i=1; i<nbElements; i++) {
-    int32_t cmp;
-    if((cmp = compareString(indexOfItems[abs(catalog[i - 1])].itemCatalogName, indexOfItems[abs(catalog[i])].itemCatalogName, CMP_EXTENSIVE)) >= 0) {
-      sprintf(msgString, "element %d (item %d) should be after element %d (item %d); cmp = %d\n",
-                                  i - 1,   catalog[i - 1],             i,       catalog[i],cmp);
-      reporterTestError(msgString);
-      passed = false;
-    }
-  }
-  reporterEndTest(passed, "elements out of order");
-}
-
-
-
-void checkCatalogsSorting(void) {
-  reporterStartTestSuite("catalogs in sorted order");
-  checkOneCatalogSorting(menu_FCNS,       MNU_FCNS,      "FCNS");
-  checkOneCatalogSorting(menu_CONST,      MNU_CONST,     "CONST");
-  checkOneCatalogSorting(menu_SYSFL,      MNU_SYSFL,     "SYS.FL");
-  checkOneCatalogSorting(menu_alpha_INTL, MNU_ALPHAINTL, "alphaINTL");
-  checkOneCatalogSorting(menu_alpha_intl, MNU_ALPHAintl, "alphaIntl");
-  reporterEndTestSuite();
-}
-
-
-
 int processTests(const char *listPath) {
   FILE *fileList;
   char *listPathDup = strdup(listPath);
@@ -2428,8 +2384,6 @@ int processTests(const char *listPath) {
   }
 
   reporterStartTestSuites();
-
-  checkCatalogsSorting();
 
   ignore_result(fgets(line, 9999, fileList));
   while(!feof(fileList)) {

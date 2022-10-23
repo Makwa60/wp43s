@@ -107,11 +107,6 @@ int main(int argc, char* argv[]) {
     }
   }
 
-  if(strcmp(indexOfItems[LAST_ITEM].itemSoftmenuName, "Last item") != 0) {
-    printf("The last item of indexOfItems[] is not \"Last item\"\n");
-    exit(1);
-  }
-
   #if defined(EXPORT_ITEMS)
     char name[LAST_ITEM][16], nameUtf8[25];
     int cat, nbrItems = 0;

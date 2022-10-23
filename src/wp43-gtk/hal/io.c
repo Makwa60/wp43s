@@ -4,6 +4,7 @@
 #include "hal/io.h"
 
 #include "defines.h"
+#include "wp43-gtk.h"
 #include <assert.h>
 #include <stdio.h>
 
