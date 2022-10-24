@@ -481,7 +481,7 @@ void frmCalcMouseButtonReleased(GtkWidget *notUsed, GdkEvent *event, gpointer da
 
 
 
-static keyCode_t _keyCodeFromGdkKey(uint gdkKey) {
+static keyCode_t _keyCodeFromGdkKey(uint32_t gdkKey) {
   switch(gdkKey) {
     case GDK_KEY_F1:
       return kcF1;
@@ -645,7 +645,7 @@ static keyCode_t _keyCodeFromGdkKey(uint gdkKey) {
 
 
 static gboolean keyPressed(GtkWidget *w, GdkEventKey *event, gpointer data) {
-  uint gdkKey = event->keyval;
+  uint32_t gdkKey = event->keyval;
   switch(gdkKey) {
     case GDK_KEY_H:
     case GDK_KEY_h:
