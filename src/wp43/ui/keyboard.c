@@ -40,19 +40,22 @@
 #if (REAL34_WIDTH_TEST == 1)
   #include "registerValueConversions.h"
 #endif // (REAL34_WIDTH_TEST == 1)
+#include <assert.h>
 #include <stdbool.h>
 #include <string.h>
 
 #include "wp43.h"
 
+keyCode_t lastKeyCode;
+
 #if !defined(TESTSUITE_BUILD)
-  int16_t determineFunctionKeyItem(const char *data) {
+  int16_t determineFunctionKeyItem(keyCode_t keyCode) {
     int16_t item = ITM_NOP;
 
     dynamicMenuItem = -1;
 
     int16_t itemShift = (shiftF ? 6 : (shiftG ? 12 : 0));
-    int16_t fn = *(data) - '0';
+    int16_t fn = keyCode - kcF1;
     const softmenu_t *sm;
     int16_t row, menuId = softmenuStack[0].softmenuId;
     int16_t firstItem = softmenuStack[0].firstItem;
@@ -61,25 +64,25 @@
     #pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
     switch(-softmenu[menuId].menuItem) {
       case MNU_MyMenu: {
-        dynamicMenuItem = firstItem + itemShift + (fn - 1);
+        dynamicMenuItem = firstItem + itemShift + fn;
         item = userMenuItems[dynamicMenuItem].item;
         break;
       }
 
       case MNU_MyAlpha: {
-        dynamicMenuItem = firstItem + itemShift + (fn - 1);
+        dynamicMenuItem = firstItem + itemShift + fn;
         item = userAlphaItems[dynamicMenuItem].item;
         break;
       }
 
       case MNU_DYNAMIC: {
-        dynamicMenuItem = firstItem + itemShift + (fn - 1);
+        dynamicMenuItem = firstItem + itemShift + fn;
         item = userMenus[currentUserMenu].menuItem[dynamicMenuItem].item;
         break;
       }
 
       case MNU_PROG: {
-        dynamicMenuItem = firstItem + itemShift + (fn - 1);
+        dynamicMenuItem = firstItem + itemShift + fn;
         if(tam.function == ITM_GTOP) {
           item = (dynamicMenuItem >= dynamicSoftmenu[menuId].numItems ? ITM_NOP : ITM_GTOP);
         }
@@ -90,13 +93,13 @@
       }
 
       case MNU_VAR: {
-        dynamicMenuItem = firstItem + itemShift + (fn - 1);
+        dynamicMenuItem = firstItem + itemShift + fn;
         item = (dynamicMenuItem >= dynamicSoftmenu[menuId].numItems ? ITM_NOP : MNU_DYNAMIC);
         break;
       }
 
       case MNU_MVAR: {
-        dynamicMenuItem = firstItem + itemShift + (fn - 1);
+        dynamicMenuItem = firstItem + itemShift + fn;
         if(currentMvarLabel != INVALID_VARIABLE) {
           item = (dynamicMenuItem >= dynamicSoftmenu[menuId].numItems ? ITM_NOP : ITM_SOLVE_VAR);
         }
@@ -151,20 +154,20 @@
       case MNU_LINTS:
       case MNU_REALS:
       case MNU_CPXS: {
-        dynamicMenuItem = firstItem + itemShift + (fn - 1);
+        dynamicMenuItem = firstItem + itemShift + fn;
         item = (dynamicMenuItem >= dynamicSoftmenu[menuId].numItems ? ITM_NOP : ITM_RCL);
         break;
       }
 
       case MNU_RAM:
       case MNU_FLASH: {
-        dynamicMenuItem = firstItem + itemShift + (fn - 1);
+        dynamicMenuItem = firstItem + itemShift + fn;
         item = (dynamicMenuItem >= dynamicSoftmenu[menuId].numItems ? ITM_NOP : ITM_XEQ);
         break;
       }
 
       case MNU_MENUS: {
-        dynamicMenuItem = firstItem + itemShift + (fn - 1);
+        dynamicMenuItem = firstItem + itemShift + fn;
         item = ITM_NOP;
         if(dynamicMenuItem < dynamicSoftmenu[menuId].numItems) {
           for(uint32_t i = 0; softmenu[i].menuItem < 0; ++i) {
@@ -183,13 +186,13 @@
       }
 
       case ITM_MENU: {
-        dynamicMenuItem = firstItem + itemShift + (fn - 1);
+        dynamicMenuItem = firstItem + itemShift + fn;
         item = ITM_MENU;
         break;
       }
 
       case MNU_EQN: {
-        if(numberOfFormulae == 0 && (firstItem + itemShift + (fn - 1)) > 0) {
+        if(numberOfFormulae == 0 && (firstItem + itemShift + fn) > 0) {
           break;
         }
         /* fallthrough */
@@ -198,8 +201,8 @@
       default: {
         sm = &softmenu[menuId];
         row = min(3, (sm->numItems + modulo(firstItem - sm->numItems, 6))/6 - firstItem/6) - 1;
-        if(itemShift/6 <= row && firstItem + itemShift + (fn - 1) < sm->numItems) {
-          item = (sm->softkeyItem)[firstItem + itemShift + (fn - 1)] % 10000;
+        if(itemShift/6 <= row && firstItem + itemShift + fn < sm->numItems) {
+          item = (sm->softkeyItem)[firstItem + itemShift + fn] % 10000;
 
           if(item == ITM_PROD_SIGN) {
             item = (getSystemFlag(FLAG_MULTx) ? ITM_DOT : ITM_CROSS);
@@ -254,26 +257,16 @@
 
 
 
-  void btnFnClicked(char *data) {
-    btnFnPressed(data);
-    btnFnReleased(data);
-  }
-
-
-
   void execAutoRepeat(uint16_t key) {
     #if defined(DMCP_BUILD)
-      char    charKey[6];
       bool    f = shiftF;
       bool    g = shiftG;
       uint8_t origScreenUpdatingMode = screenUpdatingMode;
-      sprintf(charKey, "%02d", key -1);
 
       timerStart(tidAutoRepeat, key, KEY_AUTOREPEAT_PERIOD);
 
-      btnClicked(charKey);
+      btnClicked(key);
       screenUpdatingMode = origScreenUpdatingMode;
-      //btnPressed(charKey);
       shiftF = f;
       shiftG = g;
       refreshLcd();
@@ -345,17 +338,16 @@
 
 
 
-  uint8_t asnKey[4] = {0, 0, 0, 0};
+  static keyCode_t asnKey = 0;
 
-  void btnFnPressed(char *data) {
-    asnKey[0] = ((uint8_t *)data)[0];
-    asnKey[1] = 0;
+  void btnFnPressed(keyCode_t keyCode) {
+    asnKey = keyCode;
 
     if(programRunStop == PGM_RUNNING || programRunStop == PGM_PAUSED) {
-      setLastKeyCode((*((char *)data) - '0') + 37);
+      lastKeyCode = keyCode;
     }
     else {
-      lastKeyCode = 0;
+      lastKeyCode = kcNoKey;
     }
 
     if(programRunStop == PGM_PAUSED) {
@@ -367,7 +359,7 @@
       return;
     }
     if(calcMode == cmAssign && itemToBeAssigned != 0 && !(tam.alpha && tam.mode != tmNewMenu)) {
-      int16_t item = determineFunctionKeyItem((char *)data);
+      int16_t item = determineFunctionKeyItem(keyCode);
 
       #pragma GCC diagnostic push
       #pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
@@ -398,7 +390,7 @@
       _closeCatalog();
     }
     else if(calcMode != cmApp) {
-      int16_t item = determineFunctionKeyItem((char *)data);
+      int16_t item = determineFunctionKeyItem(keyCode);
 
       if(shiftF || shiftG) {
         screenUpdatingMode &= ~SCRUPD_MANUAL_SHIFT_STATUS;
@@ -453,10 +445,10 @@
 
 
 
-  static bool _assignToMenu(uint8_t *data) {
+  static bool _assignToMenu(keyCode_t keyCode) {
     switch(-softmenu[softmenuStack[0].softmenuId].menuItem) {
       case MNU_MyMenu: {
-        assignToMyMenu((*data - '1') + (shiftG ? 12 : shiftF ? 6 : 0));
+        assignToMyMenu((keyCode - kcF1) + (shiftG ? 12 : shiftF ? 6 : 0));
         calcMode = previousCalcMode;
         shiftF = shiftG = false;
         _closeCatalog();
@@ -465,7 +457,7 @@
         return true;
       }
       case MNU_MyAlpha: {
-        assignToMyAlpha((*data - '1') + (shiftG ? 12 : shiftF ? 6 : 0));
+        assignToMyAlpha((keyCode - kcF1) + (shiftG ? 12 : shiftF ? 6 : 0));
         calcMode = previousCalcMode;
         shiftF = shiftG = false;
         _closeCatalog();
@@ -481,7 +473,7 @@
           #endif // PC_BUILD
         }
         else {
-          assignToUserMenu((*data - '1') + (shiftG ? 12 : shiftF ? 6 : 0));
+          assignToUserMenu((keyCode - kcF1) + (shiftG ? 12 : shiftF ? 6 : 0));
         }
         calcMode = previousCalcMode;
         shiftF = shiftG = false;
@@ -515,7 +507,7 @@
 
 
 
-  void btnFnReleased(char *data) {
+  void btnFnReleased(keyCode_t keyCode) {
     if(programRunStop == PGM_KEY_PRESSED_WHILE_PAUSED) {
       programRunStop = PGM_RESUMING;
       screenUpdatingMode &= ~SCRUPD_ONE_TIME_FLAGS;
@@ -524,35 +516,40 @@
     if(calcMode != cmApp) {
       if(tamIsWaitingKey()) {
         if(tam.digitsSoFar == 0) {
-          switch(data[0]) {
-            case '1': {
+          switch(keyCode) {
+            case kcF1: {
               tamProcessInput(shiftG ? ITM_1 :                  ITM_0);
               tamProcessInput(shiftG ? ITM_3 : shiftF ? ITM_7 : ITM_1);
               break;
             }
-            case '2': {
+            case kcF2: {
               tamProcessInput(shiftG ? ITM_1 :                  ITM_0);
               tamProcessInput(shiftG ? ITM_4 : shiftF ? ITM_8 : ITM_2);
               break;
             }
-            case '3': {
+            case kcF3: {
               tamProcessInput(shiftG ? ITM_1 :                  ITM_0);
               tamProcessInput(shiftG ? ITM_5 : shiftF ? ITM_9 : ITM_3);
               break;
             }
-            case '4': {
+            case kcF4: {
               tamProcessInput(     (shiftG || shiftF) ? ITM_1 : ITM_0);
               tamProcessInput(shiftG ? ITM_6 : shiftF ? ITM_0 : ITM_4);
               break;
             }
-            case '5': {
+            case kcF5: {
               tamProcessInput(     (shiftG || shiftF) ? ITM_1 : ITM_0);
               tamProcessInput(shiftG ? ITM_7 : shiftF ? ITM_1 : ITM_5);
               break;
             }
-            case '6': {
+            case kcF6: {
               tamProcessInput(     (shiftG || shiftF) ? ITM_1 : ITM_0);
               tamProcessInput(shiftG ? ITM_8 : shiftF ? ITM_2 : ITM_6);
+              break;
+            }
+            default: {
+              // This should be impossible because this is a function key
+              assert(false);
               break;
             }
           }
@@ -564,7 +561,7 @@
       }
 
       if(calcMode == cmAssign && itemToBeAssigned != 0 && !(tam.alpha && tam.mode != tmNewMenu)) {
-        if(_assignToMenu((uint8_t *)data)) {
+        if(_assignToMenu(keyCode)) {
           return;
         }
       }
@@ -740,12 +737,12 @@
 
 
 
-  int16_t determineItem(const char *data) {
+  int16_t determineItem(keyCode_t keyCode) {
     int16_t result;
     const calcKey_t *key;
 
     dynamicMenuItem = -1;
-    key = getSystemFlag(FLAG_USER) ? (kbd_usr + (*data - '0')*10 + *(data+1) - '0') : (kbd_std + (*data - '0')*10 + *(data+1) - '0');
+    key = getSystemFlag(FLAG_USER) ? &kbd_usr[keyCode - 1] : &kbd_std[keyCode - 1];
 
     // App mode doesn't support shift keys
     if(calcMode == cmApp) {
@@ -828,33 +825,25 @@
 
 
 
-  void btnClicked(char *data) {
-    btnPressed(data);
-    btnReleased(data);
+  void btnClicked(keyCode_t keyCode) {
+    btnPressed(keyCode);
+    btnReleased(keyCode);
   }
 
 
 
-  #if defined(PC_BUILD)
-    char key[3] = {0, 0, 0};
-  #endif
-
-  void btnPressed(char *data) {
-    int keyCode = (*data - '0')*10 + *(data + 1) - '0';
-
-    asnKey[0] = ((uint8_t *)data)[0];
-    asnKey[1] = ((uint8_t *)data)[1];
-    asnKey[2] = 0;
+  void btnPressed(keyCode_t keyCode) {
+    if(keyCode >= kcF1) {
+      btnFnPressed(keyCode);
+      return;
+    }
+    asnKey = keyCode;
 
     if(programRunStop == PGM_RUNNING || programRunStop == PGM_PAUSED) {
-      #if defined(PC_BUILD)
-        setLastKeyCode(keyCode + 1);
-      #elif defined(DMCP_BUILD)
-        lastKeyCode = keyCode;
-      #endif
+      lastKeyCode = keyCode;
     }
     else {
-      lastKeyCode = 0;
+      lastKeyCode = kcNoKey;
     }
 
     bool f = shiftF;
@@ -866,7 +855,7 @@
       //}
       //else {
     #endif
-    int16_t item = determineItem(data);
+    int16_t item = determineItem(keyCode);
     #if defined(DMCP_BUILD)
       //  previousItem = item;
       //}
@@ -892,7 +881,7 @@
 
     if(getSystemFlag(FLAG_USER)) {
       int keyStateCode = (getSystemFlag(FLAG_ALPHA) ? 3 : 0) + (g ? 2 : f ? 1 : 0);
-      char *funcParam = (char *)getNthString((uint8_t *)userKeyLabel, keyCode * 6 + keyStateCode);
+      char *funcParam = (char *)getNthString((uint8_t *)userKeyLabel, (keyCode - 1) * 6 + keyStateCode);
       xcopy(tmpString, funcParam, stringByteLength(funcParam) + 1);
     }
     else {
@@ -914,7 +903,11 @@
 
 
 
-  void btnReleased(char *data) {
+  void btnReleased(keyCode_t keyCode) {
+    if(keyCode >= kcF1) {
+      btnFnReleased(keyCode);
+      return;
+    }
     int16_t item;
 
     if(programRunStop == PGM_KEY_PRESSED_WHILE_PAUSED) {
@@ -924,7 +917,7 @@
     }
 
     if(calcMode == cmAssign && itemToBeAssigned != 0 && tamBuffer[0] == 0) {
-      assignToKey(data);
+      assignToKey(keyCode);
       calcMode = previousCalcMode;
       shiftF = shiftG = false;
       refreshScreen();
@@ -936,15 +929,8 @@
         showSoftmenu(item);
       }
       else {
-        int keyCode = (*data - '0')*10 + *(data + 1) - '0';
         int keyStateCode = (getSystemFlag(FLAG_ALPHA) ? 3 : 0) + (shiftG ? 2 : shiftF ? 1 : 0);
-        char *funcParam = (char *)getNthString((uint8_t *)userKeyLabel, keyCode * 6 + keyStateCode);
-
-        #if defined(PC_BUILD)
-          if(item == ITM_RS || item == ITM_XEQ) {
-            key[0] = 0;
-          }
-        #endif // PC_BUILD
+        char *funcParam = (char *)getNthString((uint8_t *)userKeyLabel, (keyCode - 1) * 6 + keyStateCode);
 
         if(item != ITM_NOP && tam.alpha && indexOfItems[item].func != addItemToBuffer) {
           // We are in TAM mode so need to cancel first (equivalent to EXIT)
@@ -983,7 +969,7 @@
     }
     //#if defined(DMCP_BUILD)
     //  else if(keyAutoRepeat) {
-    //    btnPressed(data);
+    //    btnPressed(keyCode);
     //  }
     //#endif // DMCP_BUILD
     if(timerGetStatus(tidAutoRepeat) != tsRunning) {
@@ -2157,8 +2143,8 @@ void fnKeyBackspace(uint16_t unusedButMandatoryParameter) {
           }
           else {
             assignLeaveAlpha();
-            if(asnKey[1] != 0) {
-              assignToKey((char *)asnKey);
+            if(asnKey < kcF1) {
+              assignToKey(asnKey);
             }
             else {
               _assignToMenu(asnKey);
@@ -2301,8 +2287,8 @@ void fnKeyUp(uint16_t unusedButMandatoryParameter) {
         }
         else if(tam.alpha && aimBuffer[0] == 0) {
           assignLeaveAlpha();
-          if(asnKey[1] != 0) {
-            assignToKey((char *)asnKey);
+          if(asnKey < kcF1) {
+            assignToKey(asnKey);
           }
           else {
             _assignToMenu(asnKey);
@@ -2440,8 +2426,8 @@ void fnKeyDown(uint16_t unusedButMandatoryParameter) {
         }
         else if(tam.alpha && aimBuffer[0] == 0) {
           assignLeaveAlpha();
-          if(asnKey[1] != 0) {
-            assignToKey((char *)asnKey);
+          if(asnKey < kcF1) {
+            assignToKey(asnKey);
           }
           else {
             _assignToMenu(asnKey);
@@ -2510,31 +2496,87 @@ void fnKeyDotD(uint16_t unusedButMandatoryParameter) {
 
 
 
-void setLastKeyCode(int key) {
-  if(1 <= key && key <= 43) {
-    if(key <=  6) {
-      lastKeyCode = key      + 20;
-    }
-    else if(key <= 12) {
-      lastKeyCode = key -  6 + 30;
-    }
-    else if(key <= 17) {
-      lastKeyCode = key - 12 + 40;
-    }
-    else if(key <= 22) {
-      lastKeyCode = key - 17 + 50;
-    }
-    else if(key <= 27) {
-      lastKeyCode = key - 22 + 60;
-    }
-    else if(key <= 32) {
-      lastKeyCode = key - 27 + 70;
-    }
-    else if(key <= 37) {
-      lastKeyCode = key - 32 + 80;
-    }
-    else if(key <= 43) {
-      lastKeyCode = key - 37 + 10; // function keys
-    }
+keyCode_t kbKeyCodeFromRowColumn(uint8_t rowColumn) {
+  if(rowColumn < 11) {
+    return kcNoKey;
   }
+  else if(rowColumn < 17) {
+    return rowColumn - 10 + 37;
+  }
+  else if(rowColumn < 21) {
+    return kcNoKey;
+  }
+  else if(rowColumn < 27) {
+    return rowColumn - 20 +  0;
+  }
+  else if(rowColumn < 31) {
+    return kcNoKey;
+  }
+  else if(rowColumn < 37) {
+    return rowColumn - 30 +  6;
+  }
+  else if(rowColumn < 41) {
+    return kcNoKey;
+  }
+  else if(rowColumn < 46) {
+    return rowColumn - 40 + 12;
+  }
+  else if(rowColumn < 51) {
+    return kcNoKey;
+  }
+  else if(rowColumn < 56) {
+    return rowColumn - 50 + 17;
+  }
+  else if(rowColumn < 61) {
+    return kcNoKey;
+  }
+  else if(rowColumn < 66) {
+    return rowColumn - 60 + 22;
+  }
+  else if(rowColumn < 71) {
+    return kcNoKey;
+  }
+  else if(rowColumn < 76) {
+    return rowColumn - 70 + 27;
+  }
+  else if(rowColumn < 81) {
+    return kcNoKey;
+  }
+  else if(rowColumn < 86) {
+    return rowColumn - 80 + 32;
+  }
+  return kcNoKey;
+}
+
+
+
+uint8_t kbRowColumnFromKeyCode(keyCode_t keyCode) {
+  if(keyCode == kcNoKey) {
+    return 0;
+  }
+  else if(keyCode <= 6) {
+    return keyCode      + 20;
+  }
+  else if(keyCode <= 12) {
+    return keyCode -  6 + 30;
+  }
+  else if(keyCode <= 17) {
+    return keyCode - 12 + 40;
+  }
+  else if(keyCode <= 22) {
+    return keyCode - 17 + 50;
+  }
+  else if(keyCode <= 27) {
+    return keyCode - 22 + 60;
+  }
+  else if(keyCode <= 32) {
+    return keyCode - 27 + 70;
+  }
+  else if(keyCode <= 37) {
+    return keyCode - 32 + 80;
+  }
+  else if(keyCode <= 43) {
+    return keyCode - 37 + 10; // function keys
+  }
+  return 0;
 }

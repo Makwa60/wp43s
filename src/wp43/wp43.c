@@ -108,7 +108,6 @@ uint8_t                hexDigits;
 temporaryInformation_t temporaryInformation;
 uint8_t                numScreensNumericFont;
 uint8_t                programRunStop;
-uint8_t                lastKeyCode;
 uint8_t                entryStatus;
 uint8_t                screenUpdatingMode;
 uint8_t               *beginOfProgramMemory;

@@ -24,6 +24,7 @@
 GtkWidget      *grid;
 calcKeyboard_t  calcKeyboard[MAX_KEYS];
 guiLayout_t     currentBezel;
+keyCode_t key;
 #if (SCREEN_800X480 == 0)
   GtkWidget *backgroundImage, *bezelImage[MAX_GUI_LAYOUTS], *behindScreenImage, *fgShiftedArea1, *fgShiftedArea2;
   GtkWidget *lblFSoftkeyArea, *lblGSoftkeyArea;
@@ -73,9 +74,7 @@ bool guiUseTamL(void) {
 
 static void convertXYToKey(int x, int y) {
   int xMin, xMax, yMin, yMax;
-  key[0] = 0;
-  key[1] = 0;
-  key[2] = 0;
+  key = kcNoKey;
 
   for(int i=0; i<MAX_KEYS; i++) {
     xMin = calcKeyboard[i].x;
@@ -92,21 +91,22 @@ static void convertXYToKey(int x, int y) {
     if(   xMin <= x && x <= xMax
        && yMin <= y && y <= yMax) {
       if(i < 6) { // Function key
-        key[0] = '1' + i;
+        key = kcF1 + i;
       }
       else {
-        key[0] = '0' + (i - 6)/10;
-        key[1] = '0' + (i - 6)%10;
+        key = i - 5;
       }
       break;
     }
   }
 }
 
+
+
 void frmCalcMouseButtonPressed(GtkWidget *notUsed, GdkEvent *event, gpointer data) {
-  if(key[0] == 0) { // The previous click must be released
+  if(key == kcNoKey) { // The previous click must be released
     convertXYToKey((int)event->button.x, (int)event->button.y);
-    if(key[0] == 0) {
+    if(key == kcNoKey) {
       return;
     }
 
@@ -122,28 +122,17 @@ void frmCalcMouseButtonPressed(GtkWidget *notUsed, GdkEvent *event, gpointer dat
       shiftG = true;
     }
 
-    if(key[1] == 0) { // Soft function key
-      btnFnPressed(key);
-    }
-    else { // Not a soft function key
-      btnPressed(key);
-    }
+    btnPressed(key);
   }
 }
 
+
+
 void frmCalcMouseButtonReleased(GtkWidget *notUsed, GdkEvent *event, gpointer data) {
-  if(key[0] == 0) {
-    return;
-  }
-
-  if(key[1] == 0) { // Soft function key
-    btnFnReleased(key);
-  }
-  else { // Not a soft function key
+  if(key != kcNoKey) {
     btnReleased(key);
+    key = kcNoKey;
   }
-
-  key[0] = 0;
 }
 
 
@@ -492,271 +481,194 @@ void frmCalcMouseButtonReleased(GtkWidget *notUsed, GdkEvent *event, gpointer da
 
 
 
-static gboolean keyPressed(GtkWidget *w, GdkEventKey *event, gpointer data) {
-  //printf("%d\n", event->keyval);
-  switch(event->keyval) {
+static keyCode_t _keyCodeFromGdkKey(uint gdkKey) {
+  switch(gdkKey) {
     case GDK_KEY_F1:
-      //printf("key pressed: F1\n");
-      btnFnClicked("1");
-      break;
+      return kcF1;
 
     case GDK_KEY_F2:
-      //printf("key pressed: F2\n");
-      btnFnClicked("2");
-      break;
+      return kcF2;
 
     case GDK_KEY_F3:
-      //printf("key pressed: F3\n");
-      btnFnClicked("3");
-      break;
+      return kcF3;
 
     case GDK_KEY_F4:
-      //printf("key pressed: F4\n");
-      btnFnClicked("4");
-      break;
+      return kcF4;
 
     case GDK_KEY_F5:
-      //printf("key pressed: F5\n");
-      btnFnClicked("5");
-      break;
+      return kcF5;
 
     case GDK_KEY_F6:
-      //printf("key pressed: F6\n");
-      btnFnClicked("6");
-      break;
+      return kcF6;
 
     case GDK_KEY_I:
     case GDK_KEY_i:
-      //printf("key pressed: i 1/x\n");
-      btnClicked("00");
-      break;
+      return kcInv;
 
     case GDK_KEY_L:
-      //printf("key pressed: L EXP\n");
-      btnClicked("01");
-      break;
+      return kcExp;
 
     case GDK_KEY_T:
     case GDK_KEY_t:
-      //printf("key pressed: T TRI\n");
-      btnClicked("02");
-      break;
+      return kcTri;
 
     case GDK_KEY_l:
-      //printf("key pressed: l ln\n");
-      btnClicked("03");
-      break;
+      return kcLn;
 
     case GDK_KEY_e:
-      //printf("key pressed: e e^x\n");
-      btnClicked("04");
-      break;
+      return kcEToX;
 
     case GDK_KEY_Q:
     case GDK_KEY_q:
-      //printf("key pressed: Q Quadrad\n");
-      btnClicked("05");
-      break;
+      return kcSqrt;
 
     case GDK_KEY_S:
     case GDK_KEY_s:
-      //printf("key pressed: s STO\n");
-      btnClicked("06");
-      break;
+      return kcSto;
 
     case GDK_KEY_R:
     case GDK_KEY_r:
-      //printf("key pressed: r RCL\n");
-      btnClicked("07");
-      break;
+      return kcRcl;
 
     case GDK_KEY_Page_Down:
-      //printf("key pressed: PgDn Roll down\n");
-      btnClicked("08");
-      break;
+      return kcRdown;
 
     case GDK_KEY_C:
-      //printf("key pressed: C CC\n");
-      btnClicked("09");
-      break;
+      return kcCC;
 
     case GDK_KEY_F:
     case GDK_KEY_f:
-      //printf("key pressed: f\n");
-      btnClicked("10");
-      break;
+      return kcShiftF;
 
     case GDK_KEY_G:
     case GDK_KEY_g:
-      //printf("key pressed: g\n");
-      btnClicked("11");
-      break;
+      return kcShiftG;
 
     case GDK_KEY_Return:
     case GDK_KEY_KP_Enter:
-      //printf("key pressed: ENTER\n");
-      btnClicked("12");
-      break;
+      return kcEnter;
 
     case GDK_KEY_Tab:
-      //printf("key pressed: Tab x<>y\n");
-      btnClicked("13");
-      break;
+      return kcSwap;
 
     case GDK_KEY_c:
-      //printf("key pressed: c CHS +/-\n");
-      btnClicked("14");
-      break;
+      return kcChs;
 
     case GDK_KEY_E:
-      //printf("key pressed: E\n");
-      btnClicked("15");
-      break;
+      return kcE;
 
     case GDK_KEY_BackSpace:
-      //printf("key pressed: Backspace\n");
-      btnClicked("16");
-      break;
+      return kcBackspace;
 
     case GDK_KEY_slash:
     case GDK_KEY_KP_Divide:
-      //printf("key pressed: /\n");
-      btnClicked("17");
-      break;
+      return kcDiv;
 
     case GDK_KEY_7:
     case GDK_KEY_KP_7:
-      //printf("key pressed: 7\n");
-      btnClicked("18");
-      break;
+      return kc7;
 
     case GDK_KEY_8:
     case GDK_KEY_KP_8:
-      //printf("key pressed: 8\n");
-      btnClicked("19");
-      break;
+      return kc8;
 
     case GDK_KEY_9:
     case GDK_KEY_KP_9:
-      //printf("key pressed: 9\n");
-      btnClicked("20");
-      break;
+      return kc9;
 
     case GDK_KEY_X:
-      //printf("key pressed: XEQ\n");
-      btnClicked("21");
-      break;
+      return kcXeq;
 
     case GDK_KEY_asterisk:
     case GDK_KEY_KP_Multiply:
-      //printf("key pressed: *\n");
-      btnClicked("22");
-      break;
+      return kcMul;
 
     case GDK_KEY_4:
     case GDK_KEY_KP_4:
-      //printf("key pressed: 4\n");
-      btnClicked("23");
-      break;
+      return kc4;
 
     case GDK_KEY_5:
     case GDK_KEY_KP_5:
-      //printf("key pressed: 5\n");
-      btnClicked("24");
-      break;
+      return kc5;
 
     case GDK_KEY_6:
     case GDK_KEY_KP_6:
-      //printf("key pressed: 6\n");
-      btnClicked("25");
-      break;
+      return kc6;
 
     case GDK_KEY_Up:
-      //printf("key pressed: up\n");
-      btnClicked("26");
-      break;
+      return kcUp;
 
     case GDK_KEY_minus:
     case GDK_KEY_KP_Subtract:
-      //printf("key pressed: -\n");
-      btnClicked("27");
-      break;
+      return kcSub;
 
     case GDK_KEY_1:
     case GDK_KEY_KP_1:
-      //printf("key pressed: 1\n");
-      btnClicked("28");
-      break;
+      return kc1;
 
     case GDK_KEY_2:
     case GDK_KEY_KP_2:
-      //printf("key pressed: 2\n");
-      btnClicked("29");
-      break;
+      return kc2;
 
     case GDK_KEY_3:
     case GDK_KEY_KP_3:
-      //printf("key pressed: 3\n");
-      btnClicked("30");
-      break;
+      return kc3;
 
     case GDK_KEY_Down:
-      //printf("key pressed: down\n");
-      btnClicked("31");
-      break;
+      return kcDown;
 
     case GDK_KEY_plus:
     case GDK_KEY_KP_Add:
-      //printf("key pressed: +\n");
-      btnClicked("32");
-      break;
+      return kcAdd;
 
     case GDK_KEY_0:
     case GDK_KEY_KP_0:
-      //printf("key pressed: 0\n");
-      btnClicked("33");
-      break;
+      return kc0;
 
     case GDK_KEY_comma:
     case GDK_KEY_period:
     case GDK_KEY_KP_Decimal:
-      //printf("key pressed: .\n");
-      btnClicked("34");
-      break;
+      return kcDot;
 
     case GDK_KEY_Control_L:
     case GDK_KEY_Control_R:
-      //printf("key pressed: Ctrl R/S\n");
-      btnClicked("35");
-      break;
+      return kcRun;
 
     case GDK_KEY_Escape:
-      //printf("key pressed: EXIT\n");
-      btnClicked("36");
-      break;
+      return kcExit;
 
+    default:
+      return kcNoKey;
+  }
+}
+
+
+
+static gboolean keyPressed(GtkWidget *w, GdkEventKey *event, gpointer data) {
+  uint gdkKey = event->keyval;
+  switch(gdkKey) {
     case GDK_KEY_H:
     case GDK_KEY_h:
-      //printf("key pressed: h Hardcopy to clipboard\n");
       copyScreenToClipboard();
       break;
 
     case GDK_KEY_x:
-      //printf("key pressed: x copy register X to clipboard\n");
       copyRegisterXToClipboard();
       break;
 
     case GDK_KEY_z:
-      //printf("key pressed: z copy stack registers to clipboard\n");
       copyStackRegistersToClipboard();
       break;
 
     case GDK_KEY_Z:
-      //printf("key pressed: Z copy all registers to clipboard\n");
       copyAllRegistersToClipboard();
       break;
 
     default: {
+      keyCode_t kc = _keyCodeFromGdkKey(gdkKey);
+      if(kc != kcNoKey) {
+        btnClicked(kc);
+      }
       break;
     }
   }
