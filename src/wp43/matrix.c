@@ -2444,10 +2444,14 @@ smallFont:
     int16_t        maxLeftWidth[MATRIX_MAX_COLUMNS] = {};
     const int16_t  exponentOutOfRange = 0x4000;
     bool           noFix = false;
+    bool           singleDigitDoesNotFit = false;
     const int16_t  dspDigits = displayFormatDigits;
+    int            minDigits = 1;
+    int            maxDigits = 15;
+    int            k = 1;
 
     begin:
-    for(int k = 15; k >= 1; k--) {
+    while(true) {
       if(displayFormat == dfAll) {
         *digits = k;
       }
@@ -2523,17 +2527,52 @@ smallFont:
       if(displayFormat != dfAll) {
         break;
       }
-      else if(totalWidth <= maxWidth) {
+      else if(totalWidth > maxWidth && k == 1) {
+        singleDigitDoesNotFit = true;
+      }
+      if(k == 1 && maxDigits == 15) {
+        k = 15;
+      }
+      else if(k == 15 && !noFix && totalWidth <= maxWidth) {
         *digits = k;
         break;
       }
-      else if(k > 1) {
-        totalWidth = 0;
-        for(int j = 0; j < maxCols; j++) {
-          maxRightWidth[j] = 0;
-          maxLeftWidth[j] = 0;
-        }
+      else if(k == 15 && singleDigitDoesNotFit && totalWidth > maxWidth) {
+        *digits = k;
+        break;
       }
+      else if(k == 15 && minDigits == 1) {
+        k = 7;
+      }
+      else if(maxDigits == minDigits && totalWidth > maxWidth) {
+        --k;
+      }
+      else if(maxDigits - minDigits == 1) {
+        *digits = k;
+        break;
+      }
+      else if(maxDigits - minDigits == 1 && totalWidth > maxWidth) {
+        --maxDigits;
+        --k;
+      }
+      else if(maxDigits - minDigits == 1) {
+        ++minDigits;
+        ++k;
+      }
+      else if(totalWidth > maxWidth) {
+        maxDigits = k;
+        k = (minDigits + maxDigits) / 2;
+      }
+      else {
+        minDigits = k;
+        k = (minDigits + maxDigits) / 2;
+      }
+      totalWidth = 0;
+      for(int j = 0; j < maxCols; j++) {
+        maxRightWidth[j] = 0;
+        maxLeftWidth[j] = 0;
+      }
+      noFix = false;
     }
     return totalWidth * (noFix ? -1 : 1);
   }
@@ -2765,6 +2804,10 @@ smallFont:
     int16_t        maxRightWidth_i[MATRIX_MAX_COLUMNS] = {};
     int16_t        maxLeftWidth_i[MATRIX_MAX_COLUMNS] = {};
     const int16_t  exponentOutOfRange = 0x4000;
+    bool           singleDigitDoesNotFit = false;
+    int            minDigits = 1;
+    int            maxDigits = 15;
+    int            k = 1;
 
     uint16_t cpxUnitWidth;
     if(getSystemFlag(FLAG_POLAR)) { // polar mode
@@ -2777,7 +2820,7 @@ smallFont:
     }
     cpxUnitWidth = stringWidth(tmpString, font, true, true);
 
-    for(int k = 15; k >= 1; k--) {
+    while(true) {
       if(displayFormat == dfAll) {
         *digits = k;
       }
@@ -2886,18 +2929,52 @@ smallFont:
       if(displayFormat != dfAll) {
         break;
       }
-      else if(totalWidth <= maxWidth) {
+      else if(totalWidth > maxWidth && k == 1) {
+        singleDigitDoesNotFit = true;
+      }
+      if(k == 1 && maxDigits == 15) {
+        k = 15;
+      }
+      else if(k == 15 && totalWidth <= maxWidth) {
         *digits = k;
         break;
       }
-      else if(k > 1) {
-        totalWidth = 0;
-        for(int j = 0; j < maxCols; j++) {
-          maxRightWidth_r[j] = 0;
-          maxLeftWidth_r[j] = 0;
-          maxRightWidth_i[j] = 0;
-          maxLeftWidth_i[j] = 0;
-        }
+      else if(k == 15 && singleDigitDoesNotFit && totalWidth > maxWidth) {
+        *digits = k;
+        break;
+      }
+      else if(k == 15 && minDigits == 1) {
+        k = 7;
+      }
+      else if(maxDigits == minDigits && totalWidth > maxWidth) {
+        --k;
+      }
+      else if(maxDigits - minDigits == 1) {
+        *digits = k;
+        break;
+      }
+      else if(maxDigits - minDigits == 1 && totalWidth > maxWidth) {
+        --maxDigits;
+        --k;
+      }
+      else if(maxDigits - minDigits == 1) {
+        ++minDigits;
+        ++k;
+      }
+      else if(totalWidth > maxWidth) {
+        maxDigits = k;
+        k = (minDigits + maxDigits) / 2;
+      }
+      else {
+        minDigits = k;
+        k = (minDigits + maxDigits) / 2;
+      }
+      totalWidth = 0;
+      for(int j = 0; j < maxCols; j++) {
+        maxRightWidth_r[j] = 0;
+        maxLeftWidth_r[j] = 0;
+        maxRightWidth_i[j] = 0;
+        maxLeftWidth_i[j] = 0;
       }
     }
     return totalWidth;
