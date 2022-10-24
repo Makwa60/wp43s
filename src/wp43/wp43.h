@@ -160,7 +160,6 @@
   extern temporaryInformation_t temporaryInformation;
   extern uint8_t                numScreensNumericFont;
   extern uint8_t                programRunStop;
-  extern uint8_t                lastKeyCode;
   extern uint8_t                entryStatus; // 0x01 for the entry flag, backed up to 0x02 for undo
   extern uint8_t                screenUpdatingMode;
   extern uint8_t               *beginOfProgramMemory;

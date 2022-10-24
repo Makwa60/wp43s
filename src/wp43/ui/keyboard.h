@@ -9,6 +9,55 @@
 
   #include <stdint.h>
 
+  typedef enum {
+    kcNoKey     =  0,
+    kcInv       =  1,
+    kcExp       =  2,
+    kcTri       =  3,
+    kcLn        =  4,
+    kcEToX      =  5,
+    kcSqrt      =  6,
+    kcSto       =  7,
+    kcRcl       =  8,
+    kcRdown     =  9,
+    kcCC        = 10,
+    kcShiftF    = 11,
+    kcShiftG    = 12,
+    kcEnter     = 13,
+    kcSwap      = 14,
+    kcChs       = 15,
+    kcE         = 16,
+    kcBackspace = 17,
+    kcDiv       = 18,
+    kc7         = 19,
+    kc8         = 20,
+    kc9         = 21,
+    kcXeq       = 22,
+    kcMul       = 23,
+    kc4         = 24,
+    kc5         = 25,
+    kc6         = 26,
+    kcUp        = 27,
+    kcSub       = 28,
+    kc1         = 29,
+    kc2         = 30,
+    kc3         = 31,
+    kcDown      = 32,
+    kcAdd       = 33,
+    kc0         = 34,
+    kcDot       = 35,
+    kcRun       = 36,
+    kcExit      = 37,
+    kcF1        = 38,
+    kcF2        = 39,
+    kcF3        = 40,
+    kcF4        = 41,
+    kcF5        = 42,
+    kcF6        = 43
+  } keyCode_t;
+
+  extern keyCode_t lastKeyCode;
+
   void leavePem        (void);
   void showShiftState  (void);
   void processKeyAction(int16_t item);
@@ -62,11 +111,7 @@
    */
   void fnKeyDotD       (uint16_t unusedButMandatoryParameter);
 
-  #if defined(PC_BUILD)
-    extern char key[3];
-  #endif // PC_BUILD
-
-  void execAutoRepeat(uint16_t key);
+  void execAutoRepeat  (uint16_t key);
 
   #if !defined(TESTSUITE_BUILD)
     /**
@@ -74,44 +119,25 @@
      *
      * \param data pointer to a string containing the key number pressed: 00=1/x, ..., 36=EXIT
      */
-    void btnPressed   (char *data);
+    void btnPressed   (keyCode_t keyCode);
 
     /**
      * A calc button was released.
      *
      * \param string containing the key number pressed: 00=1/x, ..., 36=EXIT
      */
-    void btnReleased   (char *data);
+    void btnReleased  (keyCode_t keyCode);
 
     /**
      * A calc button was clicked.
      *
      * \param data String containing the key ID
      */
-    void btnClicked   (char *data);
-
-    /**
-     * A calc function key was pressed.
-     *
-     * \param data pointer to a string containing the key number pressed: 00=1/x, ..., 36=EXIT
-     */
-    void btnFnPressed (char *data);
-
-    /**
-     * A calc function key was released.
-     *
-     * \param string containing the key number pressed: 00=1/x, ..., 36=EXIT
-     */
-    void btnFnReleased(char *data);
-
-    /**
-     * A calc function key was clicked.
-     *
-     * \param data String containing the key ID
-     */
-    void btnFnClicked (char *data);
+    void btnClicked   (keyCode_t keyCode);
   #endif // !TESTSUITE_BUILD
 
-  void setLastKeyCode  (int key);
+  keyCode_t kbKeyCodeFromRowColumn(uint8_t rowColumn);
+
+  uint8_t   kbRowColumnFromKeyCode(keyCode_t keyCode);
 
 #endif // !KEYBOARD_H

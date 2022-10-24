@@ -25,90 +25,94 @@ uint32_t nextScreenRefresh; // timer substitute for refreshLcd(), which does cur
 bool     wp43KbdLayout;
 
 int convertKeyCode(int key) {
-  if(wp43KbdLayout) {
-    /////////////////////////////////////////////////
-    // For key reassignment see:
-    // https://technical.swissmicros.com/dm42/devel/dmcp_devel_manual/#_system_key_table
-    //
-    // Output of keymap2layout keymap.txt
-    //
-    //    +-----+-----+-----+-----+-----+-----+
-    // 1: | F1  | F2  | F3  | F4  | F5  | F6  |
-    //    |38:38|39:39|40:40|41:41|42:42|43:43|
-    //    +-----+-----+-----+-----+-----+-----+
-    // 2: | 1/x |Sum+ | SIN | LN  | LOG |SQRT |
-    //    | 1: 2| 2: 1| 3:10| 4: 5| 5: 4| 6: 3|
-    //    +-----+-----+-----+-----+-----+-----+
-    // 3: | STO | RCL | RDN | COS | TAN |SHIFT|
-    //    | 7: 7| 8: 8| 9: 9|10:11|11:12|12:28|
-    //    +-----+-----+-----+-----+-----+-----+
-    // 4: |   ENTER   |x<>y | CHS |  E  | <-- |
-    //    |   13:13   |14:14|15:15|16:16|17:17|
-    //    +-----------+-----+-----+-----+-----+
-    // 5: |  DIV |   7  |   8  |   9  |  XEQ  |
-    //    | 18:22| 19:19| 20:20| 21:21| 22: 6 |
-    //    +------+------+------+------+-------+
-    // 6: |  MUL |   4  |   5  |   6  |  UP   |
-    //    | 23:27| 24:24| 25:25| 26:26| 27:18 |
-    //    +------+------+------+------+-------+
-    // 7: |  SUB |   1  |   2  |   3  | DOWN  |
-    //    | 28:32| 29:29| 30:30| 31:31| 32:23 |
-    //    +------+------+------+------+-------+
-    // 8: |  ADD |   0  |  DOT |  RUN | EXIT  |
-    //    | 33:37| 34:34| 35:35| 36:36| 37:33 |
-    //    +------+------+------+------+-------+
-
-    //The switch instruction below is implemented as follows e.g. for the up arrow key on the WP43 layout:
-    //  the output of keymap2layout for this key is UP 27:18 so we need the line:
-    //    case 18: key = 27; break;
-    switch(key) {               // Original
-      case  1: key =  2; break; // SUM+
-      case  2: key =  1; break; // 1/x
-      case  3: key =  6; break; // SQRT
-      case  4: key =  5; break; // LOG
-      case  5: key =  4; break; // LN
-      case  6: key = 22; break; // XEQ
-    //case  7: key =  7; break; // STO
-    //case  8: key =  8; break; // RCL
-    //case  9: key =  9; break; // RDN
-      case 10: key =  3; break; // SIN
-      case 11: key = 10; break; // COS
-      case 12: key = 11; break; // TAN
-    //case 13: key = 13; break; // ENTER
-    //case 14: key = 14; break; // x<>y
-    //case 15: key = 15; break; // +/-
-    //case 16: key = 16; break; // E
-    //case 17: key = 17; break; // <--
-      case 18: key = 27; break; // UP
-    //case 19: key = 19; break; // 7
-    //case 20: key = 20; break; // 8
-    //case 21: key = 21; break; // 9
-      case 22: key = 18; break; // /
-      case 23: key = 32; break; // DOWN
-    //case 24: key = 24; break; // 4
-    //case 25: key = 25; break; // 5
-    //case 26: key = 26; break; // 6
-      case 27: key = 23; break; // x
-      case 28: key = 12; break; // SHIFT
-    //case 29: key = 29; break; // 1
-    //case 30: key = 30; break; // 2
-    //case 31: key = 31; break; // 3
-      case 32: key = 28; break; // -
-      case 33: key = 37; break; // EXIT
-    //case 34: key = 34; break; // 0
-    //case 35: key = 35; break; // .
-    //case 36: key = 36; break; // R/S
-      case 37: key = 33; break; // +
-      default: {
-      }
-    }
+  if(!wp43KbdLayout) {
+    return key;
   }
-  return key;
+
+  // For key reassignment see:
+  // https://technical.swissmicros.com/dm42/devel/dmcp_devel_manual/#_system_key_table
+  //
+  // Output of keymap2layout keymap.txt
+  //
+  //    +-----+-----+-----+-----+-----+-----+
+  // 1: | F1  | F2  | F3  | F4  | F5  | F6  |
+  //    |38:38|39:39|40:40|41:41|42:42|43:43|
+  //    +-----+-----+-----+-----+-----+-----+
+  // 2: | 1/x |Sum+ | SIN | LN  | LOG |SQRT |
+  //    | 1: 2| 2: 1| 3:10| 4: 5| 5: 4| 6: 3|
+  //    +-----+-----+-----+-----+-----+-----+
+  // 3: | STO | RCL | RDN | COS | TAN |SHIFT|
+  //    | 7: 7| 8: 8| 9: 9|10:11|11:12|12:28|
+  //    +-----+-----+-----+-----+-----+-----+
+  // 4: |   ENTER   |x<>y | CHS |  E  | <-- |
+  //    |   13:13   |14:14|15:15|16:16|17:17|
+  //    +-----------+-----+-----+-----+-----+
+  // 5: |  DIV |   7  |   8  |   9  |  XEQ  |
+  //    | 18:22| 19:19| 20:20| 21:21| 22: 6 |
+  //    +------+------+------+------+-------+
+  // 6: |  MUL |   4  |   5  |   6  |  UP   |
+  //    | 23:27| 24:24| 25:25| 26:26| 27:18 |
+  //    +------+------+------+------+-------+
+  // 7: |  SUB |   1  |   2  |   3  | DOWN  |
+  //    | 28:32| 29:29| 30:30| 31:31| 32:23 |
+  //    +------+------+------+------+-------+
+  // 8: |  ADD |   0  |  DOT |  RUN | EXIT  |
+  //    | 33:37| 34:34| 35:35| 36:36| 37:33 |
+  //    +------+------+------+------+-------+
+
+  // The keys from DMCP are ordered from top left (excluding function keys) in rows, which is exactly the
+  // order we want. However, we apply a keymap so that the keys works as expected in the DMCP menus.
+  // If we have applied this keymap, we need to reverse this translation to get them back in the order we
+  // expect.
+  // The layout above shows the original number followed by the new assignment for each key. To reverse the
+  // map we take the key codes and find the WP43 key that corresponds to the new position for that key code.
+  // Since the map is to preserve meaning, this mapping has a close correspondence between the DMCP key
+  // code and the WP43 key code.
+  switch(key) {
+    case KEY_SIGMA: return kcExp;
+    case KEY_INV:   return kcInv;
+    case KEY_SQRT:  return kcSqrt;
+    case KEY_LOG:   return kcEToX;
+    case KEY_LN:    return kcLn;
+    case KEY_XEQ:   return kcXeq;
+  //case KEY_STO:   return kcSto;
+  //case KEY_RCL:   return kcRcl;
+  //case KEY_RDN:   return kcRdown;
+    case KEY_SIN:   return kcTri;
+    case KEY_COS:   return kcCC;
+    case KEY_TAN:   return kcShiftF;
+  //case KEY_ENTER: return kcEnter;
+  //case KEY_SWAP:  return kcSwap;
+  //case KEY_CHS:   return kcChs;
+  //case KEY_E:     return kcE;
+  //case KEY_BSP:   return kcBackspace;
+    case KEY_UP:    return kcUp;
+  //case KEY_7:     return kc7;
+  //case KEY_8:     return kc8;
+  //case KEY_9:     return kc9;
+    case KEY_DIV:   return kcDiv;
+    case KEY_DOWN:  return kcDown;
+  //case KEY_4:     return kc4;
+  //case KEY_5:     return kc5;
+  //case KEY_6:     return kc6;
+    case KEY_MUL:   return kcMul;
+    case KEY_SHIFT: return kcShiftG;
+  //case KEY_1:     return kc1;
+  //case KEY_2:     return kc2;
+  //case KEY_3:     return kc3;
+    case KEY_SUB:   return kcSub;
+    case KEY_EXIT:  return kcExit;
+  //case KEY_0:     return kc0;
+  //case KEY_DOT:   return kcDot;
+  //case KEY_RUN:   return kcRun;
+    case KEY_ADD:   return kcAdd;
+    default:        return key;
+  }
 }
 
 void program_main(void) {
-  int key = 0;
-  char charKey[3];
+  int key = kcNoKey;
+  int lastKey = kcNoKey;
   /*bool wp43KbdLayout, inFastRefresh = 0, inDownUpPress = 0, repeatDownUpPress = 0*/;
   //uint32_t now, previousRefresh, nextAutoRepeat = 0;
 
@@ -127,7 +131,7 @@ void program_main(void) {
   }
 
   wp43KbdLayout = (key == 37); // bottom left key
-  key = 0;
+  key = kcNoKey;
 
   lcd_clear_buf();
   fnReset(CONFIRMED);
@@ -388,14 +392,14 @@ void program_main(void) {
     //while(get_beep_volume() < 11) beep_volume_up(); start_buzzer_freq(220000); sys_delay(200); stop_buzzer();
 
     // Increase the refresh rate if we are in an UP/DOWN key press so we pick up auto key repeats
-    if(key == 27 || key == 32) {
+    if(key == kcUp || key == kcDown) {
       //inDownUpPress = 1;
       //nextAutoRepeat = now + KEY_AUTOREPEAT_FIRST_PERIOD;
       if(timerGetStatus(tidAutoRepeat) != tsRunning && (!shiftF || calcMode == cmPem) && !shiftG && (currentSoftmenuScrolls() || (calcMode != cmNormal && calcMode != cmNim && calcMode != cmAim))) {
         timerStart(tidAutoRepeat, key, KEY_AUTOREPEAT_FIRST_PERIOD);
       }
     }
-    else if(key == 0) {
+    else if(key == kcNoKey) {
       //inDownUpPress = 0;
       //repeatDownUpPress = 0;
       //nextAutoRepeat = 0;
@@ -403,42 +407,31 @@ void program_main(void) {
     }
     //else if(repeatDownUpPress) {
     //  keyAutoRepeat = 1;
-    //  key = 0;
+    //  key = kcNoKey;
     //  nextAutoRepeat = now + KEY_AUTOREPEAT_PERIOD;
     //  repeatDownUpPress = 0;
     //}
 
     //if(keyAutoRepeat) {
-    //  if(key == 27 || key == 32) { // UP or DOWN keys
+    //  if(key == kcUp || key == kcDown) { // UP or DOWN keys
     //    //beep(2200, 50);
-    //    key = 0; // to trigger btnReleased
+    //    key = kcNoKey; // to trigger btnReleased
     //  }
     //  else {
     //    key = -1;
     //  }
     //}
 
-    if(38 <= key && key <=43) { // Function key
-      sprintf(charKey, "%c", key+11);
-      btnFnPressed(charKey);
-      lcd_refresh();
-    }
-    else if(1 <= key && key <= 37) { // Not a function key
-      sprintf(charKey, "%02d", key - 1);
-      btnPressed(charKey);
+    if(1 <= key && key <= 43) {
+      btnPressed(key);
+      lastKey = key;
       lcd_refresh();
     }
     else if(key == 0) { // Autorepeat of UP/DOWN or key released
-      if(charKey[1] == 0) { // Last key pressed was one of the 6 function keys
-        btnFnReleased(charKey);
-      }
-      else { // Last key pressed was not one of the 6 function keys
-        //beep(440, 50);
-        btnReleased(charKey);
-        if(calcMode == cmPem && shiftF && ((charKey[0] == '2' && charKey[1] == '6') || (charKey[0] == '3' && charKey[1] == '1'))) {
-          shiftF = false;
-          refreshScreen();
-        }
+      btnReleased(lastKey);
+      if(calcMode == cmPem && shiftF && (lastKey == kcUp || lastKey == kcDown)) {
+        shiftF = false;
+        refreshScreen();
       }
       //keyAutoRepeat = 0;
       lcd_refresh();

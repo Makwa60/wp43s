@@ -775,7 +775,7 @@ void clearScreen(void) {
             }
 
             if(stringWidth(tmpString + 1500 + w, &standardFont, true, true) >= SCREEN_WIDTH - 8) { // 8 is the standard font cursor width
-              btnClicked("16"); // back space
+              btnClicked(kcBackspace);
             }
             else {
               showString(tmpString, &standardFont, 1, Y_POSITION_OF_NIM_LINE - 3, vmNormal, true, true);
@@ -1644,7 +1644,7 @@ void clearScreen(void) {
       }
 
       if(stringWidth(tmpString + 1500 + w, &standardFont, true, true) + wLastBaseStandard > SCREEN_WIDTH - 8) { // 8 is the standard font cursor width
-        btnClicked("16"); // back space
+        btnClicked(kcBackspace);
       }
       else {
         showString(tmpString, &standardFont, 0, Y_POSITION_OF_NIM_LINE - 3, vmNormal, true, true);

@@ -840,7 +840,7 @@ void runProgram(bool singleStep, uint16_t menuLabel) {
             break;
           }
           else if(key > 0) {
-            setLastKeyCode(key);
+            lastKeyCode = key;
           }
         }
       #endif // DMCP_BUILD
