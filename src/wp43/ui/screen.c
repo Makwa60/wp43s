@@ -350,6 +350,16 @@ void clearScreen(void) {
 
 
 
+  void cbRefreshLcd(uint16_t param) {
+    if(calcMode != cmTimerApp) {
+      refreshLcd();
+      lcd_refresh();
+    }
+    timerStart(tidRefreshLcd, NOPARAM, SCREEN_REFRESH_PERIOD);
+  }
+
+
+
   void cbShowNop(uint16_t param) {
     hideFunctionName();
     tmpString[0] = 0;

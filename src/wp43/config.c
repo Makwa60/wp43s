@@ -968,5 +968,7 @@ void configSetUpTimers(void) {
   timerConfig(tidTimerAppRedraw,           cbTimerAppRedraw);
   timerConfig(tidTimerAppDetectWrapAround, cbTimerAppDetectWrapAround);
   timerConfig(tidShowNop,                  cbShowNop);
+  timerConfig(tidRefreshLcd,               cbRefreshLcd);
   timerConfig(tidAsmActive,                cbAsmActive);
+  timerStart(tidRefreshLcd, NOPARAM, SCREEN_REFRESH_PERIOD);
 }

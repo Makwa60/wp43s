@@ -19,7 +19,6 @@
 
 bool     backToDMCP;
 uint32_t nextTimerRefresh;
-uint32_t nextScreenRefresh; // timer substitute for refreshLcd(), which does cursor blinking and other stuff
 bool     wp43KbdLayout;
 
 int convertKeyCode(int key) {
@@ -106,14 +105,6 @@ int convertKeyCode(int key) {
     case KEY_ADD:   return kcAdd;
     default:        return key;
   }
-}
-
-void cbRefreshLcd(uint16_t param) {
-  if(calcMode != cmTimerApp) {
-    refreshLcd();
-    lcd_refresh();
-  }
-  timerStart(tidRefreshLcd, NOPARAM, SCREEN_REFRESH_PERIOD);
 }
 
 void program_main(void) {
@@ -236,10 +227,7 @@ void program_main(void) {
   backToDMCP = false;
 
   lcd_refresh();
-  nextScreenRefresh = sys_current_ms() + SCREEN_REFRESH_PERIOD;
 
-  timerConfig(tidRefreshLcd, cbRefreshLcd);
-  timerStart(tidRefreshLcd, NOPARAM, SCREEN_REFRESH_PERIOD);
   nextTimerRefresh = 0;
 
   // Status flags:

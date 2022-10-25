@@ -39,20 +39,6 @@ char                debugString[10000];
   }
 #endif // EXPORT_ITEMS
 
-/**
- * Refreshes calc's screen.
- * This function is called every SCREEN_REFRESH_PERIOD ms by a GTK timer.
- *
- * \param[in] unusedData Not used
- * \return What will happen next?
- *   - true  = timer will call this function again
- *   - false = timer stops calling this function
- */
-gboolean refreshLcdCallback(gpointer unusedData) {
-  refreshLcd();
-  return TRUE;
-}
-
 /********************************************//**
  * \brief Refreshes timer. This function is
  * called every 5 ms by a GTK timer.
@@ -138,8 +124,6 @@ int main(int argc, char* argv[]) {
   restoreCalc();
   //ramDump();
   //refreshScreen();
-
-  gdk_threads_add_timeout(SCREEN_REFRESH_PERIOD, refreshLcdCallback, NULL); // refreshLcd is called every SCREEN_REFRESH_PERIOD ms
 
   gdk_threads_add_timeout(5, cbTimerRun, NULL);
 

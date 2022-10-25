@@ -82,6 +82,7 @@
      */
     void     hideCursor                         (void);
 
+    void     cbRefreshLcd                       (uint16_t param);
     void     cbShowNop                          (uint16_t param);
 
     /**
@@ -127,7 +128,8 @@
   #else
     #pragma GCC diagnostic ignored "-Wunused-parameter"
 
-    static inline void cbShowNop(uint16_t param) {}
+    static inline void cbRefreshLcd(uint16_t param) {}
+    static inline void cbShowNop   (uint16_t param) {}
   #endif // !TESTSUITE_BUILD
 
 #endif // !SCREEN_H
