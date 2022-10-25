@@ -2444,10 +2444,20 @@ smallFont:
     int16_t        maxLeftWidth[MATRIX_MAX_COLUMNS] = {};
     const int16_t  exponentOutOfRange = 0x4000;
     bool           noFix = false;
+    bool           singleDigitDoesNotFit = false;
     const int16_t  dspDigits = displayFormatDigits;
+    int            minDigits = 1;
+    int            maxDigits = 15;
+    int            previousDigitSpan = 14;
+    int            k = 1;
 
     begin:
-    for(int k = 15; k >= 1; k--) {
+    do {
+      previousDigitSpan = maxDigits - minDigits;
+      totalWidth = 0;
+      for(int j = 0; j < MATRIX_MAX_COLUMNS; j++) {
+        maxRightWidth[j] = maxLeftWidth[j] = 0;
+      }
       if(displayFormat == dfAll) {
         *digits = k;
       }
@@ -2463,10 +2473,6 @@ smallFont:
           real34ToDisplayString(&r34Val, amNone, tmpString, font, maxWidth, displayFormat == dfAll ? k : 15, true, STD_SPACE_4_PER_EM, true);
           if(displayFormat == dfAll && !noFix && strstr(tmpString, STD_SUB_10)) { // something like SCI
             noFix = true;
-            totalWidth = 0;
-            for(int p = 0; p < MATRIX_MAX_COLUMNS; ++p) {
-              maxRightWidth[p] = maxLeftWidth[p] = 0;
-            }
             goto begin; // redo
           }
           width = stringWidth(tmpString, font, true, true) + 1;
@@ -2523,18 +2529,53 @@ smallFont:
       if(displayFormat != dfAll) {
         break;
       }
-      else if(totalWidth <= maxWidth) {
+      else if(totalWidth > maxWidth && k == 1) {
+        singleDigitDoesNotFit = true;
+      }
+      if(k == 1 && maxDigits == 15 && !noFix && totalWidth > maxWidth) {
         *digits = k;
         break;
       }
-      else if(k > 1) {
-        totalWidth = 0;
-        for(int j = 0; j < maxCols; j++) {
-          maxRightWidth[j] = 0;
-          maxLeftWidth[j] = 0;
-        }
+      else if(k == 1 && maxDigits == 15) {
+        k = 15;
       }
-    }
+      else if(k == 15 && !noFix && totalWidth <= maxWidth) {
+        *digits = k;
+        break;
+      }
+      else if(k == 15 && singleDigitDoesNotFit && noFix && totalWidth > maxWidth) {
+        *digits = k;
+        break;
+      }
+      else if(k == 15 && minDigits == 1) {
+        k = 7;
+      }
+      else if(maxDigits == minDigits && totalWidth > maxWidth) {
+        --k;
+        previousDigitSpan = 1; // we must redo
+      }
+      else if(maxDigits == minDigits) {
+        *digits = k;
+        break;
+      }
+      else if(maxDigits - minDigits == 1 && totalWidth > maxWidth) {
+        --maxDigits;
+        --k;
+      }
+      else if(maxDigits - minDigits == 1) {
+        ++minDigits;
+        ++k;
+      }
+      else if(totalWidth > maxWidth) {
+        maxDigits = k;
+        k = (minDigits + maxDigits) / 2;
+      }
+      else {
+        minDigits = k;
+        k = (minDigits + maxDigits) / 2;
+      }
+      noFix = false;
+    } while((maxDigits > minDigits || previousDigitSpan > 0) && k >= 0);
     return totalWidth * (noFix ? -1 : 1);
   }
 
@@ -2602,20 +2643,34 @@ smallFont:
     }
 
     int16_t baseWidth = (leftEllipsis ? stringWidth(STD_ELLIPSIS " ", font, true, true) : 0) + (rightEllipsis ? stringWidth(STD_ELLIPSIS, font, true, true) : 0);
-    totalWidth = baseWidth + getComplexMatrixColumnWidths(matrix, prefixWidth, font, colWidth, colWidth_r, colWidth_i, rPadWidth_r, rPadWidth_i, &digits, maxCols);
+    int16_t mtxWidth = getComplexMatrixColumnWidths(matrix, prefixWidth, font, colWidth, colWidth_r, colWidth_i, rPadWidth_r, rPadWidth_i, &digits, maxCols);
+    bool    noFix = (mtxWidth < 0);
+    mtxWidth = abs(mtxWidth);
+    totalWidth = baseWidth + mtxWidth;
+    if(displayFormat == dfAll && noFix) {
+      displayFormat = getSystemFlag(FLAG_ALLENG) ? dfEng : dfSci;
+      displayFormatDigits = digits;
+    }
     if(totalWidth > maxWidth || leftEllipsis) {
       if(font == &numericFont) {
+        displayFormat = tmpDisplayFormat;
+        displayFormatDigits = tmpDisplayFormatDigits;
         goto smallFont;
       }
       else if(exponentLimit > 99) {
         exponentLimit = 99;
+        displayFormat = tmpDisplayFormat;
+        displayFormatDigits = tmpDisplayFormatDigits;
         goto smallFont;
       }
       else {
         displayFormat = dfSci;
         displayFormatDigits = 2;
         clearSystemFlag(FLAG_MULTx);
-        totalWidth = baseWidth + getComplexMatrixColumnWidths(matrix, prefixWidth, font, colWidth, colWidth_r, colWidth_i, rPadWidth_r, rPadWidth_i, &digits, maxCols);
+        mtxWidth = getComplexMatrixColumnWidths(matrix, prefixWidth, font, colWidth, colWidth_r, colWidth_i, rPadWidth_r, rPadWidth_i, &digits, maxCols);
+        noFix = (mtxWidth < 0);
+        mtxWidth = abs(mtxWidth);
+        totalWidth = baseWidth + mtxWidth;
         if(totalWidth > maxWidth) {
           maxCols--;
           goto smallFont;
@@ -2765,6 +2820,13 @@ smallFont:
     int16_t        maxRightWidth_i[MATRIX_MAX_COLUMNS] = {};
     int16_t        maxLeftWidth_i[MATRIX_MAX_COLUMNS] = {};
     const int16_t  exponentOutOfRange = 0x4000;
+    bool           noFix = false;
+    bool           singleDigitDoesNotFit = false;
+    const int16_t  dspDigits = displayFormatDigits;
+    int            minDigits = 1;
+    int            maxDigits = 15;
+    int            previousDigitSpan = 14;
+    int            k = 1;
 
     uint16_t cpxUnitWidth;
     if(getSystemFlag(FLAG_POLAR)) { // polar mode
@@ -2777,9 +2839,19 @@ smallFont:
     }
     cpxUnitWidth = stringWidth(tmpString, font, true, true);
 
-    for(int k = 15; k >= 1; k--) {
+    begin:
+    do {
+      previousDigitSpan = maxDigits - minDigits;
+      totalWidth = 0;
+      for(int j = 0; j < MATRIX_MAX_COLUMNS; j++) {
+        maxRightWidth_r[j] = maxLeftWidth_r[j] =  maxRightWidth_i[j] = maxLeftWidth_i[j] = 0;
+      }
       if(displayFormat == dfAll) {
         *digits = k;
+      }
+      if(displayFormat == dfAll && noFix) { // something like SCI
+        displayFormat = getSystemFlag(FLAG_ALLENG) ? dfEng : dfSci;
+        displayFormatDigits = k;
       }
       for(int i = 0; i < maxRows; i++) {
         for(int j = 0; j < maxCols; j++) {
@@ -2798,6 +2870,10 @@ smallFont:
           rPadWidth_r[i * MATRIX_MAX_COLUMNS + j] = 0;
           real34SetPositiveSign(VARIABLE_REAL34_DATA(&c34Val));
           real34ToDisplayString(VARIABLE_REAL34_DATA(&c34Val), amNone, tmpString, font, maxWidth, displayFormat == dfAll ? k : 15, true, STD_SPACE_4_PER_EM, true);
+          if(displayFormat == dfAll && !noFix && strstr(tmpString, STD_SUB_10)) { // something like SCI
+            noFix = true;
+            goto begin; // redo
+          }
           width = stringWidth(tmpString, font, true, true) + 1;
           if(strstr(tmpString, ".") || strstr(tmpString, ",")) {
             for(char *xStr = tmpString; *xStr != 0; xStr++) {
@@ -2823,6 +2899,10 @@ smallFont:
             real34SetPositiveSign(VARIABLE_IMAG34_DATA(&c34Val));
           }
           real34ToDisplayString(VARIABLE_IMAG34_DATA(&c34Val), getSystemFlag(FLAG_POLAR) ? currentAngularMode : amNone, tmpString, font, maxWidth, displayFormat == dfAll ? k : 15, true, STD_SPACE_4_PER_EM, false);
+          if(displayFormat == dfAll && !noFix && strstr(tmpString, STD_SUB_10)) { // something like SCI
+            noFix = true;
+            goto begin; // redo
+          }
           width = stringWidth(tmpString, font, true, true) + 1;
           if(strstr(tmpString, ".") || strstr(tmpString, ",")) {
             for(char *xStr = tmpString; *xStr != 0; xStr++) {
@@ -2883,24 +2963,61 @@ smallFont:
         totalWidth += colWidth[j] + stringWidth(STD_SPACE_FIGURE, font, true, true) * 2;
       }
       totalWidth -= stringWidth(STD_SPACE_FIGURE, font, true, true);
+      if(noFix) {
+        displayFormat = dfAll;
+        displayFormatDigits = dspDigits;
+      }
       if(displayFormat != dfAll) {
         break;
       }
-      else if(totalWidth <= maxWidth) {
+      else if(totalWidth > maxWidth && k == 1) {
+        singleDigitDoesNotFit = true;
+      }
+      if(k == 1 && maxDigits == 15 && !noFix && totalWidth > maxWidth) {
         *digits = k;
         break;
       }
-      else if(k > 1) {
-        totalWidth = 0;
-        for(int j = 0; j < maxCols; j++) {
-          maxRightWidth_r[j] = 0;
-          maxLeftWidth_r[j] = 0;
-          maxRightWidth_i[j] = 0;
-          maxLeftWidth_i[j] = 0;
-        }
+      else if(k == 1 && maxDigits == 15) {
+        k = 15;
       }
-    }
-    return totalWidth;
+      else if(k == 15 && !noFix && totalWidth <= maxWidth) {
+        *digits = k;
+        break;
+      }
+      else if(k == 15 && singleDigitDoesNotFit && noFix && totalWidth > maxWidth) {
+        *digits = k;
+        break;
+      }
+      else if(k == 15 && minDigits == 1) {
+        k = 7;
+      }
+      else if(maxDigits == minDigits && totalWidth > maxWidth) {
+        --k;
+        previousDigitSpan = 1; // we must redo
+      }
+      else if(maxDigits == minDigits) {
+        *digits = k;
+        break;
+      }
+      else if(maxDigits - minDigits == 1 && totalWidth > maxWidth) {
+        --maxDigits;
+        --k;
+      }
+      else if(maxDigits - minDigits == 1) {
+        ++minDigits;
+        ++k;
+      }
+      else if(totalWidth > maxWidth) {
+        maxDigits = k;
+        k = (minDigits + maxDigits) / 2;
+      }
+      else {
+        minDigits = k;
+        k = (minDigits + maxDigits) / 2;
+      }
+      noFix = false;
+    } while((maxDigits > minDigits || previousDigitSpan > 0) && k >= 0);
+    return totalWidth * (noFix ? -1 : 1);
   }
 
 
