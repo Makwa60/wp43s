@@ -23,4 +23,6 @@
   extern GtkWidget *screen;
   extern GtkWidget *frmCalc;
 
+  void simRefreshTimers(void);
+
 #endif // !WP43_GTK_H

@@ -38,6 +38,8 @@ char                debugString[10000];
     return compareString(a, b, CMP_EXTENSIVE);
   }
 #endif // EXPORT_ITEMS
+static guint        _simTimer;
+static bool         _simTimerValid = false;
 
 /********************************************//**
  * \brief Refreshes timer. This function is
@@ -49,11 +51,20 @@ char                debugString[10000];
  *                          * false = timer stops calling this function
  ***********************************************/
 gboolean cbTimerRun(gpointer unusedData) {
-  uint32_t val = timerRun();
-  if(val == 0) {
-    val = 1;
+  simRefreshTimers();
+  return FALSE;
+}
+
+void simRefreshTimers(void) {
+  if(_simTimerValid) {
+    g_source_remove(_simTimer);
+    _simTimerValid = false;
   }
-  return TRUE;
+  uint32_t time = timerRun();
+  if(time > 0) {
+    _simTimer = g_timeout_add(time, cbTimerRun, NULL);
+    _simTimerValid = true;
+  }
 }
 
 int main(int argc, char* argv[]) {
@@ -125,7 +136,7 @@ int main(int argc, char* argv[]) {
   //ramDump();
   //refreshScreen();
 
-  gdk_threads_add_timeout(5, cbTimerRun, NULL);
+  simRefreshTimers();
 
   if(getSystemFlag(FLAG_AUTXEQ)) {
     clearSystemFlag(FLAG_AUTXEQ);
