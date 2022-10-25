@@ -2537,7 +2537,7 @@ smallFont:
         *digits = k;
         break;
       }
-      else if(k == 15 && singleDigitDoesNotFit && totalWidth > maxWidth) {
+      else if(k == 15 && singleDigitDoesNotFit && noFix && totalWidth > maxWidth) {
         *digits = k;
         break;
       }
@@ -2547,7 +2547,7 @@ smallFont:
       else if(maxDigits == minDigits && totalWidth > maxWidth) {
         --k;
       }
-      else if(maxDigits - minDigits == 1) {
+      else if(maxDigits == minDigits) {
         *digits = k;
         break;
       }
