@@ -968,4 +968,5 @@ void configSetUpTimers(void) {
   timerConfig(tidTimerAppRedraw,           cbTimerAppRedraw);
   timerConfig(tidTimerAppDetectWrapAround, cbTimerAppDetectWrapAround);
   timerConfig(tidShowNop,                  cbShowNop);
+  timerConfig(tidAsmActive,                cbAsmActive);
 }

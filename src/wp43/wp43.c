@@ -169,7 +169,6 @@ int32_t                graphVariable;
 uint32_t               firstGregorianDay;
 uint32_t               denMax;
 uint32_t               lastIntegerBase;
-uint32_t               alphaSelectionTimer;
 uint32_t               xCursor;
 uint32_t               yCursor;
 uint32_t               tamOverPemYPos;

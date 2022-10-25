@@ -147,11 +147,6 @@
         }
       }
     #endif // PC_BUILD DMCP_BUILD
-
-    // Alpha selection timer
-    if(catalog && alphaSelectionTimer != 0 && (timeUptimeMs() - alphaSelectionTimer) > 3000) { // More than 3 seconds elapsed since last keypress
-      resetAlphaSelectionBuffer();
-    }
   }
 #endif // !TESTSUITE_BUILD || GENERATE_CATALOGS
 

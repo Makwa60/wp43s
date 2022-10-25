@@ -9,6 +9,7 @@
 #include "constantPointers.h"
 #include "constants.h"
 #include "conversionAngles.h"
+#include "core/timer.h"
 #include "dateTime.h"
 #include "debug.h"
 #include "display.h"
@@ -36,6 +37,14 @@
 #include "wp43.h"
 
 #if !defined(TESTSUITE_BUILD)
+  void cbAsmActive(uint16_t param) {
+    if(catalog) {
+      resetAlphaSelectionBuffer();
+    }
+  }
+
+
+
   void fnAim(uint16_t unusedButMandatoryParameter) {
     shiftF = false;
     shiftG = false;
@@ -277,7 +286,7 @@
 
   void resetAlphaSelectionBuffer(void) {
     lgCatalogSelection = 0;
-    alphaSelectionTimer = 0;
+    timerStop(tidAsmActive);
     asmBuffer[0] = 0;
     fnKeyInCatalog = 0;
   }
@@ -367,7 +376,7 @@
 
           softmenuStack[0].firstItem = findFirstItem(asmBuffer);
           setCatalogLastPos();
-          alphaSelectionTimer = timeUptimeMs();
+          timerStart(tidAsmActive, NOPARAM, 3000);
         }
       }
 

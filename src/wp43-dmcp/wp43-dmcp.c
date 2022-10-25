@@ -139,6 +139,7 @@ void program_main(void) {
   key = kcNoKey;
 
   lcd_clear_buf();
+  configSetUpTimers();
   fnReset(CONFIRMED);
   refreshScreen();
 
@@ -237,7 +238,6 @@ void program_main(void) {
   lcd_refresh();
   nextScreenRefresh = sys_current_ms() + SCREEN_REFRESH_PERIOD;
 
-  configSetUpTimers();
   timerConfig(tidRefreshLcd, cbRefreshLcd);
   timerStart(tidRefreshLcd, NOPARAM, SCREEN_REFRESH_PERIOD);
   nextTimerRefresh = 0;

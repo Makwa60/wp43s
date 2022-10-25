@@ -131,6 +131,8 @@ int main(int argc, char* argv[]) {
   #endif // EXPORT_ITEMS
 
   gtk_init(&argc, &argv);
+  configSetUpTimers();
+
   setupUI();
 
   restoreCalc();
@@ -139,7 +141,6 @@ int main(int argc, char* argv[]) {
 
   gdk_threads_add_timeout(SCREEN_REFRESH_PERIOD, refreshLcdCallback, NULL); // refreshLcd is called every SCREEN_REFRESH_PERIOD ms
 
-  configSetUpTimers();
   gdk_threads_add_timeout(5, cbTimerRun, NULL);
 
   if(getSystemFlag(FLAG_AUTXEQ)) {

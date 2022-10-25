@@ -11,6 +11,8 @@
   #include "realType.h"
 
   #if !defined(TESTSUITE_BUILD)
+    void     cbAsmActive              (uint16_t param);
+
     void     fnAim                    (uint16_t unusedButMandatoryParameter);
     void     resetAlphaSelectionBuffer(void);
     uint16_t convertItemToSubOrSup    (uint16_t item, int16_t subOrSup);

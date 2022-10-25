@@ -221,7 +221,6 @@
   extern uint32_t               firstGregorianDay;
   extern uint32_t               denMax;
   extern uint32_t               lastIntegerBase;
-  extern uint32_t               alphaSelectionTimer;
   extern uint32_t               xCursor;
   extern uint32_t               yCursor;
   extern uint32_t               tamOverPemYPos;
