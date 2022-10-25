@@ -30,6 +30,10 @@
     void     closeNim                 (void);
     void     closeAim                 (void);
     void     nimBufferToDisplayBuffer (const char *buffer, char *displayBuffer);
+  #else
+    #pragma GCC diagnostic ignored "-Wunused-parameter"
+
+    static inline void cbAsmActive(uint16_t param) {}
   #endif // !TESTSUITE_BUILD
 
 #endif // !BUFFERIZE_H

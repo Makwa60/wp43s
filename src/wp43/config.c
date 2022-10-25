@@ -964,7 +964,7 @@ void backToSystem(uint16_t unusedButMandatoryParameter) {
 
 void configSetUpTimers(void) {
   timerReset();
-  timerConfig(tidAutoRepeat,               execAutoRepeat);
+  timerConfig(tidAutoRepeat,               cbAutoRepeat);
   timerConfig(tidTimerAppRedraw,           cbTimerAppRedraw);
   timerConfig(tidTimerAppDetectWrapAround, cbTimerAppDetectWrapAround);
   timerConfig(tidShowNop,                  cbShowNop);

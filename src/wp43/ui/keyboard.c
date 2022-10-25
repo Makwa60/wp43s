@@ -46,10 +46,11 @@
 
 #include "wp43.h"
 
-keyCode_t        lastKeyCode;
-static bool      inAutoRepeat = false;
+keyCode_t lastKeyCode;
 
 #if !defined(TESTSUITE_BUILD)
+  static bool inAutoRepeat = false;
+
   int16_t determineFunctionKeyItem(keyCode_t keyCode) {
     int16_t item = ITM_NOP;
 
@@ -258,7 +259,7 @@ static bool      inAutoRepeat = false;
 
 
 
-  void execAutoRepeat(uint16_t key) {
+  void cbAutoRepeat(uint16_t key) {
     bool    f = shiftF;
     bool    g = shiftG;
     uint8_t origScreenUpdatingMode = screenUpdatingMode;

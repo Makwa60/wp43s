@@ -124,6 +124,10 @@
     void     clearTamBuffer                     (void);
     void     clearShiftState                    (void);
     void     displayShiftAndTamBuffer           (void);
+  #else
+    #pragma GCC diagnostic ignored "-Wunused-parameter"
+
+    static inline void cbShowNop(uint16_t param) {}
   #endif // !TESTSUITE_BUILD
 
 #endif // !SCREEN_H

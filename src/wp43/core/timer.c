@@ -20,6 +20,10 @@ typedef struct {
 
 static timerState_t _timer[MAX_TIMER_ID];
 
+#if !defined(NDEBUG)
+  static bool _timerInRun = false;
+#endif // !NDEBUG
+
 // Assume that the expiry is in the future and calculate the difference
 // If the difference is large (> UINT32_MAX/2) then the timer has expired
 static uint32_t _timerDiff(uint32_t currTime, uint32_t expire) {
@@ -32,9 +36,14 @@ static uint32_t _timerDiff(uint32_t currTime, uint32_t expire) {
 
 
 uint32_t timerRun(void) {
+  #if !defined(NDEBUG)
+    // Timer is not re-entrant
+    assert(!_timerInRun);
+    _timerInRun = true;
+  #endif // !NDEBUG
   uint32_t currTime = timeUptimeMs();
-  bool anyRemaining = false;
   uint32_t timeUntilNextRun = UINT32_MAX;
+  bool     anyRemaining = false;
 
   for(int i = 0; i < MAX_TIMER_ID; i++) {
     if(_timer[i].state == tsRunning) {
@@ -47,12 +56,18 @@ uint32_t timerRun(void) {
           diff = _timerDiff(currTime, _timer[i].expire);
         }
       }
-      if(_timer[i].state == tsRunning && diff < timeUntilNextRun) {
+      if(_timer[i].state == tsRunning && (diff + 1) < timeUntilNextRun) {
         anyRemaining = true;
-        timeUntilNextRun = diff;
+        // Add on one so that a timer expiry of 0 won't be interpreted as
+        // no timers
+        timeUntilNextRun = diff + 1;
       }
     }
   }
+
+  #if !defined(NDEBUG)
+    _timerInRun = false;
+  #endif // !NDEBUG
 
   if(!anyRemaining) {
     anyRemaining = false;
@@ -87,6 +102,7 @@ void timerConfig(timerId_t nr, timerCallback_t func) {
 void timerStart(timerId_t nr, uint16_t param, uint32_t time) {
   assert(nr < MAX_TIMER_ID);
   assert(_timer[nr].state != tsUnused);
+  assert(time < (UINT32_MAX / 2));
 
   _timer[nr].param  = param;
   _timer[nr].expire = timeUptimeMs() + time;
