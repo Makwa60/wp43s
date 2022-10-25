@@ -3,13 +3,14 @@
 
 #include "wp43-gtk.h"
 #include "apps/timerApp.h"
+#include "config.h"
 #include "core/memory.h"
+#include "core/timer.h"
 #include "flags.h"
 #include "gtkGui.h"
 #include "items.h"
 #include "longIntegerType.h"
 #include "saveRestoreCalcState.h"
-#include "timer.h"
 #include "ui/keyboard.h"
 #include "ui/screen.h"
 #include <stdbool.h>
@@ -61,8 +62,11 @@ gboolean refreshLcdCallback(gpointer unusedData) {
  *                          * true  = timer will call this function again
  *                          * false = timer stops calling this function
  ***********************************************/
-gboolean timerRefreshCallback(gpointer unusedData) {
-  timerRefresh();
+gboolean cbTimerRun(gpointer unusedData) {
+  uint32_t val = timerRun();
+  if(val == 0) {
+    val = 1;
+  }
   return TRUE;
 }
 
@@ -135,11 +139,8 @@ int main(int argc, char* argv[]) {
 
   gdk_threads_add_timeout(SCREEN_REFRESH_PERIOD, refreshLcdCallback, NULL); // refreshLcd is called every SCREEN_REFRESH_PERIOD ms
 
-  timerReset();
-  timerConfig(tidTimerAppRedraw,           cbTimerAppRedraw,           NOPARAM);
-  timerConfig(tidTimerAppDetectWrapAround, cbTimerAppDetectWrapAround, NOPARAM);
-  //timerConfig(tidShowNop,                  execNOPTimeout,             NOPARAM);
-  gdk_threads_add_timeout(5, timerRefreshCallback, NULL);
+  configSetUpTimers();
+  gdk_threads_add_timeout(5, cbTimerRun, NULL);
 
   if(getSystemFlag(FLAG_AUTXEQ)) {
     clearSystemFlag(FLAG_AUTXEQ);

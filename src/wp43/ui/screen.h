@@ -82,6 +82,8 @@
      */
     void     hideCursor                         (void);
 
+    void     cbShowNop                          (uint16_t param);
+
     /**
      * Displays the function name.
      * The function name of the currently pressed button is shown in the

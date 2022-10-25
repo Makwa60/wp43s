@@ -6,6 +6,7 @@
 #include "calcMode.h"
 #include "charString.h"
 #include "constantPointers.h"
+#include "core/timer.h"
 #include "debug.h"
 #include "error.h"
 #include "flags.h"
@@ -18,7 +19,6 @@
 #include "registerValueConversions.h"
 #include "stack.h"
 #include "stats.h"
-#include "timer.h"
 #include "ui/screen.h"
 #include "ui/softmenus.h"
 #include <assert.h>
@@ -181,12 +181,7 @@ void timerAppResetState(void) {
     if(calcMode == cmTimerApp) {
       timerAppDraw();
       displayShiftAndTamBuffer();
-      #if defined(DMCP_BUILD)
-        refreshLcd();
-        lcd_refresh();
-      #else // !DMCP_BUILD
-        refreshLcd();
-      #endif // DMCP_BUILD
+      refreshLcd();
     }
   }
 

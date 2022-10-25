@@ -14,6 +14,7 @@
 #include "charString.h"
 #include "constantPointers.h"
 #include "core/memory.h"
+#include "core/timer.h"
 #include "curveFitting.h"
 #include "dateTime.h"
 #include "debug.h"
@@ -35,7 +36,6 @@
 #include "programming/manage.h"
 #include "registers.h"
 #include "registerValueConversions.h"
-#include "timer.h"
 #include "ui/bufferize.h"
 #include "ui/keyboard.h"
 #include "ui/softmenus.h"
@@ -85,20 +85,6 @@
       #endif // PC_BUILD
     }
 
-    // Function name display
-    if(showFunctionNameCounter > 0) {
-      #if defined(PC_BUILD)
-        showFunctionNameCounter -= SCREEN_REFRESH_PERIOD;
-      #elif defined(DMCP_BUILD)
-        showFunctionNameCounter -= FAST_SCREEN_REFRESH_PERIOD;
-      #endif // PC_BUILD DMCP_BUILD
-      if(showFunctionNameCounter <= 0) {
-        hideFunctionName();
-        tmpString[0] = 0;
-        showFunctionName(ITM_NOP, 0);
-      }
-    }
-
     // Update date and time
     getTimeString(dateTimeString);
     if(strcmp(dateTimeString, oldTime)) {
@@ -107,7 +93,7 @@
         showDateTime();
       #endif // (DEBUG_INSTEAD_STATUS_BAR != 1)
       #if defined(DMCP_BUILD)
-        if(!getSystemFlag(FLAG_AUTOFF) || (nextTimerRefresh != 0)) {
+        if(!getSystemFlag(FLAG_AUTOFF) || (calcMode == cmTimerApp)) {
           reset_auto_off();
         }
       #endif // DMCP_BUILD
@@ -369,6 +355,14 @@ void clearScreen(void) {
 
 
 
+  void cbShowNop(uint16_t param) {
+    hideFunctionName();
+    tmpString[0] = 0;
+    showFunctionName(ITM_NOP, 0);
+  }
+
+
+
   void showFunctionName(int16_t item, int16_t delayInMs) {
     uint32_t fcol, frow, gcol, grow;
     char *functionName;
@@ -384,7 +378,9 @@ void clearScreen(void) {
     }
 
     showFunctionNameItem = item;
-    showFunctionNameCounter = delayInMs;
+    if(delayInMs != 0) {
+      timerStart(tidShowNop, NOPARAM, delayInMs);
+    }
     if(stringWidth(functionName, &standardFont, true, true) + 1 + lineTWidth > SCREEN_WIDTH) {
       clearRegisterLine(REGISTER_T, true, false);
     }
@@ -405,7 +401,7 @@ void clearScreen(void) {
     getStringBounds(tmpString[0] != 0 ? tmpString : indexOfItems[abs(showFunctionNameItem)].itemCatalogName, &standardFont, &col, &row);
     lcd_fill_rect(1, Y_POSITION_OF_REGISTER_T_LINE+6, col, row, LCD_SET_VALUE);
     showFunctionNameItem = 0;
-    showFunctionNameCounter = 0;
+    timerStop(tidShowNop);
   }
 
 

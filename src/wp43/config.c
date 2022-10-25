@@ -12,6 +12,7 @@
 #include "charString.h"
 #include "constantPointers.h"
 #include "core/memory.h"
+#include "core/timer.h"
 #include "debug.h"
 #include "display.h"
 #include "error.h"
@@ -33,6 +34,7 @@
 #include "stats.h"
 #include "ui/bufferize.h"
 #include "ui/keyboard.h"
+#include "ui/screen.h"
 #include "ui/tam.h"
 #include <stdbool.h>
 #include <stdlib.h>
@@ -956,4 +958,14 @@ void backToSystem(uint16_t unusedButMandatoryParameter) {
   #if defined(DMCP_BUILD)
     backToDMCP = true;
   #endif // DMCP_BUILD
+}
+
+
+
+void configSetUpTimers(void) {
+  timerReset();
+  timerConfig(tidAutoRepeat,               execAutoRepeat);
+  timerConfig(tidTimerAppRedraw,           cbTimerAppRedraw);
+  timerConfig(tidTimerAppDetectWrapAround, cbTimerAppDetectWrapAround);
+  timerConfig(tidShowNop,                  cbShowNop);
 }

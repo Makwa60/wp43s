@@ -8,6 +8,7 @@
 #include "constantPointers.h"
 #include "conversionAngles.h"
 #include "core/memory.h"
+#include "core/timer.h"
 #include "dateTime.h"
 #include "defines.h"
 #include "error.h"
@@ -23,7 +24,6 @@
 #include "registerValueConversions.h"
 #include "stack.h"
 #include "store.h"
-#include "timer.h"
 #include "ui/keyboard.h"
 #include "ui/screen.h"
 #include "ui/softmenus.h"
@@ -830,11 +830,10 @@ void runProgram(bool singleStep, uint16_t menuLabel) {
         if(!nestedEngine) {
           int key = key_pop();
           key = convertKeyCode(key);
-          if(key == 36 || key == 37) {
+          if(key == kcRun || key == kcExit) {
             programRunStop = PGM_WAITING;
             refreshScreen();
             lcd_refresh();
-            timerStart(tidKeyboardActive, NOPARAM, 60000);
             wait_for_key_release(0);
             key_pop();
             break;
@@ -866,7 +865,6 @@ stopProgram:
       showHideHourGlass();
       #if defined(DMCP_BUILD)
         lcd_refresh();
-        timerStart(tidKeyboardActive, NOPARAM, FAST_SCREEN_REFRESH_PERIOD+50);
       #else // !DMCP_BUILD
         refreshLcd();
       #endif // DMCP_BUILD

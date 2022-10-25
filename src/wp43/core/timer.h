@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: Copyright The WP43 Authors
 
 /**
- * \file timer.h
+ * \file core/timer.h
  */
 #if !defined(TIMER_H)
   #define TIMER_H
@@ -13,8 +13,8 @@
     tidAutoRepeat               = 0,
     tidTimerAppRedraw           = 1,
     tidTimerAppDetectWrapAround = 2,
-    tidKeyboardActive           = 3,
-    tidShowNop                  = 4
+    tidShowNop                  = 3,
+    tidRefreshLcd               = 4
   } timerId_t;
   #define MAX_TIMER_ID            5
 
@@ -25,15 +25,15 @@
     tsCompleted = 3
   } timerStatus_t;
 
-  void          timerRefresh   (void);
-  void          timerReset     (void);
+  typedef void (*timerCallback_t)(uint16_t param);
+
   void          timerDummyTest (uint16_t param);
-  void          timerConfig    (timerId_t nr, void(*func)(uint16_t), uint16_t param);
+
+  uint32_t      timerRun       (void);
+  void          timerReset     (void);
+  void          timerConfig    (timerId_t nr, timerCallback_t func);
   void          timerStart     (timerId_t nr, uint16_t param, uint32_t time);      // Start Timer, 0..n-1
   void          timerStop      (timerId_t nr);                                     // Stop Timer, 0..n-1
-  void          timerExec      (timerId_t nr);                                     // Execute Timer, 0..n-1
-  void          timerDel       (timerId_t nr);                                     // Delete Timer, 0..n-1
-  uint16_t      timerGetParam  (timerId_t nr);
   timerStatus_t timerGetStatus (timerId_t nr);
 
 #endif // !TIMER_H

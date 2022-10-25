@@ -4,6 +4,7 @@
 #include "programming/input.h"
 
 #include "constantPointers.h"
+#include "core/timer.h"
 #include "defines.h"
 #include "debug.h"
 #include "error.h"
@@ -15,7 +16,6 @@
 #include "registers.h"
 #include "registerValueConversions.h"
 #include "stack.h"
-#include "timer.h"
 #include "ui/keyboard.h"
 #include "ui/screen.h"
 #include "ui/softmenus.h"
@@ -62,11 +62,10 @@ void fnPause(uint16_t duration) {
         int key = key_pop();
         key = convertKeyCode(key);
         if(key > 0) {
-          if((key == 36 || key == 37) && previousProgramRunStop == PGM_RUNNING) {
+          if((key == kcRun || key == kcExit) && previousProgramRunStop == PGM_RUNNING) {
             previousProgramRunStop = programRunStop = PGM_WAITING;
           }
           lastKeyCode = key;
-          timerStart(tidKeyboardActive, NOPARAM, 60000);
           wait_for_key_release(0);
           key_pop();
           break;

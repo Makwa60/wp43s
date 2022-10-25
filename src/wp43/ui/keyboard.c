@@ -15,6 +15,7 @@
 #include "config.h"
 #include "constants.h"
 #include "core/memory.h"
+#include "core/timer.h"
 #include "debug.h"
 #include "error.h"
 #include "flags.h"
@@ -32,7 +33,6 @@
 #include "sort.h"
 #include "stack.h"
 #include "stats.h"
-#include "timer.h"
 #include "ui/bufferize.h"
 #include "ui/screen.h"
 #include "ui/softmenus.h"
@@ -46,7 +46,8 @@
 
 #include "wp43.h"
 
-keyCode_t lastKeyCode;
+keyCode_t        lastKeyCode;
+static bool      inAutoRepeat = false;
 
 #if !defined(TESTSUITE_BUILD)
   int16_t determineFunctionKeyItem(keyCode_t keyCode) {
@@ -258,20 +259,18 @@ keyCode_t lastKeyCode;
 
 
   void execAutoRepeat(uint16_t key) {
-    #if defined(DMCP_BUILD)
-      bool    f = shiftF;
-      bool    g = shiftG;
-      uint8_t origScreenUpdatingMode = screenUpdatingMode;
+    bool    f = shiftF;
+    bool    g = shiftG;
+    uint8_t origScreenUpdatingMode = screenUpdatingMode;
 
-      timerStart(tidAutoRepeat, key, KEY_AUTOREPEAT_PERIOD);
+    timerStart(tidAutoRepeat, key, KEY_AUTOREPEAT_PERIOD);
 
-      btnClicked(key);
-      screenUpdatingMode = origScreenUpdatingMode;
-      shiftF = f;
-      shiftG = g;
-      refreshLcd();
-      lcd_refresh_dma();
-    #endif // DMCP_BUILD
+    inAutoRepeat = true;
+    btnClicked(key);
+    inAutoRepeat = false;
+    screenUpdatingMode = origScreenUpdatingMode;
+    shiftF = f;
+    shiftG = g;
   }
 
 
@@ -839,6 +838,12 @@ keyCode_t lastKeyCode;
     }
     asnKey = keyCode;
 
+    if(keyCode == kcUp || keyCode == kcDown) {
+      if(!inAutoRepeat && (!shiftF || calcMode == cmPem) && !shiftG && (currentSoftmenuScrolls() || (calcMode != cmNormal && calcMode != cmNim && calcMode != cmAim))) {
+        timerStart(tidAutoRepeat, keyCode, KEY_AUTOREPEAT_FIRST_PERIOD);
+      }
+    }
+
     if(programRunStop == PGM_RUNNING || programRunStop == PGM_PAUSED) {
       lastKeyCode = keyCode;
     }
@@ -909,6 +914,10 @@ keyCode_t lastKeyCode;
       return;
     }
     int16_t item;
+
+    if(!inAutoRepeat) {
+      timerStop(tidAutoRepeat);
+    }
 
     if(programRunStop == PGM_KEY_PRESSED_WHILE_PAUSED) {
       programRunStop = PGM_RESUMING;
