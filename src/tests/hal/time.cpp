@@ -7,21 +7,18 @@ extern "C" {
   #include "hal/time.h"
 }
 #include <assert.h>
-#include <iostream>
 
 static Time *_mockTime = nullptr;
 
 Time::Time() {
   assert(_mockTime == nullptr);
   _mockTime = this;
-  std::cout << "Time()" << std::endl;
 }
 
 
 
 Time::~Time() {
   _mockTime = nullptr;
-  std::cout << "~Time()" << std::endl;
 }
 
 
@@ -43,9 +40,7 @@ uint32_t timeCurrentMs(void) {
 
 
 uint32_t timeUptimeMs(void) {
-  std::cout << "timeUptimeMs()" << std::endl;
   if(_mockTime != nullptr) {
-    std::cout << "timeUptimeMs()::mock" << std::endl;
     return _mockTime->uptimeMs();
   }
   return 0;
