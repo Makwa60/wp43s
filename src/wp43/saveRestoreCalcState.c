@@ -31,6 +31,7 @@
 #include "solver/graph.h"
 #include "sort.h"
 #include "stats.h"
+#include "ui/cursor.h"
 #include "ui/screen.h"
 #include "ui/softmenus.h"
 #include "ui/tam.h"
@@ -598,6 +599,9 @@ static uint32_t restore(void *buffer, uint32_t size) {
         clearSystemFlag(FLAG_ALPHA);
       }
 
+      if(cursorEnabled) {
+        cursorShow(cursorFont == &standardFont, xCursor, yCursor);
+      }
       calcModeUpdateGui();
       updateMatrixHeightCache();
       refreshScreen();

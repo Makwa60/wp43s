@@ -57,7 +57,6 @@
   extern const calcKey_t                 kbd_std[37];
   extern const font_t                    standardFont, numericFont;
   extern const font_t                   *fontForShortInteger;
-  extern const font_t                   *cursorFont;
   extern const char                      digits[17];
   extern any34Matrix_t                   openMatrixMIMPointer;
   extern uint16_t                        matrixIndex;
@@ -154,7 +153,6 @@
   extern uint8_t                displayStack;
   extern uint8_t                cachedDisplayStack;
   extern uint8_t                alphaCase;
-  extern uint8_t                cursorEnabled;
   extern uint8_t                nimNumberPart;
   extern uint8_t                hexDigits;
   extern temporaryInformation_t temporaryInformation;
@@ -221,8 +219,6 @@
   extern uint32_t               firstGregorianDay;
   extern uint32_t               denMax;
   extern uint32_t               lastIntegerBase;
-  extern uint32_t               xCursor;
-  extern uint32_t               yCursor;
   extern uint32_t               tamOverPemYPos;
   extern uint32_t               pointerOfFlashPgmLibrary;
   extern uint32_t               sizeOfFlashPgmLibrary;

@@ -381,15 +381,6 @@ int16_t currentRegisterBrowserScreen;
 
 
   void fnRegisterBrowser(uint16_t unusedButMandatoryParameter) {
-    hourGlassIconEnabled = false;
-
-    if(calcMode == cmAim) {
-      hideCursor();
-      cursorEnabled = false;
-    }
-
-    clearSystemFlag(FLAG_ALPHA);
-
     appsEnter(glRegisterBrowser, _registerBrowserKeyHandler, _registerBrowserDraw);
   }
 #endif // !TESTSUITE_BUILD

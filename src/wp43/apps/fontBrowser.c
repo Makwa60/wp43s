@@ -156,8 +156,6 @@ uint8_t currentFntScr;
 
 
   void fnFontBrowser(uint16_t unusedButMandatoryParameter) {
-    hourGlassIconEnabled = false;
-    clearSystemFlag(FLAG_ALPHA);
     appsEnter(glFlagFontBrowser, _fontBrowserKeyHandler, _fontBrowserDraw);
   }
 #endif // !TESTSUITE_BUILD

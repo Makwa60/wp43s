@@ -33,6 +33,7 @@
 #include "stack.h"
 #include "store.h"
 #include "ui/bufferize.h"
+#include "ui/cursor.h"
 #include "ui/screen.h"
 #include "ui/softmenus.h"
 #include "ui/tam.h"
@@ -572,8 +573,7 @@ void fnOldMatrix(uint16_t unusedParamButMandatory) {
     if(calcMode == cmMim) {
       aimBuffer[0] = 0;
       nimBufferDisplay[0] = 0;
-      hideCursor();
-      cursorEnabled = false;
+      cursorHide();
 
       if(getRegisterDataType(matrixIndex) == dtReal34Matrix) {
         if(openMatrixMIMPointer.realMatrix.matrixElements) {
@@ -1977,8 +1977,7 @@ void fnEigenvectors(uint16_t unusedParamButMandatory) {
 
       aimBuffer[0] = 0;
       nimBufferDisplay[0] = 0;
-      hideCursor();
-      cursorEnabled = false;
+      cursorHide();
 
       setSystemFlag(FLAG_ASLIFT);
     }
@@ -1996,10 +1995,9 @@ void fnEigenvectors(uint16_t unusedParamButMandatory) {
   static void _resetCursorPos() {
     clearRegisterLine(NIM_REGISTER_LINE, false, true);
     sprintf(tmpString, "%" PRIi16";%" PRIi16"= ", (int16_t)getIRegisterAsInt(false), (int16_t)getJRegisterAsInt(false));
-    xCursor = showString(tmpString, &numericFont, 0, Y_POSITION_OF_NIM_LINE, vmNormal, true, true) + 1;
-    yCursor = Y_POSITION_OF_NIM_LINE;
-    cursorEnabled = true;
-    cursorFont = &numericFont;
+    uint32_t x = showString(tmpString, &numericFont, 0, Y_POSITION_OF_NIM_LINE, vmNormal, true, true) + 1;
+    uint32_t y = Y_POSITION_OF_NIM_LINE;
+    cursorShow(false, x, y);
     lastIntegerBase = 0;
   }
 
@@ -2069,8 +2067,7 @@ void fnEigenvectors(uint16_t unusedParamButMandatory) {
         }
         else if((aimBuffer[0] == '+') && (aimBuffer[1] != 0) && (aimBuffer[2] == 0)) {
           aimBuffer[1] = 0;
-          hideCursor();
-          cursorEnabled = false;
+          cursorHide();
         }
         break;
       }

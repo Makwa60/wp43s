@@ -30,6 +30,7 @@
 #include "softmenus.h"
 #include "sort.h"
 #include "stack.h"
+#include "ui/cursor.h"
 #include "ui/tam.h"
 #include <stdbool.h>
 #include <string.h>

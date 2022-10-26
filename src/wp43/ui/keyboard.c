@@ -34,6 +34,7 @@
 #include "stack.h"
 #include "stats.h"
 #include "ui/bufferize.h"
+#include "ui/cursor.h"
 #include "ui/screen.h"
 #include "ui/softmenus.h"
 #include "ui/tam.h"
@@ -2000,7 +2001,8 @@ void fnKeyBackspace(uint16_t unusedButMandatoryParameter) {
           if(stringByteLength(aimBuffer) > 0) {
             lg = stringLastGlyph(aimBuffer);
             aimBuffer[lg] = 0;
-            xCursor = showString(aimBuffer, &standardFont, 1, Y_POSITION_OF_AIM_LINE + 6, vmNormal, true, true);
+            uint32_t xCursor = showString(aimBuffer, &standardFont, 1, Y_POSITION_OF_AIM_LINE + 6, vmNormal, true, true);
+            cursorShow(true, xCursor, Y_POSITION_OF_AIM_LINE + 6);
           }
         }
         else if(stringByteLength(aimBuffer) > 0) {

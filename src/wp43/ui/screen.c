@@ -37,6 +37,7 @@
 #include "registers.h"
 #include "registerValueConversions.h"
 #include "ui/bufferize.h"
+#include "ui/cursor.h"
 #include "ui/keyboard.h"
 #include "ui/softmenus.h"
 #include "ui/statusBar.h"
@@ -70,21 +71,6 @@
 #else
   // This function is called periodically by the main loop or a GTK timer
   void refreshLcd(void) {
-    // Cursor blinking
-    static bool cursorBlink=true;
-
-    if(cursorEnabled) {
-      if(cursorBlink) {
-        showGlyph(STD_CURSOR, cursorFont, xCursor, yCursor, vmNormal, true, false);
-      }
-      else {
-        hideCursor();
-      }
-      #if defined(PC_BUILD)
-        cursorBlink = !cursorBlink;
-      #endif // PC_BUILD
-    }
-
     // Update date and time
     getTimeString(dateTimeString);
     if(strcmp(dateTimeString, oldTime)) {
@@ -331,19 +317,6 @@ void clearScreen(void) {
       *col += lcol;
       if(lrow > *row) {
         *row = lrow;
-      }
-    }
-  }
-
-
-
-  void hideCursor(void) {
-    if(cursorEnabled) {
-      if(cursorFont == &standardFont) {
-        lcd_fill_rect(xCursor, yCursor + 10,  6,  6, LCD_SET_VALUE);
-      }
-      else {
-        lcd_fill_rect(xCursor, yCursor + 15, 13, 13, LCD_SET_VALUE);
       }
     }
   }
@@ -762,9 +735,9 @@ void clearScreen(void) {
 
         else if(regist == AIM_REGISTER_LINE && calcMode == cmAim && !tamIsActive()) {
           if(stringWidth(aimBuffer, &standardFont, true, true) < SCREEN_WIDTH - 8) { // 8 is the standard font cursor width
-            xCursor = showString(aimBuffer, &standardFont, 1, Y_POSITION_OF_NIM_LINE + 6, vmNormal, true, true);
-            yCursor = Y_POSITION_OF_NIM_LINE + 6;
-            cursorFont = &standardFont;
+            uint32_t xCursor = showString(aimBuffer, &standardFont, 1, Y_POSITION_OF_NIM_LINE + 6, vmNormal, true, true);
+            uint32_t yCursor = Y_POSITION_OF_NIM_LINE + 6;
+            cursorShow(true, xCursor, yCursor);
           }
           else {
             w = stringByteLength(aimBuffer) + 1;
@@ -781,9 +754,9 @@ void clearScreen(void) {
             else {
               showString(tmpString, &standardFont, 1, Y_POSITION_OF_NIM_LINE - 3, vmNormal, true, true);
 
-              xCursor = showString(tmpString + 1500 + w, &standardFont, 1, Y_POSITION_OF_NIM_LINE + 18, vmNormal, true, true);
-              yCursor = Y_POSITION_OF_NIM_LINE + 18;
-              cursorFont = &standardFont;
+              uint32_t xCursor = showString(tmpString + 1500 + w, &standardFont, 1, Y_POSITION_OF_NIM_LINE + 18, vmNormal, true, true);
+              uint32_t yCursor = Y_POSITION_OF_NIM_LINE + 18;
+              cursorShow(true, xCursor, yCursor);
             }
           }
         }
@@ -1618,18 +1591,18 @@ void clearScreen(void) {
   void displayNim(const char *nim, const char *lastBase, int16_t wLastBaseNumeric, int16_t wLastBaseStandard) {
     int16_t w;
     if(stringWidth(nim, &numericFont, true, true) + wLastBaseNumeric <= SCREEN_WIDTH - 16) { // 16 is the numeric font cursor width
-      xCursor = showString(nim, &numericFont, 0, Y_POSITION_OF_NIM_LINE, vmNormal, true, true);
-      yCursor = Y_POSITION_OF_NIM_LINE;
-      cursorFont = &numericFont;
+      uint32_t xCursor = showString(nim, &numericFont, 0, Y_POSITION_OF_NIM_LINE, vmNormal, true, true);
+      uint32_t yCursor = Y_POSITION_OF_NIM_LINE;
+      cursorShow(false, xCursor, yCursor);
 
       if(lastIntegerBase != 0) {
         showString(lastBase, &numericFont, xCursor + 16, Y_POSITION_OF_NIM_LINE, vmNormal, true, true);
       }
     }
     else if(stringWidth(nim, &standardFont, true, true) + wLastBaseStandard <= SCREEN_WIDTH - 8) { // 8 is the standard font cursor width
-      xCursor = showString(nim, &standardFont, 0, Y_POSITION_OF_NIM_LINE + 6, vmNormal, true, true);
-      yCursor = Y_POSITION_OF_NIM_LINE + 6;
-      cursorFont = &standardFont;
+      uint32_t xCursor = showString(nim, &standardFont, 0, Y_POSITION_OF_NIM_LINE + 6, vmNormal, true, true);
+      uint32_t yCursor = Y_POSITION_OF_NIM_LINE + 6;
+      cursorShow(true, xCursor, yCursor);
 
       if(lastIntegerBase != 0) {
         showString(lastBase, &standardFont, xCursor + 8, Y_POSITION_OF_NIM_LINE + 6, vmNormal, true, true);
@@ -1650,9 +1623,9 @@ void clearScreen(void) {
       else {
         showString(tmpString, &standardFont, 0, Y_POSITION_OF_NIM_LINE - 3, vmNormal, true, true);
 
-        xCursor = showString(tmpString + 1500 + w, &standardFont, 0, Y_POSITION_OF_NIM_LINE + 18, vmNormal, true, true);
-        yCursor = Y_POSITION_OF_NIM_LINE + 18;
-        cursorFont = &standardFont;
+        uint32_t xCursor = showString(tmpString + 1500 + w, &standardFont, 0, Y_POSITION_OF_NIM_LINE + 18, vmNormal, true, true);
+        uint32_t yCursor = Y_POSITION_OF_NIM_LINE + 18;
+        cursorShow(true, xCursor, yCursor);
 
         if(lastIntegerBase != 0) {
           showString(lastBase, &standardFont, xCursor + 8, Y_POSITION_OF_NIM_LINE + 18, vmNormal, true, true);

@@ -199,6 +199,7 @@ wp43_src = files(
   'store.c',
   'stringFuncs.c',
   'ui/bufferize.c',
+  'ui/cursor.c',
   'ui/keyboard.c',
   'ui/screen.c',
   'ui/softmenus.c',

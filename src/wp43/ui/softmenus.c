@@ -17,6 +17,7 @@
 #include "solver/differentiate.h"
 #include "solver/equation.h"
 #include "sort.h"
+#include "ui/cursor.h"
 #include "ui/screen.h"
 #include "ui/tam.h"
 #include <string.h>

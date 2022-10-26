@@ -88,7 +88,6 @@ void timerAppResetState(void) {
     }
     calcModeEnter(cmTimerApp);
     showSoftmenu(-MNU_TIMERF);
-    calcModeUpdateGui();
   }
 
 

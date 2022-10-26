@@ -33,6 +33,7 @@
 #include "stack.h"
 #include "stats.h"
 #include "ui/bufferize.h"
+#include "ui/cursor.h"
 #include "ui/keyboard.h"
 #include "ui/screen.h"
 #include "ui/tam.h"
@@ -380,7 +381,7 @@ void fnFractionType(uint16_t unusedButMandatoryParameter) {
 
 void setConfirmationMode(void (*func)(uint16_t)) {
   previousCalcMode = calcMode;
-  cursorEnabled = false;
+  cursorHide();
   calcMode = cmConfirmation;
   clearSystemFlag(FLAG_ALPHA);
   confirmedFunction = func;
@@ -970,5 +971,6 @@ void configSetUpTimers(void) {
   timerConfig(tidShowNop,                  cbShowNop);
   timerConfig(tidRefreshLcd,               cbRefreshLcd);
   timerConfig(tidAsmActive,                cbAsmActive);
+  timerConfig(tidCursorBlink,              cbCursorBlink);
   timerStart(tidRefreshLcd, NOPARAM, SCREEN_REFRESH_PERIOD);
 }

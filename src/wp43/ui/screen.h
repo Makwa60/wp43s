@@ -22,7 +22,6 @@
   /**
    * Refreshes calc's screen.
    * This function is called every SCREEN_REFRESH_PERIOD ms.
-   * - make the cursor blink if needed
    * - refresh date and time in the status bar if needed
    * - refresh the whole screen if needed
    */
@@ -76,11 +75,6 @@
      * \return x coordinate for the next glyph
      */
     uint32_t showGlyphCode                      (uint16_t charCode, const font_t *font, uint32_t x, uint32_t y, videoMode_t videoMode, bool showLeadingCols, bool showEndingCols);
-
-    /**
-     * Hides the cursor.
-     */
-    void     hideCursor                         (void);
 
     void     cbRefreshLcd                       (uint16_t param);
     void     cbShowNop                          (uint16_t param);

@@ -18,6 +18,7 @@
 #include "registers.h"
 #include "stack.h"
 #include "sort.h"
+#include "ui/cursor.h"
 #include "ui/screen.h"
 #include <stdbool.h>
 

@@ -302,12 +302,6 @@ uint8_t currentFlgScr;
 
 
   void fnFlagBrowser(uint16_t unusedButMandatoryParameter) {
-    hourGlassIconEnabled = false;
-    if(calcMode == cmAim) {
-      hideCursor();
-      cursorEnabled = false;
-    }
-    clearSystemFlag(FLAG_ALPHA);
     currentFlgScr = 0;
     appsEnter(glFlagFontBrowser, _flagBrowserKeyHandler, _flagBrowserDraw);
   }

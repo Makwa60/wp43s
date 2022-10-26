@@ -4,6 +4,7 @@
 #include "apps/apps.h"
 
 #include "calcMode.h"
+#include "flags.h"
 #include "items.h"
 #include "ui/screen.h"
 #include <assert.h>
@@ -69,5 +70,9 @@ void appsEnter(guiLayout_t layout, appsKeyHandler_t keyHandler, appsDraw_t draw)
   _appsLayout     = layout;
   _appsKeyHandler = keyHandler;
   _appsDraw       = draw;
+
+  hourGlassIconEnabled = false;
+  clearSystemFlag(FLAG_ALPHA);
+
   calcModeEnter(cmApp);
 }

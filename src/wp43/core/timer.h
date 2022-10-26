@@ -15,9 +15,10 @@
     tidTimerAppDetectWrapAround = 2,
     tidShowNop                  = 3,
     tidRefreshLcd               = 4,
-    tidAsmActive                = 5
+    tidAsmActive                = 5,
+    tidCursorBlink              = 6
   } timerId_t;
-  #define MAX_TIMER_ID            6
+  #define MAX_TIMER_ID            7
 
   typedef enum {
     tsUnused    = 0,
