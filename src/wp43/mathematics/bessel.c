@@ -23,11 +23,8 @@
 static bool besselGetParam(calcRegister_t regist, real_t *r, realContext_t *realContext) {
   switch(getRegisterDataType(regist)) {
     case dtReal34: {
-      if(getRegisterAngularMode(regist) == amNone) {
-        real34ToReal(REGISTER_REAL34_DATA(regist), r);
-        return true;
-      }
-      break;
+      real34ToReal(REGISTER_REAL34_DATA(regist), r);
+      return true;
     }
     case dtLongInteger: {
       convertLongIntegerRegisterToReal(regist, r, realContext);

@@ -25,6 +25,7 @@
   #define zetaError typeError
 #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
 
+void zetaLonI   (void);
 void zetaReal   (void);
 void zetaCplx   (void);
 void ComplexZeta(const real_t *xReal, const real_t *xImag, real_t *resReal, real_t *resImag, realContext_t *realContext);
@@ -32,7 +33,7 @@ void ComplexZeta(const real_t *xReal, const real_t *xImag, real_t *resReal, real
 TO_QSPI void (* const Zeta[NUMBER_OF_DATA_TYPES_FOR_CALCULATIONS])(void) = {
 // regX ==> 1            2         3          4          5          6          7          8           9             10
 //          Long integer Real34    Complex34  Time       Date       String     Real34 mat Complex34 m Short integer Config data
-            zetaError,   zetaReal, zetaCplx,  zetaError, zetaError, zetaError, zetaError, zetaError,  zetaError,    zetaError
+            zetaLonI,    zetaReal, zetaCplx,  zetaError, zetaError, zetaError, zetaError, zetaError,  zetaError,    zetaError
 };
 
 #if (EXTRA_INFO_ON_CALC_ERROR == 1)
@@ -46,7 +47,9 @@ TO_QSPI void (* const Zeta[NUMBER_OF_DATA_TYPES_FOR_CALCULATIONS])(void) = {
 
 
 void fnZeta(uint16_t unusedButMandatoryParameter) {
-  if(!saveLastX()) return;
+  if(!saveLastX()) {
+    return;
+  }
 
   Zeta[getRegisterDataType(REGISTER_X)]();
 
@@ -55,17 +58,23 @@ void fnZeta(uint16_t unusedButMandatoryParameter) {
 
 
 
+void zetaLonI(void) {
+  real_t x, res;
+
+  convertLongIntegerRegisterToReal(REGISTER_X, &x, &ctxtReal39);
+  WP34S_Zeta(&x, &res, &ctxtReal39);
+  reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE, amNone);
+  convertRealToReal34ResultRegister(&res, REGISTER_X);
+}
+
+
+
 void zetaReal(void) {
   real_t x, res;
 
-  if(getRegisterAngularMode(REGISTER_X) == amNone) {
-    real34ToReal(REGISTER_REAL34_DATA(REGISTER_X), &x);
-    WP34S_Zeta(&x, &res, &ctxtReal39);
-    convertRealToReal34ResultRegister(&res, REGISTER_X);
-  }
-  else {
-    zetaError();
-  }
+  real34ToReal(REGISTER_REAL34_DATA(REGISTER_X), &x);
+  WP34S_Zeta(&x, &res, &ctxtReal39);
+  convertRealToReal34ResultRegister(&res, REGISTER_X);
 }
 
 
