@@ -47,7 +47,9 @@ TO_QSPI void (* const Zeta[NUMBER_OF_DATA_TYPES_FOR_CALCULATIONS])(void) = {
 
 
 void fnZeta(uint16_t unusedButMandatoryParameter) {
-  if(!saveLastX()) return;
+  if(!saveLastX()) {
+    return;
+  }
 
   Zeta[getRegisterDataType(REGISTER_X)]();
 
