@@ -36,6 +36,7 @@
 #include "ui/cursor.h"
 #include "ui/keyboard.h"
 #include "ui/screen.h"
+#include "ui/statusBar.h"
 #include "ui/tam.h"
 #include <stdbool.h>
 #include <stdlib.h>
@@ -972,5 +973,6 @@ void configSetUpTimers(void) {
   timerConfig(tidRefreshLcd,               cbRefreshLcd);
   timerConfig(tidAsmActive,                cbAsmActive);
   timerConfig(tidCursorBlink,              cbCursorBlink);
+  timerConfig(tidTimeUpdate,               cbTimeUpdate);
   timerStart(tidRefreshLcd, NOPARAM, SCREEN_REFRESH_PERIOD);
 }

@@ -5,6 +5,7 @@
 
 #include "calcMode.h"
 #include "charString.h"
+#include "core/timer.h"
 #include "dateTime.h"
 #include "error.h"
 #include "flags.h"
@@ -24,8 +25,15 @@
     uint32_t x = showString(dateTimeString, &standardFont, X_DATE, 0, vmNormal, true, true);
     x = showGlyph(getSystemFlag(FLAG_TDM24) ? " " : STD_SPACE_3_PER_EM, &standardFont, x, 0, vmNormal, true, true); // is 0+0+8 pixel wide
 
-    getTimeString(dateTimeString);
+    uint32_t nextUpdateInMs = getTimeString(dateTimeString);
     showString(dateTimeString, &standardFont, x, 0, vmNormal, true, false);
+    timerStart(tidTimeUpdate, NOPARAM, nextUpdateInMs);
+  }
+
+
+
+  void cbTimeUpdate(uint16_t param) {
+    showDateTime();
   }
 
 

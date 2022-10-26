@@ -958,7 +958,7 @@ void getDateString(char *dateString) {
 
 
 
-void getTimeString(char *timeString) {
+uint32_t getTimeString(char *timeString) {
   timeInfo_t timeInfo;
 
   timeGetTimeInfo(&timeInfo);
@@ -975,4 +975,6 @@ void getTimeString(char *timeString) {
   else {
     sprintf(timeString, "%02d:%02d", timeInfo.hour, timeInfo.min);
   }
+  uint32_t timeToNextMinuteMs = (6000 - ((timeInfo.sec * 100) + timeInfo.csec)) * 10;
+  return timeToNextMinuteMs;
 }

@@ -8,6 +8,8 @@
 #if !defined(STATUSBAR_H)
   #define STATUSBAR_H
 
+  #include <stdint.h>
+
   #if !defined(TESTSUITE_BUILD)
     /**
      * Refreshes the status bar.
@@ -15,14 +17,11 @@
     void refreshStatusBar       (void);
 
     /**
-     * Displays date and time in the status bar.
-     */
-    void showDateTime           (void);
-
-    /**
      * Shows or hides the hourglass icon in the status bar.
      */
     void showHideHourGlass      (void);
+
+    void cbTimeUpdate           (uint16_t param);
 
     #if defined(DMCP_BUILD)
       /**
@@ -30,6 +29,10 @@
        */
       void showHideUsbLowBattery(void);
     #endif // DMCP_BUILD
+  #else
+    #pragma GCC diagnostic ignored "-Wunused-parameter"
+
+    static inline void cbTimeUpdate(uint16_t param) {}
   #endif // !TESTSUITE_BUILD
 
 #endif // !STATUSBAR_H

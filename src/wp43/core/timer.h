@@ -16,9 +16,10 @@
     tidShowNop                  = 3,
     tidRefreshLcd               = 4,
     tidAsmActive                = 5,
-    tidCursorBlink              = 6
+    tidCursorBlink              = 6,
+    tidTimeUpdate               = 7
   } timerId_t;
-  #define MAX_TIMER_ID            7
+  #define MAX_TIMER_ID            8
 
   typedef enum {
     tsUnused    = 0,

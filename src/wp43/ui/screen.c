@@ -71,20 +71,6 @@
 #else
   // This function is called periodically by the main loop or a GTK timer
   void refreshLcd(void) {
-    // Update date and time
-    getTimeString(dateTimeString);
-    if(strcmp(dateTimeString, oldTime)) {
-      strcpy(oldTime, dateTimeString);
-      #if (DEBUG_INSTEAD_STATUS_BAR != 1)
-        showDateTime();
-      #endif // (DEBUG_INSTEAD_STATUS_BAR != 1)
-      #if defined(DMCP_BUILD)
-        if(!getSystemFlag(FLAG_AUTOFF) || (calcMode == cmTimerApp)) {
-          reset_auto_off();
-        }
-      #endif // DMCP_BUILD
-    }
-
     #if defined(PC_BUILD)
       // If LCD has changed: update the GTK screen
       if(screenChange) {
@@ -100,6 +86,13 @@
         }
       }
     #elif defined(DMCP_BUILD)
+      getTimeString(dateTimeString);
+      if(strcmp(dateTimeString, oldTime)) {
+        strcpy(oldTime, dateTimeString);
+        if(!getSystemFlag(FLAG_AUTOFF) || (calcMode == cmTimerApp)) {
+          reset_auto_off();
+        }
+      }
       if(usb_powered() == 1) {
         if(!getSystemFlag(FLAG_USB)) {
           setSystemFlag(FLAG_USB);
