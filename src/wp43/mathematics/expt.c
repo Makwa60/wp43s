@@ -5,15 +5,18 @@
 
 #include "debug.h"
 #include "error.h"
+#include "matrix.h"
 #include "registers.h"
 #include "registerValueConversions.h"
 
 #include "wp43.h"
 
+void exptRema(void);
+
 TO_QSPI void (* const expt[NUMBER_OF_DATA_TYPES_FOR_CALCULATIONS])(void) = {
 // regX ==> 1            2         3          4          5          6          7          8           9             10
 //          Long integer Real34    Complex34  Time       Date       String     Real34 mat Complex34 m Short integer Config data
-            exptLonI,    exptReal, exptError, exptError, exptError, exptError, exptError, exptError,  exptError,    exptError
+            exptLonI,    exptReal, exptError, exptError, exptError, exptError, exptRema,  exptError,  exptError,    exptError
 };
 
 
@@ -91,4 +94,10 @@ void exptReal(void) {
   intToLongInteger((realIsZero(&x) ? 0 : x.exponent + x.digits - 1), lgInt);
   convertLongIntegerToLongIntegerRegister(lgInt, REGISTER_X);
   longIntegerFree(lgInt);
+}
+
+
+
+void exptRema(void) {
+  elementwiseRema(exptReal);
 }

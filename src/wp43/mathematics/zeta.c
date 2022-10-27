@@ -13,6 +13,7 @@
 #include "mathematics/power.h"
 #include "mathematics/toRect.h"
 #include "mathematics/wp34s.h"
+#include "matrix.h"
 #include "realType.h"
 #include "registers.h"
 #include "registerValueConversions.h"
@@ -28,12 +29,14 @@
 void zetaLonI   (void);
 void zetaReal   (void);
 void zetaCplx   (void);
+void zetaRema   (void);
+void zetaCxma   (void);
 void ComplexZeta(const real_t *xReal, const real_t *xImag, real_t *resReal, real_t *resImag, realContext_t *realContext);
 
 TO_QSPI void (* const Zeta[NUMBER_OF_DATA_TYPES_FOR_CALCULATIONS])(void) = {
 // regX ==> 1            2         3          4          5          6          7          8           9             10
 //          Long integer Real34    Complex34  Time       Date       String     Real34 mat Complex34 m Short integer Config data
-            zetaLonI,    zetaReal, zetaCplx,  zetaError, zetaError, zetaError, zetaError, zetaError,  zetaError,    zetaError
+            zetaLonI,    zetaReal, zetaCplx,  zetaError, zetaError, zetaError, zetaRema,  zetaCxma,   zetaError,    zetaError
 };
 
 #if (EXTRA_INFO_ON_CALC_ERROR == 1)
@@ -87,6 +90,18 @@ void zetaCplx(void) {
   ComplexZeta(&xr, &xi, &rr, &ri, &ctxtReal39);
   convertRealToReal34ResultRegister(&rr, REGISTER_X);
   convertRealToImag34ResultRegister(&ri, REGISTER_X);
+}
+
+
+
+void zetaRema(void) {
+  elementwiseRema(zetaReal);
+}
+
+
+
+void zetaCxma(void) {
+  elementwiseCxma(zetaCplx);
 }
 
 

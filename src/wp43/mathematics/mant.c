@@ -5,15 +5,18 @@
 
 #include "debug.h"
 #include "error.h"
+#include "matrix.h"
 #include "registers.h"
 #include "registerValueConversions.h"
 
 #include "wp43.h"
 
+void mantRema(void);
+
 TO_QSPI void (* const mant[NUMBER_OF_DATA_TYPES_FOR_CALCULATIONS])(void) = {
 // regX ==> 1            2         3          4          5          6          7          8           9             10
 //          Long integer Real34    complex34  Time       Date       String     Real34 mat Complex34 m Short integer Config data
-            mantLonI,    mantReal, mantError, mantError, mantError, mantError, mantError, mantError,  mantError,    mantError
+            mantLonI,    mantReal, mantError, mantError, mantError, mantError, mantRema,  mantError,  mantError,    mantError
 };
 
 
@@ -79,4 +82,10 @@ void mantReal(void) {
   x.exponent = 1 - x.digits;
   convertRealToReal34ResultRegister(&x, REGISTER_X);
   setRegisterAngularMode(REGISTER_X, amNone);
+}
+
+
+
+void mantRema(void) {
+  elementwiseRema(mantReal);
 }

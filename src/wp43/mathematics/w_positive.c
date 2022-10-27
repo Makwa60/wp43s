@@ -10,6 +10,7 @@
 #include "flags.h"
 #include "mathematics/comparisonReals.h"
 #include "mathematics/wp34s.h"
+#include "matrix.h"
 #include "registers.h"
 #include "registerValueConversions.h"
 
@@ -24,10 +25,13 @@ void wPosCplx(void);
   #define wPosError typeError
 #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
 
+void wPosRema(void);
+void wPosCxma(void);
+
 TO_QSPI void (* const WPositive[NUMBER_OF_DATA_TYPES_FOR_CALCULATIONS])(void) = {
 // regX ==> 1            2         3          4          5          6          7          8           9             10
 //          Long integer Real34    Complex34  Time       Date       String     Real34 mat Complex34 m Short integer Config data
-            wPosLonI,    wPosReal, wPosCplx,  wPosError, wPosError, wPosError, wPosError, wPosError,  wPosError,    wPosError
+            wPosLonI,    wPosReal, wPosCplx,  wPosError, wPosError, wPosError, wPosRema,  wPosCxma,   wPosError,    wPosError
 };
 
 #if (EXTRA_INFO_ON_CALC_ERROR == 1)
@@ -102,4 +106,16 @@ void wPosCplx(void) {
   WP34S_ComplexLambertW(&xr, &xi, &resr, &resi, &ctxtReal39);
   convertRealToReal34ResultRegister(&resr, REGISTER_X);
   convertRealToImag34ResultRegister(&resi, REGISTER_X);
+}
+
+
+
+void wPosRema(void) {
+  elementwiseRema(wPosReal);
+}
+
+
+
+void wPosCxma(void) {
+  elementwiseCxma(wPosCplx);
 }
