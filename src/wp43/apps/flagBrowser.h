@@ -9,7 +9,13 @@
 
   #include <stdint.h>
 
-  extern uint8_t currentFlgScr;
+  typedef enum {
+    fsUninitialized = 0,
+    fsScreen1       = 1,
+    fsScreen2       = 2,
+    fsOnlyOneScreen = 3
+  } flagScreen_t;
+  extern flagScreen_t flagScreen;
 
   #if !defined(TESTSUITE_BUILD)
     /**

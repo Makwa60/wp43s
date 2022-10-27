@@ -915,7 +915,7 @@
       }
 
       if(row < DEBUG_LINES) {
-        sprintf(string, "currentFlgScr                             = %6u",         currentFlgScr);
+        sprintf(string, "flagScreen                                = %6u",         flagScreen);
         gtk_label_set_label(GTK_LABEL(lbl1[row]), string);
         gtk_widget_show(lbl1[row++]);
       }
