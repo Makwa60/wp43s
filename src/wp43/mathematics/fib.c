@@ -13,15 +13,19 @@
 #include "mathematics/multiplication.h"
 #include "mathematics/power.h"
 #include "mathematics/wp34s.h"
+#include "matrix.h"
 #include "registers.h"
 #include "registerValueConversions.h"
 
 #include "wp43.h"
 
+void fibRema(void);
+void fibCxma(void);
+
 TO_QSPI void (* const fib[NUMBER_OF_DATA_TYPES_FOR_CALCULATIONS])(void) = {
 // regX ==> 1            2          3          4           5           6           7           8           9             10
 //          Long integer Real34     Complex34  Time        Date        String      Real34 mat  Complex34 m Short integer Config data
-            fibLonI,     fibReal,   fibCplx,   fibError,   fibError,   fibError,   fibError,   fibError,   fibError,     fibError
+            fibLonI,     fibReal,   fibCplx,   fibError,   fibError,   fibError,   fibRema,    fibCxma,    fibError,     fibError
 };
 
 
@@ -170,4 +174,16 @@ void fibCplx(void) {
 
   convertRealToReal34ResultRegister(&xReal, REGISTER_X);
   convertRealToImag34ResultRegister(&xImag, REGISTER_X);
+}
+
+
+
+void fibRema(void) {
+  elementwiseRema(fibReal);
+}
+
+
+
+void fibCxma(void) {
+  elementwiseCxma(fibCplx);
 }

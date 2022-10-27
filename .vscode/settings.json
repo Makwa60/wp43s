@@ -17,5 +17,11 @@
                 "before": ["Meson: Build src/tests/tests"]
             }
         }
-    ]
+    ],
+    "files.associations": {
+        "registervalueconversions.h": "c",
+        "error.h": "c",
+        "matrix.h": "c",
+        "registers.h": "c"
+    }
 }
