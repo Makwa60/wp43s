@@ -43,9 +43,6 @@
 #include "ui/statusBar.h"
 #include "ui/tam.h"
 #include "version.h"
-#if defined(PC_BUILD)
-  #include <gtk/gtk.h>
-#endif // PC_BUILD
 #include <stdbool.h>
 #include <string.h>
 
@@ -71,21 +68,7 @@
 #else
   // This function is called periodically by the main loop or a GTK timer
   void refreshLcd(void) {
-    #if defined(PC_BUILD)
-      // If LCD has changed: update the GTK screen
-      if(screenChange) {
-        #if defined(LINUX) && (DEBUG_PANEL == 1)
-          if(programRunStop != PGM_RUNNING) {
-            debugRefresh();
-          }
-        #endif // defined(LINUX) && (DEBUG_PANEL == 1)
-
-        lcd_refresh();
-        while(gtk_events_pending()) {
-          gtk_main_iteration();
-        }
-      }
-    #elif defined(DMCP_BUILD)
+    #if defined(DMCP_BUILD)
       getTimeString(dateTimeString);
       if(strcmp(dateTimeString, oldTime)) {
         strcpy(oldTime, dateTimeString);
@@ -125,7 +108,7 @@
           }
         }
       }
-    #endif // PC_BUILD DMCP_BUILD
+    #endif // DMCP_BUILD
   }
 #endif // !TESTSUITE_BUILD || GENERATE_CATALOGS
 
@@ -555,12 +538,6 @@ void clearScreen(void) {
     const uint8_t origDisplayStack = displayStack;
 
     char prefix[200], lastBase[4];
-
-    #if (DEBUG_PANEL == 1)
-      if(programRunStop != PGM_RUNNING) {
-        debugRefresh();
-      }
-    #endif // (DEBUG_PANEL == 1)
 
     if((calcMode != cmPlotStat) && (calcMode != cmGraph)) {
       clearRegisterLine(regist, true, (regist != REGISTER_Y));
@@ -1848,10 +1825,6 @@ void clearScreen(void) {
       default: {
       }
     }
-
-    #if !defined(DMCP_BUILD)
-      refreshLcd();
-    #endif // !DMCP_BUILD
   }
 #endif // !TESTSUITE_BUILD
 

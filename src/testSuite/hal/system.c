@@ -18,5 +18,10 @@ const char *systemMaker(void) {
 
 
 
+void systemProcessEvents(void) {
+}
+
+
+
 void systemQuit(void) {
 }

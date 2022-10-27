@@ -75,3 +75,9 @@ uint32_t timeCurrentMs(void) {
 uint32_t timeUptimeMs(void) {
   return (uint32_t)sys_current_ms();
 }
+
+
+
+void timeSleep(uint32_t timeInMs) {
+  sys_delay(timeInMs);
+}

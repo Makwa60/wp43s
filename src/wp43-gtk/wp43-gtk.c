@@ -65,6 +65,9 @@ void simRefreshTimers(void) {
     _simTimer = g_timeout_add(time, cbTimerRun, NULL);
     _simTimerValid = true;
   }
+  if(screenChange) {
+    gtk_widget_queue_draw(screen);
+  }
 }
 
 int main(int argc, char* argv[]) {

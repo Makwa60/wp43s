@@ -38,12 +38,7 @@ static uint32_t _timerDiff(uint32_t currTime, uint32_t expire) {
 uint32_t timerRun(void) {
   #if !defined(NDEBUG)
     // Timer is not re-entrant
-    // assert(!_timerInRun);
-    // TODO: fix this re-entrancy caused by GTK loop checking in refreshLcd
-    if(_timerInRun) {
-      return 0;
-    }
-    // TODO: Remove above when fixed
+    assert(!_timerInRun);
     _timerInRun = true;
   #endif // !NDEBUG
   uint32_t currTime = timeUptimeMs();

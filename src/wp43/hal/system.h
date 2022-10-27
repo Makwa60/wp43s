@@ -23,6 +23,14 @@
   const char *systemMaker(void);
 
   /**
+   * Process events in the platform event queue.
+   * These events should trigger the usual btnPressed or timerRun calls
+   * as usual. This method is called when there is a long delay before
+   * returning to the main loop, such as when executing a program.
+   */
+  void systemProcessEvents(void);
+
+  /**
    * Quit the application.
    * This is called after the state has been saved.
    */

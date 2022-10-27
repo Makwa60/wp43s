@@ -231,6 +231,9 @@
         }
       }
     }
+    if(hourGlassIconEnabled) {
+      lcd_refresh();
+    }
   }
 
 

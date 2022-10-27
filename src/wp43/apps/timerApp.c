@@ -180,7 +180,6 @@ void timerAppResetState(void) {
     if(calcMode == cmTimerApp) {
       timerAppDraw();
       displayShiftAndTamBuffer();
-      refreshLcd();
     }
   }
 

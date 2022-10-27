@@ -45,3 +45,8 @@ uint32_t timeUptimeMs(void) {
   }
   return 0;
 }
+
+
+
+void timeSleep(uint32_t) {
+}

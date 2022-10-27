@@ -4,8 +4,10 @@
 #include "hal/system.h"
 
 #include "charString.h"
+#include "core/timer.h"
 #include "error.h"
 #include "fonts.h"
+#include "ui/keyboard.h"
 #include <stdio.h>
 #include <dmcp.h>
 
@@ -42,6 +44,21 @@ void systemScreenshot(void) {
 
 const char *systemMaker(void) {
   return "Hardware" STD_SPACE_3_PER_EM "by" STD_SPACE_3_PER_EM "SwissMicros";
+}
+
+
+
+void systemProcessEvents(void) {
+  while(!key_empty()) {
+    int key = key_pop();
+    key = convertKeyCode(key);
+    if(key > 0) {
+      wait_for_key_release(0);
+      key_pop();
+      btnClicked(key);
+    }
+  }
+  timerRun();
 }
 
 

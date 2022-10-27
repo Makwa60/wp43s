@@ -2227,9 +2227,6 @@ void fnEigenvectors(uint16_t unusedParamButMandatory) {
     }
 
     updateMatrixHeightCache();
-    #if defined(PC_BUILD)
-      refreshLcd();
-    #endif // PC_BUILD
   }
 
   void mimFinalize(void) {

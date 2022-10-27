@@ -20,6 +20,7 @@
 #include "error.h"
 #include "flags.h"
 #include "hal/gui.h"
+#include "hal/lcd.h"
 #include "items.h"
 #include "matrix.h"
 #include "plotstat.h"
@@ -855,36 +856,23 @@ keyCode_t lastKeyCode;
 
     bool f = shiftF;
     bool g = shiftG;
-    #if defined(DMCP_BUILD)
-      //if(keyAutoRepeat) {
-      //  //beep(880, 50);
-      //  item = previousItem;
-      //}
-      //else {
-    #endif
     int16_t item = determineItem(keyCode);
-    #if defined(DMCP_BUILD)
-      //  previousItem = item;
-      //}
-    #endif
 
-    #if defined(PC_BUILD)
-      if(programRunStop == PGM_RUNNING || programRunStop == PGM_PAUSED) {
-        if((item == ITM_RS || item == ITM_EXIT) && !getSystemFlag(FLAG_INTING) && !getSystemFlag(FLAG_SOLVING)) {
-          programRunStop = PGM_WAITING;
-          showFunctionNameItem = 0;
-        }
-        else if(programRunStop == PGM_PAUSED) {
-          programRunStop = PGM_KEY_PRESSED_WHILE_PAUSED;
-        }
-        return;
+    if(programRunStop == PGM_RUNNING || programRunStop == PGM_PAUSED) {
+      if((item == ITM_RS || item == ITM_EXIT) && !getSystemFlag(FLAG_INTING) && !getSystemFlag(FLAG_SOLVING)) {
+        programRunStop = PGM_WAITING;
+        showFunctionNameItem = 0;
       }
-    #elif defined(DMCP_BUILD)
-      if(calcMode == cmPem && (item == ITM_SST || item == ITM_BST)) {
-        shiftF = f;
-        shiftG = g;
+      else if(programRunStop == PGM_PAUSED) {
+        programRunStop = PGM_KEY_PRESSED_WHILE_PAUSED;
       }
-    #endif
+      return;
+    }
+
+    if(calcMode == cmPem && (item == ITM_SST || item == ITM_BST)) {
+      shiftF = f;
+      shiftG = g;
+    }
 
     if(getSystemFlag(FLAG_USER)) {
       int keyStateCode = (getSystemFlag(FLAG_ALPHA) ? 3 : 0) + (g ? 2 : f ? 1 : 0);
@@ -978,11 +966,6 @@ keyCode_t lastKeyCode;
         }
       }
     }
-    //#if defined(DMCP_BUILD)
-    //  else if(keyAutoRepeat) {
-    //    btnPressed(keyCode);
-    //  }
-    //#endif // DMCP_BUILD
     if(timerGetStatus(tidAutoRepeat) != tsRunning) {
       refreshScreen();
     }
@@ -2239,11 +2222,7 @@ void fnKeyUp(uint16_t unusedButMandatoryParameter) {
             closeNim();
           }
           fnBst(NOPARAM);
-          #if defined(DMCP_BUILD)
-            lcd_refresh();
-          #else // !DMCP_BUILD
-            refreshLcd();
-          #endif // DMCP_BUILD
+          lcd_refresh();
         }
         if(softmenu[softmenuStack[0].softmenuId].menuItem == -MNU_PLOT_LR){
           strcpy(plotStatMx, "STATS");

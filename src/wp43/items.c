@@ -21,6 +21,7 @@
 #include "flags.h"
 #include "fonts.h"
 #include "fractions.h"
+#include "hal/lcd.h"
 #include "integers.h"
 #include "logicalOps/logicalOps.h"
 #include "mathematics/mathematics.h"
@@ -111,12 +112,6 @@ void fnNop(uint16_t unusedButMandatoryParameter) {
         fnReturn(0); // 1 more time to clean local registers
       }
 
-      #if defined(DMCP_BUILD)
-        lcd_refresh();
-      #else // !DMCP_BUILD
-        refreshLcd();
-      #endif // DMCP_BUILD
-
       if(calcMode != cmTimerApp) {
         // We should probably be more careful about when we're updating the screenUpdatingMode
         screenUpdatingMode = SCRUPD_AUTO;
@@ -151,9 +146,6 @@ void fnNop(uint16_t unusedButMandatoryParameter) {
     if(programRunStop != PGM_RUNNING) {
       updateMatrixHeightCache();
       cachedDynamicMenu = 0;
-      #if defined(PC_BUILD)
-        refreshLcd();
-      #endif // PC_BUILD
     }
   }
 

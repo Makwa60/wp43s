@@ -378,20 +378,6 @@ void pixelline(uint16_t xo, uint8_t yo, uint16_t xn, uint8_t yn, bool vmNormal) 
 }
 
 
-void force_refresh1(void) {
-  #if defined(PC_BUILD)
-    lcd_refresh();
-    //FULL UPDATE (UGLY)
-    #if defined(FULLUPDATE)
-      refresh_gui();
-    #endif // FULLUPDATE
-  #endif // PC_BUILD
-  #if DMCP_BUILD
-    lcd_forced_refresh();
-  #endif // DMCP_BUILD
-}
-
-
 void graphAxisDraw (void) {
   #if !defined(TESTSUITE_BUILD)
     uint32_t cnt;
@@ -446,7 +432,7 @@ void graphAxisDraw (void) {
         cnt++;
       }
 
-     force_refresh1();
+      lcd_refresh();
 
       if(0<x_max && 0>x_min) {
         for(x=0; x<=x_max; x+=tick_int_x) {                         //draw x ticks
@@ -517,7 +503,8 @@ void graphAxisDraw (void) {
       //DRAW YAXIS
       lcd_fill_rect(xzero,minny, 1, SCREEN_HEIGHT_GRAPH-minny, 0xFF);
 
-      force_refresh1();
+      lcd_refresh();
+
       if(0<y_max && 0>y_min) {
         for(y=0; y<=y_max; y+=tick_int_y) {                     //draw y ticks
           #if defined(STATDEBUG) && defined(PC_BUILD)
@@ -577,7 +564,7 @@ void graphAxisDraw (void) {
         }
       }
     }
-    force_refresh1();
+    lcd_refresh();
   #endif
 }
 
@@ -1746,12 +1733,6 @@ void fnPlotStat(uint16_t plotMode){
 
         hourGlassIconEnabled = true;
         showHideHourGlass();
-
-        #if defined(DMCP_BUILD)
-          lcd_refresh();
-        #else // !DMCP_BUILD
-          refreshLcd();
-        #endif // DMCP_BUILD
 
         switch(plotMode) {
           case H_PLOT:

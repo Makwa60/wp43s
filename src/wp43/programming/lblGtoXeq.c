@@ -14,6 +14,8 @@
 #include "error.h"
 #include "flags.h"
 #include "fonts.h"
+#include "hal/lcd.h"
+#include "hal/system.h"
 #include "items.h"
 #include "longIntegerType.h"
 #include "programming/flash.h"
@@ -763,11 +765,6 @@ void runProgram(bool singleStep, uint16_t menuLabel) {
     programRunStop = PGM_RUNNING;
     if(!getSystemFlag(FLAG_INTING) && !getSystemFlag(FLAG_SOLVING)) {
       showHideHourGlass();
-      #if defined(DMCP_BUILD)
-        lcd_refresh();
-      #else // !DMCP_BUILD
-        refreshLcd();
-      #endif // DMCP_BUILD
     }
 
     if(menuLabel != INVALID_VARIABLE) {
@@ -826,32 +823,15 @@ void runProgram(bool singleStep, uint16_t menuLabel) {
       else {
         break;
       }
-      #if defined(DMCP_BUILD)
-        if(!nestedEngine) {
-          int key = key_pop();
-          key = convertKeyCode(key);
-          if(key == kcRun || key == kcExit) {
-            programRunStop = PGM_WAITING;
-            refreshScreen();
-            lcd_refresh();
-            wait_for_key_release(0);
-            key_pop();
-            break;
-          }
-          else if(key > 0) {
-            lastKeyCode = key;
-          }
-        }
-      #endif // DMCP_BUILD
+      if(!nestedEngine) {
+        systemProcessEvents();
+      }
       if(programRunStop != PGM_RUNNING) {
         break;
       }
       if(singleStep) {
         break;
       }
-      #if defined(PC_BUILD)
-        refreshLcd();
-      #endif // PC_BUILD
     }
 
 stopProgram:
@@ -863,11 +843,6 @@ stopProgram:
     }
     if(!getSystemFlag(FLAG_INTING) && !getSystemFlag(FLAG_SOLVING)) {
       showHideHourGlass();
-      #if defined(DMCP_BUILD)
-        lcd_refresh();
-      #else // !DMCP_BUILD
-        refreshLcd();
-      #endif // DMCP_BUILD
     }
     return;
   #endif // !TESTSUITE_BUILD
