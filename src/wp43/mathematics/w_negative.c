@@ -9,6 +9,7 @@
 #include "error.h"
 #include "mathematics/comparisonReals.h"
 #include "mathematics/wp34s.h"
+#include "matrix.h"
 #include "registers.h"
 #include "registerValueConversions.h"
 
@@ -23,10 +24,13 @@ void wNegCplx(void);
   #define wNegError typeError
 #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
 
+void wNegRema(void);
+void wNegCxma(void);
+
 TO_QSPI void (* const WNegative[NUMBER_OF_DATA_TYPES_FOR_CALCULATIONS])(void) = {
 // regX ==> 1            2         3          4          5          6          7          8           9             10
 //          Long integer Real34    Complex34  Time       Date       String     Real34 mat Complex34 m Short integer Config data
-            wNegLonI,    wNegReal, wNegCplx,  wNegError, wNegError, wNegError, wNegError, wNegError,  wNegError,    wNegError
+            wNegLonI,    wNegReal, wNegCplx,  wNegError, wNegError, wNegError, wNegRema,  wNegCxma,   wNegError,    wNegError
 };
 
 #if (EXTRA_INFO_ON_CALC_ERROR == 1)
@@ -102,4 +106,16 @@ void wNegCplx(void) {
       moreInfoOnError("In function wNegCplx:", "Cannot calculate Wm for complex number with non-zero imaginary part", NULL, NULL);
     #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
   }
+}
+
+
+
+void wNegRema(void) {
+  elementwiseRema(wNegReal);
+}
+
+
+
+void wNegCxma(void) {
+  elementwiseCxma(wNegCplx);
 }
