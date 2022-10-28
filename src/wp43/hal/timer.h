@@ -11,16 +11,15 @@
   #include <stdint.h>
 
   typedef enum {
-    tidAutoRepeat               = 0,
-    tidTimerAppRedraw           = 1,
-    tidTimerAppDetectWrapAround = 2,
-    tidShowNop                  = 3,
-    tidRefreshLcd               = 4,
-    tidAsmActive                = 5,
-    tidCursorBlink              = 6,
-    tidTimeUpdate               = 7
+    tidTimeUpdate               = 0,
+    tidAutoRepeat               = 1,
+    tidShowNop                  = 2,
+    tidAsmActive                = 3,
+    tidTimerAppRedraw           = 4,
+    tidTimerAppDetectWrapAround = 5,
+    tidCursorBlink              = 6
   } timerId_t;
-  #define MAX_TIMER_ID            8
+  #define MAX_TIMER_ID            7
 
   typedef void (*timerCallback_t)(uint16_t param);
 

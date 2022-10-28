@@ -245,11 +245,6 @@
 
   #if defined(DMCP_BUILD)
     extern bool                 backToDMCP;
-    //extern int                  keyAutoRepeat; // Key repetition
-    //extern int16_t              previousItem;
-    extern uint32_t             nextTimerRefresh;
-
-    int                         convertKeyCode(int key);
   #endif // DMCP_BUILD
 
 #endif // !WP43_H

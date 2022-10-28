@@ -49,6 +49,8 @@ const char *systemMaker(void) {
 
 
 void systemProcessEvents(void) {
+  dmcpCheckPowerStatus();
+  dmcpResetAutoOff();
   while(!key_empty()) {
     int key = key_pop();
     key = convertKeyCode(key);

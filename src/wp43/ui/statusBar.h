@@ -24,10 +24,13 @@
     void cbTimeUpdate           (uint16_t param);
 
     #if defined(DMCP_BUILD)
-      /**
-       * Shows or hides the USB or low battery icon in the status bar.
-       */
-      void showHideUsbLowBattery(void);
+      typedef enum {
+        psUsb        = 0,
+        psBattery    = 1,
+        psBatteryLow = 2
+      } powerStatus_t;
+
+      void setPowerStatus         (powerStatus_t status);
     #endif // DMCP_BUILD
   #else
     #pragma GCC diagnostic ignored "-Wunused-parameter"

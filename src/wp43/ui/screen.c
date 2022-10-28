@@ -63,55 +63,6 @@
   */
 #endif // !TESTSUITE_BUILD
 
-#if defined(TESTSUITE_BUILD) && !defined(GENERATE_CATALOGS)
-  void refreshLcd(void) {}
-#else
-  // This function is called periodically by the main loop or a GTK timer
-  void refreshLcd(void) {
-    #if defined(DMCP_BUILD)
-      getTimeString(dateTimeString);
-      if(strcmp(dateTimeString, oldTime)) {
-        strcpy(oldTime, dateTimeString);
-        if(!getSystemFlag(FLAG_AUTOFF) || (calcMode == cmTimerApp)) {
-          reset_auto_off();
-        }
-      }
-      if(usb_powered() == 1) {
-        if(!getSystemFlag(FLAG_USB)) {
-          setSystemFlag(FLAG_USB);
-          clearSystemFlag(FLAG_LOWBAT);
-          showHideUsbLowBattery();
-        }
-      }
-      else {
-        if(getSystemFlag(FLAG_USB)) {
-          clearSystemFlag(FLAG_USB);
-        }
-
-        if(get_vbat() < 2000) {
-          if(!getSystemFlag(FLAG_LOWBAT)) {
-            setSystemFlag(FLAG_LOWBAT);
-            showHideUsbLowBattery();
-          }
-          SET_ST(STAT_PGM_END);
-        }
-        else if(get_vbat() < 2500) {
-          if(!getSystemFlag(FLAG_LOWBAT)) {
-            setSystemFlag(FLAG_LOWBAT);
-            showHideUsbLowBattery();
-          }
-        }
-        else {
-          if(getSystemFlag(FLAG_LOWBAT)) {
-            clearSystemFlag(FLAG_LOWBAT);
-            showHideUsbLowBattery();
-          }
-        }
-      }
-    #endif // DMCP_BUILD
-  }
-#endif // !TESTSUITE_BUILD || GENERATE_CATALOGS
-
 
 
 void clearScreen(void) {
@@ -295,16 +246,6 @@ void clearScreen(void) {
         *row = lrow;
       }
     }
-  }
-
-
-
-  void cbRefreshLcd(uint16_t param) {
-    if(calcMode != cmTimerApp) {
-      refreshLcd();
-      lcd_refresh();
-    }
-    timerStart(tidRefreshLcd, NOPARAM, SCREEN_REFRESH_PERIOD);
   }
 
 

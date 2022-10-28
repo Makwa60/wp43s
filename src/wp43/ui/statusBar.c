@@ -275,10 +275,36 @@
       if(getSystemFlag(FLAG_USB)) {
         showGlyph(STD_USB, &standardFont, X_BATTERY, 0, vmNormal, true, false); // is 0+9+2 pixel wide
       }
-      else {
-        if(getSystemFlag(FLAG_LOWBAT)) {
-          showGlyph(STD_BATTERY, &standardFont, X_BATTERY, 0, vmNormal, true, false); // is 0+10+1 pixel wide
-        }
+      else if(getSystemFlag(FLAG_LOWBAT)) {
+        showGlyph(STD_BATTERY, &standardFont, X_BATTERY, 0, vmNormal, true, false); // is 0+10+1 pixel wide
+      }
+    }
+
+
+
+    void setPowerStatus(powerStatus_t status) {
+      switch(status) {
+        case psUsb:
+          if(!getSystemFlag(FLAG_USB)) {
+            setSystemFlag(FLAG_USB);
+            clearSystemFlag(FLAG_LOWBAT);
+            showHideUsbLowBattery();
+          }
+          break;
+        case psBattery:
+          if(getSystemFlag(FLAG_USB) || getSystemFlag(FLAG_LOWBAT)) {
+            clearSystemFlag(FLAG_USB);
+            clearSystemFlag(FLAG_LOWBAT);
+            showHideUsbLowBattery();
+          }
+          break;
+        case psBatteryLow:
+          if(!getSystemFlag(FLAG_LOWBAT)) {
+            clearSystemFlag(FLAG_USB);
+            setSystemFlag(FLAG_LOWBAT);
+            showHideUsbLowBattery();
+          }
+          break;
       }
     }
   #endif // DMCP_BUILD

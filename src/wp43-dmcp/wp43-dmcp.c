@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // SPDX-FileCopyrightText: Copyright The WP43 Authors
 
-#include "wp43.h"
+#include "wp43-dmcp.h"
 
 #include "apps/timerApp.h"
 #include "calcMode.h"
@@ -15,7 +15,10 @@
 #include "ui/keyboard.h"
 #include "ui/screen.h"
 #include "ui/softmenus.h"
+#include "ui/statusBar.h"
 #include <stdbool.h>
+
+#include "wp43.h"
 
 bool     backToDMCP;
 uint32_t nextTimerRefresh;
@@ -106,6 +109,34 @@ int convertKeyCode(int key) {
     default:        return key;
   }
 }
+
+
+
+void dmcpResetAutoOff(void) {
+  // Key is ready -> clear auto off timer
+  if(!key_empty() || (calcMode == cmTimerApp) || !getSystemFlag(FLAG_AUTOFF)) {
+    reset_auto_off();
+  }
+}
+
+
+
+void dmcpCheckPowerStatus(void) {
+  if(usb_powered() == 1) {
+    setPowerStatus(psUsb);
+  }
+  else if(get_vbat() < 2500) {
+    setPowerStatus(psBatteryLow);
+    if(get_vbat() < 2000) {
+      SET_ST(STAT_PGM_END);
+    }
+  }
+  else {
+    setPowerStatus(psBattery);
+  }
+}
+
+
 
 void program_main(void) {
   const int TimerId = 0;
@@ -258,10 +289,9 @@ void program_main(void) {
       }
     }
 
-    // Externally forced LCD repaint
     if(ST(STAT_CLK_WKUP_FLAG)) {
       if(!ST(STAT_OFF) && (nextTimerRefresh == 0)) {
-        refreshLcd();
+        dmcpCheckPowerStatus();
         lcd_refresh_wait();
       }
       CLR_ST(STAT_CLK_WKUP_FLAG);
@@ -269,7 +299,7 @@ void program_main(void) {
     }
     if(ST(STAT_POWER_CHANGE)) {
       CLR_ST(STAT_POWER_CHANGE);
-      refreshLcd();
+      dmcpCheckPowerStatus();
       lcd_refresh_dma();
       continue;
     }
@@ -316,10 +346,7 @@ void program_main(void) {
       }
     }
 
-    // Key is ready -> clear auto off timer
-    if(!key_empty() || (calcMode == cmTimerApp)) {
-      reset_auto_off();
-    }
+    dmcpResetAutoOff();
 
     // Fetch the key
     //  < 0 -> No key event
