@@ -3,9 +3,9 @@
 
 #include "ui/cursor.h"
 
-#include "core/timer.h"
 #include "fonts.h"
 #include "hal/lcd.h"
+#include "hal/timer.h"
 #include "ui/screen.h"
 
 #include "wp43.h"

@@ -5,12 +5,12 @@
 
 #include "calcMode.h"
 #include "charString.h"
-#include "core/timer.h"
 #include "dateTime.h"
 #include "error.h"
 #include "flags.h"
 #include "fonts.h"
 #include "hal/lcd.h"
+#include "hal/timer.h"
 #include "items.h"
 #include "screen.h"
 #include "ui/tam.h"

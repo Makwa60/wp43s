@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // SPDX-FileCopyrightText: Copyright The WP43 Authors
 
-#include "core/timer.h"
+#include "hal/timer.h"
 
 #include "defines.h"
 #include "hal/time.h"
@@ -10,6 +10,13 @@
 #include <stdio.h>
 
 #include "wp43.h"
+
+typedef enum {
+  tsUnused    = 0,
+  tsStopped   = 1,
+  tsRunning   = 2,
+  tsCompleted = 3
+} timerStatus_t;
 
 typedef struct {
   timerCallback_t func;
@@ -77,11 +84,6 @@ uint32_t timerRun(void) {
 
 
 
-void timerDummyTest(uint16_t param) {
-}
-
-
-
 void timerReset(void) {
   for(int i = 0; i < MAX_TIMER_ID; i++) {
     _timer[i].state = tsUnused;
@@ -120,8 +122,8 @@ void timerStop(timerId_t nr) {
 
 
 
-timerStatus_t timerGetStatus(timerId_t nr) {
+bool timerIsRunning(timerId_t nr) {
   assert(nr < MAX_TIMER_ID);
 
-  return _timer[nr].state;
+  return (_timer[nr].state == tsRunning);
 }

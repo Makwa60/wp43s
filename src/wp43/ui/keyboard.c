@@ -15,12 +15,12 @@
 #include "config.h"
 #include "constants.h"
 #include "core/memory.h"
-#include "core/timer.h"
 #include "debug.h"
 #include "error.h"
 #include "flags.h"
 #include "hal/gui.h"
 #include "hal/lcd.h"
+#include "hal/timer.h"
 #include "items.h"
 #include "matrix.h"
 #include "plotstat.h"
@@ -966,7 +966,7 @@ keyCode_t lastKeyCode;
         }
       }
     }
-    if(timerGetStatus(tidAutoRepeat) != tsRunning) {
+    if(!timerIsRunning(tidAutoRepeat)) {
       refreshScreen();
     }
     screenUpdatingMode &= ~SCRUPD_ONE_TIME_FLAGS;

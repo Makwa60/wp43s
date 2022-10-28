@@ -69,11 +69,9 @@ endif
 
 if not meson.is_cross_build()
   gtest_proj     = subproject('gtest')
-  gtest_dep      = gtest_proj.get_variable('gtest_dep')
-  gmock_main_dep = gtest_proj.get_variable('gmock_main_dep')
+  gtest_main_dep = gtest_proj.get_variable('gtest_main_dep')
 else
-  gtest_dep      = dependency('', required : false)
-  gmock_main_dep = dependency('', required : false)
+  gtest_main_dep = dependency('', required : false)
 endif
 
 subdir('docs/code')

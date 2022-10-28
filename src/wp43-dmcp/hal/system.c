@@ -4,9 +4,9 @@
 #include "hal/system.h"
 
 #include "charString.h"
-#include "core/timer.h"
 #include "error.h"
 #include "fonts.h"
+#include "hal/timer.h"
 #include "ui/keyboard.h"
 #include <stdio.h>
 #include <dmcp.h>

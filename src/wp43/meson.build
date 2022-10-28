@@ -17,7 +17,6 @@ wp43_src = files(
   'conversionUnits.c',
   'core/freeList.c',
   'core/memory.c',
-  'core/timer.c',
   'curveFitting.c',
   'dateTime.c',
   'debug.c',
