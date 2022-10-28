@@ -326,7 +326,7 @@ keyCode_t lastKeyCode;
       keyActionProcessed = true;
     }
 
-    else if(indexOfItems[item].func == addItemToBuffer) {
+    else if(item >= 0 && indexOfItems[item].func == addItemToBuffer) {
       addItemToBuffer(item);
       keyActionProcessed = true;
     }
