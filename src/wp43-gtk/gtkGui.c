@@ -123,7 +123,6 @@ void frmCalcMouseButtonPressed(GtkWidget *notUsed, GdkEvent *event, gpointer dat
     }
 
     btnPressed(key);
-    simRefreshTimers();
   }
 }
 
@@ -133,7 +132,6 @@ void frmCalcMouseButtonReleased(GtkWidget *notUsed, GdkEvent *event, gpointer da
   if(key != kcNoKey) {
     btnReleased(key);
     key = kcNoKey;
-    simRefreshTimers();
   }
 }
 
@@ -674,7 +672,6 @@ static gboolean keyPressed(GtkWidget *w, GdkEventKey *event, gpointer data) {
       break;
     }
   }
-  simRefreshTimers();
   return FALSE;
 }
 

@@ -38,37 +38,6 @@ char                debugString[10000];
     return compareString(a, b, CMP_EXTENSIVE);
   }
 #endif // EXPORT_ITEMS
-static guint        _simTimer;
-static bool         _simTimerValid = false;
-
-/********************************************//**
- * \brief Refreshes timer. This function is
- * called every 5 ms by a GTK timer.
- *
- * \param[in] data gpointer Not used
- * \return gboolean         What will happen next?
- *                          * true  = timer will call this function again
- *                          * false = timer stops calling this function
- ***********************************************/
-gboolean cbTimerRun(gpointer unusedData) {
-  simRefreshTimers();
-  return FALSE;
-}
-
-void simRefreshTimers(void) {
-  if(_simTimerValid) {
-    g_source_remove(_simTimer);
-    _simTimerValid = false;
-  }
-  uint32_t time = timerRun();
-  if(time > 0) {
-    _simTimer = g_timeout_add(time, cbTimerRun, NULL);
-    _simTimerValid = true;
-  }
-  if(screenChange) {
-    gtk_widget_queue_draw(screen);
-  }
-}
 
 int main(int argc, char* argv[]) {
   #if defined(__APPLE__)
@@ -138,8 +107,6 @@ int main(int argc, char* argv[]) {
   restoreCalc();
   //ramDump();
   //refreshScreen();
-
-  simRefreshTimers();
 
   if(getSystemFlag(FLAG_AUTXEQ)) {
     clearSystemFlag(FLAG_AUTXEQ);
