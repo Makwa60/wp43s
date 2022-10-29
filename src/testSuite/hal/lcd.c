@@ -16,3 +16,6 @@ void flipPixel(uint32_t x, uint32_t y) {
 
 void lcd_fill_rect(uint32_t x, uint32_t y, uint32_t dx, uint32_t dy, int val) {
 }
+
+void lcd_refresh(void) {
+}

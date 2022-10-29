@@ -10,21 +10,28 @@
 #include "fonts.h"
 #include "mathematics/comparisonReals.h"
 #include "mathematics/wp34s.h"
+#include "matrix.h"
 #include "registers.h"
 #include "registerValueConversions.h"
 
 #include "wp43.h"
 
+void gammaRema(void);
+void gammaCxma(void);
+
 TO_QSPI void (* const Gamma[NUMBER_OF_DATA_TYPES_FOR_CALCULATIONS])(void) = {
 // regX ==> 1            2          3          4           5           6           7           8           9             10
 //          Long integer Real34     Complex34  Time        Date        String      Real34 mat  Complex34 m Short integer Config data
-            gammaLonI,   gammaReal, gammaCplx, gammaError, gammaError, gammaError, gammaError, gammaError, gammaError,   gammaError
+            gammaLonI,   gammaReal, gammaCplx, gammaError, gammaError, gammaError, gammaRema,  gammaCxma,  gammaError,   gammaError
 };
+
+void lnGammaRema(void);
+void lnGammaCxma(void);
 
 TO_QSPI void (* const lnGamma[NUMBER_OF_DATA_TYPES_FOR_CALCULATIONS])(void) = {
 // regX ==> 1            2            3            4             5             6             7             8             9             10
 //          Long integer Real34       Complex34    Time          Date          String        Real34 mat    Complex34 m   Short integer Config data
-            lnGammaLonI, lnGammaReal, lnGammaCplx, lnGammaError, lnGammaError, lnGammaError, lnGammaError, lnGammaError, lnGammaError, lnGammaError
+            lnGammaLonI, lnGammaReal, lnGammaCplx, lnGammaError, lnGammaError, lnGammaError, lnGammaRema,  lnGammaCxma,  lnGammaError, lnGammaError
 };
 
 
@@ -325,4 +332,28 @@ void lnGammaCplx(void) {
 
   convertRealToReal34ResultRegister(&rReal, REGISTER_X);
   convertRealToImag34ResultRegister(&rImag, REGISTER_X);
+}
+
+
+
+void gammaRema(void) {
+  elementwiseRema(gammaReal);
+}
+
+
+
+void gammaCxma(void) {
+  elementwiseCxma(gammaCplx);
+}
+
+
+
+void lnGammaRema(void) {
+  elementwiseRema(lnGammaReal);
+}
+
+
+
+void lnGammaCxma(void) {
+  elementwiseCxma(lnGammaCplx);
 }

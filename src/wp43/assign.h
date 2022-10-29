@@ -7,6 +7,7 @@
 #if !defined(ASSIGN_H)
   #define ASSIGN_H
 
+  #include "ui/keyboard.h"
   #include <stdint.h>
 
   void fnAssign             (uint16_t mode);
@@ -16,7 +17,7 @@
   void assignToMyMenu       (uint16_t position);
   void assignToMyAlpha      (uint16_t position);
   void assignToUserMenu     (uint16_t position);
-  void assignToKey          (const char *data);
+  void assignToKey          (keyCode_t keyCode);
 
   void setUserKeyArgument   (uint16_t position, const char *name);
   void createMenu           (const char *name);

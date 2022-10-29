@@ -14,6 +14,7 @@
     #include <dmcp.h>
 
     // lcd_fill_rect from dmcp.h
+    // lcd_refresh   from dmcp.h
     static inline void setBlackPixel(uint32_t x, uint32_t y) {
       bitblt24(x, 1, y, 1, BLT_OR,   BLT_NONE);
     }
@@ -38,6 +39,11 @@
      *                rectangle
      */
     void lcd_fill_rect (uint32_t x, uint32_t y, uint32_t dx, uint32_t dy, int val);
+
+    /**
+     * Refresh the LCD with the draw buffer contents.
+     */
+    void lcd_refresh   (void);
 
     /**
      * Sets a single black pixel on the screen.

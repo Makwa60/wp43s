@@ -162,23 +162,35 @@ void curtCplx(void) {
   real34ToReal(REGISTER_REAL34_DATA(REGISTER_X), &a);
   real34ToReal(REGISTER_IMAG34_DATA(REGISTER_X), &b);
 
-  if(realIsZero(&b)) {
-    if(realIsPositive(&a)) {
-      realPower(&a, const_1on3, &a, &ctxtReal39);
-    }
-    else {
-      realSetPositiveSign(&a);
-      realPower(&a, const_1on3, &a, &ctxtReal39);
-      realSetNegativeSign(&a);
-    }
-  }
-  else {
-    realRectangularToPolar(&a, &b, &a, &b, &ctxtReal39);
-    realPower(&a, const_1on3, &a, &ctxtReal39);
-    realMultiply(&b, const_1on3, &b, &ctxtReal39);
-    realPolarToRectangular(&a, &b, &a, &b, &ctxtReal39);
-  }
+  curtComplex(&a, &b, &a, &b, &ctxtReal39);
 
   convertRealToReal34ResultRegister(&a, REGISTER_X);
   convertRealToImag34ResultRegister(&b, REGISTER_X);
+}
+
+
+
+void curtComplex(const real_t *real, const real_t *imag, real_t *resReal, real_t *resImag, realContext_t *realContext) {
+  real_t a, b;
+
+  realCopy(real, &a);
+  realCopy(imag, &b);
+
+  if(realIsZero(&b)) {
+    if(realIsPositive(&a)) {
+      realPower(&a, const_1on3, resReal, realContext);
+    }
+    else {
+      realSetPositiveSign(&a);
+      realPower(&a, const_1on3, resReal, realContext);
+      realSetNegativeSign(resReal);
+    }
+    realZero(resImag);
+  }
+  else {
+    realRectangularToPolar(&a, &b, &a, &b, realContext);
+    realPower(&a, const_1on3, &a, realContext);
+    realMultiply(&b, const_1on3, &b, realContext);
+    realPolarToRectangular(&a, &b, resReal, resImag, realContext);
+  }
 }

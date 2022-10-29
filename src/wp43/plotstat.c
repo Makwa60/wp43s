@@ -380,7 +380,7 @@ void pixelline(uint16_t xo, uint8_t yo, uint16_t xn, uint8_t yn, bool vmNormal) 
 
 void force_refresh1(void) {
   #if defined(PC_BUILD)
-    gtk_widget_queue_draw(screen);
+    lcd_refresh();
     //FULL UPDATE (UGLY)
     #if defined(FULLUPDATE)
       refresh_gui();

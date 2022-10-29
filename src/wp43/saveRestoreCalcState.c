@@ -33,6 +33,7 @@
 #include "stats.h"
 #include "ui/screen.h"
 #include "ui/softmenus.h"
+#include "ui/tam.h"
 #include <stdbool.h>
 #include <string.h>
 #if defined(PC_BUILD)
@@ -42,7 +43,7 @@
 
 #include "wp43.h"
 
-#define BACKUP_VERSION         84  // changed displayFormat into an enum
+#define BACKUP_VERSION         85  // changed flagScreen into an enum
 #define START_REGISTER_VALUE 1000  // was 1522, why?
 
 static char *tmpRegisterString = NULL;
@@ -136,7 +137,7 @@ static uint32_t restore(void *buffer, uint32_t size) {
     save(&denMax,                             sizeof(denMax));
     save(&currentRegisterBrowserScreen,       sizeof(currentRegisterBrowserScreen));
     save(&currentFntScr,                      sizeof(currentFntScr));
-    save(&currentFlgScr,                      sizeof(currentFlgScr));
+    save(&flagScreen,                         sizeof(flagScreen));
     save(&displayFormat,                      sizeof(displayFormat));
     save(&displayFormatDigits,                sizeof(displayFormatDigits));
     save(&timeDisplayFormatDigits,            sizeof(timeDisplayFormatDigits));
@@ -392,7 +393,7 @@ static uint32_t restore(void *buffer, uint32_t size) {
       restore(&denMax,                             sizeof(denMax));
       restore(&currentRegisterBrowserScreen,       sizeof(currentRegisterBrowserScreen));
       restore(&currentFntScr,                      sizeof(currentFntScr));
-      restore(&currentFlgScr,                      sizeof(currentFlgScr));
+      restore(&flagScreen,                         sizeof(flagScreen));
       restore(&displayFormat,                      sizeof(displayFormat));
       restore(&displayFormatDigits,                sizeof(displayFormatDigits));
       restore(&timeDisplayFormatDigits,            sizeof(timeDisplayFormatDigits));

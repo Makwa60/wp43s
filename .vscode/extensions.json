@@ -1,6 +1,8 @@
 {
     "recommendations": [
         "mesonbuild.mesonbuild",
-        "ms-vscode.cpptools"
+        "ms-vscode.cpptools",
+        "matepek.vscode-catch2-test-adapter",
+        "vadimcn.vscode-lldb"
     ]
 }

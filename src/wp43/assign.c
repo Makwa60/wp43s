@@ -19,6 +19,7 @@
 #include "ui/bufferize.h"
 #include "ui/screen.h"
 #include "ui/softmenus.h"
+#include "ui/tam.h"
 #include <stdbool.h>
 #include <string.h>
 
@@ -290,12 +291,11 @@ static int _typeOfFunction(int16_t func) {
   }
 }
 
-void assignToKey(const char *data) {
-  int keyCode = (*data - '0')*10 + *(data+1) - '0';
-  calcKey_t *key = kbd_usr + keyCode;
+void assignToKey(keyCode_t keyCode) {
+  calcKey_t *key = kbd_usr + keyCode - 1;
   userMenuItem_t tmpMenuItem;
   int keyStateCode = ((previousCalcMode) == cmAim ? 3 : 0) + (shiftG ? 2 : shiftF ? 1 : 0);
-  const calcKey_t *stdKey = kbd_std + keyCode;
+  const calcKey_t *stdKey = kbd_std + keyCode - 1;
 
   _assignItem(&tmpMenuItem);
   switch(_typeOfFunction(tmpMenuItem.item)) {
@@ -528,11 +528,11 @@ void assignToKey(const char *data) {
       }
     }
   }
-  if(keyCode == 5) { // alpha
+  if(keyCode == kcSqrt) { // alpha
     key->primaryTam  = stdKey->primaryTam;
   }
 
-  setUserKeyArgument(keyCode * 6 + keyStateCode, tmpMenuItem.argumentName);
+  setUserKeyArgument((keyCode - 1) * 6 + keyStateCode, tmpMenuItem.argumentName);
 }
 
 
@@ -720,10 +720,7 @@ static bool _assignToKey(int16_t keyFunc) {
         }
       }
       if(keyFunc == kf && (!getSystemFlag(FLAG_USER) || getNthString((uint8_t *)userKeyLabel, j * 6 + keyStateCode + i) == 0)) {
-        char kc[4] = {};
-        kc[0] = (j / 10) + '0';
-        kc[1] = (j % 10) + '0';
-        kc[2] = 0;
+        keyCode_t kc = j + 1;
         assignToKey(kc);
         return true;
       }

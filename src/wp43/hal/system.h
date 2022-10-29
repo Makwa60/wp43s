@@ -22,4 +22,10 @@
    */
   const char *systemMaker(void);
 
+  /**
+   * Quit the application.
+   * This is called after the state has been saved.
+   */
+  void systemQuit(void);
+
 #endif // !SYSTEM_H

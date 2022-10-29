@@ -8,6 +8,7 @@
   #define CUBEROOT_H
 
   #include "defines.h"
+  #include "realType.h"
   #include <stdint.h>
 
   void fnCubeRoot(uint16_t unusedButMandatoryParameter);
@@ -24,5 +25,7 @@
   void curtShoI   (void);
   void curtReal   (void);
   void curtCplx   (void);
+
+  void curtComplex(const real_t *real, const real_t *imag, real_t *resReal, real_t *resImag, realContext_t *realContext);
 
 #endif // !CUBEROOT_H

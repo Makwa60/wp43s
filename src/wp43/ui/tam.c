@@ -28,6 +28,13 @@
 
 #include "wp43.h"
 
+tamState_t tam;
+
+void tamReset(void) {
+  tam.mode = 0;
+  tam.alpha = false;
+}
+
 #if !defined(TESTSUITE_BUILD)
   int16_t tamOperation(void) {
     switch(tam.function) {
@@ -133,7 +140,7 @@
       return;
     }
 
-    if(tam.mode == TM_KEY) {
+    if(tam.mode == tmKey) {
       tbPtr = stpcpy(tbPtr, "KEY ");
       if(tam.keyInputFinished) {
         if(tam.keyIndirect) {
@@ -168,7 +175,7 @@
       tbPtr = stpcpy(tbPtr, " ");
     }
 
-    if(tam.mode == TM_SHUFFLE) {
+    if(tam.mode == tmShuffle) {
       // Shuffle keeps the source register number for each destination register (X, Y, Z, T) in two bits
       // consecutively, with the 'valid' bit eight above that number
       // E.g. 0000010100001110 would mean that two registers have been entered: T, Z in that order
@@ -203,7 +210,7 @@
       }
       else {
         int16_t max = (tam.indirect ? (tam.dot ? (calcMode == cmPem ? 98 : currentNumberOfLocalRegisters) : 99)
-          : (tam.dot ? (calcMode == cmPem ? 98 : ((tam.mode == TM_FLAGR || tam.mode == TM_FLAGW) ? NUMBER_OF_LOCAL_FLAGS : currentNumberOfLocalRegisters)) : tam.max));
+          : (tam.dot ? (calcMode == cmPem ? 98 : ((tam.mode == tmFlagR || tam.mode == tmFlagW) ? NUMBER_OF_LOCAL_FLAGS : currentNumberOfLocalRegisters)) : tam.max));
         uint8_t maxDigits = _tamMaxDigits(max);
         uint8_t underscores = maxDigits - tam.digitsSoFar;
         int16_t v = tam.value;
@@ -279,13 +286,13 @@
     char    *forcedVar = NULL;
 
     // Shuffle is handled completely differently to everything else
-    if(tam.mode == TM_SHUFFLE) {
+    if(tam.mode == tmShuffle) {
       _tamHandleShuffle(item);
       return;
     }
 
     min = (tam.dot ? 0 : tam.min);
-    max = (tam.dot ? (calcMode == cmPem ? 98 : ((tam.mode == TM_FLAGR || tam.mode == TM_FLAGW) ? NUMBER_OF_LOCAL_FLAGS : currentNumberOfLocalRegisters)) : tam.max);
+    max = (tam.dot ? (calcMode == cmPem ? 98 : ((tam.mode == tmFlagR || tam.mode == tmFlagW) ? NUMBER_OF_LOCAL_FLAGS : currentNumberOfLocalRegisters)) : tam.max);
     min2 = (tam.indirect ? 0 : min);
     max2 = (tam.indirect ? (tam.dot ? (calcMode == cmPem ? 98 : currentNumberOfLocalRegisters) : 99) : max);
     if(item == ITM_ENTER || (tam.alpha && stringGlyphLength(aimBuffer) > 6)) {
@@ -298,7 +305,7 @@
           int16_t lg = stringLastGlyph(aimBuffer);
           aimBuffer[lg] = 0;
         }
-        else if(tam.mode == TM_NEWMENU) {
+        else if(tam.mode == tmNewMenu) {
           tamLeaveMode();
           runFunction(ITM_ASSIGN);
         }
@@ -330,12 +337,12 @@
       }
       else if(tam.indirect) {
         tam.indirect = false;
-        if(tam.mode == TM_FLAGR || tam.mode == TM_FLAGW) {
+        if(tam.mode == tmFlagR || tam.mode == tmFlagW) {
           popSoftmenu();
           showSoftmenu(-MNU_TAMFLAG);
           --numberOfTamMenusToPop;
         }
-        else if(tam.mode == TM_LABEL || (tam.mode == TM_KEY && tam.keyInputFinished)) {
+        else if(tam.mode == tmLabel || (tam.mode == tmKey && tam.keyInputFinished)) {
           popSoftmenu();
           showSoftmenu(-MNU_TAMLABEL);
           --numberOfTamMenusToPop;
@@ -344,7 +351,7 @@
       else if(tam.currentOperation != tam.function) {
         tam.currentOperation = tam.function;
       }
-      else if(tam.mode == TM_KEY && tam.keyInputFinished) {
+      else if(tam.mode == tmKey && tam.keyInputFinished) {
         tam.value            = tam.key / 10;
         tam.alpha            = tam.keyAlpha;
         tam.dot              = tam.keyDot;
@@ -387,11 +394,11 @@
     }
     else if(item == ITM_alpha) {
       bool allowAlphaMode = false, beginWithLowercase = false;
-      allowAlphaMode = allowAlphaMode || (!tam.digitsSoFar && !tam.dot && !valueParameter && (tam.mode == TM_STORCL || tam.mode == TM_M_DIM || tam.mode == TM_REGISTER || tam.mode == TM_CMP || tam.function == ITM_MVAR));
+      allowAlphaMode = allowAlphaMode || (!tam.digitsSoFar && !tam.dot && !valueParameter && (tam.mode == tmStoRcl || tam.mode == tmMDim || tam.mode == tmRegister || tam.mode == tmCmp || tam.function == ITM_MVAR));
       allowAlphaMode = allowAlphaMode || (!tam.digitsSoFar && !tam.dot && tam.indirect);
       beginWithLowercase = allowAlphaMode;
-      allowAlphaMode = allowAlphaMode || (!tam.digitsSoFar && !tam.dot && tam.mode == TM_LABEL);
-      allowAlphaMode = allowAlphaMode || (!tam.digitsSoFar && !tam.dot && tam.keyInputFinished && tam.mode == TM_KEY);
+      allowAlphaMode = allowAlphaMode || (!tam.digitsSoFar && !tam.dot && tam.mode == tmLabel);
+      allowAlphaMode = allowAlphaMode || (!tam.digitsSoFar && !tam.dot && tam.keyInputFinished && tam.mode == tmKey);
       allowAlphaMode = allowAlphaMode || (!tam.digitsSoFar && (tam.function == ITM_LBL || tam.function == ITM_GTOP));
       if(allowAlphaMode) {
         tam.alpha = true;
@@ -439,7 +446,7 @@
             return;
           }
         }
-        else if(tam.mode == TM_STORCL && tam.currentOperation != ITM_Config && tam.currentOperation != ITM_Stack) {
+        else if(tam.mode == tmStoRcl && tam.currentOperation != ITM_Config && tam.currentOperation != ITM_Stack) {
           if(item == tam.currentOperation) {
             tam.currentOperation = tam.function;
           }
@@ -502,14 +509,14 @@
       tam.value = 16;
       forceTry = true;
     }
-    else if((tam.mode == TM_LABEL || (tam.mode == TM_KEY && tam.keyInputFinished)) && !tam.indirect && item == ITM_E) {
+    else if((tam.mode == tmLabel || (tam.mode == tmKey && tam.keyInputFinished)) && !tam.indirect && item == ITM_E) {
       tam.value = 100 - 'A' + 'E';
       forceTry = true;
       tryOoR = true;
     }
     else if(REGISTER_X <= indexOfItems[item].param && indexOfItems[item].param <= REGISTER_K) {
-      if(!tam.digitsSoFar && tam.function != ITM_BESTF && tam.function != ITM_CNST && (tam.indirect || (tam.mode != TM_VALUE && tam.mode != TM_VALUE_CHB))) {
-        if((tam.mode == TM_LABEL || (tam.mode == TM_KEY && tam.keyInputFinished)) && !tam.indirect) {
+      if(!tam.digitsSoFar && tam.function != ITM_BESTF && tam.function != ITM_CNST && (tam.indirect || (tam.mode != tmValue && tam.mode != tmValueChb))) {
+        if((tam.mode == tmLabel || (tam.mode == tmKey && tam.keyInputFinished)) && !tam.indirect) {
           switch(indexOfItems[item].param) {
             case REGISTER_A: {
               tam.value = 100 - 'A' + 'A'; forceTry = true; tryOoR = true;
@@ -573,7 +580,7 @@
     else if(item == ITM_0P || item == ITM_1P) {
       reallocateRegister(TEMP_REGISTER_1, dtReal34, REAL34_SIZE, amNone);
       real34Copy(item == ITM_1P ? const34_1 : const34_0, REGISTER_REAL34_DATA(TEMP_REGISTER_1));
-      if(!tam.digitsSoFar && tam.function != ITM_BESTF && tam.function != ITM_CNST && tam.mode != TM_VALUE && tam.mode != TM_VALUE_CHB) {
+      if(!tam.digitsSoFar && tam.function != ITM_BESTF && tam.function != ITM_CNST && tam.mode != tmValue && tam.mode != tmValueChb) {
         tam.value = TEMP_REGISTER_1;
         forceTry = true;
         // Register letters access registers not accessible via number codes, so we shouldn't look at the tam.max value
@@ -631,8 +638,8 @@
         else if(tam.indirect && (currentNumberOfLocalRegisters || calcMode == cmPem)) {
           tam.dot = true;
         }
-        else if(tam.mode != TM_VALUE && tam.mode != TM_VALUE_CHB) {
-          if(calcMode == cmPem || ((tam.mode == TM_FLAGR || tam.mode == TM_FLAGW) && currentLocalFlags != NULL) || ((tam.mode != TM_FLAGR && tam.mode != TM_FLAGW) && currentNumberOfLocalRegisters)) {
+        else if(tam.mode != tmValue && tam.mode != tmValueChb) {
+          if(calcMode == cmPem || ((tam.mode == tmFlagR || tam.mode == tmFlagW) && currentLocalFlags != NULL) || ((tam.mode != tmFlagR && tam.mode != tmFlagW) && currentNumberOfLocalRegisters)) {
             tam.dot = true;
           }
         }
@@ -641,7 +648,7 @@
     }
     else if(item == ITM_INDIRECTION) {
       if(!tam.alpha && !tam.digitsSoFar && !tam.dot && !valueParameter && (indexOfItems[tam.function].status & PTP_STATUS) != PTP_SKIP_BACK && (indexOfItems[tam.function].status & PTP_STATUS) != PTP_DECLARE_LABEL) {
-        if(!tam.indirect && (tam.mode == TM_FLAGR || tam.mode == TM_FLAGW || tam.mode == TM_LABEL)) {
+        if(!tam.indirect && (tam.mode == tmFlagR || tam.mode == tmFlagW || tam.mode == tmLabel)) {
           popSoftmenu();
           showSoftmenu(-MNU_TAM);
           --numberOfTamMenusToPop;
@@ -650,7 +657,7 @@
       }
       return;
     }
-    else if(indexOfItems[item].func == fnGetSystemFlag && (tam.mode == TM_FLAGR || tam.mode == TM_FLAGW)) {
+    else if(indexOfItems[item].func == fnGetSystemFlag && (tam.mode == tmFlagR || tam.mode == tmFlagW)) {
       // A function key has been pressed that corresponds to a system flag
       tam.value = indexOfItems[item].param;
       tryOoR = true;
@@ -663,7 +670,7 @@
 
     // All operations that may try and evaluate the function shouldn't return but let execution fall through to here
 
-    if(tam.mode == TM_KEY && !tam.keyInputFinished) {
+    if(tam.mode == tmKey && !tam.keyInputFinished) {
       if(tam.alpha || forcedVar || ((tryOoR || (min2 <= tam.value && tam.value <= max2)) && (forceTry || tam.value*10 > max2))) {
         tam.key              = tam.value;
         tam.keyAlpha         = tam.alpha;
@@ -698,7 +705,7 @@
           value += FIRST_LOCAL_REGISTER;
         }
         if(tam.indirect && calcMode != cmPem) {
-          value = indirectAddressing(value, (indexOfItems[tamOperation()].param == TM_FLAGR || indexOfItems[tamOperation()].param == TM_FLAGW) ? INDPM_FLAG : (tam.mode == TM_STORCL || tam.mode == TM_M_DIM) ? INDPM_REGISTER : INDPM_PARAM, min, max);
+          value = indirectAddressing(value, (indexOfItems[tamOperation()].param == tmFlagR || indexOfItems[tamOperation()].param == tmFlagW) ? INDPM_FLAG : (tam.mode == tmStoRcl || tam.mode == tmMDim) ? INDPM_REGISTER : INDPM_PARAM, min, max);
           run = (lastErrorCode == 0);
         }
         if(tam.function == ITM_GTOP) {
@@ -744,7 +751,7 @@
       char    *buffer = (forcedVar ? forcedVar : aimBuffer);
       bool     tryAllocate = ((tam.function == ITM_STO || tam.function == ITM_M_DIM || tam.function == ITM_MVAR || tam.function == ITM_INPUT) && !tam.indirect);
       int16_t  value;
-      if(tam.mode == TM_NEWMENU) {
+      if(tam.mode == tmNewMenu) {
         value = 1;
       }
       else if(tam.function == ITM_XEQ) {
@@ -778,7 +785,7 @@
           }
         }
       }
-      else if(tam.mode == TM_LABEL || tam.mode == TM_SOLVE || (tam.mode == TM_KEY && tam.keyInputFinished)) {
+      else if(tam.mode == tmLabel || tam.mode == tmSolve || (tam.mode == tmKey && tam.keyInputFinished)) {
         value = findNamedLabel(buffer);
         if(value == INVALID_VARIABLE && tam.function != ITM_LBL && tam.function != ITM_LBLQ) {
           displayCalcErrorMessage(ERROR_LABEL_NOT_FOUND, ERR_REGISTER_LINE, REGISTER_X);
@@ -804,11 +811,11 @@
       if(calcMode == cmPem) {
         addStepInProgram(tamOperation());
       }
-      if(tam.mode != TM_NEWMENU) {
+      if(tam.mode != tmNewMenu) {
         aimBuffer[0] = 0;
       }
       if(tam.indirect && value != INVALID_VARIABLE && calcMode != cmPem) {
-        value = indirectAddressing(value, (indexOfItems[tam.function].param == TM_FLAGR || indexOfItems[tam.function].param == TM_FLAGW) ? INDPM_FLAG : (tam.mode == TM_STORCL || tam.mode == TM_M_DIM) ? INDPM_REGISTER : INDPM_PARAM, min, max);
+        value = indirectAddressing(value, (indexOfItems[tam.function].param == tmFlagR || indexOfItems[tam.function].param == tmFlagW) ? INDPM_FLAG : (tam.mode == tmStoRcl || tam.mode == tmMDim) ? INDPM_REGISTER : INDPM_PARAM, min, max);
         if(lastErrorCode != 0) {
           value = INVALID_VARIABLE;
         }
@@ -842,7 +849,7 @@
 
 
   void tamEnterMode(int16_t func) {
-    tam.mode = func == ITM_ASSIGN ? TM_NEWMENU : indexOfItems[func].param;
+    tam.mode = func == ITM_ASSIGN ? tmNewMenu : indexOfItems[func].param;
     tam.function = func;
     tam.min = indexOfItems[func].tamMinMax >> TAM_MAX_BITS;
     tam.max = indexOfItems[func].tamMinMax & TAM_MAX_MASK;
@@ -893,42 +900,42 @@
     tam.keyInputFinished = false;
 
     switch(tam.mode) {
-      case TM_VALUE:
-      case TM_VALUE_CHB:
-      case TM_REGISTER:
-      case TM_M_DIM:
-      case TM_KEY: {
+      case tmValue:
+      case tmValueChb:
+      case tmRegister:
+      case tmMDim:
+      case tmKey: {
         showSoftmenu(-MNU_TAM);
         break;
       }
 
-      case TM_CMP: {
+      case tmCmp: {
         showSoftmenu(-MNU_TAMCMP);
         break;
       }
 
-      case TM_FLAGR:
-      case TM_FLAGW: {
+      case tmFlagR:
+      case tmFlagW: {
         showSoftmenu(-MNU_TAMFLAG);
         break;
       }
 
-      case TM_STORCL: {
+      case tmStoRcl: {
         showSoftmenu(-MNU_TAMSTORCL);
         break;
       }
 
-      case TM_SHUFFLE: {
+      case tmShuffle: {
         showSoftmenu(-MNU_TAMSHUFFLE);
         break;
       }
 
-      case TM_LABEL: {
+      case tmLabel: {
         showSoftmenu(-MNU_TAMLABEL);
         break;
       }
 
-      case TM_SOLVE: {
+      case tmSolve: {
         if(func == ITM_SOLVE && calcMode == cmPem) {
           showSoftmenu(-MNU_TAM);
         }
@@ -938,12 +945,12 @@
         break;
       }
 
-      case TM_NEWMENU: {
+      case tmNewMenu: {
         break;
       }
 
       default: {
-        sprintf(errorMessage, "In function calcModeTam: %" PRIu16 " is an unexpected value for tam.mode!", tam.mode);
+        sprintf(errorMessage, "In function calcModeTam: %" PRIu16 " is an unexpected value for tam.mode!", (uint16_t)tam.mode);
         bugScreen(errorMessage);
         return;
       }
@@ -956,7 +963,7 @@
     clearSystemFlag(FLAG_ALPHA);
 
     #if defined(PC_BUILD) && (SCREEN_800X480 == 0)
-      if(tam.mode == TM_NEWMENU) {
+      if(tam.mode == tmNewMenu) {
         setSystemFlag(FLAG_ALPHA);
         aimBuffer[0] = 0;
         calcModeEnter(cmAim);

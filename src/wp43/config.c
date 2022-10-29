@@ -17,6 +17,7 @@
 #include "error.h"
 #include "fonts.h"
 #include "flags.h"
+#include "hal/debug.h"
 #include "hal/io.h"
 #include "items.h"
 #include "matrix.h"
@@ -32,6 +33,7 @@
 #include "stats.h"
 #include "ui/bufferize.h"
 #include "ui/keyboard.h"
+#include "ui/tam.h"
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
@@ -743,11 +745,6 @@ void fnReset(uint16_t confirmation) {
       matrixIndex = INVALID_VARIABLE; // Unset matrix index
     #endif // !TESTSUITE_BUILD
 
-
-    #if defined(PC_BUILD)
-      debugWindow = DBG_REGISTERS;
-    #endif // PC_BUILD
-
     decContextDefault(&ctxtReal34, DEC_INIT_DECQUAD);
 
     decContextDefault(&ctxtReal4, DEC_INIT_DECSINGLE);
@@ -836,7 +833,6 @@ void fnReset(uint16_t confirmation) {
     printerIconEnabled = false;
     thereIsSomethingToUndo = false;
     pemCursorIsZerothStep = true;
-    tam.alpha = false;
     fnKeyInCatalog = false;
     shiftF = false;
     shiftG = false;
@@ -880,7 +876,7 @@ void fnReset(uint16_t confirmation) {
     // RNG initialisation
     pcg32_srandom(0x1963073019931121ULL, 0x1995062319981019ULL);
 
-    tam.mode = 0;
+    tamReset();
     catalog = CATALOG_NONE;
     memset(lastCatalogPosition, 0, NUMBER_OF_CATALOGS * sizeof(lastCatalogPosition[0]));
     firstGregorianDay = 2361222 /* 14 Sept 1752 */;
@@ -945,9 +941,7 @@ void fnReset(uint16_t confirmation) {
     timerAppResetState();
 
     #if (DEBUG_PANEL == 1)
-      debugWindow = DBG_REGISTERS;
-      gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(chkHexaString), false);
-      refreshDebugPanel();
+      debugInit();
     #endif // DEBUG_PANEL == 1
   }
 }

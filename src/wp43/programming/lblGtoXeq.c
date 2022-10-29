@@ -34,7 +34,7 @@
 #include "wp43.h"
 
 void fnGoto(uint16_t label) {
-  if(tam.mode || calcMode != cmPem) {
+  if(tamIsActive() || calcMode != cmPem) {
     if(dynamicMenuItem >= 0) {
       fnGotoDot(label);
       return;
@@ -217,7 +217,7 @@ void fnExecute(uint16_t label) {
     dynamicMenuItem = -1;
     if(lastErrorCode == ERROR_NONE) {
       #if !defined(TESTSUITE_BUILD)
-        if(tam.mode) {
+        if(tamIsActive()) {
           tamLeaveMode();
           refreshScreen();
         }
@@ -311,7 +311,7 @@ void fnStopProgram(uint16_t unusedButMandatoryParameter) {
   static void _executeWithIndirectRegister(uint8_t *paramAddress, uint16_t op) {
     uint8_t opParam = *(uint8_t *)paramAddress;
     if(opParam <= LAST_LOCAL_REGISTER) { // Local register from .00 to .98
-      int16_t realParam = indirectAddressing(opParam, (indexOfItems[op].param == TM_FLAGR || indexOfItems[op].param == TM_FLAGW) ? INDPM_FLAG : (indexOfItems[op].param == TM_STORCL || indexOfItems[op].param == TM_M_DIM) ? INDPM_REGISTER : INDPM_PARAM, indexOfItems[op].tamMinMax >> TAM_MAX_BITS, indexOfItems[op].tamMinMax & TAM_MAX_MASK);
+      int16_t realParam = indirectAddressing(opParam, (indexOfItems[op].param == tmFlagR || indexOfItems[op].param == tmFlagW) ? INDPM_FLAG : (indexOfItems[op].param == tmStoRcl || indexOfItems[op].param == tmMDim) ? INDPM_REGISTER : INDPM_PARAM, indexOfItems[op].tamMinMax >> TAM_MAX_BITS, indexOfItems[op].tamMinMax & TAM_MAX_MASK);
       if(realParam < 9999) {
         reallyRunFunction(op, realParam);
       }
@@ -328,7 +328,7 @@ void fnStopProgram(uint16_t unusedButMandatoryParameter) {
     _getStringLabelOrVariableName(stringAddress);
     regist = findNamedVariable(tmpStringLabelOrVariableName);
     if(regist != INVALID_VARIABLE) {
-      int16_t realParam = indirectAddressing(regist, (indexOfItems[op].param == TM_FLAGR || indexOfItems[op].param == TM_FLAGW) ? INDPM_FLAG : (indexOfItems[op].param == TM_STORCL || indexOfItems[op].param == TM_M_DIM) ? INDPM_REGISTER : INDPM_PARAM, indexOfItems[op].tamMinMax >> TAM_MAX_BITS, indexOfItems[op].tamMinMax & TAM_MAX_MASK);
+      int16_t realParam = indirectAddressing(regist, (indexOfItems[op].param == tmFlagR || indexOfItems[op].param == tmFlagW) ? INDPM_FLAG : (indexOfItems[op].param == tmStoRcl || indexOfItems[op].param == tmMDim) ? INDPM_REGISTER : INDPM_PARAM, indexOfItems[op].tamMinMax >> TAM_MAX_BITS, indexOfItems[op].tamMinMax & TAM_MAX_MASK);
       if(realParam < 9999) {
         reallyRunFunction(op, realParam);
       }
@@ -840,7 +840,7 @@ void runProgram(bool singleStep, uint16_t menuLabel) {
             break;
           }
           else if(key > 0) {
-            setLastKeyCode(key);
+            lastKeyCode = key;
           }
         }
       #endif // DMCP_BUILD

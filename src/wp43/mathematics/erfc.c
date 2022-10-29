@@ -6,15 +6,18 @@
 #include "debug.h"
 #include "error.h"
 #include "mathematics/wp34s.h"
+#include "matrix.h"
 #include "registers.h"
 #include "registerValueConversions.h"
 
 #include "wp43.h"
 
+void erfcRema(void);
+
 TO_QSPI void (* const Erfc[NUMBER_OF_DATA_TYPES_FOR_CALCULATIONS])(void) = {
 // regX ==> 1            2         3          4          5          6          7          8           9             10
 //          Long integer Real34    Complex34  Time       Date       String     Real34 mat Complex34 m Short integer Config data
-            erfcLonI,    erfcReal, erfcError, erfcError, erfcError, erfcError, erfcError, erfcError,  erfcError,    erfcError
+            erfcLonI,    erfcReal, erfcError, erfcError, erfcError, erfcError, erfcRema,  erfcError,  erfcError,    erfcError
 };
 
 
@@ -71,4 +74,10 @@ void erfcReal(void) {
   real34ToReal(REGISTER_REAL34_DATA(REGISTER_X), &x);
   WP34S_Erfc(&x, &x, &ctxtReal39);
   convertRealToReal34ResultRegister(&x, REGISTER_X);
+}
+
+
+
+void erfcRema(void) {
+  elementwiseRema(erfcReal);
 }

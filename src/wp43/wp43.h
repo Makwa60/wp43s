@@ -19,12 +19,6 @@
     #include <unistd.h>
   #endif // OSX
 
-  #if defined(PC_BUILD)
-    #include <glib.h>
-    #include <gtk/gtk.h>
-    #include <gdk/gdk.h>
-  #endif // PC_BUILD
-
   #if defined(WIN32)
     #include <locale.h>
   #endif // WIN32
@@ -52,22 +46,9 @@
   #endif // PC_BUILD || TESTSUITE_BUILD
 
   #if defined(PC_BUILD)
-    extern bool                 calcLandscape;
-    extern bool                 calcAutoLandscapePortrait;
-    extern GtkWidget           *screen;
-    extern GtkWidget           *frmCalc;
     extern int16_t              screenStride;
-    extern int16_t              debugWindow;
     extern uint32_t            *screenData;
     extern bool                 screenChange;
-    extern char                 debugString[10000];
-    #if (DEBUG_REGISTER_L == 1)
-      extern GtkWidget         *lblRegisterL1;
-      extern GtkWidget         *lblRegisterL2;
-    #endif // (DEBUG_REGISTER_L == 1)
-    #if (SHOW_MEMORY_STATUS == 1)
-      extern GtkWidget         *lblMemoryStatus;
-    #endif // (SHOW_MEMORY_STATUS == 1)
   #endif //PC_BUILD
 
   // Variables stored in FLASH
@@ -179,16 +160,11 @@
   extern temporaryInformation_t temporaryInformation;
   extern uint8_t                numScreensNumericFont;
   extern uint8_t                programRunStop;
-  extern uint8_t                lastKeyCode;
   extern uint8_t                entryStatus; // 0x01 for the entry flag, backed up to 0x02 for undo
   extern uint8_t                screenUpdatingMode;
   extern uint8_t               *beginOfProgramMemory;
   extern uint8_t               *firstFreeProgramByte;
 
-  /**
-   * Instance of the internal state for TAM.
-   */
-  extern tamState_t             tam;
   extern int16_t                lineTWidth;
   extern int16_t                rbrRegister;
   extern int16_t                catalog;

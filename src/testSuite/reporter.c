@@ -50,7 +50,7 @@ static void _junitEndTest(bool passed, const char *errorMsg) {
 
 static void _junitEndTestSuite(void) {
   assert(_testSuiteOutPtr + _testSuitesOutPtr <= MAX_TEST_SUITES_SIZE);
-  char tmp[100];
+  char tmp[200];
   sprintf(tmp, "\t<testsuite time=\"0\" tests=\"%d\" errors=\"%d\" name=\"%s\">\n", _testsInSuite, _failingTestsInSuite, _testSuiteName);
   assert(strlen(tmp) + _testSuitesOutPtr + _testSuiteOutPtr < MAX_TEST_SUITES_SIZE);
   strcpy(_testSuitesOut + _testSuitesOutPtr, tmp);

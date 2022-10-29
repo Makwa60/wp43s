@@ -15,3 +15,8 @@ void systemScreenshot(void) {
 const char *systemMaker(void) {
   return NULL;
 }
+
+
+
+void systemQuit(void) {
+}

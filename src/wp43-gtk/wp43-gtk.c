@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // SPDX-FileCopyrightText: Copyright The WP43 Authors
 
+#include "wp43-gtk.h"
 #include "apps/timerApp.h"
 #include "core/memory.h"
 #include "flags.h"
@@ -20,7 +21,6 @@ bool                calcAutoLandscapePortrait;
 GtkWidget           *screen;
 GtkWidget           *frmCalc;
 int16_t             screenStride;
-int16_t             debugWindow;
 uint32_t            *screenData;
 bool                screenChange;
 char                debugString[10000];
@@ -105,11 +105,6 @@ int main(int argc, char* argv[]) {
       calcLandscape             = false;
       calcAutoLandscapePortrait = true;
     }
-  }
-
-  if(strcmp(indexOfItems[LAST_ITEM].itemSoftmenuName, "Last item") != 0) {
-    printf("The last item of indexOfItems[] is not \"Last item\"\n");
-    exit(1);
   }
 
   #if defined(EXPORT_ITEMS)

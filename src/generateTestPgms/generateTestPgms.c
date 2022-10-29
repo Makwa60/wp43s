@@ -6,6 +6,7 @@
 #include "fonts.h"
 #include "items.h"
 #include <stdlib.h>
+#include <string.h>
 
 #include "wp43.h"
 

@@ -4,6 +4,7 @@
 #include "hal/lcd.h"
 
 #include "defines.h"
+#include "wp43-gtk.h"
 
 #include "wp43.h"
 
@@ -59,4 +60,10 @@ void lcd_fill_rect(uint32_t x, uint32_t y, uint32_t dx, uint32_t dy, int val) {
   }
 
   screenChange = true;
+}
+
+
+
+void lcd_refresh(void) {
+  gtk_widget_queue_draw(screen);
 }

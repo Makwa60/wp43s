@@ -9,6 +9,7 @@
 #include "error.h"
 #include "fonts.h"
 #include "mathematics/wp34s.h"
+#include "matrix.h"
 #include "registers.h"
 #include "registerValueConversions.h"
 
@@ -17,6 +18,9 @@
 void wInvLonI   (void);
 void wInvReal   (void);
 void wInvCplx   (void);
+void wInvRema   (void);
+void wInvCxma   (void);
+
 #if (EXTRA_INFO_ON_CALC_ERROR == 1)
   void wInvError  (void);
 #else // (EXTRA_INFO_ON_CALC_ERROR == 1)
@@ -26,7 +30,7 @@ void wInvCplx   (void);
 TO_QSPI void (* const WInverse[NUMBER_OF_DATA_TYPES_FOR_CALCULATIONS])(void) = {
 // regX ==> 1            2         3          4          5          6          7          8           9             10
 //          Long integer Real34    Complex34  Time       Date       String     Real34 mat Complex34 m Short integer Config data
-            wInvLonI,    wInvReal, wInvCplx,  wInvError, wInvError, wInvError, wInvError, wInvError,  wInvError,    wInvError
+            wInvLonI,    wInvReal, wInvCplx,  wInvError, wInvError, wInvError, wInvRema,  wInvCxma,   wInvError,    wInvError
 };
 
 #if (EXTRA_INFO_ON_CALC_ERROR == 1)
@@ -87,4 +91,16 @@ void wInvCplx(void) {
   WP34S_InverseComplexW(&xr, &xi, &resr, &resi, &ctxtReal39);
   convertRealToReal34ResultRegister(&resr, REGISTER_X);
   convertRealToImag34ResultRegister(&resi, REGISTER_X);
+}
+
+
+
+void wInvRema(void) {
+  elementwiseRema(wInvReal);
+}
+
+
+
+void wInvCxma(void) {
+  elementwiseCxma(wInvCplx);
 }

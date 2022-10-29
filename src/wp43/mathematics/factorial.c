@@ -10,15 +10,19 @@
 #include "flags.h"
 #include "fonts.h"
 #include "mathematics/wp34s.h"
+#include "matrix.h"
 #include "registers.h"
 #include "registerValueConversions.h"
 
 #include "wp43.h"
 
+void factRema(void);
+void factCxma(void);
+
 TO_QSPI void (* const fact[NUMBER_OF_DATA_TYPES_FOR_CALCULATIONS])(void) = {
 // regX ==> 1            2         3         4          5          6          7          8           9             10
 //          Long integer Real34    Complex34 Time       Date       String     Real34 mat Complex34 m Short integer Config data
-            factLonI,    factReal, factCplx, factError, factError, factError, factError, factError,  factShoI,     factError
+            factLonI,    factReal, factCplx, factError, factError, factError, factRema,  factCxma,   factShoI,     factError
 };
 
 
@@ -180,4 +184,16 @@ void factCplx(void) {
 
   convertRealToReal34ResultRegister(&zReal, REGISTER_X);
   convertRealToImag34ResultRegister(&zImag, REGISTER_X);
+}
+
+
+
+void factRema(void) {
+  elementwiseRema(factReal);
+}
+
+
+
+void factCxma(void) {
+  elementwiseCxma(factCplx);
 }
