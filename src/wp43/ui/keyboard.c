@@ -20,6 +20,7 @@
 #include "flags.h"
 #include "hal/gui.h"
 #include "hal/lcd.h"
+#include "hal/system.h"
 #include "hal/timer.h"
 #include "items.h"
 #include "matrix.h"
@@ -49,6 +50,8 @@
 #include "wp43.h"
 
 keyCode_t lastKeyCode;
+bool      _kbCheckForInterrupt = false;
+bool      _kbSeenInterrupt     = false;
 
 #if !defined(TESTSUITE_BUILD)
   static bool inAutoRepeat = false;
@@ -835,6 +838,12 @@ keyCode_t lastKeyCode;
 
 
   void btnPressed(keyCode_t keyCode) {
+    if(_kbCheckForInterrupt) {
+      if(keyCode == kcExit) {
+        _kbSeenInterrupt = true;
+      }
+      return;
+    }
     if(keyCode >= kcF1) {
       btnFnPressed(keyCode);
       return;
@@ -899,6 +908,9 @@ keyCode_t lastKeyCode;
 
 
   void btnReleased(keyCode_t keyCode) {
+    if(_kbCheckForInterrupt) {
+      return;
+    }
     if(keyCode >= kcF1) {
       btnFnReleased(keyCode);
       return;
@@ -2570,4 +2582,14 @@ uint8_t kbRowColumnFromKeyCode(keyCode_t keyCode) {
     return keyCode - 37 + 10; // function keys
   }
   return 0;
+}
+
+
+
+bool kbCheckForInterrupt(void) {
+  _kbCheckForInterrupt = true;
+  _kbSeenInterrupt     = false;
+  systemProcessEvents();
+  _kbCheckForInterrupt = false;
+  return _kbSeenInterrupt;
 }

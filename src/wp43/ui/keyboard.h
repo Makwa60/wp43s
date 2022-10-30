@@ -7,6 +7,7 @@
 #if !defined(KEYBOARD_H)
   #define KEYBOARD_H
 
+  #include <stdbool.h>
   #include <stdint.h>
 
   typedef enum {
@@ -143,5 +144,7 @@
   keyCode_t kbKeyCodeFromRowColumn(uint8_t rowColumn);
 
   uint8_t   kbRowColumnFromKeyCode(keyCode_t keyCode);
+
+  bool kbCheckForInterrupt(void);
 
 #endif // !KEYBOARD_H
