@@ -2006,12 +2006,12 @@ void fnKeyBackspace(uint16_t unusedButMandatoryParameter) {
       }
 
       case cmEim: {
-        if(xCursor > 0) {
+        if(equationEditorCursor > 0) {
           char *srcPos = aimBuffer;
           char *dstPos = aimBuffer;
           char *lstPos = aimBuffer + stringNextGlyph(aimBuffer, stringLastGlyph(aimBuffer));
-          --xCursor;
-          for(uint32_t i = 0; i < xCursor; ++i) {
+          --equationEditorCursor;
+          for(uint32_t i = 0; i < equationEditorCursor; ++i) {
             dstPos += (*dstPos & 0x80) ? 2 : 1;
           }
           srcPos = dstPos + ((*dstPos & 0x80) ? 2 : 1);

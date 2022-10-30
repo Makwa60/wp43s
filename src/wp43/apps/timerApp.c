@@ -19,6 +19,7 @@
 #include "registerValueConversions.h"
 #include "stack.h"
 #include "stats.h"
+#include "ui/cursor.h"
 #include "ui/screen.h"
 #include "ui/softmenus.h"
 #include <assert.h>
@@ -143,10 +144,12 @@ void timerAppResetState(void) {
   void timerAppDraw(void) {
     assert(calcMode == cmTimerApp);
 
+    bool cursorAppeared = false;
     const uint32_t msec = _getTimerValue();
     clearRegisterLine(REGISTER_T, true, true);
 
     tmpString[0] = 0;
+    cursorEnabled = false;
 
     if(timerAppState.totalTime > 0) {
       const uint32_t tmsec = (msec - timerAppState.lapTime) + timerAppState.totalTime;
@@ -169,9 +172,15 @@ void timerAppResetState(void) {
       sprintf(tmpString + stringByteLength(tmpString), "[%02" PRIu16 "]", timerAppState.currentRegister);
     }
     else {
-      sprintf(tmpString + stringByteLength(tmpString), "[%" PRIu8 STD_CURSOR "]", timerAppState.firstDigit);
+      sprintf(tmpString + stringByteLength(tmpString), "[%" PRIu8, timerAppState.firstDigit);
+      cursorShow(false, 1 + stringWidth(tmpString, &numericFont, true, true), Y_POSITION_OF_REGISTER_T_LINE);
+      cursorAppeared = true;
+      sprintf(tmpString + stringByteLength(tmpString), STD_CURSOR "]");
     }
     showString(tmpString, &numericFont, 1, Y_POSITION_OF_REGISTER_T_LINE, vmNormal, true, true);
+    if(!cursorAppeared) {
+      cursorHide();
+    }
   }
 
 
@@ -351,6 +360,7 @@ void timerAppResetState(void) {
 
 
   void timerAppLeave(void) {
+    cursorEnabled = false;
     popSoftmenu();
     calcModeLeave();
     timerAppState.isFirstDigit = true;

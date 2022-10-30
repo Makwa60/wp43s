@@ -127,8 +127,8 @@ void fnEqEdit(uint16_t unusedButMandatoryParameter) {
     calcMode = cmEim;
     alphaCase = AC_LOWER;
     setSystemFlag(FLAG_ALPHA);
-    yCursor = 0;
-    xCursor = equationString ? stringGlyphLength(equationString) : 0;
+    equationEditorScrollPosition = 0;
+    equationEditorCursor = equationString ? stringGlyphLength(equationString) : 0;
     calcModeUpdateGui();
   #endif // !TESTSUITE_BUILD
 }
@@ -142,16 +142,16 @@ void fnEqDelete(uint16_t unusedButMandatoryParameter) {
 
 
 void fnEqCursorLeft(uint16_t unusedButMandatoryParameter) {
-  if(xCursor > 0) {
-    --xCursor;
+  if(equationEditorCursor > 0) {
+    --equationEditorCursor;
   }
 }
 
 
 
 void fnEqCursorRight(uint16_t unusedButMandatoryParameter) {
-  if(xCursor < (uint32_t)stringGlyphLength(aimBuffer)) {
-    ++xCursor;
+  if(equationEditorCursor < (uint32_t)stringGlyphLength(aimBuffer)) {
+    ++equationEditorCursor;
   }
 }
 
@@ -628,8 +628,18 @@ void showEquation(uint16_t equationId, uint16_t startAt, uint16_t cursorAt, bool
         strPtr += ((*strPtr) & 0x80) ? 2 : 1;
       }
 
-      if((!dryRun) && (*cursorShown || cursorAt == EQUATION_NO_CURSOR)) {
-        showString(tmpString, &standardFont, 1, SCREEN_HEIGHT - SOFTMENU_HEIGHT * 3 + 2 , vmNormal, true, true);
+      if(!dryRun) {
+        char *cursorPos = strstr(tmpString, STD_CURSOR);
+        if(*cursorShown || cursorAt == EQUATION_NO_CURSOR) {
+          showString(tmpString, &standardFont, 1, SCREEN_HEIGHT - SOFTMENU_HEIGHT * 3 + 2, vmNormal, true, true);
+        }
+        if(*cursorShown && cursorAt != EQUATION_NO_CURSOR && cursorPos) {
+          *cursorPos = 0;
+          cursorShow(true, 1 + stringWidth(tmpString, &standardFont, true, true), SCREEN_HEIGHT - SOFTMENU_HEIGHT * 3 + 2);
+        }
+        else {
+          cursorHide();
+        }
       }
     }
   #endif // !TESTSUITE_BUILD
