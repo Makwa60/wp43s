@@ -649,7 +649,7 @@ void showEquation(uint16_t equationId, uint16_t startAt, uint16_t cursorAt, bool
 
 #if !defined(TESTSUITE_BUILD)
   static void _menuItem(int16_t item, char *bufPtr) {
-    xcopy(bufPtr,indexOfItems[item].itemSoftmenuName,stringByteLength(indexOfItems[item].itemSoftmenuName) + 1);
+    xcopy(bufPtr, indexOfItems[item].itemSoftmenuName, stringByteLength(indexOfItems[item].itemSoftmenuName) + 1);
     bufPtr[stringByteLength(indexOfItems[item].itemSoftmenuName)+1]=0;
     //  xcopy(bufPtr, "Calc", 5);
     //  bufPtr[5] = 0;

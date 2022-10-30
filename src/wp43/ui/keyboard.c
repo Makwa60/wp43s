@@ -404,32 +404,32 @@ keyCode_t lastKeyCode;
       if(item != ITM_NOP && item != ITM_NULL) {
         lastErrorCode = 0;
 
-      if(calcMode != cmAssign && indexOfItems[item].func == addItemToBuffer) {
-        // If we are in the catalog then a normal key press should affect the Alpha Selection Buffer to choose
-        // an item from the catalog, but a function key press should put the item in the AIM (or TAM) buffer
-        // Use this variable to distinguish between the two
-        if(calcMode == cmPem && !tamIsActive()) {
-          if(getSystemFlag(FLAG_ALPHA)) {
-            pemAlpha(item);
+        if(calcMode != cmAssign && item >= 0 && indexOfItems[item].func == addItemToBuffer) {
+          // If we are in the catalog then a normal key press should affect the Alpha Selection Buffer to choose
+          // an item from the catalog, but a function key press should put the item in the AIM (or TAM) buffer
+          // Use this variable to distinguish between the two
+          if(calcMode == cmPem && !tamIsActive()) {
+            if(getSystemFlag(FLAG_ALPHA)) {
+              pemAlpha(item);
+            }
+            else {
+              addStepInProgram(item);
+            }
+            hourGlassIconEnabled = false;
           }
           else {
-            addStepInProgram(item);
+            fnKeyInCatalog = 1;
+            addItemToBuffer(item);
+            fnKeyInCatalog = 0;
           }
-          hourGlassIconEnabled = false;
-        }
-        else {
-          fnKeyInCatalog = 1;
-          addItemToBuffer(item);
-          fnKeyInCatalog = 0;
-        }
-        if(calcMode == cmEim && !tamIsActive()) {
-          while(softmenu[softmenuStack[0].softmenuId].menuItem != -MNU_EQ_EDIT) {
-            popSoftmenu();
+          if(calcMode == cmEim && !tamIsActive()) {
+            while(softmenu[softmenuStack[0].softmenuId].menuItem != -MNU_EQ_EDIT) {
+              popSoftmenu();
+            }
           }
+          _closeCatalog();
+          refreshScreen();
         }
-        _closeCatalog();
-        refreshScreen();
-      }
 
         else {
           #if (FN_KEY_TIMEOUT_TO_NOP == 1)
