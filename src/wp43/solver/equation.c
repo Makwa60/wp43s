@@ -628,8 +628,22 @@ void showEquation(uint16_t equationId, uint16_t startAt, uint16_t cursorAt, bool
         strPtr += ((*strPtr) & 0x80) ? 2 : 1;
       }
 
-      if((!dryRun) && (*cursorShown || cursorAt == EQUATION_NO_CURSOR)) {
-        showString(tmpString, &standardFont, 1, SCREEN_HEIGHT - SOFTMENU_HEIGHT * 3 + 2 , vmNormal, true, true);
+      if(!dryRun) {
+        char *cursorPos = strstr(tmpString, STD_CURSOR);
+        if(*cursorShown || cursorAt == EQUATION_NO_CURSOR) {
+          showString(tmpString, &standardFont, 1, SCREEN_HEIGHT - SOFTMENU_HEIGHT * 3 + 2, vmNormal, true, true);
+        }
+        if(*cursorShown && cursorAt != EQUATION_NO_CURSOR && cursorPos) {
+          *cursorPos = 0;
+          xCursor = 1 + stringWidth(tmpString, &standardFont, true, true);
+          yCursor = SCREEN_HEIGHT - SOFTMENU_HEIGHT * 3 + 2;
+          cursorFont = &standardFont;
+          cursorEnabled = true;
+        }
+        else {
+          hideCursor();
+          cursorEnabled = false;
+        }
       }
     }
   #endif // !TESTSUITE_BUILD
