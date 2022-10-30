@@ -22,6 +22,7 @@ if get_option('buildtype').startswith('release')
 else
   cflags        += ['-D_FORTIFY_SOURCE=2', '-fstack-protector-strong']
   linkargs      += ['-fstack-protector-strong']
+  override_opts += ['b_sanitize=undefined']
 endif
 
 sim = executable(
