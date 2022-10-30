@@ -8,6 +8,7 @@
 #include "fonts.h"
 #include "hal/timer.h"
 #include "ui/keyboard.h"
+#include "wp43-dmcp.h"
 #include <stdio.h>
 #include <dmcp.h>
 

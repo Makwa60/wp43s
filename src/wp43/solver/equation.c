@@ -21,6 +21,7 @@
 #include "ui/cursor.h"
 #include "ui/screen.h"
 #include <stdbool.h>
+#include <string.h>
 
 #include "wp43.h"
 
