@@ -322,7 +322,7 @@
           char *aimCursorPos = aimBuffer;
           char *aimBottomPos = aimBuffer + stringByteLength(aimBuffer);
           uint32_t itemLen = stringByteLength(addChar);
-          for(uint32_t i = 0; i < xCursor; ++i) {
+          for(uint32_t i = 0; i < equationEditorCursor; ++i) {
             aimCursorPos += (*aimCursorPos & 0x80) ? 2 : 1;
           }
           for(; aimBottomPos >= aimCursorPos; --aimBottomPos) {
@@ -331,20 +331,20 @@
           xcopy(aimCursorPos, addChar, itemLen);
           switch(item) {
             case ITM_ALOG_SYMBOL: {
-              xCursor += 4;
+              equationEditorCursor += 4;
               break;
             }
             case ITM_ROOT_SIGN: {
-              xCursor += 2;
+              equationEditorCursor += 2;
               break;
             }
             case ITM_PAIR_OF_PARENTHESES:
             case ITM_VERTICAL_BAR: {
-              xCursor += 1;
+              equationEditorCursor += 1;
               break;
             }
             default: {
-              xCursor += stringGlyphLength(indexOfItems[item].itemSoftmenuName);
+              equationEditorCursor += stringGlyphLength(indexOfItems[item].itemSoftmenuName);
             }
           }
         }

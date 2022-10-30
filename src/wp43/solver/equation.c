@@ -127,8 +127,8 @@ void fnEqEdit(uint16_t unusedButMandatoryParameter) {
     calcMode = cmEim;
     alphaCase = AC_LOWER;
     setSystemFlag(FLAG_ALPHA);
-    yCursor = 0;
-    xCursor = equationString ? stringGlyphLength(equationString) : 0;
+    equationEditorScrollPosition = 0;
+    equationEditorCursor = equationString ? stringGlyphLength(equationString) : 0;
     calcModeUpdateGui();
   #endif // !TESTSUITE_BUILD
 }
@@ -142,16 +142,16 @@ void fnEqDelete(uint16_t unusedButMandatoryParameter) {
 
 
 void fnEqCursorLeft(uint16_t unusedButMandatoryParameter) {
-  if(xCursor > 0) {
-    --xCursor;
+  if(equationEditorCursor > 0) {
+    --equationEditorCursor;
   }
 }
 
 
 
 void fnEqCursorRight(uint16_t unusedButMandatoryParameter) {
-  if(xCursor < (uint32_t)stringGlyphLength(aimBuffer)) {
-    ++xCursor;
+  if(equationEditorCursor < (uint32_t)stringGlyphLength(aimBuffer)) {
+    ++equationEditorCursor;
   }
 }
 

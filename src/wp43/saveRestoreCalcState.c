@@ -44,7 +44,7 @@
 
 #include "wp43.h"
 
-#define BACKUP_VERSION         85  // changed flagScreen into an enum
+#define BACKUP_VERSION         86  // equationEditorCursor and equationEditorScrollPosition
 #define START_REGISTER_VALUE 1000  // was 1522, why?
 
 static char *tmpRegisterString = NULL;
@@ -269,6 +269,8 @@ static uint32_t restore(void *buffer, uint32_t size) {
     save(&currentSolverVariable,              sizeof(currentSolverVariable));
     save(&numberOfFormulae,                   sizeof(numberOfFormulae));
     save(&currentFormula,                     sizeof(currentFormula));
+    save(&equationEditorCursor,               sizeof(equationEditorCursor));
+    save(&equationEditorScrollPosition,       sizeof(equationEditorScrollPosition));
     save(&numberOfUserMenus,                  sizeof(numberOfUserMenus));
     save(&currentUserMenu,                    sizeof(currentUserMenu));
     save(&userKeyLabelSize,                   sizeof(userKeyLabelSize));
@@ -529,6 +531,8 @@ static uint32_t restore(void *buffer, uint32_t size) {
       restore(&currentSolverVariable,              sizeof(currentSolverVariable));
       restore(&numberOfFormulae,                   sizeof(numberOfFormulae));
       restore(&currentFormula,                     sizeof(currentFormula));
+      restore(&equationEditorCursor,               sizeof(equationEditorCursor));
+      restore(&equationEditorScrollPosition,       sizeof(equationEditorScrollPosition));
       restore(&numberOfUserMenus,                  sizeof(numberOfUserMenus));
       restore(&currentUserMenu,                    sizeof(currentUserMenu));
       restore(&userKeyLabelSize,                   sizeof(userKeyLabelSize));
