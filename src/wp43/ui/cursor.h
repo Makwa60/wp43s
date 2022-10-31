@@ -23,7 +23,8 @@
    */
   void cursorHide(void);
 
-
   void cursorShow(bool useStandardFont, uint32_t x, uint32_t y);
+
+  void cursorDraw(void);
 
 #endif // !CURSOR_H

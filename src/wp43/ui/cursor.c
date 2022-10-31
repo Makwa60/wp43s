@@ -38,8 +38,10 @@ void drawCursor(bool show) {
 
 void cursorHide(void) {
   timerStop(tidCursorBlink);
-  drawCursor(false);
-  cursorEnabled = false;
+  if(cursorEnabled) {
+    drawCursor(false);
+    cursorEnabled = false;
+  }
 }
 
 
@@ -60,4 +62,10 @@ void cbCursorBlink(uint16_t param) {
   cursorOn = !cursorOn;
   drawCursor(cursorOn);
   timerStart(tidCursorBlink, 0, CursorBlinkPeriod);
+}
+
+
+
+void cursorDraw(void) {
+  drawCursor(cursorOn);
 }
