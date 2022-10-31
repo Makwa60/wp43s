@@ -181,7 +181,7 @@ void clearScreen(void) {
   uint32_t showGlyphCode(uint16_t charCode, const font_t *font, uint32_t x, uint32_t y, videoMode_t videoMode, bool showLeadingCols, bool showEndingCols) {
     uint32_t  col, row, xGlyph, endingCols;
     int32_t glyphId;
-    int8_t   byte, *data;
+    uint8_t   byte, *data;
     const glyph_t  *glyph;
 
     glyphId = findGlyph(font, charCode);
@@ -206,7 +206,7 @@ void clearScreen(void) {
       return 0;
     }
 
-    data = (int8_t *)glyph->data;
+    data = (uint8_t *)glyph->data;
 
     xGlyph      = showLeadingCols ? glyph->colsBeforeGlyph : 0;
     endingCols  = showEndingCols ? glyph->colsAfterGlyph : 0;
