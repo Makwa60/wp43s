@@ -265,8 +265,6 @@ bool      _kbSeenInterrupt     = false;
 
 
   void cbAutoRepeat(uint16_t key) {
-    bool    f = shiftF;
-    bool    g = shiftG;
     uint8_t origScreenUpdatingMode = screenUpdatingMode;
 
     timerStart(tidAutoRepeat, key, KEY_AUTOREPEAT_PERIOD);
@@ -275,8 +273,6 @@ bool      _kbSeenInterrupt     = false;
     btnClicked(key);
     inAutoRepeat = false;
     screenUpdatingMode = origScreenUpdatingMode;
-    shiftF = f;
-    shiftG = g;
   }
 
 
@@ -850,12 +846,6 @@ bool      _kbSeenInterrupt     = false;
     }
     asnKey = keyCode;
 
-    if(keyCode == kcUp || keyCode == kcDown) {
-      if(!inAutoRepeat && (!shiftF || calcMode == cmPem) && !shiftG && (currentSoftmenuScrolls() || (calcMode != cmNormal && calcMode != cmNim && calcMode != cmAim))) {
-        timerStart(tidAutoRepeat, keyCode, KEY_AUTOREPEAT_FIRST_PERIOD);
-      }
-    }
-
     if(programRunStop == PGM_RUNNING || programRunStop == PGM_PAUSED) {
       lastKeyCode = keyCode;
     }
@@ -867,6 +857,16 @@ bool      _kbSeenInterrupt     = false;
     bool g = shiftG;
     int16_t item = determineItem(keyCode);
 
+    if(item == ITM_UP || item == ITM_DOWN || ((item == ITM_SST || item == ITM_BST) && calcMode == cmPem)) {
+      if(currentSoftmenuScrolls() || (calcMode != cmNormal && calcMode != cmNim && calcMode != cmAim)) {
+        if(!inAutoRepeat) {
+          timerStart(tidAutoRepeat, keyCode, KEY_AUTOREPEAT_FIRST_PERIOD);
+        }
+        shiftF = f;
+        shiftG = g;
+      }
+    }
+
     if(programRunStop == PGM_RUNNING || programRunStop == PGM_PAUSED) {
       if((item == ITM_RS || item == ITM_EXIT) && !getSystemFlag(FLAG_INTING) && !getSystemFlag(FLAG_SOLVING)) {
         programRunStop = PGM_WAITING;
@@ -876,11 +876,6 @@ bool      _kbSeenInterrupt     = false;
         programRunStop = PGM_KEY_PRESSED_WHILE_PAUSED;
       }
       return;
-    }
-
-    if(calcMode == cmPem && (item == ITM_SST || item == ITM_BST)) {
-      shiftF = f;
-      shiftG = g;
     }
 
     if(getSystemFlag(FLAG_USER)) {
@@ -916,10 +911,6 @@ bool      _kbSeenInterrupt     = false;
       return;
     }
     int16_t item;
-
-    if(!inAutoRepeat) {
-      timerStop(tidAutoRepeat);
-    }
 
     if(programRunStop == PGM_KEY_PRESSED_WHILE_PAUSED) {
       programRunStop = PGM_RESUMING;
@@ -978,14 +969,14 @@ bool      _kbSeenInterrupt     = false;
         }
       }
     }
+    if(!inAutoRepeat && timerIsRunning(tidAutoRepeat)) {
+      timerStop(tidAutoRepeat);
+      shiftF = shiftG = false;
+    }
     if(!timerIsRunning(tidAutoRepeat)) {
       refreshScreen();
     }
     screenUpdatingMode &= ~SCRUPD_ONE_TIME_FLAGS;
-    if(calcMode == cmPem && shiftF && (keyCode == kcUp || keyCode == kcDown)) {
-      shiftF = false;
-      refreshScreen();
-    }
   }
 
 
