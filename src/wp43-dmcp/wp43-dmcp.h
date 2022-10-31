@@ -10,6 +10,7 @@
   #include <stdint.h>
 
   extern uint32_t nextTimerRefresh;
+  extern uint32_t timeUptime;
 
   int  convertKeyCode       (int key);
   void dmcpResetAutoOff     (void);

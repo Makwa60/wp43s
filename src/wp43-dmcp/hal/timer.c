@@ -63,11 +63,11 @@ uint32_t timerRun(void) {
           diff = _timerDiff(currTime, _timer[i].expire);
         }
       }
-      if(_timer[i].state == tsRunning && (diff + 1) < timeUntilNextRun) {
+      if(_timer[i].state == tsRunning && diff < timeUntilNextRun) {
         anyRemaining = true;
         // Add on one so that a timer expiry of 0 won't be interpreted as
         // no timers
-        timeUntilNextRun = diff + 1;
+        timeUntilNextRun = diff;
       }
     }
   }
@@ -76,10 +76,7 @@ uint32_t timerRun(void) {
     _timerInRun = false;
   #endif // !NDEBUG
 
-  if(!anyRemaining) {
-    anyRemaining = false;
-  }
-  return anyRemaining ? timeUntilNextRun : 0;
+  return anyRemaining ? max(timeUntilNextRun, 1) : 0;
 }
 
 

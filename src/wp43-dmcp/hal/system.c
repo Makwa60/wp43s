@@ -6,6 +6,7 @@
 #include "charString.h"
 #include "error.h"
 #include "fonts.h"
+#include "hal/time.h"
 #include "hal/timer.h"
 #include "ui/keyboard.h"
 #include "wp43-dmcp.h"
@@ -50,6 +51,7 @@ const char *systemMaker(void) {
 
 
 void systemProcessEvents(void) {
+  timeUptime = timeCurrentMs();
   dmcpCheckPowerStatus();
   dmcpResetAutoOff();
   while(!key_empty()) {
@@ -67,4 +69,5 @@ void systemProcessEvents(void) {
 
 
 void systemQuit(void) {
+  SET_ST(STAT_PGM_END);
 }

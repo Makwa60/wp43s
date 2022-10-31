@@ -84,12 +84,9 @@ calcMode_t calcMode;
         }
       }
       saveCalc();
-      systemQuit();
     #endif // PC_BUILD
 
-    #if defined(DMCP_BUILD)
-      SET_ST(STAT_PGM_END);
-    #endif // DMCP_BUILD
+    systemQuit();
   }
 
 

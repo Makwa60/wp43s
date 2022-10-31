@@ -10,6 +10,7 @@
 #include "core/memory.h"
 #include "flags.h"
 #include "items.h"
+#include "hal/time.h"
 #include "hal/timer.h"
 #include "longIntegerType.h"
 #include "ui/keyboard.h"
@@ -23,6 +24,7 @@
 bool     backToDMCP;
 uint32_t nextTimerRefresh;
 bool     wp43KbdLayout;
+uint32_t timeUptime;
 
 int convertKeyCode(int key) {
   if(!wp43KbdLayout) {
@@ -138,8 +140,42 @@ void dmcpCheckPowerStatus(void) {
 
 
 
+void dmcpWaitForEvent(void) {
+  // Try and optimise power usage by not using the timers if it can be avoided as they consume power
+  // The wakeup for a SECOND or MINUTE timer does not consume very much power at all and is very
+  // efficient, so use that wakeup if we can
+  uint32_t timeToNextSecondMs = 1000 - (timeUptime % 1000);
+  if(nextTimerRefresh == 0) {
+    // No timer so just wait until the next minute - this is unlikely to happen because the status bar
+    // time will be updated every minute
+    CLR_ST(STAT_CLK_WKUP_SECONDS);
+    sys_sleep();
+  }
+  else if(nextTimerRefresh <= 100 || nextTimerRefresh < timeToNextSecondMs) {
+    const int TimerId = 0;
+    sys_timer_start(TimerId, nextTimerRefresh);
+    sys_sleep();
+    sys_timer_disable(TimerId);
+  }
+  else {
+    uint32_t timeToNextMinuteMs = 60000 - (timeUptime % 60000);
+    if(nextTimerRefresh < timeToNextMinuteMs) {
+      SET_ST(STAT_CLK_WKUP_SECONDS);
+    }
+    else {
+      CLR_ST(STAT_CLK_WKUP_SECONDS);
+    }
+    sys_sleep();
+  }
+  if(ST(STAT_CLK_WKUP_FLAG)) {
+    CLR_ST(STAT_CLK_WKUP_FLAG);
+  }
+  timeUptime = timeCurrentMs();
+}
+
+
+
 void program_main(void) {
-  const int TimerId = 0;
   int key = kcNoKey;
   int lastKey = kcNoKey;
 
@@ -164,6 +200,8 @@ void program_main(void) {
   configSetUpTimers();
   fnReset(CONFIRMED);
   refreshScreen();
+  timeUptime = timeCurrentMs();
+  nextTimerRefresh = timerRun();
 
   #if 0
     longInteger_t li;
@@ -259,8 +297,6 @@ void program_main(void) {
 
   lcd_refresh();
 
-  nextTimerRefresh = 0;
-
   // Status flags:
   //   ST(STAT_PGM_END)   - Indicates that program should go to off state (set by auto off timer)
   //   ST(STAT_SUSPENDED) - Program signals it is ready for off and doesn't need to be woken-up again
@@ -268,69 +304,25 @@ void program_main(void) {
   //   ST(STAT_RUNNING)   - OS doesn't sleep in this mode
   //   SET_ST(STAT_CLK_WKUP_SECONDS)
   SET_ST(STAT_CLK_WKUP_ENABLE); // Enable wakeup each minute (for clock update)
+  SET_ST(STAT_RUNNING);
 
   while(!backToDMCP) {
-    if(ST(STAT_PGM_END) && ST(STAT_SUSPENDED)) {
-      // Already in off mode and suspended
+    if(ST(STAT_PGM_END)) {
+      // Going to off mode
+      lcd_set_buf_cleared(0); // Mark no buffer change region
+      draw_power_off_image(1);
+      LCD_power_off(0);
+
+      SET_ST(STAT_SUSPENDED);
       CLR_ST(STAT_RUNNING);
+      SET_ST(STAT_OFF);
       sys_sleep();
-    }
-    else if((!ST(STAT_PGM_END) && key_empty())) {
-      // No keys available, wait for timers
-      CLR_ST(STAT_RUNNING);
+      CLR_ST(STAT_OFF);
+      CLR_ST(STAT_SUSPENDED);
+      SET_ST(STAT_RUNNING);
 
-      if(nextTimerRefresh == 0) {
-        sys_sleep();
-      }
-      else {
-        sys_timer_start(TimerId, max(nextTimerRefresh, 1)); // wake up for refresh
-        sys_sleep();
-        sys_timer_disable(TimerId);
-      }
-    }
-
-    if(ST(STAT_CLK_WKUP_FLAG)) {
-      if(!ST(STAT_OFF) && (nextTimerRefresh == 0)) {
-        dmcpCheckPowerStatus();
-        lcd_refresh_wait();
-      }
-      CLR_ST(STAT_CLK_WKUP_FLAG);
-      continue;
-    }
-    if(ST(STAT_POWER_CHANGE)) {
-      CLR_ST(STAT_POWER_CHANGE);
-      dmcpCheckPowerStatus();
-      lcd_refresh_dma();
-      continue;
-    }
-
-    // Wakeup in off state or going to sleep
-    if(ST(STAT_PGM_END) || ST(STAT_SUSPENDED)) {
-      if(!ST(STAT_SUSPENDED)) {
-        // Going to off mode
-        lcd_set_buf_cleared(0); // Mark no buffer change region
-        draw_power_off_image(1);
-
-        LCD_power_off(0);
-        SET_ST(STAT_SUSPENDED);
-        SET_ST(STAT_OFF);
-      }
-      // Already in OFF -> just continue to sleep above
-      continue;
-    }
-
-    // Well, we are woken-up
-    SET_ST(STAT_RUNNING);
-
-    // Clear suspended state, because now we are definitely reached the active state
-    CLR_ST(STAT_SUSPENDED);
-
-    // Get up from OFF state
-    if(ST(STAT_OFF)) {
       LCD_power_on();
       rtc_wakeup_delay(); // Ensure that RTC readings after power off will be OK
-
-      CLR_ST(STAT_OFF);
 
       if(!lcd_get_buf_cleared()) {
         lcd_forced_refresh(); // Just redraw from LCD buffer
@@ -344,6 +336,19 @@ void program_main(void) {
         }
         refreshScreen();
       }
+    }
+    else if(key_empty()) {
+      // No keys available, wait for timers
+      CLR_ST(STAT_RUNNING);
+      dmcpWaitForEvent();
+      SET_ST(STAT_RUNNING);
+    }
+
+    if(ST(STAT_POWER_CHANGE)) {
+      CLR_ST(STAT_POWER_CHANGE);
+      dmcpCheckPowerStatus();
+      lcd_refresh_dma();
+      continue;
     }
 
     dmcpResetAutoOff();
@@ -361,17 +366,7 @@ void program_main(void) {
     }
     else if(key == 0) { // Key released
       btnReleased(lastKey);
-      if(calcMode == cmPem && shiftF && (lastKey == kcUp || lastKey == kcDown)) {
-        shiftF = false;
-        refreshScreen();
-      }
     }
-
-    // TODO: There was code that would create a delay and then refresh the screen after the keyboard
-    // was active (and a few other events). This has been removed and replaced with always refreshing
-    // after a fixed interval. This is worse for performance and should be fixed.
-    // The fix should be to only refresh when something has changed and all changes should be from an
-    // event (timer or key press).
 
     // Execute pending timer jobs
     nextTimerRefresh = timerRun();

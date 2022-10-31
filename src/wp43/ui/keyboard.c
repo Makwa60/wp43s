@@ -982,6 +982,10 @@ bool      _kbSeenInterrupt     = false;
       refreshScreen();
     }
     screenUpdatingMode &= ~SCRUPD_ONE_TIME_FLAGS;
+    if(calcMode == cmPem && shiftF && (keyCode == kcUp || keyCode == kcDown)) {
+      shiftF = false;
+      refreshScreen();
+    }
   }
 
 
