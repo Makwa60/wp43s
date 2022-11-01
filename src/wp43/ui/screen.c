@@ -1744,6 +1744,13 @@ void clearScreen(void) {
         hourGlassIconEnabled = true;
         refreshStatusBar();
         graphPlotstat(plotSelection);
+        if(lastErrorCode != ERROR_NONE) {
+          if(softmenu[softmenuStack[0].softmenuId].menuItem == -MNU_GRAPH) {
+            popSoftmenu();
+            calcMode = cmNormal;
+            refreshScreen();
+          }
+        }
         hourGlassIconEnabled = false;
         showHideHourGlass();
         refreshStatusBar();
@@ -1758,6 +1765,13 @@ void clearScreen(void) {
         refreshStatusBar();
         graphPlotstat(plotSelection);
         graphDrawLRline(plotSelection);
+        if(lastErrorCode != ERROR_NONE) {
+          if(softmenu[softmenuStack[0].softmenuId].menuItem == -MNU_HPLOT || softmenu[softmenuStack[0].softmenuId].menuItem == -MNU_PLOT_LR || softmenu[softmenuStack[0].softmenuId].menuItem == -MNU_HPLOT || softmenu[softmenuStack[0].softmenuId].menuItem == -MNU_PLOT_STAT) {
+            popSoftmenu();
+            calcMode = cmNormal;
+            refreshScreen();
+          }
+        }
         hourGlassIconEnabled = false;
         showHideHourGlass();
         refreshStatusBar();

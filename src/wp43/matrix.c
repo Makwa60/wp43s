@@ -2465,7 +2465,7 @@ smallFont:
           real34Copy(&matrix->matrixElements[(i+sRow)*cols+j+sCol], &r34Val);
           real34SetPositiveSign(&r34Val);
           real34ToDisplayString(&r34Val, amNone, tmpString, font, maxWidth, displayFormat == dfAll ? k : 15, true, STD_SPACE_4_PER_EM, true);
-          if(displayFormat == dfAll && !noFix && strstr(tmpString, STD_SUB_10)) { // something like SCI
+          if(displayFormat == dfAll && !noFix && (strstr(tmpString, STD_SUB_10) || (strcmp(tmpString + 1, "0.") == 0 && !real34IsZero(&r34Val)))) { // something like SCI
             noFix = true;
             goto begin; // redo
           }
@@ -2538,6 +2538,10 @@ smallFont:
         break;
       }
       else if(k == 15 && singleDigitDoesNotFit && noFix && totalWidth > maxWidth) {
+        *digits = k;
+        break;
+      }
+      else if(k <= 2 && maxDigits <= 2) {
         *digits = k;
         break;
       }
@@ -2864,7 +2868,7 @@ smallFont:
           rPadWidth_r[i * MATRIX_MAX_COLUMNS + j] = 0;
           real34SetPositiveSign(VARIABLE_REAL34_DATA(&c34Val));
           real34ToDisplayString(VARIABLE_REAL34_DATA(&c34Val), amNone, tmpString, font, maxWidth, displayFormat == dfAll ? k : 15, true, STD_SPACE_4_PER_EM, true);
-          if(displayFormat == dfAll && !noFix && strstr(tmpString, STD_SUB_10)) { // something like SCI
+          if(displayFormat == dfAll && !noFix && (strstr(tmpString, STD_SUB_10) || (strcmp(tmpString + 1, "0.") == 0 && !real34IsZero(VARIABLE_REAL34_DATA(&c34Val))))) { // something like SCI            noFix = true;
             noFix = true;
             goto begin; // redo
           }
@@ -2893,7 +2897,7 @@ smallFont:
             real34SetPositiveSign(VARIABLE_IMAG34_DATA(&c34Val));
           }
           real34ToDisplayString(VARIABLE_IMAG34_DATA(&c34Val), getSystemFlag(FLAG_POLAR) ? currentAngularMode : amNone, tmpString, font, maxWidth, displayFormat == dfAll ? k : 15, true, STD_SPACE_4_PER_EM, false);
-          if(displayFormat == dfAll && !noFix && strstr(tmpString, STD_SUB_10)) { // something like SCI
+          if(displayFormat == dfAll && !noFix && (strstr(tmpString, STD_SUB_10) || (strcmp(tmpString + 1, "0.") == 0 && !real34IsZero(VARIABLE_IMAG34_DATA(&c34Val))))) { // something like SCI            noFix = true;
             noFix = true;
             goto begin; // redo
           }
@@ -2979,6 +2983,10 @@ smallFont:
         break;
       }
       else if(k == 15 && singleDigitDoesNotFit && noFix && totalWidth > maxWidth) {
+        *digits = k;
+        break;
+      }
+      else if(k <= 2 && maxDigits <= 2) {
         *digits = k;
         break;
       }
