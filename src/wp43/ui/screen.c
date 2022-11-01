@@ -22,6 +22,7 @@
 #include "error.h"
 #include "flags.h"
 #include "fonts.h"
+#include "hal/audio.h"
 #include "hal/debug.h"
 #include "hal/lcd.h"
 #include "hal/time.h"
@@ -181,7 +182,7 @@ void clearScreen(void) {
   uint32_t showGlyphCode(uint16_t charCode, const font_t *font, uint32_t x, uint32_t y, videoMode_t videoMode, bool showLeadingCols, bool showEndingCols) {
     uint32_t  col, row, xGlyph, endingCols;
     int32_t glyphId;
-    int8_t   byte, *data;
+    uint8_t   byte, *data;
     const glyph_t  *glyph;
 
     glyphId = findGlyph(font, charCode);
@@ -206,7 +207,7 @@ void clearScreen(void) {
       return 0;
     }
 
-    data = (int8_t *)glyph->data;
+    data = (uint8_t *)glyph->data;
 
     xGlyph      = showLeadingCols ? glyph->colsBeforeGlyph : 0;
     endingCols  = showEndingCols ? glyph->colsAfterGlyph : 0;
@@ -1910,6 +1911,9 @@ void clearScreen(void) {
 
 void fnScreenDump(uint16_t unusedButMandatoryParameter) {
   systemScreenshot();
+  if(!getSystemFlag(FLAG_QUIET)) {
+    audioShutter();
+  }
   screenUpdatingMode |= SCRUPD_SKIP_STACK_ONE_TIME | SCRUPD_SKIP_MENU_ONE_TIME;
 }
 

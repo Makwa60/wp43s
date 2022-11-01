@@ -7,3 +7,8 @@
 
 void audioTone(uint32_t frequency) {
 }
+
+
+
+void audioShutter(void) {
+}

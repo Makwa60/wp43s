@@ -21,6 +21,10 @@ if get_option('buildtype').startswith('release')
 else
   cflags        += ['-D_FORTIFY_SOURCE=2', '-fstack-protector-strong']
   linkargs      += ['-fstack-protector-strong']
+  # Sanitizers not supported on MinGW
+  if (host_machine.system() == 'linux' or host_machine.system() == 'darwin')
+    override_opts += ['b_sanitize=undefined']
+  endif
 endif
 
 sim = executable(
