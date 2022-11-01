@@ -175,6 +175,19 @@ void dmcpWaitForEvent(void) {
 
 
 
+#if defined(DEBUG_POWER)
+  static void powerDebugMark(uint32_t markNumber) {
+    start_buzzer_freq(5000);
+    sys_delay(markNumber);
+    stop_buzzer();
+  }
+#else
+  static inline void powerDebugMark(uint32_t markNumber) {
+  }
+#endif // DEBUG_POWER
+
+
+
 void program_main(void) {
   int key = kcNoKey;
   int lastKey = kcNoKey;
@@ -307,6 +320,7 @@ void program_main(void) {
   SET_ST(STAT_RUNNING);
 
   while(!backToDMCP) {
+    powerDebugMark(3);
     if(ST(STAT_PGM_END)) {
       // Going to off mode
       lcd_set_buf_cleared(0); // Mark no buffer change region
@@ -361,10 +375,12 @@ void program_main(void) {
     key = convertKeyCode(key);
 
     if(1 <= key && key <= 43) {
+      powerDebugMark(1);
       btnPressed(key);
       lastKey = key;
     }
     else if(key == 0) { // Key released
+      powerDebugMark(2);
       btnReleased(lastKey);
     }
 

@@ -9,3 +9,7 @@ option('RASPBERRY',
   type        : 'boolean',
   value       : false,
   description : 'Set if running on a RaspberryPi for a better layout')
+option('DEBUG_POWER',
+  type        : 'boolean',
+  value       : false,
+  description : 'Set to add buzzer tones to aid with debugging power')
