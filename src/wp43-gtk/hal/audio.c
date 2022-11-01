@@ -3,13 +3,13 @@
 
 #include "hal/audio.h"
 
+#include "hal/time.h"
 #include <stdio.h>
 #if defined(__MINGW64__)
   #define NOMINMAX
   #include <windows.h>
 #elif defined(WITH_PULSEAUDIO)
   #include <pulse/simple.h>
-  #include <unistd.h>
 #endif
 
 #pragma GCC diagnostic ignored "-Wunused-parameter"
@@ -60,7 +60,7 @@ void audioTone(uint32_t frequency) {
 void audioShutter(void) {
   #if defined(WITH_PULSEAUDIO)
     _audioPulse(100000, 5);
-    usleep(100000);
+    timeSleep(100);
     _audioPulse(400000, 5);
   #endif // WITH_PULSEAUDIO
 }
