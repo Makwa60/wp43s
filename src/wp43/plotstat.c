@@ -992,8 +992,11 @@ void graphPlotstat(uint16_t selection) {
         printf("Axis1a: x: %f -> %f y: %f -> %f   \n", x_min, x_max, y_min, y_max);
       #endif // STATDEBUG && PC_BUILD
 
-      if(x_min <= FLoatingMin || x_min >= FLoatingMax || x_max <= FLoatingMin || x_max >= FLoatingMax || y_min <= FLoatingMin || y_min >= FLoatingMax || y_max <= FLoatingMin || y_max >= FLoatingMax) {
-        goto scaleInfinity;
+      if(x_min <= FLoatingMin || x_max <= FLoatingMin || y_min <= FLoatingMin || y_max <= FLoatingMin) {
+        goto scaleMinusInfinity;
+      }
+      if(x_min >= FLoatingMax || x_max >= FLoatingMax || y_min >= FLoatingMax || y_max >= FLoatingMax) {
+        goto scalePlusInfinity;
       }
 
       //Check and correct if min and max is swapped
@@ -1108,8 +1111,11 @@ void graphPlotstat(uint16_t selection) {
         roundedTicks = false;
       }
 
-      if(x_min <= FLoatingMin || x_min >= FLoatingMax || x_max <= FLoatingMin || x_max >= FLoatingMax || y_min <= FLoatingMin || y_min >= FLoatingMax || y_max <= FLoatingMin || y_max >= FLoatingMax) {
-        goto scaleInfinity;
+      if(x_min <= FLoatingMin || x_max <= FLoatingMin || y_min <= FLoatingMin || y_max <= FLoatingMin) {
+        goto scaleMinusInfinity;
+      }
+      if(x_min >= FLoatingMax || x_max >= FLoatingMax || y_min >= FLoatingMax || y_max >= FLoatingMax) {
+        goto scalePlusInfinity;
       }
 
       graph_axis();
@@ -1285,15 +1291,20 @@ void graphPlotstat(uint16_t selection) {
     }
   return;
 
-
-  scaleInfinity:
+  scalePlusInfinity:
   displayCalcErrorMessage(ERROR_OVERFLOW_PLUS_INF, ERR_REGISTER_LINE, REGISTER_X);
   #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-    sprintf(errorMessage, "Infinity encountered!");
+    sprintf(errorMessage, "Plus Infinity encountered!");
     moreInfoOnError("In function graphPlotstat:", errorMessage, NULL, NULL);
   #endif
+  return;
 
-
+  scaleMinusInfinity:
+  displayCalcErrorMessage(ERROR_OVERFLOW_MINUS_INF, ERR_REGISTER_LINE, REGISTER_X);
+  #if (EXTRA_INFO_ON_CALC_ERROR == 1)
+    sprintf(errorMessage, "Minus Infinity encountered!");
+    moreInfoOnError("In function graphPlotstat:", errorMessage, NULL, NULL);
+  #endif
 
   #endif // !TESTSUITE_BUILD
 }
