@@ -80,4 +80,14 @@
    */
   void ioFileClose(void);
 
+  /**
+   * Delete the given file.
+   * The file should not be open.
+   *
+   * \param[in] path file to delete
+   * \param[out] errorNumber error code given by the platform if there's an error
+   * \return true if delete succeeded
+   */
+  bool ioFileRemove(ioFilePath_t path, uint32_t *errorNumber);
+
 #endif // IO_H

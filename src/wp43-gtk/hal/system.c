@@ -140,3 +140,9 @@ void systemProcessEvents(void) {
 void systemQuit(void) {
   gtk_main_quit();
 }
+
+
+
+uint32_t systemBatteryVoltage(void) {
+  return 3100;
+}

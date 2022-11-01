@@ -4,30 +4,36 @@
 #include "hal/io.h"
 
 #include <assert.h>
+#include <errno.h>
 #include <stdio.h>
 
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 
 static FILE *_ioFileHandle = NULL;
 
-bool ioFileOpen(ioFilePath_t path, ioFileMode_t mode) {
-  assert(_ioFileHandle == NULL);
-  const char *filename, *filemode;
+const char *_ioFileNameFromFilePath(ioFilePath_t path) {
   switch(path) {
     case ioPathSaveFile:
-      filename = "wp43.sav";
-      break;
+      return "wp43.sav";
     case ioPathPgmFile:
-      filename = "wp43.dat";
-      break;
+      return "wp43.dat";
     case ioPathTestPgms:
-      filename = "res/dmcp/testPgms.bin";
-      break;
+      return "res/dmcp/testPgms.bin";
     case ioPathBackup:
-      filename = "backup.bin";
-      break;
+      return "backup.bin";
     default:
-      return 0;
+      return false;
+  }
+}
+
+
+
+bool ioFileOpen(ioFilePath_t path, ioFileMode_t mode) {
+  assert(_ioFileHandle == NULL);
+  const char *filemode;
+  const char *filename = _ioFileNameFromFilePath(path);
+  if(!filename) {
+    return false;
   }
   switch(mode) {
     case ioModeRead:
@@ -40,7 +46,7 @@ bool ioFileOpen(ioFilePath_t path, ioFileMode_t mode) {
       filemode = "r+b";
       break;
     default:
-      return 0;
+      return false;
   }
   _ioFileHandle = fopen(filename, filemode);
   return (_ioFileHandle != NULL);
@@ -73,4 +79,19 @@ void ioFileClose(void) {
   assert(_ioFileHandle != NULL);
   fclose(_ioFileHandle);
   _ioFileHandle = NULL;
+}
+
+
+
+bool ioFileRemove(ioFilePath_t path, uint32_t *errorNumber) {
+  assert(_ioFileHandle == NULL);
+  const char *filename = _ioFileNameFromFilePath(path);
+  if(!filename) {
+    return false;
+  }
+  int result = remove(filename);
+  if(result == -1 && errorNumber != NULL) {
+    *errorNumber = errno;
+  }
+  return result != -1;
 }

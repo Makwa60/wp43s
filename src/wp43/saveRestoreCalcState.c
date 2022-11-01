@@ -37,10 +37,6 @@
 #include "ui/tam.h"
 #include <stdbool.h>
 #include <string.h>
-#if defined(PC_BUILD)
-  #include <stdio.h>
-  #include <errno.h>
-#endif
 
 #include "wp43.h"
 
@@ -1894,28 +1890,13 @@ void fnDeleteBackup(uint16_t confirmation) {
     setConfirmationMode(fnDeleteBackup);
   }
   else {
-    #if defined(DMCP_BUILD)
-      FRESULT result;
-      sys_disk_write_enable(1);
-      result = f_unlink("SAVFILES\\wp43.sav");
-      if(result != FR_OK && result != FR_NO_FILE && result != FR_NO_PATH) {
-        displayCalcErrorMessage(ERROR_IO, ERR_REGISTER_LINE, REGISTER_X);
-      }
-      sys_disk_write_enable(0);
-    #else // !DMCP_BUILD
-      int result = remove("wp43.sav");
-      if(result == -1) {
-        #if !defined(TESTSUITE_BUILD)
-          int e = errno;
-          if(e != ENOENT) {
-            displayCalcErrorMessage(ERROR_IO, ERR_REGISTER_LINE, REGISTER_X);
-            #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-              sprintf(errorMessage, "removing the backup failed with error code %d", e);
-              moreInfoOnError("In function fnDeleteBackup:", errorMessage, NULL, NULL);
-            #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
-          }
-        #endif // !TESTSUITE_BUILD
-      }
-    #endif // DMCP_BUILD
+    uint32_t errorNumber;
+    if(!ioFileRemove(ioPathSaveFile, &errorNumber)) {
+      displayCalcErrorMessage(ERROR_IO, ERR_REGISTER_LINE, REGISTER_X);
+      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
+        sprintf(errorMessage, "removing the backup failed with error code %d", errorNumber);
+        moreInfoOnError("In function fnDeleteBackup:", errorMessage, NULL, NULL);
+      #endif
+    }
   }
 }

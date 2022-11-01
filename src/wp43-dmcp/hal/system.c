@@ -50,3 +50,9 @@ void systemProcessEvents(void) {
 void systemQuit(void) {
   SET_ST(STAT_PGM_END);
 }
+
+
+
+uint32_t systemBatteryVoltage(void) {
+  return get_vbat();
+}

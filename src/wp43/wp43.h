@@ -31,8 +31,6 @@
     #else
       #define printf(...)
     #endif
-
-    #include <dmcp.h>
   #endif // DMCP_BUILD
 
   #include "mathematics/pcg_basic.h"

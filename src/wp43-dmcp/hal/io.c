@@ -14,23 +14,28 @@
 static bool _ioWriteEnabled = false;
 static bool _ioReadEnabled  = false;
 
-bool ioFileOpen(ioFilePath_t path, ioFileMode_t mode) {
-  assert(!_ioWriteEnabled && !_ioReadEnabled);
-  const TCHAR *filename;
-  BYTE filemode;
+const char *_ioFileNameFromFilePath(ioFilePath_t path) {
   switch(path) {
     case ioPathSaveFile:
-      filename = "SAVFILES\\wp43.sav";
-      break;
+      return "SAVFILES\\wp43.sav";
     case ioPathPgmFile:
-      filename = "LIBRARY\\wp43.dat";
-      break;
+      return "LIBRARY\\wp43.dat";
     case ioPathTestPgms:
-      filename = "testPgms.bin";
-      break;
+      return "testPgms.bin";
     default:
       return 0;
   }
+}
+
+
+
+bool ioFileOpen(ioFilePath_t path, ioFileMode_t mode) {
+  assert(!_ioWriteEnabled && !_ioReadEnabled);
+  const TCHAR *filename = _ioFileNameFromFilePath(path);
+  if(!filename) {
+    return false;
+  }
+  BYTE filemode;
   switch(mode) {
     case ioModeRead:
       filemode = FA_READ;
@@ -46,7 +51,7 @@ bool ioFileOpen(ioFilePath_t path, ioFileMode_t mode) {
       _ioReadEnabled = true;
       break;
     default:
-      return 0;
+      return false;
   }
   if(mode != ioModeRead) {
     sys_disk_write_enable(1);
@@ -104,4 +109,18 @@ void ioFileClose(void) {
   }
   _ioWriteEnabled = false;
   _ioReadEnabled = false;
+}
+
+
+
+bool ioFileRemove(ioFilePath_t path, uint32_t *errorNumber) {
+  assert(!_ioWriteEnabled && !_ioReadEnabled);
+  FRESULT result;
+  sys_disk_write_enable(1);
+  result = f_unlink(_ioFileNameFromFilePath(path));
+  if(result != FR_OK && errorNumber != NULL) {
+    *errorNumber = result;
+  }
+  sys_disk_write_enable(0);
+  return result == FR_OK;
 }

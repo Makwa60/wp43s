@@ -19,6 +19,7 @@
 #include "flags.h"
 #include "hal/debug.h"
 #include "hal/io.h"
+#include "hal/system.h"
 #include "hal/timer.h"
 #include "items.h"
 #include "matrix.h"
@@ -38,6 +39,9 @@
 #include "ui/screen.h"
 #include "ui/statusBar.h"
 #include "ui/tam.h"
+#if defined(DMCP_BUILD)
+  #include <dmcp.h>
+#endif // DMCP_BUILD
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
@@ -249,13 +253,7 @@ void fnBatteryVoltage(uint16_t unusedButMandatoryParameter) {
 
   liftStack();
 
-  #if defined(PC_BUILD)
-    int32ToReal(3100, &value);
-  #endif // PC_BUILD
-
-  #if defined(DMCP_BUILD)
-    int32ToReal(get_vbat(), &value);
-  #endif // DMCP_BUILD
+  uInt32ToReal(systemBatteryVoltage(), &value);
 
   realDivide(&value, const_1000, &value, &ctxtReal39);
   convertRealToReal34ResultRegister(&value, REGISTER_X);

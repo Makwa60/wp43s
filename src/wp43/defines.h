@@ -786,6 +786,8 @@
   #endif // OS32BIT
 
   #if defined(DMCP_BUILD)
+    #include <stdio.h>
+    #include <dmcp.h>
     #define TMP_STR_LENGTH       AUX_BUF_SIZE
   #else // !DMCP_BUILD
     #define TMP_STR_LENGTH       2560
