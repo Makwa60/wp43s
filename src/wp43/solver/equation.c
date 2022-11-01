@@ -762,7 +762,7 @@ void showEquation(uint16_t equationId, uint16_t startAt, uint16_t cursorAt, bool
       real34Copy(&re, REGISTER_REAL34_DATA(REGISTER_X));
     }
     else {
-      reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE, amNone);
+      reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE_IN_BLOCKS, amNone);
       real34Copy(&re, REGISTER_REAL34_DATA(REGISTER_X));
       real34Copy(&im, REGISTER_IMAG34_DATA(REGISTER_X));
     }
@@ -772,7 +772,7 @@ void showEquation(uint16_t equationId, uint16_t startAt, uint16_t cursorAt, bool
       real34Copy(&re, REGISTER_REAL34_DATA(REGISTER_Y));
     }
     else {
-      reallocateRegister(REGISTER_Y, dtComplex34, COMPLEX34_SIZE, amNone);
+      reallocateRegister(REGISTER_Y, dtComplex34, COMPLEX34_SIZE_IN_BLOCKS, amNone);
       real34Copy(&re, REGISTER_REAL34_DATA(REGISTER_Y));
       real34Copy(&im, REGISTER_IMAG34_DATA(REGISTER_Y));
     }
@@ -801,7 +801,7 @@ void showEquation(uint16_t equationId, uint16_t startAt, uint16_t cursorAt, bool
       real34Copy(&re, REGISTER_REAL34_DATA(REGISTER_X));
     }
     else {
-      reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE, amNone);
+      reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE_IN_BLOCKS, amNone);
       real34Copy(&re, REGISTER_REAL34_DATA(REGISTER_X));
       real34Copy(&im, REGISTER_IMAG34_DATA(REGISTER_X));
     }
@@ -947,11 +947,11 @@ void showEquation(uint16_t equationId, uint16_t startAt, uint16_t cursorAt, bool
             setSystemFlag(FLAG_ASLIFT);
             liftStack();
             if((real34IsZero(PARSER_LEFT_VALUE_IMAG) || real34IsNaN(PARSER_LEFT_VALUE_IMAG)) && (real34IsZero(&PARSER_NUMERIC_STACK[(*PARSER_NUMERIC_STACK_POINTER) * 2 - 1]) || real34IsNaN(&PARSER_NUMERIC_STACK[(*PARSER_NUMERIC_STACK_POINTER) * 2 - 1]))) {
-              reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE, amNone);
+              reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
               real34Subtract(&PARSER_NUMERIC_STACK[(*PARSER_NUMERIC_STACK_POINTER) * 2 - 2], PARSER_LEFT_VALUE_REAL, REGISTER_REAL34_DATA(REGISTER_X));
             }
             else {
-              reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE, amNone);
+              reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE_IN_BLOCKS, amNone);
               real34Subtract(&PARSER_NUMERIC_STACK[(*PARSER_NUMERIC_STACK_POINTER) * 2 - 2], PARSER_LEFT_VALUE_REAL, REGISTER_REAL34_DATA(REGISTER_X));
               real34Subtract(&PARSER_NUMERIC_STACK[(*PARSER_NUMERIC_STACK_POINTER) * 2 - 1], PARSER_LEFT_VALUE_IMAG, REGISTER_IMAG34_DATA(REGISTER_X));
             }

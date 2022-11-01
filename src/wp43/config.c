@@ -498,7 +498,7 @@ void fnClAll(uint16_t confirmation) {
     fnClPAll(CONFIRMED);  // Clears all the programs
     fnClSigma(CONFIRMED); // Clears and releases the memory of all statistical sums
     if(savedStatisticalSumsPointer != NULL) {
-      freeWp43(savedStatisticalSumsPointer, NUMBER_OF_STATISTICAL_SUMS * REAL_SIZE);
+      freeWp43(savedStatisticalSumsPointer, NUMBER_OF_STATISTICAL_SUMS * REAL_SIZE_IN_BLOCKS);
     }
 
     // Clear local registers
@@ -673,7 +673,7 @@ void fnReset(uint16_t confirmation) {
 
     // initialize 9 real34 reserved variables: ACC, ↑Lim, ↓Lim, FV, i%/a, NPER, PER/a, PMT, and PV
     for(int i=0; i<9; i++) {
-      real34Zero(allocWp43(REAL34_SIZE));
+      real34Zero(allocWp43(REAL34_SIZE_IN_BLOCKS));
     }
 
     // initialize 1 long integer reserved variables: GRAMOD
@@ -689,7 +689,7 @@ void fnReset(uint16_t confirmation) {
     memset(globalRegister, 0, sizeof(globalRegister));
     for(calcRegister_t regist=0; regist<=LAST_GLOBAL_REGISTER; regist++) {
       setRegisterDataType(regist, dtReal34, amNone);
-      memPtr = allocWp43(REAL34_SIZE);
+      memPtr = allocWp43(REAL34_SIZE_IN_BLOCKS);
       setRegisterDataPointer(regist, memPtr);
       real34Zero(memPtr);
     }
@@ -698,7 +698,7 @@ void fnReset(uint16_t confirmation) {
     memset(savedStackRegister, 0, sizeof(savedStackRegister));
     for(calcRegister_t regist=FIRST_SAVED_STACK_REGISTER; regist<=LAST_TEMP_REGISTER; regist++) {
       setRegisterDataType(regist, dtReal34, amNone);
-      memPtr = allocWp43(REAL34_SIZE);
+      memPtr = allocWp43(REAL34_SIZE_IN_BLOCKS);
       setRegisterDataPointer(regist, memPtr);
       real34Zero(memPtr);
     }
@@ -725,19 +725,19 @@ void fnReset(uint16_t confirmation) {
     allNamedVariables = NULL;
 
 
-    allocateNamedVariable("Mat_A", dtReal34Matrix, REAL34_SIZE + 1);
+    allocateNamedVariable("Mat_A", dtReal34Matrix, REAL34_SIZE_IN_BLOCKS + 1);
     memPtr = getRegisterDataPointer(FIRST_NAMED_VARIABLE);
     ((dataBlock_t *)memPtr)->matrixRows = 1;
     ((dataBlock_t *)memPtr)->matrixColumns = 1;
     real34Zero(memPtr + 4);
 
-    allocateNamedVariable("Mat_B", dtReal34Matrix, REAL34_SIZE + 1);
+    allocateNamedVariable("Mat_B", dtReal34Matrix, REAL34_SIZE_IN_BLOCKS + 1);
     memPtr = getRegisterDataPointer(FIRST_NAMED_VARIABLE + 1);
     ((dataBlock_t *)memPtr)->matrixRows = 1;
     ((dataBlock_t *)memPtr)->matrixColumns = 1;
     real34Zero(memPtr + 4);
 
-    allocateNamedVariable("Mat_X", dtReal34Matrix, REAL34_SIZE + 1);
+    allocateNamedVariable("Mat_X", dtReal34Matrix, REAL34_SIZE_IN_BLOCKS + 1);
     memPtr = getRegisterDataPointer(FIRST_NAMED_VARIABLE + 2);
     ((dataBlock_t *)memPtr)->matrixRows = 1;
     ((dataBlock_t *)memPtr)->matrixColumns = 1;
@@ -921,7 +921,7 @@ void fnReset(uint16_t confirmation) {
     //allocateLocalRegisters(3);
     //fnSetFlag(FIRST_LOCAL_REGISTER+0);
     //fnSetFlag(NUMBER_OF_GLOBAL_FLAGS+2);
-    //reallocateRegister(FIRST_LOCAL_REGISTER+0, dtReal34, REAL34_SIZE, RT_REAL);
+    //reallocateRegister(FIRST_LOCAL_REGISTER+0, dtReal34, REAL34_SIZE_IN_BLOCKS, RT_REAL);
     //stringToReal34("5.555", REGISTER_REAL34_DATA(FIRST_LOCAL_REGISTER));
 
     //strcpy(tmpString, "Pure ASCII string requiring 38 bytes!");

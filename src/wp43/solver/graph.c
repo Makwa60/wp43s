@@ -248,7 +248,7 @@ void fnPlot(uint16_t unusedButMandatoryParameter) {
     }
     calcRegister_t regStats = findNamedVariable(plotStatMx);
     if(regStats == INVALID_VARIABLE) {
-      allocateNamedVariable(plotStatMx, dtReal34, REAL34_SIZE);
+      allocateNamedVariable(plotStatMx, dtReal34, REAL34_SIZE_IN_BLOCKS);
       regStats = findNamedVariable(plotStatMx);
     }
     clearRegister(regStats);                  // this should change to delete the named variable STATS once the delete function is available. Until then write 0.0 into STATS.

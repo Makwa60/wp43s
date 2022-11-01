@@ -406,7 +406,7 @@ void cpyxRealLonI(uint16_t combOrPerm) {
     (combOrPerm == CP_COMBINATION) ? cyxReal(&y, &x, &t, &ctxtReal39)
                                    : pyxReal(&y, &x, &t, &ctxtReal39);
 
-    reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE, amNone);
+    reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
     convertRealToReal34ResultRegister(&t, REGISTER_X);
     setRegisterAngularMode(REGISTER_X, amNone);
   }
@@ -484,7 +484,7 @@ void cpyxRealShoI(uint16_t combOrPerm) {
     (combOrPerm == CP_COMBINATION) ? cyxReal(&y, &x, &t, &ctxtReal39)
                                    : pyxReal(&y, &x, &t, &ctxtReal39);
 
-    reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE, amNone);
+    reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
     convertRealToReal34ResultRegister(&t, REGISTER_X);
     setRegisterAngularMode(REGISTER_X, amNone);
   }
@@ -513,7 +513,7 @@ void cpyxCplxLonI(uint16_t combOrPerm) {
   (combOrPerm == CP_COMBINATION) ? cyxCplx(&yReal, &yImag, &xReal, &xImag, &tReal, &tImag, &ctxtReal39)
                                  : pyxCplx(&yReal, &yImag, &xReal, &xImag, &tReal, &tImag, &ctxtReal39);
 
-  reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE, amNone);
+  reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE_IN_BLOCKS, amNone);
   convertRealToReal34ResultRegister(&tReal, REGISTER_X);
   convertRealToImag34ResultRegister(&tImag, REGISTER_X);
 }
@@ -537,7 +537,7 @@ void cpyxCplxReal(uint16_t combOrPerm) {
   (combOrPerm == CP_COMBINATION) ? cyxCplx(&yReal, &yImag, &xReal, &xImag, &tReal, &tImag, &ctxtReal39)
                                  : pyxCplx(&yReal, &yImag, &xReal, &xImag, &tReal, &tImag, &ctxtReal39);
 
-  reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE, amNone);
+  reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE_IN_BLOCKS, amNone);
   convertRealToReal34ResultRegister(&tReal, REGISTER_X);
   convertRealToImag34ResultRegister(&tImag, REGISTER_X);
 }
@@ -584,7 +584,7 @@ void cpyxCplxShoI(uint16_t combOrPerm) {
   (combOrPerm == CP_COMBINATION) ? cyxCplx(&yReal, &yImag, &xReal, &xImag, &tReal, &tImag, &ctxtReal39)
                                  : pyxCplx(&yReal, &yImag, &xReal, &xImag, &tReal, &tImag, &ctxtReal39);
 
-  reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE, amNone);
+  reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE_IN_BLOCKS, amNone);
   convertRealToReal34ResultRegister(&tReal, REGISTER_X);
   convertRealToImag34ResultRegister(&tImag, REGISTER_X);
 }
@@ -646,7 +646,7 @@ void cpyxShoIReal(uint16_t combOrPerm) {
     (combOrPerm == CP_COMBINATION) ? cyxReal(&y, &x, &t, &ctxtReal39)
                                    : pyxReal(&y, &x, &t, &ctxtReal39);
 
-    reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE, amNone);
+    reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
     convertRealToReal34ResultRegister(&t, REGISTER_X);
     setRegisterAngularMode(REGISTER_X, amNone);
   }

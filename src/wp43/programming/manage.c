@@ -874,7 +874,7 @@ static void _pemCloseDateInput(void) {
         *(tmpPtr++) = ITM_LITERAL;
         *(tmpPtr++) = STRING_DATE;
 
-        reallocateRegister(TEMP_REGISTER_1, dtReal34, REAL34_SIZE, amNone);
+        reallocateRegister(TEMP_REGISTER_1, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
         stringToReal34(numBuffer, REGISTER_REAL34_DATA(TEMP_REGISTER_1));
         convertReal34RegisterToDateRegister(TEMP_REGISTER_1, TEMP_REGISTER_1);
         internalDateToJulianDay(REGISTER_REAL34_DATA(TEMP_REGISTER_1), REGISTER_REAL34_DATA(TEMP_REGISTER_1));
