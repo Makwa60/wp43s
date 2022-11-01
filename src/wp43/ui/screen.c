@@ -22,6 +22,7 @@
 #include "error.h"
 #include "flags.h"
 #include "fonts.h"
+#include "hal/audio.h"
 #include "hal/debug.h"
 #include "hal/lcd.h"
 #include "hal/system.h"
@@ -1773,6 +1774,9 @@ void clearScreen(void) {
 
 void fnScreenDump(uint16_t unusedButMandatoryParameter) {
   systemScreenshot();
+  if(!getSystemFlag(FLAG_QUIET)) {
+    audioShutter();
+  }
   screenUpdatingMode |= SCRUPD_SKIP_STACK_ONE_TIME | SCRUPD_SKIP_MENU_ONE_TIME;
 }
 
