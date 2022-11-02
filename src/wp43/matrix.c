@@ -4084,7 +4084,13 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
               realMultiply(&t, &u, &max, &ctxtReal39);
               realCopy(&tmpMat[i * n + j], &t);
               realSubtract(&t, &max, &u, &ctxtReal39);
-              realCopy(&u, &tmpMat[i * n + j]);
+              realDivide(&u, &t, &max, &ctxtReal39); // condition number
+              if(realCompareAbsLessThan(&max, const_1e_37)) {
+                realZero(&tmpMat[i * n + j]); // prevent ill-conditionedness (likely singular)
+              }
+              else {
+                realCopy(&u, &tmpMat[i * n + j]);
+              }
             }
           }
         }
@@ -4163,6 +4169,14 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
           realCopy(&tmpMat[(i * n + j) * 2], &v), realCopy(&tmpMat[(i * n + j) * 2 + 1], &max);
           realSubtract(&v,   &t, &tmpMat[(i * n + j) * 2    ], realContext);
           realSubtract(&max, &u, &tmpMat[(i * n + j) * 2 + 1], realContext);
+          realDivide(&tmpMat[(i * n + j) * 2    ], &v,   &t, &ctxtReal39); // condition number
+          realDivide(&tmpMat[(i * n + j) * 2 + 1], &max, &u, &ctxtReal39);
+          if(realCompareAbsLessThan(&t, const_1e_37)) {
+            realZero(&tmpMat[(i * n + j) * 2    ]); // prevent ill-conditionedness
+          }
+          if(realCompareAbsLessThan(&u, const_1e_37)) {
+            realZero(&tmpMat[(i * n + j) * 2 + 1]);
+          }
         }
       }
     }
