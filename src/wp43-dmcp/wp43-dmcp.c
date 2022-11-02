@@ -186,7 +186,7 @@ void dmcpWaitForEvent(void) {
 
 #if defined(DEBUG_POWER)
   static void powerDebugMark(uint32_t markNumber) {
-    start_buzzer_freq(5000);
+    start_buzzer_freq(5000000);
     sys_delay(markNumber);
     stop_buzzer();
   }
