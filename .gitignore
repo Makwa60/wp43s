@@ -5,6 +5,7 @@
 /build
 /build.sim
 /dep/gmp-6.2.0
+/res/dmcp/testPgms.bin
 /wp43
 /testSuite
 /generate*
