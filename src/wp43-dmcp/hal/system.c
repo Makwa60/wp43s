@@ -30,7 +30,7 @@ const char *systemMaker(void) {
 
 
 void systemProcessEvents(void) {
-  timeUptime = timeCurrentMs();
+  timeCapture();
   dmcpCheckPowerStatus();
   dmcpResetAutoOff();
   while(!key_empty()) {

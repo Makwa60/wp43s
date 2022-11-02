@@ -32,13 +32,12 @@ if get_option('RASPBERRY')
   add_project_arguments('-DRASPBERRY', native : true, language : ['c', 'cpp'])
 endif
 
-if get_option('DEBUG_POWER')
-  add_project_arguments('-DDEBUG_POWER', native : true, language : ['c', 'cpp'])
-endif
-
 # DMCP arguments
 add_project_arguments('-DDMCP_BUILD', native : false, language : ['c', 'cpp'])
 add_project_arguments('-DOS32BIT',    native : false, language : ['c', 'cpp'])
+if get_option('DEBUG_POWER')
+  add_project_arguments('-DDEBUG_POWER', native : false, language : ['c', 'cpp'])
+endif
 
 git = find_program('git')
 run_command(git, 'submodule', 'update', '--init', '--recursive', meson.project_source_root(), check: true)
