@@ -8,27 +8,25 @@
 #include <stdio.h>
 #include <dmcp.h>
 
+static tm_t _timeInfo;
+static dt_t _dateInfo;
+static uint32_t _timeUptime;
+
 void timeGetTimeInfo(timeInfo_t *ti) {
   assert(ti != NULL);
-  tm_t timeInfo;
-  dt_t dateInfo;
-  rtc_read(&timeInfo, &dateInfo);
-  ti->hour = timeInfo.hour;
-  ti->min  = timeInfo.min;
-  ti->sec  = timeInfo.sec;
-  ti->csec = timeInfo.csec;
+  ti->hour = _timeInfo.hour;
+  ti->min  = _timeInfo.min;
+  ti->sec  = _timeInfo.sec;
+  ti->csec = _timeInfo.csec;
 }
 
 
 
 void timeGetDateInfo(dateInfo_t *di) {
   assert(di != NULL);
-  tm_t timeInfo;
-  dt_t dateInfo;
-  rtc_read(&timeInfo, &dateInfo);
-  di->year  = dateInfo.year;
-  di->month = dateInfo.month;
-  di->day   = dateInfo.day;
+  di->year  = _dateInfo.year;
+  di->month = _dateInfo.month;
+  di->day   = _dateInfo.day;
 }
 
 
@@ -61,24 +59,27 @@ void timeSetDateInfo(dateInfo_t *di) {
 
 
 uint32_t timeCurrentMs(void) {
-  tm_t timeInfo;
-  dt_t dateInfo;
-
-  rtc_read(&timeInfo, &dateInfo);
-  return (uint32_t)timeInfo.hour * 3600000u +
-         (uint32_t)timeInfo.min * 60000u +
-         (uint32_t)timeInfo.sec * 1000u +
-         (uint32_t)timeInfo.csec * 10u;
+  return _timeUptime;
 }
 
 
 
 uint32_t timeUptimeMs(void) {
-  return timeUptime;
+  return _timeUptime;
 }
 
 
 
 void timeSleep(uint32_t timeInMs) {
   sys_delay(timeInMs);
+}
+
+
+
+void timeCapture(void) {
+  rtc_read(&_timeInfo, &_dateInfo);
+  _timeUptime = (uint32_t)_timeInfo.hour * 3600000u +
+                (uint32_t)_timeInfo.min * 60000u +
+                (uint32_t)_timeInfo.sec * 1000u +
+                (uint32_t)_timeInfo.csec * 10u;
 }

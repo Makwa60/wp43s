@@ -10,10 +10,10 @@
   #include <stdint.h>
 
   extern uint32_t nextTimerRefresh;
-  extern uint32_t timeUptime;
 
   int  convertKeyCode       (int key);
   void dmcpResetAutoOff     (void);
   void dmcpCheckPowerStatus (void);
+  void timeCapture          (void);
 
 #endif // WP43_DMCP_H
