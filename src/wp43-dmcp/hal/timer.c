@@ -22,7 +22,7 @@ typedef struct {
   timerCallback_t func;
   uint16_t        param;
   uint32_t        expire;
-  timerStatus_t   state;
+  bool            isRunning;
 } timerState_t;
 
 static timerState_t _timer[MAX_TIMER_ID];
@@ -53,17 +53,17 @@ uint32_t timerRun(void) {
   bool     anyRemaining = false;
 
   for(int i = 0; i < MAX_TIMER_ID; i++) {
-    if(_timer[i].state == tsRunning) {
+    if(_timer[i].isRunning) {
       uint32_t diff = _timerDiff(currTime, _timer[i].expire);
       if(diff > (UINT32_MAX / 2) || diff == 0) {
-        _timer[i].state = tsCompleted;
+        _timer[i].isRunning = false;
         _timer[i].func(_timer[i].param);
-        if(_timer[i].state == tsRunning) {
+        if(_timer[i].isRunning) {
           // The callback restarted the timer, so recompute the difference
           diff = _timerDiff(currTime, _timer[i].expire);
         }
       }
-      if(_timer[i].state == tsRunning && diff < timeUntilNextRun) {
+      if(_timer[i].isRunning && diff < timeUntilNextRun) {
         anyRemaining = true;
         // Add on one so that a timer expiry of 0 won't be interpreted as
         // no timers
@@ -83,7 +83,7 @@ uint32_t timerRun(void) {
 
 void timerReset(void) {
   for(int i = 0; i < MAX_TIMER_ID; i++) {
-    _timer[i].state = tsUnused;
+    _timer[i].isRunning = false;
   }
 }
 
@@ -92,29 +92,26 @@ void timerReset(void) {
 void timerConfig(timerId_t nr, timerCallback_t func) {
   assert(nr < MAX_TIMER_ID);
 
-  _timer[nr].func  = func;
-  _timer[nr].state = tsStopped;
+  _timer[nr].func      = func;
 }
 
 
 
 void timerStart(timerId_t nr, uint16_t param, uint32_t time) {
   assert(nr < MAX_TIMER_ID);
-  assert(_timer[nr].state != tsUnused);
   assert(time < (UINT32_MAX / 2));
 
-  _timer[nr].param  = param;
-  _timer[nr].expire = timeUptimeMs() + time;
-  _timer[nr].state  = tsRunning;
+  _timer[nr].param     = param;
+  _timer[nr].expire    = timeUptimeMs() + time;
+  _timer[nr].isRunning = true;
 }
 
 
 
 void timerStop(timerId_t nr) {
   assert(nr < MAX_TIMER_ID);
-  assert(_timer[nr].state != tsUnused);
 
-  _timer[nr].state = tsStopped;
+  _timer[nr].isRunning = false;
 }
 
 
@@ -122,5 +119,5 @@ void timerStop(timerId_t nr) {
 bool timerIsRunning(timerId_t nr) {
   assert(nr < MAX_TIMER_ID);
 
-  return (_timer[nr].state == tsRunning);
+  return _timer[nr].isRunning;
 }

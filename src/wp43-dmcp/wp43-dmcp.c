@@ -141,23 +141,36 @@ void dmcpCheckPowerStatus(void) {
 
 
 void dmcpWaitForEvent(void) {
-  // Try and optimise power usage by not using the timers if it can be avoided as they consume power
-  // The wakeup for a SECOND or MINUTE timer does not consume very much power at all and is very
-  // efficient, so use that wakeup if we can
-  uint32_t timeToNextSecondMs = 1000 - (timeUptime % 1000);
   if(nextTimerRefresh == 0) {
     // No timer so just wait until the next minute - this is unlikely to happen because the status bar
     // time will be updated every minute
     CLR_ST(STAT_CLK_WKUP_SECONDS);
     sys_sleep();
+    return;
   }
-  else if(nextTimerRefresh <= 100 || nextTimerRefresh < timeToNextSecondMs) {
+  // The current time is only updated once per main loop, so check how long since the last time update
+  uint32_t elapsedTime = timeCurrentMs() - timeUptime;
+  if(nextTimerRefresh <= elapsedTime) {
+    // The next timer is already due
+    return;
+  }
+  // Reduce nextTimerRefresh by the elapsed time
+  nextTimerRefresh -= elapsedTime;
+  // Try and optimise power usage by not using the timers if it can be avoided as they consume power
+  // The wakeup for a SECOND or MINUTE timer does not consume very much power at all and is very
+  // efficient, so use that wakeup if we can
+  uint32_t timeToNextSecondMs = 1000 - (timeUptime % 1000);
+  if(nextTimerRefresh <= 100 || nextTimerRefresh < timeToNextSecondMs) {
+    // Use the sys_timer because the timer will expire before the next second wakeup
+    // Also allow 100ms for this function which is a conservative estimate
     const int TimerId = 0;
     sys_timer_start(TimerId, nextTimerRefresh);
     sys_sleep();
     sys_timer_disable(TimerId);
   }
   else {
+    // The next timeout is after the next second or minute wakeup will happen
+    // Use the MINUTE wakeup if we can, otherwise use the SECOND wakeup
     uint32_t timeToNextMinuteMs = 60000 - (timeUptime % 60000);
     if(nextTimerRefresh < timeToNextMinuteMs) {
       SET_ST(STAT_CLK_WKUP_SECONDS);
@@ -167,10 +180,6 @@ void dmcpWaitForEvent(void) {
     }
     sys_sleep();
   }
-  if(ST(STAT_CLK_WKUP_FLAG)) {
-    CLR_ST(STAT_CLK_WKUP_FLAG);
-  }
-  timeUptime = timeCurrentMs();
 }
 
 
@@ -355,6 +364,10 @@ void program_main(void) {
       // No keys available, wait for timers
       CLR_ST(STAT_RUNNING);
       dmcpWaitForEvent();
+      timeUptime = timeCurrentMs();
+      if(ST(STAT_CLK_WKUP_FLAG)) {
+        CLR_ST(STAT_CLK_WKUP_FLAG);
+      }
       SET_ST(STAT_RUNNING);
     }
 
