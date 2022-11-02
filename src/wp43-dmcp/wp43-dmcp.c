@@ -24,7 +24,19 @@
 bool     backToDMCP;
 uint32_t nextTimerRefresh;
 bool     wp43KbdLayout;
-uint32_t timeUptime;
+
+#if defined(DEBUG_POWER)
+  static void powerDebugMark(uint32_t markNumber) {
+    start_buzzer_freq(5000000);
+    sys_delay(markNumber);
+    stop_buzzer();
+  }
+#else
+  static inline void powerDebugMark(uint32_t markNumber) {
+  }
+#endif // DEBUG_POWER
+
+
 
 int convertKeyCode(int key) {
   if(!wp43KbdLayout) {
@@ -148,8 +160,11 @@ void dmcpWaitForEvent(void) {
     sys_sleep();
     return;
   }
+  uint32_t lastCapturedTime = timeCurrentMs();
+  timeCapture();
+  uint32_t newCapturedTime = timeCurrentMs();
   // The current time is only updated once per main loop, so check how long since the last time update
-  uint32_t elapsedTime = timeCurrentMs() - timeUptime;
+  uint32_t elapsedTime = newCapturedTime - lastCapturedTime;
   if(nextTimerRefresh <= elapsedTime) {
     // The next timer is already due
     return;
@@ -159,8 +174,9 @@ void dmcpWaitForEvent(void) {
   // Try and optimise power usage by not using the timers if it can be avoided as they consume power
   // The wakeup for a SECOND or MINUTE timer does not consume very much power at all and is very
   // efficient, so use that wakeup if we can
-  uint32_t timeToNextSecondMs = 1000 - (timeUptime % 1000);
+  uint32_t timeToNextSecondMs = 1000 - (newCapturedTime % 1000);
   if(nextTimerRefresh <= 100 || nextTimerRefresh < timeToNextSecondMs) {
+    powerDebugMark(4);
     // Use the sys_timer because the timer will expire before the next second wakeup
     // Also allow 100ms for this function which is a conservative estimate
     const int TimerId = 0;
@@ -171,29 +187,18 @@ void dmcpWaitForEvent(void) {
   else {
     // The next timeout is after the next second or minute wakeup will happen
     // Use the MINUTE wakeup if we can, otherwise use the SECOND wakeup
-    uint32_t timeToNextMinuteMs = 60000 - (timeUptime % 60000);
+    uint32_t timeToNextMinuteMs = 60000 - (newCapturedTime % 60000);
     if(nextTimerRefresh < timeToNextMinuteMs) {
+      powerDebugMark(5);
       SET_ST(STAT_CLK_WKUP_SECONDS);
     }
     else {
+      powerDebugMark(6);
       CLR_ST(STAT_CLK_WKUP_SECONDS);
     }
     sys_sleep();
   }
 }
-
-
-
-#if defined(DEBUG_POWER)
-  static void powerDebugMark(uint32_t markNumber) {
-    start_buzzer_freq(5000000);
-    sys_delay(markNumber);
-    stop_buzzer();
-  }
-#else
-  static inline void powerDebugMark(uint32_t markNumber) {
-  }
-#endif // DEBUG_POWER
 
 
 
@@ -219,10 +224,10 @@ void program_main(void) {
   key = kcNoKey;
 
   lcd_clear_buf();
+  timeCapture();
   configSetUpTimers();
   fnReset(CONFIRMED);
   refreshScreen();
-  timeUptime = timeCurrentMs();
   nextTimerRefresh = timerRun();
 
   #if 0
@@ -364,7 +369,7 @@ void program_main(void) {
       // No keys available, wait for timers
       CLR_ST(STAT_RUNNING);
       dmcpWaitForEvent();
-      timeUptime = timeCurrentMs();
+      timeCapture();
       if(ST(STAT_CLK_WKUP_FLAG)) {
         CLR_ST(STAT_CLK_WKUP_FLAG);
       }
