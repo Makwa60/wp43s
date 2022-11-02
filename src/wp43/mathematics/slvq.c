@@ -135,139 +135,9 @@ void fnSlvq(uint16_t unusedButMandatoryParameter) {
     realRoots = false;
   }
 
-  if(realCoefs) {
-    if(realIsZero(&aReal)) {
-      // bx + c = 0   (b is not 0 here)
+  solveQuadraticEquation(&aReal, &aImag, &bReal, &bImag, &cReal, &cImag, &rReal, &rImag, &x1Real, &x1Imag, &x2Real, &x2Imag, &ctxtReal75);
 
-      // r = b²
-      realMultiply(&bReal, &bReal, &rReal, &ctxtReal75);
-      realZero(&rImag);
-
-      // x1 = x2 = -c/b
-      realDivide(&cReal, &bReal, &x1Real, &ctxtReal75);
-      realChangeSign(&x1Real);
-      realCopy(&x1Real, &x2Real);
-    }
-    else if(realIsZero(&cReal)) {
-      // ax² + bx = x(ax + b) = 0   (a is not 0 here)
-
-      // r = b²
-      realMultiply(&bReal, &bReal, &rReal, &ctxtReal75);
-      realZero(&rImag);
-
-      // x1 = 0
-      realZero(&x1Real);
-
-      // x2 = -b/a
-      realDivide(&bReal, &aReal, &x2Real, &ctxtReal75);
-      realChangeSign(&x2Real);
-    }
-    else {
-      // ax² + bx + c = 0   (a and c are not 0 here)
-
-      // r = b² - 4ac
-      realMultiply(const__4, &aReal, &rReal, &ctxtReal75);
-      realMultiply(&cReal, &rReal, &rReal, &ctxtReal75);
-      realFMA(&bReal, &bReal, &rReal, &rReal, &ctxtReal75);
-      realZero(&rImag);
-
-      if(realIsPositive(&rReal)) { // real roots
-        // x1 = (-b - sign(b)*sqrt(r)) / 2a
-        realSquareRoot(&rReal, &x1Real, &ctxtReal75);
-        if(realIsPositive(&bReal)) {
-          realChangeSign(&x1Real);
-        }
-        realSubtract(&x1Real, &bReal, &x1Real, &ctxtReal75);
-        realMultiply(&x1Real, const_1on2, &x1Real, &ctxtReal75);
-        realDivide(&x1Real, &aReal, &x1Real, &ctxtReal75);
-
-        // x2 = c / ax1  (x1 connot be 0 here)
-        realDivide(&cReal, &aReal, &x2Real, &ctxtReal75);
-        realDivide(&x2Real, &x1Real, &x2Real, &ctxtReal75);
-      }
-      else { // complex roots
-        realRoots = false;
-
-        // x1 = (-b - sign(b)*sqrt(r)) / 2a
-        realMinus(&rReal, &x1Real, &ctxtReal75);
-        realSquareRoot(&x1Real, &x1Imag, &ctxtReal75);
-        realZero(&x1Real);
-        if(realIsPositive(&bReal)) {
-          realChangeSign(&x1Imag);
-        }
-        realSubtract(&x1Real, &bReal, &x1Real, &ctxtReal75);
-        realSubtract(&x1Imag, &bImag, &x1Imag, &ctxtReal75);
-        realMultiply(&x1Real, const_1on2, &x1Real, &ctxtReal75);
-        realMultiply(&x1Imag, const_1on2, &x1Imag, &ctxtReal75);
-        realDivide(&x1Real, &aReal, &x1Real, &ctxtReal75);
-        realDivide(&x1Imag, &aReal, &x1Imag, &ctxtReal75);
-
-        // x2 = conj(x1)
-        realCopy(&x1Real, &x2Real);
-        realCopy(&x1Imag, &x2Imag);
-        realChangeSign(&x2Imag);
-      }
-    }
-  }
-  else { // Complex coefficients
-    if(realIsZero(&aReal) && realIsZero(&aImag)) {
-      // bx + c = 0   (b is not 0 here)
-
-      // r = b²
-      mulComplexComplex(&bReal, &bImag, &bReal, &bImag, &rReal, &rImag, &ctxtReal75);
-
-      // x1 = x2 = -c/b
-      divComplexComplex(&cReal, &cImag, &bReal, &bImag, &x1Real, &x1Imag, &ctxtReal75);
-      realChangeSign(&x1Real);
-      realChangeSign(&x1Imag);
-      realCopy(&x1Real, &x2Real);
-      realCopy(&x1Imag, &x2Imag);
-    }
-    else if(realIsZero(&cReal) && realIsZero(&cImag)) {
-      // ax² + bx = x(ax + b) = 0   (a is not 0 here)
-
-      // r = b²
-      mulComplexComplex(&bReal, &bImag, &bReal, &bImag, &rReal, &rImag, &ctxtReal75);
-
-      // x1 = 0
-      realZero(&x1Real);
-      realZero(&x1Imag);
-
-      // x2 = -b/a
-      divComplexComplex(&bReal, &bImag, &aReal, &aImag, &x2Real, &x2Imag, &ctxtReal75);
-      realChangeSign(&x2Real);
-      realChangeSign(&x2Imag);
-    }
-    else {
-      // ax² + bx + c = 0   (a and c are not 0 here)
-
-      // r = b² - 4ac
-      realMultiply(const__4, &aReal, &rReal, &ctxtReal75);
-      realMultiply(const__4, &aImag, &rImag, &ctxtReal75);
-      mulComplexComplex(&cReal, &cImag, &rReal, &rImag, &rReal, &rImag, &ctxtReal75);
-      mulComplexComplex(&bReal, &bImag, &bReal, &bImag, &x1Real, &x1Imag, &ctxtReal75);
-      realAdd(&x1Real, &rReal, &rReal, &ctxtReal75);
-      realAdd(&x1Imag, &rImag, &rImag, &ctxtReal75);
-
-      // x1 = (-b + sqrt(r)) / 2a
-      realCopy(&rReal, &x1Real);
-      realCopy(&rImag, &x1Imag);
-      realRectangularToPolar(&x1Real, &x1Imag, &x1Real, &x1Imag, &ctxtReal75);
-      realSquareRoot(&x1Real, &x1Real, &ctxtReal75);
-      realMultiply(&x1Imag, const_1on2, &x1Imag, &ctxtReal75);
-      realPolarToRectangular(&x1Real, &x1Imag, &x1Real, &x1Imag, &ctxtReal75);
-
-      realSubtract(&x1Real, &bReal, &x1Real, &ctxtReal75);
-      realSubtract(&x1Imag, &bImag, &x1Imag, &ctxtReal75);
-      realMultiply(&x1Real, const_1on2, &x1Real, &ctxtReal75);
-      realMultiply(&x1Imag, const_1on2, &x1Imag, &ctxtReal75);
-      divComplexComplex(&x1Real, &x1Imag, &aReal, &aImag, &x1Real, &x1Imag, &ctxtReal75);
-
-      // x2 = c / ax1  (x1 connot be 0 here)
-      divComplexComplex(&cReal, &cImag, &aReal, &aImag, &x2Real, &x2Imag, &ctxtReal75);
-      divComplexComplex(&x2Real, &x2Imag, &x1Real, &x1Imag, &x2Real, &x2Imag, &ctxtReal75);
-    }
-  }
+  realRoots &= realIsZero(&x1Imag) && realIsZero(&x2Imag);
 
   if(realRoots) {
     reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
@@ -312,4 +182,150 @@ void fnSlvq(uint16_t unusedButMandatoryParameter) {
   adjustResult(REGISTER_X, false, true, REGISTER_X, -1, -1);
   adjustResult(REGISTER_Y, false, true, REGISTER_Y, -1, -1);
   adjustResult(REGISTER_Z, false, true, REGISTER_Z, -1, -1);
+}
+
+
+void solveQuadraticEquation(const real_t *aReal, const real_t *aImag, const real_t *bReal, const real_t *bImag, const real_t *cReal, const real_t *cImag, real_t *rReal, real_t *rImag, real_t *x1Real, real_t *x1Imag, real_t *x2Real, real_t *x2Imag, realContext_t *realContext) {
+  bool realCoefs = realIsZero(aImag) && realIsZero(bImag) && realIsZero(cImag);
+
+  if(realCoefs) {
+    if(realIsZero(aReal)) {
+      // bx + c = 0   (b is not 0 here)
+
+      // r = b²
+      realMultiply(bReal, bReal, rReal, realContext);
+      realZero(rImag);
+
+      // x1 = x2 = -c/b
+      realDivide(cReal, bReal, x1Real, realContext);
+      realChangeSign(x1Real);
+      realCopy(x1Real, x2Real);
+
+      realZero(x1Imag);
+      realZero(x2Imag);
+    }
+    else if(realIsZero(cReal)) {
+      // ax² + bx = x(ax + b) = 0   (a is not 0 here)
+
+      // r = b²
+      realMultiply(bReal, bReal, rReal, realContext);
+      realZero(rImag);
+
+      // x1 = 0
+      realZero(x1Real);
+
+      // x2 = -b/a
+      realDivide(bReal, aReal, x2Real, realContext);
+      realChangeSign(x2Real);
+
+      realZero(x1Imag);
+      realZero(x2Imag);
+    }
+    else {
+      // ax² + bx + c = 0   (a and c are not 0 here)
+
+      // r = b² - 4ac
+      realMultiply(const__4, aReal, rReal, realContext);
+      realMultiply(cReal, rReal, rReal, realContext);
+      realFMA(bReal, bReal, rReal, rReal, realContext);
+      realZero(rImag);
+
+      if(realIsPositive(rReal)) { // real roots
+        // x1 = (-b - sign(b)*sqrt(r)) / 2a
+        realSquareRoot(rReal, x1Real, realContext);
+        if(realIsPositive(bReal)) {
+          realChangeSign(x1Real);
+        }
+        realSubtract(x1Real, bReal, x1Real, realContext);
+        realMultiply(x1Real, const_1on2, x1Real, realContext);
+        realDivide(x1Real, aReal, x1Real, realContext);
+
+        // x2 = c / ax1  (x1 connot be 0 here)
+        realDivide(cReal, aReal, x2Real, realContext);
+        realDivide(x2Real, x1Real, x2Real, realContext);
+
+        realZero(x1Imag);
+        realZero(x2Imag);
+      }
+      else { // complex roots
+        // x1 = (-b - sign(b)*sqrt(r)) / 2a
+        realMinus(rReal, x1Real, realContext);
+        realSquareRoot(x1Real, x1Imag, realContext);
+        realZero(x1Real);
+        if(realIsPositive(bReal)) {
+          realChangeSign(x1Imag);
+        }
+        realSubtract(x1Real, bReal, x1Real, realContext);
+        realSubtract(x1Imag, bImag, x1Imag, realContext);
+        realMultiply(x1Real, const_1on2, x1Real, realContext);
+        realMultiply(x1Imag, const_1on2, x1Imag, realContext);
+        realDivide(x1Real, aReal, x1Real, realContext);
+        realDivide(x1Imag, aReal, x1Imag, realContext);
+
+        // x2 = conj(x1)
+        realCopy(x1Real, x2Real);
+        realCopy(x1Imag, x2Imag);
+        realChangeSign(x2Imag);
+      }
+    }
+  }
+  else { // Complex coefficients
+    if(realIsZero(aReal) && realIsZero(aImag)) {
+      // bx + c = 0   (b is not 0 here)
+
+      // r = b²
+      mulComplexComplex(bReal, bImag, bReal, bImag, rReal, rImag, realContext);
+
+      // x1 = x2 = -c/b
+      divComplexComplex(cReal, cImag, bReal, bImag, x1Real, x1Imag, realContext);
+      realChangeSign(x1Real);
+      realChangeSign(x1Imag);
+      realCopy(x1Real, x2Real);
+      realCopy(x1Imag, x2Imag);
+    }
+    else if(realIsZero(cReal) && realIsZero(cImag)) {
+      // ax² + bx = x(ax + b) = 0   (a is not 0 here)
+
+      // r = b²
+      mulComplexComplex(bReal, bImag, bReal, bImag, rReal, rImag, realContext);
+
+      // x1 = 0
+      realZero(x1Real);
+      realZero(x1Imag);
+
+      // x2 = -b/a
+      divComplexComplex(bReal, bImag, aReal, aImag, x2Real, x2Imag, realContext);
+      realChangeSign(x2Real);
+      realChangeSign(x2Imag);
+    }
+    else {
+      // ax² + bx + c = 0   (a and c are not 0 here)
+
+      // r = b² - 4ac
+      realMultiply(const__4, aReal, rReal, realContext);
+      realMultiply(const__4, aImag, rImag, realContext);
+      mulComplexComplex(cReal, cImag, rReal, rImag, rReal, rImag, realContext);
+      mulComplexComplex(bReal, bImag, bReal, bImag, x1Real, x1Imag, realContext);
+      realAdd(x1Real, rReal, rReal, realContext);
+      realAdd(x1Imag, rImag, rImag, realContext);
+
+      // x1 = (-b + sqrt(r)) / 2a
+      realCopy(rReal, x1Real);
+      realCopy(rImag, x1Imag);
+      realRectangularToPolar(x1Real, x1Imag, x1Real, x1Imag, realContext);
+      realSquareRoot(x1Real, x1Real, realContext);
+      realMultiply(x1Imag, const_1on2, x1Imag, realContext);
+      realPolarToRectangular(x1Real, x1Imag, x1Real, x1Imag, realContext);
+
+      realSubtract(x1Real, bReal, x1Real, realContext);
+      realSubtract(x1Imag, bImag, x1Imag, realContext);
+      realMultiply(x1Real, const_1on2, x1Real, realContext);
+      realMultiply(x1Imag, const_1on2, x1Imag, realContext);
+      divComplexComplex(x1Real, x1Imag, aReal, aImag, x1Real, x1Imag, realContext);
+
+      // x2 = c / ax1  (x1 connot be 0 here)
+      divComplexComplex(cReal, cImag, aReal, aImag, x2Real, x2Imag, realContext);
+      divComplexComplex(x2Real, x2Imag, x1Real, x1Imag, x2Real, x2Imag, realContext);
+    }
+  }
 }

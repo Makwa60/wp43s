@@ -23,6 +23,7 @@
 #include "mathematics/division.h"
 #include "mathematics/magnitude.h"
 #include "mathematics/multiplication.h"
+#include "mathematics/slvq.h"
 #include "mathematics/toPolar.h"
 #include "mathematics/toRect.h"
 #include "mathematics/squareRoot.h"
@@ -5375,82 +5376,33 @@ void complex_QR_decomposition(const complex34Matrix_t *matrix, complex34Matrix_t
     //                                            t = ((a + d) ± √(a^2 + 2 a d + d^2 - 4 (a d - b c))) / 2
     //                                                ((a + d) ± √(a^2         + d^2 - 2 a d + 4 b c)) / 2
     const real_t *ar, *ai, *br, *bi, *cr, *ci, *dr, *di;
-    real_t tmpR, tmpI, discrR, discrI;
+    real_t trR, trI, detR, detI, discrR, discrI;
 
     ar = mat + ((size - 2) * size + (size - 2)) * 2; ai = ar + 1;
     br = mat + ((size - 2) * size + (size - 1)) * 2; bi = br + 1;
     cr = mat + ((size - 1) * size + (size - 2)) * 2; ci = cr + 1;
     dr = mat + ((size - 1) * size + (size - 1)) * 2; di = dr + 1;
 
-    // a^2
-    if(realIsZero(ai)) {
-      realMultiply(ar, ar, &discrR, realContext), realZero(&discrI);
+    // determinant
+    if(realIsZero(ai) && realIsZero(bi) && realIsZero(ci) && realIsZero(di)) {
+      realMultiply(ar, dr, &detR, realContext);
+      realChangeSign(&detR);
+      realFMA(br, cr, &detR, &detR, realContext);
+      realChangeSign(&detR);
+      realZero(&detI);
     }
     else {
-      mulComplexComplex(ar, ai, ar, ai, &discrR, &discrI, realContext);
+      mulComplexComplex(ar, ai, dr, di, &detR, &detI, realContext);
+      mulComplexComplex(br, bi, cr, ci, &trR,  &trI,  realContext);
+      realSubtract(&detR, &trR, &detR, realContext);
+      realSubtract(&detI, &trI, &detI, realContext);
     }
 
-    // d^2
-    if(realIsZero(di)) {
-      realMultiply(dr, dr, &tmpR, realContext), realZero(&tmpI);
-    }
-    else {
-      mulComplexComplex(dr, di, dr, di, &tmpR, &tmpI, realContext);
-    }
-    realAdd(&discrR, &tmpR, &discrR, realContext), realAdd(&discrI, &tmpI, &discrI, realContext);
+    // trace
+    realAdd(ar, dr, &trR, realContext);
+    realAdd(ai, di, &trI, realContext);
 
-    // -2ad
-    if(realIsZero(ai) && realIsZero(di)) {
-      realMultiply(ar, dr, &tmpR, realContext), realZero(&tmpI);
-      realMultiply(&tmpR, const_2, &tmpR, realContext);
-    }
-    else {
-      mulComplexComplex(ar, ai, dr, di, &tmpR, &tmpI, realContext);
-      realMultiply(&tmpR, const_2, &tmpR, realContext);
-      realMultiply(&tmpI, const_2, &tmpI, realContext);
-    }
-    realSubtract(&discrR, &tmpR, &discrR, realContext), realSubtract(&discrI, &tmpI, &discrI, realContext);
-
-    // 4bc
-    if(realIsZero(bi) && realIsZero(ci)) {
-      realMultiply(br, cr, &tmpR, realContext), realZero(&tmpI);
-      realMultiply(&tmpR, const_4, &tmpR, realContext);
-    }
-    else {
-      mulComplexComplex(br, bi, cr, ci, &tmpR, &tmpI, realContext);
-      realMultiply(&tmpR, const_4, &tmpR, realContext);
-      realMultiply(&tmpI, const_4, &tmpI, realContext);
-    }
-    realAdd(&discrR, &tmpR, &discrR, realContext), realAdd(&discrI, &tmpI, &discrI, realContext);
-
-    // sqrt
-    if(realIsZero(&discrI) && !realIsNegative(&discrR)) {
-      realSquareRoot(&discrR, t1r, realContext);
-      realCopy(t1r, t2r); realChangeSign(t2r);
-      realZero(t1i); realZero(t2i);
-    }
-    else if(realIsZero(&discrI)) {
-      realCopy(&discrR, t1i); realSetPositiveSign(t1i);
-      realSquareRoot(t1i, t1i, realContext);
-      realCopy(t1i, t2i); realChangeSign(t2i);
-      realZero(t1r); realZero(t2r);
-    }
-    else {
-      realRectangularToPolar(&discrR, &discrI, t1r, t1i, realContext);
-      realSquareRoot(t1r, t1r, realContext);
-      realMultiply(t1i, const_1on2, t1i, realContext);
-      realPolarToRectangular(t1r, t1i, t1r, t1i, realContext);
-      realCopy(t1r, t2r); realChangeSign(t2r);
-      realCopy(t1i, t2i); realChangeSign(t2i);
-    }
-
-    // +a +d /2
-    realAdd(t1r, ar, t1r, realContext), realAdd(t1i, ai, t1i, realContext);
-    realAdd(t1r, dr, t1r, realContext), realAdd(t1i, di, t1i, realContext);
-    realAdd(t2r, ar, t2r, realContext), realAdd(t2i, ai, t2i, realContext);
-    realAdd(t2r, dr, t2r, realContext), realAdd(t2i, di, t2i, realContext);
-    realDivide(t1r, const_2, t1r, realContext), realDivide(t1i, const_2, t1i, realContext);
-    realDivide(t2r, const_2, t2r, realContext), realDivide(t2i, const_2, t2i, realContext);
+    solveQuadraticEquation(const_1, const_0, &trR, &trI, &detR, &detI, &discrR, &discrI, t1r, t1i, t2r, t2i, realContext);
   }
 
 
