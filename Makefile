@@ -27,13 +27,18 @@ build.dmcp:
 build.dmcp-power:
 	meson setup build.dmcp-power --cross-file=src/wp43-dmcp/cross_stm32l4_gcc.build -DCI_COMMIT_TAG=$(CI_COMMIT_TAG) -DDEBUG_POWER=true
 
-sim: build.sim
+testPgms: build.sim
+	cd build.sim && ninja testPgms
+	mkdir -p res/dmcp
+	cp build.sim/src/generateTestPgms/testPgms.bin res/dmcp/
+
+sim: build.sim testPgms
 	cd build.sim && ninja sim
 	cp build.sim/src/generateCatalogs/softmenuCatalogs.h src/generated/
 	cp build.sim/src/generateConstants/constantPointers.* src/generated/
 	cp build.sim/src/ttf2RasterFonts/rasterFontsData.c src/generated/
 
-release: build.rel
+release: build.rel testPgms
 	cd build.rel && ninja sim
 	cp build.rel/src/wp43-gtk/wp43$(EXE) ./
 	cp build.rel/src/generateCatalogs/softmenuCatalogs.h src/generated/
@@ -43,7 +48,7 @@ release: build.rel
 test: build.sim
 	cd build.sim && ninja test
 
-coverage:
+coverage: build.sim
 	cd build.sim && ninja coverage-xml
 	cd build.sim && ninja coverage-text && cat meson-logs/coverage.txt
 
@@ -55,10 +60,6 @@ dmcp-power: build.dmcp-power
 
 docs: build.sim
 	cd build.sim && ninja docs
-
-testPgms: build.sim
-	cd build.sim && ninja testPgms
-	cp build.sim/src/generateTestPgms/testPgms.bin res/dmcp/
 
 build.rel/wiki: build.rel
 	git clone https://gitlab.com/wpcalculators/wp43.wiki.git build.rel/wiki
