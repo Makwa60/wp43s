@@ -15,9 +15,6 @@ uint32_t       xCursor;
 uint32_t       yCursor;
 const font_t  *cursorFont;
 
-static bool    cursorOn;
-const uint32_t CursorBlinkPeriod = 500; // in milliseconds
-
 void drawCursor(bool show) {
   #if !defined(TESTSUITE_BUILD)
     if(show) {
@@ -37,7 +34,6 @@ void drawCursor(bool show) {
 
 
 void cursorHide(void) {
-  timerStop(tidCursorBlink);
   if(cursorEnabled) {
     drawCursor(false);
     cursorEnabled = false;
@@ -51,21 +47,11 @@ void cursorShow(bool useStandardFont, uint32_t x, uint32_t y) {
   yCursor = y;
   cursorFont = useStandardFont ? &standardFont : &numericFont;
   cursorEnabled = true;
-  cursorOn = true;
   drawCursor(true);
-  timerStart(tidCursorBlink, 0, CursorBlinkPeriod);
-}
-
-
-
-void cbCursorBlink(uint16_t param) {
-  cursorOn = !cursorOn;
-  drawCursor(cursorOn);
-  timerStart(tidCursorBlink, 0, CursorBlinkPeriod);
 }
 
 
 
 void cursorDraw(void) {
-  drawCursor(cursorOn);
+  drawCursor(true);
 }

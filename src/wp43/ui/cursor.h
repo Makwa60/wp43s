@@ -16,8 +16,6 @@
   extern uint32_t      yCursor;
   extern const font_t *cursorFont;
 
-  void cbCursorBlink(uint16_t param);
-
   /**
    * Hides the cursor.
    */

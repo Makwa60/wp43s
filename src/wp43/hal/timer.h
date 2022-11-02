@@ -17,9 +17,8 @@
     tidAsmActive                = 3,
     tidTimerAppRedraw           = 4,
     tidTimerAppDetectWrapAround = 5,
-    tidCursorBlink              = 6
   } timerId_t;
-  #define MAX_TIMER_ID            7
+  #define MAX_TIMER_ID            6
 
   typedef void (*timerCallback_t)(uint16_t param);
 
