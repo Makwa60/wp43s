@@ -12,13 +12,14 @@
 #include "fonts.h"
 #include "hal/gui.h"
 #include "hal/time.h"
+#include "hal/timer.h"
 #include "items.h"
 #include "realType.h"
 #include "registers.h"
 #include "registerValueConversions.h"
 #include "stack.h"
 #include "stats.h"
-#include "timer.h"
+#include "ui/cursor.h"
 #include "ui/screen.h"
 #include "ui/softmenus.h"
 #include <assert.h>
@@ -52,6 +53,23 @@ void timerAppResetState(void) {
 
 
 #if !defined(TESTSUITE_BUILD)
+  static void _timerAppShowCursor(void) {
+    const char *str;
+    uint32_t length = 1;
+    if(timerAppState.totalTime > 0) {
+      str = STD_SPACE_FIGURE STD_SPACE_FIGURE ":" STD_SPACE_FIGURE STD_SPACE_FIGURE ":" STD_SPACE_FIGURE STD_SPACE_FIGURE STD_SUP_T STD_SPACE_PUNCTUATION STD_SPACE_FIGURE "  ";
+      length += stringWidth(str, &numericFont, true, true);
+    }
+
+    str = STD_SPACE_FIGURE STD_SPACE_FIGURE ":" STD_SPACE_FIGURE STD_SPACE_FIGURE ":" STD_SPACE_FIGURE STD_SPACE_FIGURE STD_SPACE_PUNCTUATION STD_SPACE_FIGURE " [" STD_SPACE_FIGURE;
+    length += stringWidth(str, &numericFont, true, true);
+
+    _timerAppUpdate();
+    cursorShow(false, length, Y_POSITION_OF_REGISTER_T_LINE);
+  }
+
+
+
   static uint32_t _getTimerIncrement(uint32_t currTime) {
     if(currTime < timerAppState.startUptime) {
       return (UINT32_MAX - timerAppState.startUptime) + currTime + 1;
@@ -76,19 +94,20 @@ void timerAppResetState(void) {
     }
     timerAppState.lapTime   = 0;
     timerAppState.isFirstDigit = true;
+    cursorHide();
   }
 
 
 
   void fnTimerApp(uint16_t unusedButMandatoryParameter) {
     timerAppState.isFirstDigit = true;
+    cursorHide();
     watchIconEnabled = false;
     if(timerAppState.started) {
       timerStart(tidTimerAppRedraw, NOPARAM, TIMER_APP_REDRAW_PERIOD);
     }
     calcModeEnter(cmTimerApp);
     showSoftmenu(-MNU_TIMERF);
-    calcModeUpdateGui();
   }
 
 
@@ -119,6 +138,7 @@ void timerAppResetState(void) {
       _timerAppUpdate();
     }
     timerAppState.isFirstDigit = true;
+    cursorHide();
   }
 
 
@@ -170,7 +190,11 @@ void timerAppResetState(void) {
       sprintf(tmpString + stringByteLength(tmpString), "[%02" PRIu16 "]", timerAppState.currentRegister);
     }
     else {
-      sprintf(tmpString + stringByteLength(tmpString), "[%" PRIu8 STD_CURSOR "]", timerAppState.firstDigit);
+      const char *close = "]";
+      sprintf(tmpString + stringByteLength(tmpString), "[%" PRIu8, timerAppState.firstDigit);
+      uint32_t closeStart = 1 + stringWidth(tmpString, &numericFont, true, true) + stringWidth(STD_CURSOR, &numericFont, true, true);
+      showString(close, &numericFont, closeStart, Y_POSITION_OF_REGISTER_T_LINE, vmNormal, true, true);
+      cursorDraw();
     }
     showString(tmpString, &numericFont, 1, Y_POSITION_OF_REGISTER_T_LINE, vmNormal, true, true);
   }
@@ -181,12 +205,6 @@ void timerAppResetState(void) {
     if(calcMode == cmTimerApp) {
       timerAppDraw();
       displayShiftAndTamBuffer();
-      #if defined(DMCP_BUILD)
-        refreshLcd();
-        lcd_refresh();
-      #else // !DMCP_BUILD
-        refreshLcd();
-      #endif // DMCP_BUILD
     }
   }
 
@@ -221,13 +239,14 @@ void timerAppResetState(void) {
     if(timerAppState.isFirstDigit) {
       real_t lapTimeReal;
       _timerAppGetLapTimeReal(&lapTimeReal);
-      reallocateRegister(timerAppState.currentRegister, dtTime, REAL34_SIZE, amNone);
+      reallocateRegister(timerAppState.currentRegister, dtTime, REAL34_SIZE_IN_BLOCKS, amNone);
       realToReal34(&lapTimeReal, REGISTER_REAL34_DATA(timerAppState.currentRegister));
       timerAppUp();
     }
     else {
       timerAppState.isFirstDigit    = true;
       timerAppState.currentRegister = timerAppState.firstDigit;
+      cursorHide();
     }
   }
 
@@ -243,6 +262,7 @@ void timerAppResetState(void) {
       }
       else {
         timerAppState.totalTime = msec;
+        _timerAppShowCursor();
       }
       _timerAppResetExceptTotal();
     }
@@ -267,6 +287,7 @@ void timerAppResetState(void) {
       timerAppState.currentRegister++;
     }
     timerAppState.isFirstDigit = true;
+    cursorHide();
   }
 
 
@@ -279,6 +300,7 @@ void timerAppResetState(void) {
       timerAppState.currentRegister--;
     }
     timerAppState.isFirstDigit = true;
+    cursorHide();
   }
 
 
@@ -287,10 +309,12 @@ void timerAppResetState(void) {
     if(timerAppState.isFirstDigit) {
       timerAppState.isFirstDigit = false;
       timerAppState.firstDigit   = digit;
+      _timerAppShowCursor();
     }
     else {
       timerAppState.isFirstDigit = true;
       timerAppState.currentRegister = timerAppState.firstDigit * 10u + digit;
+      cursorHide();
     }
   }
 
@@ -352,6 +376,7 @@ void timerAppResetState(void) {
     }
     else {
       timerAppState.isFirstDigit = true;
+      cursorHide();
     }
   }
 
@@ -359,8 +384,9 @@ void timerAppResetState(void) {
 
   void timerAppLeave(void) {
     popSoftmenu();
-    calcModeLeave();
     timerAppState.isFirstDigit = true;
+    cursorHide();
+    calcModeLeave();
     watchIconEnabled = timerAppState.started;
   }
 

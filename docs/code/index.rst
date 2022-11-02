@@ -22,6 +22,7 @@ Contents
    lcd
    system
    time
+   timer
 
 .. toctree::
    :maxdepth: 2

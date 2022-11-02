@@ -3,6 +3,7 @@
 
 #include "hal/audio.h"
 
+#include "hal/time.h"
 #include <stdio.h>
 #if defined(__MINGW64__)
   #define NOMINMAX
@@ -13,12 +14,8 @@
 
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 
-void audioTone(uint32_t frequency) {
-  #if defined(__MINGW64__)
-    char filename[32];
-    sprintf(filename, "res\\tone\\tone%" PRIu32 ".wav", frequency);
-    PlaySoundA(filename, NULL, SND_FILENAME | SND_SYNC | SND_NODEFAULT);
-  #elif defined(WITH_PULSEAUDIO)
+#if defined(WITH_PULSEAUDIO)
+  void _audioPulse(uint32_t frequency, uint32_t durationMs) {
     pa_simple *s;
     pa_sample_spec ss;
 
@@ -29,7 +26,7 @@ void audioTone(uint32_t frequency) {
     s = pa_simple_new(NULL, "WP43", PA_STREAM_PLAYBACK, NULL, "BEEP/TONE", &ss, NULL, NULL, NULL);
 
     if(s) {
-      size_t bufSize = ss.rate / 4;
+      size_t bufSize = (ss.rate * durationMs) / 1000; 
       int16_t *samples = (int16_t *)malloc(bufSize * sizeof(int16_t));
       int errCode;
       uint64_t p = 0;
@@ -45,5 +42,25 @@ void audioTone(uint32_t frequency) {
       free(samples);
       pa_simple_free(s);
     }
-  #endif
+  }
+#endif // WITH_PULSEAUDIO
+
+void audioTone(uint32_t frequency) {
+  #if defined(__MINGW64__)
+    char filename[32];
+    sprintf(filename, "res\\tone\\tone%" PRIu32 ".wav", frequency);
+    PlaySoundA(filename, NULL, SND_FILENAME | SND_SYNC | SND_NODEFAULT);
+  #elif defined(WITH_PULSEAUDIO)
+    _audioPulse(frequency, 250);
+  #endif // WITH_PULSEAUDIO
+}
+
+
+
+void audioShutter(void) {
+  #if defined(WITH_PULSEAUDIO)
+    _audioPulse(100000, 5);
+    timeSleep(100);
+    _audioPulse(400000, 5);
+  #endif // WITH_PULSEAUDIO
 }

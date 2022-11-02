@@ -6,44 +6,25 @@
 #include "flags.h"
 #include "hal/audio.h"
 #include "ui/screen.h"
+#include <assert.h>
 #include <stdio.h>
 
 #include "wp43.h"
 
 TO_QSPI uint32_t frequency[10] = {164814, 220000, 246942, 277183, 293665, 329628, 369995, 415305, 440000, 554365};
 
-static void _tonePlay(uint16_t toneNum) {
-  if(getSystemFlag(FLAG_QUIET)) {
-    return;
-  }
-  if(toneNum < 10) {
+void fnTone(uint16_t toneNum) {
+  assert(toneNum < 10);
+  if(!getSystemFlag(FLAG_QUIET)) {
     audioTone(frequency[toneNum]);
   }
 }
 
 
 
-void fnTone(uint16_t toneNum) {
-  #if defined(DMCP_BUILD)
-    lcd_refresh();
-  #else // !DMCP_BUILD
-    refreshLcd();
-  #endif // DMCP_BUILD
-
-  _tonePlay(toneNum);
-}
-
-
-
 void fnBeep(uint16_t unusedButMandatoryParameter) {
-  #if defined(DMCP_BUILD)
-    lcd_refresh();
-  #else // !DMCP_BUILD
-    refreshLcd();
-  #endif // DMCP_BUILD
-
-  _tonePlay(8);
-  _tonePlay(5);
-  _tonePlay(9);
-  _tonePlay(8);
+  fnTone(8);
+  fnTone(5);
+  fnTone(9);
+  fnTone(8);
 }

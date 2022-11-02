@@ -16,6 +16,7 @@
 #include "flags.h"
 #include "fonts.h"
 #include "hal/time.h"
+#include "hal/timer.h"
 #include "items.h"
 #include "mathematics/comparisonReals.h"
 #include "mathematics/toRect.h"
@@ -29,6 +30,7 @@
 #include "softmenus.h"
 #include "sort.h"
 #include "stack.h"
+#include "ui/cursor.h"
 #include "ui/tam.h"
 #include <stdbool.h>
 #include <string.h>
@@ -36,6 +38,14 @@
 #include "wp43.h"
 
 #if !defined(TESTSUITE_BUILD)
+  void cbAsmActive(uint16_t param) {
+    if(catalog) {
+      resetAlphaSelectionBuffer();
+    }
+  }
+
+
+
   void fnAim(uint16_t unusedButMandatoryParameter) {
     shiftF = false;
     shiftG = false;
@@ -277,7 +287,7 @@
 
   void resetAlphaSelectionBuffer(void) {
     lgCatalogSelection = 0;
-    alphaSelectionTimer = 0;
+    timerStop(tidAsmActive);
     asmBuffer[0] = 0;
     fnKeyInCatalog = 0;
   }
@@ -312,7 +322,7 @@
           char *aimCursorPos = aimBuffer;
           char *aimBottomPos = aimBuffer + stringByteLength(aimBuffer);
           uint32_t itemLen = stringByteLength(addChar);
-          for(uint32_t i = 0; i < xCursor; ++i) {
+          for(uint32_t i = 0; i < equationEditorCursor; ++i) {
             aimCursorPos += (*aimCursorPos & 0x80) ? 2 : 1;
           }
           for(; aimBottomPos >= aimCursorPos; --aimBottomPos) {
@@ -321,20 +331,20 @@
           xcopy(aimCursorPos, addChar, itemLen);
           switch(item) {
             case ITM_ALOG_SYMBOL: {
-              xCursor += 4;
+              equationEditorCursor += 4;
               break;
             }
             case ITM_ROOT_SIGN: {
-              xCursor += 2;
+              equationEditorCursor += 2;
               break;
             }
             case ITM_PAIR_OF_PARENTHESES:
             case ITM_VERTICAL_BAR: {
-              xCursor += 1;
+              equationEditorCursor += 1;
               break;
             }
             default: {
-              xCursor += stringGlyphLength(indexOfItems[item].itemSoftmenuName);
+              equationEditorCursor += stringGlyphLength(indexOfItems[item].itemSoftmenuName);
             }
           }
         }
@@ -367,7 +377,7 @@
 
           softmenuStack[0].firstItem = findFirstItem(asmBuffer);
           setCatalogLastPos();
-          alphaSelectionTimer = timeUptimeMs();
+          timerStart(tidAsmActive, NOPARAM, 3000);
         }
       }
 
@@ -2206,15 +2216,15 @@
             longIntegerFree(value);
           }
           else if(nimNumberPart == NP_REAL_FLOAT_PART || nimNumberPart == NP_REAL_EXPONENT) {
-            reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE, amNone);
+            reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
             stringToReal34(aimBuffer, REGISTER_REAL34_DATA(REGISTER_X));
           }
           else if(nimNumberPart == NP_FRACTION_DENOMINATOR) {
-            reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE, amNone);
+            reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
             closeNimWithFraction(REGISTER_REAL34_DATA(REGISTER_X));
           }
           else if(nimNumberPart == NP_COMPLEX_INT_PART || nimNumberPart == NP_COMPLEX_FLOAT_PART || nimNumberPart == NP_COMPLEX_EXPONENT) {
-            reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE, amNone);
+            reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE_IN_BLOCKS, amNone);
             closeNimWithComplex(REGISTER_REAL34_DATA(REGISTER_X), REGISTER_IMAG34_DATA(REGISTER_X));
           }
           else {

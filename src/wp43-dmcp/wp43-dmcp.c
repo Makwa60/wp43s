@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // SPDX-FileCopyrightText: Copyright The WP43 Authors
 
-#include "wp43.h"
+#include "wp43-dmcp.h"
 
 #include "apps/timerApp.h"
 #include "calcMode.h"
@@ -10,19 +10,21 @@
 #include "core/memory.h"
 #include "flags.h"
 #include "items.h"
+#include "hal/time.h"
+#include "hal/timer.h"
 #include "longIntegerType.h"
-#include "timer.h"
 #include "ui/keyboard.h"
 #include "ui/screen.h"
 #include "ui/softmenus.h"
+#include "ui/statusBar.h"
 #include <stdbool.h>
 
+#include "wp43.h"
+
 bool     backToDMCP;
-//int      keyAutoRepeat;
-//int16_t  previousItem;
 uint32_t nextTimerRefresh;
-uint32_t nextScreenRefresh; // timer substitute for refreshLcd(), which does cursor blinking and other stuff
 bool     wp43KbdLayout;
+uint32_t timeUptime;
 
 int convertKeyCode(int key) {
   if(!wp43KbdLayout) {
@@ -110,11 +112,94 @@ int convertKeyCode(int key) {
   }
 }
 
+
+
+void dmcpResetAutoOff(void) {
+  // Key is ready -> clear auto off timer
+  if(!key_empty() || (calcMode == cmTimerApp) || !getSystemFlag(FLAG_AUTOFF)) {
+    reset_auto_off();
+  }
+}
+
+
+
+void dmcpCheckPowerStatus(void) {
+  if(usb_powered() == 1) {
+    setPowerStatus(psUsb);
+  }
+  else if(get_vbat() < 2500) {
+    setPowerStatus(psBatteryLow);
+    if(get_vbat() < 2000) {
+      SET_ST(STAT_PGM_END);
+    }
+  }
+  else {
+    setPowerStatus(psBattery);
+  }
+}
+
+
+
+void dmcpWaitForEvent(void) {
+  if(nextTimerRefresh == 0) {
+    // No timer so just wait until the next minute - this is unlikely to happen because the status bar
+    // time will be updated every minute
+    CLR_ST(STAT_CLK_WKUP_SECONDS);
+    sys_sleep();
+    return;
+  }
+  // The current time is only updated once per main loop, so check how long since the last time update
+  uint32_t elapsedTime = timeCurrentMs() - timeUptime;
+  if(nextTimerRefresh <= elapsedTime) {
+    // The next timer is already due
+    return;
+  }
+  // Reduce nextTimerRefresh by the elapsed time
+  nextTimerRefresh -= elapsedTime;
+  // Try and optimise power usage by not using the timers if it can be avoided as they consume power
+  // The wakeup for a SECOND or MINUTE timer does not consume very much power at all and is very
+  // efficient, so use that wakeup if we can
+  uint32_t timeToNextSecondMs = 1000 - (timeUptime % 1000);
+  if(nextTimerRefresh <= 100 || nextTimerRefresh < timeToNextSecondMs) {
+    // Use the sys_timer because the timer will expire before the next second wakeup
+    // Also allow 100ms for this function which is a conservative estimate
+    const int TimerId = 0;
+    sys_timer_start(TimerId, nextTimerRefresh);
+    sys_sleep();
+    sys_timer_disable(TimerId);
+  }
+  else {
+    // The next timeout is after the next second or minute wakeup will happen
+    // Use the MINUTE wakeup if we can, otherwise use the SECOND wakeup
+    uint32_t timeToNextMinuteMs = 60000 - (timeUptime % 60000);
+    if(nextTimerRefresh < timeToNextMinuteMs) {
+      SET_ST(STAT_CLK_WKUP_SECONDS);
+    }
+    else {
+      CLR_ST(STAT_CLK_WKUP_SECONDS);
+    }
+    sys_sleep();
+  }
+}
+
+
+
+#if defined(DEBUG_POWER)
+  static void powerDebugMark(uint32_t markNumber) {
+    start_buzzer_freq(5000);
+    sys_delay(markNumber);
+    stop_buzzer();
+  }
+#else
+  static inline void powerDebugMark(uint32_t markNumber) {
+  }
+#endif // DEBUG_POWER
+
+
+
 void program_main(void) {
   int key = kcNoKey;
   int lastKey = kcNoKey;
-  /*bool wp43KbdLayout, inFastRefresh = 0, inDownUpPress = 0, repeatDownUpPress = 0*/;
-  //uint32_t now, previousRefresh, nextAutoRepeat = 0;
 
   wp43MemInBlocks = 0;
   gmpMemInBytes = 0;
@@ -134,8 +219,11 @@ void program_main(void) {
   key = kcNoKey;
 
   lcd_clear_buf();
+  configSetUpTimers();
   fnReset(CONFIRMED);
   refreshScreen();
+  timeUptime = timeCurrentMs();
+  nextTimerRefresh = timerRun();
 
   #if 0
     longInteger_t li;
@@ -230,126 +318,34 @@ void program_main(void) {
   backToDMCP = false;
 
   lcd_refresh();
-  //previousRefresh = sys_current_ms();
-  nextScreenRefresh = sys_current_ms() + SCREEN_REFRESH_PERIOD;
-  //now = sys_current_ms();
-  //runner_key_tout_init(0); // Enables fast auto repeat
-
-  timerReset();
-  timerConfig(tidAutoRepeat,               execAutoRepeat,             NOPARAM);
-  timerConfig(tidTimerAppRedraw,           cbTimerAppRedraw,           NOPARAM);
-  timerConfig(tidTimerAppDetectWrapAround, cbTimerAppDetectWrapAround, NOPARAM);
-  timerConfig(tidKeyboardActive,           timerDummyTest,             NOPARAM);
-  //timerConfig(tidShowNop,                  execNOPTimeout,             NOPARAM);
-  nextTimerRefresh = 0;
 
   // Status flags:
   //   ST(STAT_PGM_END)   - Indicates that program should go to off state (set by auto off timer)
   //   ST(STAT_SUSPENDED) - Program signals it is ready for off and doesn't need to be woken-up again
   //   ST(STAT_OFF)       - Program in off state (OS goes to sleep and only [EXIT] key can wake it up again)
   //   ST(STAT_RUNNING)   - OS doesn't sleep in this mode
-  //SET_ST(STAT_CLK_WKUP_SECONDS);
+  //   SET_ST(STAT_CLK_WKUP_SECONDS)
   SET_ST(STAT_CLK_WKUP_ENABLE); // Enable wakeup each minute (for clock update)
+  SET_ST(STAT_RUNNING);
 
   while(!backToDMCP) {
-    if(ST(STAT_PGM_END) && ST(STAT_SUSPENDED)) { // Already in off mode and suspended
+    powerDebugMark(3);
+    if(ST(STAT_PGM_END)) {
+      // Going to off mode
+      lcd_set_buf_cleared(0); // Mark no buffer change region
+      draw_power_off_image(1);
+      LCD_power_off(0);
+
+      SET_ST(STAT_SUSPENDED);
       CLR_ST(STAT_RUNNING);
+      SET_ST(STAT_OFF);
       sys_sleep();
-    }
-    else if((!ST(STAT_PGM_END) && key_empty())) {         // Just wait if no keys available.
-      CLR_ST(STAT_RUNNING);
+      CLR_ST(STAT_OFF);
+      CLR_ST(STAT_SUSPENDED);
+      SET_ST(STAT_RUNNING);
 
-      if(nextTimerRefresh == 0) {                         // no timeout available
-        sys_sleep();
-      }
-      else {                                                                  // timeout available
-        //uint32_t timeoutTime = max(1, nextTimerRefresh - sys_current_ms());
-        uint32_t timeoutTime = sys_current_ms();
-        if(nextTimerRefresh > timeoutTime) {
-          timeoutTime = nextTimerRefresh - timeoutTime;
-        }
-        else {
-          timeoutTime = 1;
-        }
-
-        //uint32_t sleepTime = max(1, nextScreenRefresh - sys_current_ms());
-        uint32_t sleepTime = sys_current_ms();
-        if(nextScreenRefresh > sleepTime) {
-          sleepTime = nextScreenRefresh - sleepTime;
-        }
-        else {
-          sleepTime = 1;
-        }
-        if(showFunctionNameCounter > 0) {
-          sleepTime = min(sleepTime, FAST_SCREEN_REFRESH_PERIOD);
-        }
-        sleepTime = min(sleepTime, timeoutTime);
-
-        sys_timer_start(TIMER_IDX_REFRESH_SLEEP, max(sleepTime, 1));          // wake up for refresh
-        sys_sleep();
-        sys_timer_disable(TIMER_IDX_REFRESH_SLEEP);
-      }
-
-
-      //sys_timer_start(TIMER_IDX_SCREEN_REFRESH, max(1, nextScreenRefresh - now));  // wake up for screen refresh
-      //if(inDownUpPress) {
-      //  sys_timer_start(TIMER_IDX_AUTO_REPEAT, max(1, nextAutoRepeat - now)); // wake up for key auto-repeat
-      //}
-      //sys_sleep();
-      //sys_timer_disable(TIMER_IDX_SCREEN_REFRESH);
-      //if(inDownUpPress) {
-      //  repeatDownUpPress = (sys_current_ms() > nextAutoRepeat);
-      //  sys_timer_disable(TIMER_IDX_AUTO_REPEAT);
-      //}
-    }
-
-    //now = sys_current_ms();
-
-    // =======================
-    // Externally forced LCD repaint
-    if(ST(STAT_CLK_WKUP_FLAG)) {
-      if(!ST(STAT_OFF) && (nextTimerRefresh == 0)) {
-        refreshLcd();
-        lcd_refresh_wait();
-      }
-      CLR_ST(STAT_CLK_WKUP_FLAG);
-      continue;
-    }
-    if(ST(STAT_POWER_CHANGE)) {
-      if(!ST(STAT_OFF) && (timerGetStatus(tidKeyboardActive) != tsRunning)) {
-        timerStart(tidKeyboardActive, NOPARAM, SCREEN_REFRESH_PERIOD+50);
-      }
-      CLR_ST(STAT_POWER_CHANGE);
-      continue;
-    }
-
-    // Wakeup in off state or going to sleep
-    if(ST(STAT_PGM_END) || ST(STAT_SUSPENDED)) {
-      if(!ST(STAT_SUSPENDED)) {
-        // Going to off mode
-        lcd_set_buf_cleared(0); // Mark no buffer change region
-        draw_power_off_image(1);
-
-        LCD_power_off(0);
-        SET_ST(STAT_SUSPENDED);
-        SET_ST(STAT_OFF);
-      }
-      // Already in OFF -> just continue to sleep above
-      continue;
-    }
-
-    // Well, we are woken-up
-    SET_ST(STAT_RUNNING);
-
-    // Clear suspended state, because now we are definitely reached the active state
-    CLR_ST(STAT_SUSPENDED);
-
-    // Get up from OFF state
-    if(ST(STAT_OFF)) {
       LCD_power_on();
       rtc_wakeup_delay(); // Ensure that RTC readings after power off will be OK
-
-      CLR_ST(STAT_OFF);
 
       if(!lcd_get_buf_cleared()) {
         lcd_forced_refresh(); // Just redraw from LCD buffer
@@ -364,117 +360,45 @@ void program_main(void) {
         refreshScreen();
       }
     }
-
-    // Key is ready -> clear auto off timer
-    if(!key_empty() || (nextTimerRefresh != 0)) {
-      reset_auto_off();
+    else if(key_empty()) {
+      // No keys available, wait for timers
+      CLR_ST(STAT_RUNNING);
+      dmcpWaitForEvent();
+      timeUptime = timeCurrentMs();
+      if(ST(STAT_CLK_WKUP_FLAG)) {
+        CLR_ST(STAT_CLK_WKUP_FLAG);
+      }
+      SET_ST(STAT_RUNNING);
     }
+
+    if(ST(STAT_POWER_CHANGE)) {
+      CLR_ST(STAT_POWER_CHANGE);
+      dmcpCheckPowerStatus();
+      lcd_refresh_dma();
+      continue;
+    }
+
+    dmcpResetAutoOff();
 
     // Fetch the key
     //  < 0 -> No key event
     //  > 0 -> Key pressed
     // == 0 -> Key released
     key = key_pop();
-
-    //key = runner_get_key_delay(&keyAutoRepeat,
-    //                           50,                            // timeout - this should be the fastest period between loops
-    //                           KEY_AUTOREPEAT_FIRST_PERIOD,  // time before the first autorepeat
-    //                           KEY_AUTOREPEAT_PERIOD,        // time between subsequent autorepeats
-    //                           KEY_AUTOREPEAT_FIRST_PERIOD); // should be the same as time before first autorepeat
-    //key = runner_get_key(&keyAutoRepeat);
-
     key = convertKeyCode(key);
-    //The 3 lines below to see in the top left screen corner the pressed keycode
-    //char sysLastKeyCh[5];
-    //sprintf(sysLastKeyCh, " %02d", key);
-    //showString(sysLastKeyCh, &standardFont, 0, 0, vmReverse, true, true);
-    //The line below to emit a beep
-    //while(get_beep_volume() < 11) beep_volume_up(); start_buzzer_freq(220000); sys_delay(200); stop_buzzer();
-
-    // Increase the refresh rate if we are in an UP/DOWN key press so we pick up auto key repeats
-    if(key == kcUp || key == kcDown) {
-      //inDownUpPress = 1;
-      //nextAutoRepeat = now + KEY_AUTOREPEAT_FIRST_PERIOD;
-      if(timerGetStatus(tidAutoRepeat) != tsRunning && (!shiftF || calcMode == cmPem) && !shiftG && (currentSoftmenuScrolls() || (calcMode != cmNormal && calcMode != cmNim && calcMode != cmAim))) {
-        timerStart(tidAutoRepeat, key, KEY_AUTOREPEAT_FIRST_PERIOD);
-      }
-    }
-    else if(key == kcNoKey) {
-      //inDownUpPress = 0;
-      //repeatDownUpPress = 0;
-      //nextAutoRepeat = 0;
-      timerStop(tidAutoRepeat);
-    }
-    //else if(repeatDownUpPress) {
-    //  keyAutoRepeat = 1;
-    //  key = kcNoKey;
-    //  nextAutoRepeat = now + KEY_AUTOREPEAT_PERIOD;
-    //  repeatDownUpPress = 0;
-    //}
-
-    //if(keyAutoRepeat) {
-    //  if(key == kcUp || key == kcDown) { // UP or DOWN keys
-    //    //beep(2200, 50);
-    //    key = kcNoKey; // to trigger btnReleased
-    //  }
-    //  else {
-    //    key = -1;
-    //  }
-    //}
 
     if(1 <= key && key <= 43) {
+      powerDebugMark(1);
       btnPressed(key);
       lastKey = key;
-      lcd_refresh();
     }
-    else if(key == 0) { // Autorepeat of UP/DOWN or key released
+    else if(key == 0) { // Key released
+      powerDebugMark(2);
       btnReleased(lastKey);
-      if(calcMode == cmPem && shiftF && (lastKey == kcUp || lastKey == kcDown)) {
-        shiftF = false;
-        refreshScreen();
-      }
-      //keyAutoRepeat = 0;
-      lcd_refresh();
     }
 
-    if(key >= 0) {                                        // Temporary intermediate solution to get some refreshLcd and go to sleep afterwards
-      if(key > 0) {
-        timerStart(tidKeyboardActive, NOPARAM, 60000);
-      }
-      else if(cursorEnabled == true) {
-        timerStart(tidKeyboardActive, NOPARAM, 4*FAST_SCREEN_REFRESH_PERIOD+50);
-      }
-      else
-      {
-        timerStart(tidKeyboardActive, NOPARAM, FAST_SCREEN_REFRESH_PERIOD+50);
-      }
-    }
-
-    //// Compute refresh period
-    //if(showFunctionNameCounter > 0) {
-    //  inFastRefresh = 1;
-    //  nextScreenRefresh = previousRefresh + FAST_SCREEN_REFRESH_PERIOD;
-    //}
-    //else {
-    //  inFastRefresh = 0;
-    //}
-
-    uint32_t now = sys_current_ms();
-
-    if(nextTimerRefresh != 0 && nextTimerRefresh <= now) {
-      timerRefresh();                                     // Executes pending timer jobs
-    }
-    now = sys_current_ms();
-    if(nextScreenRefresh <= now) {
-      //previousRefresh = now;
-      nextScreenRefresh += ((showFunctionNameCounter > 0) ? FAST_SCREEN_REFRESH_PERIOD : SCREEN_REFRESH_PERIOD);
-      if(nextScreenRefresh < now) {
-        nextScreenRefresh = now + ((showFunctionNameCounter > 0) ? FAST_SCREEN_REFRESH_PERIOD : SCREEN_REFRESH_PERIOD);         // we were out longer than expected; just skip ahead.
-      }
-      if(calcMode != cmTimerApp) {
-        refreshLcd();
-        lcd_refresh();
-      }
-    }
+    // Execute pending timer jobs
+    nextTimerRefresh = timerRun();
+    lcd_refresh_dma();
   }
 }

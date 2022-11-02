@@ -94,7 +94,7 @@ static void normalP(bool logNormal) {
         realDivide(&ans, &alval, &ans, &ctxtReal39);
       }
     }
-    reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE, amNone);
+    reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
     convertRealToReal34ResultRegister(&ans, REGISTER_X);
   }
 
@@ -128,7 +128,7 @@ static void normalL(bool logNormal) {
       realDivide(&val, &sigma, &val, &ctxtReal39);
       WP34S_Cdf_Q(&val, &ans, &ctxtReal39);
     }
-    reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE, amNone);
+    reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
     convertRealToReal34ResultRegister(&ans, REGISTER_X);
   }
 
@@ -162,7 +162,7 @@ static void normalR(bool logNormal) {
       realDivide(&val, &sigma, &val, &ctxtReal39);
       WP34S_Cdfu_Q(&val, &ans, &ctxtReal39);
     }
-    reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE, amNone);
+    reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
     convertRealToReal34ResultRegister(&ans, REGISTER_X);
   }
 
@@ -192,7 +192,7 @@ static void normalI(bool logNormal) {
       if(logNormal) {
         realExp(&ans, &ans, &ctxtReal39);
       }
-      reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE, amNone);
+      reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
       convertRealToReal34ResultRegister(&ans, REGISTER_X);
     }
   }

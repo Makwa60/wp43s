@@ -20,4 +20,12 @@
    */
   void audioTone(uint32_t frequency);
 
+  /**
+   * Make a sound similar to a camera shutter.
+   * This is used when taking a snapshot to give an audio clue that the
+   * snapshot has been taken. Configuration for a "silent mode" is not
+   * covered by this function and should be checked by the caller.
+   */
+  void audioShutter(void);
+
 #endif // !AUDIO_H

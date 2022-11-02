@@ -33,6 +33,7 @@
 #include "stack.h"
 #include "store.h"
 #include "ui/bufferize.h"
+#include "ui/cursor.h"
 #include "ui/screen.h"
 #include "ui/softmenus.h"
 #include "ui/tam.h"
@@ -500,7 +501,7 @@ bool recallStatsMatrix(void) {
       if(cols == 2 && rows >= 1) {
         regStats = findNamedVariable("STATS");
         if(regStats == INVALID_VARIABLE) {
-          allocateNamedVariable("STATS", dtReal34, REAL34_SIZE);
+          allocateNamedVariable("STATS", dtReal34, REAL34_SIZE_IN_BLOCKS);
           regStats = findNamedVariable("STATS");
         }
         #if defined(DEBUGUNDO)
@@ -572,8 +573,7 @@ void fnOldMatrix(uint16_t unusedParamButMandatory) {
     if(calcMode == cmMim) {
       aimBuffer[0] = 0;
       nimBufferDisplay[0] = 0;
-      hideCursor();
-      cursorEnabled = false;
+      cursorHide();
 
       if(getRegisterDataType(matrixIndex) == dtReal34Matrix) {
         if(openMatrixMIMPointer.realMatrix.matrixElements) {
@@ -768,9 +768,9 @@ void fnGetMatrixDimensions(uint16_t unusedButMandatoryParameter) {
       const uint16_t cols = REGISTER_DATA(REGISTER_X)->matrixColumns;
       longInteger_t li;
 
-      reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE, amNone);
+      reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
       liftStack();
-      reallocateRegister(REGISTER_Y, dtReal34, REAL34_SIZE, amNone);
+      reallocateRegister(REGISTER_Y, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
 
       longIntegerInit(li);
       uIntToLongInteger(rows, li);
@@ -1012,7 +1012,7 @@ void fnDeterminant(uint16_t unusedParamButMandatory) {
       else {
         detRealMatrix(&x, &res);
         if(lastErrorCode == ERROR_NONE) {
-          reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE, amNone);
+          reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
           real34Copy(&res, REGISTER_REAL34_DATA(REGISTER_X));
         }
       }
@@ -1034,7 +1034,7 @@ void fnDeterminant(uint16_t unusedParamButMandatory) {
       else {
         detComplexMatrix(&x, &res_r, &res_i);
         if(lastErrorCode == ERROR_NONE) {
-          reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE, amNone);
+          reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE_IN_BLOCKS, amNone);
           real34Copy(&res_r, REGISTER_REAL34_DATA(REGISTER_X));
           real34Copy(&res_i, REGISTER_IMAG34_DATA(REGISTER_X));
         }
@@ -1161,7 +1161,7 @@ void fnEuclideanNorm(uint16_t unusedParamButMandatory) {
       euclideanNormRealMatrix(&matrix, &sum);
 
       // `matrix` invalidates here
-      reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE, amNone);
+      reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
       real34Copy(&sum, REGISTER_REAL34_DATA(REGISTER_X));
     }
     else if(getRegisterDataType(REGISTER_X) == dtComplex34Matrix) {
@@ -1173,7 +1173,7 @@ void fnEuclideanNorm(uint16_t unusedParamButMandatory) {
       euclideanNormComplexMatrix(&matrix, &sum);
 
       // `matrix` invalidates here
-      reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE, amNone);
+      reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
       real34Copy(&sum, REGISTER_REAL34_DATA(REGISTER_X));
     }
     else {
@@ -1279,7 +1279,7 @@ void fnRowNorm(uint16_t unusedParamButMandatory) {
         }
       }
 
-      reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE, amNone);
+      reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
       convertRealToReal34ResultRegister(&norm, REGISTER_X);
     }
     else if(getRegisterDataType(REGISTER_X) == dtComplex34Matrix) {
@@ -1301,7 +1301,7 @@ void fnRowNorm(uint16_t unusedParamButMandatory) {
         }
       }
 
-      reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE, amNone);
+      reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
       convertRealToReal34ResultRegister(&norm, REGISTER_X);
     }
     else {
@@ -1341,7 +1341,7 @@ void fnVectorAngle(uint16_t unusedParamButMandatory) {
       else {
         vectorAngle(&y, &x, &res);
         convertAngle34FromTo(&res, amRadian, currentAngularMode);
-        reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE, currentAngularMode);
+        reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BLOCKS, currentAngularMode);
         real34Copy(&res, REGISTER_REAL34_DATA(REGISTER_X));
       }
     }
@@ -1977,8 +1977,7 @@ void fnEigenvectors(uint16_t unusedParamButMandatory) {
 
       aimBuffer[0] = 0;
       nimBufferDisplay[0] = 0;
-      hideCursor();
-      cursorEnabled = false;
+      cursorHide();
 
       setSystemFlag(FLAG_ASLIFT);
     }
@@ -1996,10 +1995,9 @@ void fnEigenvectors(uint16_t unusedParamButMandatory) {
   static void _resetCursorPos() {
     clearRegisterLine(NIM_REGISTER_LINE, false, true);
     sprintf(tmpString, "%" PRIi16";%" PRIi16"= ", (int16_t)getIRegisterAsInt(false), (int16_t)getJRegisterAsInt(false));
-    xCursor = showString(tmpString, &numericFont, 0, Y_POSITION_OF_NIM_LINE, vmNormal, true, true) + 1;
-    yCursor = Y_POSITION_OF_NIM_LINE;
-    cursorEnabled = true;
-    cursorFont = &numericFont;
+    uint32_t x = showString(tmpString, &numericFont, 0, Y_POSITION_OF_NIM_LINE, vmNormal, true, true) + 1;
+    uint32_t y = Y_POSITION_OF_NIM_LINE;
+    cursorShow(false, x, y);
     lastIntegerBase = 0;
   }
 
@@ -2069,8 +2067,7 @@ void fnEigenvectors(uint16_t unusedParamButMandatory) {
         }
         else if((aimBuffer[0] == '+') && (aimBuffer[1] != 0) && (aimBuffer[2] == 0)) {
           aimBuffer[1] = 0;
-          hideCursor();
-          cursorEnabled = false;
+          cursorHide();
         }
         break;
       }
@@ -2152,12 +2149,12 @@ void fnEigenvectors(uint16_t unusedParamButMandatory) {
       real34Zero(&im);
     }
     if(isComplex) {
-      reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE, amNone);
+      reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE_IN_BLOCKS, amNone);
       real34Copy(&re, REGISTER_REAL34_DATA(REGISTER_X));
       real34Copy(&im, REGISTER_IMAG34_DATA(REGISTER_X));
     }
     else {
-      reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE, amNone);
+      reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
       real34Copy(&re, REGISTER_REAL34_DATA(REGISTER_X));
     }
 
@@ -2230,9 +2227,6 @@ void fnEigenvectors(uint16_t unusedParamButMandatory) {
     }
 
     updateMatrixHeightCache();
-    #if defined(PC_BUILD)
-      refreshLcd();
-    #endif // PC_BUILD
   }
 
   void mimFinalize(void) {
@@ -2471,7 +2465,7 @@ smallFont:
           real34Copy(&matrix->matrixElements[(i+sRow)*cols+j+sCol], &r34Val);
           real34SetPositiveSign(&r34Val);
           real34ToDisplayString(&r34Val, amNone, tmpString, font, maxWidth, displayFormat == dfAll ? k : 15, true, STD_SPACE_4_PER_EM, true);
-          if(displayFormat == dfAll && !noFix && strstr(tmpString, STD_SUB_10)) { // something like SCI
+          if(displayFormat == dfAll && !noFix && (strstr(tmpString, STD_SUB_10) || (strcmp(tmpString + 1, "0.") == 0 && !real34IsZero(&r34Val)))) { // something like SCI
             noFix = true;
             goto begin; // redo
           }
@@ -2544,6 +2538,10 @@ smallFont:
         break;
       }
       else if(k == 15 && singleDigitDoesNotFit && noFix && totalWidth > maxWidth) {
+        *digits = k;
+        break;
+      }
+      else if(k <= 2 && maxDigits <= 2) {
         *digits = k;
         break;
       }
@@ -2870,7 +2868,7 @@ smallFont:
           rPadWidth_r[i * MATRIX_MAX_COLUMNS + j] = 0;
           real34SetPositiveSign(VARIABLE_REAL34_DATA(&c34Val));
           real34ToDisplayString(VARIABLE_REAL34_DATA(&c34Val), amNone, tmpString, font, maxWidth, displayFormat == dfAll ? k : 15, true, STD_SPACE_4_PER_EM, true);
-          if(displayFormat == dfAll && !noFix && strstr(tmpString, STD_SUB_10)) { // something like SCI
+          if(displayFormat == dfAll && !noFix && (strstr(tmpString, STD_SUB_10) || (strcmp(tmpString + 1, "0.") == 0 && !real34IsZero(VARIABLE_REAL34_DATA(&c34Val))))) { // something like SCI            noFix = true;
             noFix = true;
             goto begin; // redo
           }
@@ -2899,7 +2897,7 @@ smallFont:
             real34SetPositiveSign(VARIABLE_IMAG34_DATA(&c34Val));
           }
           real34ToDisplayString(VARIABLE_IMAG34_DATA(&c34Val), getSystemFlag(FLAG_POLAR) ? currentAngularMode : amNone, tmpString, font, maxWidth, displayFormat == dfAll ? k : 15, true, STD_SPACE_4_PER_EM, false);
-          if(displayFormat == dfAll && !noFix && strstr(tmpString, STD_SUB_10)) { // something like SCI
+          if(displayFormat == dfAll && !noFix && (strstr(tmpString, STD_SUB_10) || (strcmp(tmpString + 1, "0.") == 0 && !real34IsZero(VARIABLE_IMAG34_DATA(&c34Val))))) { // something like SCI            noFix = true;
             noFix = true;
             goto begin; // redo
           }
@@ -2988,6 +2986,10 @@ smallFont:
         *digits = k;
         break;
       }
+      else if(k <= 2 && maxDigits <= 2) {
+        *digits = k;
+        break;
+      }
       else if(k == 15 && minDigits == 1) {
         k = 7;
       }
@@ -3068,7 +3070,7 @@ smallFont:
 
 
   bool initMatrixRegister(calcRegister_t regist, uint16_t rows, uint16_t cols, bool complex) {
-    const size_t neededSize = (rows * cols) * (complex ? COMPLEX34_SIZE : REAL34_SIZE);
+    const size_t neededSize = (rows * cols) * (complex ? COMPLEX34_SIZE_IN_BLOCKS : REAL34_SIZE_IN_BLOCKS);
     reallocateRegister(regist, complex ? dtComplex34Matrix : dtReal34Matrix, neededSize, amNone);
     if(regist == INVALID_VARIABLE) {
       return false;
@@ -3102,8 +3104,8 @@ smallFont:
       return false;
     }
     else if(getRegisterDataType(regist) == dtReal34Matrix) {
-      const size_t oldSize = (origRows * origCols) * REAL34_SIZE;
-      const size_t newSize = (rows     * cols    ) * REAL34_SIZE;
+      const size_t oldSize = (origRows * origCols) * REAL34_SIZE_IN_BLOCKS;
+      const size_t newSize = (rows     * cols    ) * REAL34_SIZE_IN_BLOCKS;
       if(oldSize >= newSize) {
         if(oldSize > newSize) {
           freeWp43(REGISTER_REAL34_MATRIX_M_ELEMENTS(regist) + rows * cols, oldSize - newSize);
@@ -3140,8 +3142,8 @@ smallFont:
       }
     }
     else if(getRegisterDataType(regist) == dtComplex34Matrix) {
-      const size_t oldSize = (origRows * origCols) * COMPLEX34_SIZE;
-      const size_t newSize = (rows     * cols    ) * COMPLEX34_SIZE;
+      const size_t oldSize = (origRows * origCols) * COMPLEX34_SIZE_IN_BLOCKS;
+      const size_t newSize = (rows     * cols    ) * COMPLEX34_SIZE_IN_BLOCKS;
       if(oldSize >= newSize) {
         if(oldSize > newSize) {
           freeWp43(REGISTER_COMPLEX34_MATRIX_M_ELEMENTS(regist) + rows * cols, oldSize - newSize);
@@ -4022,7 +4024,7 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
       return;
     }
 
-    if((tmpMat = allocWp43(m * n * REAL_SIZE))) {
+    if((tmpMat = allocWp43(m * n * REAL_SIZE_IN_BLOCKS))) {
       if(matrix != lu) {
         copyRealMatrix(matrix, lu);
       }
@@ -4097,7 +4099,7 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
         displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
       }
 
-      freeWp43(tmpMat, m * n * REAL_SIZE);
+      freeWp43(tmpMat, m * n * REAL_SIZE_IN_BLOCKS);
     }
     else {
       if(matrix != lu) {
@@ -4184,7 +4186,7 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
       return;
     }
 
-    if((tmpMat = allocWp43(m * n * REAL_SIZE * 2))) {
+    if((tmpMat = allocWp43(m * n * REAL_SIZE_IN_BLOCKS * 2))) {
       if(matrix != lu) {
         copyComplexMatrix(matrix, lu);
       }
@@ -4210,7 +4212,7 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
         displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
       }
 
-      freeWp43(tmpMat, m * n * REAL_SIZE * 2);
+      freeWp43(tmpMat, m * n * REAL_SIZE_IN_BLOCKS * 2);
     }
     else {
       if(matrix != lu) {
@@ -4280,8 +4282,8 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
     real_t *lu;
     real_t tr, ti;
 
-    if((lu = allocWp43(size * size * REAL_SIZE * 2))) {
-      xcopy(lu, matrix, TO_BYTES(size * size * REAL_SIZE * 2));
+    if((lu = allocWp43(size * size * REAL_SIZE_IN_BLOCKS * 2))) {
+      xcopy(lu, matrix, TO_BYTES(size * size * REAL_SIZE_IN_BLOCKS * 2));
       if((p = allocWp43(TO_BLOCKS(size * sizeof(uint16_t))))) {
         realCopy(const_1, &tr), realCopy(const_0, &ti);
         if(luCpxMat(lu, size, p, realContext)) {
@@ -4306,7 +4308,7 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
         realCopy(const_NaN, res_r), realCopy(const_NaN, res_i);
       }
 
-      freeWp43(lu, size * size * REAL_SIZE * 2);
+      freeWp43(lu, size * size * REAL_SIZE_IN_BLOCKS * 2);
     }
     else {
       displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
@@ -4325,13 +4327,13 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
       return;
     }
 
-    if((lu = allocWp43(n * n * REAL_SIZE * 2))) {
+    if((lu = allocWp43(n * n * REAL_SIZE_IN_BLOCKS * 2))) {
       for(int i = 0; i < n * n; ++i) {
         real34ToReal(&matrix->matrixElements[i], &lu[i * 2]);
         realZero(&lu[i * 2 + 1]);
       }
       detCpxMat(lu, n, &tr, &ti, &ctxtReal51);
-      freeWp43(lu, n * n * REAL_SIZE * 2);
+      freeWp43(lu, n * n * REAL_SIZE_IN_BLOCKS * 2);
       realToReal34(&tr, res);
     }
     else {
@@ -4352,13 +4354,13 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
       return;
     }
 
-    if((lu = allocWp43(n * n * REAL_SIZE * 2))) {
+    if((lu = allocWp43(n * n * REAL_SIZE_IN_BLOCKS * 2))) {
       for(int i = 0; i < n * n; ++i) {
         real34ToReal(VARIABLE_REAL34_DATA(&matrix->matrixElements[i]), &lu[i * 2    ]);
         real34ToReal(VARIABLE_IMAG34_DATA(&matrix->matrixElements[i]), &lu[i * 2 + 1]);
       }
       detCpxMat(lu, n, &tr, &ti, &ctxtReal51);
-      freeWp43(lu, n * n * REAL_SIZE * 2);
+      freeWp43(lu, n * n * REAL_SIZE_IN_BLOCKS * 2);
       realToReal34(&tr, res_r);
       realToReal34(&ti, res_i);
     }
@@ -4431,13 +4433,13 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
     uint16_t i, j;
     real_t *b;
 
-    if((lu = allocWp43(n * n * REAL_SIZE * 2))) {
+    if((lu = allocWp43(n * n * REAL_SIZE_IN_BLOCKS * 2))) {
       if((pivots = allocWp43(TO_BLOCKS(n * sizeof(uint16_t))))) {
         for(i = 0; i < n * n * 2; i++) {
           realCopy(matrix + i, lu + i);
         }
         if(!luCpxMat(lu, n, pivots, realContext)) {
-          freeWp43(lu, n * n * REAL_SIZE * 2);
+          freeWp43(lu, n * n * REAL_SIZE_IN_BLOCKS * 2);
           freeWp43(pivots, TO_BLOCKS(n * sizeof(uint16_t)));
           return false;
         }
@@ -4470,8 +4472,8 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
           }
         }
 
-        if((x = allocWp43(n * REAL_SIZE * 2))) {
-          if((b = allocWp43(n * REAL_SIZE * 2))) {
+        if((x = allocWp43(n * REAL_SIZE_IN_BLOCKS * 2))) {
+          if((b = allocWp43(n * REAL_SIZE_IN_BLOCKS * 2))) {
             for(i = 0; i < n; i++) {
               for(j = 0; j < n; j++) {
                 realCopy((i == j) ? const_1 : const_0, &b[j * 2    ]);
@@ -4483,12 +4485,12 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
                 realCopy(x + j * 2 + 1, matrix + (j * n + i) * 2 + 1);
               }
             }
-            freeWp43(b, n * REAL_SIZE * 2);
+            freeWp43(b, n * REAL_SIZE_IN_BLOCKS * 2);
           }
           else {
             displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
           }
-          freeWp43(x, n * REAL_SIZE * 2);
+          freeWp43(x, n * REAL_SIZE_IN_BLOCKS * 2);
         }
         else {
           displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
@@ -4498,7 +4500,7 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
       else {
         displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
       }
-      freeWp43(lu, n * n * REAL_SIZE * 2);
+      freeWp43(lu, n * n * REAL_SIZE_IN_BLOCKS * 2);
     }
     else {
       displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
@@ -4521,7 +4523,7 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
       return;
     }
 
-    if((tmpMat = allocWp43(n * n * REAL_SIZE * 2))) {
+    if((tmpMat = allocWp43(n * n * REAL_SIZE_IN_BLOCKS * 2))) {
       for(i = 0; i < n; i++) {
         for(j = 0; j < n; j++) {
           real34ToReal(&matrix->matrixElements[i * n + j], &tmpMat[(i * n + j) * 2]);
@@ -4551,7 +4553,7 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
         }
       }
 
-      freeWp43(tmpMat, n * n * REAL_SIZE * 2);
+      freeWp43(tmpMat, n * n * REAL_SIZE_IN_BLOCKS * 2);
     }
     else {
       displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
@@ -4573,7 +4575,7 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
       return;
     }
 
-    if((tmpMat = allocWp43(n * n * REAL_SIZE * 2))) {
+    if((tmpMat = allocWp43(n * n * REAL_SIZE_IN_BLOCKS * 2))) {
       for(i = 0; i < n; i++) {
         for(j = 0; j < n; j++) {
           real34ToReal(VARIABLE_REAL34_DATA(&matrix->matrixElements[i * n + j]), &tmpMat[(i * n + j) * 2    ]);
@@ -4604,7 +4606,7 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
         }
       }
 
-      freeWp43(tmpMat, n * n * REAL_SIZE * 2);
+      freeWp43(tmpMat, n * n * REAL_SIZE_IN_BLOCKS * 2);
     }
     else {
       displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
@@ -4694,9 +4696,9 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
       return;
     }
 
-    if((yy = allocWp43(sizeY * size * REAL_SIZE * 2))) {
-      if((xx = allocWp43(size * size * REAL_SIZE * 2))) {
-        if((rr = allocWp43(sizeY * size * REAL_SIZE * 2))) {
+    if((yy = allocWp43(sizeY * size * REAL_SIZE_IN_BLOCKS * 2))) {
+      if((xx = allocWp43(size * size * REAL_SIZE_IN_BLOCKS * 2))) {
+        if((rr = allocWp43(sizeY * size * REAL_SIZE_IN_BLOCKS * 2))) {
           for(int i = 0; i < size * size; ++i) {
             real34ToReal(&x->matrixElements[i], &xx[i * 2]);
             realZero(&xx[i * 2 + 1]);
@@ -4728,7 +4730,7 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
             }
           }
 
-          freeWp43(rr, sizeY * size * REAL_SIZE * 2);
+          freeWp43(rr, sizeY * size * REAL_SIZE_IN_BLOCKS * 2);
         }
         else {
           if(y != res && x != res) {
@@ -4737,7 +4739,7 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
           }
           displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
         }
-        freeWp43(xx, size * size * REAL_SIZE * 2);
+        freeWp43(xx, size * size * REAL_SIZE_IN_BLOCKS * 2);
       }
       else {
         if(y != res && x != res) {
@@ -4746,7 +4748,7 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
         }
         displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
       }
-      freeWp43(yy, sizeY * size * REAL_SIZE * 2);
+      freeWp43(yy, sizeY * size * REAL_SIZE_IN_BLOCKS * 2);
     }
     else {
       if(y != res && x != res) {
@@ -4828,9 +4830,9 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
       return;
     }
 
-    if((yy = allocWp43(sizeY * size * REAL_SIZE * 2))) {
-      if((xx = allocWp43(size * size * REAL_SIZE * 2))) {
-        if((rr = allocWp43(sizeY * size * REAL_SIZE * 2))) {
+    if((yy = allocWp43(sizeY * size * REAL_SIZE_IN_BLOCKS * 2))) {
+      if((xx = allocWp43(size * size * REAL_SIZE_IN_BLOCKS * 2))) {
+        if((rr = allocWp43(sizeY * size * REAL_SIZE_IN_BLOCKS * 2))) {
           for(int i = 0; i < size * size; ++i) {
             real34ToReal(VARIABLE_REAL34_DATA(&x->matrixElements[i]), &xx[i * 2    ]);
             real34ToReal(VARIABLE_IMAG34_DATA(&x->matrixElements[i]), &xx[i * 2 + 1]);
@@ -4863,7 +4865,7 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
             }
           }
 
-          freeWp43(rr, sizeY * size * REAL_SIZE * 2);
+          freeWp43(rr, sizeY * size * REAL_SIZE_IN_BLOCKS * 2);
         }
         else {
           if(y != res && x != res) {
@@ -4872,7 +4874,7 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
           }
           displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
         }
-        freeWp43(xx, size * size * REAL_SIZE * 2);
+        freeWp43(xx, size * size * REAL_SIZE_IN_BLOCKS * 2);
       }
       else {
         if(y != res && x != res) {
@@ -4881,7 +4883,7 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
         }
         displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
       }
-      freeWp43(yy, sizeY * size * REAL_SIZE * 2);
+      freeWp43(yy, sizeY * size * REAL_SIZE_IN_BLOCKS * 2);
     }
     else {
       if(y != res && x != res) {
@@ -4897,8 +4899,8 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
   static void cpxLinearEqn(const real_t *a, const real_t *b, real_t *r, uint16_t size, realContext_t *realContext) {
     real_t *inv_a;
 
-    if((inv_a = allocWp43(size * size * REAL_SIZE * 2))) {
-      xcopy(inv_a, a, TO_BYTES(size * size * REAL_SIZE * 2));
+    if((inv_a = allocWp43(size * size * REAL_SIZE_IN_BLOCKS * 2))) {
+      xcopy(inv_a, a, TO_BYTES(size * size * REAL_SIZE_IN_BLOCKS * 2));
       if(invCpxMat(inv_a, size, realContext)) {
         mulCpxMat(inv_a, b, size, size, 1, r, realContext);
       }
@@ -4909,7 +4911,7 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
           moreInfoOnError("In function cpxLinearEqn:", errorMessage, NULL, NULL);
         #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
       }
-      freeWp43(inv_a, size * size * REAL_SIZE * 2);
+      freeWp43(inv_a, size * size * REAL_SIZE_IN_BLOCKS * 2);
     }
     else {
       displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
@@ -4938,9 +4940,9 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
       return;
     }
 
-    if((aa = allocWp43(size * size * REAL_SIZE * 2))) {
-      if((bb = allocWp43(size * REAL_SIZE * 2))) {
-        if((rr = allocWp43(size * REAL_SIZE * 2))) {
+    if((aa = allocWp43(size * size * REAL_SIZE_IN_BLOCKS * 2))) {
+      if((bb = allocWp43(size * REAL_SIZE_IN_BLOCKS * 2))) {
+        if((rr = allocWp43(size * REAL_SIZE_IN_BLOCKS * 2))) {
           for(int i = 0; i < size * size; ++i) {
             real34ToReal(&a->matrixElements[i], &aa[i * 2]);
             realZero(&aa[i * 2 + 1]);
@@ -4970,7 +4972,7 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
               r->header.matrixRows = r->header.matrixColumns = 0;
             }
           }
-          freeWp43(rr, size * REAL_SIZE * 2);
+          freeWp43(rr, size * REAL_SIZE_IN_BLOCKS * 2);
         }
         else {
           if(a != r && b != r) {
@@ -4979,7 +4981,7 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
           }
           displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
         }
-        freeWp43(bb, size * REAL_SIZE * 2);
+        freeWp43(bb, size * REAL_SIZE_IN_BLOCKS * 2);
       }
       else {
         if(a != r && b != r) {
@@ -4988,7 +4990,7 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
         }
         displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
       }
-      freeWp43(aa, size * size * REAL_SIZE * 2);
+      freeWp43(aa, size * size * REAL_SIZE_IN_BLOCKS * 2);
     }
     else {
       if(a != r && b != r) {
@@ -5021,9 +5023,9 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
       return;
     }
 
-    if((aa = allocWp43(size * size * REAL_SIZE * 2))) {
-      if((bb = allocWp43(size * REAL_SIZE * 2))) {
-        if((rr = allocWp43(size * REAL_SIZE * 2))) {
+    if((aa = allocWp43(size * size * REAL_SIZE_IN_BLOCKS * 2))) {
+      if((bb = allocWp43(size * REAL_SIZE_IN_BLOCKS * 2))) {
+        if((rr = allocWp43(size * REAL_SIZE_IN_BLOCKS * 2))) {
           for(int i = 0; i < size * size; ++i) {
             real34ToReal(VARIABLE_REAL34_DATA(&a->matrixElements[i]), &aa[i * 2    ]);
             real34ToReal(VARIABLE_IMAG34_DATA(&a->matrixElements[i]), &aa[i * 2 + 1]);
@@ -5054,7 +5056,7 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
               r->header.matrixRows = r->header.matrixColumns = 0;
             }
           }
-          freeWp43(rr, size * REAL_SIZE * 2);
+          freeWp43(rr, size * REAL_SIZE_IN_BLOCKS * 2);
         }
         else {
           if(a != r && b != r) {
@@ -5063,7 +5065,7 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
           }
           displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
         }
-        freeWp43(bb, size * REAL_SIZE * 2);
+        freeWp43(bb, size * REAL_SIZE_IN_BLOCKS * 2);
       }
       else {
         if(a != r && b != r) {
@@ -5072,7 +5074,7 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
         }
         displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
       }
-      freeWp43(aa, size * size * REAL_SIZE * 2);
+      freeWp43(aa, size * size * REAL_SIZE_IN_BLOCKS * 2);
     }
     else {
       if(a != r && b != r) {
@@ -5106,7 +5108,7 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
     real_t *v, *qq, *qt, *newMat, sum, m, t;
 
     // Allocate
-    if((bulk = allocWp43((size * size * 5 + size) * REAL_SIZE * 2))) {
+    if((bulk = allocWp43((size * size * 5 + size) * REAL_SIZE_IN_BLOCKS * 2))) {
       matr = bulk;
       matq = bulk + (size * size * 2);
 
@@ -5239,7 +5241,7 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
       }
 
       // Cleanup
-      freeWp43(bulk, (size * size * 5 + size) * REAL_SIZE * 2);
+      freeWp43(bulk, (size * size * 5 + size) * REAL_SIZE_IN_BLOCKS * 2);
     }
     else {
       displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
@@ -5255,7 +5257,7 @@ void real_QR_decomposition(const real34Matrix_t *matrix, real34Matrix_t *q, real
       uint32_t i;
 
       // Allocate
-      if((mat = allocWp43(matrix->header.matrixRows * matrix->header.matrixColumns * REAL_SIZE * 2 * 3))) {
+      if((mat = allocWp43(matrix->header.matrixRows * matrix->header.matrixColumns * REAL_SIZE_IN_BLOCKS * 2 * 3))) {
         matq = mat + matrix->header.matrixRows * matrix->header.matrixColumns * 2;
         matr = mat + matrix->header.matrixRows * matrix->header.matrixColumns * 2 * 2;
 
@@ -5291,7 +5293,7 @@ void real_QR_decomposition(const real34Matrix_t *matrix, real34Matrix_t *q, real
         }
 
         // Cleanup
-        freeWp43(mat, matrix->header.matrixRows * matrix->header.matrixColumns * REAL_SIZE * 2 * 3);
+        freeWp43(mat, matrix->header.matrixRows * matrix->header.matrixColumns * REAL_SIZE_IN_BLOCKS * 2 * 3);
       }
       else {
         displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
@@ -5308,7 +5310,7 @@ void complex_QR_decomposition(const complex34Matrix_t *matrix, complex34Matrix_t
       uint32_t i;
 
       // Allocate
-      if((mat = allocWp43(matrix->header.matrixRows * matrix->header.matrixColumns * REAL_SIZE * 2 * 3))) {
+      if((mat = allocWp43(matrix->header.matrixRows * matrix->header.matrixColumns * REAL_SIZE_IN_BLOCKS * 2 * 3))) {
         matq = mat + matrix->header.matrixRows * matrix->header.matrixColumns * 2;
         matr = mat + matrix->header.matrixRows * matrix->header.matrixColumns * 2 * 2;
 
@@ -5341,7 +5343,7 @@ void complex_QR_decomposition(const complex34Matrix_t *matrix, complex34Matrix_t
         }
 
         // Cleanup
-        freeWp43(mat, matrix->header.matrixRows * matrix->header.matrixColumns * REAL_SIZE * 2 * 3);
+        freeWp43(mat, matrix->header.matrixRows * matrix->header.matrixColumns * REAL_SIZE_IN_BLOCKS * 2 * 3);
       }
       else {
         displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
@@ -5718,7 +5720,7 @@ void complex_QR_decomposition(const complex34Matrix_t *matrix, complex34Matrix_t
       }
 
       for(k = 0; k < size; k++) {
-        if((v = allocWp43(size * REAL_SIZE * 2))) {
+        if((v = allocWp43(size * REAL_SIZE_IN_BLOCKS * 2))) {
           for(i = 0; i < size * size; i++) {
             for(j = 0; j < size * 2; j++) {
               realCopy(const_NaN, v + j);
@@ -5772,7 +5774,7 @@ void complex_QR_decomposition(const complex34Matrix_t *matrix, complex34Matrix_t
             realCopy(v + i * 2 + 1, r + (i * size + k) * 2 + 1);
           }
 
-          freeWp43(v, size * REAL_SIZE * 2);
+          freeWp43(v, size * REAL_SIZE_IN_BLOCKS * 2);
           v = NULL;
         }
         else {
@@ -5797,7 +5799,7 @@ void realEigenvalues(const real34Matrix_t *matrix, real34Matrix_t *res, real34Ma
     bool            shifted = true;
 
     if(matrix->header.matrixRows == matrix->header.matrixColumns) {
-      if((bulk = allocWp43(size * size * REAL_SIZE * 2 * 4))) {
+      if((bulk = allocWp43(size * size * REAL_SIZE_IN_BLOCKS * 2 * 4))) {
         a   = bulk;
         q   = bulk + size * size * 2;
         r   = bulk + size * size * 2 * 2;
@@ -5842,7 +5844,7 @@ void realEigenvalues(const real34Matrix_t *matrix, real34Matrix_t *res, real34Ma
           displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
         }
 
-        freeWp43(bulk, size * size * REAL_SIZE * 2 * 4);
+        freeWp43(bulk, size * size * REAL_SIZE_IN_BLOCKS * 2 * 4);
       }
       else {
         displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
@@ -5860,7 +5862,7 @@ void complexEigenvalues(const complex34Matrix_t *matrix, complex34Matrix_t *res)
     bool            shifted = true;
 
     if(matrix->header.matrixRows == matrix->header.matrixColumns) {
-      if((bulk = allocWp43(size * size * REAL_SIZE * 2 * 4))) {
+      if((bulk = allocWp43(size * size * REAL_SIZE_IN_BLOCKS * 2 * 4))) {
         a   = bulk;
         q   = bulk + size * size * 2;
         r   = bulk + size * size * 2 * 2;
@@ -5887,7 +5889,7 @@ void complexEigenvalues(const complex34Matrix_t *matrix, complex34Matrix_t *res)
           displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
         }
 
-        freeWp43(bulk, size * size * REAL_SIZE * 2 * 4);
+        freeWp43(bulk, size * size * REAL_SIZE_IN_BLOCKS * 2 * 4);
       }
       else {
         displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
@@ -5906,7 +5908,7 @@ void realEigenvectors(const real34Matrix_t *matrix, real34Matrix_t *res, real34M
     bool            shifted = true;
 
     if(matrix->header.matrixRows == matrix->header.matrixColumns) {
-      if((bulk = allocWp43(size * size * REAL_SIZE * 2 * 4))) {
+      if((bulk = allocWp43(size * size * REAL_SIZE_IN_BLOCKS * 2 * 4))) {
         a   = bulk;
         q   = bulk + size * size * 2;
         r   = bulk + size * size * 2 * 2;
@@ -5969,7 +5971,7 @@ void realEigenvectors(const real34Matrix_t *matrix, real34Matrix_t *res, real34M
           displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
         }
 
-        freeWp43(bulk, size * size * REAL_SIZE * 2 * 4);
+        freeWp43(bulk, size * size * REAL_SIZE_IN_BLOCKS * 2 * 4);
       }
       else {
         displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
@@ -5987,7 +5989,7 @@ void complexEigenvectors(const complex34Matrix_t *matrix, complex34Matrix_t *res
     bool            shifted = true;
 
     if(matrix->header.matrixRows == matrix->header.matrixColumns) {
-      if((bulk = allocWp43(size * size * REAL_SIZE * 2 * 4))) {
+      if((bulk = allocWp43(size * size * REAL_SIZE_IN_BLOCKS * 2 * 4))) {
         a   = bulk;
         q   = bulk + size * size * 2;
         r   = bulk + size * size * 2 * 2;
@@ -6016,7 +6018,7 @@ void complexEigenvectors(const complex34Matrix_t *matrix, complex34Matrix_t *res
           displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
         }
 
-        freeWp43(bulk, size * size * REAL_SIZE * 2 * 4);
+        freeWp43(bulk, size * size * REAL_SIZE_IN_BLOCKS * 2 * 4);
       }
       else {
         displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
@@ -6070,7 +6072,7 @@ void elementwiseRema(void (*f)(void)) {
     const int numOfElements = x.header.matrixRows * x.header.matrixColumns;
 
     for(int i = 0; i < numOfElements; ++i) {
-      reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE, amNone);
+      reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
       if(complex) {
         real34Copy(VARIABLE_REAL34_DATA(&xc.matrixElements[i]), REGISTER_REAL34_DATA(REGISTER_X));
       }
@@ -6103,7 +6105,7 @@ void elementwiseRema_UInt16(void (*f)(uint16_t), uint16_t param) {
     const int numOfElements = x.header.matrixRows * x.header.matrixColumns;
 
     for(int i = 0; i < numOfElements; ++i) {
-      reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE, amNone);
+      reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
       if(complex) {
         real34Copy(VARIABLE_REAL34_DATA(&xc.matrixElements[i]), REGISTER_REAL34_DATA(REGISTER_X));
       }
@@ -6138,7 +6140,7 @@ void elementwiseRemaLonI(void (*f)(void)) {
     const int numOfElements = y.header.matrixRows * y.header.matrixColumns;
 
     for(int i = 0; i < numOfElements; ++i) {
-      reallocateRegister(REGISTER_Y, dtReal34, REAL34_SIZE, amNone);
+      reallocateRegister(REGISTER_Y, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
       if(complex) {
         real34Copy(VARIABLE_REAL34_DATA(&yc.matrixElements[i]), REGISTER_REAL34_DATA(REGISTER_Y));
       }
@@ -6175,8 +6177,8 @@ void elementwiseRemaReal(void (*f)(void)) {
     const int numOfElements = y.header.matrixRows * y.header.matrixColumns;
 
     for(int i = 0; i < numOfElements; ++i) {
-      reallocateRegister(REGISTER_Y, dtReal34, REAL34_SIZE, amNone);
-      reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE, amNone);
+      reallocateRegister(REGISTER_Y, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
+      reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
       if(complex) {
         real34Copy(VARIABLE_REAL34_DATA(&yc.matrixElements[i]), REGISTER_REAL34_DATA(REGISTER_Y));
       }
@@ -6215,7 +6217,7 @@ void elementwiseRemaShoI(void (*f)(void)) {
     const int numOfElements = y.header.matrixRows * y.header.matrixColumns;
 
     for(int i = 0; i < numOfElements; ++i) {
-      reallocateRegister(REGISTER_Y, dtReal34, REAL34_SIZE, amNone);
+      reallocateRegister(REGISTER_Y, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
       if(complex) {
         real34Copy(VARIABLE_REAL34_DATA(&yc.matrixElements[i]), REGISTER_REAL34_DATA(REGISTER_Y));
       }
@@ -6251,8 +6253,8 @@ void elementwiseRealRema(void (*f)(void)) {
     const int numOfElements = x.header.matrixRows * x.header.matrixColumns;
 
     for(int i = 0; i < numOfElements; ++i) {
-      reallocateRegister(REGISTER_Y, dtReal34, REAL34_SIZE, amNone);
-      reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE, amNone);
+      reallocateRegister(REGISTER_Y, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
+      reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
       real34Copy(&y, REGISTER_REAL34_DATA(REGISTER_Y));
       if(complex) {
         real34Copy(VARIABLE_REAL34_DATA(&xc.matrixElements[i]), REGISTER_REAL34_DATA(REGISTER_X));
@@ -6301,7 +6303,7 @@ void elementwiseCxma(void (*f)(void)) {
     convertComplex34MatrixRegisterToComplex34Matrix(REGISTER_X, &x);
 
     for(int i = 0; i < x.header.matrixRows * x.header.matrixColumns; ++i) {
-      reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE, amNone);
+      reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE_IN_BLOCKS, amNone);
       complex34Copy(&x.matrixElements[i], REGISTER_COMPLEX34_DATA(REGISTER_X));
       f();
       elementwiseCxmaGetResult(&x, i);
@@ -6321,7 +6323,7 @@ void elementwiseCxma_UInt16(void (*f)(uint16_t), uint16_t param) {
     convertComplex34MatrixRegisterToComplex34Matrix(REGISTER_X, &x);
 
     for(int i = 0; i < x.header.matrixRows * x.header.matrixColumns; ++i) {
-      reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE, amNone);
+      reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE_IN_BLOCKS, amNone);
       complex34Copy(&x.matrixElements[i], REGISTER_COMPLEX34_DATA(REGISTER_X));
       f(param);
       elementwiseCxmaGetResult(&x, i);
@@ -6343,7 +6345,7 @@ void elementwiseCxmaLonI(void (*f)(void)) {
     convertLongIntegerRegisterToLongInteger(REGISTER_X, x);
 
     for(int i = 0; i < y.header.matrixRows * y.header.matrixColumns; ++i) {
-      reallocateRegister(REGISTER_Y, dtComplex34, COMPLEX34_SIZE, amNone);
+      reallocateRegister(REGISTER_Y, dtComplex34, COMPLEX34_SIZE_IN_BLOCKS, amNone);
       complex34Copy(&y.matrixElements[i], REGISTER_COMPLEX34_DATA(REGISTER_Y));
       convertLongIntegerToLongIntegerRegister(x, REGISTER_X);
       f();
@@ -6367,8 +6369,8 @@ void elementwiseCxmaReal(void (*f)(void)) {
     real34Copy(REGISTER_REAL34_DATA(REGISTER_X), &x);
 
     for(int i = 0; i < y.header.matrixRows * y.header.matrixColumns; ++i) {
-      reallocateRegister(REGISTER_Y, dtComplex34, COMPLEX34_SIZE, amNone);
-      reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE, amNone);
+      reallocateRegister(REGISTER_Y, dtComplex34, COMPLEX34_SIZE_IN_BLOCKS, amNone);
+      reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
       complex34Copy(&y.matrixElements[i], REGISTER_COMPLEX34_DATA(REGISTER_Y));
       real34Copy(&x, REGISTER_REAL34_DATA(REGISTER_X));
       f();
@@ -6392,7 +6394,7 @@ void elementwiseCxmaShoI(void (*f)(void)) {
     base = getRegisterShortIntegerBase(REGISTER_X);
 
     for(int i = 0; i < y.header.matrixRows * y.header.matrixColumns; ++i) {
-      reallocateRegister(REGISTER_Y, dtComplex34, COMPLEX34_SIZE, amNone);
+      reallocateRegister(REGISTER_Y, dtComplex34, COMPLEX34_SIZE_IN_BLOCKS, amNone);
       complex34Copy(&y.matrixElements[i], REGISTER_COMPLEX34_DATA(REGISTER_Y));
       convertUInt64ToShortIntegerRegister(sign, x, base, REGISTER_X);
       f();
@@ -6415,8 +6417,8 @@ void elementwiseCxmaCplx(void (*f)(void)) {
     complex34Copy(REGISTER_COMPLEX34_DATA(REGISTER_X), &x);
 
     for(int i = 0; i < y.header.matrixRows * y.header.matrixColumns; ++i) {
-      reallocateRegister(REGISTER_Y, dtComplex34, COMPLEX34_SIZE, amNone);
-      reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE, amNone);
+      reallocateRegister(REGISTER_Y, dtComplex34, COMPLEX34_SIZE_IN_BLOCKS, amNone);
+      reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE_IN_BLOCKS, amNone);
       complex34Copy(&y.matrixElements[i], REGISTER_COMPLEX34_DATA(REGISTER_Y));
       complex34Copy(&x, REGISTER_COMPLEX34_DATA(REGISTER_X));
       f();
@@ -6439,8 +6441,8 @@ void elementwiseRealCxma(void (*f)(void)) {
     real34Copy(REGISTER_REAL34_DATA(REGISTER_Y), &y);
 
     for(int i = 0; i < x.header.matrixRows * x.header.matrixColumns; ++i) {
-      reallocateRegister(REGISTER_Y, dtReal34, REAL34_SIZE, amNone);
-      reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE, amNone);
+      reallocateRegister(REGISTER_Y, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
+      reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE_IN_BLOCKS, amNone);
       real34Copy(&y, REGISTER_REAL34_DATA(REGISTER_Y));
       complex34Copy(&x.matrixElements[i], REGISTER_COMPLEX34_DATA(REGISTER_X));
       f();

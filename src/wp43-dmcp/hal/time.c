@@ -3,6 +3,7 @@
 
 #include "hal/time.h"
 
+#include "wp43-dmcp.h"
 #include <assert.h>
 #include <stdio.h>
 #include <dmcp.h>
@@ -73,5 +74,11 @@ uint32_t timeCurrentMs(void) {
 
 
 uint32_t timeUptimeMs(void) {
-  return (uint32_t)sys_current_ms();
+  return timeUptime;
+}
+
+
+
+void timeSleep(uint32_t timeInMs) {
+  sys_delay(timeInMs);
 }

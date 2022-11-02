@@ -11,6 +11,7 @@
 #include "error.h"
 #include "gtkDebug.h"
 #include "gtkScreen.h"
+#include "hal/lcd.h"
 #include "items.h"
 #include "saveRestoreCalcState.h"
 #include "ui/keyboard.h"
@@ -123,6 +124,7 @@ void frmCalcMouseButtonPressed(GtkWidget *notUsed, GdkEvent *event, gpointer dat
     }
 
     btnPressed(key);
+    lcd_refresh();
   }
 }
 
@@ -131,6 +133,7 @@ void frmCalcMouseButtonPressed(GtkWidget *notUsed, GdkEvent *event, gpointer dat
 void frmCalcMouseButtonReleased(GtkWidget *notUsed, GdkEvent *event, gpointer data) {
   if(key != kcNoKey) {
     btnReleased(key);
+    lcd_refresh();
     key = kcNoKey;
   }
 }
@@ -668,6 +671,7 @@ static gboolean keyPressed(GtkWidget *w, GdkEventKey *event, gpointer data) {
       keyCode_t kc = _keyCodeFromGdkKey(gdkKey);
       if(kc != kcNoKey) {
         btnClicked(kc);
+        lcd_refresh();
       }
       break;
     }

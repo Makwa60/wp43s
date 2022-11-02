@@ -17,6 +17,7 @@ wp43_dmcp_src = files(
   'hal/io.c',
   'hal/system.c',
   'hal/time.c',
+  'hal/timer.c',
   'wp43-dmcp.c')
 wp43_lib = static_library(
   'libwp43',

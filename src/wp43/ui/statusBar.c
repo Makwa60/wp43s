@@ -10,6 +10,7 @@
 #include "flags.h"
 #include "fonts.h"
 #include "hal/lcd.h"
+#include "hal/timer.h"
 #include "items.h"
 #include "screen.h"
 #include "ui/tam.h"
@@ -24,8 +25,15 @@
     uint32_t x = showString(dateTimeString, &standardFont, X_DATE, 0, vmNormal, true, true);
     x = showGlyph(getSystemFlag(FLAG_TDM24) ? " " : STD_SPACE_3_PER_EM, &standardFont, x, 0, vmNormal, true, true); // is 0+0+8 pixel wide
 
-    getTimeString(dateTimeString);
+    uint32_t nextUpdateInMs = getTimeString(dateTimeString);
     showString(dateTimeString, &standardFont, x, 0, vmNormal, true, false);
+    timerStart(tidTimeUpdate, NOPARAM, nextUpdateInMs);
+  }
+
+
+
+  void cbTimeUpdate(uint16_t param) {
+    showDateTime();
   }
 
 
@@ -223,6 +231,9 @@
         }
       }
     }
+    if(hourGlassIconEnabled) {
+      lcd_refresh();
+    }
   }
 
 
@@ -264,10 +275,36 @@
       if(getSystemFlag(FLAG_USB)) {
         showGlyph(STD_USB, &standardFont, X_BATTERY, 0, vmNormal, true, false); // is 0+9+2 pixel wide
       }
-      else {
-        if(getSystemFlag(FLAG_LOWBAT)) {
-          showGlyph(STD_BATTERY, &standardFont, X_BATTERY, 0, vmNormal, true, false); // is 0+10+1 pixel wide
-        }
+      else if(getSystemFlag(FLAG_LOWBAT)) {
+        showGlyph(STD_BATTERY, &standardFont, X_BATTERY, 0, vmNormal, true, false); // is 0+10+1 pixel wide
+      }
+    }
+
+
+
+    void setPowerStatus(powerStatus_t status) {
+      switch(status) {
+        case psUsb:
+          if(!getSystemFlag(FLAG_USB)) {
+            setSystemFlag(FLAG_USB);
+            clearSystemFlag(FLAG_LOWBAT);
+            showHideUsbLowBattery();
+          }
+          break;
+        case psBattery:
+          if(getSystemFlag(FLAG_USB) || getSystemFlag(FLAG_LOWBAT)) {
+            clearSystemFlag(FLAG_USB);
+            clearSystemFlag(FLAG_LOWBAT);
+            showHideUsbLowBattery();
+          }
+          break;
+        case psBatteryLow:
+          if(!getSystemFlag(FLAG_LOWBAT)) {
+            clearSystemFlag(FLAG_USB);
+            setSystemFlag(FLAG_LOWBAT);
+            showHideUsbLowBattery();
+          }
+          break;
       }
     }
   #endif // DMCP_BUILD

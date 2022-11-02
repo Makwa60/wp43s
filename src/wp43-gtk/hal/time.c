@@ -6,6 +6,7 @@
 #include <assert.h>
 #include <glib.h>
 #include <time.h>
+#include <unistd.h>
 
 void timeGetTimeInfo(timeInfo_t *ti) {
   assert(ti != NULL);
@@ -38,4 +39,10 @@ uint32_t timeCurrentMs(void) {
 
 uint32_t timeUptimeMs(void) {
   return (uint32_t)(g_get_monotonic_time() / 1000);
+}
+
+
+
+void timeSleep(uint32_t timeInMs) {
+  usleep(timeInMs * 1000);
 }

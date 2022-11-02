@@ -34,6 +34,7 @@
     void  btnNamedVariablesClicked     (GtkWidget *w, gpointer data);
     void  btnSavedStackRegistersClicked(GtkWidget *w, gpointer data);
     void  chkHexaStringClicked         (GtkWidget *w, gpointer data);
+    void  debugRefresh                 (void);
   #endif // (DEBUG_PANEL == 1)
 
 #endif // !GTKDEBUG_H

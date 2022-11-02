@@ -17,6 +17,7 @@
 #include "solver/differentiate.h"
 #include "solver/equation.h"
 #include "sort.h"
+#include "ui/cursor.h"
 #include "ui/screen.h"
 #include "ui/tam.h"
 #include <string.h>
@@ -1170,28 +1171,28 @@ void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
         bool cursorShown;
         bool rightEllipsis;
         while(1) {
-          showEquation(EQUATION_AIM_BUFFER, yCursor, xCursor, true, &cursorShown, &rightEllipsis);
+          showEquation(EQUATION_AIM_BUFFER, equationEditorScrollPosition, equationEditorCursor, true, &cursorShown, &rightEllipsis);
           if(cursorShown) {
             break;
           }
-          if(yCursor > xCursor) {
-            --yCursor;
+          if(equationEditorScrollPosition > equationEditorCursor) {
+            --equationEditorScrollPosition;
           }
           else {
-            ++yCursor;
+            ++equationEditorScrollPosition;
           }
         }
-        if(!rightEllipsis && yCursor > 0) {
+        if(!rightEllipsis && equationEditorScrollPosition > 0) {
           do {
-            --yCursor;
-            showEquation(EQUATION_AIM_BUFFER, yCursor, xCursor, true, &cursorShown, &rightEllipsis);
+            --equationEditorScrollPosition;
+            showEquation(EQUATION_AIM_BUFFER, equationEditorScrollPosition, equationEditorCursor, true, &cursorShown, &rightEllipsis);
             if((!cursorShown) || rightEllipsis) {
-              ++yCursor;
+              ++equationEditorScrollPosition;
               break;
             }
-          } while(yCursor > 0);
+          } while(equationEditorScrollPosition > 0);
         }
-        showEquation(EQUATION_AIM_BUFFER, yCursor, xCursor, false, NULL, NULL);
+        showEquation(EQUATION_AIM_BUFFER, equationEditorScrollPosition, equationEditorCursor, false, NULL, NULL);
       }
     }
 

@@ -86,9 +86,6 @@
 
 
   void bugScreen(const char *msg) {
-    clearSystemFlag(FLAG_ALPHA);
-    hideCursor();
-    cursorEnabled = false;
     _bugScreenMsg = msg;
     appsEnter(glFlagFontBrowser, _bugScreenKeyHandler, _bugScreenDraw);
   }

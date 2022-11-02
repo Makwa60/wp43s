@@ -184,4 +184,6 @@
   void     fnHide                (uint16_t digits);
   void     fnGetHide             (uint16_t unusedButMandatoryParameter);
 
+  void     configSetUpTimers     (void);
+
 #endif // !CONFIG_H

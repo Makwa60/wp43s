@@ -31,19 +31,16 @@
 #include "solver/graph.h"
 #include "sort.h"
 #include "stats.h"
+#include "ui/cursor.h"
 #include "ui/screen.h"
 #include "ui/softmenus.h"
 #include "ui/tam.h"
 #include <stdbool.h>
 #include <string.h>
-#if defined(PC_BUILD)
-  #include <stdio.h>
-  #include <errno.h>
-#endif
 
 #include "wp43.h"
 
-#define BACKUP_VERSION         85  // changed flagScreen into an enum
+#define BACKUP_VERSION         86  // equationEditorCursor and equationEditorScrollPosition
 #define START_REGISTER_VALUE 1000  // was 1522, why?
 
 static char *tmpRegisterString = NULL;
@@ -268,6 +265,8 @@ static uint32_t restore(void *buffer, uint32_t size) {
     save(&currentSolverVariable,              sizeof(currentSolverVariable));
     save(&numberOfFormulae,                   sizeof(numberOfFormulae));
     save(&currentFormula,                     sizeof(currentFormula));
+    save(&equationEditorCursor,               sizeof(equationEditorCursor));
+    save(&equationEditorScrollPosition,       sizeof(equationEditorScrollPosition));
     save(&numberOfUserMenus,                  sizeof(numberOfUserMenus));
     save(&currentUserMenu,                    sizeof(currentUserMenu));
     save(&userKeyLabelSize,                   sizeof(userKeyLabelSize));
@@ -528,6 +527,8 @@ static uint32_t restore(void *buffer, uint32_t size) {
       restore(&currentSolverVariable,              sizeof(currentSolverVariable));
       restore(&numberOfFormulae,                   sizeof(numberOfFormulae));
       restore(&currentFormula,                     sizeof(currentFormula));
+      restore(&equationEditorCursor,               sizeof(equationEditorCursor));
+      restore(&equationEditorScrollPosition,       sizeof(equationEditorScrollPosition));
       restore(&numberOfUserMenus,                  sizeof(numberOfUserMenus));
       restore(&currentUserMenu,                    sizeof(currentUserMenu));
       restore(&userKeyLabelSize,                   sizeof(userKeyLabelSize));
@@ -598,6 +599,9 @@ static uint32_t restore(void *buffer, uint32_t size) {
         clearSystemFlag(FLAG_ALPHA);
       }
 
+      if(cursorEnabled) {
+        cursorShow(cursorFont == &standardFont, xCursor, yCursor);
+      }
       calcModeUpdateGui();
       updateMatrixHeightCache();
       refreshScreen();
@@ -815,7 +819,7 @@ void fnSave(uint16_t unusedButMandatoryParameter) {
   sprintf(tmpString, "STATISTICAL_SUMS\n%" PRIu16 "\n", (uint16_t)(statisticalSumsPointer ? NUMBER_OF_STATISTICAL_SUMS : 0));
   save(tmpString, strlen(tmpString));
   for(i=0; i<(statisticalSumsPointer ? NUMBER_OF_STATISTICAL_SUMS : 0); i++) {
-    realToString((real_t *)(statisticalSumsPointer + REAL_SIZE * i), tmpRegisterString);
+    realToString((real_t *)(statisticalSumsPointer + REAL_SIZE_IN_BLOCKS * i), tmpRegisterString);
     sprintf(tmpString, "%s\n", tmpRegisterString);
     save(tmpString, strlen(tmpString));
   }
@@ -1117,22 +1121,22 @@ static void restoreRegister(calcRegister_t regist, char *type, char *value) {
       tag = amNone;
     }
 
-    reallocateRegister(regist, dtReal34, REAL34_SIZE, tag);
+    reallocateRegister(regist, dtReal34, REAL34_SIZE_IN_BLOCKS, tag);
     stringToReal34(value, REGISTER_REAL34_DATA(regist));
   }
 
   else if(strcmp(type, "Real") == 0) {
-    reallocateRegister(regist, dtReal34, REAL34_SIZE, tag);
+    reallocateRegister(regist, dtReal34, REAL34_SIZE_IN_BLOCKS, tag);
     stringToReal34(value, REGISTER_REAL34_DATA(regist));
   }
 
   else if(strcmp(type, "Time") == 0) {
-    reallocateRegister(regist, dtTime, REAL34_SIZE, amNone);
+    reallocateRegister(regist, dtTime, REAL34_SIZE_IN_BLOCKS, amNone);
     stringToReal34(value, REGISTER_REAL34_DATA(regist));
   }
 
   else if(strcmp(type, "Date") == 0) {
-    reallocateRegister(regist, dtDate, REAL34_SIZE, amNone);
+    reallocateRegister(regist, dtDate, REAL34_SIZE_IN_BLOCKS, amNone);
     stringToReal34(value, REGISTER_REAL34_DATA(regist));
   }
 
@@ -1172,7 +1176,7 @@ static void restoreRegister(calcRegister_t regist, char *type, char *value) {
   else if(strcmp(type, "Cplx") == 0) {
     char *imaginaryPart;
 
-    reallocateRegister(regist, dtComplex34, COMPLEX34_SIZE, amNone);
+    reallocateRegister(regist, dtComplex34, COMPLEX34_SIZE_IN_BLOCKS, amNone);
     imaginaryPart = value;
     while(*imaginaryPart != ' ') {
       imaginaryPart++;
@@ -1194,7 +1198,7 @@ static void restoreRegister(calcRegister_t regist, char *type, char *value) {
     *(numOfCols++) = 0;
     rows = stringToUint16(value);
     cols = stringToUint16(numOfCols);
-    reallocateRegister(regist, dtReal34Matrix, REAL34_SIZE * rows * cols, amNone);
+    reallocateRegister(regist, dtReal34Matrix, REAL34_SIZE_IN_BLOCKS * rows * cols, amNone);
     REGISTER_REAL34_MATRIX_DBLOCK(regist)->matrixRows = rows;
     REGISTER_REAL34_MATRIX_DBLOCK(regist)->matrixColumns = cols;
   }
@@ -1210,7 +1214,7 @@ static void restoreRegister(calcRegister_t regist, char *type, char *value) {
     *(numOfCols++) = 0;
     rows = stringToUint16(value);
     cols = stringToUint16(numOfCols);
-    reallocateRegister(regist, dtComplex34Matrix, COMPLEX34_SIZE * rows * cols, amNone);
+    reallocateRegister(regist, dtComplex34Matrix, COMPLEX34_SIZE_IN_BLOCKS * rows * cols, amNone);
     REGISTER_COMPLEX34_MATRIX_DBLOCK(regist)->matrixRows = rows;
     REGISTER_COMPLEX34_MATRIX_DBLOCK(regist)->matrixColumns = cols;
   }
@@ -1436,7 +1440,7 @@ static bool restoreOneSection(uint16_t loadMode, uint16_t s, uint16_t n, uint16_
       readLine(tmpString); // statistical sum
       if(statisticalSumsPointer) { // likely
         if(loadMode == LM_ALL || loadMode == LM_SUMS) {
-          stringToReal(tmpString, (real_t *)(statisticalSumsPointer + REAL_SIZE * i), &ctxtReal75);
+          stringToReal(tmpString, (real_t *)(statisticalSumsPointer + REAL_SIZE_IN_BLOCKS * i), &ctxtReal75);
         }
       }
     }
@@ -1886,28 +1890,13 @@ void fnDeleteBackup(uint16_t confirmation) {
     setConfirmationMode(fnDeleteBackup);
   }
   else {
-    #if defined(DMCP_BUILD)
-      FRESULT result;
-      sys_disk_write_enable(1);
-      result = f_unlink("SAVFILES\\wp43.sav");
-      if(result != FR_OK && result != FR_NO_FILE && result != FR_NO_PATH) {
-        displayCalcErrorMessage(ERROR_IO, ERR_REGISTER_LINE, REGISTER_X);
-      }
-      sys_disk_write_enable(0);
-    #else // !DMCP_BUILD
-      int result = remove("wp43.sav");
-      if(result == -1) {
-        #if !defined(TESTSUITE_BUILD)
-          int e = errno;
-          if(e != ENOENT) {
-            displayCalcErrorMessage(ERROR_IO, ERR_REGISTER_LINE, REGISTER_X);
-            #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-              sprintf(errorMessage, "removing the backup failed with error code %d", e);
-              moreInfoOnError("In function fnDeleteBackup:", errorMessage, NULL, NULL);
-            #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
-          }
-        #endif // !TESTSUITE_BUILD
-      }
-    #endif // DMCP_BUILD
+    uint32_t errorNumber;
+    if(!ioFileRemove(ioPathSaveFile, &errorNumber)) {
+      displayCalcErrorMessage(ERROR_IO, ERR_REGISTER_LINE, REGISTER_X);
+      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
+        sprintf(errorMessage, "removing the backup failed with error code %d", errorNumber);
+        moreInfoOnError("In function fnDeleteBackup:", errorMessage, NULL, NULL);
+      #endif
+    }
   }
 }

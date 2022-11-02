@@ -9,7 +9,8 @@ testSuite_src = files(
   'hal/io.c',
   'hal/lcd.c',
   'hal/system.c',
-  'hal/time.c')
+  'hal/time.c',
+  'hal/timer.c')
 testSuite = executable(
   'testSuite',
   build_by_default    : false,
@@ -18,7 +19,7 @@ testSuite = executable(
                           constantPointers_ch],
   c_args              : '-DTESTSUITE_BUILD',
   include_directories : [decNumber_inc, wp43_inc],
-  dependencies        : [gtk_dep, gmp_dep, m_dep],
+  dependencies        : [gmp_dep, m_dep],
   native              : true)
 test(
   'testSuite',

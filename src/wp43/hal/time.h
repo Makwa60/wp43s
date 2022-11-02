@@ -77,4 +77,11 @@
    */
   uint32_t timeUptimeMs(void);
 
+  /**
+   * Sleep for a fixed period of time.
+   *
+   * \param[in] timeInMs amount of time to sleep
+   */
+  void timeSleep(uint32_t timeInMs);
+
 #endif // !TIME_H

@@ -22,10 +22,12 @@
 #include "error.h"
 #include "flags.h"
 #include "fonts.h"
+#include "hal/audio.h"
 #include "hal/debug.h"
 #include "hal/lcd.h"
-#include "hal/time.h"
 #include "hal/system.h"
+#include "hal/time.h"
+#include "hal/timer.h"
 #include "items.h"
 #include "longIntegerType.h"
 #include "mathematics/comparisonReals.h"
@@ -35,16 +37,13 @@
 #include "programming/manage.h"
 #include "registers.h"
 #include "registerValueConversions.h"
-#include "timer.h"
 #include "ui/bufferize.h"
+#include "ui/cursor.h"
 #include "ui/keyboard.h"
 #include "ui/softmenus.h"
 #include "ui/statusBar.h"
 #include "ui/tam.h"
 #include "version.h"
-#if defined(PC_BUILD)
-  #include <gtk/gtk.h>
-#endif // PC_BUILD
 #include <stdbool.h>
 #include <string.h>
 
@@ -65,110 +64,6 @@
   */
 #endif // !TESTSUITE_BUILD
 
-#if defined(TESTSUITE_BUILD) && !defined(GENERATE_CATALOGS)
-  void refreshLcd(void) {}
-#else
-  // This function is called periodically by the main loop or a GTK timer
-  void refreshLcd(void) {
-    // Cursor blinking
-    static bool cursorBlink=true;
-
-    if(cursorEnabled) {
-      if(cursorBlink) {
-        showGlyph(STD_CURSOR, cursorFont, xCursor, yCursor, vmNormal, true, false);
-      }
-      else {
-        hideCursor();
-      }
-      #if defined(PC_BUILD)
-        cursorBlink = !cursorBlink;
-      #endif // PC_BUILD
-    }
-
-    // Function name display
-    if(showFunctionNameCounter > 0) {
-      #if defined(PC_BUILD)
-        showFunctionNameCounter -= SCREEN_REFRESH_PERIOD;
-      #elif defined(DMCP_BUILD)
-        showFunctionNameCounter -= FAST_SCREEN_REFRESH_PERIOD;
-      #endif // PC_BUILD DMCP_BUILD
-      if(showFunctionNameCounter <= 0) {
-        hideFunctionName();
-        tmpString[0] = 0;
-        showFunctionName(ITM_NOP, 0);
-      }
-    }
-
-    // Update date and time
-    getTimeString(dateTimeString);
-    if(strcmp(dateTimeString, oldTime)) {
-      strcpy(oldTime, dateTimeString);
-      #if (DEBUG_INSTEAD_STATUS_BAR != 1)
-        showDateTime();
-      #endif // (DEBUG_INSTEAD_STATUS_BAR != 1)
-      #if defined(DMCP_BUILD)
-        if(!getSystemFlag(FLAG_AUTOFF) || (nextTimerRefresh != 0)) {
-          reset_auto_off();
-        }
-      #endif // DMCP_BUILD
-    }
-
-    #if defined(PC_BUILD)
-      // If LCD has changed: update the GTK screen
-      if(screenChange) {
-        #if defined(LINUX) && (DEBUG_PANEL == 1)
-          if(programRunStop != PGM_RUNNING) {
-            debugRefresh();
-          }
-        #endif // defined(LINUX) && (DEBUG_PANEL == 1)
-
-        lcd_refresh();
-        while(gtk_events_pending()) {
-          gtk_main_iteration();
-        }
-      }
-    #elif defined(DMCP_BUILD)
-      if(usb_powered() == 1) {
-        if(!getSystemFlag(FLAG_USB)) {
-          setSystemFlag(FLAG_USB);
-          clearSystemFlag(FLAG_LOWBAT);
-          showHideUsbLowBattery();
-        }
-      }
-      else {
-        if(getSystemFlag(FLAG_USB)) {
-          clearSystemFlag(FLAG_USB);
-        }
-
-        if(get_vbat() < 2000) {
-          if(!getSystemFlag(FLAG_LOWBAT)) {
-            setSystemFlag(FLAG_LOWBAT);
-            showHideUsbLowBattery();
-          }
-          SET_ST(STAT_PGM_END);
-        }
-        else if(get_vbat() < 2500) {
-          if(!getSystemFlag(FLAG_LOWBAT)) {
-            setSystemFlag(FLAG_LOWBAT);
-            showHideUsbLowBattery();
-          }
-        }
-        else {
-          if(getSystemFlag(FLAG_LOWBAT)) {
-            clearSystemFlag(FLAG_LOWBAT);
-            showHideUsbLowBattery();
-          }
-        }
-      }
-    #endif // PC_BUILD DMCP_BUILD
-
-    // Alpha selection timer
-    if(catalog && alphaSelectionTimer != 0 && (timeUptimeMs() - alphaSelectionTimer) > 3000) { // More than 3 seconds elapsed since last keypress
-      resetAlphaSelectionBuffer();
-    }
-  }
-#endif // !TESTSUITE_BUILD || GENERATE_CATALOGS
-
 
 
 void clearScreen(void) {
@@ -181,7 +76,7 @@ void clearScreen(void) {
   uint32_t showGlyphCode(uint16_t charCode, const font_t *font, uint32_t x, uint32_t y, videoMode_t videoMode, bool showLeadingCols, bool showEndingCols) {
     uint32_t  col, row, xGlyph, endingCols;
     int32_t glyphId;
-    int8_t   byte, *data;
+    uint8_t   byte, *data;
     const glyph_t  *glyph;
 
     glyphId = findGlyph(font, charCode);
@@ -206,7 +101,7 @@ void clearScreen(void) {
       return 0;
     }
 
-    data = (int8_t *)glyph->data;
+    data = (uint8_t *)glyph->data;
 
     xGlyph      = showLeadingCols ? glyph->colsBeforeGlyph : 0;
     endingCols  = showEndingCols ? glyph->colsAfterGlyph : 0;
@@ -356,15 +251,10 @@ void clearScreen(void) {
 
 
 
-  void hideCursor(void) {
-    if(cursorEnabled) {
-      if(cursorFont == &standardFont) {
-        lcd_fill_rect(xCursor, yCursor + 10,  6,  6, LCD_SET_VALUE);
-      }
-      else {
-        lcd_fill_rect(xCursor, yCursor + 15, 13, 13, LCD_SET_VALUE);
-      }
-    }
+  void cbShowNop(uint16_t param) {
+    hideFunctionName();
+    tmpString[0] = 0;
+    showFunctionName(ITM_NOP, 0);
   }
 
 
@@ -384,7 +274,9 @@ void clearScreen(void) {
     }
 
     showFunctionNameItem = item;
-    showFunctionNameCounter = delayInMs;
+    if(delayInMs != 0) {
+      timerStart(tidShowNop, NOPARAM, delayInMs);
+    }
     if(stringWidth(functionName, &standardFont, true, true) + 1 + lineTWidth > SCREEN_WIDTH) {
       clearRegisterLine(REGISTER_T, true, false);
     }
@@ -405,7 +297,7 @@ void clearScreen(void) {
     getStringBounds(tmpString[0] != 0 ? tmpString : indexOfItems[abs(showFunctionNameItem)].itemCatalogName, &standardFont, &col, &row);
     lcd_fill_rect(1, Y_POSITION_OF_REGISTER_T_LINE+6, col, row, LCD_SET_VALUE);
     showFunctionNameItem = 0;
-    showFunctionNameCounter = 0;
+    timerStop(tidShowNop);
   }
 
 
@@ -589,12 +481,6 @@ void clearScreen(void) {
 
     char prefix[200], lastBase[4];
 
-    #if (DEBUG_PANEL == 1)
-      if(programRunStop != PGM_RUNNING) {
-        debugRefresh();
-      }
-    #endif // (DEBUG_PANEL == 1)
-
     if((calcMode != cmPlotStat) && (calcMode != cmGraph)) {
       clearRegisterLine(regist, true, (regist != REGISTER_Y));
 
@@ -761,9 +647,9 @@ void clearScreen(void) {
 
         else if(regist == AIM_REGISTER_LINE && calcMode == cmAim && !tamIsActive()) {
           if(stringWidth(aimBuffer, &standardFont, true, true) < SCREEN_WIDTH - 8) { // 8 is the standard font cursor width
-            xCursor = showString(aimBuffer, &standardFont, 1, Y_POSITION_OF_NIM_LINE + 6, vmNormal, true, true);
-            yCursor = Y_POSITION_OF_NIM_LINE + 6;
-            cursorFont = &standardFont;
+            uint32_t xCursor = showString(aimBuffer, &standardFont, 1, Y_POSITION_OF_NIM_LINE + 6, vmNormal, true, true);
+            uint32_t yCursor = Y_POSITION_OF_NIM_LINE + 6;
+            cursorShow(true, xCursor, yCursor);
           }
           else {
             w = stringByteLength(aimBuffer) + 1;
@@ -780,9 +666,9 @@ void clearScreen(void) {
             else {
               showString(tmpString, &standardFont, 1, Y_POSITION_OF_NIM_LINE - 3, vmNormal, true, true);
 
-              xCursor = showString(tmpString + 1500 + w, &standardFont, 1, Y_POSITION_OF_NIM_LINE + 18, vmNormal, true, true);
-              yCursor = Y_POSITION_OF_NIM_LINE + 18;
-              cursorFont = &standardFont;
+              uint32_t xCursor = showString(tmpString + 1500 + w, &standardFont, 1, Y_POSITION_OF_NIM_LINE + 18, vmNormal, true, true);
+              uint32_t yCursor = Y_POSITION_OF_NIM_LINE + 18;
+              cursorShow(true, xCursor, yCursor);
             }
           }
         }
@@ -1617,18 +1503,18 @@ void clearScreen(void) {
   void displayNim(const char *nim, const char *lastBase, int16_t wLastBaseNumeric, int16_t wLastBaseStandard) {
     int16_t w;
     if(stringWidth(nim, &numericFont, true, true) + wLastBaseNumeric <= SCREEN_WIDTH - 16) { // 16 is the numeric font cursor width
-      xCursor = showString(nim, &numericFont, 0, Y_POSITION_OF_NIM_LINE, vmNormal, true, true);
-      yCursor = Y_POSITION_OF_NIM_LINE;
-      cursorFont = &numericFont;
+      uint32_t xCursor = showString(nim, &numericFont, 0, Y_POSITION_OF_NIM_LINE, vmNormal, true, true);
+      uint32_t yCursor = Y_POSITION_OF_NIM_LINE;
+      cursorShow(false, xCursor, yCursor);
 
       if(lastIntegerBase != 0) {
         showString(lastBase, &numericFont, xCursor + 16, Y_POSITION_OF_NIM_LINE, vmNormal, true, true);
       }
     }
     else if(stringWidth(nim, &standardFont, true, true) + wLastBaseStandard <= SCREEN_WIDTH - 8) { // 8 is the standard font cursor width
-      xCursor = showString(nim, &standardFont, 0, Y_POSITION_OF_NIM_LINE + 6, vmNormal, true, true);
-      yCursor = Y_POSITION_OF_NIM_LINE + 6;
-      cursorFont = &standardFont;
+      uint32_t xCursor = showString(nim, &standardFont, 0, Y_POSITION_OF_NIM_LINE + 6, vmNormal, true, true);
+      uint32_t yCursor = Y_POSITION_OF_NIM_LINE + 6;
+      cursorShow(true, xCursor, yCursor);
 
       if(lastIntegerBase != 0) {
         showString(lastBase, &standardFont, xCursor + 8, Y_POSITION_OF_NIM_LINE + 6, vmNormal, true, true);
@@ -1649,9 +1535,9 @@ void clearScreen(void) {
       else {
         showString(tmpString, &standardFont, 0, Y_POSITION_OF_NIM_LINE - 3, vmNormal, true, true);
 
-        xCursor = showString(tmpString + 1500 + w, &standardFont, 0, Y_POSITION_OF_NIM_LINE + 18, vmNormal, true, true);
-        yCursor = Y_POSITION_OF_NIM_LINE + 18;
-        cursorFont = &standardFont;
+        uint32_t xCursor = showString(tmpString + 1500 + w, &standardFont, 0, Y_POSITION_OF_NIM_LINE + 18, vmNormal, true, true);
+        uint32_t yCursor = Y_POSITION_OF_NIM_LINE + 18;
+        cursorShow(true, xCursor, yCursor);
 
         if(lastIntegerBase != 0) {
           showString(lastBase, &standardFont, xCursor + 8, Y_POSITION_OF_NIM_LINE + 18, vmNormal, true, true);
@@ -1858,6 +1744,13 @@ void clearScreen(void) {
         hourGlassIconEnabled = true;
         refreshStatusBar();
         graphPlotstat(plotSelection);
+        if(lastErrorCode != ERROR_NONE) {
+          if(softmenu[softmenuStack[0].softmenuId].menuItem == -MNU_GRAPH) {
+            popSoftmenu();
+            calcMode = cmNormal;
+            refreshScreen();
+          }
+        }
         hourGlassIconEnabled = false;
         showHideHourGlass();
         refreshStatusBar();
@@ -1872,6 +1765,13 @@ void clearScreen(void) {
         refreshStatusBar();
         graphPlotstat(plotSelection);
         graphDrawLRline(plotSelection);
+        if(lastErrorCode != ERROR_NONE) {
+          if(softmenu[softmenuStack[0].softmenuId].menuItem == -MNU_HPLOT || softmenu[softmenuStack[0].softmenuId].menuItem == -MNU_PLOT_LR || softmenu[softmenuStack[0].softmenuId].menuItem == -MNU_HPLOT || softmenu[softmenuStack[0].softmenuId].menuItem == -MNU_PLOT_STAT) {
+            popSoftmenu();
+            calcMode = cmNormal;
+            refreshScreen();
+          }
+        }
         hourGlassIconEnabled = false;
         showHideHourGlass();
         refreshStatusBar();
@@ -1881,10 +1781,6 @@ void clearScreen(void) {
       default: {
       }
     }
-
-    #if !defined(DMCP_BUILD)
-      refreshLcd();
-    #endif // !DMCP_BUILD
   }
 #endif // !TESTSUITE_BUILD
 
@@ -1892,6 +1788,9 @@ void clearScreen(void) {
 
 void fnScreenDump(uint16_t unusedButMandatoryParameter) {
   systemScreenshot();
+  if(!getSystemFlag(FLAG_QUIET)) {
+    audioShutter();
+  }
   screenUpdatingMode |= SCRUPD_SKIP_STACK_ONE_TIME | SCRUPD_SKIP_MENU_ONE_TIME;
 }
 

@@ -13,6 +13,9 @@
 #include "error.h"
 #include "flags.h"
 #include "fonts.h"
+#include "hal/lcd.h"
+#include "hal/system.h"
+#include "hal/timer.h"
 #include "items.h"
 #include "longIntegerType.h"
 #include "programming/flash.h"
@@ -23,7 +26,6 @@
 #include "registerValueConversions.h"
 #include "stack.h"
 #include "store.h"
-#include "timer.h"
 #include "ui/keyboard.h"
 #include "ui/screen.h"
 #include "ui/softmenus.h"
@@ -473,12 +475,12 @@ void fnStopProgram(uint16_t unusedButMandatoryParameter) {
           }
         }
         else if(paramMode == PARAM_COMPARE && opParam == VALUE_0) {
-          reallocateRegister(TEMP_REGISTER_1, dtReal34, REAL34_SIZE, amNone);
+          reallocateRegister(TEMP_REGISTER_1, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
           real34Copy(const34_0, REGISTER_REAL34_DATA(TEMP_REGISTER_1));
           reallyRunFunction(op, TEMP_REGISTER_1);
         }
         else if(paramMode == PARAM_COMPARE && opParam == VALUE_1) {
-          reallocateRegister(TEMP_REGISTER_1, dtReal34, REAL34_SIZE, amNone);
+          reallocateRegister(TEMP_REGISTER_1, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
           real34Copy(const34_1, REGISTER_REAL34_DATA(TEMP_REGISTER_1));
           reallyRunFunction(op, TEMP_REGISTER_1);
         }
@@ -525,7 +527,7 @@ void fnStopProgram(uint16_t unusedButMandatoryParameter) {
       case BINARY_REAL34: {
         liftStack();
         setSystemFlag(FLAG_ASLIFT);
-        reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE, amNone);
+        reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
         real34Copy((real34_t *)literalAddress, REGISTER_REAL34_DATA(REGISTER_X));
         break;
       }
@@ -534,7 +536,7 @@ void fnStopProgram(uint16_t unusedButMandatoryParameter) {
         complex34_t complexLiteral;
         liftStack();
         setSystemFlag(FLAG_ASLIFT);
-        reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE, amNone);
+        reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE_IN_BLOCKS, amNone);
         xcopy(VARIABLE_REAL34_DATA(&complexLiteral), literalAddress     , 16);
         xcopy(VARIABLE_IMAG34_DATA(&complexLiteral), literalAddress + 16, 16);
         complex34Copy(&complexLiteral, REGISTER_COMPLEX34_DATA(REGISTER_X));
@@ -582,7 +584,7 @@ void fnStopProgram(uint16_t unusedButMandatoryParameter) {
         _getStringLabelOrVariableName(literalAddress);
         liftStack();
         setSystemFlag(FLAG_ASLIFT);
-        reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE, amNone);
+        reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
         stringToReal34(tmpStringLabelOrVariableName, REGISTER_REAL34_DATA(REGISTER_X));
         break;
       }
@@ -607,7 +609,7 @@ void fnStopProgram(uint16_t unusedButMandatoryParameter) {
         }
         liftStack();
         setSystemFlag(FLAG_ASLIFT);
-        reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE, amNone);
+        reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE_IN_BLOCKS, amNone);
         stringToReal34(tmpStringLabelOrVariableName, REGISTER_REAL34_DATA(REGISTER_X));
         stringToReal34(imag,                         REGISTER_IMAG34_DATA(REGISTER_X));
         break;
@@ -626,7 +628,7 @@ void fnStopProgram(uint16_t unusedButMandatoryParameter) {
         _getStringLabelOrVariableName(literalAddress);
         liftStack();
         setSystemFlag(FLAG_ASLIFT);
-        reallocateRegister(REGISTER_X, dtDate, REAL34_SIZE, amNone);
+        reallocateRegister(REGISTER_X, dtDate, REAL34_SIZE_IN_BLOCKS, amNone);
         stringToReal34(tmpStringLabelOrVariableName, REGISTER_REAL34_DATA(REGISTER_X));
         julianDayToInternalDate(REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X));
         break;
@@ -636,7 +638,7 @@ void fnStopProgram(uint16_t unusedButMandatoryParameter) {
         _getStringLabelOrVariableName(literalAddress);
         liftStack();
         setSystemFlag(FLAG_ASLIFT);
-        reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE, amNone);
+        reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
         stringToReal34(tmpStringLabelOrVariableName, REGISTER_REAL34_DATA(REGISTER_X));
         hmmssInRegisterToSeconds(REGISTER_X);
         break;
@@ -646,7 +648,7 @@ void fnStopProgram(uint16_t unusedButMandatoryParameter) {
         _getStringLabelOrVariableName(literalAddress);
         liftStack();
         setSystemFlag(FLAG_ASLIFT);
-        reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE, amDMS);
+        reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BLOCKS, amDMS);
         stringToReal34(tmpStringLabelOrVariableName, REGISTER_REAL34_DATA(REGISTER_X));
         real34FromDmsToDeg(REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X));
         break;
@@ -763,11 +765,6 @@ void runProgram(bool singleStep, uint16_t menuLabel) {
     programRunStop = PGM_RUNNING;
     if(!getSystemFlag(FLAG_INTING) && !getSystemFlag(FLAG_SOLVING)) {
       showHideHourGlass();
-      #if defined(DMCP_BUILD)
-        lcd_refresh();
-      #else // !DMCP_BUILD
-        refreshLcd();
-      #endif // DMCP_BUILD
     }
 
     if(menuLabel != INVALID_VARIABLE) {
@@ -826,33 +823,15 @@ void runProgram(bool singleStep, uint16_t menuLabel) {
       else {
         break;
       }
-      #if defined(DMCP_BUILD)
-        if(!nestedEngine) {
-          int key = key_pop();
-          key = convertKeyCode(key);
-          if(key == 36 || key == 37) {
-            programRunStop = PGM_WAITING;
-            refreshScreen();
-            lcd_refresh();
-            timerStart(tidKeyboardActive, NOPARAM, 60000);
-            wait_for_key_release(0);
-            key_pop();
-            break;
-          }
-          else if(key > 0) {
-            lastKeyCode = key;
-          }
-        }
-      #endif // DMCP_BUILD
+      if(!nestedEngine) {
+        systemProcessEvents();
+      }
       if(programRunStop != PGM_RUNNING) {
         break;
       }
       if(singleStep) {
         break;
       }
-      #if defined(PC_BUILD)
-        refreshLcd();
-      #endif // PC_BUILD
     }
 
 stopProgram:
@@ -864,12 +843,6 @@ stopProgram:
     }
     if(!getSystemFlag(FLAG_INTING) && !getSystemFlag(FLAG_SOLVING)) {
       showHideHourGlass();
-      #if defined(DMCP_BUILD)
-        lcd_refresh();
-        timerStart(tidKeyboardActive, NOPARAM, FAST_SCREEN_REFRESH_PERIOD+50);
-      #else // !DMCP_BUILD
-        refreshLcd();
-      #endif // DMCP_BUILD
     }
     return;
   #endif // !TESTSUITE_BUILD
