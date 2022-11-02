@@ -4,8 +4,9 @@
 #include "hal/time.h"
 
 #include <assert.h>
-#include <glib.h>
 #include <time.h>
+
+#pragma GCC diagnostic ignored "-Wunused-parameter"
 
 void timeGetTimeInfo(timeInfo_t *ti) {
   assert(ti != NULL);
@@ -31,11 +32,16 @@ void timeGetDateInfo(dateInfo_t *di) {
 
 
 uint32_t timeCurrentMs(void) {
-  return (uint32_t)(g_get_real_time() % 86400000000uLL / 1000uLL);
+  return 0;
 }
 
 
 
 uint32_t timeUptimeMs(void) {
-  return (uint32_t)(g_get_monotonic_time() / 1000);
+  return 0;
+}
+
+
+
+void timeSleep(uint32_t param) {
 }

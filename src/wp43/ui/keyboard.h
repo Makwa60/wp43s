@@ -7,6 +7,7 @@
 #if !defined(KEYBOARD_H)
   #define KEYBOARD_H
 
+  #include <stdbool.h>
   #include <stdint.h>
 
   typedef enum {
@@ -111,9 +112,9 @@
    */
   void fnKeyDotD       (uint16_t unusedButMandatoryParameter);
 
-  void execAutoRepeat  (uint16_t key);
-
   #if !defined(TESTSUITE_BUILD)
+    void cbAutoRepeat (uint16_t key);
+
     /**
      * A calc button was pressed.
      *
@@ -134,10 +135,16 @@
      * \param data String containing the key ID
      */
     void btnClicked   (keyCode_t keyCode);
+  #else
+    #pragma GCC diagnostic ignored "-Wunused-parameter"
+
+    static inline void cbAutoRepeat (uint16_t key) {}
   #endif // !TESTSUITE_BUILD
 
   keyCode_t kbKeyCodeFromRowColumn(uint8_t rowColumn);
 
   uint8_t   kbRowColumnFromKeyCode(keyCode_t keyCode);
+
+  bool kbCheckForInterrupt(void);
 
 #endif // !KEYBOARD_H

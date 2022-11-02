@@ -7,6 +7,10 @@
 #include "defines.h"
 #include "debug.h"
 #include "error.h"
+#include "hal/lcd.h"
+#include "hal/system.h"
+#include "hal/time.h"
+#include "hal/timer.h"
 #include "items.h"
 #include "longIntegerType.h"
 #include "mathematics/comparisonReals.h"
@@ -15,15 +19,10 @@
 #include "registers.h"
 #include "registerValueConversions.h"
 #include "stack.h"
-#include "timer.h"
 #include "ui/keyboard.h"
 #include "ui/screen.h"
 #include "ui/softmenus.h"
 #include "ui/tam.h"
-#if defined(PC_BUILD)
-  #include <gtk/gtk.h>
-  #include <unistd.h>
-#endif // PC_BUILD
 
 #include "wp43.h"
 
@@ -55,46 +54,23 @@ void fnPause(uint16_t duration) {
     programRunStop = PGM_PAUSED;
     if(previousProgramRunStop != PGM_RUNNING) {
       refreshScreen();
-    }
-    #if defined(DMCP_BUILD)
       lcd_refresh();
-      for(uint16_t i = 0; i < duration && (programRunStop == PGM_PAUSED || programRunStop == PGM_KEY_PRESSED_WHILE_PAUSED); ++i) {
-        int key = key_pop();
-        key = convertKeyCode(key);
-        if(key > 0) {
-          if((key == 36 || key == 37) && previousProgramRunStop == PGM_RUNNING) {
-            previousProgramRunStop = programRunStop = PGM_WAITING;
-          }
-          lastKeyCode = key;
-          timerStart(tidKeyboardActive, NOPARAM, 60000);
-          wait_for_key_release(0);
-          key_pop();
-          break;
-        }
-        sys_delay(100);
+    }
+    for(uint16_t i = 0; i < duration && (programRunStop == PGM_PAUSED || programRunStop == PGM_KEY_PRESSED_WHILE_PAUSED); ++i) {
+      if(previousProgramRunStop != PGM_RUNNING) {
+        refreshScreen();
+        lcd_refresh();
       }
-    #else // !DMCP_BUILD
-      refreshLcd();
-      for(uint16_t i = 0; i < duration && (programRunStop == PGM_PAUSED || programRunStop == PGM_KEY_PRESSED_WHILE_PAUSED); ++i) {
-        if(previousProgramRunStop != PGM_RUNNING) {
-          refreshScreen();
-          refreshLcd();
-        }
-        gtk_main_iteration_do(FALSE);
-        usleep(100000);
-      }
-      if(programRunStop == PGM_WAITING) {
-        previousProgramRunStop = PGM_WAITING;
-      }
-    #endif // DMCP_BUILD
+      systemProcessEvents();
+      timeSleep(100);
+    }
+    if(programRunStop == PGM_WAITING) {
+      previousProgramRunStop = PGM_WAITING;
+    }
     programRunStop = previousProgramRunStop;
     if(programRunStop != PGM_RUNNING) {
       refreshScreen();
-      #if defined(DMCP_BUILD)
-        lcd_refresh();
-      #else // !DMCP_BUILD
-        refreshLcd();
-      #endif // DMCP_BUILD
+      lcd_refresh();
     }
   #endif // !TESTSUITE_BUILD
 }

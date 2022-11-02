@@ -11,7 +11,8 @@ wp43_gtk_src = files(
   'hal/io.c',
   'hal/lcd.c',
   'hal/system.c',
-  'hal/time.c')
+  'hal/time.c',
+  'hal/timer.c')
 
 override_opts = ['b_coverage=false']
 cflags        = []

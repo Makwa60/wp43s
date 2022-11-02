@@ -325,9 +325,6 @@
   #define X_USER_MODE                              375
   #define X_BATTERY                                389
 
-  #define TIMER_IDX_REFRESH_SLEEP                    0 // use timer 0 to wake up for screen refresh
-  //#define TIMER_IDX_AUTO_REPEAT                    1 // use timer 1 to wake up for key auto-repeat
-
   #if defined(PC_BUILD)
     #if defined(LINUX)
       #define LINEBREAK                           "\n"
@@ -532,33 +529,33 @@
 
   #define NUMBER_OF_STATISTICAL_SUMS                28
   #define SIGMA_N      ((real_t *)(statisticalSumsPointer)) // could be a 32 bit unsigned integer
-  #define SIGMA_X      ((real_t *)(statisticalSumsPointer + REAL_SIZE * SUM_X     )) // could be a real34
-  #define SIGMA_Y      ((real_t *)(statisticalSumsPointer + REAL_SIZE * SUM_Y     )) // could be a real34
-  #define SIGMA_X2     ((real_t *)(statisticalSumsPointer + REAL_SIZE * SUM_X2    ))
-  #define SIGMA_X2Y    ((real_t *)(statisticalSumsPointer + REAL_SIZE * SUM_X2Y   ))
-  #define SIGMA_Y2     ((real_t *)(statisticalSumsPointer + REAL_SIZE * SUM_Y2    ))
-  #define SIGMA_XY     ((real_t *)(statisticalSumsPointer + REAL_SIZE * SUM_XY    ))
-  #define SIGMA_lnXlnY ((real_t *)(statisticalSumsPointer + REAL_SIZE * SUM_lnXlnY))
-  #define SIGMA_lnX    ((real_t *)(statisticalSumsPointer + REAL_SIZE * SUM_lnX   ))
-  #define SIGMA_ln2X   ((real_t *)(statisticalSumsPointer + REAL_SIZE * SUM_ln2X  ))
-  #define SIGMA_YlnX   ((real_t *)(statisticalSumsPointer + REAL_SIZE * SUM_YlnX  ))
-  #define SIGMA_lnY    ((real_t *)(statisticalSumsPointer + REAL_SIZE * SUM_lnY   ))
-  #define SIGMA_ln2Y   ((real_t *)(statisticalSumsPointer + REAL_SIZE * SUM_ln2Y  ))
-  #define SIGMA_XlnY   ((real_t *)(statisticalSumsPointer + REAL_SIZE * SUM_XlnY  ))
-  #define SIGMA_X2lnY  ((real_t *)(statisticalSumsPointer + REAL_SIZE * SUM_X2lnY ))
-  #define SIGMA_lnYonX ((real_t *)(statisticalSumsPointer + REAL_SIZE * SUM_lnYonX))
-  #define SIGMA_X2onY  ((real_t *)(statisticalSumsPointer + REAL_SIZE * SUM_X2onY ))
-  #define SIGMA_1onX   ((real_t *)(statisticalSumsPointer + REAL_SIZE * SUM_1onX  ))
-  #define SIGMA_1onX2  ((real_t *)(statisticalSumsPointer + REAL_SIZE * SUM_1onX2 ))
-  #define SIGMA_XonY   ((real_t *)(statisticalSumsPointer + REAL_SIZE * SUM_XonY  ))
-  #define SIGMA_1onY   ((real_t *)(statisticalSumsPointer + REAL_SIZE * SUM_1onY  ))
-  #define SIGMA_1onY2  ((real_t *)(statisticalSumsPointer + REAL_SIZE * SUM_1onY2 ))
-  #define SIGMA_X3     ((real_t *)(statisticalSumsPointer + REAL_SIZE * SUM_X3    ))
-  #define SIGMA_X4     ((real_t *)(statisticalSumsPointer + REAL_SIZE * SUM_X4    ))
-  #define SIGMA_XMIN   ((real_t *)(statisticalSumsPointer + REAL_SIZE * SUM_XMIN  )) // could be a real34
-  #define SIGMA_XMAX   ((real_t *)(statisticalSumsPointer + REAL_SIZE * SUM_XMAX  )) // could be a real34
-  #define SIGMA_YMIN   ((real_t *)(statisticalSumsPointer + REAL_SIZE * SUM_YMIN  )) // could be a real34
-  #define SIGMA_YMAX   ((real_t *)(statisticalSumsPointer + REAL_SIZE * SUM_YMAX  )) // could be a real34
+  #define SIGMA_X      ((real_t *)(statisticalSumsPointer + REAL_SIZE_IN_BLOCKS * SUM_X     )) // could be a real34
+  #define SIGMA_Y      ((real_t *)(statisticalSumsPointer + REAL_SIZE_IN_BLOCKS * SUM_Y     )) // could be a real34
+  #define SIGMA_X2     ((real_t *)(statisticalSumsPointer + REAL_SIZE_IN_BLOCKS * SUM_X2    ))
+  #define SIGMA_X2Y    ((real_t *)(statisticalSumsPointer + REAL_SIZE_IN_BLOCKS * SUM_X2Y   ))
+  #define SIGMA_Y2     ((real_t *)(statisticalSumsPointer + REAL_SIZE_IN_BLOCKS * SUM_Y2    ))
+  #define SIGMA_XY     ((real_t *)(statisticalSumsPointer + REAL_SIZE_IN_BLOCKS * SUM_XY    ))
+  #define SIGMA_lnXlnY ((real_t *)(statisticalSumsPointer + REAL_SIZE_IN_BLOCKS * SUM_lnXlnY))
+  #define SIGMA_lnX    ((real_t *)(statisticalSumsPointer + REAL_SIZE_IN_BLOCKS * SUM_lnX   ))
+  #define SIGMA_ln2X   ((real_t *)(statisticalSumsPointer + REAL_SIZE_IN_BLOCKS * SUM_ln2X  ))
+  #define SIGMA_YlnX   ((real_t *)(statisticalSumsPointer + REAL_SIZE_IN_BLOCKS * SUM_YlnX  ))
+  #define SIGMA_lnY    ((real_t *)(statisticalSumsPointer + REAL_SIZE_IN_BLOCKS * SUM_lnY   ))
+  #define SIGMA_ln2Y   ((real_t *)(statisticalSumsPointer + REAL_SIZE_IN_BLOCKS * SUM_ln2Y  ))
+  #define SIGMA_XlnY   ((real_t *)(statisticalSumsPointer + REAL_SIZE_IN_BLOCKS * SUM_XlnY  ))
+  #define SIGMA_X2lnY  ((real_t *)(statisticalSumsPointer + REAL_SIZE_IN_BLOCKS * SUM_X2lnY ))
+  #define SIGMA_lnYonX ((real_t *)(statisticalSumsPointer + REAL_SIZE_IN_BLOCKS * SUM_lnYonX))
+  #define SIGMA_X2onY  ((real_t *)(statisticalSumsPointer + REAL_SIZE_IN_BLOCKS * SUM_X2onY ))
+  #define SIGMA_1onX   ((real_t *)(statisticalSumsPointer + REAL_SIZE_IN_BLOCKS * SUM_1onX  ))
+  #define SIGMA_1onX2  ((real_t *)(statisticalSumsPointer + REAL_SIZE_IN_BLOCKS * SUM_1onX2 ))
+  #define SIGMA_XonY   ((real_t *)(statisticalSumsPointer + REAL_SIZE_IN_BLOCKS * SUM_XonY  ))
+  #define SIGMA_1onY   ((real_t *)(statisticalSumsPointer + REAL_SIZE_IN_BLOCKS * SUM_1onY  ))
+  #define SIGMA_1onY2  ((real_t *)(statisticalSumsPointer + REAL_SIZE_IN_BLOCKS * SUM_1onY2 ))
+  #define SIGMA_X3     ((real_t *)(statisticalSumsPointer + REAL_SIZE_IN_BLOCKS * SUM_X3    ))
+  #define SIGMA_X4     ((real_t *)(statisticalSumsPointer + REAL_SIZE_IN_BLOCKS * SUM_X4    ))
+  #define SIGMA_XMIN   ((real_t *)(statisticalSumsPointer + REAL_SIZE_IN_BLOCKS * SUM_XMIN  )) // could be a real34
+  #define SIGMA_XMAX   ((real_t *)(statisticalSumsPointer + REAL_SIZE_IN_BLOCKS * SUM_XMAX  )) // could be a real34
+  #define SIGMA_YMIN   ((real_t *)(statisticalSumsPointer + REAL_SIZE_IN_BLOCKS * SUM_YMIN  )) // could be a real34
+  #define SIGMA_YMAX   ((real_t *)(statisticalSumsPointer + REAL_SIZE_IN_BLOCKS * SUM_YMAX  )) // could be a real34
 
   #define MAX_NUMBER_OF_GLYPHS_IN_STRING           196
 
@@ -789,6 +786,8 @@
   #endif // OS32BIT
 
   #if defined(DMCP_BUILD)
+    #include <stdio.h>
+    #include <dmcp.h>
     #define TMP_STR_LENGTH       AUX_BUF_SIZE
   #else // !DMCP_BUILD
     #define TMP_STR_LENGTH       2560

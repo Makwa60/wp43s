@@ -11,7 +11,6 @@
 
   #if (DEBUG_PANEL == 1)
     void debugInit(void);
-    void debugRefresh(void);
   #endif
 
 #endif // !HAL_DEBUG_H

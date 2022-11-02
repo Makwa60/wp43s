@@ -476,7 +476,7 @@ void allocateLocalRegisters(uint16_t numberOfRegistersToAllocate) {
 
       // All the new local registers are real34s initialized to 0.0
       for(r=FIRST_LOCAL_REGISTER; r<FIRST_LOCAL_REGISTER+numberOfRegistersToAllocate; r++) {
-        void *newMem = allocWp43(REAL34_SIZE);
+        void *newMem = allocWp43(REAL34_SIZE_IN_BLOCKS);
         if(newMem) {
           setRegisterDataType(r, dtReal34, amNone);
           setRegisterDataPointer(r, newMem);
@@ -514,7 +514,7 @@ void allocateLocalRegisters(uint16_t numberOfRegistersToAllocate) {
 
         // All the new local registers are real34s initialized to 0.0
         for(r=FIRST_LOCAL_REGISTER+oldNumberOfLocalRegisters; r<FIRST_LOCAL_REGISTER+numberOfRegistersToAllocate; r++) {
-          void *newMem = allocWp43(REAL34_SIZE);
+          void *newMem = allocWp43(REAL34_SIZE_IN_BLOCKS);
           if(newMem) {
             setRegisterDataType(r, dtReal34, amNone);
             setRegisterDataPointer(r, newMem);
@@ -810,7 +810,7 @@ calcRegister_t findOrAllocateNamedVariable(const char *variableName) {
       #endif // PC_BUILD
       return regist;
     }
-    allocateNamedVariable(variableName, dtReal34, REAL34_SIZE);
+    allocateNamedVariable(variableName, dtReal34, REAL34_SIZE_IN_BLOCKS);
     if(lastErrorCode == ERROR_NONE) {
       // New variables are zero by default - although this might be immediately overridden, it might require an
       // initial value, such as when STO+
@@ -945,10 +945,10 @@ uint16_t getRegisterMaxDataLength(calcRegister_t regist) {
 
   if(db) {
     if(getRegisterDataType(regist) == dtReal34Matrix) {
-      return db->matrixRows * db->matrixColumns * REAL34_SIZE;
+      return db->matrixRows * db->matrixColumns * REAL34_SIZE_IN_BLOCKS;
     }
     else if(getRegisterDataType(regist) == dtComplex34Matrix) {
-      return db->matrixRows * db->matrixColumns * COMPLEX34_SIZE;
+      return db->matrixRows * db->matrixColumns * COMPLEX34_SIZE_IN_BLOCKS;
     }
     else {
       return db->dataMaxLength;
@@ -965,10 +965,10 @@ uint16_t getRegisterFullSize(calcRegister_t regist) {
       return getRegisterDataPointer(regist)->dataMaxLength + 1;
     }
     case dtTime: {
-      return REAL34_SIZE;
+      return REAL34_SIZE_IN_BLOCKS;
     }
     case dtDate: {
-      return REAL34_SIZE;
+      return REAL34_SIZE_IN_BLOCKS;
     }
     case dtString: {
       return getRegisterDataPointer(regist)->dataMaxLength + 1;
@@ -983,10 +983,10 @@ uint16_t getRegisterFullSize(calcRegister_t regist) {
       return SHORT_INTEGER_SIZE;
     }
     case dtReal34: {
-      return REAL34_SIZE;
+      return REAL34_SIZE_IN_BLOCKS;
     }
     case dtComplex34: {
-      return COMPLEX34_SIZE;
+      return COMPLEX34_SIZE_IN_BLOCKS;
     }
     case dtConfig: {
       return CONFIG_SIZE;
@@ -1007,7 +1007,7 @@ void clearRegister(calcRegister_t regist) {
     setRegisterTag(regist, amNone);
   }
   else{
-    reallocateRegister(regist, dtReal34, REAL34_SIZE, amNone);
+    reallocateRegister(regist, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
     real34Zero(REGISTER_REAL34_DATA(regist));
   }
 }
@@ -1307,11 +1307,11 @@ void copySourceRegisterToDestRegister(calcRegister_t sourceRegister, calcRegiste
         break;
       }
       case dtTime: {
-        sizeInBlocks = REAL34_SIZE;
+        sizeInBlocks = REAL34_SIZE_IN_BLOCKS;
         break;
       }
       case dtDate: {
-        sizeInBlocks = REAL34_SIZE;
+        sizeInBlocks = REAL34_SIZE_IN_BLOCKS;
         break;
       }
       case dtString: {
@@ -1331,11 +1331,11 @@ void copySourceRegisterToDestRegister(calcRegister_t sourceRegister, calcRegiste
         break;
       }
       case dtReal34: {
-        sizeInBlocks = REAL34_SIZE;
+        sizeInBlocks = REAL34_SIZE_IN_BLOCKS;
         break;
       }
       case dtComplex34: {
-        sizeInBlocks = COMPLEX34_SIZE;
+        sizeInBlocks = COMPLEX34_SIZE_IN_BLOCKS;
         break;
       }
       case dtConfig: {
@@ -1359,13 +1359,13 @@ void copySourceRegisterToDestRegister(calcRegister_t sourceRegister, calcRegiste
     case dtReal34Matrix: {
       xcopy(REGISTER_REAL34_MATRIX_DBLOCK(destRegister), REGISTER_REAL34_MATRIX_DBLOCK(sourceRegister), sizeof(dataBlock_t));
       xcopy(REGISTER_REAL34_MATRIX_M_ELEMENTS(destRegister), REGISTER_REAL34_MATRIX_M_ELEMENTS(sourceRegister),
-      getRegisterDataPointer(sourceRegister)->matrixRows * getRegisterDataPointer(sourceRegister)->matrixColumns * TO_BYTES(REAL34_SIZE));
+      getRegisterDataPointer(sourceRegister)->matrixRows * getRegisterDataPointer(sourceRegister)->matrixColumns * TO_BYTES(REAL34_SIZE_IN_BLOCKS));
       break;
     }
     case dtComplex34Matrix: {
       xcopy(REGISTER_COMPLEX34_MATRIX_DBLOCK(destRegister), REGISTER_COMPLEX34_MATRIX_DBLOCK(sourceRegister), sizeof(dataBlock_t));
       xcopy(REGISTER_COMPLEX34_MATRIX_M_ELEMENTS(destRegister), REGISTER_COMPLEX34_MATRIX_M_ELEMENTS(sourceRegister),
-      getRegisterDataPointer(sourceRegister)->matrixRows * getRegisterDataPointer(sourceRegister)->matrixColumns * TO_BYTES(COMPLEX34_SIZE));
+      getRegisterDataPointer(sourceRegister)->matrixRows * getRegisterDataPointer(sourceRegister)->matrixColumns * TO_BYTES(COMPLEX34_SIZE_IN_BLOCKS));
       break;
     }
     default: {
@@ -1775,12 +1775,12 @@ void reallocateRegister(calcRegister_t regist, uint32_t dataType, uint16_t dataS
   uint16_t dataSizeWithDataLenBlocks = dataSizeWithoutDataLenBlocks;
 
   //printf("reallocateRegister: %d to %s tag=%u (%u bytes excluding maxSize) begin\n", regist, getDataTypeName(dataType, false, false), tag, dataSizeWithoutDataLenBlocks);
-  if(dataType == dtReal34 && dataSizeWithoutDataLenBlocks != REAL34_SIZE) {
-    sprintf(errorMessage, "In function reallocateRegister: %" PRIu16 " is an unexpected numByte value for a real34 or an angle34! It should be REAL34_SIZE=%" PRIu16 "!", dataSizeWithoutDataLenBlocks, (uint16_t)REAL34_SIZE);
+  if(dataType == dtReal34 && dataSizeWithoutDataLenBlocks != REAL34_SIZE_IN_BLOCKS) {
+    sprintf(errorMessage, "In function reallocateRegister: %" PRIu16 " is an unexpected numByte value for a real34 or an angle34! It should be REAL34_SIZE_IN_BLOCKS=%" PRIu16 "!", dataSizeWithoutDataLenBlocks, (uint16_t)REAL34_SIZE_IN_BLOCKS);
     bugScreen(errorMessage);
   }
-  else if(dataType == dtComplex34 && dataSizeWithoutDataLenBlocks != COMPLEX34_SIZE) {
-    sprintf(errorMessage, "In function reallocateRegister: %" PRIu16 " is an unexpected numByte value for a complex34! It should be COMPLEX34_SIZE=%" PRIu16 "!", dataSizeWithoutDataLenBlocks, (uint16_t)COMPLEX34_SIZE);
+  else if(dataType == dtComplex34 && dataSizeWithoutDataLenBlocks != COMPLEX34_SIZE_IN_BLOCKS) {
+    sprintf(errorMessage, "In function reallocateRegister: %" PRIu16 " is an unexpected numByte value for a complex34! It should be COMPLEX34_SIZE_IN_BLOCKS=%" PRIu16 "!", dataSizeWithoutDataLenBlocks, (uint16_t)COMPLEX34_SIZE_IN_BLOCKS);
     bugScreen(errorMessage);
   }
   else if(dataType == dtShortInteger && dataSizeWithoutDataLenBlocks != SHORT_INTEGER_SIZE) {
@@ -1791,12 +1791,12 @@ void reallocateRegister(calcRegister_t regist, uint32_t dataType, uint16_t dataS
     sprintf(errorMessage, "In function reallocateRegister: %" PRIu16 " is an unexpected numByte value for a configuration! It should be CONFIG_SIZE=%" PRIu16 "!", dataSizeWithoutDataLenBlocks, (uint16_t)CONFIG_SIZE);
     bugScreen(errorMessage);
   }
-  else if(dataType == dtTime && dataSizeWithoutDataLenBlocks != REAL34_SIZE) {
-    sprintf(errorMessage, "In function reallocateRegister: %" PRIu16 " is an unexpected numByte value for a time! It should be REAL34_SIZE=%" PRIu16 "!", dataSizeWithoutDataLenBlocks, (uint16_t)REAL34_SIZE);
+  else if(dataType == dtTime && dataSizeWithoutDataLenBlocks != REAL34_SIZE_IN_BLOCKS) {
+    sprintf(errorMessage, "In function reallocateRegister: %" PRIu16 " is an unexpected numByte value for a time! It should be REAL34_SIZE_IN_BLOCKS=%" PRIu16 "!", dataSizeWithoutDataLenBlocks, (uint16_t)REAL34_SIZE_IN_BLOCKS);
     bugScreen(errorMessage);
   }
-  else if(dataType == dtDate && dataSizeWithoutDataLenBlocks != REAL34_SIZE) {
-    sprintf(errorMessage, "In function reallocateRegister: %" PRIu16 " is an unexpected numByte value for a date! It should be REAL34_SIZE=%" PRIu16 "!", dataSizeWithoutDataLenBlocks, (uint16_t)REAL34_SIZE);
+  else if(dataType == dtDate && dataSizeWithoutDataLenBlocks != REAL34_SIZE_IN_BLOCKS) {
+    sprintf(errorMessage, "In function reallocateRegister: %" PRIu16 " is an unexpected numByte value for a date! It should be REAL34_SIZE_IN_BLOCKS=%" PRIu16 "!", dataSizeWithoutDataLenBlocks, (uint16_t)REAL34_SIZE_IN_BLOCKS);
     bugScreen(errorMessage);
   }
   else if(dataType == dtString || dataType == dtReal34Matrix || dataType == dtComplex34Matrix) {
@@ -1822,11 +1822,11 @@ void reallocateRegister(calcRegister_t regist, uint32_t dataType, uint16_t dataS
     setRegisterDataType(regist, dataType, tag);
     if(dataType == dtReal34Matrix) {
       REGISTER_REAL34_MATRIX_DBLOCK(regist)->matrixRows = 1;
-      REGISTER_REAL34_MATRIX_DBLOCK(regist)->matrixColumns = dataSizeWithoutDataLenBlocks / REAL34_SIZE;
+      REGISTER_REAL34_MATRIX_DBLOCK(regist)->matrixColumns = dataSizeWithoutDataLenBlocks / REAL34_SIZE_IN_BLOCKS;
     }
     else if(dataType == dtComplex34Matrix) {
       REGISTER_COMPLEX34_MATRIX_DBLOCK(regist)->matrixRows = 1;
-      REGISTER_COMPLEX34_MATRIX_DBLOCK(regist)->matrixColumns = dataSizeWithoutDataLenBlocks / COMPLEX34_SIZE;
+      REGISTER_COMPLEX34_MATRIX_DBLOCK(regist)->matrixColumns = dataSizeWithoutDataLenBlocks / COMPLEX34_SIZE_IN_BLOCKS;
     }
     else {
       setRegisterMaxDataLength(regist, dataSizeWithoutDataLenBlocks);

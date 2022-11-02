@@ -18,5 +18,16 @@ const char *systemMaker(void) {
 
 
 
+void systemProcessEvents(void) {
+}
+
+
+
 void systemQuit(void) {
+}
+
+
+
+uint32_t systemBatteryVoltage(void) {
+  return 3100;
 }

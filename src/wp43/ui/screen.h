@@ -19,15 +19,6 @@
   void       fnPoint                            (uint16_t unusedButMandatoryParameter);
   void       fnAGraph                           (uint16_t regist);
 
-  /**
-   * Refreshes calc's screen.
-   * This function is called every SCREEN_REFRESH_PERIOD ms.
-   * - make the cursor blink if needed
-   * - refresh date and time in the status bar if needed
-   * - refresh the whole screen if needed
-   */
-  void     refreshLcd                         (void);
-
   void     clearScreen                        (void);
 
   #if !defined(TESTSUITE_BUILD)
@@ -77,10 +68,7 @@
      */
     uint32_t showGlyphCode                      (uint16_t charCode, const font_t *font, uint32_t x, uint32_t y, videoMode_t videoMode, bool showLeadingCols, bool showEndingCols);
 
-    /**
-     * Hides the cursor.
-     */
-    void     hideCursor                         (void);
+    void     cbShowNop                          (uint16_t param);
 
     /**
      * Displays the function name.
@@ -122,6 +110,11 @@
     void     clearTamBuffer                     (void);
     void     clearShiftState                    (void);
     void     displayShiftAndTamBuffer           (void);
+  #else
+    #pragma GCC diagnostic ignored "-Wunused-parameter"
+
+    static inline void cbRefreshLcd(uint16_t param) {}
+    static inline void cbShowNop   (uint16_t param) {}
   #endif // !TESTSUITE_BUILD
 
 #endif // !SCREEN_H

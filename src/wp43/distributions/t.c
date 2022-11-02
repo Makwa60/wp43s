@@ -65,7 +65,7 @@ void fnT_P(uint16_t unusedButMandatoryParameter) {
 
   if(checkParamT(&val, &dof)) {
     WP34S_Pdf_T(&val, &dof, &ans, &ctxtReal39);
-    reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE, amNone);
+    reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
     convertRealToReal34ResultRegister(&ans, REGISTER_X);
   }
 
@@ -83,7 +83,7 @@ void fnT_L(uint16_t unusedButMandatoryParameter) {
 
   if(checkParamT(&val, &dof)) {
     WP34S_Cdf_T(&val, &dof, &ans, &ctxtReal39);
-    reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE, amNone);
+    reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
     convertRealToReal34ResultRegister(&ans, REGISTER_X);
   }
 
@@ -101,7 +101,7 @@ void fnT_R(uint16_t unusedButMandatoryParameter) {
 
   if(checkParamT(&val, &dof)) {
     WP34S_Cdfu_T(&val, &dof, &ans, &ctxtReal39);
-    reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE, amNone);
+    reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
     convertRealToReal34ResultRegister(&ans, REGISTER_X);
   }
 
@@ -133,7 +133,7 @@ void fnT_I(uint16_t unusedButMandatoryParameter) {
         #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
       }
       else {
-        reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE, amNone);
+        reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
         convertRealToReal34ResultRegister(&ans, REGISTER_X);
       }
     }

@@ -19,6 +19,9 @@
 #include "error.h"
 #include "flags.h"
 #include "hal/gui.h"
+#include "hal/lcd.h"
+#include "hal/system.h"
+#include "hal/timer.h"
 #include "items.h"
 #include "matrix.h"
 #include "plotstat.h"
@@ -32,8 +35,8 @@
 #include "sort.h"
 #include "stack.h"
 #include "stats.h"
-#include "timer.h"
 #include "ui/bufferize.h"
+#include "ui/cursor.h"
 #include "ui/screen.h"
 #include "ui/softmenus.h"
 #include "ui/tam.h"
@@ -47,8 +50,12 @@
 #include "wp43.h"
 
 keyCode_t lastKeyCode;
+bool      _kbCheckForInterrupt = false;
+bool      _kbSeenInterrupt     = false;
 
 #if !defined(TESTSUITE_BUILD)
+  static bool inAutoRepeat = false;
+
   int16_t determineFunctionKeyItem(keyCode_t keyCode) {
     int16_t item = ITM_NOP;
 
@@ -257,21 +264,15 @@ keyCode_t lastKeyCode;
 
 
 
-  void execAutoRepeat(uint16_t key) {
-    #if defined(DMCP_BUILD)
-      bool    f = shiftF;
-      bool    g = shiftG;
-      uint8_t origScreenUpdatingMode = screenUpdatingMode;
+  void cbAutoRepeat(uint16_t key) {
+    uint8_t origScreenUpdatingMode = screenUpdatingMode;
 
-      timerStart(tidAutoRepeat, key, KEY_AUTOREPEAT_PERIOD);
+    timerStart(tidAutoRepeat, key, KEY_AUTOREPEAT_PERIOD);
 
-      btnClicked(key);
-      screenUpdatingMode = origScreenUpdatingMode;
-      shiftF = f;
-      shiftG = g;
-      refreshLcd();
-      lcd_refresh_dma();
-    #endif // DMCP_BUILD
+    inAutoRepeat = true;
+    btnClicked(key);
+    inAutoRepeat = false;
+    screenUpdatingMode = origScreenUpdatingMode;
   }
 
 
@@ -833,6 +834,12 @@ keyCode_t lastKeyCode;
 
 
   void btnPressed(keyCode_t keyCode) {
+    if(_kbCheckForInterrupt) {
+      if(keyCode == kcExit) {
+        _kbSeenInterrupt = true;
+      }
+      return;
+    }
     if(keyCode >= kcF1) {
       btnFnPressed(keyCode);
       return;
@@ -848,36 +855,28 @@ keyCode_t lastKeyCode;
 
     bool f = shiftF;
     bool g = shiftG;
-    #if defined(DMCP_BUILD)
-      //if(keyAutoRepeat) {
-      //  //beep(880, 50);
-      //  item = previousItem;
-      //}
-      //else {
-    #endif
     int16_t item = determineItem(keyCode);
-    #if defined(DMCP_BUILD)
-      //  previousItem = item;
-      //}
-    #endif
 
-    #if defined(PC_BUILD)
-      if(programRunStop == PGM_RUNNING || programRunStop == PGM_PAUSED) {
-        if((item == ITM_RS || item == ITM_EXIT) && !getSystemFlag(FLAG_INTING) && !getSystemFlag(FLAG_SOLVING)) {
-          programRunStop = PGM_WAITING;
-          showFunctionNameItem = 0;
+    if(item == ITM_UP || item == ITM_DOWN || ((item == ITM_SST || item == ITM_BST) && calcMode == cmPem)) {
+      if(currentSoftmenuScrolls() || (calcMode != cmNormal && calcMode != cmNim && calcMode != cmAim)) {
+        if(!inAutoRepeat) {
+          timerStart(tidAutoRepeat, keyCode, KEY_AUTOREPEAT_FIRST_PERIOD);
         }
-        else if(programRunStop == PGM_PAUSED) {
-          programRunStop = PGM_KEY_PRESSED_WHILE_PAUSED;
-        }
-        return;
-      }
-    #elif defined(DMCP_BUILD)
-      if(calcMode == cmPem && (item == ITM_SST || item == ITM_BST)) {
         shiftF = f;
         shiftG = g;
       }
-    #endif
+    }
+
+    if(programRunStop == PGM_RUNNING || programRunStop == PGM_PAUSED) {
+      if((item == ITM_RS || item == ITM_EXIT) && !getSystemFlag(FLAG_INTING) && !getSystemFlag(FLAG_SOLVING)) {
+        programRunStop = PGM_WAITING;
+        showFunctionNameItem = 0;
+      }
+      else if(programRunStop == PGM_PAUSED) {
+        programRunStop = PGM_KEY_PRESSED_WHILE_PAUSED;
+      }
+      return;
+    }
 
     if(getSystemFlag(FLAG_USER)) {
       int keyStateCode = (getSystemFlag(FLAG_ALPHA) ? 3 : 0) + (g ? 2 : f ? 1 : 0);
@@ -904,6 +903,9 @@ keyCode_t lastKeyCode;
 
 
   void btnReleased(keyCode_t keyCode) {
+    if(_kbCheckForInterrupt) {
+      return;
+    }
     if(keyCode >= kcF1) {
       btnFnReleased(keyCode);
       return;
@@ -967,12 +969,11 @@ keyCode_t lastKeyCode;
         }
       }
     }
-    //#if defined(DMCP_BUILD)
-    //  else if(keyAutoRepeat) {
-    //    btnPressed(keyCode);
-    //  }
-    //#endif // DMCP_BUILD
-    if(timerGetStatus(tidAutoRepeat) != tsRunning) {
+    if(!inAutoRepeat && timerIsRunning(tidAutoRepeat)) {
+      timerStop(tidAutoRepeat);
+      shiftF = shiftG = false;
+    }
+    if(!timerIsRunning(tidAutoRepeat)) {
       refreshScreen();
     }
     screenUpdatingMode &= ~SCRUPD_ONE_TIME_FLAGS;
@@ -1990,7 +1991,8 @@ void fnKeyBackspace(uint16_t unusedButMandatoryParameter) {
           if(stringByteLength(aimBuffer) > 0) {
             lg = stringLastGlyph(aimBuffer);
             aimBuffer[lg] = 0;
-            xCursor = showString(aimBuffer, &standardFont, 1, Y_POSITION_OF_AIM_LINE + 6, vmNormal, true, true);
+            uint32_t xCursor = showString(aimBuffer, &standardFont, 1, Y_POSITION_OF_AIM_LINE + 6, vmNormal, true, true);
+            cursorShow(true, xCursor, Y_POSITION_OF_AIM_LINE + 6);
           }
         }
         else if(stringByteLength(aimBuffer) > 0) {
@@ -2011,12 +2013,12 @@ void fnKeyBackspace(uint16_t unusedButMandatoryParameter) {
       }
 
       case cmEim: {
-        if(xCursor > 0) {
+        if(equationEditorCursor > 0) {
           char *srcPos = aimBuffer;
           char *dstPos = aimBuffer;
           char *lstPos = aimBuffer + stringNextGlyph(aimBuffer, stringLastGlyph(aimBuffer));
-          --xCursor;
-          for(uint32_t i = 0; i < xCursor; ++i) {
+          --equationEditorCursor;
+          for(uint32_t i = 0; i < equationEditorCursor; ++i) {
             dstPos += (*dstPos & 0x80) ? 2 : 1;
           }
           srcPos = dstPos + ((*dstPos & 0x80) ? 2 : 1);
@@ -2227,11 +2229,7 @@ void fnKeyUp(uint16_t unusedButMandatoryParameter) {
             closeNim();
           }
           fnBst(NOPARAM);
-          #if defined(DMCP_BUILD)
-            lcd_refresh();
-          #else // !DMCP_BUILD
-            refreshLcd();
-          #endif // DMCP_BUILD
+          lcd_refresh();
         }
         if(softmenu[softmenuStack[0].softmenuId].menuItem == -MNU_PLOT_LR){
           strcpy(plotStatMx, "STATS");
@@ -2579,4 +2577,14 @@ uint8_t kbRowColumnFromKeyCode(keyCode_t keyCode) {
     return keyCode - 37 + 10; // function keys
   }
   return 0;
+}
+
+
+
+bool kbCheckForInterrupt(void) {
+  _kbCheckForInterrupt = true;
+  _kbSeenInterrupt     = false;
+  systemProcessEvents();
+  _kbCheckForInterrupt = false;
+  return _kbSeenInterrupt;
 }

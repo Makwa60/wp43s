@@ -16,6 +16,7 @@
 #include "saveRestoreCalcState.h"
 #include "stack.h"
 #include "ui/bufferize.h"
+#include "ui/cursor.h"
 #include "ui/keyboard.h"
 #include "ui/screen.h"
 #include "ui/tam.h"
@@ -83,12 +84,9 @@ calcMode_t calcMode;
         }
       }
       saveCalc();
-      systemQuit();
     #endif // PC_BUILD
 
-    #if defined(DMCP_BUILD)
-      SET_ST(STAT_PGM_END);
-    #endif // DMCP_BUILD
+    systemQuit();
   }
 
 
@@ -101,8 +99,6 @@ calcMode_t calcMode;
     }
 
     clearSystemFlag(FLAG_ALPHA);
-    hideCursor();
-    cursorEnabled = false;
   }
 
 
@@ -116,10 +112,7 @@ calcMode_t calcMode;
       liftStack();
 
       clearRegisterLine(AIM_REGISTER_LINE, true, true);
-      xCursor = 1;
-      yCursor = Y_POSITION_OF_AIM_LINE + 6;
-      cursorFont = &standardFont;
-      cursorEnabled = true;
+      cursorShow(true, 1, Y_POSITION_OF_AIM_LINE + 6);
     }
 
     if(softmenuStack[0].softmenuId == 0) { // MyMenu
@@ -157,16 +150,14 @@ calcMode_t calcMode;
 
     if(calcMode != cmPem) {
       clearRegisterLine(NIM_REGISTER_LINE, true, true);
-      xCursor = 1;
-      yCursor = Y_POSITION_OF_NIM_LINE;
-      cursorEnabled = true;
-      cursorFont = &numericFont;
+      cursorShow(false, 1, Y_POSITION_OF_NIM_LINE);
     }
   }
 
 
 
   void calcModeEnter(calcMode_t newMode) {
+    cursorHide();
     switch(newMode) {
       case cmNormal:
         calcModeNormal();

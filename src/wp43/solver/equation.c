@@ -18,8 +18,10 @@
 #include "registers.h"
 #include "stack.h"
 #include "sort.h"
+#include "ui/cursor.h"
 #include "ui/screen.h"
 #include <stdbool.h>
+#include <string.h>
 
 #include "wp43.h"
 
@@ -126,8 +128,8 @@ void fnEqEdit(uint16_t unusedButMandatoryParameter) {
     calcMode = cmEim;
     alphaCase = AC_LOWER;
     setSystemFlag(FLAG_ALPHA);
-    yCursor = 0;
-    xCursor = equationString ? stringGlyphLength(equationString) : 0;
+    equationEditorScrollPosition = 0;
+    equationEditorCursor = equationString ? stringGlyphLength(equationString) : 0;
     calcModeUpdateGui();
   #endif // !TESTSUITE_BUILD
 }
@@ -141,16 +143,16 @@ void fnEqDelete(uint16_t unusedButMandatoryParameter) {
 
 
 void fnEqCursorLeft(uint16_t unusedButMandatoryParameter) {
-  if(xCursor > 0) {
-    --xCursor;
+  if(equationEditorCursor > 0) {
+    --equationEditorCursor;
   }
 }
 
 
 
 void fnEqCursorRight(uint16_t unusedButMandatoryParameter) {
-  if(xCursor < (uint32_t)stringGlyphLength(aimBuffer)) {
-    ++xCursor;
+  if(equationEditorCursor < (uint32_t)stringGlyphLength(aimBuffer)) {
+    ++equationEditorCursor;
   }
 }
 
@@ -627,8 +629,18 @@ void showEquation(uint16_t equationId, uint16_t startAt, uint16_t cursorAt, bool
         strPtr += ((*strPtr) & 0x80) ? 2 : 1;
       }
 
-      if((!dryRun) && (*cursorShown || cursorAt == EQUATION_NO_CURSOR)) {
-        showString(tmpString, &standardFont, 1, SCREEN_HEIGHT - SOFTMENU_HEIGHT * 3 + 2 , vmNormal, true, true);
+      if(!dryRun) {
+        char *cursorPos = strstr(tmpString, STD_CURSOR);
+        if(*cursorShown || cursorAt == EQUATION_NO_CURSOR) {
+          showString(tmpString, &standardFont, 1, SCREEN_HEIGHT - SOFTMENU_HEIGHT * 3 + 2, vmNormal, true, true);
+        }
+        if(*cursorShown && cursorAt != EQUATION_NO_CURSOR && cursorPos) {
+          *cursorPos = 0;
+          cursorShow(true, 1 + stringWidth(tmpString, &standardFont, true, true), SCREEN_HEIGHT - SOFTMENU_HEIGHT * 3 + 2);
+        }
+        else {
+          cursorHide();
+        }
       }
     }
   #endif // !TESTSUITE_BUILD
@@ -750,7 +762,7 @@ void showEquation(uint16_t equationId, uint16_t startAt, uint16_t cursorAt, bool
       real34Copy(&re, REGISTER_REAL34_DATA(REGISTER_X));
     }
     else {
-      reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE, amNone);
+      reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE_IN_BLOCKS, amNone);
       real34Copy(&re, REGISTER_REAL34_DATA(REGISTER_X));
       real34Copy(&im, REGISTER_IMAG34_DATA(REGISTER_X));
     }
@@ -760,7 +772,7 @@ void showEquation(uint16_t equationId, uint16_t startAt, uint16_t cursorAt, bool
       real34Copy(&re, REGISTER_REAL34_DATA(REGISTER_Y));
     }
     else {
-      reallocateRegister(REGISTER_Y, dtComplex34, COMPLEX34_SIZE, amNone);
+      reallocateRegister(REGISTER_Y, dtComplex34, COMPLEX34_SIZE_IN_BLOCKS, amNone);
       real34Copy(&re, REGISTER_REAL34_DATA(REGISTER_Y));
       real34Copy(&im, REGISTER_IMAG34_DATA(REGISTER_Y));
     }
@@ -789,7 +801,7 @@ void showEquation(uint16_t equationId, uint16_t startAt, uint16_t cursorAt, bool
       real34Copy(&re, REGISTER_REAL34_DATA(REGISTER_X));
     }
     else {
-      reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE, amNone);
+      reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE_IN_BLOCKS, amNone);
       real34Copy(&re, REGISTER_REAL34_DATA(REGISTER_X));
       real34Copy(&im, REGISTER_IMAG34_DATA(REGISTER_X));
     }
@@ -935,11 +947,11 @@ void showEquation(uint16_t equationId, uint16_t startAt, uint16_t cursorAt, bool
             setSystemFlag(FLAG_ASLIFT);
             liftStack();
             if((real34IsZero(PARSER_LEFT_VALUE_IMAG) || real34IsNaN(PARSER_LEFT_VALUE_IMAG)) && (real34IsZero(&PARSER_NUMERIC_STACK[(*PARSER_NUMERIC_STACK_POINTER) * 2 - 1]) || real34IsNaN(&PARSER_NUMERIC_STACK[(*PARSER_NUMERIC_STACK_POINTER) * 2 - 1]))) {
-              reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE, amNone);
+              reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
               real34Subtract(&PARSER_NUMERIC_STACK[(*PARSER_NUMERIC_STACK_POINTER) * 2 - 2], PARSER_LEFT_VALUE_REAL, REGISTER_REAL34_DATA(REGISTER_X));
             }
             else {
-              reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE, amNone);
+              reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE_IN_BLOCKS, amNone);
               real34Subtract(&PARSER_NUMERIC_STACK[(*PARSER_NUMERIC_STACK_POINTER) * 2 - 2], PARSER_LEFT_VALUE_REAL, REGISTER_REAL34_DATA(REGISTER_X));
               real34Subtract(&PARSER_NUMERIC_STACK[(*PARSER_NUMERIC_STACK_POINTER) * 2 - 1], PARSER_LEFT_VALUE_IMAG, REGISTER_IMAG34_DATA(REGISTER_X));
             }

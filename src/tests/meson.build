@@ -10,7 +10,8 @@ tests_src = files(
   '../testSuite/hal/io.c',
   '../testSuite/hal/lcd.c',
   '../testSuite/hal/system.c',
-  '../testSuite/hal/time.c')
+  '../testSuite/hal/time.c',
+  '../testSuite/hal/timer.c')
 tests = executable(
   'tests',
   build_by_default    : false,
@@ -19,7 +20,7 @@ tests = executable(
                           constantPointers_ch, vcs_h, version_h],
   c_args              : '-DTESTSUITE_BUILD',
   include_directories : [decNumber_inc, wp43_inc],
-  dependencies        : [gtest_main_dep, gtk_dep, gmp_dep, m_dep],
+  dependencies        : [gtest_main_dep, gmp_dep, m_dep],
   native              : true,
   override_options    : ['cpp_std=c++17'])
 test(

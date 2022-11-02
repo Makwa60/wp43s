@@ -23,6 +23,7 @@
 #include "registerValueConversions.h"
 #include "sort.h"
 #include "ui/bufferize.h"
+#include "ui/cursor.h"
 #include "ui/screen.h"
 #include "ui/softmenus.h"
 #include "ui/tam.h"
@@ -354,6 +355,7 @@ void fnPem(uint16_t unusedButMandatoryParameter) {
     bool     inTamMode = tamIsActive() && programList[currentProgramNumber - 1].step > 0;
     uint16_t numberOfSteps = getNumberOfSteps();
     uint16_t linesOfCurrentStep = 1;
+    bool     cursorAppeared = false;
 
     if(calcMode != cmPem) {
       calcMode = cmPem;
@@ -482,13 +484,29 @@ void fnPem(uint16_t unusedButMandatoryParameter) {
         linesOfCurrentStep += numberOfExtraLines;
       }
 
+      char *cursorPos = strstr(tmpString, STD_CURSOR);
       showString(tmpString, &standardFont, lblOrEnd ? 42 : 62, Y_POSITION_OF_REGISTER_T_LINE + 21 * line, vmNormal,  false, false);
+      if(cursorPos) {
+        *cursorPos = 0;
+        cursorShow(true, 62 + stringWidth(tmpString, &standardFont, false, true), Y_POSITION_OF_REGISTER_T_LINE + 21 * line);
+        cursorAppeared = true;
+      }
       offset = 300;
       while(numberOfExtraLines && line <= 5) {
+        cursorPos = strstr(tmpString + offset, STD_CURSOR);
         showString(tmpString + offset, &standardFont, 62, Y_POSITION_OF_REGISTER_T_LINE + 21 * (++line), vmNormal,  false, false);
+        if(cursorPos) {
+          *cursorPos = 0;
+          cursorShow(true, 62 + stringWidth(tmpString, &standardFont, false, true), Y_POSITION_OF_REGISTER_T_LINE + 21 * line);
+          cursorAppeared = true;
+        }
         numberOfExtraLines--;
         offset += 300;
         lineOffset++;
+      }
+
+      if(!cursorAppeared) {
+        cursorHide();
       }
 
       if((*step == ((ITM_END >> 8) | 0x80)) && (*(step + 1) == (ITM_END & 0xff))) {
@@ -856,7 +874,7 @@ static void _pemCloseDateInput(void) {
         *(tmpPtr++) = ITM_LITERAL;
         *(tmpPtr++) = STRING_DATE;
 
-        reallocateRegister(TEMP_REGISTER_1, dtReal34, REAL34_SIZE, amNone);
+        reallocateRegister(TEMP_REGISTER_1, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
         stringToReal34(numBuffer, REGISTER_REAL34_DATA(TEMP_REGISTER_1));
         convertReal34RegisterToDateRegister(TEMP_REGISTER_1, TEMP_REGISTER_1);
         internalDateToJulianDay(REGISTER_REAL34_DATA(TEMP_REGISTER_1), REGISTER_REAL34_DATA(TEMP_REGISTER_1));

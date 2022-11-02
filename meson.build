@@ -9,27 +9,31 @@ project('wp43', 'c', 'cpp',
 )
 
 # Simulator and generate tools arguments
-add_project_arguments('-DPC_BUILD',   native : true, language : ['c', 'cpp'])
+add_project_arguments('-DPC_BUILD', native : true, language : ['c', 'cpp'])
 if build_machine.system() == 'windows'
-  add_project_arguments('-DWIN32',    native : true, language : ['c', 'cpp'])
+  add_project_arguments('-DWIN32',  native : true, language : ['c', 'cpp'])
 elif build_machine.system() == 'darwin'
-  add_project_arguments('-DOSX',      native : true, language : ['c', 'cpp'])
+  add_project_arguments('-DOSX',    native : true, language : ['c', 'cpp'])
 elif build_machine.system() == 'linux'
-  add_project_arguments('-DLINUX',    native : true, language : ['c', 'cpp'])
+  add_project_arguments('-DLINUX',  native : true, language : ['c', 'cpp'])
 else
   error('Unsupported platform')
 endif
 
 if build_machine.cpu_family() in ['aarch64', 'x86_64']
-  add_project_arguments('-DOS64BIT',    native : true, language : ['c', 'cpp'])
+  add_project_arguments('-DOS64BIT', native : true, language : ['c', 'cpp'])
 elif build_machine.cpu_family() in ['arm', 'x86']
-  add_project_arguments('-DOS32BIT',    native : true, language : ['c', 'cpp'])
+  add_project_arguments('-DOS32BIT', native : true, language : ['c', 'cpp'])
 else
   error('Unsupported platform')
 endif
 
 if get_option('RASPBERRY')
-  add_project_arguments('-DRASPBERRY',  native : true, language : ['c', 'cpp'])
+  add_project_arguments('-DRASPBERRY', native : true, language : ['c', 'cpp'])
+endif
+
+if get_option('DEBUG_POWER')
+  add_project_arguments('-DDEBUG_POWER', native : true, language : ['c', 'cpp'])
 endif
 
 # DMCP arguments
@@ -42,7 +46,7 @@ run_command(git, 'submodule', 'update', '--init', '--recursive', meson.project_s
 cc = meson.get_compiler('c')
 ft_dep  = dependency('freetype2', native : true)
 gtk_dep = dependency('gtk+-3.0',  native : true)
-gmp_dep = dependency('gmp', native : true)
+gmp_dep = dependency('gmp',       native : true)
 m_dep   = cc.find_library('m', required : false)
 
 if (not meson.is_cross_build()) and (host_machine.system() == 'linux' or host_machine.system() == 'darwin')
@@ -68,7 +72,7 @@ else
 endif
 
 if not meson.is_cross_build()
-  gtest_proj = subproject('gtest')
+  gtest_proj     = subproject('gtest')
   gtest_main_dep = gtest_proj.get_variable('gtest_main_dep')
 else
   gtest_main_dep = dependency('', required : false)

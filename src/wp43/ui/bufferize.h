@@ -11,6 +11,8 @@
   #include "realType.h"
 
   #if !defined(TESTSUITE_BUILD)
+    void     cbAsmActive              (uint16_t param);
+
     void     fnAim                    (uint16_t unusedButMandatoryParameter);
     void     resetAlphaSelectionBuffer(void);
     uint16_t convertItemToSubOrSup    (uint16_t item, int16_t subOrSup);
@@ -28,6 +30,10 @@
     void     closeNim                 (void);
     void     closeAim                 (void);
     void     nimBufferToDisplayBuffer (const char *buffer, char *displayBuffer);
+  #else
+    #pragma GCC diagnostic ignored "-Wunused-parameter"
+
+    static inline void cbAsmActive(uint16_t param) {}
   #endif // !TESTSUITE_BUILD
 
 #endif // !BUFFERIZE_H

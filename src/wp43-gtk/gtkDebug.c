@@ -17,6 +17,7 @@
 #include "hal/debug.h"
 #include "items.h"
 #include "registers.h"
+#include "ui/cursor.h"
 #include "ui/tam.h"
 #include <stdbool.h>
 #include <string.h>

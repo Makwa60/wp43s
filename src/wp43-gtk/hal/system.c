@@ -129,6 +129,20 @@ const char *systemMaker(void) {
 
 
 
+void systemProcessEvents(void) {
+  while(gtk_events_pending()) {
+    gtk_main_iteration();
+  }
+}
+
+
+
 void systemQuit(void) {
   gtk_main_quit();
+}
+
+
+
+uint32_t systemBatteryVoltage(void) {
+  return 3100;
 }

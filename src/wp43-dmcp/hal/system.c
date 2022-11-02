@@ -6,6 +6,10 @@
 #include "charString.h"
 #include "error.h"
 #include "fonts.h"
+#include "hal/time.h"
+#include "hal/timer.h"
+#include "ui/keyboard.h"
+#include "wp43-dmcp.h"
 #include <stdio.h>
 #include <dmcp.h>
 
@@ -25,5 +29,30 @@ const char *systemMaker(void) {
 
 
 
+void systemProcessEvents(void) {
+  timeUptime = timeCurrentMs();
+  dmcpCheckPowerStatus();
+  dmcpResetAutoOff();
+  while(!key_empty()) {
+    int key = key_pop();
+    key = convertKeyCode(key);
+    if(key > 0) {
+      wait_for_key_release(0);
+      key_pop();
+      btnClicked(key);
+    }
+  }
+  timerRun();
+}
+
+
+
 void systemQuit(void) {
+  SET_ST(STAT_PGM_END);
+}
+
+
+
+uint32_t systemBatteryVoltage(void) {
+  return get_vbat();
 }

@@ -73,7 +73,7 @@ void fnPoissonP(uint16_t unusedButMandatoryParameter) {
 
   if(checkParamPoisson(&val, &prob)) {
     WP34S_Pdf_Poisson(&val, &prob, &ans, &ctxtReal39);
-    reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE, amNone);
+    reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
     convertRealToReal34ResultRegister(&ans, REGISTER_X);
   }
 
@@ -91,7 +91,7 @@ void fnPoissonL(uint16_t unusedButMandatoryParameter) {
 
   if(checkParamPoisson(&val, &prob)) {
     WP34S_Cdf_Poisson(&val, &prob, &ans, &ctxtReal39);
-    reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE, amNone);
+    reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
     convertRealToReal34ResultRegister(&ans, REGISTER_X);
   }
 
@@ -109,7 +109,7 @@ void fnPoissonR(uint16_t unusedButMandatoryParameter) {
 
   if(checkParamPoisson(&val, &prob)) {
     WP34S_Cdfu_Poisson(&val, &prob, &ans, &ctxtReal39);
-    reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE, amNone);
+    reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
     convertRealToReal34ResultRegister(&ans, REGISTER_X);
   }
 
@@ -134,7 +134,7 @@ void fnPoissonI(uint16_t unusedButMandatoryParameter) {
     }
     else {
       WP34S_Qf_Poisson(&val, &prob, &ans, &ctxtReal39);
-      reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE, amNone);
+      reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
       convertRealToReal34ResultRegister(&ans, REGISTER_X);
     }
   }

@@ -11,7 +11,6 @@
 #endif // PC_BUILD || TESTSUITE_BUILD
 
 const font_t          *fontForShortInteger;
-const font_t          *cursorFont;
 TO_QSPI const char     digits[17] = "0123456789ABCDEF";
 real51_t               const *gammaLanczosCoefficients;
 real51_t               const *angle180;
@@ -102,7 +101,6 @@ uint8_t                nextChar;
 uint8_t                displayStack;
 uint8_t                cachedDisplayStack;
 uint8_t                alphaCase;
-uint8_t                cursorEnabled;
 uint8_t                nimNumberPart;
 uint8_t                hexDigits;
 temporaryInformation_t temporaryInformation;
@@ -124,7 +122,6 @@ int16_t                imaginaryExponentSignLocation;
 int16_t                imaginaryMantissaSignLocation;
 int16_t                exponentLimit;
 int16_t                exponentHideLimit;
-int16_t                showFunctionNameCounter;
 int16_t                dynamicMenuItem;
 int16_t               *menu_RAM;
 int16_t                numberOfTamMenusToPop;
@@ -159,6 +156,8 @@ uint16_t               currentUserMenu;
 uint16_t               userKeyLabelSize;
 uint16_t               currentInputVariable = INVALID_VARIABLE;
 uint16_t               currentMvarLabel = INVALID_VARIABLE;
+uint16_t               equationEditorCursor;
+uint16_t               equationEditorScrollPosition;
 #if (REAL34_WIDTH_TEST == 1)
   uint16_t               largeur=200;
 #endif // (REAL34_WIDTH_TEST == 1)
@@ -170,9 +169,6 @@ int32_t                graphVariable;
 uint32_t               firstGregorianDay;
 uint32_t               denMax;
 uint32_t               lastIntegerBase;
-uint32_t               alphaSelectionTimer;
-uint32_t               xCursor;
-uint32_t               yCursor;
 uint32_t               tamOverPemYPos;
 uint32_t               pointerOfFlashPgmLibrary;
 uint32_t               sizeOfFlashPgmLibrary;

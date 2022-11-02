@@ -149,7 +149,8 @@
    * Gets the system time
    *
    * \param[out] timeString String receiving the system time. Must be at least 8 bytes long (03:15pm plus terminating 0)
+   * \return milliseconds until the string will change
    */
-  void getTimeString           (char *timeString);
+  uint32_t getTimeString           (char *timeString);
 
 #endif // !DATETIME_H

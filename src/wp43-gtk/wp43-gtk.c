@@ -3,13 +3,14 @@
 
 #include "wp43-gtk.h"
 #include "apps/timerApp.h"
+#include "config.h"
 #include "core/memory.h"
 #include "flags.h"
 #include "gtkGui.h"
+#include "hal/timer.h"
 #include "items.h"
 #include "longIntegerType.h"
 #include "saveRestoreCalcState.h"
-#include "timer.h"
 #include "ui/keyboard.h"
 #include "ui/screen.h"
 #include <stdbool.h>
@@ -37,34 +38,6 @@ char                debugString[10000];
     return compareString(a, b, CMP_EXTENSIVE);
   }
 #endif // EXPORT_ITEMS
-
-/**
- * Refreshes calc's screen.
- * This function is called every SCREEN_REFRESH_PERIOD ms by a GTK timer.
- *
- * \param[in] unusedData Not used
- * \return What will happen next?
- *   - true  = timer will call this function again
- *   - false = timer stops calling this function
- */
-gboolean refreshLcdCallback(gpointer unusedData) {
-  refreshLcd();
-  return TRUE;
-}
-
-/********************************************//**
- * \brief Refreshes timer. This function is
- * called every 5 ms by a GTK timer.
- *
- * \param[in] data gpointer Not used
- * \return gboolean         What will happen next?
- *                          * true  = timer will call this function again
- *                          * false = timer stops calling this function
- ***********************************************/
-gboolean timerRefreshCallback(gpointer unusedData) {
-  timerRefresh();
-  return TRUE;
-}
 
 int main(int argc, char* argv[]) {
   #if defined(__APPLE__)
@@ -127,19 +100,13 @@ int main(int argc, char* argv[]) {
   #endif // EXPORT_ITEMS
 
   gtk_init(&argc, &argv);
+  configSetUpTimers();
+
   setupUI();
 
   restoreCalc();
   //ramDump();
   //refreshScreen();
-
-  gdk_threads_add_timeout(SCREEN_REFRESH_PERIOD, refreshLcdCallback, NULL); // refreshLcd is called every SCREEN_REFRESH_PERIOD ms
-
-  timerReset();
-  timerConfig(tidTimerAppRedraw,           cbTimerAppRedraw,           NOPARAM);
-  timerConfig(tidTimerAppDetectWrapAround, cbTimerAppDetectWrapAround, NOPARAM);
-  //timerConfig(tidShowNop,                  execNOPTimeout,             NOPARAM);
-  gdk_threads_add_timeout(5, timerRefreshCallback, NULL);
 
   if(getSystemFlag(FLAG_AUTXEQ)) {
     clearSystemFlag(FLAG_AUTXEQ);

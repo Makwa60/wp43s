@@ -9,6 +9,7 @@
 #include "defines.h"
 #include "error.h"
 #include "flags.h"
+#include "hal/lcd.h"
 #include "items.h"
 #include "mathematics/comparisonReals.h"
 #include "mathematics/invert.h"
@@ -247,7 +248,7 @@ void fnPlot(uint16_t unusedButMandatoryParameter) {
     }
     calcRegister_t regStats = findNamedVariable(plotStatMx);
     if(regStats == INVALID_VARIABLE) {
-      allocateNamedVariable(plotStatMx, dtReal34, REAL34_SIZE);
+      allocateNamedVariable(plotStatMx, dtReal34, REAL34_SIZE_IN_BLOCKS);
       regStats = findNamedVariable(plotStatMx);
     }
     clearRegister(regStats);                  // this should change to delete the named variable STATS once the delete function is available. Until then write 0.0 into STATS.
@@ -970,13 +971,7 @@ void graph_eqn(uint16_t mode) {
         printRegisterToConsole(REGISTER_Y,"Y = ","\n");
       #endif // PC_BUILD
 
-
-      #if defined(DMCP_BUILD)
-        lcd_refresh();
-      #else // !DMCP_BUILD
-        refreshLcd();
-      #endif // DMCP_BUILD
-
+      lcd_refresh();
     }
 
 
@@ -993,11 +988,7 @@ void graph_eqn(uint16_t mode) {
 
 
     clearScreenPixels();
-    #if defined(DMCP_BUILD)
-      lcd_refresh();
-    #else // !DMCP_BUILD
-      refreshLcd();
-    #endif // DMCP_BUILD
+    lcd_refresh();
 
     convertDoubleToReal34RegisterPush(0.0, REGISTER_X);
 
@@ -1038,11 +1029,6 @@ void fnEqSolvGraph (uint16_t func) {
 #if !defined(TESTSUITE_BUILD)
   hourGlassIconEnabled = true;
   showHideHourGlass();
-  #if defined(DMCP_BUILD)
-    lcd_refresh();
-  #else // !DMCP_BUILD
-    refreshLcd();
-  #endif // DMCP_BUILD
 
   graphVariable = currentSolverVariable;
   if(graphVariable<0) {

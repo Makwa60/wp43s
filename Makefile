@@ -13,7 +13,7 @@ endif
 clean:
 	rm -f wp43$(EXE)
 	rm -rf wp43-windows* wp43-macos* wp43-dmcp*
-	rm -rf build build.sim build.dmcp build.rel
+	rm -rf build build.sim build.dmcp build.dmcp-power build.rel
 
 build.sim:
 	meson setup build.sim --buildtype=debug -DRASPBERRY=`tools/onARaspberry` -Db_coverage=true
@@ -23,6 +23,9 @@ build.rel:
 
 build.dmcp:
 	meson setup build.dmcp --cross-file=src/wp43-dmcp/cross_stm32l4_gcc.build -DCI_COMMIT_TAG=$(CI_COMMIT_TAG)
+
+build.dmcp-power:
+	meson setup build.dmcp-power --cross-file=src/wp43-dmcp/cross_stm32l4_gcc.build -DCI_COMMIT_TAG=$(CI_COMMIT_TAG) -DDEBUG_POWER=true
 
 sim: build.sim
 	cd build.sim && ninja sim
@@ -46,6 +49,9 @@ coverage:
 
 dmcp: build.dmcp
 	cd build.dmcp && ninja dmcp
+
+dmcp-power: build.dmcp-power
+	cd build.dmcp-power && ninja dmcp
 
 docs: build.sim
 	cd build.sim && ninja docs

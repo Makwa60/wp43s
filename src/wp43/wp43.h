@@ -31,8 +31,6 @@
     #else
       #define printf(...)
     #endif
-
-    #include <dmcp.h>
   #endif // DMCP_BUILD
 
   #include "mathematics/pcg_basic.h"
@@ -57,7 +55,6 @@
   extern const calcKey_t                 kbd_std[37];
   extern const font_t                    standardFont, numericFont;
   extern const font_t                   *fontForShortInteger;
-  extern const font_t                   *cursorFont;
   extern const char                      digits[17];
   extern any34Matrix_t                   openMatrixMIMPointer;
   extern uint16_t                        matrixIndex;
@@ -154,7 +151,6 @@
   extern uint8_t                displayStack;
   extern uint8_t                cachedDisplayStack;
   extern uint8_t                alphaCase;
-  extern uint8_t                cursorEnabled;
   extern uint8_t                nimNumberPart;
   extern uint8_t                hexDigits;
   extern temporaryInformation_t temporaryInformation;
@@ -176,7 +172,6 @@
   extern int16_t                imaginaryMantissaSignLocation;
   extern int16_t                exponentLimit;
   extern int16_t                exponentHideLimit;
-  extern int16_t                showFunctionNameCounter;
   extern int16_t                dynamicMenuItem;
   extern int16_t               *menu_RAM;
   extern int16_t                numberOfTamMenusToPop;
@@ -211,6 +206,8 @@
   extern uint16_t               userKeyLabelSize;
   extern uint16_t               currentInputVariable;
   extern uint16_t               currentMvarLabel;
+  extern uint16_t               equationEditorCursor;
+  extern uint16_t               equationEditorScrollPosition;
   #if (REAL34_WIDTH_TEST == 1)
     extern uint16_t               largeur;
   #endif // (REAL34_WIDTH_TEST == 1)
@@ -222,9 +219,6 @@
   extern uint32_t               firstGregorianDay;
   extern uint32_t               denMax;
   extern uint32_t               lastIntegerBase;
-  extern uint32_t               alphaSelectionTimer;
-  extern uint32_t               xCursor;
-  extern uint32_t               yCursor;
   extern uint32_t               tamOverPemYPos;
   extern uint32_t               pointerOfFlashPgmLibrary;
   extern uint32_t               sizeOfFlashPgmLibrary;
@@ -251,11 +245,6 @@
 
   #if defined(DMCP_BUILD)
     extern bool                 backToDMCP;
-    //extern int                  keyAutoRepeat; // Key repetition
-    //extern int16_t              previousItem;
-    extern uint32_t             nextTimerRefresh;
-
-    int                         convertKeyCode(int key);
   #endif // DMCP_BUILD
 
 #endif // !WP43_H
