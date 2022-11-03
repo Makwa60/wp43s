@@ -397,7 +397,7 @@ void fnPem(uint16_t unusedButMandatoryParameter) {
     int lineOffset = 0, lineOffsetTam = 0;
 
     if(programList[currentProgramNumber - 1].step < 0) { // Flash
-      tmpSteps = allocWp43(400 * 7);
+      tmpSteps = allocWp43(TO_BLOCKS(400 * 7));
       readStepInFlashPgmLibrary(tmpSteps, 400 * 7, firstDisplayedStep.flash);
       step = tmpSteps;
     }
@@ -525,7 +525,7 @@ void fnPem(uint16_t unusedButMandatoryParameter) {
     }
 
     if(programList[currentProgramNumber - 1].step < 0) { // Flash
-      freeWp43(tmpSteps, 400 * 7);
+      freeWp43(tmpSteps, TO_BLOCKS(400 * 7));
     }
 
     if(aimBuffer[0] != 0 && linesOfCurrentStep > 4) { // Limited to 4 lines so as not to cause crash or freeze
