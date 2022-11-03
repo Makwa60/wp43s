@@ -706,7 +706,7 @@ void tamReset(void) {
         }
         if(tam.indirect && calcMode != cmPem) {
           value = indirectAddressing(value, (indexOfItems[tamOperation()].param == tmFlagR || indexOfItems[tamOperation()].param == tmFlagW) ? INDPM_FLAG : (tam.mode == tmStoRcl || tam.mode == tmMDim) ? INDPM_REGISTER : INDPM_PARAM, min, max);
-          run = (lastErrorCode == 0);
+          run = (value != FAILED_INDIRECTION);
         }
         if(tam.function == ITM_GTOP) {
           if(tam.digitsSoFar < 3) {
@@ -788,11 +788,20 @@ void tamReset(void) {
       else if(tam.mode == tmLabel || tam.mode == tmSolve || (tam.mode == tmKey && tam.keyInputFinished)) {
         value = findNamedLabel(buffer);
         if(value == INVALID_VARIABLE && tam.function != ITM_LBL && tam.function != ITM_LBLQ) {
-          displayCalcErrorMessage(ERROR_LABEL_NOT_FOUND, ERR_REGISTER_LINE, REGISTER_X);
-          #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-            sprintf(errorMessage, "string '%s' is not a named label", buffer);
-            moreInfoOnError("In function _tamProcessInput:", errorMessage, NULL, NULL);
-          #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+          if(calcMode != cmPem && getSystemFlag(FLAG_IGN1ER)) {
+            clearSystemFlag(FLAG_IGN1ER);
+            #if (EXTRA_INFO_ON_CALC_ERROR == 1)
+              sprintf(errorMessage, "string '%s' is not a named label", buffer);
+              moreInfoOnError("In function _tamProcessInput:", errorMessage, "ignored since IGN1ER was set", NULL);
+            #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+          }
+          else {
+            displayCalcErrorMessage(ERROR_LABEL_NOT_FOUND, ERR_REGISTER_LINE, REGISTER_X);
+            #if (EXTRA_INFO_ON_CALC_ERROR == 1)
+              sprintf(errorMessage, "string '%s' is not a named label", buffer);
+              moreInfoOnError("In function _tamProcessInput:", errorMessage, NULL, NULL);
+            #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+          }
         }
       }
       else if(tryAllocate) {
@@ -801,11 +810,20 @@ void tamReset(void) {
       else {
         value = findNamedVariable(buffer);
         if(value == INVALID_VARIABLE) {
-          displayCalcErrorMessage(ERROR_UNDEF_SOURCE_VAR, ERR_REGISTER_LINE, REGISTER_X);
-          #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-            sprintf(errorMessage, "string '%s' is not a named variable", buffer);
-            moreInfoOnError("In function _tamProcessInput:", errorMessage, NULL, NULL);
-          #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+          if(calcMode != cmPem && getSystemFlag(FLAG_IGN1ER)) {
+            clearSystemFlag(FLAG_IGN1ER);
+            #if (EXTRA_INFO_ON_CALC_ERROR == 1)
+              sprintf(errorMessage, "string '%s' is not a named variable", buffer);
+              moreInfoOnError("In function _tamProcessInput:", errorMessage, "ignored since IGN1ER was set", NULL);
+            #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+          }
+          else {
+            displayCalcErrorMessage(ERROR_UNDEF_SOURCE_VAR, ERR_REGISTER_LINE, REGISTER_X);
+            #if (EXTRA_INFO_ON_CALC_ERROR == 1)
+              sprintf(errorMessage, "string '%s' is not a named variable", buffer);
+              moreInfoOnError("In function _tamProcessInput:", errorMessage, NULL, NULL);
+            #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+          }
         }
       }
       if(calcMode == cmPem) {
@@ -816,7 +834,7 @@ void tamReset(void) {
       }
       if(tam.indirect && value != INVALID_VARIABLE && calcMode != cmPem) {
         value = indirectAddressing(value, (indexOfItems[tam.function].param == tmFlagR || indexOfItems[tam.function].param == tmFlagW) ? INDPM_FLAG : (tam.mode == tmStoRcl || tam.mode == tmMDim) ? INDPM_REGISTER : INDPM_PARAM, min, max);
-        if(lastErrorCode != 0) {
+        if(value == FAILED_INDIRECTION) {
           value = INVALID_VARIABLE;
         }
       }

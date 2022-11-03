@@ -272,6 +272,8 @@
   #define FIRST_LABEL                             2028
   #define LAST_LABEL                              6999
 
+  #define FAILED_INDIRECTION                      9999
+
   #define NUMBER_OF_RESERVED_VARIABLES        (LAST_RESERVED_VARIABLE - FIRST_RESERVED_VARIABLE + 1)
 
 
