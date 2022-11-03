@@ -344,7 +344,9 @@ void program_main(void) {
       SET_ST(STAT_SUSPENDED);
       CLR_ST(STAT_RUNNING);
       SET_ST(STAT_OFF);
-      sys_sleep();
+      do {
+        sys_sleep();
+      } while(ST(STAT_PGM_END));
       CLR_ST(STAT_OFF);
       CLR_ST(STAT_SUSPENDED);
       SET_ST(STAT_RUNNING);
