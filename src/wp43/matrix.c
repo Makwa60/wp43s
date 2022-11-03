@@ -5646,12 +5646,14 @@ void complex_QR_decomposition(const complex34Matrix_t *matrix, complex34Matrix_t
 
     if(size == 2) {
       calculateEigenvalues22(a, size, eig, eig + 1, eig + 6, eig + 7, realContext);
+      sortEigenvalues(eig, size, 0, (size + 1) / 2, size - 1, realContext);
     }
     else if(size == 3) {
       calculateEigenvalues33(a, size, eig, eig + 1, eig + 8, eig + 9, eig + 16, eig + 17, realContext);
+      sortEigenvalues(eig, size, 0, (size + 1) / 2, size - 1, realContext);
     }
     else {
-      real_t tol;
+      real_t tol, maxM, minM, tmpM;
       if(reducedSignificantDigits) {
         if(significantDigits == 0 || significantDigits >= 34) {
           realCopy(const_1e_37, &tol);
@@ -5712,8 +5714,25 @@ void complex_QR_decomposition(const complex34Matrix_t *matrix, complex34Matrix_t
         }
       }
       shifted = false;
+
+      // check for condition number of the diagonal elements
+      // at least one of eigenvalues is 0 if and only if the given matrix is singular
+      sortEigenvalues(eig, size, 0, (size + 1) / 2, size - 1, realContext);
+      complexMagnitude(eig, eig + 1, &maxM, realContext);
+      for(i = 0; i < size; i++) {
+        complexMagnitude(eig + (i * size + i) * 2, eig + (i * size + i) * 2 + 1, &tmpM, realContext);
+        if(!realIsZero(&tmpM) && !realIsZero(&maxM) && realCompareLessThan(&tmpM, &tol)) { // ill-conditioned: possibly singular
+          realMultiply(&maxM, &tol, &minM, realContext);
+          for(i = 1; i < size; i++) {
+            complexMagnitude(eig + (i * size + i) * 2, eig + (i * size + i) * 2 + 1, &tmpM, realContext);
+            if(realCompareLessThan(&tmpM, &minM)) {
+              realZero(eig + (i * size + i) * 2    );
+              realZero(eig + (i * size + i) * 2 + 1);
+            }
+          }
+        }
+      }
     }
-    sortEigenvalues(eig, size, 0, (size + 1) / 2, size - 1, realContext);
   }
 
 
