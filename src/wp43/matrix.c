@@ -5406,6 +5406,52 @@ void complex_QR_decomposition(const complex34Matrix_t *matrix, complex34Matrix_t
   }
 
 
+  static bool _checkConditionNumberOfAddSub(const real_t *operand1, const real_t *operand2, const real_t *res, realContext_t *realContext) {
+    real_t conditionNumber1, conditionNumber2;
+    real_t *conditionNumber = &conditionNumber1;
+
+    if(realIsZero(res)) {
+      return false;
+    }
+    else {
+      realDivide(res, operand1, &conditionNumber1, realContext); realSetPositiveSign(&conditionNumber1);
+      realDivide(res, operand2, &conditionNumber2, realContext); realSetPositiveSign(&conditionNumber2);
+      if(realIsZero(operand1)) {
+        conditionNumber = &conditionNumber2;
+      }
+      else if(realIsZero(operand2)) {
+        conditionNumber = &conditionNumber1;
+      }
+      else if(realCompareGreaterThan(&conditionNumber1, &conditionNumber2)) {
+        conditionNumber = &conditionNumber2;
+      }
+      else {
+        conditionNumber = &conditionNumber1;
+      }
+      return realCompareLessThan(conditionNumber, const_1e_37);
+    }
+  }
+  static void _realCheckedAdd(const real_t *operand1, const real_t *operand2, real_t *res, realContext_t *realContext) {
+    real_t r;
+    realAdd(operand1, operand2, &r, realContext);
+    if(_checkConditionNumberOfAddSub(operand1, operand2, &r, realContext)) {
+      realZero(res);
+    }
+    else {
+      realCopy(&r, res);
+    }
+  }
+  static void _realCheckedSubtract(const real_t *operand1, const real_t *operand2, real_t *res, realContext_t *realContext) {
+    real_t r;
+    realSubtract(operand1, operand2, &r, realContext);
+    if(_checkConditionNumberOfAddSub(operand1, operand2, &r, realContext)) {
+      realZero(res);
+    }
+    else {
+      realCopy(&r, res);
+    }
+  }
+
   static void solveCubicEquation(const real_t *c2Real, const real_t *c2Imag, const real_t *c1Real, const real_t *c1Imag, const real_t *c0Real, const real_t *c0Imag, real_t *rReal, real_t *rImag, real_t *x1Real, real_t *x1Imag, real_t *x2Real, real_t *x2Imag, real_t *x3Real, real_t *x3Imag, realContext_t *realContext) {
     // x^3 + b x^2 + c x + d = 0
     // Abramowitz & Stegun §3.8.2
@@ -5451,8 +5497,8 @@ void complex_QR_decomposition(const complex34Matrix_t *matrix, complex34Matrix_t
     realMultiply(&qr, const_1on2, x3Real, realContext), realMultiply(&qi, const_1on2, x3Imag, realContext);
     realAdd(x3Real, x2Real, x3Real, realContext), realAdd(x3Imag, x2Imag, x3Imag, realContext);
     realChangeSign(x3Real); realChangeSign(x3Imag);
-    realAdd(x3Real, &rr, x2Real, realContext), realAdd(x3Imag, &ri, x2Imag, realContext);
-    realSubtract(x3Real, &rr, x3Real, realContext), realSubtract(x3Imag, &ri, x3Imag, realContext);
+    _realCheckedAdd(x3Real, &rr, x2Real, realContext), _realCheckedAdd(x3Imag, &ri, x2Imag, realContext);
+    _realCheckedSubtract(x3Real, &rr, x3Real, realContext), _realCheckedSubtract(x3Imag, &ri, x3Imag, realContext);
   }
 
   static void calculateEigenvalues33(const real_t *mat, uint16_t size, real_t *t1r, real_t *t1i, real_t *t2r, real_t *t2i, real_t *t3r, real_t *t3i, realContext_t *realContext) {
