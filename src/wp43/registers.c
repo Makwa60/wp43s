@@ -1399,12 +1399,15 @@ int16_t indirectAddressing(calcRegister_t regist, uint16_t parameterType, int16_
   if(regist >= FIRST_LOCAL_REGISTER + currentNumberOfLocalRegisters &&
      (regist < FIRST_NAMED_VARIABLE ||
         regist >= FIRST_NAMED_VARIABLE + numberOfNamedVariables)) {
-    displayCalcErrorMessage(ERROR_OUT_OF_RANGE, ERR_REGISTER_LINE, REGISTER_X);
+    if(!getSystemFlag(FLAG_IGN1ER)) {
+      displayCalcErrorMessage(ERROR_OUT_OF_RANGE, ERR_REGISTER_LINE, REGISTER_X);
+    }
     #if defined(PC_BUILD)
       sprintf(errorMessage, "local indirection register .%02d", regist - FIRST_LOCAL_REGISTER);
-      moreInfoOnError("In function indirectAddressing:", errorMessage, "is not defined!", NULL);
+      moreInfoOnError("In function indirectAddressing:", errorMessage, "is not defined!", getSystemFlag(FLAG_IGN1ER) ? "ignored since IGN1ER was set" : NULL);
     #endif // PC_BUILD
-    return 9999;
+    clearSystemFlag(FLAG_IGN1ER);
+    return FAILED_INDIRECTION;
   }
 
   else if(getRegisterDataType(regist) == dtReal34) {
@@ -1412,13 +1415,16 @@ int16_t indirectAddressing(calcRegister_t regist, uint16_t parameterType, int16_
 
     int32ToReal34(maxValue, &maxValue34);
     if(real34CompareLessThan(REGISTER_REAL34_DATA(regist), const34_0) || real34CompareGreaterEqual(REGISTER_REAL34_DATA(regist), &maxValue34)) {
-      displayCalcErrorMessage(ERROR_OUT_OF_RANGE, ERR_REGISTER_LINE, REGISTER_X);
+      if(!getSystemFlag(FLAG_IGN1ER)) {
+        displayCalcErrorMessage(ERROR_OUT_OF_RANGE, ERR_REGISTER_LINE, REGISTER_X);
+      }
       #if defined(PC_BUILD)
         real34ToString(REGISTER_REAL34_DATA(regist), errorMessage);
         sprintf(tmpString, "register %" PRId16 " = %s:", regist, errorMessage);
-        moreInfoOnError("In function indirectAddressing:", tmpString, "this value is negative or too big!", NULL);
+        moreInfoOnError("In function indirectAddressing:", tmpString, "this value is negative or too big!", getSystemFlag(FLAG_IGN1ER) ? "ignored since IGN1ER was set" : NULL);
       #endif // PC_BUILD
-      return 9999;
+      clearSystemFlag(FLAG_IGN1ER);
+      return FAILED_INDIRECTION;
     }
     value = real34ToInt32(REGISTER_REAL34_DATA(regist));
   }
@@ -1428,14 +1434,17 @@ int16_t indirectAddressing(calcRegister_t regist, uint16_t parameterType, int16_
 
     convertLongIntegerRegisterToLongInteger(regist, lgInt);
     if(longIntegerIsNegative(lgInt) || longIntegerCompareUInt(lgInt, maxValue) > 0) {
-      displayCalcErrorMessage(ERROR_OUT_OF_RANGE, ERR_REGISTER_LINE, REGISTER_X);
+      if(!getSystemFlag(FLAG_IGN1ER)) {
+        displayCalcErrorMessage(ERROR_OUT_OF_RANGE, ERR_REGISTER_LINE, REGISTER_X);
+      }
       #if defined(PC_BUILD)
         longIntegerToAllocatedString(lgInt, errorMessage, ERROR_MESSAGE_LENGTH);
         sprintf(tmpString, "register %" PRId16 " = %s:", regist, errorMessage);
-        moreInfoOnError("In function indirectAddressing:", tmpString, "this value is negative or too big!", NULL);
+        moreInfoOnError("In function indirectAddressing:", tmpString, "this value is negative or too big!", getSystemFlag(FLAG_IGN1ER) ? "ignored since IGN1ER was set" : NULL);
       #endif // PC_BUILD
       longIntegerFree(lgInt);
-      return 9999;
+      clearSystemFlag(FLAG_IGN1ER);
+      return FAILED_INDIRECTION;
     }
     value = longIntegerToUInt(lgInt);
     longIntegerFree(lgInt);
@@ -1447,13 +1456,16 @@ int16_t indirectAddressing(calcRegister_t regist, uint16_t parameterType, int16_
 
     convertShortIntegerRegisterToUInt64(regist, &sign, &val);
     if(sign == 1 || val > 180) {
-      displayCalcErrorMessage(ERROR_OUT_OF_RANGE, ERR_REGISTER_LINE, REGISTER_X);
+      if(!getSystemFlag(FLAG_IGN1ER)) {
+        displayCalcErrorMessage(ERROR_OUT_OF_RANGE, ERR_REGISTER_LINE, REGISTER_X);
+      }
       #if defined(PC_BUILD)
         shortIntegerToDisplayString(regist, errorMessage, false);
         sprintf(tmpString, "register %" PRId16 " = %s:", regist, errorMessage);
-        moreInfoOnError("In function indirectAddressing:", tmpString, "this value is negative or too big!", NULL);
+        moreInfoOnError("In function indirectAddressing:", tmpString, "this value is negative or too big!", getSystemFlag(FLAG_IGN1ER) ? "ignored since IGN1ER was set" : NULL);
       #endif // PC_BUILD
-      return 9999;
+      clearSystemFlag(FLAG_IGN1ER);
+      return FAILED_INDIRECTION;
     }
     value = val;
   }
@@ -1462,34 +1474,43 @@ int16_t indirectAddressing(calcRegister_t regist, uint16_t parameterType, int16_
     value = findNamedVariable(REGISTER_STRING_DATA(regist));
     isValidAlpha = true;
     if(value == INVALID_VARIABLE) {
-      displayCalcErrorMessage(ERROR_UNDEF_SOURCE_VAR, ERR_REGISTER_LINE, REGISTER_X);
+      if(!getSystemFlag(FLAG_IGN1ER)) {
+        displayCalcErrorMessage(ERROR_UNDEF_SOURCE_VAR, ERR_REGISTER_LINE, REGISTER_X);
+      }
       #if (EXTRA_INFO_ON_CALC_ERROR == 1)
         sprintf(errorMessage, "string '%s' is not a named variable", REGISTER_STRING_DATA(regist));
-        moreInfoOnError("In function indirectAddressing:", errorMessage, NULL, NULL);
+        moreInfoOnError("In function indirectAddressing:", errorMessage, getSystemFlag(FLAG_IGN1ER) ? "ignored since IGN1ER was set" : NULL, NULL);
       #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
-      return 9999;
+      clearSystemFlag(FLAG_IGN1ER);
+      return FAILED_INDIRECTION;
     }
   }
 
   else {
-    displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, REGISTER_X);
+    if(!getSystemFlag(FLAG_IGN1ER)) {
+      displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, REGISTER_X);
+    }
     #if defined(PC_BUILD)
       sprintf(errorMessage, "register %" PRId16 " is %s:", regist, getRegisterDataTypeName(regist, true, false));
-      moreInfoOnError("In function indirectAddressing:", errorMessage, "not suited for indirect addressing!", NULL);
+      moreInfoOnError("In function indirectAddressing:", errorMessage, "not suited for indirect addressing!", getSystemFlag(FLAG_IGN1ER) ? "ignored since IGN1ER was set" : NULL);
     #endif // PC_BUILD
-    return 9999;
+    clearSystemFlag(FLAG_IGN1ER);
+    return FAILED_INDIRECTION;
   }
 
   if(minValue <= value && (value <= maxValue || isValidAlpha)) {
     return value;
   }
   else {
-    displayCalcErrorMessage(ERROR_OUT_OF_RANGE, ERR_REGISTER_LINE, REGISTER_X);
+    if(!getSystemFlag(FLAG_IGN1ER)) {
+      displayCalcErrorMessage(ERROR_OUT_OF_RANGE, ERR_REGISTER_LINE, REGISTER_X);
+    }
     #if defined(PC_BUILD)
       sprintf(errorMessage, "value = %d! Should be from %d to %d.", value, minValue, maxValue);
-      moreInfoOnError("In function indirectAddressing:", errorMessage, NULL, NULL);
+      moreInfoOnError("In function indirectAddressing:", errorMessage, getSystemFlag(FLAG_IGN1ER) ? "ignored since IGN1ER was set" : NULL, NULL);
     #endif // PC_BUILD
-    return 9999;
+    clearSystemFlag(FLAG_IGN1ER);
+    return FAILED_INDIRECTION;
   }
 }
 

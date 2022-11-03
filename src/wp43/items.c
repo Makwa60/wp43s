@@ -168,6 +168,13 @@ void fnNop(uint16_t unusedButMandatoryParameter) {
         if(regist != INVALID_VARIABLE) {
           reallyRunFunction(func, regist);
         }
+        else if(getSystemFlag(FLAG_IGN1ER)) {
+          clearSystemFlag(FLAG_IGN1ER);
+          #if (EXTRA_INFO_ON_CALC_ERROR == 1)
+            sprintf(errorMessage, "string '%s' is not a named variable", varCatalogItem);
+            moreInfoOnError("In function runFunction:", errorMessage, "ignored since IGN1ER was set", NULL);
+          #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+        }
         else {
           displayCalcErrorMessage(ERROR_UNDEF_SOURCE_VAR, ERR_REGISTER_LINE, REGISTER_X);
           #if (EXTRA_INFO_ON_CALC_ERROR == 1)
@@ -182,6 +189,13 @@ void fnNop(uint16_t unusedButMandatoryParameter) {
         calcRegister_t regist = findNamedLabel(varCatalogItem);
         if(regist != INVALID_VARIABLE) {
           reallyRunFunction(func, regist);
+        }
+        else if(getSystemFlag(FLAG_IGN1ER)) {
+          clearSystemFlag(FLAG_IGN1ER);
+          #if (EXTRA_INFO_ON_CALC_ERROR == 1)
+            sprintf(errorMessage, "string '%s' is not a named label", varCatalogItem);
+            moreInfoOnError("In function runFunction:", errorMessage, "ignored since IGN1ER was set", NULL);
+          #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
         }
         else {
           displayCalcErrorMessage(ERROR_LABEL_NOT_FOUND, ERR_REGISTER_LINE, REGISTER_X);

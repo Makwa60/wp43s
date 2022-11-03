@@ -8,6 +8,7 @@
 #include "defines.h"
 #include "display.h"
 #include "error.h"
+#include "flags.h"
 #include "fonts.h"
 #include "items.h"
 #include "programming/flash.h"
@@ -40,7 +41,7 @@
     uint8_t opParam = *(uint8_t *)paramAddress;
     if(opParam <= LAST_LOCAL_REGISTER) { // Local register from .00 to .98
       int16_t realParam = indirectAddressing(opParam, INDPM_REGISTER, 0, 99);
-      if(realParam < 9999) {
+      if(realParam != FAILED_INDIRECTION) {
         return realParam;
       }
     }
@@ -58,7 +59,7 @@
     regist = findNamedVariable(tmpStringLabelOrVariableName);
     if(regist != INVALID_VARIABLE) {
       int16_t realParam = indirectAddressing(regist, INDPM_REGISTER, 0, 99);
-      if(realParam < 9999) {
+      if(realParam != FAILED_INDIRECTION) {
         return realParam;
       }
     }
@@ -117,7 +118,11 @@
     if(programList[currentProgramNumber - 1].step > 0) { // RAM
       label = _get2ndParamOfKey(opParam.ram);
 
-      if(*secondParam.ram == ITM_XEQ) {
+      if(lastErrorCode != ERROR_NONE && getSystemFlag(FLAG_IGN1ER)) {
+        lastErrorCode = ERROR_NONE;
+        clearSystemFlag(FLAG_IGN1ER);
+      }
+      else if(*secondParam.ram == ITM_XEQ) {
         keyXeq(keyNum, label);
       }
       else {
@@ -128,7 +133,11 @@
       readStepInFlashPgmLibrary((uint8_t *)tmpString, 400, secondParam.flash);
       label = _get2ndParamOfKey((uint8_t *)tmpString + 1);
 
-      if(*((uint8_t *)tmpString) == ITM_XEQ) {
+      if(lastErrorCode != ERROR_NONE && getSystemFlag(FLAG_IGN1ER)) {
+        lastErrorCode = ERROR_NONE;
+        clearSystemFlag(FLAG_IGN1ER);
+      }
+      else if(*((uint8_t *)tmpString) == ITM_XEQ) {
         keyXeq(keyNum, label);
       }
       else {

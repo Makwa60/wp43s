@@ -314,7 +314,7 @@ void fnStopProgram(uint16_t unusedButMandatoryParameter) {
     uint8_t opParam = *(uint8_t *)paramAddress;
     if(opParam <= LAST_LOCAL_REGISTER) { // Local register from .00 to .98
       int16_t realParam = indirectAddressing(opParam, (indexOfItems[op].param == tmFlagR || indexOfItems[op].param == tmFlagW) ? INDPM_FLAG : (indexOfItems[op].param == tmStoRcl || indexOfItems[op].param == tmMDim) ? INDPM_REGISTER : INDPM_PARAM, indexOfItems[op].tamMinMax >> TAM_MAX_BITS, indexOfItems[op].tamMinMax & TAM_MAX_MASK);
-      if(realParam < 9999) {
+      if(realParam != FAILED_INDIRECTION) {
         reallyRunFunction(op, realParam);
       }
     }
@@ -331,15 +331,22 @@ void fnStopProgram(uint16_t unusedButMandatoryParameter) {
     regist = findNamedVariable(tmpStringLabelOrVariableName);
     if(regist != INVALID_VARIABLE) {
       int16_t realParam = indirectAddressing(regist, (indexOfItems[op].param == tmFlagR || indexOfItems[op].param == tmFlagW) ? INDPM_FLAG : (indexOfItems[op].param == tmStoRcl || indexOfItems[op].param == tmMDim) ? INDPM_REGISTER : INDPM_PARAM, indexOfItems[op].tamMinMax >> TAM_MAX_BITS, indexOfItems[op].tamMinMax & TAM_MAX_MASK);
-      if(realParam < 9999) {
+      if(realParam != FAILED_INDIRECTION) {
         reallyRunFunction(op, realParam);
       }
+    }
+    else if(getSystemFlag(FLAG_IGN1ER)) {
+      clearSystemFlag(FLAG_IGN1ER);
+      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
+        sprintf(errorMessage, "string '%s' is not a named variable", tmpStringLabelOrVariableName);
+        moreInfoOnError("In function _executeWithIndirectVariable:", errorMessage, "ignored since IGN1ER was set", NULL);
+      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
     }
     else {
       displayCalcErrorMessage(ERROR_UNDEF_SOURCE_VAR, ERR_REGISTER_LINE, REGISTER_X);
       #if (EXTRA_INFO_ON_CALC_ERROR == 1)
         sprintf(errorMessage, "string '%s' is not a named variable", tmpStringLabelOrVariableName);
-        moreInfoOnError("In function _executeOp:", errorMessage, NULL, NULL);
+        moreInfoOnError("In function _executeWithIndirectVariable:", errorMessage, NULL, NULL);
       #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
     }
   }
@@ -365,6 +372,13 @@ void fnStopProgram(uint16_t unusedButMandatoryParameter) {
           calcRegister_t label = findNamedLabel(tmpStringLabelOrVariableName);
           if(label != INVALID_VARIABLE || op == ITM_LBLQ) {
             reallyRunFunction(op, label);
+          }
+          else if(getSystemFlag(FLAG_IGN1ER)) {
+            clearSystemFlag(FLAG_IGN1ER);
+            #if (EXTRA_INFO_ON_CALC_ERROR == 1)
+              sprintf(errorMessage, "string '%s' is not a named label", tmpStringLabelOrVariableName);
+              moreInfoOnError("In function _executeOp:", errorMessage, "ignored since IGN1ER was set", NULL);
+            #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
           }
           else {
             displayCalcErrorMessage(ERROR_LABEL_NOT_FOUND, ERR_REGISTER_LINE, REGISTER_X);
@@ -465,6 +479,13 @@ void fnStopProgram(uint16_t unusedButMandatoryParameter) {
           }
           else if(regist != INVALID_VARIABLE) {
             reallyRunFunction(op, regist);
+          }
+          else if(getSystemFlag(FLAG_IGN1ER)) {
+            clearSystemFlag(FLAG_IGN1ER);
+            #if (EXTRA_INFO_ON_CALC_ERROR == 1)
+              sprintf(errorMessage, "string '%s' is not a named variable", tmpStringLabelOrVariableName);
+              moreInfoOnError("In function _executeOp:", errorMessage, "ignored since IGN1ER was set", NULL);
+            #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
           }
           else {
             displayCalcErrorMessage(ERROR_UNDEF_SOURCE_VAR, ERR_REGISTER_LINE, REGISTER_X);

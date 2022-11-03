@@ -943,6 +943,13 @@ bool      _kbSeenInterrupt     = false;
           if(var != INVALID_VARIABLE) {
             reallyRunFunction(item, var);
           }
+          else if(getSystemFlag(FLAG_IGN1ER)) {
+            clearSystemFlag(FLAG_IGN1ER);
+            #if (EXTRA_INFO_ON_CALC_ERROR == 1)
+              sprintf(errorMessage, "string '%s' is not a named variable", funcParam);
+              moreInfoOnError("In function btnReleased:", errorMessage, "ignored since IGN1ER was set", NULL);
+            #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+          }
           else {
             displayCalcErrorMessage(ERROR_UNDEF_SOURCE_VAR, ERR_REGISTER_LINE, REGISTER_X);
             #if (EXTRA_INFO_ON_CALC_ERROR == 1)
@@ -955,6 +962,13 @@ bool      _kbSeenInterrupt     = false;
           calcRegister_t label = findNamedLabel(funcParam);
           if(label != INVALID_VARIABLE) {
             reallyRunFunction(item, label);
+          }
+          else if(getSystemFlag(FLAG_IGN1ER)) {
+            clearSystemFlag(FLAG_IGN1ER);
+            #if (EXTRA_INFO_ON_CALC_ERROR == 1)
+              sprintf(errorMessage, "string '%s' is not a named label", funcParam);
+              moreInfoOnError("In function btnReleased:", errorMessage, "ignored since IGN1ER was set", NULL);
+            #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
           }
           else {
             displayCalcErrorMessage(ERROR_LABEL_NOT_FOUND, ERR_REGISTER_LINE, REGISTER_X);
