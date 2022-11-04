@@ -239,7 +239,7 @@ void timerAppResetState(void) {
     if(timerAppState.isFirstDigit) {
       real_t lapTimeReal;
       _timerAppGetLapTimeReal(&lapTimeReal);
-      reallocateRegister(timerAppState.currentRegister, dtTime, REAL34_SIZE_IN_BLOCKS, amNone);
+      reallocateRegister(timerAppState.currentRegister, dtTime, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
       realToReal34(&lapTimeReal, REGISTER_REAL34_DATA(timerAppState.currentRegister));
       timerAppUp();
     }

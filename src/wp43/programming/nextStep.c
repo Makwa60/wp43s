@@ -169,11 +169,11 @@ uint8_t *countLiteralBytes(uint8_t *step) {
     //}
 
     case BINARY_REAL34: {
-      return step + TO_BYTES(REAL34_SIZE_IN_BLOCKS);
+      return step + TO_BYTES(TO_BLOCKS(REAL34_SIZE_IN_BYTES));
     }
 
     case BINARY_COMPLEX34: {
-      return step + TO_BYTES(REAL34_SIZE_IN_BLOCKS * 2);
+      return step + TO_BYTES(TO_BLOCKS(REAL34_SIZE_IN_BYTES) * 2);
     }
 
     //case BINARY_DATE: {

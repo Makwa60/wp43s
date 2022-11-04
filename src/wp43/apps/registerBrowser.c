@@ -41,7 +41,7 @@ int16_t currentRegisterBrowserScreen;
           real34ToDisplayString(REGISTER_REAL34_DATA(regist), getRegisterAngularMode(regist), tmpString, &standardFont, SCREEN_WIDTH - 1 - registerNameWidth, 34, false, STD_SPACE_4_PER_EM, false);
         }
         else {
-          sprintf(tmpString, "%d bytes", (int16_t)TO_BYTES(REAL34_SIZE_IN_BLOCKS));
+          sprintf(tmpString, "%d bytes", (int16_t)TO_BYTES(TO_BLOCKS(REAL34_SIZE_IN_BYTES)));
         }
         break;
       }
@@ -51,7 +51,7 @@ int16_t currentRegisterBrowserScreen;
           complex34ToDisplayString(REGISTER_COMPLEX34_DATA(regist), tmpString, &standardFont, SCREEN_WIDTH - 1 - registerNameWidth, 34, false, STD_SPACE_4_PER_EM, false);
         }
         else {
-          sprintf(tmpString, "%d bytes", (int16_t)TO_BYTES(COMPLEX34_SIZE_IN_BLOCKS));
+          sprintf(tmpString, "%d bytes", (int16_t)TO_BYTES(TO_BLOCKS(COMPLEX34_SIZE_IN_BYTES)));
         }
         break;
       }
@@ -105,7 +105,7 @@ int16_t currentRegisterBrowserScreen;
           timeToDisplayString(regist, tmpString, true);
         }
         else {
-          sprintf(tmpString, "%d bytes", (int16_t)TO_BYTES(REAL34_SIZE_IN_BLOCKS));
+          sprintf(tmpString, "%d bytes", (int16_t)TO_BYTES(TO_BLOCKS(REAL34_SIZE_IN_BYTES)));
         }
         break;
       }
@@ -115,7 +115,7 @@ int16_t currentRegisterBrowserScreen;
           dateToDisplayString(regist, tmpString);
         }
         else {
-          sprintf(tmpString, "%d bytes", (int16_t)TO_BYTES(REAL34_SIZE_IN_BLOCKS));
+          sprintf(tmpString, "%d bytes", (int16_t)TO_BYTES(TO_BLOCKS(REAL34_SIZE_IN_BYTES)));
         }
         break;
       }
@@ -126,7 +126,7 @@ int16_t currentRegisterBrowserScreen;
         }
         else {
           dataBlock_t* dblock = REGISTER_REAL34_MATRIX_DBLOCK(regist);
-          sprintf(tmpString, "%" PRIu16 " element%s " STD_CORRESPONDS_TO " 4+%" PRIu32 " bytes", (uint16_t)(dblock->matrixRows * dblock->matrixColumns), (dblock->matrixRows * dblock->matrixColumns)==1 ? "" : "s", (uint32_t)TO_BYTES(dblock->matrixRows * dblock->matrixColumns * REAL34_SIZE_IN_BLOCKS));
+          sprintf(tmpString, "%" PRIu16 " element%s " STD_CORRESPONDS_TO " 4+%" PRIu32 " bytes", (uint16_t)(dblock->matrixRows * dblock->matrixColumns), (dblock->matrixRows * dblock->matrixColumns)==1 ? "" : "s", (uint32_t)TO_BYTES(dblock->matrixRows * dblock->matrixColumns * TO_BLOCKS(REAL34_SIZE_IN_BYTES)));
         }
         break;
       }
@@ -137,7 +137,7 @@ int16_t currentRegisterBrowserScreen;
         }
         else {
           dataBlock_t* dblock = REGISTER_COMPLEX34_MATRIX_DBLOCK(regist);
-          sprintf(tmpString, "%" PRIu16 " element%s " STD_CORRESPONDS_TO " 4+%" PRIu32 " bytes", (uint16_t)(dblock->matrixRows * dblock->matrixColumns), (dblock->matrixRows * dblock->matrixColumns)==1 ? "" : "s", (uint32_t)TO_BYTES(dblock->matrixRows * dblock->matrixColumns * COMPLEX34_SIZE_IN_BLOCKS));
+          sprintf(tmpString, "%" PRIu16 " element%s " STD_CORRESPONDS_TO " 4+%" PRIu32 " bytes", (uint16_t)(dblock->matrixRows * dblock->matrixColumns), (dblock->matrixRows * dblock->matrixColumns)==1 ? "" : "s", (uint32_t)TO_BYTES(dblock->matrixRows * dblock->matrixColumns * TO_BLOCKS(COMPLEX34_SIZE_IN_BYTES)));
         }
         break;
       }

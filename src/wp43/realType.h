@@ -74,27 +74,27 @@
 
   typedef enum rounding realRoundingMode_t;
 
-  static const size_t REAL_SIZE_IN_BLOCKS      = TO_BLOCKS(sizeof(real_t));
-  static const size_t REAL34_SIZE_IN_BLOCKS    = TO_BLOCKS(sizeof(real34_t));
-  static const size_t REAL39_SIZE_IN_BLOCKS    = TO_BLOCKS(sizeof(real39_t));
-  static const size_t REAL51_SIZE_IN_BLOCKS    = TO_BLOCKS(sizeof(real51_t));
-  static const size_t REAL1071_SIZE_IN_BLOCKS  = TO_BLOCKS(sizeof(real1071_t));
-  static const size_t COMPLEX34_SIZE_IN_BLOCKS = TO_BLOCKS(sizeof(complex34_t));
+  static const size_t REAL_SIZE_IN_BYTES      = sizeof(real_t);
+  static const size_t REAL34_SIZE_IN_BYTES    = sizeof(real34_t);
+  static const size_t REAL39_SIZE_IN_BYTES    = sizeof(real39_t);
+  static const size_t REAL51_SIZE_IN_BYTES    = sizeof(real51_t);
+  static const size_t REAL1071_SIZE_IN_BYTES  = sizeof(real1071_t);
+  static const size_t COMPLEX34_SIZE_IN_BYTES = sizeof(complex34_t);
 
-  extern realContext_t          ctxtReal4;    //   Limited digits: used for high speed internal calcs
-  extern realContext_t          ctxtReal34;   //   34 digits
-  extern realContext_t          ctxtReal39;   //   39 digits: used for 34 digits intermediate calculations
-  extern realContext_t          ctxtReal51;   //   51 digits: used for 34 digits intermediate calculations
-  extern realContext_t          ctxtReal75;   //   75 digits: used in SLVQ
-  extern realContext_t          ctxtReal1071; // 1071 digits: used in radian angle reduction
+  extern realContext_t ctxtReal4;    //   Limited digits: used for high speed internal calcs
+  extern realContext_t ctxtReal34;   //   34 digits
+  extern realContext_t ctxtReal39;   //   39 digits: used for 34 digits intermediate calculations
+  extern realContext_t ctxtReal51;   //   51 digits: used for 34 digits intermediate calculations
+  extern realContext_t ctxtReal75;   //   75 digits: used in SLVQ
+  extern realContext_t ctxtReal1071; // 1071 digits: used in radian angle reduction
   //extern realContext_t          ctxtReal2139; // 2139 digits: used for really big modulo
 
   #define VARIABLE_REAL34_DATA(a)                                ((real34_t    *)(a))
-  #define VARIABLE_IMAG34_DATA(a)                                ((real34_t    *)((dataBlock_t *)(a) + REAL34_SIZE_IN_BLOCKS))
+  #define VARIABLE_IMAG34_DATA(a)                                ((real34_t    *)((dataBlock_t *)(a) + TO_BLOCKS(REAL34_SIZE_IN_BYTES)))
 
 
   #define complex34ChangeSign(operand)                           {real34ChangeSign((real34_t *)(operand)); \
-                                                                  real34ChangeSign((real34_t *)((dataBlock_t *)(operand) + REAL34_SIZE_IN_BLOCKS)); \
+                                                                  real34ChangeSign((real34_t *)((dataBlock_t *)(operand) + TO_BLOCKS(REAL34_SIZE_IN_BYTES))); \
                                                                  }
   #define complex34Copy(source, destination)                     {  *(uint64_t *)(destination)     =   *(uint64_t *)(source); \
                                                                   *(((uint64_t *)(destination))+1) = *(((uint64_t *)(source))+1); \
@@ -106,7 +106,7 @@
   #define real34ChangeSign(operand)                              ((real34_t *)(operand))->bytes[15] ^= 0x80
   #define real34Compare(operand1, operand2, res)                 decQuadCompare           ((real34_t *)(res), (real34_t *)(operand1), (real34_t *)(operand2), &ctxtReal34)
   //#define real34Copy(source, destination)                        decQuadCopy            (destination, source)
-  //#define real34Copy(source, destination)                        xcopy(destination, source, TO_BYTES(REAL34_SIZE_IN_BLOCKS))
+  //#define real34Copy(source, destination)                        xcopy(destination, source, TO_BYTES(TO_BLOCKS(REAL34_SIZE_IN_BYTES)))
   #define real34Copy(source, destination)                        {*(uint64_t *)(destination) = *(uint64_t *)(source); \
                                                                   *(((uint64_t *)(destination))+1) = *(((uint64_t *)(source))+1); \
                                                                  }
@@ -137,7 +137,7 @@
   #define real34ToUInt32(source)                                 decQuadToUInt32          ((real34_t *)(source), &ctxtReal34, DEC_ROUND_DOWN)
   #define real34Reduce(source, destination)                      decQuadReduce            (destination, source, &ctxtReal34)
   #define real34Zero(destination)                                decQuadZero              (destination)
-  //#define real34Zero(destination)                                xcopy                    (destination, const34_0, TO_BYTES(REAL34_SIZE_IN_BLOCKS))
+  //#define real34Zero(destination)                                xcopy                    (destination, const34_0, TO_BYTES(TO_BLOCKS(REAL34_SIZE_IN_BYTES)))
   /*#define real34Zero(destination)                                {  *(uint64_t *)(destination)     =   *(uint64_t *)const34_0; \
                                                                     *(((uint64_t *)(destination))+1) = *(((uint64_t *)const34_0)+1); \
                                                                  }*/

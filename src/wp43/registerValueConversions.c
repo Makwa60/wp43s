@@ -52,7 +52,7 @@ void convertLongIntegerRegisterToReal34Register(calcRegister_t source, calcRegis
   convertLongIntegerRegisterToLongInteger(source, lgInt);
   longIntegerToAllocatedString(lgInt, tmpString, TMP_STR_LENGTH);
   longIntegerFree(lgInt);
-  reallocateRegister(destination, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
+  reallocateRegister(destination, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
   stringToReal34(tmpString, REGISTER_REAL34_DATA(destination));
 }
 
@@ -125,7 +125,7 @@ void convertShortIntegerRegisterToReal34Register(calcRegister_t source, calcRegi
   real34_t lowWord;
 
   convertShortIntegerRegisterToUInt64(source, &sign, &value);
-  reallocateRegister(destination, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
+  reallocateRegister(destination, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
 
   uInt32ToReal34(value >> 32, REGISTER_REAL34_DATA(destination));
   uInt32ToReal34(value & 0x00000000ffffffff, &lowWord);
@@ -397,7 +397,7 @@ void convertTimeRegisterToReal34Register(calcRegister_t source, calcRegister_t d
   real34_t real34, value34;
   real34Copy(REGISTER_REAL34_DATA(source), &real34);
   int32ToReal34(3600, &value34);
-  reallocateRegister(destination, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
+  reallocateRegister(destination, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
   real34Divide(&real34, &value34, REGISTER_REAL34_DATA(destination));
 }
 
@@ -407,7 +407,7 @@ void convertReal34RegisterToTimeRegister(calcRegister_t source, calcRegister_t d
   real34_t real34, value34;
   real34Copy(REGISTER_REAL34_DATA(source), &real34);
   int32ToReal34(3600, &value34);
-  reallocateRegister(destination, dtTime, REAL34_SIZE_IN_BLOCKS, amNone);
+  reallocateRegister(destination, dtTime, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
   real34Multiply(&real34, &value34, REGISTER_REAL34_DATA(destination));
 }
 
@@ -442,7 +442,7 @@ void convertDateRegisterToReal34Register(calcRegister_t source, calcRegister_t d
     int32ToReal34(1000000, &val), real34Divide(&y, &val, &y);
   }
 
-  reallocateRegister(destination, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
+  reallocateRegister(destination, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
   real34Add(&y, &m, REGISTER_REAL34_DATA(destination));
   real34Add(REGISTER_REAL34_DATA(destination), &d, REGISTER_REAL34_DATA(destination));
   if(isNegative) {
@@ -487,7 +487,7 @@ void convertReal34RegisterToDateRegister(calcRegister_t source, calcRegister_t d
       return;
   }
 
-  reallocateRegister(destination, dtDate, REAL34_SIZE_IN_BLOCKS, amNone);
+  reallocateRegister(destination, dtDate, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
   if(getSystemFlag(FLAG_YMD)) {
     composeJulianDay(&part1, &part2, &part3, REGISTER_REAL34_DATA(destination));
   }
@@ -668,7 +668,7 @@ void convertReal34RegisterToDateRegister(calcRegister_t source, calcRegister_t d
   void convertDoubleToReal34Register(double x, calcRegister_t destination) {
     char buff[100];
 
-    reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
+    reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
     convertDoubleToString(x, 100, buff);
     stringToReal34(buff, REGISTER_REAL34_DATA(REGISTER_X));
 

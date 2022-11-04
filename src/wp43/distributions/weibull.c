@@ -79,7 +79,7 @@ void fnWeibullP(uint16_t unusedButMandatoryParameter) {
 
   if(checkParamWeibull(&val, &shape, &lifetime)) {
     WP34S_Pdf_Weib(&val, &shape, &lifetime, &ans, &ctxtReal39);
-    reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
+    reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
     convertRealToReal34ResultRegister(&ans, REGISTER_X);
   }
 
@@ -97,7 +97,7 @@ void fnWeibullL(uint16_t unusedButMandatoryParameter) {
 
   if(checkParamWeibull(&val, &shape, &lifetime)) {
     WP34S_Cdf_Weib(&val, &shape, &lifetime, &ans, &ctxtReal39);
-    reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
+    reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
     convertRealToReal34ResultRegister(&ans, REGISTER_X);
   }
 
@@ -115,7 +115,7 @@ void fnWeibullR(uint16_t unusedButMandatoryParameter) {
 
   if(checkParamWeibull(&val, &shape, &lifetime)) {
     WP34S_Cdfu_Weib(&val, &shape, &lifetime, &ans, &ctxtReal39);
-    reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
+    reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
     convertRealToReal34ResultRegister(&ans, REGISTER_X);
   }
 
@@ -140,7 +140,7 @@ void fnWeibullI(uint16_t unusedButMandatoryParameter) {
     }
     else {
       WP34S_Qf_Weib(&val, &shape, &lifetime, &ans, &ctxtReal39);
-      reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
+      reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
       convertRealToReal34ResultRegister(&ans, REGISTER_X);
     }
   }

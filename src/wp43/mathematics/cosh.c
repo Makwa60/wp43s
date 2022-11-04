@@ -65,7 +65,7 @@ void coshLonI(void) {
   convertLongIntegerRegisterToReal(REGISTER_X, &cosh, &ctxtReal39);
   WP34S_SinhCosh(&cosh, NULL, &cosh, &ctxtReal39);
 
-  reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
+  reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
   convertRealToReal34ResultRegister(&cosh, REGISTER_X);
 }
 

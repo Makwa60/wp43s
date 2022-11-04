@@ -39,10 +39,10 @@ static void _calc_real_elliptic(real_t *sn, real_t *cn, real_t *dn, const real_t
   real_t sin_umu, cos_umu, t, r;
   int n = 0;
 
-  if((MU = allocWp43(ELLIPTIC_N * REAL_SIZE_IN_BLOCKS))) {
-    if((NU = allocWp43(ELLIPTIC_N * REAL_SIZE_IN_BLOCKS))) {
-      if((C = allocWp43(ELLIPTIC_N * REAL_SIZE_IN_BLOCKS))) {
-        if((D = allocWp43(ELLIPTIC_N * REAL_SIZE_IN_BLOCKS))) {
+  if((MU = allocWp43(ELLIPTIC_N * TO_BLOCKS(REAL_SIZE_IN_BYTES)))) {
+    if((NU = allocWp43(ELLIPTIC_N * TO_BLOCKS(REAL_SIZE_IN_BYTES)))) {
+      if((C = allocWp43(ELLIPTIC_N * TO_BLOCKS(REAL_SIZE_IN_BYTES)))) {
+        if((D = allocWp43(ELLIPTIC_N * TO_BLOCKS(REAL_SIZE_IN_BYTES)))) {
           #define mu(n) (MU + (n))
           #define nu(n) (NU + (n))
           #define c(n)  (C + (n))
@@ -52,19 +52,19 @@ static void _calc_real_elliptic(real_t *sn, real_t *cn, real_t *dn, const real_t
             realCopy(const_NaN, sn);
             realCopy(const_NaN, cn);
             realCopy(const_NaN, dn);
-            freeWp43(MU, ELLIPTIC_N * REAL_SIZE_IN_BLOCKS);
-            freeWp43(NU, ELLIPTIC_N * REAL_SIZE_IN_BLOCKS);
-            freeWp43(C, ELLIPTIC_N * REAL_SIZE_IN_BLOCKS);
-            freeWp43(D, ELLIPTIC_N * REAL_SIZE_IN_BLOCKS);
+            freeWp43(MU, ELLIPTIC_N * TO_BLOCKS(REAL_SIZE_IN_BYTES));
+            freeWp43(NU, ELLIPTIC_N * TO_BLOCKS(REAL_SIZE_IN_BYTES));
+            freeWp43(C, ELLIPTIC_N * TO_BLOCKS(REAL_SIZE_IN_BYTES));
+            freeWp43(D, ELLIPTIC_N * TO_BLOCKS(REAL_SIZE_IN_BYTES));
             return;
           }
           if(realCompareLessThan(m, const_1e_32)) {
             WP34S_Cvt2RadSinCosTan(u, amRadian, sn, cn, NULL, realContext);
             realCopy(const_1, dn);
-            freeWp43(MU, ELLIPTIC_N * REAL_SIZE_IN_BLOCKS);
-            freeWp43(NU, ELLIPTIC_N * REAL_SIZE_IN_BLOCKS);
-            freeWp43(C, ELLIPTIC_N * REAL_SIZE_IN_BLOCKS);
-            freeWp43(D, ELLIPTIC_N * REAL_SIZE_IN_BLOCKS);
+            freeWp43(MU, ELLIPTIC_N * TO_BLOCKS(REAL_SIZE_IN_BYTES));
+            freeWp43(NU, ELLIPTIC_N * TO_BLOCKS(REAL_SIZE_IN_BYTES));
+            freeWp43(C, ELLIPTIC_N * TO_BLOCKS(REAL_SIZE_IN_BYTES));
+            freeWp43(D, ELLIPTIC_N * TO_BLOCKS(REAL_SIZE_IN_BYTES));
             return;
           }
           realSubtract(m, const_1, &a, realContext);
@@ -73,10 +73,10 @@ static void _calc_real_elliptic(real_t *sn, real_t *cn, real_t *dn, const real_t
             realDivide(const_1, &b, cn, realContext);
             realMultiply(&a, cn, sn, realContext);
             realCopy(cn, dn);
-            freeWp43(MU, ELLIPTIC_N * REAL_SIZE_IN_BLOCKS);
-            freeWp43(NU, ELLIPTIC_N * REAL_SIZE_IN_BLOCKS);
-            freeWp43(C, ELLIPTIC_N * REAL_SIZE_IN_BLOCKS);
-            freeWp43(D, ELLIPTIC_N * REAL_SIZE_IN_BLOCKS);
+            freeWp43(MU, ELLIPTIC_N * TO_BLOCKS(REAL_SIZE_IN_BYTES));
+            freeWp43(NU, ELLIPTIC_N * TO_BLOCKS(REAL_SIZE_IN_BYTES));
+            freeWp43(C, ELLIPTIC_N * TO_BLOCKS(REAL_SIZE_IN_BYTES));
+            freeWp43(D, ELLIPTIC_N * TO_BLOCKS(REAL_SIZE_IN_BYTES));
             return;
           }
 
@@ -96,10 +96,10 @@ static void _calc_real_elliptic(real_t *sn, real_t *cn, real_t *dn, const real_t
             realCopy(const_0, sn);
             realCopy(const_1, cn);
             realCopy(const_1, dn);
-            freeWp43(MU, ELLIPTIC_N * REAL_SIZE_IN_BLOCKS);
-            freeWp43(NU, ELLIPTIC_N * REAL_SIZE_IN_BLOCKS);
-            freeWp43(C, ELLIPTIC_N * REAL_SIZE_IN_BLOCKS);
-            freeWp43(D, ELLIPTIC_N * REAL_SIZE_IN_BLOCKS);
+            freeWp43(MU, ELLIPTIC_N * TO_BLOCKS(REAL_SIZE_IN_BYTES));
+            freeWp43(NU, ELLIPTIC_N * TO_BLOCKS(REAL_SIZE_IN_BYTES));
+            freeWp43(C, ELLIPTIC_N * TO_BLOCKS(REAL_SIZE_IN_BYTES));
+            freeWp43(D, ELLIPTIC_N * TO_BLOCKS(REAL_SIZE_IN_BYTES));
             return;
           }
 
@@ -144,25 +144,25 @@ static void _calc_real_elliptic(real_t *sn, real_t *cn, real_t *dn, const real_t
           #undef c
           #undef d
 
-          freeWp43(D, ELLIPTIC_N * REAL_SIZE_IN_BLOCKS);
+          freeWp43(D, ELLIPTIC_N * TO_BLOCKS(REAL_SIZE_IN_BYTES));
         }
         else {
           displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
           realCopy(const_NaN, sn); realCopy(const_NaN, cn); realCopy(const_NaN, dn);
         }
-        freeWp43(C, ELLIPTIC_N * REAL_SIZE_IN_BLOCKS);
+        freeWp43(C, ELLIPTIC_N * TO_BLOCKS(REAL_SIZE_IN_BYTES));
       }
       else {
         displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
         realCopy(const_NaN, sn); realCopy(const_NaN, cn); realCopy(const_NaN, dn);
       }
-      freeWp43(NU, ELLIPTIC_N * REAL_SIZE_IN_BLOCKS);
+      freeWp43(NU, ELLIPTIC_N * TO_BLOCKS(REAL_SIZE_IN_BYTES));
     }
     else {
       displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
       realCopy(const_NaN, sn); realCopy(const_NaN, cn); realCopy(const_NaN, dn);
     }
-    freeWp43(MU, ELLIPTIC_N * REAL_SIZE_IN_BLOCKS);
+    freeWp43(MU, ELLIPTIC_N * TO_BLOCKS(REAL_SIZE_IN_BYTES));
   }
   else {
     displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
@@ -924,7 +924,7 @@ void ellipticE(const real_t *phi, const real_t *psi, const real_t *m, real_t *re
     #define COS2_MU_I     (tmpVal + 23)
     #define M1            (tmpVal + 24)
 
-    if((tmpVal = allocWp43(25 * REAL_SIZE_IN_BLOCKS))) {
+    if((tmpVal = allocWp43(25 * TO_BLOCKS(REAL_SIZE_IN_BYTES)))) {
       bool           remainderNegative = realIsNegative(&phiRemainder);
       realContext_t *realContext2 = &ctxtReal51;
       realContext_t *realContext3 = &ctxtReal75;
@@ -988,7 +988,7 @@ void ellipticE(const real_t *phi, const real_t *psi, const real_t *m, real_t *re
         realChangeSign(resi);
       }
 
-      freeWp43(tmpVal, 25 * REAL_SIZE_IN_BLOCKS);
+      freeWp43(tmpVal, 25 * TO_BLOCKS(REAL_SIZE_IN_BYTES));
     }
     else {
       displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
@@ -1037,10 +1037,10 @@ static void _jacobiZeta_Agm(const real_t *phi, const real_t *psi, const real_t *
     TanhComplex(&k, &ki, res, resi, realContext);
     return;
   }
-  if((a = allocWp43(ELLIPTIC_N * REAL_SIZE_IN_BLOCKS))) {
-    if((ai = allocWp43(ELLIPTIC_N * REAL_SIZE_IN_BLOCKS))) {
-      if((b = allocWp43(ELLIPTIC_N * REAL_SIZE_IN_BLOCKS))) {
-        if((bi = allocWp43(ELLIPTIC_N * REAL_SIZE_IN_BLOCKS))) {
+  if((a = allocWp43(ELLIPTIC_N * TO_BLOCKS(REAL_SIZE_IN_BYTES)))) {
+    if((ai = allocWp43(ELLIPTIC_N * TO_BLOCKS(REAL_SIZE_IN_BYTES)))) {
+      if((b = allocWp43(ELLIPTIC_N * TO_BLOCKS(REAL_SIZE_IN_BYTES)))) {
+        if((bi = allocWp43(ELLIPTIC_N * TO_BLOCKS(REAL_SIZE_IN_BYTES)))) {
           real_t k, ki, c, ci, s, si, q;
 
           realZero(res); realZero(resi);
@@ -1075,25 +1075,25 @@ static void _jacobiZeta_Agm(const real_t *phi, const real_t *psi, const real_t *
             realAdd(&s, &q, &s, realContext);
             realMultiply(&s, const_1on2, &k, realContext); realMultiply(&si, const_1on2, &ki, realContext);
           }
-          freeWp43(bi, ELLIPTIC_N * REAL_SIZE_IN_BLOCKS);
+          freeWp43(bi, ELLIPTIC_N * TO_BLOCKS(REAL_SIZE_IN_BYTES));
         }
         else {
           displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
           realCopy(const_NaN, res); realCopy(const_NaN, resi);
         }
-        freeWp43(b, ELLIPTIC_N * REAL_SIZE_IN_BLOCKS);
+        freeWp43(b, ELLIPTIC_N * TO_BLOCKS(REAL_SIZE_IN_BYTES));
       }
       else {
         displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
         realCopy(const_NaN, res); realCopy(const_NaN, resi);
       }
-      freeWp43(ai, ELLIPTIC_N * REAL_SIZE_IN_BLOCKS);
+      freeWp43(ai, ELLIPTIC_N * TO_BLOCKS(REAL_SIZE_IN_BYTES));
     }
     else {
       displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
       realCopy(const_NaN, res); realCopy(const_NaN, resi);
     }
-    freeWp43(a, ELLIPTIC_N * REAL_SIZE_IN_BLOCKS);
+    freeWp43(a, ELLIPTIC_N * TO_BLOCKS(REAL_SIZE_IN_BYTES));
   }
   else {
     displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
@@ -1348,12 +1348,12 @@ void fnJacobiSn(uint16_t unusedButMandatoryParameter) {
 
   if(realInput) {
     jacobiElliptic(&uReal, &m, NULL, &rReal, NULL, NULL, &ctxtReal39);
-    reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
+    reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
     convertRealToReal34ResultRegister(&rReal, REGISTER_X);
   }
   else {
     jacobiComplexSn(&uReal, &uImag, &m, &rReal, &rImag, &ctxtReal39);
-    reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE_IN_BLOCKS, amNone);
+    reallocateRegister(REGISTER_X, dtComplex34, TO_BLOCKS(COMPLEX34_SIZE_IN_BYTES), amNone);
     convertRealToReal34ResultRegister(&rReal, REGISTER_X);
     convertRealToImag34ResultRegister(&rImag, REGISTER_X);
   }
@@ -1376,12 +1376,12 @@ void fnJacobiCn(uint16_t unusedButMandatoryParameter) {
 
   if(realInput) {
     jacobiElliptic(&uReal, &m, NULL, NULL, &rReal, NULL, &ctxtReal39);
-    reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
+    reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
     convertRealToReal34ResultRegister(&rReal, REGISTER_X);
   }
   else {
     jacobiComplexCn(&uReal, &uImag, &m, &rReal, &rImag, &ctxtReal39);
-    reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE_IN_BLOCKS, amNone);
+    reallocateRegister(REGISTER_X, dtComplex34, TO_BLOCKS(COMPLEX34_SIZE_IN_BYTES), amNone);
     convertRealToReal34ResultRegister(&rReal, REGISTER_X);
     convertRealToImag34ResultRegister(&rImag, REGISTER_X);
   }
@@ -1404,12 +1404,12 @@ void fnJacobiDn(uint16_t unusedButMandatoryParameter) {
 
   if(realInput) {
     jacobiElliptic(&uReal, &m, NULL, NULL, NULL, &rReal, &ctxtReal39);
-    reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
+    reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
     convertRealToReal34ResultRegister(&rReal, REGISTER_X);
   }
   else {
     jacobiComplexDn(&uReal, &uImag, &m, &rReal, &rImag, &ctxtReal39);
-    reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE_IN_BLOCKS, amNone);
+    reallocateRegister(REGISTER_X, dtComplex34, TO_BLOCKS(COMPLEX34_SIZE_IN_BYTES), amNone);
     convertRealToReal34ResultRegister(&rReal, REGISTER_X);
     convertRealToImag34ResultRegister(&rImag, REGISTER_X);
   }
@@ -1433,12 +1433,12 @@ void fnJacobiAmplitude(uint16_t unusedButMandatoryParameter) {
   if(realInput) {
     jacobiElliptic(&uReal, &m, &rReal, NULL, NULL, NULL, &ctxtReal39);
     convertAngleFromTo(&rReal, amRadian, currentAngularMode, &ctxtReal39);
-    reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BLOCKS, currentAngularMode);
+    reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), currentAngularMode);
     convertRealToReal34ResultRegister(&rReal, REGISTER_X);
   }
   else {
     jacobiComplexAm(&uReal, &uImag, &m, &rReal, &rImag, &ctxtReal39);
-    reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE_IN_BLOCKS, amNone);
+    reallocateRegister(REGISTER_X, dtComplex34, TO_BLOCKS(COMPLEX34_SIZE_IN_BYTES), amNone);
     convertRealToReal34ResultRegister(&rReal, REGISTER_X);
     convertRealToImag34ResultRegister(&rImag, REGISTER_X);
   }
@@ -1479,13 +1479,13 @@ void fnEllipticK(uint16_t unusedButMandatoryParameter) {
   if(realCompareLessEqual(&m, const_1)) {
     ellipticKE(&m, &b, NULL, NULL, NULL, &ctxtReal39);
 
-    reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
+    reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
     convertRealToReal34ResultRegister(&b, REGISTER_X);
   }
   else if(getFlag(FLAG_CPXRES)) {
     ellipticKE(&m, &a, &b, NULL, NULL, &ctxtReal39);
 
-    reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE_IN_BLOCKS, amNone);
+    reallocateRegister(REGISTER_X, dtComplex34, TO_BLOCKS(COMPLEX34_SIZE_IN_BYTES), amNone);
     convertRealToReal34ResultRegister(&a, REGISTER_X);
     convertRealToImag34ResultRegister(&b, REGISTER_X);
   }
@@ -1533,13 +1533,13 @@ void fnEllipticE(uint16_t unusedButMandatoryParameter) {
   if(realCompareLessEqual(&m, const_1)) {
     ellipticKE(&m, NULL, NULL, &b, NULL, &ctxtReal39);
 
-    reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
+    reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
     convertRealToReal34ResultRegister(&b, REGISTER_X);
   }
   else if(getFlag(FLAG_CPXRES)) {
     ellipticKE(&m, NULL, NULL, &a, &b, &ctxtReal39);
 
-    reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE_IN_BLOCKS, amNone);
+    reallocateRegister(REGISTER_X, dtComplex34, TO_BLOCKS(COMPLEX34_SIZE_IN_BYTES), amNone);
     convertRealToReal34ResultRegister(&a, REGISTER_X);
     convertRealToImag34ResultRegister(&b, REGISTER_X);
   }
@@ -1576,11 +1576,11 @@ void fnEllipticPi(uint16_t unusedButMandatoryParameter) {
   else if(realInput) {
     ellipticPi(&ur, &m, &rr, &ri, &ctxtReal39);
     if(realIsZero(&ri)) {
-      reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
+      reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
       convertRealToReal34ResultRegister(&rr, REGISTER_X);
     }
     else if(getFlag(FLAG_CPXRES)) {
-      reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE_IN_BLOCKS, amNone);
+      reallocateRegister(REGISTER_X, dtComplex34, TO_BLOCKS(COMPLEX34_SIZE_IN_BYTES), amNone);
       convertRealToReal34ResultRegister(&rr, REGISTER_X);
       convertRealToImag34ResultRegister(&ri, REGISTER_X);
     }
@@ -1619,11 +1619,11 @@ void fnEllipticFphi(uint16_t unusedButMandatoryParameter) {
   if(realInput) {
     ellipticF(&uReal, const_0, &m, &rReal, &rImag, &ctxtReal39);
     if(realIsZero(&rImag)) {
-      reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
+      reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
       convertRealToReal34ResultRegister(&rReal, REGISTER_X);
     }
     else if(getFlag(FLAG_CPXRES)) {
-      reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE_IN_BLOCKS, amNone);
+      reallocateRegister(REGISTER_X, dtComplex34, TO_BLOCKS(COMPLEX34_SIZE_IN_BYTES), amNone);
       convertRealToReal34ResultRegister(&rReal, REGISTER_X);
       convertRealToImag34ResultRegister(&rImag, REGISTER_X);
     }
@@ -1637,7 +1637,7 @@ void fnEllipticFphi(uint16_t unusedButMandatoryParameter) {
   }
   else {
     ellipticF(&uReal, &uImag, &m, &rReal, &rImag, &ctxtReal39);
-    reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE_IN_BLOCKS, amNone);
+    reallocateRegister(REGISTER_X, dtComplex34, TO_BLOCKS(COMPLEX34_SIZE_IN_BYTES), amNone);
     convertRealToReal34ResultRegister(&rReal, REGISTER_X);
     convertRealToImag34ResultRegister(&rImag, REGISTER_X);
   }
@@ -1661,11 +1661,11 @@ void fnEllipticEphi(uint16_t unusedButMandatoryParameter) {
   if(realInput) {
     ellipticE(&uReal, const_0, &m, &rReal, &rImag, &ctxtReal39);
     if(realIsZero(&rImag)) {
-      reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
+      reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
       convertRealToReal34ResultRegister(&rReal, REGISTER_X);
     }
     else if(getFlag(FLAG_CPXRES)) {
-      reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE_IN_BLOCKS, amNone);
+      reallocateRegister(REGISTER_X, dtComplex34, TO_BLOCKS(COMPLEX34_SIZE_IN_BYTES), amNone);
       convertRealToReal34ResultRegister(&rReal, REGISTER_X);
       convertRealToImag34ResultRegister(&rImag, REGISTER_X);
     }
@@ -1679,7 +1679,7 @@ void fnEllipticEphi(uint16_t unusedButMandatoryParameter) {
   }
   else {
     ellipticE(&uReal, &uImag, &m, &rReal, &rImag, &ctxtReal39);
-    reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE_IN_BLOCKS, amNone);
+    reallocateRegister(REGISTER_X, dtComplex34, TO_BLOCKS(COMPLEX34_SIZE_IN_BYTES), amNone);
     convertRealToReal34ResultRegister(&rReal, REGISTER_X);
     convertRealToImag34ResultRegister(&rImag, REGISTER_X);
   }
@@ -1703,11 +1703,11 @@ void fnJacobiZeta(uint16_t unusedButMandatoryParameter) {
   if(realInput) {
     jacobiZeta(&uReal, const_0, &m, &rReal, &rImag, &ctxtReal39);
     if(realIsZero(&rImag)) {
-      reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
+      reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
       convertRealToReal34ResultRegister(&rReal, REGISTER_X);
     }
     else if(getFlag(FLAG_CPXRES)) {
-      reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE_IN_BLOCKS, amNone);
+      reallocateRegister(REGISTER_X, dtComplex34, TO_BLOCKS(COMPLEX34_SIZE_IN_BYTES), amNone);
       convertRealToReal34ResultRegister(&rReal, REGISTER_X);
       convertRealToImag34ResultRegister(&rImag, REGISTER_X);
     }
@@ -1721,7 +1721,7 @@ void fnJacobiZeta(uint16_t unusedButMandatoryParameter) {
   }
   else {
     jacobiZeta(&uReal, &uImag, &m, &rReal, &rImag, &ctxtReal39);
-    reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE_IN_BLOCKS, amNone);
+    reallocateRegister(REGISTER_X, dtComplex34, TO_BLOCKS(COMPLEX34_SIZE_IN_BYTES), amNone);
     convertRealToReal34ResultRegister(&rReal, REGISTER_X);
     convertRealToImag34ResultRegister(&rImag, REGISTER_X);
   }
