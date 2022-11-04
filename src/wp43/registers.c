@@ -1823,7 +1823,7 @@ void reallocateRegister(calcRegister_t regist, uint32_t dataType, uint16_t dataS
       break;
     }
     case dtLongInteger: {
-      if(dataSizeWithoutDataLenBlocks % LIMB_SIZE != 0) {
+      if(TO_BYTES(dataSizeWithoutDataLenBlocks) % LIMB_SIZE != 0) {
         dataSizeWithoutDataLenBlocks = ((dataSizeWithoutDataLenBlocks / TO_BLOCKS(LIMB_SIZE)) + 1) * TO_BLOCKS(LIMB_SIZE);
       }
       dataSizeWithDataLenBlocks = dataSizeWithoutDataLenBlocks + 1; // +1 for the max length of the data
