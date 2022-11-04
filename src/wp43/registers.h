@@ -33,7 +33,7 @@
   static inline dataBlock_t          *REGISTER_DATA                        (calcRegister_t a) {return (dataBlock_t *)(getRegisterDataPointer(a));}
   static inline longInteger_t        *REGISTER_LONG_INTEGER_DATA           (calcRegister_t a) {return (longInteger_t *)(getRegisterDataPointer(a) + 1);}
   static inline real34_t             *REGISTER_REAL34_DATA                 (calcRegister_t a) {return (real34_t    *)(getRegisterDataPointer(a));}
-  static inline real34_t             *REGISTER_IMAG34_DATA                 (calcRegister_t a) {return (real34_t    *)(getRegisterDataPointer(a) + REAL34_SIZE_IN_BLOCKS);}
+  static inline real34_t             *REGISTER_IMAG34_DATA                 (calcRegister_t a) {return (real34_t    *)(getRegisterDataPointer(a) + TO_BLOCKS(REAL34_SIZE_IN_BYTES));}
   static inline complex34_t          *REGISTER_COMPLEX34_DATA              (calcRegister_t a) {return (complex34_t *)(getRegisterDataPointer(a));}
 
   static inline char                 *REGISTER_STRING_DATA                 (calcRegister_t a) {return (char        *)(getRegisterDataPointer(a) + 1);} // Memory pointer to the string of a register

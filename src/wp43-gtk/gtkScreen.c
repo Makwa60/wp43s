@@ -509,7 +509,7 @@ void copyAllRegistersToClipboard(void) {
       ptr += strlen(ptr);
       strcpy(ptr, " = ");
       ptr += strlen(ptr);
-      realToString((real_t *)(statisticalSumsPointer + REAL_SIZE_IN_BLOCKS * sum), tmpString);
+      realToString((real_t *)(statisticalSumsPointer + TO_BLOCKS(REAL_SIZE_IN_BYTES) * sum), tmpString);
       if(strchr(tmpString, '.') == NULL && strchr(tmpString, 'E') == NULL) {
         strcat(tmpString, ".");
       }

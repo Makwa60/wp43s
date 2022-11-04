@@ -986,7 +986,7 @@ void setParameter(char *p) {
         }
       }
 
-      reallocateRegister(regist, dtReal34, REAL34_SIZE_IN_BLOCKS, am);
+      reallocateRegister(regist, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), am);
       stringToReal34(r, REGISTER_REAL34_DATA(regist));
     }
     else if(strcmp(l, "STRI") == 0) {
@@ -1071,7 +1071,7 @@ void setParameter(char *p) {
         }
       }
 
-      reallocateRegister(regist, dtComplex34, COMPLEX34_SIZE_IN_BLOCKS, amNone);
+      reallocateRegister(regist, dtComplex34, TO_BLOCKS(COMPLEX34_SIZE_IN_BYTES), amNone);
       stringToReal34(real, REGISTER_REAL34_DATA(regist));
       stringToReal34(imag, REGISTER_IMAG34_DATA(regist));
     }
@@ -1111,7 +1111,7 @@ void setParameter(char *p) {
         }
       }
 
-      reallocateRegister(regist, dtTime, REAL34_SIZE_IN_BLOCKS, amNone);
+      reallocateRegister(regist, dtTime, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
       stringToReal34(r, REGISTER_REAL34_DATA(regist));
       if(isHms) {
         hmmssInRegisterToSeconds(regist);
@@ -1132,7 +1132,7 @@ void setParameter(char *p) {
         }
       }
 
-      reallocateRegister(regist, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
+      reallocateRegister(regist, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
       stringToReal34(r, REGISTER_REAL34_DATA(regist));
       convertReal34RegisterToDateRegister(regist, regist);
     }
@@ -2034,7 +2034,7 @@ void checkExpectedOutParameter(char *p) {
       }
 
       checkRegisterType(regist, letter, dtDate, amNone);
-      reallocateRegister(TEMP_REGISTER_1, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
+      reallocateRegister(TEMP_REGISTER_1, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
       stringToReal34(r, REGISTER_REAL34_DATA(TEMP_REGISTER_1));
       convertReal34RegisterToDateRegister(TEMP_REGISTER_1, TEMP_REGISTER_1);
       real34Copy(REGISTER_REAL34_DATA(TEMP_REGISTER_1), &expectedReal34)

@@ -110,8 +110,8 @@ void fnIntegrate(uint16_t labelOrVariable) {
     integrate(labelOrVariable, &llim, &ulim, &acc, &res, &ctxtReal39);
     liftStack();
     liftStack();
-    reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
-    reallocateRegister(REGISTER_Y, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
+    reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
+    reallocateRegister(REGISTER_Y, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
     convertRealToReal34ResultRegister(&res, REGISTER_X);
     convertRealToReal34ResultRegister(&acc, REGISTER_Y);
     temporaryInformation = TI_INTEGRAL;
@@ -243,7 +243,7 @@ static void DEI_xeq_user(calcRegister_t regist, const real_t *x, real_t *res, re
   if(!realIsSpecial(x)) { // abscissa is good?
     bool d = getSystemFlag(FLAG_SPCRES);
     clearSystemFlag(FLAG_SPCRES);
-    reallocateRegister(regist, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
+    reallocateRegister(regist, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
     realToReal34(x, REGISTER_REAL34_DATA(regist));
     fnFillStack(NOPARAM);
     //printReal34ToConsole(REGISTER_REAL34_DATA(regist), "", " -> ");

@@ -86,7 +86,7 @@ void lnLonI(void) {
 
   if(longIntegerIsZero(lgInt)) {
     if(getSystemFlag(FLAG_SPCRES)) {
-      reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
+      reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
       convertRealToReal34ResultRegister(const_minusInfinity, REGISTER_X);
     }
     else {
@@ -103,18 +103,18 @@ void lnLonI(void) {
 
     if(longIntegerIsPositive(lgInt)) {
       WP34S_Ln(&x, &x, &ctxtReal39);
-      reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
+      reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
       convertRealToReal34ResultRegister(&x, REGISTER_X);
      }
     else if(getFlag(FLAG_CPXRES)) {
       realSetPositiveSign(&x);
       WP34S_Ln(&x, &x, &ctxtReal39);
-      reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE_IN_BLOCKS, amNone);
+      reallocateRegister(REGISTER_X, dtComplex34, TO_BLOCKS(COMPLEX34_SIZE_IN_BYTES), amNone);
       convertRealToReal34ResultRegister(&x, REGISTER_X);
       convertRealToImag34ResultRegister(const_pi, REGISTER_X);
     }
     else if(getSystemFlag(FLAG_SPCRES)) {
-      reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
+      reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
       convertRealToReal34ResultRegister(const_NaN, REGISTER_X);
     }
     else {
@@ -146,7 +146,7 @@ void lnShoI(void) {
   real_t x;
 
   convertShortIntegerRegisterToReal(REGISTER_X, &x, &ctxtReal39);
-  reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
+  reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
 
   if(realIsZero(&x)) {
     if(getSystemFlag(FLAG_SPCRES)) {
@@ -167,7 +167,7 @@ void lnShoI(void) {
     else if(getFlag(FLAG_CPXRES)) {
       realSetPositiveSign(&x);
       WP34S_Ln(&x, &x, &ctxtReal39);
-      reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE_IN_BLOCKS, amNone);
+      reallocateRegister(REGISTER_X, dtComplex34, TO_BLOCKS(COMPLEX34_SIZE_IN_BYTES), amNone);
       convertRealToReal34ResultRegister(&x, REGISTER_X);
       convertRealToImag34ResultRegister(const_pi, REGISTER_X);
     }
@@ -211,7 +211,7 @@ void lnReal(void) {
         convertRealToReal34ResultRegister(const_plusInfinity, REGISTER_X);
       }
       else {
-        reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE_IN_BLOCKS, amNone);
+        reallocateRegister(REGISTER_X, dtComplex34, TO_BLOCKS(COMPLEX34_SIZE_IN_BYTES), amNone);
         convertRealToReal34ResultRegister(const_plusInfinity, REGISTER_X);
         convertRealToImag34ResultRegister(const_pi, REGISTER_X);
       }
@@ -232,7 +232,7 @@ void lnReal(void) {
     else if(getFlag(FLAG_CPXRES)) {
       realSetPositiveSign(&x);
       WP34S_Ln(&x, &x, &ctxtReal39);
-      reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE_IN_BLOCKS, amNone);
+      reallocateRegister(REGISTER_X, dtComplex34, TO_BLOCKS(COMPLEX34_SIZE_IN_BYTES), amNone);
       convertRealToReal34ResultRegister(&x, REGISTER_X);
       convertRealToImag34ResultRegister(const_pi, REGISTER_X);
     }

@@ -819,7 +819,7 @@ void fnSave(uint16_t unusedButMandatoryParameter) {
   sprintf(tmpString, "STATISTICAL_SUMS\n%" PRIu16 "\n", (uint16_t)(statisticalSumsPointer ? NUMBER_OF_STATISTICAL_SUMS : 0));
   save(tmpString, strlen(tmpString));
   for(i=0; i<(statisticalSumsPointer ? NUMBER_OF_STATISTICAL_SUMS : 0); i++) {
-    realToString((real_t *)(statisticalSumsPointer + REAL_SIZE_IN_BLOCKS * i), tmpRegisterString);
+    realToString((real_t *)(statisticalSumsPointer + TO_BLOCKS(REAL_SIZE_IN_BYTES) * i), tmpRegisterString);
     sprintf(tmpString, "%s\n", tmpRegisterString);
     save(tmpString, strlen(tmpString));
   }
@@ -1121,22 +1121,22 @@ static void restoreRegister(calcRegister_t regist, char *type, char *value) {
       tag = amNone;
     }
 
-    reallocateRegister(regist, dtReal34, REAL34_SIZE_IN_BLOCKS, tag);
+    reallocateRegister(regist, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), tag);
     stringToReal34(value, REGISTER_REAL34_DATA(regist));
   }
 
   else if(strcmp(type, "Real") == 0) {
-    reallocateRegister(regist, dtReal34, REAL34_SIZE_IN_BLOCKS, tag);
+    reallocateRegister(regist, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), tag);
     stringToReal34(value, REGISTER_REAL34_DATA(regist));
   }
 
   else if(strcmp(type, "Time") == 0) {
-    reallocateRegister(regist, dtTime, REAL34_SIZE_IN_BLOCKS, amNone);
+    reallocateRegister(regist, dtTime, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
     stringToReal34(value, REGISTER_REAL34_DATA(regist));
   }
 
   else if(strcmp(type, "Date") == 0) {
-    reallocateRegister(regist, dtDate, REAL34_SIZE_IN_BLOCKS, amNone);
+    reallocateRegister(regist, dtDate, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
     stringToReal34(value, REGISTER_REAL34_DATA(regist));
   }
 
@@ -1176,7 +1176,7 @@ static void restoreRegister(calcRegister_t regist, char *type, char *value) {
   else if(strcmp(type, "Cplx") == 0) {
     char *imaginaryPart;
 
-    reallocateRegister(regist, dtComplex34, COMPLEX34_SIZE_IN_BLOCKS, amNone);
+    reallocateRegister(regist, dtComplex34, TO_BLOCKS(COMPLEX34_SIZE_IN_BYTES), amNone);
     imaginaryPart = value;
     while(*imaginaryPart != ' ') {
       imaginaryPart++;
@@ -1198,7 +1198,7 @@ static void restoreRegister(calcRegister_t regist, char *type, char *value) {
     *(numOfCols++) = 0;
     rows = stringToUint16(value);
     cols = stringToUint16(numOfCols);
-    reallocateRegister(regist, dtReal34Matrix, REAL34_SIZE_IN_BLOCKS * rows * cols, amNone);
+    reallocateRegister(regist, dtReal34Matrix, TO_BLOCKS(REAL34_SIZE_IN_BYTES) * rows * cols, amNone);
     REGISTER_REAL34_MATRIX_DBLOCK(regist)->matrixRows = rows;
     REGISTER_REAL34_MATRIX_DBLOCK(regist)->matrixColumns = cols;
   }
@@ -1214,7 +1214,7 @@ static void restoreRegister(calcRegister_t regist, char *type, char *value) {
     *(numOfCols++) = 0;
     rows = stringToUint16(value);
     cols = stringToUint16(numOfCols);
-    reallocateRegister(regist, dtComplex34Matrix, COMPLEX34_SIZE_IN_BLOCKS * rows * cols, amNone);
+    reallocateRegister(regist, dtComplex34Matrix, TO_BLOCKS(COMPLEX34_SIZE_IN_BYTES) * rows * cols, amNone);
     REGISTER_COMPLEX34_MATRIX_DBLOCK(regist)->matrixRows = rows;
     REGISTER_COMPLEX34_MATRIX_DBLOCK(regist)->matrixColumns = cols;
   }
@@ -1440,7 +1440,7 @@ static bool restoreOneSection(uint16_t loadMode, uint16_t s, uint16_t n, uint16_
       readLine(tmpString); // statistical sum
       if(statisticalSumsPointer) { // likely
         if(loadMode == LM_ALL || loadMode == LM_SUMS) {
-          stringToReal(tmpString, (real_t *)(statisticalSumsPointer + REAL_SIZE_IN_BLOCKS * i), &ctxtReal75);
+          stringToReal(tmpString, (real_t *)(statisticalSumsPointer + TO_BLOCKS(REAL_SIZE_IN_BYTES) * i), &ctxtReal75);
         }
       }
     }

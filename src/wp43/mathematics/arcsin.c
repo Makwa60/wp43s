@@ -65,13 +65,13 @@ void arcsinLonI(void) {
   convertLongIntegerRegisterToReal(REGISTER_X, &x, &ctxtReal39);
   if(realCompareAbsGreaterThan(&x, const_1)) {
     if(getFlag(FLAG_CPXRES)) {
-      reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE_IN_BLOCKS, amNone);
+      reallocateRegister(REGISTER_X, dtComplex34, TO_BLOCKS(COMPLEX34_SIZE_IN_BYTES), amNone);
       convertRealToReal34ResultRegister(&x, REGISTER_X);
       real34Zero(REGISTER_IMAG34_DATA(REGISTER_X));
       arcsinCplx();
     }
     else if(getSystemFlag(FLAG_SPCRES)) {
-      reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BLOCKS, currentAngularMode);
+      reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), currentAngularMode);
       convertRealToReal34ResultRegister(const_NaN, REGISTER_X);
     }
     else {
@@ -83,7 +83,7 @@ void arcsinLonI(void) {
     return;
   }
 
-  reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BLOCKS, currentAngularMode);
+  reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), currentAngularMode);
 
   if(realIsZero(&x)) {
     real34Zero(REGISTER_REAL34_DATA(REGISTER_X));
@@ -119,7 +119,7 @@ void arcsinReal(void) {
 
   if(realCompareAbsGreaterThan(&x, const_1)) {
     if(getFlag(FLAG_CPXRES)) {
-      reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE_IN_BLOCKS, amNone);
+      reallocateRegister(REGISTER_X, dtComplex34, TO_BLOCKS(COMPLEX34_SIZE_IN_BYTES), amNone);
       convertRealToReal34ResultRegister(&x, REGISTER_X);
       real34Zero(REGISTER_IMAG34_DATA(REGISTER_X));
       arcsinCplx();
