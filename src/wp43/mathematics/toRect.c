@@ -68,8 +68,8 @@ void fnToRect(uint16_t unusedButMandatoryParameter) {
 
     realPolarToRectangular(&x, &y, &x, &y, &ctxtReal39);
 
-    reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
-    reallocateRegister(REGISTER_Y, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
+    reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
+    reallocateRegister(REGISTER_Y, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
     convertRealToReal34ResultRegister(&x, REGISTER_X);
     convertRealToReal34ResultRegister(&y, REGISTER_Y);
 

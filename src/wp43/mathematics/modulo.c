@@ -242,7 +242,7 @@ void modRealLonI(void) {
     realAdd(&r, &x, &r, &ctxtReal39);
   }
 
-  reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
+  reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
   convertRealToReal34ResultRegister(&r, REGISTER_X);
 }
 
@@ -351,7 +351,7 @@ void modRealShoI(void) {
     realAdd(&r, &x, &r, &ctxtReal39);
   }
 
-  reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
+  reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
   convertRealToReal34ResultRegister(&r, REGISTER_X);
 }
 

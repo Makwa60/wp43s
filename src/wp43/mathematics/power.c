@@ -235,7 +235,7 @@ void powLonICplx(void) {
   real_t y;
 
   convertLongIntegerRegisterToReal(REGISTER_Y, &y, &ctxtReal39);
-  reallocateRegister(REGISTER_Y, dtComplex34, COMPLEX34_SIZE_IN_BLOCKS, amNone);
+  reallocateRegister(REGISTER_Y, dtComplex34, TO_BLOCKS(COMPLEX34_SIZE_IN_BYTES), amNone);
   convertRealToReal34ResultRegister(&y, REGISTER_Y);
   real34Zero(REGISTER_IMAG34_DATA(REGISTER_Y));
   powCplxCplx();
@@ -253,7 +253,7 @@ void powCplxLonI(void) {
   real_t x;
 
   convertLongIntegerRegisterToReal(REGISTER_X, &x, &ctxtReal39);
-  reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE_IN_BLOCKS, amNone);
+  reallocateRegister(REGISTER_X, dtComplex34, TO_BLOCKS(COMPLEX34_SIZE_IN_BYTES), amNone);
   convertRealToReal34ResultRegister(&x, REGISTER_X);
   real34Zero(REGISTER_IMAG34_DATA(REGISTER_X));
   powCplxCplx();
@@ -450,7 +450,7 @@ void powShoICplx(void) {
   real_t y;
 
   convertShortIntegerRegisterToReal(REGISTER_Y, &y, &ctxtReal39);
-  reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE_IN_BLOCKS, amNone);
+  reallocateRegister(REGISTER_X, dtComplex34, TO_BLOCKS(COMPLEX34_SIZE_IN_BYTES), amNone);
   convertRealToReal34ResultRegister(&y, REGISTER_Y);
   real34Zero(REGISTER_IMAG34_DATA(REGISTER_Y));
   powCplxCplx();
@@ -468,7 +468,7 @@ void powCplxShoI(void) {
   real_t x;
 
   convertShortIntegerRegisterToReal(REGISTER_X, &x, &ctxtReal39);
-  reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE_IN_BLOCKS, amNone);
+  reallocateRegister(REGISTER_X, dtComplex34, TO_BLOCKS(COMPLEX34_SIZE_IN_BYTES), amNone);
   convertRealToReal34ResultRegister(&x, REGISTER_X);
   real34Zero(REGISTER_IMAG34_DATA(REGISTER_X));
   powCplxCplx();
@@ -521,11 +521,11 @@ void powRealReal(void) {
   if(getFlag(FLAG_CPXRES) && realIsNaN(&x)) {
     real34ToReal(REGISTER_REAL34_DATA(REGISTER_X), &x);
 
-    reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE_IN_BLOCKS, amNone);
+    reallocateRegister(REGISTER_X, dtComplex34, TO_BLOCKS(COMPLEX34_SIZE_IN_BYTES), amNone);
     convertRealToReal34ResultRegister(&x, REGISTER_X);
     real34Zero(REGISTER_IMAG34_DATA(REGISTER_X));
 
-    reallocateRegister(REGISTER_Y, dtComplex34, COMPLEX34_SIZE_IN_BLOCKS, amNone);
+    reallocateRegister(REGISTER_Y, dtComplex34, TO_BLOCKS(COMPLEX34_SIZE_IN_BYTES), amNone);
     convertRealToReal34ResultRegister(&y, REGISTER_Y);
     real34Zero(REGISTER_IMAG34_DATA(REGISTER_Y));
 
@@ -549,7 +549,7 @@ void powRealCplx(void) {
   real_t y;
 
   real34ToReal(REGISTER_REAL34_DATA(REGISTER_Y), &y);
-  reallocateRegister(REGISTER_Y, dtComplex34, COMPLEX34_SIZE_IN_BLOCKS, amNone);
+  reallocateRegister(REGISTER_Y, dtComplex34, TO_BLOCKS(COMPLEX34_SIZE_IN_BYTES), amNone);
   convertRealToReal34ResultRegister(&y, REGISTER_Y);
   real34Zero(REGISTER_IMAG34_DATA(REGISTER_Y));
   powCplxCplx();
@@ -567,7 +567,7 @@ void powCplxReal(void) {
   real_t x;
 
   real34ToReal(REGISTER_REAL34_DATA(REGISTER_X), &x);
-  reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE_IN_BLOCKS, amNone);
+  reallocateRegister(REGISTER_X, dtComplex34, TO_BLOCKS(COMPLEX34_SIZE_IN_BYTES), amNone);
   convertRealToReal34ResultRegister(&x, REGISTER_X);
   real34Zero(REGISTER_IMAG34_DATA(REGISTER_X));
   powCplxCplx();

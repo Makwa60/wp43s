@@ -559,7 +559,7 @@ static void decodeLiteral(uint8_t *literalAddress) {
 
     case STRING_DATE: {
       getStringLabelOrVariableName(literalAddress);
-      reallocateRegister(TEMP_REGISTER_1, dtDate, REAL34_SIZE_IN_BLOCKS, amNone);
+      reallocateRegister(TEMP_REGISTER_1, dtDate, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
       stringToReal34(tmpStringLabelOrVariableName, REGISTER_REAL34_DATA(TEMP_REGISTER_1));
       julianDayToInternalDate(REGISTER_REAL34_DATA(TEMP_REGISTER_1), REGISTER_REAL34_DATA(TEMP_REGISTER_1));
       dateToDisplayString(TEMP_REGISTER_1, tmpString);

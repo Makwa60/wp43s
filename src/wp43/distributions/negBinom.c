@@ -101,7 +101,7 @@ void fnNegBinomialP(uint16_t unusedButMandatoryParameter) {
       #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
     }
     else {
-      reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
+      reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
       convertRealToReal34ResultRegister(&ans, REGISTER_X);
     }
   }
@@ -127,7 +127,7 @@ void fnNegBinomialL(uint16_t unusedButMandatoryParameter) {
       #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
     }
     else {
-      reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
+      reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
       convertRealToReal34ResultRegister(&ans, REGISTER_X);
     }
   }
@@ -153,7 +153,7 @@ void fnNegBinomialR(uint16_t unusedButMandatoryParameter) {
       #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
     }
     else {
-      reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
+      reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
       convertRealToReal34ResultRegister(&ans, REGISTER_X);
     }
   }
@@ -186,7 +186,7 @@ void fnNegBinomialI(uint16_t unusedButMandatoryParameter) {
         #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
       }
       else {
-        reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
+        reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
         convertRealToReal34ResultRegister(&ans, REGISTER_X);
       }
     }
