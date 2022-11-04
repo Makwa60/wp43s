@@ -37,9 +37,9 @@ void fnDrop(uint16_t unusedButMandatoryParameter) {
     globalRegister[regist] = globalRegister[regist + 1];
   }
 
-  uint16_t sizeInBlocks = getRegisterFullSize(getStackTop());
-  setRegisterDataPointer(getStackTop() - 1, allocWp43(sizeInBlocks));
-  xcopy(REGISTER_DATA(getStackTop() - 1), REGISTER_DATA(getStackTop()), TO_BYTES(sizeInBlocks));
+  uint16_t sizeInBytes = TO_BYTES(getRegisterFullSize(getStackTop()));
+  setRegisterDataPointer(getStackTop() - 1, allocWp43(sizeInBytes));
+  xcopy(REGISTER_DATA(getStackTop() - 1), REGISTER_DATA(getStackTop()), sizeInBytes);
 }
 
 
@@ -58,7 +58,7 @@ void liftStack(void) {
     freeRegisterData(REGISTER_X);
   }
 
-  setRegisterDataPointer(REGISTER_X, allocWp43(TO_BLOCKS(REAL34_SIZE_IN_BYTES)));
+  setRegisterDataPointer(REGISTER_X, allocWp43(REAL34_SIZE_IN_BYTES));
   setRegisterDataType(REGISTER_X, dtReal34, amNone);
 }
 
@@ -70,11 +70,11 @@ void fnDropY(uint16_t unusedButMandatoryParameter) {
     globalRegister[i] = globalRegister[i+1];
   }
 
-  uint16_t sizeInBlocks = getRegisterFullSize(getStackTop());
-  void *dataPtr = allocWp43(sizeInBlocks);
+  uint16_t sizeInBytes = TO_BYTES(getRegisterFullSize(getStackTop()));
+  void *dataPtr = allocWp43(sizeInBytes);
   if(dataPtr) {
     setRegisterDataPointer(getStackTop() - 1, dataPtr);
-    xcopy(REGISTER_DATA(getStackTop() - 1), REGISTER_DATA(getStackTop()), TO_BYTES(sizeInBlocks));
+    xcopy(REGISTER_DATA(getStackTop() - 1), REGISTER_DATA(getStackTop()), sizeInBytes);
   }
   else {
     lastErrorCode = ERROR_RAM_FULL;
@@ -205,16 +205,16 @@ void fnShuffle(uint16_t regist_order) {
 
 void fnFillStack(uint16_t unusedButMandatoryParameter) {
   uint16_t dataTypeX         = getRegisterDataType(REGISTER_X);
-  uint16_t dataSizeXinBlocks = getRegisterFullSize(REGISTER_X);
+  uint16_t dataSizeXinBytes  = TO_BYTES(getRegisterFullSize(REGISTER_X));
   uint16_t tag               = getRegisterTag(REGISTER_X);
 
   for(uint16_t i=REGISTER_Y; i<=getStackTop(); i++) {
     freeRegisterData(i);
     setRegisterDataType(i, dataTypeX, tag);
-    void *newDataPointer = allocWp43(dataSizeXinBlocks);
+    void *newDataPointer = allocWp43(dataSizeXinBytes);
     if(newDataPointer) {
       setRegisterDataPointer(i, newDataPointer);
-      xcopy(newDataPointer, REGISTER_DATA(REGISTER_X), TO_BYTES(dataSizeXinBlocks));
+      xcopy(newDataPointer, REGISTER_DATA(REGISTER_X), dataSizeXinBytes);
     }
     else {
       lastErrorCode = ERROR_RAM_FULL;
@@ -299,14 +299,14 @@ void saveForUndo(void) {
   lrSelectionUndo = lrSelection;
   if(statisticalSumsPointer == NULL) { // There are no statistical sums to save for undo
     if(savedStatisticalSumsPointer != NULL) {
-      freeWp43(savedStatisticalSumsPointer, NUMBER_OF_STATISTICAL_SUMS * TO_BLOCKS(REAL_SIZE_IN_BYTES));
+      freeWp43(savedStatisticalSumsPointer, NUMBER_OF_STATISTICAL_SUMS * REAL_SIZE_IN_BYTES);
       savedStatisticalSumsPointer = NULL;
     }
   }
   else { // There are statistical sums to save for undo
     lrChosenUndo = lrChosen;
     if(savedStatisticalSumsPointer == NULL) {
-      savedStatisticalSumsPointer = allocWp43(NUMBER_OF_STATISTICAL_SUMS * TO_BLOCKS(REAL_SIZE_IN_BYTES));
+      savedStatisticalSumsPointer = allocWp43(NUMBER_OF_STATISTICAL_SUMS * REAL_SIZE_IN_BYTES);
     }
     xcopy(savedStatisticalSumsPointer, statisticalSumsPointer, NUMBER_OF_STATISTICAL_SUMS * TO_BYTES(TO_BLOCKS(REAL_SIZE_IN_BYTES)));
   }
@@ -379,7 +379,7 @@ void undo(void) {
   lrSelection = lrSelectionUndo;
   if(savedStatisticalSumsPointer == NULL) { // There are no statistical sums to restore
     if(statisticalSumsPointer != NULL) {
-      freeWp43(statisticalSumsPointer, NUMBER_OF_STATISTICAL_SUMS * TO_BLOCKS(REAL_SIZE_IN_BYTES));
+      freeWp43(statisticalSumsPointer, NUMBER_OF_STATISTICAL_SUMS * REAL_SIZE_IN_BYTES);
       statisticalSumsPointer = NULL;
       lrChosen = 0;
     }
@@ -387,7 +387,7 @@ void undo(void) {
   else { // There are statistical sums to restore
     lrChosen = lrChosenUndo;
     if(statisticalSumsPointer == NULL) {
-      statisticalSumsPointer = allocWp43(NUMBER_OF_STATISTICAL_SUMS * TO_BLOCKS(REAL_SIZE_IN_BYTES));
+      statisticalSumsPointer = allocWp43(NUMBER_OF_STATISTICAL_SUMS * REAL_SIZE_IN_BYTES);
     }
     xcopy(statisticalSumsPointer, savedStatisticalSumsPointer, NUMBER_OF_STATISTICAL_SUMS * TO_BYTES(TO_BLOCKS(REAL_SIZE_IN_BYTES)));
   }

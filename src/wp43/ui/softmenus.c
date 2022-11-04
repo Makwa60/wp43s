@@ -592,7 +592,7 @@ void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
     uint16_t  flashOffset = 0;
     uint8_t  *step;
     if(inFlash) {
-      step = allocWp43(TO_BLOCKS(400));
+      step = allocWp43(400);
       if(step) {
         readStepInFlashPgmLibrary(step, 400, labelList[label].instructionPointer.flash);
       }
@@ -618,7 +618,7 @@ void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
       }
     }
     if(inFlash) {
-      freeWp43(step, TO_BLOCKS(400));
+      freeWp43(step, 400);
     }
   }
 

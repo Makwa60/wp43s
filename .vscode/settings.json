@@ -19,6 +19,11 @@
         }
     ],
     "files.associations": {
-        "*.h": "c"
+        "*.h": "c",
+        "array": "c",
+        "hash_map": "c",
+        "string_view": "c",
+        "initializer_list": "c",
+        "valarray": "c"
     }
 }
