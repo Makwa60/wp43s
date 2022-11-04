@@ -678,10 +678,10 @@ void fnReset(uint16_t confirmation) {
 
     // initialize 1 long integer reserved variables: GRAMOD
     #if defined(OS64BIT)
-      memPtr = allocWp43(3);
+      memPtr = allocWp43(TO_BLOCKS(12));
       ((dataBlock_t *)memPtr)->dataMaxLength = 2;
     #else // !OS64BIT
-      memPtr = allocWp43(2);
+      memPtr = allocWp43(TO_BLOCKS(8));
       ((dataBlock_t *)memPtr)->dataMaxLength = 1;
     #endif // OS64BIT
 
@@ -708,7 +708,7 @@ void fnReset(uint16_t confirmation) {
 
     // allocate space for the local register list
     allSubroutineLevels.numberOfSubroutineLevels = 1;
-    currentSubroutineLevelData = allocWp43(3);
+    currentSubroutineLevelData = allocWp43(TO_BLOCKS(12));
     allSubroutineLevels.ptrToSubroutineLevel0Data = TO_WP43MEMPTR(currentSubroutineLevelData);
     currentReturnProgramNumber = 0;
     currentReturnLocalStep = 0;

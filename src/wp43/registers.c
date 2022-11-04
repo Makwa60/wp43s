@@ -23,6 +23,7 @@
 #include "saveRestoreCalcState.h"
 #include "sort.h"
 #include "stack.h"
+#include <assert.h>
 #include <stdbool.h>
 #include <string.h>
 
@@ -467,7 +468,7 @@ void allocateLocalRegisters(uint16_t numberOfRegistersToAllocate) {
   uint16_t r;
   if(currentLocalFlags == NULL) {
     // 1st allocation of local registers in this level of subroutine
-    if((currentSubroutineLevelData = reallocWp43(currentSubroutineLevelData, 3, 4 + numberOfRegistersToAllocate))) {
+    if((currentSubroutineLevelData = reallocWp43(currentSubroutineLevelData, TO_BLOCKS(12), TO_BLOCKS(16 + 4*numberOfRegistersToAllocate)))) {
       currentLocalFlags = currentSubroutineLevelData + 3;
       currentLocalFlags->localFlags = 0;
       currentLocalRegisters = (registerHeader_t *)(currentSubroutineLevelData + 4);
@@ -487,7 +488,7 @@ void allocateLocalRegisters(uint16_t numberOfRegistersToAllocate) {
           for(uint16_t rr = FIRST_LOCAL_REGISTER; rr < r; rr++) {
             freeRegisterData(FIRST_LOCAL_REGISTER + rr);
           }
-          reallocWp43(currentSubroutineLevelData, 4 + numberOfRegistersToAllocate, 3);
+          reallocWp43(currentSubroutineLevelData, TO_BLOCKS(16 + 4*numberOfRegistersToAllocate), TO_BLOCKS(12));
           currentLocalFlags = NULL;
           currentLocalRegisters = NULL;
           currentNumberOfLocalRegisters = 0;
@@ -507,7 +508,7 @@ void allocateLocalRegisters(uint16_t numberOfRegistersToAllocate) {
     // The number of allocated local registers changes
     if(numberOfRegistersToAllocate > currentNumberOfLocalRegisters) {
       uint8_t oldNumberOfLocalRegisters = currentNumberOfLocalRegisters;
-      if((currentSubroutineLevelData = reallocWp43(currentSubroutineLevelData, 4 + currentNumberOfLocalRegisters, 4 + numberOfRegistersToAllocate))) {
+      if((currentSubroutineLevelData = reallocWp43(currentSubroutineLevelData, TO_BLOCKS(16 + 4*currentNumberOfLocalRegisters), TO_BLOCKS(16 + 4*numberOfRegistersToAllocate)))) {
         currentLocalFlags = currentSubroutineLevelData + 3;
         currentLocalRegisters = (registerHeader_t *)(currentSubroutineLevelData + 4);
         currentNumberOfLocalRegisters = numberOfRegistersToAllocate;
@@ -525,7 +526,7 @@ void allocateLocalRegisters(uint16_t numberOfRegistersToAllocate) {
             for(uint16_t rr = FIRST_LOCAL_REGISTER + oldNumberOfLocalRegisters; rr < r; rr++) {
               freeRegisterData(FIRST_LOCAL_REGISTER + rr);
             }
-            reallocWp43(currentSubroutineLevelData, 4 + numberOfRegistersToAllocate, 4 + oldNumberOfLocalRegisters);
+            reallocWp43(currentSubroutineLevelData, TO_BLOCKS(16 + 4*numberOfRegistersToAllocate), TO_BLOCKS(16 + 4*oldNumberOfLocalRegisters));
             currentLocalFlags = currentSubroutineLevelData + 3;
             currentLocalRegisters = (registerHeader_t *)(currentSubroutineLevelData + 4);
             currentNumberOfLocalRegisters = numberOfRegistersToAllocate;
@@ -545,7 +546,7 @@ void allocateLocalRegisters(uint16_t numberOfRegistersToAllocate) {
       for(r=numberOfRegistersToAllocate; r<currentNumberOfLocalRegisters; r++) {
         freeRegisterData(FIRST_LOCAL_REGISTER + r);
       }
-      freeWp43(currentSubroutineLevelData + 4 + numberOfRegistersToAllocate, currentNumberOfLocalRegisters - numberOfRegistersToAllocate);
+      freeWp43(currentSubroutineLevelData + 4 + numberOfRegistersToAllocate, TO_BLOCKS(4*(currentNumberOfLocalRegisters - numberOfRegistersToAllocate)));
       currentLocalFlags = currentSubroutineLevelData + 3;
       currentLocalRegisters = (numberOfRegistersToAllocate == 0 ? NULL : (registerHeader_t *)(currentSubroutineLevelData + 4));
       currentNumberOfLocalRegisters = numberOfRegistersToAllocate;
@@ -1399,12 +1400,15 @@ int16_t indirectAddressing(calcRegister_t regist, uint16_t parameterType, int16_
   if(regist >= FIRST_LOCAL_REGISTER + currentNumberOfLocalRegisters &&
      (regist < FIRST_NAMED_VARIABLE ||
         regist >= FIRST_NAMED_VARIABLE + numberOfNamedVariables)) {
-    displayCalcErrorMessage(ERROR_OUT_OF_RANGE, ERR_REGISTER_LINE, REGISTER_X);
+    if(!getSystemFlag(FLAG_IGN1ER)) {
+      displayCalcErrorMessage(ERROR_OUT_OF_RANGE, ERR_REGISTER_LINE, REGISTER_X);
+    }
     #if defined(PC_BUILD)
       sprintf(errorMessage, "local indirection register .%02d", regist - FIRST_LOCAL_REGISTER);
-      moreInfoOnError("In function indirectAddressing:", errorMessage, "is not defined!", NULL);
+      moreInfoOnError("In function indirectAddressing:", errorMessage, "is not defined!", getSystemFlag(FLAG_IGN1ER) ? "ignored since IGN1ER was set" : NULL);
     #endif // PC_BUILD
-    return 9999;
+    clearSystemFlag(FLAG_IGN1ER);
+    return FAILED_INDIRECTION;
   }
 
   else if(getRegisterDataType(regist) == dtReal34) {
@@ -1412,13 +1416,16 @@ int16_t indirectAddressing(calcRegister_t regist, uint16_t parameterType, int16_
 
     int32ToReal34(maxValue, &maxValue34);
     if(real34CompareLessThan(REGISTER_REAL34_DATA(regist), const34_0) || real34CompareGreaterEqual(REGISTER_REAL34_DATA(regist), &maxValue34)) {
-      displayCalcErrorMessage(ERROR_OUT_OF_RANGE, ERR_REGISTER_LINE, REGISTER_X);
+      if(!getSystemFlag(FLAG_IGN1ER)) {
+        displayCalcErrorMessage(ERROR_OUT_OF_RANGE, ERR_REGISTER_LINE, REGISTER_X);
+      }
       #if defined(PC_BUILD)
         real34ToString(REGISTER_REAL34_DATA(regist), errorMessage);
         sprintf(tmpString, "register %" PRId16 " = %s:", regist, errorMessage);
-        moreInfoOnError("In function indirectAddressing:", tmpString, "this value is negative or too big!", NULL);
+        moreInfoOnError("In function indirectAddressing:", tmpString, "this value is negative or too big!", getSystemFlag(FLAG_IGN1ER) ? "ignored since IGN1ER was set" : NULL);
       #endif // PC_BUILD
-      return 9999;
+      clearSystemFlag(FLAG_IGN1ER);
+      return FAILED_INDIRECTION;
     }
     value = real34ToInt32(REGISTER_REAL34_DATA(regist));
   }
@@ -1428,14 +1435,17 @@ int16_t indirectAddressing(calcRegister_t regist, uint16_t parameterType, int16_
 
     convertLongIntegerRegisterToLongInteger(regist, lgInt);
     if(longIntegerIsNegative(lgInt) || longIntegerCompareUInt(lgInt, maxValue) > 0) {
-      displayCalcErrorMessage(ERROR_OUT_OF_RANGE, ERR_REGISTER_LINE, REGISTER_X);
+      if(!getSystemFlag(FLAG_IGN1ER)) {
+        displayCalcErrorMessage(ERROR_OUT_OF_RANGE, ERR_REGISTER_LINE, REGISTER_X);
+      }
       #if defined(PC_BUILD)
         longIntegerToAllocatedString(lgInt, errorMessage, ERROR_MESSAGE_LENGTH);
         sprintf(tmpString, "register %" PRId16 " = %s:", regist, errorMessage);
-        moreInfoOnError("In function indirectAddressing:", tmpString, "this value is negative or too big!", NULL);
+        moreInfoOnError("In function indirectAddressing:", tmpString, "this value is negative or too big!", getSystemFlag(FLAG_IGN1ER) ? "ignored since IGN1ER was set" : NULL);
       #endif // PC_BUILD
       longIntegerFree(lgInt);
-      return 9999;
+      clearSystemFlag(FLAG_IGN1ER);
+      return FAILED_INDIRECTION;
     }
     value = longIntegerToUInt(lgInt);
     longIntegerFree(lgInt);
@@ -1447,13 +1457,16 @@ int16_t indirectAddressing(calcRegister_t regist, uint16_t parameterType, int16_
 
     convertShortIntegerRegisterToUInt64(regist, &sign, &val);
     if(sign == 1 || val > 180) {
-      displayCalcErrorMessage(ERROR_OUT_OF_RANGE, ERR_REGISTER_LINE, REGISTER_X);
+      if(!getSystemFlag(FLAG_IGN1ER)) {
+        displayCalcErrorMessage(ERROR_OUT_OF_RANGE, ERR_REGISTER_LINE, REGISTER_X);
+      }
       #if defined(PC_BUILD)
         shortIntegerToDisplayString(regist, errorMessage, false);
         sprintf(tmpString, "register %" PRId16 " = %s:", regist, errorMessage);
-        moreInfoOnError("In function indirectAddressing:", tmpString, "this value is negative or too big!", NULL);
+        moreInfoOnError("In function indirectAddressing:", tmpString, "this value is negative or too big!", getSystemFlag(FLAG_IGN1ER) ? "ignored since IGN1ER was set" : NULL);
       #endif // PC_BUILD
-      return 9999;
+      clearSystemFlag(FLAG_IGN1ER);
+      return FAILED_INDIRECTION;
     }
     value = val;
   }
@@ -1462,34 +1475,43 @@ int16_t indirectAddressing(calcRegister_t regist, uint16_t parameterType, int16_
     value = findNamedVariable(REGISTER_STRING_DATA(regist));
     isValidAlpha = true;
     if(value == INVALID_VARIABLE) {
-      displayCalcErrorMessage(ERROR_UNDEF_SOURCE_VAR, ERR_REGISTER_LINE, REGISTER_X);
+      if(!getSystemFlag(FLAG_IGN1ER)) {
+        displayCalcErrorMessage(ERROR_UNDEF_SOURCE_VAR, ERR_REGISTER_LINE, REGISTER_X);
+      }
       #if (EXTRA_INFO_ON_CALC_ERROR == 1)
         sprintf(errorMessage, "string '%s' is not a named variable", REGISTER_STRING_DATA(regist));
-        moreInfoOnError("In function indirectAddressing:", errorMessage, NULL, NULL);
+        moreInfoOnError("In function indirectAddressing:", errorMessage, getSystemFlag(FLAG_IGN1ER) ? "ignored since IGN1ER was set" : NULL, NULL);
       #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
-      return 9999;
+      clearSystemFlag(FLAG_IGN1ER);
+      return FAILED_INDIRECTION;
     }
   }
 
   else {
-    displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, REGISTER_X);
+    if(!getSystemFlag(FLAG_IGN1ER)) {
+      displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, REGISTER_X);
+    }
     #if defined(PC_BUILD)
       sprintf(errorMessage, "register %" PRId16 " is %s:", regist, getRegisterDataTypeName(regist, true, false));
-      moreInfoOnError("In function indirectAddressing:", errorMessage, "not suited for indirect addressing!", NULL);
+      moreInfoOnError("In function indirectAddressing:", errorMessage, "not suited for indirect addressing!", getSystemFlag(FLAG_IGN1ER) ? "ignored since IGN1ER was set" : NULL);
     #endif // PC_BUILD
-    return 9999;
+    clearSystemFlag(FLAG_IGN1ER);
+    return FAILED_INDIRECTION;
   }
 
   if(minValue <= value && (value <= maxValue || isValidAlpha)) {
     return value;
   }
   else {
-    displayCalcErrorMessage(ERROR_OUT_OF_RANGE, ERR_REGISTER_LINE, REGISTER_X);
+    if(!getSystemFlag(FLAG_IGN1ER)) {
+      displayCalcErrorMessage(ERROR_OUT_OF_RANGE, ERR_REGISTER_LINE, REGISTER_X);
+    }
     #if defined(PC_BUILD)
       sprintf(errorMessage, "value = %d! Should be from %d to %d.", value, minValue, maxValue);
-      moreInfoOnError("In function indirectAddressing:", errorMessage, NULL, NULL);
+      moreInfoOnError("In function indirectAddressing:", errorMessage, getSystemFlag(FLAG_IGN1ER) ? "ignored since IGN1ER was set" : NULL, NULL);
     #endif // PC_BUILD
-    return 9999;
+    clearSystemFlag(FLAG_IGN1ER);
+    return FAILED_INDIRECTION;
   }
 }
 
@@ -1775,38 +1797,39 @@ void reallocateRegister(calcRegister_t regist, uint32_t dataType, uint16_t dataS
   uint16_t dataSizeWithDataLenBlocks = dataSizeWithoutDataLenBlocks;
 
   //printf("reallocateRegister: %d to %s tag=%u (%u bytes excluding maxSize) begin\n", regist, getDataTypeName(dataType, false, false), tag, dataSizeWithoutDataLenBlocks);
-  if(dataType == dtReal34 && dataSizeWithoutDataLenBlocks != REAL34_SIZE_IN_BLOCKS) {
-    sprintf(errorMessage, "In function reallocateRegister: %" PRIu16 " is an unexpected numByte value for a real34 or an angle34! It should be REAL34_SIZE_IN_BLOCKS=%" PRIu16 "!", dataSizeWithoutDataLenBlocks, (uint16_t)REAL34_SIZE_IN_BLOCKS);
-    bugScreen(errorMessage);
-  }
-  else if(dataType == dtComplex34 && dataSizeWithoutDataLenBlocks != COMPLEX34_SIZE_IN_BLOCKS) {
-    sprintf(errorMessage, "In function reallocateRegister: %" PRIu16 " is an unexpected numByte value for a complex34! It should be COMPLEX34_SIZE_IN_BLOCKS=%" PRIu16 "!", dataSizeWithoutDataLenBlocks, (uint16_t)COMPLEX34_SIZE_IN_BLOCKS);
-    bugScreen(errorMessage);
-  }
-  else if(dataType == dtShortInteger && dataSizeWithoutDataLenBlocks != SHORT_INTEGER_SIZE) {
-    sprintf(errorMessage, "In function reallocateRegister: %" PRIu16 " is an unexpected numByte value for an integer! It should be SHORT_INTEGER_SIZE=%" PRIu16 "!", dataSizeWithoutDataLenBlocks, (uint16_t)SHORT_INTEGER_SIZE);
-    bugScreen(errorMessage);
-  }
-  else if(dataType == dtConfig && dataSizeWithoutDataLenBlocks != CONFIG_SIZE) {
-    sprintf(errorMessage, "In function reallocateRegister: %" PRIu16 " is an unexpected numByte value for a configuration! It should be CONFIG_SIZE=%" PRIu16 "!", dataSizeWithoutDataLenBlocks, (uint16_t)CONFIG_SIZE);
-    bugScreen(errorMessage);
-  }
-  else if(dataType == dtTime && dataSizeWithoutDataLenBlocks != REAL34_SIZE_IN_BLOCKS) {
-    sprintf(errorMessage, "In function reallocateRegister: %" PRIu16 " is an unexpected numByte value for a time! It should be REAL34_SIZE_IN_BLOCKS=%" PRIu16 "!", dataSizeWithoutDataLenBlocks, (uint16_t)REAL34_SIZE_IN_BLOCKS);
-    bugScreen(errorMessage);
-  }
-  else if(dataType == dtDate && dataSizeWithoutDataLenBlocks != REAL34_SIZE_IN_BLOCKS) {
-    sprintf(errorMessage, "In function reallocateRegister: %" PRIu16 " is an unexpected numByte value for a date! It should be REAL34_SIZE_IN_BLOCKS=%" PRIu16 "!", dataSizeWithoutDataLenBlocks, (uint16_t)REAL34_SIZE_IN_BLOCKS);
-    bugScreen(errorMessage);
-  }
-  else if(dataType == dtString || dataType == dtReal34Matrix || dataType == dtComplex34Matrix) {
-    dataSizeWithDataLenBlocks = dataSizeWithoutDataLenBlocks + 1; // +1 for the max length of the string
-  }
-  else if(dataType == dtLongInteger) {
-    if(TO_BYTES(dataSizeWithoutDataLenBlocks) % LIMB_SIZE != 0) {
-      dataSizeWithoutDataLenBlocks = ((dataSizeWithoutDataLenBlocks / TO_BLOCKS(LIMB_SIZE)) + 1) * TO_BLOCKS(LIMB_SIZE);
+  switch(dataType) {
+    case dtReal34:
+    case dtTime:
+    case dtDate: {
+      assert(dataSizeWithoutDataLenBlocks == REAL34_SIZE_IN_BLOCKS);
+      break;
     }
-    dataSizeWithDataLenBlocks = dataSizeWithoutDataLenBlocks + 1; // +1 for the max length of the data
+    case dtComplex34: {
+      assert(dataSizeWithoutDataLenBlocks == COMPLEX34_SIZE_IN_BLOCKS);
+      break;
+    }
+    case dtShortInteger: {
+      assert(dataSizeWithoutDataLenBlocks == SHORT_INTEGER_SIZE);
+      break;
+    }
+    case dtConfig: {
+      assert(dataSizeWithoutDataLenBlocks == CONFIG_SIZE);
+      break;
+    }
+    case dtString:
+    case dtReal34Matrix:
+    case dtComplex34Matrix: {
+      dataSizeWithDataLenBlocks = dataSizeWithoutDataLenBlocks + 1; // +1 for the max length of the string
+      break;
+    }
+    case dtLongInteger: {
+      if(TO_BYTES(dataSizeWithoutDataLenBlocks) % LIMB_SIZE != 0) {
+        dataSizeWithoutDataLenBlocks = ((dataSizeWithoutDataLenBlocks / TO_BLOCKS(LIMB_SIZE)) + 1) * TO_BLOCKS(LIMB_SIZE);
+      }
+      dataSizeWithDataLenBlocks = dataSizeWithoutDataLenBlocks + 1; // +1 for the max length of the data
+      break;
+    }
+    default: {}
   }
 
   if(getRegisterDataType(regist) != dataType || ((getRegisterDataType(regist) == dtString || getRegisterDataType(regist) == dtLongInteger || getRegisterDataType(regist) == dtReal34Matrix || getRegisterDataType(regist) == dtComplex34Matrix) && getRegisterMaxDataLength(regist) != dataSizeWithoutDataLenBlocks)) {
