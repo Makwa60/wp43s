@@ -23,6 +23,7 @@
 #include "saveRestoreCalcState.h"
 #include "sort.h"
 #include "stack.h"
+#include <assert.h>
 #include <stdbool.h>
 #include <string.h>
 
@@ -1796,38 +1797,39 @@ void reallocateRegister(calcRegister_t regist, uint32_t dataType, uint16_t dataS
   uint16_t dataSizeWithDataLenBlocks = dataSizeWithoutDataLenBlocks;
 
   //printf("reallocateRegister: %d to %s tag=%u (%u bytes excluding maxSize) begin\n", regist, getDataTypeName(dataType, false, false), tag, dataSizeWithoutDataLenBlocks);
-  if(dataType == dtReal34 && dataSizeWithoutDataLenBlocks != REAL34_SIZE_IN_BLOCKS) {
-    sprintf(errorMessage, "In function reallocateRegister: %" PRIu16 " is an unexpected numByte value for a real34 or an angle34! It should be REAL34_SIZE_IN_BLOCKS=%" PRIu16 "!", dataSizeWithoutDataLenBlocks, (uint16_t)REAL34_SIZE_IN_BLOCKS);
-    bugScreen(errorMessage);
-  }
-  else if(dataType == dtComplex34 && dataSizeWithoutDataLenBlocks != COMPLEX34_SIZE_IN_BLOCKS) {
-    sprintf(errorMessage, "In function reallocateRegister: %" PRIu16 " is an unexpected numByte value for a complex34! It should be COMPLEX34_SIZE_IN_BLOCKS=%" PRIu16 "!", dataSizeWithoutDataLenBlocks, (uint16_t)COMPLEX34_SIZE_IN_BLOCKS);
-    bugScreen(errorMessage);
-  }
-  else if(dataType == dtShortInteger && dataSizeWithoutDataLenBlocks != SHORT_INTEGER_SIZE) {
-    sprintf(errorMessage, "In function reallocateRegister: %" PRIu16 " is an unexpected numByte value for an integer! It should be SHORT_INTEGER_SIZE=%" PRIu16 "!", dataSizeWithoutDataLenBlocks, (uint16_t)SHORT_INTEGER_SIZE);
-    bugScreen(errorMessage);
-  }
-  else if(dataType == dtConfig && dataSizeWithoutDataLenBlocks != CONFIG_SIZE) {
-    sprintf(errorMessage, "In function reallocateRegister: %" PRIu16 " is an unexpected numByte value for a configuration! It should be CONFIG_SIZE=%" PRIu16 "!", dataSizeWithoutDataLenBlocks, (uint16_t)CONFIG_SIZE);
-    bugScreen(errorMessage);
-  }
-  else if(dataType == dtTime && dataSizeWithoutDataLenBlocks != REAL34_SIZE_IN_BLOCKS) {
-    sprintf(errorMessage, "In function reallocateRegister: %" PRIu16 " is an unexpected numByte value for a time! It should be REAL34_SIZE_IN_BLOCKS=%" PRIu16 "!", dataSizeWithoutDataLenBlocks, (uint16_t)REAL34_SIZE_IN_BLOCKS);
-    bugScreen(errorMessage);
-  }
-  else if(dataType == dtDate && dataSizeWithoutDataLenBlocks != REAL34_SIZE_IN_BLOCKS) {
-    sprintf(errorMessage, "In function reallocateRegister: %" PRIu16 " is an unexpected numByte value for a date! It should be REAL34_SIZE_IN_BLOCKS=%" PRIu16 "!", dataSizeWithoutDataLenBlocks, (uint16_t)REAL34_SIZE_IN_BLOCKS);
-    bugScreen(errorMessage);
-  }
-  else if(dataType == dtString || dataType == dtReal34Matrix || dataType == dtComplex34Matrix) {
-    dataSizeWithDataLenBlocks = dataSizeWithoutDataLenBlocks + 1; // +1 for the max length of the string
-  }
-  else if(dataType == dtLongInteger) {
-    if(TO_BYTES(dataSizeWithoutDataLenBlocks) % LIMB_SIZE != 0) {
-      dataSizeWithoutDataLenBlocks = ((dataSizeWithoutDataLenBlocks / TO_BLOCKS(LIMB_SIZE)) + 1) * TO_BLOCKS(LIMB_SIZE);
+  switch(dataType) {
+    case dtReal34:
+    case dtTime:
+    case dtDate: {
+      assert(dataSizeWithoutDataLenBlocks == REAL34_SIZE_IN_BLOCKS);
+      break;
     }
-    dataSizeWithDataLenBlocks = dataSizeWithoutDataLenBlocks + 1; // +1 for the max length of the data
+    case dtComplex34: {
+      assert(dataSizeWithoutDataLenBlocks == COMPLEX34_SIZE_IN_BLOCKS);
+      break;
+    }
+    case dtShortInteger: {
+      assert(dataSizeWithoutDataLenBlocks == SHORT_INTEGER_SIZE);
+      break;
+    }
+    case dtConfig: {
+      assert(dataSizeWithoutDataLenBlocks == CONFIG_SIZE);
+      break;
+    }
+    case dtString:
+    case dtReal34Matrix:
+    case dtComplex34Matrix: {
+      dataSizeWithDataLenBlocks = dataSizeWithoutDataLenBlocks + 1; // +1 for the max length of the string
+      break;
+    }
+    case dtLongInteger: {
+      if(TO_BYTES(dataSizeWithoutDataLenBlocks) % LIMB_SIZE != 0) {
+        dataSizeWithoutDataLenBlocks = ((dataSizeWithoutDataLenBlocks / TO_BLOCKS(LIMB_SIZE)) + 1) * TO_BLOCKS(LIMB_SIZE);
+      }
+      dataSizeWithDataLenBlocks = dataSizeWithoutDataLenBlocks + 1; // +1 for the max length of the data
+      break;
+    }
+    default: {}
   }
 
   if(getRegisterDataType(regist) != dataType || ((getRegisterDataType(regist) == dtString || getRegisterDataType(regist) == dtLongInteger || getRegisterDataType(regist) == dtReal34Matrix || getRegisterDataType(regist) == dtComplex34Matrix) && getRegisterMaxDataLength(regist) != dataSizeWithoutDataLenBlocks)) {
