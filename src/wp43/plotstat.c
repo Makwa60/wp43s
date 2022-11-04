@@ -1271,27 +1271,18 @@ void graphPlotstat(uint16_t selection) {
     }
     else {
       displayCalcErrorMessage(ERROR_NO_SUMMATION_DATA, ERR_REGISTER_LINE, REGISTER_X);
-      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-        sprintf(errorMessage, "There is no statistical data available!");
-        moreInfoOnError("In function graphPlotstat:", errorMessage, NULL, NULL);
-      #endif
+      errorMoreInfo("There is no statistical data available!");
     }
   return;
 
   scalePlusInfinity:
   displayCalcErrorMessage(ERROR_OVERFLOW_PLUS_INF, ERR_REGISTER_LINE, REGISTER_X);
-  #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-    sprintf(errorMessage, "Plus Infinity encountered!");
-    moreInfoOnError("In function graphPlotstat:", errorMessage, NULL, NULL);
-  #endif
+  errorMoreInfo("Plus Infinity encountered!");
   return;
 
   scaleMinusInfinity:
   displayCalcErrorMessage(ERROR_OVERFLOW_MINUS_INF, ERR_REGISTER_LINE, REGISTER_X);
-  #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-    sprintf(errorMessage, "Minus Infinity encountered!");
-    moreInfoOnError("In function graphPlotstat:", errorMessage, NULL, NULL);
-  #endif
+  errorMoreInfo("Minus Infinity encountered!");
 
   #endif // !TESTSUITE_BUILD
 }
@@ -1816,10 +1807,7 @@ void fnPlotStat(uint16_t plotMode){
     else {
       calcMode = cmNormal;
       displayCalcErrorMessage(ERROR_NO_SUMMATION_DATA, ERR_REGISTER_LINE, REGISTER_X);
-      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-        sprintf(errorMessage, "There is no statistical/plot data available!");
-        moreInfoOnError("In function fnPlotStat:", errorMessage, NULL, NULL);
-      #endif
+      errorMoreInfo("There is no statistical/plot data available!");
     }
   #endif // !TESTSUITE_BUILD
 }

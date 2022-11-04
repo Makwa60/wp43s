@@ -66,15 +66,12 @@ void fnGoto(uint16_t label) {
       }
 
       displayCalcErrorMessage(ERROR_LABEL_NOT_FOUND, ERR_REGISTER_LINE, REGISTER_X);
-      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-        if(label < REGISTER_X) {
-          sprintf(errorMessage, "there is no local label %02u in current program", label);
-        }
-        else {
-          sprintf(errorMessage, "there is no local label %c in current program", 'A' + (label - 100));
-        }
-        moreInfoOnError("In function fnGoto:", errorMessage, NULL, NULL);
-      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+      if(label < REGISTER_X) {
+        errorMoreInfo("there is no local label %02u in current program", label);
+      }
+      else {
+        errorMoreInfo("there is no local label %c in current program", 'A' + (label - 100));
+      }
     }
     else if(label >= FIRST_LABEL && label <= LAST_LABEL) { // Global named label
       if((label - FIRST_LABEL) < numberOfLabels) {
@@ -83,18 +80,12 @@ void fnGoto(uint16_t label) {
       }
       else {
         displayCalcErrorMessage(ERROR_LABEL_NOT_FOUND, ERR_REGISTER_LINE, REGISTER_X);
-        #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-          sprintf(errorMessage, "label ID %u out of range", label - FIRST_LABEL);
-          moreInfoOnError("In function fnGoto:", errorMessage, NULL, NULL);
-        #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+        errorMoreInfo("label ID %u out of range", label - FIRST_LABEL);
       }
     }
     else {
       displayCalcErrorMessage(ERROR_LABEL_NOT_FOUND, ERR_REGISTER_LINE, REGISTER_X);
-      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-        sprintf(errorMessage, "invalid parameter %u", label);
-        moreInfoOnError("In function fnGoto:", errorMessage, NULL, NULL);
-      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+      errorMoreInfo("invalid parameter %u", label);
     }
   }
   else {
@@ -337,17 +328,11 @@ void fnStopProgram(uint16_t unusedButMandatoryParameter) {
     }
     else if(getSystemFlag(FLAG_IGN1ER)) {
       clearSystemFlag(FLAG_IGN1ER);
-      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-        sprintf(errorMessage, "string '%s' is not a named variable", tmpStringLabelOrVariableName);
-        moreInfoOnError("In function _executeWithIndirectVariable:", errorMessage, "ignored since IGN1ER was set", NULL);
-      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+      errorMoreInfo("string '%s' is not a named variable\nignored since IGN1ER was set", tmpStringLabelOrVariableName);
     }
     else {
       displayCalcErrorMessage(ERROR_UNDEF_SOURCE_VAR, ERR_REGISTER_LINE, REGISTER_X);
-      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-        sprintf(errorMessage, "string '%s' is not a named variable", tmpStringLabelOrVariableName);
-        moreInfoOnError("In function _executeWithIndirectVariable:", errorMessage, NULL, NULL);
-      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+      errorMoreInfo("string '%s' is not a named variable", tmpStringLabelOrVariableName);
     }
   }
 
@@ -375,17 +360,11 @@ void fnStopProgram(uint16_t unusedButMandatoryParameter) {
           }
           else if(getSystemFlag(FLAG_IGN1ER)) {
             clearSystemFlag(FLAG_IGN1ER);
-            #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-              sprintf(errorMessage, "string '%s' is not a named label", tmpStringLabelOrVariableName);
-              moreInfoOnError("In function _executeOp:", errorMessage, "ignored since IGN1ER was set", NULL);
-            #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+            errorMoreInfo("string '%s' is not a named label\nignored since IGN1ER was set", tmpStringLabelOrVariableName);
           }
           else {
             displayCalcErrorMessage(ERROR_LABEL_NOT_FOUND, ERR_REGISTER_LINE, REGISTER_X);
-            #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-              sprintf(errorMessage, "string '%s' is not a named label", tmpStringLabelOrVariableName);
-              moreInfoOnError("In function _executeOp:", errorMessage, NULL, NULL);
-            #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+            errorMoreInfo("string '%s' is not a named label", tmpStringLabelOrVariableName);
           }
         }
         else if(opParam == INDIRECT_REGISTER) {
@@ -482,17 +461,11 @@ void fnStopProgram(uint16_t unusedButMandatoryParameter) {
           }
           else if(getSystemFlag(FLAG_IGN1ER)) {
             clearSystemFlag(FLAG_IGN1ER);
-            #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-              sprintf(errorMessage, "string '%s' is not a named variable", tmpStringLabelOrVariableName);
-              moreInfoOnError("In function _executeOp:", errorMessage, "ignored since IGN1ER was set", NULL);
-            #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+            errorMoreInfo("string '%s' is not a named variable\nignored since IGN1ER was set", tmpStringLabelOrVariableName);
           }
           else {
             displayCalcErrorMessage(ERROR_UNDEF_SOURCE_VAR, ERR_REGISTER_LINE, REGISTER_X);
-            #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-              sprintf(errorMessage, "string '%s' is not a named variable", tmpStringLabelOrVariableName);
-              moreInfoOnError("In function _executeOp:", errorMessage, NULL, NULL);
-            #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+            errorMoreInfo("string '%s' is not a named variable", tmpStringLabelOrVariableName);
           }
         }
         else if(paramMode == PARAM_COMPARE && opParam == VALUE_0) {
@@ -749,9 +722,7 @@ int16_t executeOneStep(pgmPtr_t step) {
 
           case PTP_DISABLED: {
             displayCalcErrorMessage(ERROR_NON_PROGRAMMABLE_COMMAND, ERR_REGISTER_LINE, REGISTER_X);
-            #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-              moreInfoOnError("In function decodeOneStep:", "non-programmable function", indexOfItems[op].itemCatalogName, "appeared in the program!");
-            #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+            errorMoreInfo("non-programmable function '%s' appeared in the program!", indexOfItems[op].itemCatalogName);
             return 0;
           }
 

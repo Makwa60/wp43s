@@ -136,9 +136,7 @@ void fnPSto(uint16_t unusedButMandatoryParameter) {
     // Append to Flash
     if(!ioFileOpen(ioPathPgmFile, ioModeUpdate)) {
       displayCalcErrorMessage(ERROR_NO_BACKUP_DATA, ERR_REGISTER_LINE, REGISTER_X);
-      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-        moreInfoOnError("In function deleteFromFlashPgmLibrary: cannot find or read backup data file wp43.sav", NULL, NULL, NULL);
-      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+      errorMoreInfo("cannot find or read backup data file wp43.sav");
       return;
     }
 
@@ -153,9 +151,7 @@ void fnPSto(uint16_t unusedButMandatoryParameter) {
   }
   else {
     displayCalcErrorMessage(ERROR_FLASH_MEMORY_WRITE_PROTECTED, ERR_REGISTER_LINE, REGISTER_X);
-    #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-      moreInfoOnError("In function fnPSto: cannot copy a program from FM to FM", NULL, NULL, NULL);
-    #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+    errorMoreInfo("cannot copy a program from FM to FM");
   }
 }
 
@@ -164,9 +160,7 @@ void fnPSto(uint16_t unusedButMandatoryParameter) {
 void deleteFromFlashPgmLibrary(uint32_t fromAddr, uint32_t toAddr) {
   if(!ioFileOpen(ioPathPgmFile, ioModeUpdate)) {
     displayCalcErrorMessage(ERROR_NO_BACKUP_DATA, ERR_REGISTER_LINE, REGISTER_X);
-    #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-      moreInfoOnError("In function deleteFromFlashPgmLibrary: cannot find or read backup data file wp43.sav", NULL, NULL, NULL);
-    #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+    errorMoreInfo("cannot find or read backup data file wp43.sav");
     return;
   }
 
@@ -189,9 +183,7 @@ void deleteFromFlashPgmLibrary(uint32_t fromAddr, uint32_t toAddr) {
 void readStepInFlashPgmLibrary(uint8_t *buffer, uint16_t bufferSize, uint32_t pointer) {
   if(!ioFileOpen(ioPathPgmFile, ioModeRead)) {
     displayCalcErrorMessage(ERROR_NO_BACKUP_DATA, ERR_REGISTER_LINE, REGISTER_X);
-    #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-      moreInfoOnError("In function scanFlashProgramLibrary: cannot find or read backup data file wp43.sav", NULL, NULL, NULL);
-    #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+    errorMoreInfo("cannot find or read backup data file wp43.sav");
     return;
   }
 
@@ -208,9 +200,7 @@ void scanFlashPgmLibrary(void) {
     initFlashPgmLibrary();
     if(!ioFileOpen(ioPathPgmFile, ioModeRead)) {
       displayCalcErrorMessage(ERROR_NO_BACKUP_DATA, ERR_REGISTER_LINE, REGISTER_X);
-      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-        moreInfoOnError("In function scanFlashProgramLibrary: cannot find or read backup data file wp43.sav", NULL, NULL, NULL);
-      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+      errorMoreInfo("cannot find or read backup data file wp43.sav");
       return;
     }
   }
