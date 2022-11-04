@@ -1409,9 +1409,7 @@ void shortIntegerToDisplayString(calcRegister_t regist, char *displayString, boo
       return;
     }
 
-    #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-      moreInfoOnError("In function shortIntegerToDisplayString: the integer data representation is too wide (1)!", displayString, NULL, NULL);
-    #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+    errorMoreInfo("the integer data representation is too wide (1)!\n%s", displayString);
 
     strcpy(displayString, "Integer data representation to wide!");
   }
@@ -1465,9 +1463,7 @@ void shortIntegerToDisplayString(calcRegister_t regist, char *displayString, boo
       return;
     }
 
-    #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-      moreInfoOnError("In function shortIntegerToDisplayString: the integer data representation is too wide (2)!", displayString, NULL, NULL);
-    #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+    errorMoreInfo("the integer data representation is too wide (2)!\n%s", displayString);
 
     strcpy(displayString, "Integer data representation to wide!");
   }
@@ -2076,10 +2072,7 @@ void fnShow(uint16_t unusedButMandatoryParameter) {
         programRunStop = PGM_STOPPED;
       }
       displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, REGISTER_X);
-      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-        sprintf(errorMessage, "cannot SHOW %s", getRegisterDataTypeName(REGISTER_X, true, false));
-        moreInfoOnError("In function fnShow:", errorMessage, NULL, NULL);
-      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+      errorMoreInfo("cannot SHOW %s", getRegisterDataTypeName(REGISTER_X, true, false));
       return;
     }
   }

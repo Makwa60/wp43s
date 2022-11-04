@@ -16,6 +16,7 @@
 #include "registers.h"
 #include "registerValueConversions.h"
 #include "ui/screen.h"
+#include <stdarg.h>
 #include <string.h>
 
 #include "wp43.h"
@@ -114,6 +115,23 @@ TO_QSPI const char *errorMessages[NUMBER_OF_ERROR_CODES] = {
     }
   }
 #endif // PC_BUILD
+
+
+
+#if (EXTRA_INFO_ON_CALC_ERROR == 1)
+  void errorMoreInfoForFunc(const char *funcName, const char *format, ...) {
+    char errorMsgString[2000];
+    uint8_t errorMsgUtf8[2000];
+    printf("\nIn function %s:\n", funcName);
+    va_list args;
+    va_start(args, format);
+    vsprintf(errorMsgString, format, args);
+    va_end(args);
+    stringToUtf8(errorMsgString, errorMsgUtf8);
+    printf("%s", errorMsgUtf8);
+    printf("\n\n");
+  }
+#endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
 
 
 

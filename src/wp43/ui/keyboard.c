@@ -469,9 +469,7 @@ bool      _kbSeenInterrupt     = false;
       case MNU_DYNAMIC: {
         if(itemToBeAssigned < 0) {
           displayCalcErrorMessage(ERROR_CANNOT_ASSIGN_HERE, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
-          #if defined(PC_BUILD)
-            moreInfoOnError("In function btnFnReleased:", "cannot assign submenu", indexOfItems[-itemToBeAssigned].itemCatalogName, "in user-created menu.");
-          #endif // PC_BUILD
+          errorMoreInfo("cannot assign submenu '%s' in user-created menu", indexOfItems[-itemToBeAssigned].itemCatalogName);
         }
         else {
           assignToUserMenu((keyCode - kcF1) + (shiftG ? 12 : shiftF ? 6 : 0));
@@ -493,9 +491,7 @@ bool      _kbSeenInterrupt     = false;
       }
       default: {
         displayCalcErrorMessage(ERROR_CANNOT_ASSIGN_HERE, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
-        #if defined(PC_BUILD)
-          moreInfoOnError("In function btnFnReleased:", "the menu", indexOfItems[-softmenu[softmenuStack[0].softmenuId].menuItem].itemCatalogName, "is write-protected.");
-        #endif // PC_BUILD
+        errorMoreInfo("the menu '%s' is write-protected", indexOfItems[-softmenu[softmenuStack[0].softmenuId].menuItem].itemCatalogName);
         calcMode = previousCalcMode;
         shiftF = shiftG = false;
         _closeCatalog();
@@ -945,17 +941,11 @@ bool      _kbSeenInterrupt     = false;
           }
           else if(getSystemFlag(FLAG_IGN1ER)) {
             clearSystemFlag(FLAG_IGN1ER);
-            #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-              sprintf(errorMessage, "string '%s' is not a named variable", funcParam);
-              moreInfoOnError("In function btnReleased:", errorMessage, "ignored since IGN1ER was set", NULL);
-            #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+            errorMoreInfo("string '%s' is not a named variable\nignored since IGN1ER was set", funcParam);
           }
           else {
             displayCalcErrorMessage(ERROR_UNDEF_SOURCE_VAR, ERR_REGISTER_LINE, REGISTER_X);
-            #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-              sprintf(errorMessage, "string '%s' is not a named variable", funcParam);
-              moreInfoOnError("In function btnReleased:", errorMessage, NULL, NULL);
-            #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+            errorMoreInfo("string '%s' is not a named variable", funcParam);
           }
         }
         else if(item == ITM_XEQ && getSystemFlag(FLAG_USER) && funcParam[0] != 0) {
@@ -965,17 +955,11 @@ bool      _kbSeenInterrupt     = false;
           }
           else if(getSystemFlag(FLAG_IGN1ER)) {
             clearSystemFlag(FLAG_IGN1ER);
-            #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-              sprintf(errorMessage, "string '%s' is not a named label", funcParam);
-              moreInfoOnError("In function btnReleased:", errorMessage, "ignored since IGN1ER was set", NULL);
-            #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+            errorMoreInfo("string '%s' is not a named label\nignored since IGN1ER was set", funcParam);
           }
           else {
             displayCalcErrorMessage(ERROR_LABEL_NOT_FOUND, ERR_REGISTER_LINE, REGISTER_X);
-            #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-              sprintf(errorMessage, "string '%s' is not a named label", funcParam);
-              moreInfoOnError("In function btnReleased:", errorMessage, NULL, NULL);
-            #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+            errorMoreInfo("string '%s' is not a named label", funcParam);
           }
         }
         else {
@@ -1937,10 +1921,7 @@ void fnKeyCC(uint16_t unusedButMandatoryParameter) {
         }
         else {
           displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, REGISTER_X); // Invalid input data type for this operation
-          #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-            sprintf(errorMessage, "You cannot use CC with %s in X and %s in Y!", getDataTypeName(getRegisterDataType(REGISTER_X), true, false), getDataTypeName(getRegisterDataType(REGISTER_Y), true, false));
-            moreInfoOnError("In function fnKeyCC:", errorMessage, NULL, NULL);
-          #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+          errorMoreInfo("You cannot use CC with %s in X and %s in Y!", getDataTypeName(getRegisterDataType(REGISTER_X), true, false), getDataTypeName(getRegisterDataType(REGISTER_Y), true, false));
         }
         break;
       }
