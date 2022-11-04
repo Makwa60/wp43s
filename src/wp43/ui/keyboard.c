@@ -996,7 +996,7 @@ bool      _kbSeenInterrupt     = false;
 
 
   void leavePem(void) {
-    if(freeProgramBytes >= 4) { // Push the programs to the end of RAM
+    if(freeProgramBytes >= TO_BYTES(1)) { // Push the programs to the end of RAM
       uint32_t newProgramSize = (uint32_t)((uint8_t *)(ram + RAM_SIZE) - beginOfProgramMemory) - (freeProgramBytes & 0xfffc);
       uint16_t localStepNumber = currentLocalStepNumber;
       uint16_t programNumber = currentProgramNumber;
