@@ -468,7 +468,7 @@ void allocateLocalRegisters(uint16_t numberOfRegistersToAllocate) {
   uint16_t r;
   if(currentLocalFlags == NULL) {
     // 1st allocation of local registers in this level of subroutine
-    if((currentSubroutineLevelData = reallocWp43(currentSubroutineLevelData, TO_BLOCKS(12), TO_BLOCKS(16 + 4*numberOfRegistersToAllocate)))) {
+    if((currentSubroutineLevelData = reallocWp43(currentSubroutineLevelData, 12, 16 + 4*numberOfRegistersToAllocate))) {
       currentLocalFlags = currentSubroutineLevelData + 3;
       currentLocalFlags->localFlags = 0;
       currentLocalRegisters = (registerHeader_t *)(currentSubroutineLevelData + 4);
@@ -477,7 +477,7 @@ void allocateLocalRegisters(uint16_t numberOfRegistersToAllocate) {
 
       // All the new local registers are real34s initialized to 0.0
       for(r=FIRST_LOCAL_REGISTER; r<FIRST_LOCAL_REGISTER+numberOfRegistersToAllocate; r++) {
-        void *newMem = allocWp43(TO_BLOCKS(REAL34_SIZE_IN_BYTES));
+        void *newMem = allocWp43(REAL34_SIZE_IN_BYTES);
         if(newMem) {
           setRegisterDataType(r, dtReal34, amNone);
           setRegisterDataPointer(r, newMem);
@@ -488,7 +488,7 @@ void allocateLocalRegisters(uint16_t numberOfRegistersToAllocate) {
           for(uint16_t rr = FIRST_LOCAL_REGISTER; rr < r; rr++) {
             freeRegisterData(FIRST_LOCAL_REGISTER + rr);
           }
-          reallocWp43(currentSubroutineLevelData, TO_BLOCKS(16 + 4*numberOfRegistersToAllocate), TO_BLOCKS(12));
+          reallocWp43(currentSubroutineLevelData, 16 + 4*numberOfRegistersToAllocate, 12);
           currentLocalFlags = NULL;
           currentLocalRegisters = NULL;
           currentNumberOfLocalRegisters = 0;
@@ -508,14 +508,14 @@ void allocateLocalRegisters(uint16_t numberOfRegistersToAllocate) {
     // The number of allocated local registers changes
     if(numberOfRegistersToAllocate > currentNumberOfLocalRegisters) {
       uint8_t oldNumberOfLocalRegisters = currentNumberOfLocalRegisters;
-      if((currentSubroutineLevelData = reallocWp43(currentSubroutineLevelData, TO_BLOCKS(16 + 4*currentNumberOfLocalRegisters), TO_BLOCKS(16 + 4*numberOfRegistersToAllocate)))) {
+      if((currentSubroutineLevelData = reallocWp43(currentSubroutineLevelData, 16 + 4*currentNumberOfLocalRegisters, 16 + 4*numberOfRegistersToAllocate))) {
         currentLocalFlags = currentSubroutineLevelData + 3;
         currentLocalRegisters = (registerHeader_t *)(currentSubroutineLevelData + 4);
         currentNumberOfLocalRegisters = numberOfRegistersToAllocate;
 
         // All the new local registers are real34s initialized to 0.0
         for(r=FIRST_LOCAL_REGISTER+oldNumberOfLocalRegisters; r<FIRST_LOCAL_REGISTER+numberOfRegistersToAllocate; r++) {
-          void *newMem = allocWp43(TO_BLOCKS(REAL34_SIZE_IN_BYTES));
+          void *newMem = allocWp43(REAL34_SIZE_IN_BYTES);
           if(newMem) {
             setRegisterDataType(r, dtReal34, amNone);
             setRegisterDataPointer(r, newMem);
@@ -526,7 +526,7 @@ void allocateLocalRegisters(uint16_t numberOfRegistersToAllocate) {
             for(uint16_t rr = FIRST_LOCAL_REGISTER + oldNumberOfLocalRegisters; rr < r; rr++) {
               freeRegisterData(FIRST_LOCAL_REGISTER + rr);
             }
-            reallocWp43(currentSubroutineLevelData, TO_BLOCKS(16 + 4*numberOfRegistersToAllocate), TO_BLOCKS(16 + 4*oldNumberOfLocalRegisters));
+            reallocWp43(currentSubroutineLevelData, 16 + 4*numberOfRegistersToAllocate, 16 + 4*oldNumberOfLocalRegisters);
             currentLocalFlags = currentSubroutineLevelData + 3;
             currentLocalRegisters = (registerHeader_t *)(currentSubroutineLevelData + 4);
             currentNumberOfLocalRegisters = numberOfRegistersToAllocate;
@@ -546,7 +546,7 @@ void allocateLocalRegisters(uint16_t numberOfRegistersToAllocate) {
       for(r=numberOfRegistersToAllocate; r<currentNumberOfLocalRegisters; r++) {
         freeRegisterData(FIRST_LOCAL_REGISTER + r);
       }
-      freeWp43(currentSubroutineLevelData + 4 + numberOfRegistersToAllocate, TO_BLOCKS(4*(currentNumberOfLocalRegisters - numberOfRegistersToAllocate)));
+      freeWp43(currentSubroutineLevelData + 4 + numberOfRegistersToAllocate, 4*(currentNumberOfLocalRegisters - numberOfRegistersToAllocate));
       currentLocalFlags = currentSubroutineLevelData + 3;
       currentLocalRegisters = (numberOfRegistersToAllocate == 0 ? NULL : (registerHeader_t *)(currentSubroutineLevelData + 4));
       currentNumberOfLocalRegisters = numberOfRegistersToAllocate;
@@ -727,7 +727,7 @@ void allocateNamedVariable(const char *variableName, dataType_t dataType, uint16
   }
 
   if(numberOfNamedVariables == 0) { // First named variable
-    if((allNamedVariables = allocWp43(TO_BLOCKS(sizeof(namedVariableHeader_t))))) {
+    if((allNamedVariables = allocWp43(sizeof(namedVariableHeader_t)))) {
       numberOfNamedVariables = 1;
 
       regist = 0;
@@ -749,7 +749,7 @@ void allocateNamedVariable(const char *variableName, dataType_t dataType, uint16
     }
 
     namedVariableHeader_t *origNamedVariables = allNamedVariables;
-    if((allNamedVariables = reallocWp43(allNamedVariables, TO_BLOCKS(sizeof(namedVariableHeader_t) * numberOfNamedVariables), TO_BLOCKS(sizeof(namedVariableHeader_t) * (numberOfNamedVariables + 1))))) {
+    if((allNamedVariables = reallocWp43(allNamedVariables, sizeof(namedVariableHeader_t) * numberOfNamedVariables, sizeof(namedVariableHeader_t) * (numberOfNamedVariables + 1)))) {
       numberOfNamedVariables++;
     }
     else {
@@ -767,7 +767,7 @@ void allocateNamedVariable(const char *variableName, dataType_t dataType, uint16
 
   regist += FIRST_NAMED_VARIABLE;
   setRegisterDataType(regist, dataType, amNone);
-  setRegisterDataPointer(regist, allocWp43(fullDataSizeInBlocks));
+  setRegisterDataPointer(regist, allocWp43(TO_BYTES(fullDataSizeInBlocks)));
 }
 
 
@@ -1833,7 +1833,7 @@ void reallocateRegister(calcRegister_t regist, uint32_t dataType, uint16_t dataS
   }
 
   if(getRegisterDataType(regist) != dataType || ((getRegisterDataType(regist) == dtString || getRegisterDataType(regist) == dtLongInteger || getRegisterDataType(regist) == dtReal34Matrix || getRegisterDataType(regist) == dtComplex34Matrix) && getRegisterMaxDataLength(regist) != dataSizeWithoutDataLenBlocks)) {
-    if(!isMemoryBlockAvailable(dataSizeWithDataLenBlocks)) {
+    if(!isMemoryBlockAvailable(TO_BYTES(dataSizeWithDataLenBlocks))) {
       #if defined(PC_BUILD)
         printf("In function reallocateRegister: required %" PRIu16 " blocks for register #%" PRId16 " but no data blocks with enough size are available!\n", dataSizeWithoutDataLenBlocks, regist); fflush(stdout);
       #endif // PC_BUILD
@@ -1841,7 +1841,7 @@ void reallocateRegister(calcRegister_t regist, uint32_t dataType, uint16_t dataS
       return;
     }
     freeRegisterData(regist);
-    setRegisterDataPointer(regist, allocWp43(dataSizeWithDataLenBlocks));
+    setRegisterDataPointer(regist, allocWp43(TO_BYTES(dataSizeWithDataLenBlocks)));
     setRegisterDataType(regist, dataType, tag);
     if(dataType == dtReal34Matrix) {
       REGISTER_REAL34_MATRIX_DBLOCK(regist)->matrixRows = 1;
@@ -2050,7 +2050,7 @@ static void sortReg(uint16_t range_start, uint16_t range_end) {
   else {
     const uint16_t range_center = (range_end - range_start) / 2 + range_start;
     uint16_t pos1 = range_start, pos2 = range_center + 1;
-    registerHeader_t *sortedReg = allocWp43(TO_BLOCKS(sizeof(registerHeader_t)) * (range_end - range_start + 1));
+    registerHeader_t *sortedReg = allocWp43(sizeof(registerHeader_t) * (range_end - range_start + 1));
     if(lastErrorCode == ERROR_RAM_FULL) {
       return; // unlikely
     }
@@ -2078,7 +2078,7 @@ static void sortReg(uint16_t range_start, uint16_t range_end) {
       for(uint16_t i = 0; i <= (range_end - range_start); ++i) {
         globalRegister[range_start + i] = sortedReg[i];
       }
-      freeWp43(sortedReg, TO_BLOCKS(sizeof(registerHeader_t)) * (range_end - range_start + 1));
+      freeWp43(sortedReg, sizeof(registerHeader_t) * (range_end - range_start + 1));
     }
     else { // unlikely
       displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);

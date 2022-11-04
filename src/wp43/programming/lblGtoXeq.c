@@ -187,7 +187,7 @@ void fnExecute(uint16_t label) {
   if(programRunStop == PGM_RUNNING) {
     dataBlock_t *_currentSubroutineLevelData = currentSubroutineLevelData;
     allSubroutineLevels.numberOfSubroutineLevels += 1;
-    currentSubroutineLevelData = allocWp43(TO_BLOCKS(12));
+    currentSubroutineLevelData = allocWp43(12);
     if(currentSubroutineLevelData) {
       _currentSubroutineLevelData[2].ptrToNextLevel = TO_WP43MEMPTR(currentSubroutineLevelData);
       currentReturnProgramNumber = currentProgramNumber;
@@ -272,7 +272,7 @@ void fnReturn(uint16_t skip) {
       allocateLocalRegisters(0);
     }
     if(currentNumberOfLocalFlags > 0) {
-      freeWp43(currentSubroutineLevelData + 3, TO_BLOCKS(4));
+      freeWp43(currentSubroutineLevelData + 3, 16); // TODO: is this 16 correct?
       currentNumberOfLocalFlags = 0;
     }
     currentLocalFlags = NULL;

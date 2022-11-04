@@ -848,7 +848,7 @@ void fnLuDecomposition(uint16_t unusedParamButMandatory) {
         #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
       }
       else {
-        if((p = allocWp43(TO_BLOCKS(x.header.matrixRows * 8)))) {
+        if((p = allocWp43(x.header.matrixRows * 8))) {
           WP34S_LU_decomposition(&x, &l, p);
           if(l.matrixElements) {
             copyRealMatrix(&l, &u);
@@ -890,7 +890,7 @@ void fnLuDecomposition(uint16_t unusedParamButMandatory) {
               moreInfoOnError("In function fnLuDecomposition:", errorMessage, NULL, NULL);
             #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
           }
-          freeWp43(p, TO_BLOCKS(x.header.matrixRows * 8));
+          freeWp43(p, x.header.matrixRows * 8);
         }
         else {
           displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
@@ -915,7 +915,7 @@ void fnLuDecomposition(uint16_t unusedParamButMandatory) {
         #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
       }
       else {
-        if((p = allocWp43(TO_BLOCKS(x.header.matrixRows * 8)))) {
+        if((p = allocWp43(x.header.matrixRows * 8))) {
           complex_LU_decomposition(&x, &l, p);
           if(l.matrixElements) {
             copyComplexMatrix(&l, &u);
@@ -967,7 +967,7 @@ void fnLuDecomposition(uint16_t unusedParamButMandatory) {
               moreInfoOnError("In function fnLuDecomposition:", errorMessage, NULL, NULL);
             #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
           }
-          freeWp43(p, TO_BLOCKS(x.header.matrixRows * 8));
+          freeWp43(p, x.header.matrixRows * 8);
         }
         else {
           displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
@@ -1707,13 +1707,13 @@ void fnEigenvectors(uint16_t unusedParamButMandatory) {
 #if !defined(TESTSUITE_BUILD)
   bool realMatrixInit(real34Matrix_t *matrix, uint16_t rows, uint16_t cols) {
     //Allocate Memory for Matrix
-    const size_t neededSize = (rows * cols) * TO_BLOCKS(REAL34_SIZE_IN_BYTES);
-    if(!isMemoryBlockAvailable(neededSize)) {
+    const size_t neededSizeInBytes = (rows * cols) * REAL34_SIZE_IN_BYTES;
+    if(!isMemoryBlockAvailable(neededSizeInBytes)) {
       matrix->header.matrixColumns = matrix->header.matrixRows = 0;
       matrix->matrixElements = NULL;
       return false;
     }
-    matrix->matrixElements = allocWp43(neededSize);
+    matrix->matrixElements = allocWp43(neededSizeInBytes);
 
     matrix->header.matrixColumns = cols;
     matrix->header.matrixRows = rows;
@@ -1730,7 +1730,7 @@ void fnEigenvectors(uint16_t unusedParamButMandatory) {
     uint16_t cols = matrix->header.matrixColumns;
     uint16_t rows = matrix->header.matrixRows;
 
-    freeWp43(matrix->matrixElements, (rows * cols) * TO_BLOCKS(REAL34_SIZE_IN_BYTES));
+    freeWp43(matrix->matrixElements, (rows * cols) * REAL34_SIZE_IN_BYTES);
     matrix->matrixElements = NULL;
     matrix->header.matrixRows = matrix->header.matrixColumns = 0;
   }
@@ -1773,13 +1773,13 @@ void fnEigenvectors(uint16_t unusedParamButMandatory) {
 
   bool complexMatrixInit(complex34Matrix_t *matrix, uint16_t rows, uint16_t cols) {
     //Allocate Memory for Matrix
-    const size_t neededSize = (rows * cols) * TO_BLOCKS(COMPLEX34_SIZE_IN_BYTES);
-    if(!isMemoryBlockAvailable(neededSize)) {
+    const size_t neededSizeInBytes = (rows * cols) * COMPLEX34_SIZE_IN_BYTES;
+    if(!isMemoryBlockAvailable(neededSizeInBytes)) {
       matrix->header.matrixColumns = matrix->header.matrixRows = 0;
       matrix->matrixElements = NULL;
       return false;
     }
-    matrix->matrixElements = allocWp43(neededSize);
+    matrix->matrixElements = allocWp43(neededSizeInBytes);
 
     matrix->header.matrixColumns = cols;
     matrix->header.matrixRows = rows;
@@ -1797,7 +1797,7 @@ void fnEigenvectors(uint16_t unusedParamButMandatory) {
     uint16_t cols = matrix->header.matrixColumns;
     uint16_t rows = matrix->header.matrixRows;
 
-    freeWp43(matrix->matrixElements, (rows * cols) * TO_BLOCKS(COMPLEX34_SIZE_IN_BYTES));
+    freeWp43(matrix->matrixElements, (rows * cols) * COMPLEX34_SIZE_IN_BYTES);
     matrix->matrixElements = NULL;
     matrix->header.matrixRows = matrix->header.matrixColumns = 0;
   }
@@ -3104,11 +3104,11 @@ smallFont:
       return false;
     }
     else if(getRegisterDataType(regist) == dtReal34Matrix) {
-      const size_t oldSize = (origRows * origCols) * TO_BLOCKS(REAL34_SIZE_IN_BYTES);
-      const size_t newSize = (rows     * cols    ) * TO_BLOCKS(REAL34_SIZE_IN_BYTES);
-      if(oldSize >= newSize) {
-        if(oldSize > newSize) {
-          freeWp43(REGISTER_REAL34_MATRIX_M_ELEMENTS(regist) + rows * cols, oldSize - newSize);
+      const size_t oldSizeInBytes = (origRows * origCols) * REAL34_SIZE_IN_BYTES;
+      const size_t newSizeInBytes = (rows     * cols    ) * REAL34_SIZE_IN_BYTES;
+      if(oldSizeInBytes >= newSizeInBytes) {
+        if(oldSizeInBytes > newSizeInBytes) {
+          freeWp43(REGISTER_REAL34_MATRIX_M_ELEMENTS(regist) + rows * cols, oldSizeInBytes - newSizeInBytes);
         }
         REGISTER_REAL34_MATRIX_DBLOCK(regist)->matrixRows    = rows;
         REGISTER_REAL34_MATRIX_DBLOCK(regist)->matrixColumns = cols;
@@ -3118,7 +3118,7 @@ smallFont:
         real34Matrix_t newMatrix;
         convertReal34MatrixRegisterToReal34Matrix(regist, &newMatrix);
         if(lastErrorCode == ERROR_NONE) {
-          reallocateRegister(regist, dtReal34Matrix, newSize, amNone);
+          reallocateRegister(regist, dtReal34Matrix, TO_BLOCKS(newSizeInBytes), amNone);
           if(lastErrorCode == ERROR_NONE) {
             REGISTER_REAL34_MATRIX_DBLOCK(regist)->matrixRows    = rows;
             REGISTER_REAL34_MATRIX_DBLOCK(regist)->matrixColumns = cols;
@@ -3142,11 +3142,11 @@ smallFont:
       }
     }
     else if(getRegisterDataType(regist) == dtComplex34Matrix) {
-      const size_t oldSize = (origRows * origCols) * TO_BLOCKS(COMPLEX34_SIZE_IN_BYTES);
-      const size_t newSize = (rows     * cols    ) * TO_BLOCKS(COMPLEX34_SIZE_IN_BYTES);
-      if(oldSize >= newSize) {
-        if(oldSize > newSize) {
-          freeWp43(REGISTER_COMPLEX34_MATRIX_M_ELEMENTS(regist) + rows * cols, oldSize - newSize);
+      const size_t oldSizeInBytes = (origRows * origCols) * TO_BLOCKS(COMPLEX34_SIZE_IN_BYTES);
+      const size_t newSizeInBytes = (rows     * cols    ) * TO_BLOCKS(COMPLEX34_SIZE_IN_BYTES);
+      if(oldSizeInBytes >= newSizeInBytes) {
+        if(oldSizeInBytes > newSizeInBytes) {
+          freeWp43(REGISTER_COMPLEX34_MATRIX_M_ELEMENTS(regist) + rows * cols, oldSizeInBytes - newSizeInBytes);
         }
         REGISTER_COMPLEX34_MATRIX_DBLOCK(regist)->matrixRows    = rows;
         REGISTER_COMPLEX34_MATRIX_DBLOCK(regist)->matrixColumns = cols;
@@ -3156,7 +3156,7 @@ smallFont:
         complex34Matrix_t newMatrix;
         convertComplex34MatrixRegisterToComplex34Matrix(regist, &newMatrix);
         if(lastErrorCode == ERROR_NONE) {
-          reallocateRegister(regist, dtComplex34Matrix, newSize, amNone);
+          reallocateRegister(regist, dtComplex34Matrix, TO_BLOCKS(newSizeInBytes), amNone);
           if(lastErrorCode == ERROR_NONE) {
             REGISTER_COMPLEX34_MATRIX_DBLOCK(regist)->matrixRows    = rows;
             REGISTER_COMPLEX34_MATRIX_DBLOCK(regist)->matrixColumns = cols;
@@ -4024,7 +4024,7 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
       return;
     }
 
-    if((tmpMat = allocWp43(m * n * TO_BLOCKS(REAL_SIZE_IN_BYTES)))) {
+    if((tmpMat = allocWp43(m * n * REAL_SIZE_IN_BYTES))) {
       if(matrix != lu) {
         copyRealMatrix(matrix, lu);
       }
@@ -4099,7 +4099,7 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
         displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
       }
 
-      freeWp43(tmpMat, m * n * TO_BLOCKS(REAL_SIZE_IN_BYTES));
+      freeWp43(tmpMat, m * n * REAL_SIZE_IN_BYTES);
     }
     else {
       if(matrix != lu) {
@@ -4186,7 +4186,7 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
       return;
     }
 
-    if((tmpMat = allocWp43(m * n * TO_BLOCKS(REAL_SIZE_IN_BYTES) * 2))) {
+    if((tmpMat = allocWp43(m * n * REAL_SIZE_IN_BYTES * 2))) {
       if(matrix != lu) {
         copyComplexMatrix(matrix, lu);
       }
@@ -4212,7 +4212,7 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
         displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
       }
 
-      freeWp43(tmpMat, m * n * TO_BLOCKS(REAL_SIZE_IN_BYTES) * 2);
+      freeWp43(tmpMat, m * n * REAL_SIZE_IN_BYTES * 2);
     }
     else {
       if(matrix != lu) {
@@ -4282,9 +4282,9 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
     real_t *lu;
     real_t tr, ti;
 
-    if((lu = allocWp43(size * size * TO_BLOCKS(REAL_SIZE_IN_BYTES) * 2))) {
+    if((lu = allocWp43(size * size * REAL_SIZE_IN_BYTES * 2))) {
       xcopy(lu, matrix, TO_BYTES(size * size * TO_BLOCKS(REAL_SIZE_IN_BYTES) * 2));
-      if((p = allocWp43(TO_BLOCKS(size * 2)))) {
+      if((p = allocWp43(size * 2))) {
         realCopy(const_1, &tr), realCopy(const_0, &ti);
         if(luCpxMat(lu, size, p, realContext)) {
           for(uint16_t i = 0; i < size; ++i) {
@@ -4301,14 +4301,14 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
           real34Copy(const34_0, res_r); real34Copy(const34_0, res_i);
         }
 
-        freeWp43(p, TO_BLOCKS(size * 2));
+        freeWp43(p, size * 2);
       }
       else {
         displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
         realCopy(const_NaN, res_r), realCopy(const_NaN, res_i);
       }
 
-      freeWp43(lu, size * size * TO_BLOCKS(REAL_SIZE_IN_BYTES) * 2);
+      freeWp43(lu, size * size * REAL_SIZE_IN_BYTES * 2);
     }
     else {
       displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
@@ -4327,13 +4327,13 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
       return;
     }
 
-    if((lu = allocWp43(n * n * TO_BLOCKS(REAL_SIZE_IN_BYTES) * 2))) {
+    if((lu = allocWp43(n * n * REAL_SIZE_IN_BYTES * 2))) {
       for(int i = 0; i < n * n; ++i) {
         real34ToReal(&matrix->matrixElements[i], &lu[i * 2]);
         realZero(&lu[i * 2 + 1]);
       }
       detCpxMat(lu, n, &tr, &ti, &ctxtReal51);
-      freeWp43(lu, n * n * TO_BLOCKS(REAL_SIZE_IN_BYTES) * 2);
+      freeWp43(lu, n * n * REAL_SIZE_IN_BYTES * 2);
       realToReal34(&tr, res);
     }
     else {
@@ -4354,13 +4354,13 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
       return;
     }
 
-    if((lu = allocWp43(n * n * TO_BLOCKS(REAL_SIZE_IN_BYTES) * 2))) {
+    if((lu = allocWp43(n * n * REAL_SIZE_IN_BYTES * 2))) {
       for(int i = 0; i < n * n; ++i) {
         real34ToReal(VARIABLE_REAL34_DATA(&matrix->matrixElements[i]), &lu[i * 2    ]);
         real34ToReal(VARIABLE_IMAG34_DATA(&matrix->matrixElements[i]), &lu[i * 2 + 1]);
       }
       detCpxMat(lu, n, &tr, &ti, &ctxtReal51);
-      freeWp43(lu, n * n * TO_BLOCKS(REAL_SIZE_IN_BYTES) * 2);
+      freeWp43(lu, n * n * REAL_SIZE_IN_BYTES * 2);
       realToReal34(&tr, res_r);
       realToReal34(&ti, res_i);
     }
@@ -4433,14 +4433,14 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
     uint16_t i, j;
     real_t *b;
 
-    if((lu = allocWp43(n * n * TO_BLOCKS(REAL_SIZE_IN_BYTES) * 2))) {
-      if((pivots = allocWp43(TO_BLOCKS(n * 2)))) {
+    if((lu = allocWp43(n * n * REAL_SIZE_IN_BYTES * 2))) {
+      if((pivots = allocWp43(n * 2))) {
         for(i = 0; i < n * n * 2; i++) {
           realCopy(matrix + i, lu + i);
         }
         if(!luCpxMat(lu, n, pivots, realContext)) {
-          freeWp43(lu, n * n * TO_BLOCKS(REAL_SIZE_IN_BYTES) * 2);
-          freeWp43(pivots, TO_BLOCKS(n * 2));
+          freeWp43(lu, n * n * REAL_SIZE_IN_BYTES * 2);
+          freeWp43(pivots, n * 2);
           return false;
         }
 
@@ -4472,8 +4472,8 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
           }
         }
 
-        if((x = allocWp43(n * TO_BLOCKS(REAL_SIZE_IN_BYTES) * 2))) {
-          if((b = allocWp43(n * TO_BLOCKS(REAL_SIZE_IN_BYTES) * 2))) {
+        if((x = allocWp43(n * REAL_SIZE_IN_BYTES * 2))) {
+          if((b = allocWp43(n * REAL_SIZE_IN_BYTES * 2))) {
             for(i = 0; i < n; i++) {
               for(j = 0; j < n; j++) {
                 realCopy((i == j) ? const_1 : const_0, &b[j * 2    ]);
@@ -4485,22 +4485,22 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
                 realCopy(x + j * 2 + 1, matrix + (j * n + i) * 2 + 1);
               }
             }
-            freeWp43(b, n * TO_BLOCKS(REAL_SIZE_IN_BYTES) * 2);
+            freeWp43(b, n * REAL_SIZE_IN_BYTES * 2);
           }
           else {
             displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
           }
-          freeWp43(x, n * TO_BLOCKS(REAL_SIZE_IN_BYTES) * 2);
+          freeWp43(x, n * REAL_SIZE_IN_BYTES * 2);
         }
         else {
           displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
         }
-        freeWp43(pivots, TO_BLOCKS(n * 2));
+        freeWp43(pivots, n * 2);
       }
       else {
         displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
       }
-      freeWp43(lu, n * n * TO_BLOCKS(REAL_SIZE_IN_BYTES) * 2);
+      freeWp43(lu, n * n * REAL_SIZE_IN_BYTES * 2);
     }
     else {
       displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
@@ -4523,7 +4523,7 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
       return;
     }
 
-    if((tmpMat = allocWp43(n * n * TO_BLOCKS(REAL_SIZE_IN_BYTES) * 2))) {
+    if((tmpMat = allocWp43(n * n * REAL_SIZE_IN_BYTES * 2))) {
       for(i = 0; i < n; i++) {
         for(j = 0; j < n; j++) {
           real34ToReal(&matrix->matrixElements[i * n + j], &tmpMat[(i * n + j) * 2]);
@@ -4553,7 +4553,7 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
         }
       }
 
-      freeWp43(tmpMat, n * n * TO_BLOCKS(REAL_SIZE_IN_BYTES) * 2);
+      freeWp43(tmpMat, n * n * REAL_SIZE_IN_BYTES * 2);
     }
     else {
       displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
@@ -4575,7 +4575,7 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
       return;
     }
 
-    if((tmpMat = allocWp43(n * n * TO_BLOCKS(REAL_SIZE_IN_BYTES) * 2))) {
+    if((tmpMat = allocWp43(n * n * REAL_SIZE_IN_BYTES * 2))) {
       for(i = 0; i < n; i++) {
         for(j = 0; j < n; j++) {
           real34ToReal(VARIABLE_REAL34_DATA(&matrix->matrixElements[i * n + j]), &tmpMat[(i * n + j) * 2    ]);
@@ -4606,7 +4606,7 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
         }
       }
 
-      freeWp43(tmpMat, n * n * TO_BLOCKS(REAL_SIZE_IN_BYTES) * 2);
+      freeWp43(tmpMat, n * n * REAL_SIZE_IN_BYTES * 2);
     }
     else {
       displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
@@ -4696,9 +4696,9 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
       return;
     }
 
-    if((yy = allocWp43(sizeY * size * TO_BLOCKS(REAL_SIZE_IN_BYTES) * 2))) {
-      if((xx = allocWp43(size * size * TO_BLOCKS(REAL_SIZE_IN_BYTES) * 2))) {
-        if((rr = allocWp43(sizeY * size * TO_BLOCKS(REAL_SIZE_IN_BYTES) * 2))) {
+    if((yy = allocWp43(sizeY * size * REAL_SIZE_IN_BYTES * 2))) {
+      if((xx = allocWp43(size * size * REAL_SIZE_IN_BYTES * 2))) {
+        if((rr = allocWp43(sizeY * size * REAL_SIZE_IN_BYTES * 2))) {
           for(int i = 0; i < size * size; ++i) {
             real34ToReal(&x->matrixElements[i], &xx[i * 2]);
             realZero(&xx[i * 2 + 1]);
@@ -4730,7 +4730,7 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
             }
           }
 
-          freeWp43(rr, sizeY * size * TO_BLOCKS(REAL_SIZE_IN_BYTES) * 2);
+          freeWp43(rr, sizeY * size * REAL_SIZE_IN_BYTES * 2);
         }
         else {
           if(y != res && x != res) {
@@ -4739,7 +4739,7 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
           }
           displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
         }
-        freeWp43(xx, size * size * TO_BLOCKS(REAL_SIZE_IN_BYTES) * 2);
+        freeWp43(xx, size * size * REAL_SIZE_IN_BYTES * 2);
       }
       else {
         if(y != res && x != res) {
@@ -4748,7 +4748,7 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
         }
         displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
       }
-      freeWp43(yy, sizeY * size * TO_BLOCKS(REAL_SIZE_IN_BYTES) * 2);
+      freeWp43(yy, sizeY * size * REAL_SIZE_IN_BYTES * 2);
     }
     else {
       if(y != res && x != res) {
@@ -4830,9 +4830,9 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
       return;
     }
 
-    if((yy = allocWp43(sizeY * size * TO_BLOCKS(REAL_SIZE_IN_BYTES) * 2))) {
-      if((xx = allocWp43(size * size * TO_BLOCKS(REAL_SIZE_IN_BYTES) * 2))) {
-        if((rr = allocWp43(sizeY * size * TO_BLOCKS(REAL_SIZE_IN_BYTES) * 2))) {
+    if((yy = allocWp43(sizeY * size * REAL_SIZE_IN_BYTES * 2))) {
+      if((xx = allocWp43(size * size * REAL_SIZE_IN_BYTES * 2))) {
+        if((rr = allocWp43(sizeY * size * REAL_SIZE_IN_BYTES * 2))) {
           for(int i = 0; i < size * size; ++i) {
             real34ToReal(VARIABLE_REAL34_DATA(&x->matrixElements[i]), &xx[i * 2    ]);
             real34ToReal(VARIABLE_IMAG34_DATA(&x->matrixElements[i]), &xx[i * 2 + 1]);
@@ -4865,7 +4865,7 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
             }
           }
 
-          freeWp43(rr, sizeY * size * TO_BLOCKS(REAL_SIZE_IN_BYTES) * 2);
+          freeWp43(rr, sizeY * size * REAL_SIZE_IN_BYTES * 2);
         }
         else {
           if(y != res && x != res) {
@@ -4874,7 +4874,7 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
           }
           displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
         }
-        freeWp43(xx, size * size * TO_BLOCKS(REAL_SIZE_IN_BYTES) * 2);
+        freeWp43(xx, size * size * REAL_SIZE_IN_BYTES * 2);
       }
       else {
         if(y != res && x != res) {
@@ -4883,7 +4883,7 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
         }
         displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
       }
-      freeWp43(yy, sizeY * size * TO_BLOCKS(REAL_SIZE_IN_BYTES) * 2);
+      freeWp43(yy, sizeY * size * REAL_SIZE_IN_BYTES * 2);
     }
     else {
       if(y != res && x != res) {
@@ -4899,7 +4899,7 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
   static void cpxLinearEqn(const real_t *a, const real_t *b, real_t *r, uint16_t size, realContext_t *realContext) {
     real_t *inv_a;
 
-    if((inv_a = allocWp43(size * size * TO_BLOCKS(REAL_SIZE_IN_BYTES) * 2))) {
+    if((inv_a = allocWp43(size * size * REAL_SIZE_IN_BYTES * 2))) {
       xcopy(inv_a, a, TO_BYTES(size * size * TO_BLOCKS(REAL_SIZE_IN_BYTES) * 2));
       if(invCpxMat(inv_a, size, realContext)) {
         mulCpxMat(inv_a, b, size, size, 1, r, realContext);
@@ -4911,7 +4911,7 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
           moreInfoOnError("In function cpxLinearEqn:", errorMessage, NULL, NULL);
         #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
       }
-      freeWp43(inv_a, size * size * TO_BLOCKS(REAL_SIZE_IN_BYTES) * 2);
+      freeWp43(inv_a, size * size * REAL_SIZE_IN_BYTES * 2);
     }
     else {
       displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
@@ -4940,9 +4940,9 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
       return;
     }
 
-    if((aa = allocWp43(size * size * TO_BLOCKS(REAL_SIZE_IN_BYTES) * 2))) {
-      if((bb = allocWp43(size * TO_BLOCKS(REAL_SIZE_IN_BYTES) * 2))) {
-        if((rr = allocWp43(size * TO_BLOCKS(REAL_SIZE_IN_BYTES) * 2))) {
+    if((aa = allocWp43(size * size * REAL_SIZE_IN_BYTES * 2))) {
+      if((bb = allocWp43(size * REAL_SIZE_IN_BYTES * 2))) {
+        if((rr = allocWp43(size * REAL_SIZE_IN_BYTES * 2))) {
           for(int i = 0; i < size * size; ++i) {
             real34ToReal(&a->matrixElements[i], &aa[i * 2]);
             realZero(&aa[i * 2 + 1]);
@@ -4972,7 +4972,7 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
               r->header.matrixRows = r->header.matrixColumns = 0;
             }
           }
-          freeWp43(rr, size * TO_BLOCKS(REAL_SIZE_IN_BYTES) * 2);
+          freeWp43(rr, size * REAL_SIZE_IN_BYTES * 2);
         }
         else {
           if(a != r && b != r) {
@@ -4981,7 +4981,7 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
           }
           displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
         }
-        freeWp43(bb, size * TO_BLOCKS(REAL_SIZE_IN_BYTES) * 2);
+        freeWp43(bb, size * REAL_SIZE_IN_BYTES * 2);
       }
       else {
         if(a != r && b != r) {
@@ -4990,7 +4990,7 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
         }
         displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
       }
-      freeWp43(aa, size * size * TO_BLOCKS(REAL_SIZE_IN_BYTES) * 2);
+      freeWp43(aa, size * size * REAL_SIZE_IN_BYTES * 2);
     }
     else {
       if(a != r && b != r) {
@@ -5023,9 +5023,9 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
       return;
     }
 
-    if((aa = allocWp43(size * size * TO_BLOCKS(REAL_SIZE_IN_BYTES) * 2))) {
-      if((bb = allocWp43(size * TO_BLOCKS(REAL_SIZE_IN_BYTES) * 2))) {
-        if((rr = allocWp43(size * TO_BLOCKS(REAL_SIZE_IN_BYTES) * 2))) {
+    if((aa = allocWp43(size * size * REAL_SIZE_IN_BYTES * 2))) {
+      if((bb = allocWp43(size * REAL_SIZE_IN_BYTES * 2))) {
+        if((rr = allocWp43(size * REAL_SIZE_IN_BYTES * 2))) {
           for(int i = 0; i < size * size; ++i) {
             real34ToReal(VARIABLE_REAL34_DATA(&a->matrixElements[i]), &aa[i * 2    ]);
             real34ToReal(VARIABLE_IMAG34_DATA(&a->matrixElements[i]), &aa[i * 2 + 1]);
@@ -5056,7 +5056,7 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
               r->header.matrixRows = r->header.matrixColumns = 0;
             }
           }
-          freeWp43(rr, size * TO_BLOCKS(REAL_SIZE_IN_BYTES) * 2);
+          freeWp43(rr, size * REAL_SIZE_IN_BYTES * 2);
         }
         else {
           if(a != r && b != r) {
@@ -5065,7 +5065,7 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
           }
           displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
         }
-        freeWp43(bb, size * TO_BLOCKS(REAL_SIZE_IN_BYTES) * 2);
+        freeWp43(bb, size * REAL_SIZE_IN_BYTES * 2);
       }
       else {
         if(a != r && b != r) {
@@ -5074,7 +5074,7 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
         }
         displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
       }
-      freeWp43(aa, size * size * TO_BLOCKS(REAL_SIZE_IN_BYTES) * 2);
+      freeWp43(aa, size * size * REAL_SIZE_IN_BYTES * 2);
     }
     else {
       if(a != r && b != r) {
@@ -5108,7 +5108,7 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
     real_t *v, *qq, *qt, *newMat, sum, m, t;
 
     // Allocate
-    if((bulk = allocWp43((size * size * 5 + size) * TO_BLOCKS(REAL_SIZE_IN_BYTES) * 2))) {
+    if((bulk = allocWp43((size * size * 5 + size) * REAL_SIZE_IN_BYTES * 2))) {
       matr = bulk;
       matq = bulk + (size * size * 2);
 
@@ -5241,7 +5241,7 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
       }
 
       // Cleanup
-      freeWp43(bulk, (size * size * 5 + size) * TO_BLOCKS(REAL_SIZE_IN_BYTES) * 2);
+      freeWp43(bulk, (size * size * 5 + size) * REAL_SIZE_IN_BYTES * 2);
     }
     else {
       displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
@@ -5257,7 +5257,7 @@ void real_QR_decomposition(const real34Matrix_t *matrix, real34Matrix_t *q, real
       uint32_t i;
 
       // Allocate
-      if((mat = allocWp43(matrix->header.matrixRows * matrix->header.matrixColumns * TO_BLOCKS(REAL_SIZE_IN_BYTES) * 2 * 3))) {
+      if((mat = allocWp43(matrix->header.matrixRows * matrix->header.matrixColumns * REAL_SIZE_IN_BYTES * 2 * 3))) {
         matq = mat + matrix->header.matrixRows * matrix->header.matrixColumns * 2;
         matr = mat + matrix->header.matrixRows * matrix->header.matrixColumns * 2 * 2;
 
@@ -5293,7 +5293,7 @@ void real_QR_decomposition(const real34Matrix_t *matrix, real34Matrix_t *q, real
         }
 
         // Cleanup
-        freeWp43(mat, matrix->header.matrixRows * matrix->header.matrixColumns * TO_BLOCKS(REAL_SIZE_IN_BYTES) * 2 * 3);
+        freeWp43(mat, matrix->header.matrixRows * matrix->header.matrixColumns * REAL_SIZE_IN_BYTES * 2 * 3);
       }
       else {
         displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
@@ -5310,7 +5310,7 @@ void complex_QR_decomposition(const complex34Matrix_t *matrix, complex34Matrix_t
       uint32_t i;
 
       // Allocate
-      if((mat = allocWp43(matrix->header.matrixRows * matrix->header.matrixColumns * TO_BLOCKS(REAL_SIZE_IN_BYTES) * 2 * 3))) {
+      if((mat = allocWp43(matrix->header.matrixRows * matrix->header.matrixColumns * REAL_SIZE_IN_BYTES * 2 * 3))) {
         matq = mat + matrix->header.matrixRows * matrix->header.matrixColumns * 2;
         matr = mat + matrix->header.matrixRows * matrix->header.matrixColumns * 2 * 2;
 
@@ -5343,7 +5343,7 @@ void complex_QR_decomposition(const complex34Matrix_t *matrix, complex34Matrix_t
         }
 
         // Cleanup
-        freeWp43(mat, matrix->header.matrixRows * matrix->header.matrixColumns * TO_BLOCKS(REAL_SIZE_IN_BYTES) * 2 * 3);
+        freeWp43(mat, matrix->header.matrixRows * matrix->header.matrixColumns * REAL_SIZE_IN_BYTES * 2 * 3);
       }
       else {
         displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
@@ -5720,7 +5720,7 @@ void complex_QR_decomposition(const complex34Matrix_t *matrix, complex34Matrix_t
       }
 
       for(k = 0; k < size; k++) {
-        if((v = allocWp43(size * TO_BLOCKS(REAL_SIZE_IN_BYTES) * 2))) {
+        if((v = allocWp43(size * REAL_SIZE_IN_BYTES * 2))) {
           for(i = 0; i < size * size; i++) {
             for(j = 0; j < size * 2; j++) {
               realCopy(const_NaN, v + j);
@@ -5774,7 +5774,7 @@ void complex_QR_decomposition(const complex34Matrix_t *matrix, complex34Matrix_t
             realCopy(v + i * 2 + 1, r + (i * size + k) * 2 + 1);
           }
 
-          freeWp43(v, size * TO_BLOCKS(REAL_SIZE_IN_BYTES) * 2);
+          freeWp43(v, size * REAL_SIZE_IN_BYTES * 2);
           v = NULL;
         }
         else {
@@ -5799,7 +5799,7 @@ void realEigenvalues(const real34Matrix_t *matrix, real34Matrix_t *res, real34Ma
     bool            shifted = true;
 
     if(matrix->header.matrixRows == matrix->header.matrixColumns) {
-      if((bulk = allocWp43(size * size * TO_BLOCKS(REAL_SIZE_IN_BYTES) * 2 * 4))) {
+      if((bulk = allocWp43(size * size * REAL_SIZE_IN_BYTES * 2 * 4))) {
         a   = bulk;
         q   = bulk + size * size * 2;
         r   = bulk + size * size * 2 * 2;
@@ -5844,7 +5844,7 @@ void realEigenvalues(const real34Matrix_t *matrix, real34Matrix_t *res, real34Ma
           displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
         }
 
-        freeWp43(bulk, size * size * TO_BLOCKS(REAL_SIZE_IN_BYTES) * 2 * 4);
+        freeWp43(bulk, size * size * REAL_SIZE_IN_BYTES * 2 * 4);
       }
       else {
         displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
@@ -5862,7 +5862,7 @@ void complexEigenvalues(const complex34Matrix_t *matrix, complex34Matrix_t *res)
     bool            shifted = true;
 
     if(matrix->header.matrixRows == matrix->header.matrixColumns) {
-      if((bulk = allocWp43(size * size * TO_BLOCKS(REAL_SIZE_IN_BYTES) * 2 * 4))) {
+      if((bulk = allocWp43(size * size * REAL_SIZE_IN_BYTES * 2 * 4))) {
         a   = bulk;
         q   = bulk + size * size * 2;
         r   = bulk + size * size * 2 * 2;
@@ -5889,7 +5889,7 @@ void complexEigenvalues(const complex34Matrix_t *matrix, complex34Matrix_t *res)
           displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
         }
 
-        freeWp43(bulk, size * size * TO_BLOCKS(REAL_SIZE_IN_BYTES) * 2 * 4);
+        freeWp43(bulk, size * size * REAL_SIZE_IN_BYTES * 2 * 4);
       }
       else {
         displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
@@ -5908,7 +5908,7 @@ void realEigenvectors(const real34Matrix_t *matrix, real34Matrix_t *res, real34M
     bool            shifted = true;
 
     if(matrix->header.matrixRows == matrix->header.matrixColumns) {
-      if((bulk = allocWp43(size * size * TO_BLOCKS(REAL_SIZE_IN_BYTES) * 2 * 4))) {
+      if((bulk = allocWp43(size * size * REAL_SIZE_IN_BYTES * 2 * 4))) {
         a   = bulk;
         q   = bulk + size * size * 2;
         r   = bulk + size * size * 2 * 2;
@@ -5971,7 +5971,7 @@ void realEigenvectors(const real34Matrix_t *matrix, real34Matrix_t *res, real34M
           displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
         }
 
-        freeWp43(bulk, size * size * TO_BLOCKS(REAL_SIZE_IN_BYTES) * 2 * 4);
+        freeWp43(bulk, size * size * REAL_SIZE_IN_BYTES * 2 * 4);
       }
       else {
         displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
@@ -5989,7 +5989,7 @@ void complexEigenvectors(const complex34Matrix_t *matrix, complex34Matrix_t *res
     bool            shifted = true;
 
     if(matrix->header.matrixRows == matrix->header.matrixColumns) {
-      if((bulk = allocWp43(size * size * TO_BLOCKS(REAL_SIZE_IN_BYTES) * 2 * 4))) {
+      if((bulk = allocWp43(size * size * REAL_SIZE_IN_BYTES * 2 * 4))) {
         a   = bulk;
         q   = bulk + size * size * 2;
         r   = bulk + size * size * 2 * 2;
@@ -6018,7 +6018,7 @@ void complexEigenvectors(const complex34Matrix_t *matrix, complex34Matrix_t *res
           displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
         }
 
-        freeWp43(bulk, size * size * TO_BLOCKS(REAL_SIZE_IN_BYTES) * 2 * 4);
+        freeWp43(bulk, size * size * REAL_SIZE_IN_BYTES * 2 * 4);
       }
       else {
         displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);

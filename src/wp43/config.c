@@ -498,7 +498,7 @@ void fnClAll(uint16_t confirmation) {
     fnClPAll(CONFIRMED);  // Clears all the programs
     fnClSigma(CONFIRMED); // Clears and releases the memory of all statistical sums
     if(savedStatisticalSumsPointer != NULL) {
-      freeWp43(savedStatisticalSumsPointer, NUMBER_OF_STATISTICAL_SUMS * TO_BLOCKS(REAL_SIZE_IN_BYTES));
+      freeWp43(savedStatisticalSumsPointer, NUMBER_OF_STATISTICAL_SUMS * REAL_SIZE_IN_BYTES);
     }
 
     // Clear local registers
@@ -673,15 +673,15 @@ void fnReset(uint16_t confirmation) {
 
     // initialize 9 real34 reserved variables: ACC, ↑Lim, ↓Lim, FV, i%/a, NPER, PER/a, PMT, and PV
     for(int i=0; i<9; i++) {
-      real34Zero(allocWp43(TO_BLOCKS(REAL34_SIZE_IN_BYTES)));
+      real34Zero(allocWp43(REAL34_SIZE_IN_BYTES));
     }
 
     // initialize 1 long integer reserved variables: GRAMOD
     #if defined(OS64BIT)
-      memPtr = allocWp43(TO_BLOCKS(12));
+      memPtr = allocWp43(12);
       ((dataBlock_t *)memPtr)->dataMaxLength = 2;
     #else // !OS64BIT
-      memPtr = allocWp43(TO_BLOCKS(8));
+      memPtr = allocWp43(8);
       ((dataBlock_t *)memPtr)->dataMaxLength = 1;
     #endif // OS64BIT
 
@@ -689,7 +689,7 @@ void fnReset(uint16_t confirmation) {
     memset(globalRegister, 0, sizeof(globalRegister));
     for(calcRegister_t regist=0; regist<=LAST_GLOBAL_REGISTER; regist++) {
       setRegisterDataType(regist, dtReal34, amNone);
-      memPtr = allocWp43(TO_BLOCKS(REAL34_SIZE_IN_BYTES));
+      memPtr = allocWp43(REAL34_SIZE_IN_BYTES);
       setRegisterDataPointer(regist, memPtr);
       real34Zero(memPtr);
     }
@@ -698,7 +698,7 @@ void fnReset(uint16_t confirmation) {
     memset(savedStackRegister, 0, sizeof(savedStackRegister));
     for(calcRegister_t regist=FIRST_SAVED_STACK_REGISTER; regist<=LAST_TEMP_REGISTER; regist++) {
       setRegisterDataType(regist, dtReal34, amNone);
-      memPtr = allocWp43(TO_BLOCKS(REAL34_SIZE_IN_BYTES));
+      memPtr = allocWp43(REAL34_SIZE_IN_BYTES);
       setRegisterDataPointer(regist, memPtr);
       real34Zero(memPtr);
     }
@@ -708,7 +708,7 @@ void fnReset(uint16_t confirmation) {
 
     // allocate space for the local register list
     allSubroutineLevels.numberOfSubroutineLevels = 1;
-    currentSubroutineLevelData = allocWp43(TO_BLOCKS(12));
+    currentSubroutineLevelData = allocWp43(12);
     allSubroutineLevels.ptrToSubroutineLevel0Data = TO_WP43MEMPTR(currentSubroutineLevelData);
     currentReturnProgramNumber = 0;
     currentReturnLocalStep = 0;
@@ -898,7 +898,7 @@ void fnReset(uint16_t confirmation) {
     numberOfUserMenus = 0;
     currentUserMenu = 0;
     userKeyLabelSize = 37/*keys*/ * 6/*states*/ * 1/*byte terminator*/ + 1/*byte sentinel*/;
-    userKeyLabel = allocWp43(TO_BLOCKS(userKeyLabelSize));
+    userKeyLabel = allocWp43(userKeyLabelSize);
     memset(userKeyLabel,   0, TO_BYTES(TO_BLOCKS(userKeyLabelSize)));
 
     fnClearMenu(NOPARAM);

@@ -436,7 +436,7 @@ static void clearStatisticalSums(void) {
 
 void initStatisticalSums(void) {
   if(statisticalSumsPointer == NULL) {
-    statisticalSumsPointer = allocWp43(NUMBER_OF_STATISTICAL_SUMS * TO_BLOCKS(REAL_SIZE_IN_BYTES));
+    statisticalSumsPointer = allocWp43(NUMBER_OF_STATISTICAL_SUMS * REAL_SIZE_IN_BYTES);
     clearStatisticalSums();
     }
   else {
@@ -655,7 +655,7 @@ void fnClSigma(uint16_t unusedButMandatoryParameter) {
 
 
   if(statisticalSumsPointer != NULL) {
-    freeWp43(statisticalSumsPointer, NUMBER_OF_STATISTICAL_SUMS * TO_BLOCKS(REAL_SIZE_IN_BYTES));
+    freeWp43(statisticalSumsPointer, NUMBER_OF_STATISTICAL_SUMS * REAL_SIZE_IN_BYTES);
     statisticalSumsPointer = NULL;
   }
 }
