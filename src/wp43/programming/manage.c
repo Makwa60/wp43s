@@ -90,8 +90,8 @@ void scanLabelsAndPrograms(void) {
   uint8_t *nextStep, *step = beginOfProgramMemory;
   uint16_t numberOfProgramsInRam;
 
-  freeWp43(labelList, TO_BLOCKS(sizeof(labelList_t)) * numberOfLabels);
-  freeWp43(programList, TO_BLOCKS(sizeof(programList_t)) * numberOfPrograms);
+  freeWp43(labelList, sizeof(labelList_t) * numberOfLabels);
+  freeWp43(programList, sizeof(programList_t) * numberOfPrograms);
 
   numberOfLabels = 0;
   numberOfPrograms = 1;
@@ -105,14 +105,14 @@ void scanLabelsAndPrograms(void) {
     step = findNextStep_ram(step);
   }
 
-  labelList = allocWp43(TO_BLOCKS(sizeof(labelList_t)) * (numberOfLabels + numberOfLabelsInFlash));
+  labelList = allocWp43(sizeof(labelList_t) * (numberOfLabels + numberOfLabelsInFlash));
   if(labelList == NULL) {
     // unlikely
     lastErrorCode = ERROR_RAM_FULL;
     return;
   }
 
-  programList = allocWp43(TO_BLOCKS(sizeof(programList_t)) * (numberOfPrograms + numberOfProgramsInFlash));
+  programList = allocWp43(sizeof(programList_t) * (numberOfPrograms + numberOfProgramsInFlash));
   if(programList == NULL) {
     // unlikely
     lastErrorCode = ERROR_RAM_FULL;
@@ -397,7 +397,7 @@ void fnPem(uint16_t unusedButMandatoryParameter) {
     int lineOffset = 0, lineOffsetTam = 0;
 
     if(programList[currentProgramNumber - 1].step < 0) { // Flash
-      tmpSteps = allocWp43(TO_BLOCKS(400 * 7));
+      tmpSteps = allocWp43(400 * 7);
       readStepInFlashPgmLibrary(tmpSteps, 400 * 7, firstDisplayedStep.flash);
       step = tmpSteps;
     }
@@ -525,7 +525,7 @@ void fnPem(uint16_t unusedButMandatoryParameter) {
     }
 
     if(programList[currentProgramNumber - 1].step < 0) { // Flash
-      freeWp43(tmpSteps, TO_BLOCKS(400 * 7));
+      freeWp43(tmpSteps, 400 * 7);
     }
 
     if(aimBuffer[0] != 0 && linesOfCurrentStep > 4) { // Limited to 4 lines so as not to cause crash or freeze

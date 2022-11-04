@@ -219,8 +219,8 @@ void scanFlashPgmLibrary(void) {
   int32_t seekPos = 0;
   uint32_t stepNumber = 0;
 
-  freeWp43(flashLabelList, TO_BLOCKS(sizeof(labelList_t)) * numberOfLabelsInFlash);
-  freeWp43(flashProgramList, TO_BLOCKS(sizeof(programList_t)) * numberOfProgramsInFlash);
+  freeWp43(flashLabelList, sizeof(labelList_t) * numberOfLabelsInFlash);
+  freeWp43(flashProgramList, sizeof(programList_t) * numberOfProgramsInFlash);
 
   numberOfLabelsInFlash = 0;
   numberOfProgramsInFlash = 1;
@@ -244,14 +244,14 @@ void scanFlashPgmLibrary(void) {
 
   sizeOfFlashPgmLibrary = (uint32_t)(((intptr_t)step - (intptr_t)tmpString) + seekPos);
 
-  flashLabelList = allocWp43(TO_BLOCKS(sizeof(labelList_t)) * numberOfLabelsInFlash);
+  flashLabelList = allocWp43(sizeof(labelList_t) * numberOfLabelsInFlash);
   if(flashLabelList == NULL) {
     // unlikely
     lastErrorCode = ERROR_RAM_FULL;
     return;
   }
 
-  flashProgramList = allocWp43(TO_BLOCKS(sizeof(programList_t)) * numberOfProgramsInFlash);
+  flashProgramList = allocWp43(sizeof(programList_t) * numberOfProgramsInFlash);
   if(flashProgramList == NULL) {
     // unlikely
     lastErrorCode = ERROR_RAM_FULL;

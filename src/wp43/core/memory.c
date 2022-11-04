@@ -40,7 +40,8 @@ int32_t getFreeRamMemory(void) {
 
 
 
-bool isMemoryBlockAvailable(size_t sizeInBlocks) {
+bool isMemoryBlockAvailable(const size_t sizeInBytes) {
+  const size_t sizeInBlocks = TO_BLOCKS(sizeInBytes);
   int i;
 
   for(i=0; i<numberOfFreeMemoryRegions; i++) {
@@ -54,7 +55,8 @@ bool isMemoryBlockAvailable(size_t sizeInBlocks) {
 
 
 
-void *allocWp43(size_t sizeInBlocks) {
+void *allocWp43(size_t sizeInBytes) {
+  const size_t sizeInBlocks = TO_BLOCKS(sizeInBytes);
   #if !defined(DMCP_BUILD)
     //if(debugMemAllocation) {
     //  printf("allocWp43\n");
@@ -82,7 +84,9 @@ void *allocWp43(size_t sizeInBlocks) {
 
 
 
-void *reallocWp43(void *pcMemPtr, size_t oldSizeInBlocks, size_t newSizeInBlocks) {
+void *reallocWp43(void *pcMemPtr, size_t oldSizeInBytes, size_t newSizeInBytes) {
+  const size_t oldSizeInBlocks = TO_BLOCKS(oldSizeInBytes);
+  const size_t newSizeInBlocks = TO_BLOCKS(newSizeInBytes);
   #if !defined(DMCP_BUILD)
     //if(debugMemAllocation) {
     //  printf("reallocWp43\n");
@@ -110,7 +114,8 @@ void *reallocWp43(void *pcMemPtr, size_t oldSizeInBlocks, size_t newSizeInBlocks
 
 
 
-void freeWp43(void *pcMemPtr, size_t sizeInBlocks) {
+void freeWp43(void *pcMemPtr, size_t sizeInBytes) {
+  const size_t sizeInBlocks = TO_BLOCKS(sizeInBytes);
   if(pcMemPtr == NULL) {
     return;
   }

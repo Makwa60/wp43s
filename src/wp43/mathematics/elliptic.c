@@ -39,10 +39,10 @@ static void _calc_real_elliptic(real_t *sn, real_t *cn, real_t *dn, const real_t
   real_t sin_umu, cos_umu, t, r;
   int n = 0;
 
-  if((MU = allocWp43(ELLIPTIC_N * TO_BLOCKS(REAL_SIZE_IN_BYTES)))) {
-    if((NU = allocWp43(ELLIPTIC_N * TO_BLOCKS(REAL_SIZE_IN_BYTES)))) {
-      if((C = allocWp43(ELLIPTIC_N * TO_BLOCKS(REAL_SIZE_IN_BYTES)))) {
-        if((D = allocWp43(ELLIPTIC_N * TO_BLOCKS(REAL_SIZE_IN_BYTES)))) {
+  if((MU = allocWp43(ELLIPTIC_N * REAL_SIZE_IN_BYTES))) {
+    if((NU = allocWp43(ELLIPTIC_N * REAL_SIZE_IN_BYTES))) {
+      if((C = allocWp43(ELLIPTIC_N * REAL_SIZE_IN_BYTES))) {
+        if((D = allocWp43(ELLIPTIC_N * REAL_SIZE_IN_BYTES))) {
           #define mu(n) (MU + (n))
           #define nu(n) (NU + (n))
           #define c(n)  (C + (n))
@@ -52,19 +52,19 @@ static void _calc_real_elliptic(real_t *sn, real_t *cn, real_t *dn, const real_t
             realCopy(const_NaN, sn);
             realCopy(const_NaN, cn);
             realCopy(const_NaN, dn);
-            freeWp43(MU, ELLIPTIC_N * TO_BLOCKS(REAL_SIZE_IN_BYTES));
-            freeWp43(NU, ELLIPTIC_N * TO_BLOCKS(REAL_SIZE_IN_BYTES));
-            freeWp43(C, ELLIPTIC_N * TO_BLOCKS(REAL_SIZE_IN_BYTES));
-            freeWp43(D, ELLIPTIC_N * TO_BLOCKS(REAL_SIZE_IN_BYTES));
+            freeWp43(MU, ELLIPTIC_N * REAL_SIZE_IN_BYTES);
+            freeWp43(NU, ELLIPTIC_N * REAL_SIZE_IN_BYTES);
+            freeWp43(C, ELLIPTIC_N * REAL_SIZE_IN_BYTES);
+            freeWp43(D, ELLIPTIC_N * REAL_SIZE_IN_BYTES);
             return;
           }
           if(realCompareLessThan(m, const_1e_32)) {
             WP34S_Cvt2RadSinCosTan(u, amRadian, sn, cn, NULL, realContext);
             realCopy(const_1, dn);
-            freeWp43(MU, ELLIPTIC_N * TO_BLOCKS(REAL_SIZE_IN_BYTES));
-            freeWp43(NU, ELLIPTIC_N * TO_BLOCKS(REAL_SIZE_IN_BYTES));
-            freeWp43(C, ELLIPTIC_N * TO_BLOCKS(REAL_SIZE_IN_BYTES));
-            freeWp43(D, ELLIPTIC_N * TO_BLOCKS(REAL_SIZE_IN_BYTES));
+            freeWp43(MU, ELLIPTIC_N * REAL_SIZE_IN_BYTES);
+            freeWp43(NU, ELLIPTIC_N * REAL_SIZE_IN_BYTES);
+            freeWp43(C, ELLIPTIC_N * REAL_SIZE_IN_BYTES);
+            freeWp43(D, ELLIPTIC_N * REAL_SIZE_IN_BYTES);
             return;
           }
           realSubtract(m, const_1, &a, realContext);
@@ -73,10 +73,10 @@ static void _calc_real_elliptic(real_t *sn, real_t *cn, real_t *dn, const real_t
             realDivide(const_1, &b, cn, realContext);
             realMultiply(&a, cn, sn, realContext);
             realCopy(cn, dn);
-            freeWp43(MU, ELLIPTIC_N * TO_BLOCKS(REAL_SIZE_IN_BYTES));
-            freeWp43(NU, ELLIPTIC_N * TO_BLOCKS(REAL_SIZE_IN_BYTES));
-            freeWp43(C, ELLIPTIC_N * TO_BLOCKS(REAL_SIZE_IN_BYTES));
-            freeWp43(D, ELLIPTIC_N * TO_BLOCKS(REAL_SIZE_IN_BYTES));
+            freeWp43(MU, ELLIPTIC_N * REAL_SIZE_IN_BYTES);
+            freeWp43(NU, ELLIPTIC_N * REAL_SIZE_IN_BYTES);
+            freeWp43(C, ELLIPTIC_N * REAL_SIZE_IN_BYTES);
+            freeWp43(D, ELLIPTIC_N * REAL_SIZE_IN_BYTES);
             return;
           }
 
@@ -96,10 +96,10 @@ static void _calc_real_elliptic(real_t *sn, real_t *cn, real_t *dn, const real_t
             realCopy(const_0, sn);
             realCopy(const_1, cn);
             realCopy(const_1, dn);
-            freeWp43(MU, ELLIPTIC_N * TO_BLOCKS(REAL_SIZE_IN_BYTES));
-            freeWp43(NU, ELLIPTIC_N * TO_BLOCKS(REAL_SIZE_IN_BYTES));
-            freeWp43(C, ELLIPTIC_N * TO_BLOCKS(REAL_SIZE_IN_BYTES));
-            freeWp43(D, ELLIPTIC_N * TO_BLOCKS(REAL_SIZE_IN_BYTES));
+            freeWp43(MU, ELLIPTIC_N * REAL_SIZE_IN_BYTES);
+            freeWp43(NU, ELLIPTIC_N * REAL_SIZE_IN_BYTES);
+            freeWp43(C, ELLIPTIC_N * REAL_SIZE_IN_BYTES);
+            freeWp43(D, ELLIPTIC_N * REAL_SIZE_IN_BYTES);
             return;
           }
 
@@ -144,25 +144,25 @@ static void _calc_real_elliptic(real_t *sn, real_t *cn, real_t *dn, const real_t
           #undef c
           #undef d
 
-          freeWp43(D, ELLIPTIC_N * TO_BLOCKS(REAL_SIZE_IN_BYTES));
+          freeWp43(D, ELLIPTIC_N * REAL_SIZE_IN_BYTES);
         }
         else {
           displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
           realCopy(const_NaN, sn); realCopy(const_NaN, cn); realCopy(const_NaN, dn);
         }
-        freeWp43(C, ELLIPTIC_N * TO_BLOCKS(REAL_SIZE_IN_BYTES));
+        freeWp43(C, ELLIPTIC_N * REAL_SIZE_IN_BYTES);
       }
       else {
         displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
         realCopy(const_NaN, sn); realCopy(const_NaN, cn); realCopy(const_NaN, dn);
       }
-      freeWp43(NU, ELLIPTIC_N * TO_BLOCKS(REAL_SIZE_IN_BYTES));
+      freeWp43(NU, ELLIPTIC_N * REAL_SIZE_IN_BYTES);
     }
     else {
       displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
       realCopy(const_NaN, sn); realCopy(const_NaN, cn); realCopy(const_NaN, dn);
     }
-    freeWp43(MU, ELLIPTIC_N * TO_BLOCKS(REAL_SIZE_IN_BYTES));
+    freeWp43(MU, ELLIPTIC_N * REAL_SIZE_IN_BYTES);
   }
   else {
     displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
@@ -924,7 +924,7 @@ void ellipticE(const real_t *phi, const real_t *psi, const real_t *m, real_t *re
     #define COS2_MU_I     (tmpVal + 23)
     #define M1            (tmpVal + 24)
 
-    if((tmpVal = allocWp43(25 * TO_BLOCKS(REAL_SIZE_IN_BYTES)))) {
+    if((tmpVal = allocWp43(25 * REAL_SIZE_IN_BYTES))) {
       bool           remainderNegative = realIsNegative(&phiRemainder);
       realContext_t *realContext2 = &ctxtReal51;
       realContext_t *realContext3 = &ctxtReal75;
@@ -988,7 +988,7 @@ void ellipticE(const real_t *phi, const real_t *psi, const real_t *m, real_t *re
         realChangeSign(resi);
       }
 
-      freeWp43(tmpVal, 25 * TO_BLOCKS(REAL_SIZE_IN_BYTES));
+      freeWp43(tmpVal, 25 * REAL_SIZE_IN_BYTES);
     }
     else {
       displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
@@ -1037,10 +1037,10 @@ static void _jacobiZeta_Agm(const real_t *phi, const real_t *psi, const real_t *
     TanhComplex(&k, &ki, res, resi, realContext);
     return;
   }
-  if((a = allocWp43(ELLIPTIC_N * TO_BLOCKS(REAL_SIZE_IN_BYTES)))) {
-    if((ai = allocWp43(ELLIPTIC_N * TO_BLOCKS(REAL_SIZE_IN_BYTES)))) {
-      if((b = allocWp43(ELLIPTIC_N * TO_BLOCKS(REAL_SIZE_IN_BYTES)))) {
-        if((bi = allocWp43(ELLIPTIC_N * TO_BLOCKS(REAL_SIZE_IN_BYTES)))) {
+  if((a = allocWp43(ELLIPTIC_N * REAL_SIZE_IN_BYTES))) {
+    if((ai = allocWp43(ELLIPTIC_N * REAL_SIZE_IN_BYTES))) {
+      if((b = allocWp43(ELLIPTIC_N * REAL_SIZE_IN_BYTES))) {
+        if((bi = allocWp43(ELLIPTIC_N * REAL_SIZE_IN_BYTES))) {
           real_t k, ki, c, ci, s, si, q;
 
           realZero(res); realZero(resi);
@@ -1075,25 +1075,25 @@ static void _jacobiZeta_Agm(const real_t *phi, const real_t *psi, const real_t *
             realAdd(&s, &q, &s, realContext);
             realMultiply(&s, const_1on2, &k, realContext); realMultiply(&si, const_1on2, &ki, realContext);
           }
-          freeWp43(bi, ELLIPTIC_N * TO_BLOCKS(REAL_SIZE_IN_BYTES));
+          freeWp43(bi, ELLIPTIC_N * REAL_SIZE_IN_BYTES);
         }
         else {
           displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
           realCopy(const_NaN, res); realCopy(const_NaN, resi);
         }
-        freeWp43(b, ELLIPTIC_N * TO_BLOCKS(REAL_SIZE_IN_BYTES));
+        freeWp43(b, ELLIPTIC_N * REAL_SIZE_IN_BYTES);
       }
       else {
         displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
         realCopy(const_NaN, res); realCopy(const_NaN, resi);
       }
-      freeWp43(ai, ELLIPTIC_N * TO_BLOCKS(REAL_SIZE_IN_BYTES));
+      freeWp43(ai, ELLIPTIC_N * REAL_SIZE_IN_BYTES);
     }
     else {
       displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
       realCopy(const_NaN, res); realCopy(const_NaN, resi);
     }
-    freeWp43(a, ELLIPTIC_N * TO_BLOCKS(REAL_SIZE_IN_BYTES));
+    freeWp43(a, ELLIPTIC_N * REAL_SIZE_IN_BYTES);
   }
   else {
     displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);

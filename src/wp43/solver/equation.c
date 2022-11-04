@@ -73,7 +73,7 @@
 
 void fnEqNew(uint16_t unusedButMandatoryParameter) {
   if(numberOfFormulae == 0) {
-    allFormulae = allocWp43(TO_BLOCKS(sizeof(formulaHeader_t)));
+    allFormulae = allocWp43(sizeof(formulaHeader_t));
     if(allFormulae) {
       numberOfFormulae = 1;
       currentFormula = 0;
@@ -90,7 +90,7 @@ void fnEqNew(uint16_t unusedButMandatoryParameter) {
     }
   }
   else {
-    formulaHeader_t *newPtr = allocWp43(TO_BLOCKS(sizeof(formulaHeader_t)) * (numberOfFormulae + 1));
+    formulaHeader_t *newPtr = allocWp43(sizeof(formulaHeader_t) * (numberOfFormulae + 1));
     if(newPtr) {
       for(uint32_t i = 0; i < numberOfFormulae; ++i) {
         newPtr[i + (i > currentFormula ? 1 : 0)] = allFormulae[i];
@@ -98,7 +98,7 @@ void fnEqNew(uint16_t unusedButMandatoryParameter) {
       ++currentFormula;
       newPtr[currentFormula].pointerToFormulaData = WP43_NULL;
       newPtr[currentFormula].sizeInBlocks = 0;
-      freeWp43(allFormulae, TO_BLOCKS(sizeof(formulaHeader_t)) * (numberOfFormulae));
+      freeWp43(allFormulae, sizeof(formulaHeader_t) * numberOfFormulae);
       allFormulae = newPtr;
       ++numberOfFormulae;
       graphVariable = 0;
@@ -173,13 +173,13 @@ void fnEqCalc(uint16_t unusedButMandatoryParameter) {
 
 
 void setEquation(uint16_t equationId, const char *equationString) {
-  uint32_t newSizeInBlocks = TO_BLOCKS(stringByteLength(equationString) + 1);
+  uint32_t newSizeInBytes = stringByteLength(equationString) + 1;
   uint8_t *newPtr;
   if(allFormulae[equationId].sizeInBlocks == 0) {
-    newPtr = allocWp43(newSizeInBlocks);
+    newPtr = allocWp43(newSizeInBytes);
   }
   else {
-    newPtr = reallocWp43(TO_PCMEMPTR(allFormulae[equationId].pointerToFormulaData), allFormulae[equationId].sizeInBlocks, newSizeInBlocks);
+    newPtr = reallocWp43(TO_PCMEMPTR(allFormulae[equationId].pointerToFormulaData), TO_BYTES(allFormulae[equationId].sizeInBlocks), newSizeInBytes);
   }
   if(newPtr) {
     allFormulae[equationId].pointerToFormulaData = TO_WP43MEMPTR(newPtr);
@@ -191,7 +191,7 @@ void setEquation(uint16_t equationId, const char *equationString) {
     #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
     return;
   }
-  allFormulae[equationId].sizeInBlocks = newSizeInBlocks;
+  allFormulae[equationId].sizeInBlocks = TO_BLOCKS(newSizeInBytes);
   xcopy(TO_PCMEMPTR(allFormulae[equationId].pointerToFormulaData), equationString, stringByteLength(equationString) + 1);
 }
 
@@ -200,12 +200,12 @@ void setEquation(uint16_t equationId, const char *equationString) {
 void deleteEquation(uint16_t equationId) {
   if(equationId < numberOfFormulae) {
     if(allFormulae[equationId].sizeInBlocks > 0) {
-      freeWp43(TO_PCMEMPTR(allFormulae[equationId].pointerToFormulaData), allFormulae[equationId].sizeInBlocks);
+      freeWp43(TO_PCMEMPTR(allFormulae[equationId].pointerToFormulaData), TO_BYTES(allFormulae[equationId].sizeInBlocks));
     }
     for(uint16_t i = equationId + 1; i < numberOfFormulae; ++i) {
       allFormulae[i - 1] = allFormulae[i];
     }
-    freeWp43(allFormulae + (--numberOfFormulae), TO_BLOCKS(sizeof(formulaHeader_t)));
+    freeWp43(allFormulae + (--numberOfFormulae), sizeof(formulaHeader_t));
     if(numberOfFormulae == 0) {
       allFormulae = NULL;
     }

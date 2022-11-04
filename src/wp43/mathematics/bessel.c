@@ -193,7 +193,7 @@ static void bessel_asymptotic_large_x(const real_t *alpha, const real_t *x, bool
 
 // Polynomial U[k] (based on Abramowitz and Stegun, p.366)
 #define NUMBER_OF_COEFF   100
-#define COEFF_BUFFER_SIZE (TO_BLOCKS(REAL_SIZE_IN_BYTES) * NUMBER_OF_COEFF)
+#define COEFF_BUFFER_SIZE_IN_BYTES (REAL_SIZE_IN_BYTES * NUMBER_OF_COEFF)
 static void u_k(uint32_t k, const real_t *coeff/*array*/, const real_t *t_r, const real_t *t_i, real_t *res_r, real_t *res_i, realContext_t *realContext) {
   real_t t_n_r, t_n_i, tmp_r, tmp_i;
   uint32_t i;
@@ -220,9 +220,9 @@ static void Sigma_u_k(const real_t *nu, const real_t *t_r, const real_t *t_i, in
   real_t nu_k, tmp, tmp2, prev_r, prev_i, coeff;
   uint32_t i, j;
 
-  if((coeff_current = allocWp43(COEFF_BUFFER_SIZE))) {
-    if((coeff_deriv = allocWp43(COEFF_BUFFER_SIZE))) {
-      if((coeff_next = allocWp43(COEFF_BUFFER_SIZE))) {
+  if((coeff_current = allocWp43(COEFF_BUFFER_SIZE_IN_BYTES))) {
+    if((coeff_deriv = allocWp43(COEFF_BUFFER_SIZE_IN_BYTES))) {
+      if((coeff_next = allocWp43(COEFF_BUFFER_SIZE_IN_BYTES))) {
         realCopy(const_0, &prev_r), realCopy(const_0, &prev_i);
         realCopy(even ? const_1 : const_0, res_r), realCopy(const_0, res_i);
         realCopy(nu, &nu_k);
@@ -317,24 +317,24 @@ static void Sigma_u_k(const real_t *nu, const real_t *t_r, const real_t *t_i, in
          coeff_next = coeff_tmpptr;
          coeff_tmpptr = NULL;
         }
-        freeWp43(coeff_next, COEFF_BUFFER_SIZE);
+        freeWp43(coeff_next, COEFF_BUFFER_SIZE_IN_BYTES);
       }
       else {
         displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
       }
-      freeWp43(coeff_deriv, COEFF_BUFFER_SIZE);
+      freeWp43(coeff_deriv, COEFF_BUFFER_SIZE_IN_BYTES);
     }
     else {
       displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
     }
-    freeWp43(coeff_current, COEFF_BUFFER_SIZE);
+    freeWp43(coeff_current, COEFF_BUFFER_SIZE_IN_BYTES);
   }
   else {
     displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
   }
   return;
 }
-#undef COEFF_BUFFER_SIZE
+#undef COEFF_BUFFER_SIZE_IN_BYTES
 #undef NUMBER_OF_COEFF
 
 // Debye's asymptotic expansion (based on Abramowitz and Stegun, p.366)

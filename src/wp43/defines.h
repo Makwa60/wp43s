@@ -701,7 +701,7 @@
 
   #define shortIntegerIsZero(op)               (((*(uint64_t *)(op)) == 0) || (shortIntegerMode == SIM_SIGNMT && (((*(uint64_t *)(op)) == 1u<<((uint64_t)shortIntegerWordSize-1)))))
   #define getStackTop()                        (getSystemFlag(FLAG_SSIZE8) ? REGISTER_D : REGISTER_T)
-  #define freeRegisterData(regist)             freeWp43((void *)getRegisterDataPointer(regist), getRegisterFullSize(regist))
+  #define freeRegisterData(regist)             freeWp43((void *)getRegisterDataPointer(regist), TO_BYTES(getRegisterFullSize(regist)))
   #define storeToDtConfigDescriptor(config)    (configToStore->config = config)
   #define recallFromDtConfigDescriptor(config) (config = configToRecall->config)
   #define getRecalledSystemFlag(sf)            ((configToRecall->systemFlags &   ((uint64_t)1 << (sf & 0x3fff))) != 0)

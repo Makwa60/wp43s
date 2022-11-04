@@ -1533,9 +1533,9 @@ static bool restoreOneSection(uint16_t loadMode, uint16_t s, uint16_t n, uint16_
     readLine(tmpString); // Number of keys
     numberOfRegs = stringToInt16(tmpString);
     if(loadMode == LM_ALL || loadMode == LM_SYSTEM_STATE) {
-      freeWp43(userKeyLabel, TO_BLOCKS(userKeyLabelSize));
+      freeWp43(userKeyLabel, userKeyLabelSize);
       userKeyLabelSize = 37/*keys*/ * 6/*states*/ * 1/*byte terminator*/ + 1/*byte sentinel*/;
-      userKeyLabel = allocWp43(TO_BLOCKS(userKeyLabelSize));
+      userKeyLabel = allocWp43(userKeyLabelSize);
       memset(userKeyLabel,   0, TO_BYTES(TO_BLOCKS(userKeyLabelSize)));
     }
     for(i=0; i<numberOfRegs; i++) {
@@ -1752,7 +1752,7 @@ static bool restoreOneSection(uint16_t loadMode, uint16_t s, uint16_t n, uint16_
     readLine(tmpString); // Number of formulae
     formulae = stringToUint16(tmpString);
     if(loadMode == LM_ALL || loadMode == LM_PROGRAMS) {
-      allFormulae = allocWp43(TO_BLOCKS(sizeof(formulaHeader_t)) * formulae);
+      allFormulae = allocWp43(sizeof(formulaHeader_t) * formulae);
       numberOfFormulae = formulae;
       currentFormula = 0;
       for(i = 0; i < formulae; i++) {
