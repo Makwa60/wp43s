@@ -83,9 +83,7 @@ void fnTvmVar(uint16_t variable) {
           }
           else {
             displayCalcErrorMessage(ERROR_NO_ROOT_FOUND, ERR_REGISTER_LINE, REGISTER_X);
-            #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-              moreInfoOnError("In function fnTvmVar:", "cannot compute TVM equation", "with current parameters", NULL);
-            #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+            errorMoreInfo("cannot compute TVM equation\nwith current parameters");
           }
           adjustResult(REGISTER_X, false, false, REGISTER_X, -1, -1);
         }

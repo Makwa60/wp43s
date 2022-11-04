@@ -254,10 +254,7 @@ void fnPlot(uint16_t unusedButMandatoryParameter) {
     clearRegister(regStats);                  // this should change to delete the named variable STATS once the delete function is available. Until then write 0.0 into STATS.
     if(regStats == INVALID_VARIABLE) {
       displayCalcErrorMessage(ERROR_NO_MATRIX_INDEXED, ERR_REGISTER_LINE, REGISTER_X); // Invalid input data type for this operation
-      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-        sprintf(errorMessage, "DrwMX matrix not created");
-        moreInfoOnError("In function fnClPlotData:", errorMessage, NULL, NULL);
-      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+      errorMoreInfo("DrwMX matrix not created");
     }
   }
 
@@ -294,10 +291,7 @@ void fnPlot(uint16_t unusedButMandatoryParameter) {
     }
     else {
       displayCalcErrorMessage(ERROR_NOT_ENOUGH_MEMORY_FOR_NEW_MATRIX, ERR_REGISTER_LINE, REGISTER_X); // Invalid input data type for this operation
-      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-        sprintf(errorMessage, "additional matrix line not added; rows = %i",rows);
-        moreInfoOnError("In function AddtoDrawMx:", errorMessage, NULL, NULL);
-      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+      errorMoreInfo("additional matrix line not added; rows = %i",rows);
     }
   }
 #endif // !TESTSUITE_BUILD
@@ -1042,10 +1036,7 @@ void fnEqSolvGraph (uint16_t func) {
   }
   else {
     displayCalcErrorMessage(ERROR_OUT_OF_RANGE, ERR_REGISTER_LINE, REGISTER_X);
-    #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-      sprintf(errorMessage, "unexpected parameter %u", graphVariable);
-      moreInfoOnError("In function fnEqSolvGraph:", errorMessage, NULL, NULL);
-    #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+    errorMoreInfo("unexpected parameter %u", graphVariable);
     adjustResult(REGISTER_X, false, false, REGISTER_X, -1, -1);
     return;
   }

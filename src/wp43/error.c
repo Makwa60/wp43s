@@ -163,10 +163,7 @@ void fnErrorMessage(uint16_t unusedButMandatoryParameter) {
 
     default: {
       displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, REGISTER_X);
-      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-        sprintf(errorMessage, "data type %s cannot be used for this function!", getRegisterDataTypeName(REGISTER_X, false, false));
-        moreInfoOnError("In function fnErrorMessage:", errorMessage, NULL, NULL);
-      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+      errorMoreInfo("data type %s cannot be used for this function!", getRegisterDataTypeName(REGISTER_X, false, false));
       return;
     }
   }
@@ -177,10 +174,7 @@ void fnErrorMessage(uint16_t unusedButMandatoryParameter) {
   }
   else {
     displayCalcErrorMessage(ERROR_OUT_OF_RANGE, ERR_REGISTER_LINE, REGISTER_X);
-    #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-      sprintf(errorMessage, "the argument is not less than %u or is negative!", NUMBER_OF_ERROR_CODES);
-      moreInfoOnError("In function fnErrorMessage:", errorMessage, NULL, NULL);
-    #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+    errorMoreInfo("the argument is not less than %u or is negative!", NUMBER_OF_ERROR_CODES);
   }
 }
 
