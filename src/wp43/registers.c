@@ -23,6 +23,7 @@
 #include "saveRestoreCalcState.h"
 #include "sort.h"
 #include "stack.h"
+#include <assert.h>
 #include <stdbool.h>
 #include <string.h>
 
