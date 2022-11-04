@@ -16,6 +16,7 @@
 #include "registers.h"
 #include "registerValueConversions.h"
 #include "ui/screen.h"
+#include <stdarg.h>
 #include <string.h>
 
 #include "wp43.h"
@@ -117,6 +118,23 @@ TO_QSPI const char *errorMessages[NUMBER_OF_ERROR_CODES] = {
 
 
 
+#if (EXTRA_INFO_ON_CALC_ERROR == 1)
+  void errorMoreInfoForFunc(const char *funcName, const char *format, ...) {
+    char errorMsgString[2000];
+    uint8_t errorMsgUtf8[2000];
+    printf("\nIn function %s:\n", funcName);
+    va_list args;
+    va_start(args, format);
+    vsprintf(errorMsgString, format, args);
+    va_end(args);
+    stringToUtf8(errorMsgString, errorMsgUtf8);
+    printf("%s", errorMsgUtf8);
+    printf("\n\n");
+  }
+#endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+
+
+
 void fnRaiseError(uint16_t errorCode) {
   displayCalcErrorMessage((errorCode_t)errorCode, ERR_REGISTER_LINE, REGISTER_X);
 }
@@ -145,10 +163,7 @@ void fnErrorMessage(uint16_t unusedButMandatoryParameter) {
 
     default: {
       displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, REGISTER_X);
-      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-        sprintf(errorMessage, "data type %s cannot be used for this function!", getRegisterDataTypeName(REGISTER_X, false, false));
-        moreInfoOnError("In function fnErrorMessage:", errorMessage, NULL, NULL);
-      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+      errorMoreInfo("data type %s cannot be used for this function!", getRegisterDataTypeName(REGISTER_X, false, false));
       return;
     }
   }
@@ -159,10 +174,7 @@ void fnErrorMessage(uint16_t unusedButMandatoryParameter) {
   }
   else {
     displayCalcErrorMessage(ERROR_OUT_OF_RANGE, ERR_REGISTER_LINE, REGISTER_X);
-    #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-      sprintf(errorMessage, "the argument is not less than %u or is negative!", NUMBER_OF_ERROR_CODES);
-      moreInfoOnError("In function fnErrorMessage:", errorMessage, NULL, NULL);
-    #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+    errorMoreInfo("the argument is not less than %u or is negative!", NUMBER_OF_ERROR_CODES);
   }
 }
 

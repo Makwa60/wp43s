@@ -91,6 +91,13 @@
   void moreInfoOnError        (const char *m1, const char *m2, const char *m3, const char *m4);
 
   #if (EXTRA_INFO_ON_CALC_ERROR != 1)
+    #define errorMoreInfo(...) do {} while(0)
+  #else
+    #define errorMoreInfo(...) errorMoreInfoForFunc(__func__, __VA_ARGS__)
+    void errorMoreInfoForFunc(const char *funcName, const char *format, ...);
+  #endif // (EXTRA_INFO_ON_CALC_ERROR != 1)
+
+  #if (EXTRA_INFO_ON_CALC_ERROR != 1)
     /**
      * Data type error, common function
      */

@@ -576,17 +576,12 @@ void createMenu(const char *name) {
     }
     else {
       displayCalcErrorMessage(ERROR_ENTER_NEW_NAME, ERR_REGISTER_LINE, REGISTER_X);
-      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-        sprintf(errorMessage, "the name %s", name);
-        moreInfoOnError("In function fnAssign:", errorMessage, "is already in use!", NULL);
-      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+      errorMoreInfo("the name '%s' is already in use!", name);
     }
   }
   else {
     displayCalcErrorMessage(ERROR_INVALID_NAME, ERR_REGISTER_LINE, REGISTER_X);
-    #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-      moreInfoOnError("In function fnAssign:", "the menu", name, "does not follow the naming convention");
-    #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+    errorMoreInfo("the menu '%s' does not follow the naming convention", name);
   }
 }
 
@@ -759,8 +754,6 @@ void assignGetName2(void) {
 
   if(!result) {
     displayCalcErrorMessage(ERROR_CANNOT_ASSIGN_HERE, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
-    #if defined(PC_BUILD)
-      moreInfoOnError("In function assignGetName2:", aimBuffer, "is invalid name.", NULL);
-    #endif // PC_BUILD
+    errorMoreInfo("'%s' is an invalid name", aimBuffer);
   }
 }

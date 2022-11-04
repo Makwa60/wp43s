@@ -1849,9 +1849,7 @@ static bool restoreOneSection(uint16_t loadMode, uint16_t s, uint16_t n, uint16_
 void doLoad(uint16_t loadMode, uint16_t s, uint16_t n, uint16_t d) {
   if(!ioFileOpen(ioPathSaveFile, ioModeRead)) {
     displayCalcErrorMessage(ERROR_NO_BACKUP_DATA, ERR_REGISTER_LINE, REGISTER_X);
-    #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-      moreInfoOnError("In function fnLoad: cannot find or read backup data file wp43.sav", NULL, NULL, NULL);
-    #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+    errorMoreInfo("cannot find or read backup data file wp43.sav");
     return;
   }
 
@@ -1893,10 +1891,7 @@ void fnDeleteBackup(uint16_t confirmation) {
     uint32_t errorNumber;
     if(!ioFileRemove(ioPathSaveFile, &errorNumber)) {
       displayCalcErrorMessage(ERROR_IO, ERR_REGISTER_LINE, REGISTER_X);
-      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-        sprintf(errorMessage, "removing the backup failed with error code %d", errorNumber);
-        moreInfoOnError("In function fnDeleteBackup:", errorMessage, NULL, NULL);
-      #endif
+      errorMoreInfo("removing the backup failed with error code %d", errorNumber);
     }
   }
 }

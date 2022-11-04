@@ -356,7 +356,7 @@ void strReplace(char *haystack, const char *needle, const char *newNeedle) {
     str = malloc(strlen(needleLocation + needleLg) + 1);
     #if defined(PC_BUILD) && !defined(GENERATE_CATALOGS)
       if(str == NULL) {
-        moreInfoOnError("In function strReplace:", "error allocating memory for str!", NULL, NULL);
+        errorMoreInfo("error allocating memory for str!");
         exit(1);
       }
     #endif // PC_BUILD && !GENERATE_CATALOGS

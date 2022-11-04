@@ -293,19 +293,16 @@ void fnSetSignificantDigits(uint16_t unusedButMandatoryParameter) {
     }
     else {
       displayCalcErrorMessage(ERROR_ARG_EXCEEDS_FUNCTION_DOMAIN, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
-      #if defined(PC_BUILD)
+      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
         longIntegerToAllocatedString(sigDigits, errorMessage, sizeof(errorMessage));
-        moreInfoOnError("In function fnSetSignificantDigits:", errorMessage, "is out of range.", "");
-      #endif // PC_BUILD
+        errorMoreInfo("'%s' is out of range", errorMessage);
+      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
     }
     longIntegerFree(sigDigits);
   }
   else {
     displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
-    #if defined(PC_BUILD)
-      sprintf(errorMessage, "DataType %" PRIu32, getRegisterDataType(REGISTER_X));
-      moreInfoOnError("In function fnSetSignificantDigits:", errorMessage, "is not a long integer.", "");
-    #endif // PC_BUILD
+    errorMoreInfo("DataType %" PRIu32 " is not a long integer", getRegisterDataType(REGISTER_X));
   }
 }
 
@@ -400,10 +397,7 @@ void fnRange(uint16_t unusedButMandatoryParameter) {
   }
   else {
     displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, REGISTER_X);
-    #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-      sprintf(errorMessage, "cannot use %s for setting RANGE", getRegisterDataTypeName(REGISTER_X, true, true));
-      moreInfoOnError("In function fnRange:", errorMessage, NULL, NULL);
-    #endif //  (EXTRA_INFO_ON_CALC_ERROR == 1)
+    errorMoreInfo("cannot use %s for setting RANGE", getRegisterDataTypeName(REGISTER_X, true, true));
     return;
   }
 
@@ -448,10 +442,7 @@ void fnHide(uint16_t unusedButMandatoryParameter) {
   }
   else {
     displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, REGISTER_X);
-    #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-      sprintf(errorMessage, "cannot use %s for setting HIDE", getRegisterDataTypeName(REGISTER_X, true, true));
-      moreInfoOnError("In function fnHide:", errorMessage, NULL, NULL);
-    #endif //  (EXTRA_INFO_ON_CALC_ERROR == 1)
+    errorMoreInfo("cannot use %s for setting HIDE", getRegisterDataTypeName(REGISTER_X, true, true));
     return;
   }
 

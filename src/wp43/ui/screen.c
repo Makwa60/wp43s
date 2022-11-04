@@ -499,10 +499,7 @@ void clearScreen(void) {
           else {
             sprintf(tmpString, "L.R. selected to %03" PRIu16 ".", (uint16_t)((~lrSelection) & 0x01FF));
           }
-          #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-            sprintf(errorMessage, "BestF is set, but will not work until REAL data points are used.");
-            moreInfoOnError("In function refreshRegisterLine:", errorMessage, errorMessages[24], NULL);
-          #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+          errorMoreInfo("BestF is set, but will not work until REAL data points are used.\n%s", errorMessages[ERROR_INVALID_DATA_TYPE_FOR_OP]);
           w = stringWidth(tmpString, &standardFont, true, true);
           showString(tmpString, &standardFont, SCREEN_WIDTH - w, Y_POSITION_OF_REGISTER_X_LINE - REGISTER_LINE_HEIGHT*(regist - REGISTER_X) + 6, vmNormal, true, true);
         }
@@ -612,10 +609,7 @@ void clearScreen(void) {
             showString(errorMessages[lastErrorCode], &standardFont, 1, Y_POSITION_OF_REGISTER_X_LINE - REGISTER_LINE_HEIGHT*(regist - REGISTER_X) + 6, vmNormal, true, true);
           }
           else {
-            #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-              sprintf(errorMessage, "Error message %" PRIu8 " is too wide!", (uint8_t)lastErrorCode);
-              moreInfoOnError("In function refreshRegisterLine:", errorMessage, errorMessages[lastErrorCode], NULL);
-            #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+            errorMoreInfo("Error message %" PRIu8 " is too wide!\n%s", (uint8_t)lastErrorCode, errorMessages[lastErrorCode]);
             sprintf(tmpString, "Error message %" PRIu8 " is too wide!", (uint8_t)lastErrorCode);
             w = stringWidth(tmpString, &standardFont, true, true);
             showString(tmpString, &standardFont, SCREEN_WIDTH - w, Y_POSITION_OF_REGISTER_X_LINE - REGISTER_LINE_HEIGHT*(regist - REGISTER_X) + 6, vmNormal, true, true);
@@ -695,9 +689,7 @@ void clearScreen(void) {
             w = stringWidth(tmpString, &standardFont, false, true);
             lineWidth = w;
             if(w > SCREEN_WIDTH) {
-              #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-                moreInfoOnError("In function refreshRegisterLine:", "Fraction representation too wide!", tmpString, NULL);
-              #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+              errorMoreInfo("Fraction representation too wide!\n%s", tmpString);
               strcpy(tmpString, "Fraction representation too wide!");
               w = stringWidth(tmpString, &standardFont, false, true);
               lineWidth = w;
@@ -1362,9 +1354,7 @@ void clearScreen(void) {
           else {
             w = stringWidth(tmpString, &standardFont, false, true);
             if(w > SCREEN_WIDTH) {
-              #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-                moreInfoOnError("In function refreshRegisterLine:", "Long integer representation too wide!", tmpString, NULL);
-              #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+              errorMoreInfo("Long integer representation too wide!\n%s", tmpString);
               strcpy(tmpString, "Long integer representation too wide!");
             }
             w = stringWidth(tmpString, &standardFont, false, true);
@@ -1806,11 +1796,10 @@ void fnScreenDump(uint16_t unusedButMandatoryParameter) {
       int32ToReal34(maxValue, &maxValue34);
       if(real34CompareLessThan(REGISTER_REAL34_DATA(regist), const34_0) || real34CompareLessThan(&maxValue34, REGISTER_REAL34_DATA(regist))) {
         displayCalcErrorMessage(ERROR_OUT_OF_RANGE, ERR_REGISTER_LINE, REGISTER_X);
-        #if defined(PC_BUILD)
+        #if (EXTRA_INFO_ON_CALC_ERROR == 1)
           real34ToString(REGISTER_REAL34_DATA(regist), errorMessage);
-          sprintf(tmpString, "x %" PRId16 " = %s:", regist, errorMessage);
-          moreInfoOnError("In function _getPositionFromRegister:", tmpString, "this value is negative or too big!", NULL);
-        #endif // PC_BUILD
+          errorMoreInfo("x %" PRId16 " = %s:\nthis value is negative or too big!", regist, errorMessage);
+        #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
         return -1;
       }
       value = real34ToInt32(REGISTER_REAL34_DATA(regist));
@@ -1822,11 +1811,10 @@ void fnScreenDump(uint16_t unusedButMandatoryParameter) {
       convertLongIntegerRegisterToLongInteger(regist, lgInt);
       if(longIntegerCompareUInt(lgInt, 0) < 0 || longIntegerCompareUInt(lgInt, maxValue) > 0) {
         displayCalcErrorMessage(ERROR_OUT_OF_RANGE, ERR_REGISTER_LINE, REGISTER_X);
-        #if defined(PC_BUILD)
+        #if (EXTRA_INFO_ON_CALC_ERROR == 1)
           longIntegerToAllocatedString(lgInt, errorMessage, ERROR_MESSAGE_LENGTH);
-          sprintf(tmpString, "register %" PRId16 " = %s:", regist, errorMessage);
-          moreInfoOnError("In function _getPositionFromRegister:", tmpString, "this value is negative or too big!", NULL);
-        #endif // PC_BUILD
+          errorMoreInfo("register %" PRId16 " = %s:\n%sthis value is negative or too big!", regist, errorMessage);
+        #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
         longIntegerFree(lgInt);
         return -1;
       }
@@ -1836,10 +1824,7 @@ void fnScreenDump(uint16_t unusedButMandatoryParameter) {
 
     else {
       displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, REGISTER_X);
-      #if defined(PC_BUILD)
-        sprintf(errorMessage, "register %" PRId16 " is %s:", regist, getRegisterDataTypeName(regist, true, false));
-        moreInfoOnError("In function _getPositionFromRegister:", errorMessage, "not suited for addressing!", NULL);
-      #endif // PC_BUILD
+      errorMoreInfo("register %" PRId16 " is %s:\nnot suited for addressing!", regist, getRegisterDataTypeName(regist, true, false));
       return -1;
     }
 
@@ -1958,10 +1943,7 @@ void fnAGraph(uint16_t regist) {
 
       else {
         displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, REGISTER_X);
-        #if defined(PC_BUILD)
-          sprintf(errorMessage, "register %" PRId16 " is %s:", regist, getRegisterDataTypeName(regist, true, false));
-          moreInfoOnError("In function fnAGraph:", errorMessage, "not suited for addressing!", NULL);
-        #endif // PC_BUILD
+        errorMoreInfo("register %" PRId16 " is %s:\nnot suited for addressing!", regist, getRegisterDataTypeName(regist, true, false));
       }
     }
   #endif // !TESTSUITE_BUILD

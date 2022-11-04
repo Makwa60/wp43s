@@ -481,9 +481,7 @@ void convertReal34RegisterToDateRegister(calcRegister_t source, calcRegister_t d
     ( getSystemFlag(FLAG_MDY) && !isValidDay(&part3, &part1, &part2)) ||
     ( getSystemFlag(FLAG_DMY) && !isValidDay(&part3, &part2, &part1))) {
       displayCalcErrorMessage(ERROR_BAD_TIME_OR_DATE_INPUT, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
-      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-        moreInfoOnError("In function convertReal34RegisterToDateRegister:", "Invalid date input like 30 Feb.", NULL, NULL);
-      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+      errorMoreInfo("Invalid date input like 30 Feb.");
       return;
   }
 

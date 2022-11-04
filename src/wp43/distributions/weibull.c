@@ -20,10 +20,7 @@ static bool checkParamWeibull(real_t *x, real_t *i, real_t *j) {
      || ((getRegisterDataType(REGISTER_I) != dtReal34) && (getRegisterDataType(REGISTER_I) != dtLongInteger))
      || ((getRegisterDataType(REGISTER_J) != dtReal34) && (getRegisterDataType(REGISTER_J) != dtLongInteger))) {
       displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, REGISTER_X);
-      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-        sprintf(errorMessage, "Values in register X, I and J must be of the real or long integer type");
-        moreInfoOnError("In function checkParamWeibull:", errorMessage, NULL, NULL);
-      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+      errorMoreInfo("Values in register X, I and J must be of the real or long integer type");
       return false;
   }
 
@@ -53,16 +50,12 @@ static bool checkParamWeibull(real_t *x, real_t *i, real_t *j) {
   }
   else if(realIsNegative(x)) {
     displayCalcErrorMessage(ERROR_ARG_EXCEEDS_FUNCTION_DOMAIN, ERR_REGISTER_LINE, REGISTER_X);
-    #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-      moreInfoOnError("In function checkParamWeibull:", "cannot calculate for x < 0", NULL, NULL);
-    #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+    errorMoreInfo("cannot calculate for x < 0");
     return false;
   }
   else if(realIsZero(i) || realIsNegative(i) || realIsZero(j) || realIsNegative(j)) {
     displayCalcErrorMessage(ERROR_INVALID_DISTRIBUTION_PARAM, ERR_REGISTER_LINE, REGISTER_X);
-    #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-      moreInfoOnError("In function checkParamWeibull:", "cannot calculate for b " STD_LESS_EQUAL " 0 or t " STD_LESS_EQUAL " 0", NULL, NULL);
-    #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+    errorMoreInfo("cannot calculate for b " STD_LESS_EQUAL " 0 or t " STD_LESS_EQUAL " 0");
     return false;
   }
   return true;
@@ -134,9 +127,7 @@ void fnWeibullI(uint16_t unusedButMandatoryParameter) {
   if(checkParamWeibull(&val, &shape, &lifetime)) {
     if((!getSystemFlag(FLAG_SPCRES)) && (realCompareLessEqual(&val, const_0) || realCompareGreaterEqual(&val, const_1))) {
       displayCalcErrorMessage(ERROR_ARG_EXCEEDS_FUNCTION_DOMAIN, ERR_REGISTER_LINE, REGISTER_X);
-      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-        moreInfoOnError("In function fnWeibullI:", "the argument must be 0 < x < 1", NULL, NULL);
-      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+      errorMoreInfo("the argument must be 0 < x < 1");
     }
     else {
       WP34S_Qf_Weib(&val, &shape, &lifetime, &ans, &ctxtReal39);

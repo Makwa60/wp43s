@@ -60,10 +60,7 @@ void fnPgmSlv(uint16_t label) {
     label = findNamedLabel(buf);
     if(label == INVALID_VARIABLE) {
       displayCalcErrorMessage(ERROR_LABEL_NOT_FOUND, ERR_REGISTER_LINE, REGISTER_X);
-      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-        sprintf(errorMessage, "string '%s' is not a named label", buf);
-        moreInfoOnError("In function fnPgmSlv:", errorMessage, NULL, NULL);
-      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+      errorMoreInfo("string '%s' is not a named label", buf);
     }
     else {
       currentSolverProgram = label - FIRST_LABEL;
@@ -71,10 +68,7 @@ void fnPgmSlv(uint16_t label) {
   }
   else {
     displayCalcErrorMessage(ERROR_OUT_OF_RANGE, ERR_REGISTER_LINE, REGISTER_X);
-    #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-      sprintf(errorMessage, "unexpected parameter %u", label);
-      moreInfoOnError("In function fnPgmSlv:", errorMessage, NULL, NULL);
-    #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+    errorMoreInfo("unexpected parameter %u", label);
   }
 }
 
@@ -187,19 +181,13 @@ void fnSolve(uint16_t labelOrVariable) {
     }
     else {
       displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
-      #if defined(PC_BUILD)
-        sprintf(errorMessage, "DataType %" PRIu32, getRegisterDataType(REGISTER_X));
-        moreInfoOnError("In function fnSolve:", errorMessage, "is not a real number.", "");
-      #endif // PC_BUILD
+      errorMoreInfo("DataType %" PRIu32 " is not a real number", getRegisterDataType(REGISTER_X));
       adjustResult(REGISTER_X, false, false, REGISTER_X, -1, -1);
     }
   }
   else {
     displayCalcErrorMessage(ERROR_OUT_OF_RANGE, ERR_REGISTER_LINE, REGISTER_X);
-    #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-      sprintf(errorMessage, "unexpected parameter %u", labelOrVariable);
-      moreInfoOnError("In function fnPgmSlv:", errorMessage, NULL, NULL);
-    #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+    errorMoreInfo("unexpected parameter %u", labelOrVariable);
     adjustResult(REGISTER_X, false, false, REGISTER_X, -1, -1);
   }
 }

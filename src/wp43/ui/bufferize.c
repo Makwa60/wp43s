@@ -1510,9 +1510,7 @@
             if(lastErrorCode == ERROR_RAM_FULL) {
               lastErrorCode = 0;
               temporaryInformation = TI_UNDO_DISABLED;
-              #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-                moreInfoOnError("In function addItemToNimBuffer:", "there is not enough memory to save for undo!", NULL, NULL);
-              #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+              errorMoreInfo("there is not enough memory to save for undo!");
             }
           }
           return;
@@ -1525,9 +1523,7 @@
           if(lastErrorCode == ERROR_RAM_FULL) {
             lastErrorCode = 0;
             temporaryInformation = TI_UNDO_DISABLED;
-            #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-              moreInfoOnError("In function addItemToNimBuffer:", "there is not enough memory to save for undo!", NULL, NULL);
-            #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+            errorMoreInfo("there is not enough memory to save for undo!");
           }
         }
         break;
@@ -1914,9 +1910,7 @@
     for(i=1; i<posSpace; i++) {
       if(aimBuffer[i]<'0' || aimBuffer[i]>'9') { // This should never happen
         displayCalcErrorMessage(ERROR_BAD_INPUT, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
-        #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-          moreInfoOnError("In function parseNimString:", "there is a non numeric character in the integer part of the fraction!", NULL, NULL);
-        #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+        errorMoreInfo("there is a non numeric character in the integer part of the fraction!");
         return;
       }
     }
@@ -1932,9 +1926,7 @@
     for(i=posSpace+1; i<posSlash; i++) {
       if(aimBuffer[i]<'0' || aimBuffer[i]>'9') { // This should never happen
        displayCalcErrorMessage(ERROR_BAD_INPUT, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
-       #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-         moreInfoOnError("In function parseNimString:", "there is a non numeric character in the numerator part of the fraction!", NULL, NULL);
-       #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+       errorMoreInfo("there is a non numeric character in the numerator part of the fraction!");
        return;
       }
     }
@@ -1942,9 +1934,7 @@
     for(i=posSlash+1; i<lg; i++) {
       if(aimBuffer[i]<'0' || aimBuffer[i]>'9') {
         displayCalcErrorMessage(ERROR_BAD_INPUT, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
-        #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-          moreInfoOnError("In function parseNimString:", "there is a non numeric character in the denominator part of the fraction!", NULL, NULL);
-        #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+        errorMoreInfo("there is a non numeric character in the denominator part of the fraction!");
         return;
       }
     }
@@ -1957,9 +1947,7 @@
 
     if(denom == 0 && !getSystemFlag(FLAG_SPCRES)) {
       displayCalcErrorMessage(ERROR_ARG_EXCEEDS_FUNCTION_DOMAIN, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
-      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-        moreInfoOnError("In function parseNimString:", "the denominator of the fraction should not be 0!", "Unless D flag (Danger) is set.", NULL);
-      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+      errorMoreInfo("the denominator of the fraction should not be 0!\nUnless D flag (Danger) is set.");
       return;
     }
 
@@ -2093,9 +2081,7 @@
               if(aimBuffer[i]<'0' || aimBuffer[i]>'9') {
                 // This should never happen
                 displayCalcErrorMessage(ERROR_INVALID_INTEGER_INPUT, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
-                #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-                  moreInfoOnError("In function closeNIM:", "there is a non numeric character in the base of the integer!", NULL, NULL);
-                #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+                errorMoreInfo("there is a non numeric character in the base of the integer!");
                 return;
               }
             }
@@ -2103,19 +2089,14 @@
             base = stringToInt32(aimBuffer + posHash + 1);
             if(base < 2 || base > 16) {
               displayCalcErrorMessage(ERROR_INVALID_INTEGER_INPUT, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
-              #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-               moreInfoOnError("In function closeNIM:", "the base of the integer must be from 2 to 16!", NULL, NULL);
-              #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+              errorMoreInfo("the base of the integer must be from 2 to 16!");
               return;
             }
 
             for(i=aimBuffer[0] == '-' ? 1 : 0; i<posHash; i++) {
               if((aimBuffer[i] > '9' ? aimBuffer[i] - 'A' + 10 : aimBuffer[i] - '0') >= base) {
                 displayCalcErrorMessage(ERROR_INVALID_INTEGER_INPUT, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
-                #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-                  sprintf(errorMessage, "digit %c is not allowed in base %d!", aimBuffer[i], base);
-                  moreInfoOnError("In function closeNIM:", errorMessage, NULL, NULL);
-                #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+                errorMoreInfo("digit %c is not allowed in base %d!", aimBuffer[i], base);
 
                 #if defined(DEBUGUNDO)
                   printf(">>> undo from addItemToNimBufferD\n");
@@ -2168,9 +2149,9 @@
                 char strMin[22], strMax[22];
                 longIntegerToAllocatedString(minVal, strMin, sizeof(strMin));
                 longIntegerToAllocatedString(maxVal, strMax, sizeof(strMax));
-                sprintf(errorMessage, "For word size of %d bit%s and integer mode %s,", shortIntegerWordSize, shortIntegerWordSize>1 ? "s" : "", getShortIntegerModeName(shortIntegerMode));
-                sprintf(errorMessage + ERROR_MESSAGE_LENGTH/2, "the entered number must be from %s to %s!", strMin, strMax);
-                moreInfoOnError("In function closeNIM:", errorMessage, errorMessage + ERROR_MESSAGE_LENGTH/2, NULL);
+                errorMoreInfo("For word size of %d bit%s and integer mode %s,\nthe entered number must be from %s to %s!",
+                    shortIntegerWordSize, shortIntegerWordSize>1 ? "s" : "", getShortIntegerModeName(shortIntegerMode),
+                    strMin, strMax);
               #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
               longIntegerFree(maxVal);
               longIntegerFree(minVal);

@@ -118,40 +118,26 @@ static void _swapRegs(uint16_t srcReg, uint16_t regist) {
     globalRegister[srcReg] = globalRegister[regist];
     globalRegister[regist] = savedRegisterHeader;
   }
-
   else if(regist < FIRST_LOCAL_REGISTER + currentNumberOfLocalRegisters) {
     globalRegister[srcReg] = currentLocalRegisters[regist - FIRST_LOCAL_REGISTER];
     currentLocalRegisters[regist - FIRST_LOCAL_REGISTER] = savedRegisterHeader;
   }
-
-  #if defined(PC_BUILD)
-    else if(regist <= LAST_LOCAL_REGISTER) {
-      displayCalcErrorMessage(ERROR_OUT_OF_RANGE, ERR_REGISTER_LINE, REGISTER_X);
-      sprintf(errorMessage, "local register .%02d", regist - FIRST_LOCAL_REGISTER);
-      moreInfoOnError("In function _swapRegs:", errorMessage, "is not defined!", NULL);
-    }
-  #endif // PC_BUILD
-
-  else if(regist <= LAST_TEMP_REGISTER) {
-    #if defined(PC_BUILD)
-      displayCalcErrorMessage(ERROR_OUT_OF_RANGE, ERR_REGISTER_LINE, REGISTER_X);
-      sprintf(errorMessage, "register %d", regist);
-      moreInfoOnError("In function _swapRegs:", errorMessage, "is unsupported!", NULL);
-    #endif // PC_BUILD
+  else if(regist <= LAST_LOCAL_REGISTER) {
+    displayCalcErrorMessage(ERROR_OUT_OF_RANGE, ERR_REGISTER_LINE, REGISTER_X);
+    errorMoreInfo("local register .%02d is not defined!", regist - FIRST_LOCAL_REGISTER);
   }
-
+  else if(regist <= LAST_TEMP_REGISTER) {
+    displayCalcErrorMessage(ERROR_OUT_OF_RANGE, ERR_REGISTER_LINE, REGISTER_X);
+    errorMoreInfo(errorMessage, "register %d is unsupported!", regist);
+  }
   else if(regist < FIRST_NAMED_VARIABLE + numberOfNamedVariables) {
     globalRegister[srcReg] = allNamedVariables[regist - FIRST_NAMED_VARIABLE].header;
     allNamedVariables[regist - FIRST_NAMED_VARIABLE].header = savedRegisterHeader;
   }
-
-  #if defined(PC_BUILD)
-    else {
-      displayCalcErrorMessage(ERROR_OUT_OF_RANGE, ERR_REGISTER_LINE, REGISTER_X);
-      sprintf(errorMessage, "register %d", regist);
-      moreInfoOnError("In function _swapRegs:", errorMessage, "is unsupported!", NULL);
-    }
-  #endif // PC_BUILD
+  else {
+    displayCalcErrorMessage(ERROR_OUT_OF_RANGE, ERR_REGISTER_LINE, REGISTER_X);
+    errorMoreInfo(errorMessage, "register %d is unsupported!", regist);
+  }
 }
 
 
