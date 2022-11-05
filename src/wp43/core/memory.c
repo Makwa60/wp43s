@@ -203,55 +203,56 @@ void freeGmp(void *pcMemPtr, size_t sizeInBytes) {
 
 
 
-void resizeProgramMemory(uint16_t newSizeInBlocks) {
-  uint16_t currentSizeInBlocks = RAM_SIZE - freeMemoryRegions[numberOfFreeMemoryRegions - 1].address - freeMemoryRegions[numberOfFreeMemoryRegions - 1].sizeInBlocks;
-  uint16_t deltaBlocks, blocksToMove = 0;
+void resizeProgramMemory(size_t newSizeInBytes) {
+  size_t currentSizeInBytes = TO_BYTES(RAM_SIZE - freeMemoryRegions[numberOfFreeMemoryRegions - 1].address - freeMemoryRegions[numberOfFreeMemoryRegions - 1].sizeInBlocks);
+  size_t deltaBytes, bytesToMove = 0;
   uint8_t *newProgramMemoryPointer = NULL;
 
+  newSizeInBytes = TO_BYTES(TO_BLOCKS(newSizeInBytes));
   #if !defined(DMCP_BUILD)
-    //printf("currentSizeInBlocks = %u    newSizeInBlocks = %u\n", currentSizeInBlocks, newSizeInBlocks);
+    //printf("currentSizeInBytes = %u    newSizeInBytes = %u\n", currentSizeInBytes, newSizeInBytes);
     //printf("currentAddress      = %u\n", TO_WP43MEMPTR(beginOfProgramMemory));
   #endif // !DMCP_BUILD
-  if(newSizeInBlocks == currentSizeInBlocks) { // Nothing to do
+  if(newSizeInBytes == currentSizeInBytes) { // Nothing to do
     return;
   }
 
-  if(newSizeInBlocks > currentSizeInBlocks) { // Increase program memory size
-    deltaBlocks = newSizeInBlocks - currentSizeInBlocks;
-    if(newSizeInBlocks - currentSizeInBlocks > freeMemoryRegions[numberOfFreeMemoryRegions - 1].sizeInBlocks) { // Out of memory
+  if(newSizeInBytes > currentSizeInBytes) { // Increase program memory size
+    deltaBytes = newSizeInBytes - currentSizeInBytes;
+    if(newSizeInBytes - currentSizeInBytes > (size_t)TO_BYTES(freeMemoryRegions[numberOfFreeMemoryRegions - 1].sizeInBlocks)) { // Out of memory
       #if defined(DMCP_BUILD)
         backToSystem(NOPARAM);
       #else // !DMCP_BUILD
-        int32_t freeMemory = 0;
+        int32_t freeMemoryInBlocks = 0;
         for(int32_t i=0; i<numberOfFreeMemoryRegions; i++) {
-          freeMemory += freeMemoryRegions[i].sizeInBlocks;
+          freeMemoryInBlocks += freeMemoryRegions[i].sizeInBlocks;
         }
-        printf("\nOUT OF MEMORY\nMemory claimed: %" PRIu64 " bytes\nFragmented free memory: %" PRIu64 " bytes\n", (uint64_t)TO_BYTES(deltaBlocks), (uint64_t)TO_BYTES(freeMemory));
+        printf("\nOUT OF MEMORY\nMemory claimed: %" PRIu64 " bytes\nFragmented free memory: %" PRIu64 " bytes\n", (uint64_t)deltaBytes, (uint64_t)TO_BYTES(freeMemoryInBlocks));
         exit(-3);
       #endif // DMCP_BUILD
     }
     else { // There is plenty of memory available
-      blocksToMove = currentSizeInBlocks;
-      newProgramMemoryPointer = beginOfProgramMemory - TO_BYTES(deltaBlocks);
-      firstFreeProgramByte -= TO_BYTES(deltaBlocks);
+      bytesToMove = currentSizeInBytes;
+      newProgramMemoryPointer = beginOfProgramMemory - deltaBytes;
+      firstFreeProgramByte -= deltaBytes;
       #if !defined(DMCP_BUILD)
-        //printf("Increasing program memory by copying %u blocks from %u to %u\n", currentSizeInBlocks, TO_WP43MEMPTR(beginOfProgramMemory), TO_WP43MEMPTR(newProgramMemoryPointer));
+        //printf("Increasing program memory by copying %u blocks from %u to %u\n", currentSizeInBytes, TO_WP43MEMPTR(beginOfProgramMemory), TO_WP43MEMPTR(newProgramMemoryPointer));
       #endif // !DMCP_BUILD
-      freeMemoryRegions[numberOfFreeMemoryRegions - 1].sizeInBlocks -= deltaBlocks;
+      freeMemoryRegions[numberOfFreeMemoryRegions - 1].sizeInBlocks -= TO_BLOCKS(deltaBytes);
     }
   }
   else { // Decrease program memory size
-    deltaBlocks = currentSizeInBlocks - newSizeInBlocks;
-    blocksToMove = newSizeInBlocks;
-    newProgramMemoryPointer = beginOfProgramMemory + TO_BYTES(deltaBlocks);
-    firstFreeProgramByte += TO_BYTES(deltaBlocks);
+    deltaBytes = currentSizeInBytes - newSizeInBytes;
+    bytesToMove = newSizeInBytes;
+    newProgramMemoryPointer = beginOfProgramMemory + deltaBytes;
+    firstFreeProgramByte += deltaBytes;
     #if !defined(DMCP_BUILD)
-      //printf("Decreasing program memory by copying %u blocks from %u to %u\n", newSizeInBlocks, TO_WP43MEMPTR(beginOfProgramMemory), TO_WP43MEMPTR(newProgramMemoryPointer));
+      //printf("Decreasing program memory by copying %u blocks from %u to %u\n", newSizeInBytes, TO_WP43MEMPTR(beginOfProgramMemory), TO_WP43MEMPTR(newProgramMemoryPointer));
     #endif // !DMCP_BUILD
-    freeMemoryRegions[numberOfFreeMemoryRegions - 1].sizeInBlocks += deltaBlocks;
+    freeMemoryRegions[numberOfFreeMemoryRegions - 1].sizeInBlocks += TO_BLOCKS(deltaBytes);
   }
 
-  xcopy(newProgramMemoryPointer, beginOfProgramMemory, TO_BYTES(blocksToMove));
+  xcopy(newProgramMemoryPointer, beginOfProgramMemory, bytesToMove);
   beginOfProgramMemory = newProgramMemoryPointer;
   //debugMemory("resizeProgramMemory : end");
 }

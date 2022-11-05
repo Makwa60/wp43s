@@ -523,7 +523,7 @@ void fnClAll(uint16_t confirmation) {
 void addTestPrograms(void) {
   uint32_t numberOfBytesUsed, numberOfBytesForTheTestPrograms = TO_BYTES(TO_BLOCKS(11509));
 
-  resizeProgramMemory(TO_BLOCKS(numberOfBytesForTheTestPrograms));
+  resizeProgramMemory(numberOfBytesForTheTestPrograms);
   firstDisplayedStep.ram        = beginOfProgramMemory;
   currentStep.ram               = beginOfProgramMemory;
   currentLocalStepNumber        = 1;
@@ -601,8 +601,8 @@ void fnReset(uint16_t confirmation) {
     }
     memset(ram, 0, TO_BYTES(RAM_SIZE));
     numberOfFreeMemoryRegions = 1;
-    freeMemoryRegions[0].address = 40;                     // for reserved variables
-    freeMemoryRegions[0].sizeInBlocks = RAM_SIZE - 40 - 1; // - 1: one block for an empty program
+    freeMemoryRegions[0].address = TO_BLOCKS(160);         // for reserved variables
+    freeMemoryRegions[0].sizeInBlocks = RAM_SIZE -  TO_BLOCKS(160) - 1; // - 1: one block for an empty program
 
     if(tmpString == NULL) {
       #if defined(DMCP_BUILD)
@@ -716,19 +716,19 @@ void fnReset(uint16_t confirmation) {
     allNamedVariables = NULL;
 
 
-    allocateNamedVariable("Mat_A", dtReal34Matrix, TO_BLOCKS(REAL34_SIZE_IN_BYTES) + 1);
+    allocateNamedVariable("Mat_A", dtReal34Matrix, REAL34_SIZE_IN_BYTES + 4);
     memPtr = getRegisterDataPointer(FIRST_NAMED_VARIABLE);
     ((dataBlock_t *)memPtr)->matrixRows = 1;
     ((dataBlock_t *)memPtr)->matrixColumns = 1;
     real34Zero(memPtr + 4);
 
-    allocateNamedVariable("Mat_B", dtReal34Matrix, TO_BLOCKS(REAL34_SIZE_IN_BYTES) + 1);
+    allocateNamedVariable("Mat_B", dtReal34Matrix, REAL34_SIZE_IN_BYTES + 4);
     memPtr = getRegisterDataPointer(FIRST_NAMED_VARIABLE + 1);
     ((dataBlock_t *)memPtr)->matrixRows = 1;
     ((dataBlock_t *)memPtr)->matrixColumns = 1;
     real34Zero(memPtr + 4);
 
-    allocateNamedVariable("Mat_X", dtReal34Matrix, TO_BLOCKS(REAL34_SIZE_IN_BYTES) + 1);
+    allocateNamedVariable("Mat_X", dtReal34Matrix, REAL34_SIZE_IN_BYTES + 4);
     memPtr = getRegisterDataPointer(FIRST_NAMED_VARIABLE + 2);
     ((dataBlock_t *)memPtr)->matrixRows = 1;
     ((dataBlock_t *)memPtr)->matrixColumns = 1;

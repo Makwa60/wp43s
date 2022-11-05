@@ -631,7 +631,7 @@ static calcRegister_t _findReservedVariable(const char *variableName) {
 
 
 
-void allocateNamedVariable(const char *variableName, dataType_t dataType, uint16_t fullDataSizeInBlocks) {
+void allocateNamedVariable(const char *variableName, dataType_t dataType, uint16_t fullDataSizeInBytes) {
   calcRegister_t regist;
   uint8_t len;
 
@@ -690,7 +690,7 @@ void allocateNamedVariable(const char *variableName, dataType_t dataType, uint16
 
   regist += FIRST_NAMED_VARIABLE;
   setRegisterDataType(regist, dataType, amNone);
-  setRegisterDataPointer(regist, allocWp43(TO_BYTES(fullDataSizeInBlocks)));
+  setRegisterDataPointer(regist, allocWp43(fullDataSizeInBytes));
 }
 
 
@@ -731,7 +731,7 @@ calcRegister_t findOrAllocateNamedVariable(const char *variableName) {
       errorMoreInfo("the name '%s' is already in use!", variableName);
       return regist;
     }
-    allocateNamedVariable(variableName, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES));
+    allocateNamedVariable(variableName, dtReal34, REAL34_SIZE_IN_BYTES);
     if(lastErrorCode == ERROR_NONE) {
       // New variables are zero by default - although this might be immediately overridden, it might require an
       // initial value, such as when STO+

@@ -129,11 +129,11 @@
   /**
    * Allocates one named variable.
    *
-   * \param[in] variableName         Variable name
-   * \param[in] dataType             The content type of the variable
-   * \param[in] fullDataSizeInBlocks How many blocks the named variable will require for storage
+   * \param[in] variableName        Variable name
+   * \param[in] dataType            The content type of the variable
+   * \param[in] fullDataSizeInBytes How many bytes the named variable will require for storage
    */
-  void           allocateNamedVariable           (const char *variableName, dataType_t dataType, uint16_t fullDataSizeInBlocks);
+  void           allocateNamedVariable           (const char *variableName, dataType_t dataType, uint16_t fullDataSizeInBytes);
 
   /**
    * Retrieves the register number for the named variable.
