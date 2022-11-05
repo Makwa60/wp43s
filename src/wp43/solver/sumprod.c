@@ -66,7 +66,7 @@
     }
 
     if(lastErrorCode == ERROR_NONE) {
-      reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
+      reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
       real34Copy(&result, REGISTER_REAL34_DATA(REGISTER_X));
     }
 
@@ -115,10 +115,7 @@
       label = findNamedLabel(buf);
       if(label == INVALID_VARIABLE) {
         displayCalcErrorMessage(ERROR_LABEL_NOT_FOUND, ERR_REGISTER_LINE, REGISTER_X);
-        #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-          sprintf(errorMessage, "string '%s' is not a named label", buf);
-          moreInfoOnError("In function fnPgmSlv:", errorMessage, NULL, NULL);
-        #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+        errorMoreInfo("string '%s' is not a named label", buf);
       }
       else {
         _programmableSumProd(label, prod);
@@ -126,10 +123,7 @@
     }
     else {
       displayCalcErrorMessage(ERROR_OUT_OF_RANGE, ERR_REGISTER_LINE, REGISTER_X);
-      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-        sprintf(errorMessage, "unexpected parameter %u", label);
-        moreInfoOnError("In function fnPgmSlv:", errorMessage, NULL, NULL);
-      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+      errorMoreInfo("unexpected parameter %u", label);
     }
   }
 #endif // !TESTSUITE_BUILD

@@ -23,10 +23,7 @@ static bool checkParamGeometric(real_t *x, real_t *i) {
   if(   ((getRegisterDataType(REGISTER_X) != dtReal34) && (getRegisterDataType(REGISTER_X) != dtLongInteger))
      || ((getRegisterDataType(REGISTER_I) != dtReal34) && (getRegisterDataType(REGISTER_I) != dtLongInteger))) {
       displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, REGISTER_X);
-      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-        sprintf(errorMessage, "Values in register X and I must be of the real or long integer type");
-        moreInfoOnError("In function checkParamGeometric:", errorMessage, NULL, NULL);
-      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+      errorMoreInfo("Values in register X and I must be of the real or long integer type");
       return false;
   }
 
@@ -49,16 +46,12 @@ static bool checkParamGeometric(real_t *x, real_t *i) {
   }
   else if(realIsNegative(x)) {
     displayCalcErrorMessage(ERROR_ARG_EXCEEDS_FUNCTION_DOMAIN, ERR_REGISTER_LINE, REGISTER_X);
-    #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-      moreInfoOnError("In function checkParamGeometric:", "cannot calculate for x < 0", NULL, NULL);
-    #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+    errorMoreInfo("cannot calculate for x < 0");
     return false;
   }
   else if(realIsZero(i) || realIsNegative(i) || realCompareGreaterThan(i, const_1)) {
     displayCalcErrorMessage(ERROR_INVALID_DISTRIBUTION_PARAM, ERR_REGISTER_LINE, REGISTER_X);
-    #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-      moreInfoOnError("In function checkParamGeometric:", "the parameter must be 0 < p " STD_LESS_EQUAL " 1", NULL, NULL);
-    #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+    errorMoreInfo("the parameter must be 0 < p " STD_LESS_EQUAL " 1");
     return false;
   }
   return true;
@@ -75,7 +68,7 @@ void fnGeometricP(uint16_t unusedButMandatoryParameter) {
 
   if(checkParamGeometric(&val, &prob)) {
     WP34S_Pdf_Geom(&val, &prob, &ans, &ctxtReal39);
-    reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
+    reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
     convertRealToReal34ResultRegister(&ans, REGISTER_X);
   }
 
@@ -93,7 +86,7 @@ void fnGeometricL(uint16_t unusedButMandatoryParameter) {
 
   if(checkParamGeometric(&val, &prob)) {
     WP34S_Cdf_Geom(&val, &prob, &ans, &ctxtReal39);
-    reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
+    reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
     convertRealToReal34ResultRegister(&ans, REGISTER_X);
   }
 
@@ -111,7 +104,7 @@ void fnGeometricR(uint16_t unusedButMandatoryParameter) {
 
   if(checkParamGeometric(&val, &prob)) {
     WP34S_Cdfu_Geom(&val, &prob, &ans, &ctxtReal39);
-    reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
+    reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
     convertRealToReal34ResultRegister(&ans, REGISTER_X);
   }
 
@@ -130,13 +123,11 @@ void fnGeometricI(uint16_t unusedButMandatoryParameter) {
   if(checkParamGeometric(&val, &prob)) {
     if((!getSystemFlag(FLAG_SPCRES)) && (realCompareLessEqual(&val, const_0) || realCompareGreaterEqual(&val, const_1))) {
       displayCalcErrorMessage(ERROR_ARG_EXCEEDS_FUNCTION_DOMAIN, ERR_REGISTER_LINE, REGISTER_X);
-      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-        moreInfoOnError("In function fnGeometricI:", "the argument must be 0 < x < 1", NULL, NULL);
-      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+      errorMoreInfo("the argument must be 0 < x < 1");
     }
     else {
       WP34S_Qf_Geom(&val, &prob, &ans, &ctxtReal39);
-      reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
+      reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
       convertRealToReal34ResultRegister(&ans, REGISTER_X);
     }
   }

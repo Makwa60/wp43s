@@ -109,7 +109,7 @@ static void percentMRR() {
   realSubtract(&q, const_1, &q, &ctxtReal39);         // q = pow(x/y, 1/z) - 1
   realMultiply(&q, const_100, &q, &ctxtReal39);       // q = 100 * ( pow(x/y, 1/z) - 1 )
 
-  reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
+  reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
   convertRealToReal34ResultRegister(&q, REGISTER_X);
   setRegisterAngularMode(REGISTER_X, amNone);
 }

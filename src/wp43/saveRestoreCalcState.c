@@ -819,7 +819,7 @@ void fnSave(uint16_t unusedButMandatoryParameter) {
   sprintf(tmpString, "STATISTICAL_SUMS\n%" PRIu16 "\n", (uint16_t)(statisticalSumsPointer ? NUMBER_OF_STATISTICAL_SUMS : 0));
   save(tmpString, strlen(tmpString));
   for(i=0; i<(statisticalSumsPointer ? NUMBER_OF_STATISTICAL_SUMS : 0); i++) {
-    realToString((real_t *)(statisticalSumsPointer + REAL_SIZE_IN_BLOCKS * i), tmpRegisterString);
+    realToString((real_t *)(statisticalSumsPointer + TO_BLOCKS(REAL_SIZE_IN_BYTES) * i), tmpRegisterString);
     sprintf(tmpString, "%s\n", tmpRegisterString);
     save(tmpString, strlen(tmpString));
   }
@@ -1121,22 +1121,22 @@ static void restoreRegister(calcRegister_t regist, char *type, char *value) {
       tag = amNone;
     }
 
-    reallocateRegister(regist, dtReal34, REAL34_SIZE_IN_BLOCKS, tag);
+    reallocateRegister(regist, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), tag);
     stringToReal34(value, REGISTER_REAL34_DATA(regist));
   }
 
   else if(strcmp(type, "Real") == 0) {
-    reallocateRegister(regist, dtReal34, REAL34_SIZE_IN_BLOCKS, tag);
+    reallocateRegister(regist, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), tag);
     stringToReal34(value, REGISTER_REAL34_DATA(regist));
   }
 
   else if(strcmp(type, "Time") == 0) {
-    reallocateRegister(regist, dtTime, REAL34_SIZE_IN_BLOCKS, amNone);
+    reallocateRegister(regist, dtTime, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
     stringToReal34(value, REGISTER_REAL34_DATA(regist));
   }
 
   else if(strcmp(type, "Date") == 0) {
-    reallocateRegister(regist, dtDate, REAL34_SIZE_IN_BLOCKS, amNone);
+    reallocateRegister(regist, dtDate, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
     stringToReal34(value, REGISTER_REAL34_DATA(regist));
   }
 
@@ -1176,7 +1176,7 @@ static void restoreRegister(calcRegister_t regist, char *type, char *value) {
   else if(strcmp(type, "Cplx") == 0) {
     char *imaginaryPart;
 
-    reallocateRegister(regist, dtComplex34, COMPLEX34_SIZE_IN_BLOCKS, amNone);
+    reallocateRegister(regist, dtComplex34, TO_BLOCKS(COMPLEX34_SIZE_IN_BYTES), amNone);
     imaginaryPart = value;
     while(*imaginaryPart != ' ') {
       imaginaryPart++;
@@ -1198,7 +1198,7 @@ static void restoreRegister(calcRegister_t regist, char *type, char *value) {
     *(numOfCols++) = 0;
     rows = stringToUint16(value);
     cols = stringToUint16(numOfCols);
-    reallocateRegister(regist, dtReal34Matrix, REAL34_SIZE_IN_BLOCKS * rows * cols, amNone);
+    reallocateRegister(regist, dtReal34Matrix, TO_BLOCKS(REAL34_SIZE_IN_BYTES) * rows * cols, amNone);
     REGISTER_REAL34_MATRIX_DBLOCK(regist)->matrixRows = rows;
     REGISTER_REAL34_MATRIX_DBLOCK(regist)->matrixColumns = cols;
   }
@@ -1214,7 +1214,7 @@ static void restoreRegister(calcRegister_t regist, char *type, char *value) {
     *(numOfCols++) = 0;
     rows = stringToUint16(value);
     cols = stringToUint16(numOfCols);
-    reallocateRegister(regist, dtComplex34Matrix, COMPLEX34_SIZE_IN_BLOCKS * rows * cols, amNone);
+    reallocateRegister(regist, dtComplex34Matrix, TO_BLOCKS(COMPLEX34_SIZE_IN_BYTES) * rows * cols, amNone);
     REGISTER_COMPLEX34_MATRIX_DBLOCK(regist)->matrixRows = rows;
     REGISTER_COMPLEX34_MATRIX_DBLOCK(regist)->matrixColumns = cols;
   }
@@ -1440,7 +1440,7 @@ static bool restoreOneSection(uint16_t loadMode, uint16_t s, uint16_t n, uint16_
       readLine(tmpString); // statistical sum
       if(statisticalSumsPointer) { // likely
         if(loadMode == LM_ALL || loadMode == LM_SUMS) {
-          stringToReal(tmpString, (real_t *)(statisticalSumsPointer + REAL_SIZE_IN_BLOCKS * i), &ctxtReal75);
+          stringToReal(tmpString, (real_t *)(statisticalSumsPointer + TO_BLOCKS(REAL_SIZE_IN_BYTES) * i), &ctxtReal75);
         }
       }
     }
@@ -1533,9 +1533,9 @@ static bool restoreOneSection(uint16_t loadMode, uint16_t s, uint16_t n, uint16_
     readLine(tmpString); // Number of keys
     numberOfRegs = stringToInt16(tmpString);
     if(loadMode == LM_ALL || loadMode == LM_SYSTEM_STATE) {
-      freeWp43(userKeyLabel, TO_BLOCKS(userKeyLabelSize));
+      freeWp43(userKeyLabel, userKeyLabelSize);
       userKeyLabelSize = 37/*keys*/ * 6/*states*/ * 1/*byte terminator*/ + 1/*byte sentinel*/;
-      userKeyLabel = allocWp43(TO_BLOCKS(userKeyLabelSize));
+      userKeyLabel = allocWp43(userKeyLabelSize);
       memset(userKeyLabel,   0, TO_BYTES(TO_BLOCKS(userKeyLabelSize)));
     }
     for(i=0; i<numberOfRegs; i++) {
@@ -1752,7 +1752,7 @@ static bool restoreOneSection(uint16_t loadMode, uint16_t s, uint16_t n, uint16_
     readLine(tmpString); // Number of formulae
     formulae = stringToUint16(tmpString);
     if(loadMode == LM_ALL || loadMode == LM_PROGRAMS) {
-      allFormulae = allocWp43(TO_BLOCKS(sizeof(formulaHeader_t)) * formulae);
+      allFormulae = allocWp43(sizeof(formulaHeader_t) * formulae);
       numberOfFormulae = formulae;
       currentFormula = 0;
       for(i = 0; i < formulae; i++) {
@@ -1849,9 +1849,7 @@ static bool restoreOneSection(uint16_t loadMode, uint16_t s, uint16_t n, uint16_
 void doLoad(uint16_t loadMode, uint16_t s, uint16_t n, uint16_t d) {
   if(!ioFileOpen(ioPathSaveFile, ioModeRead)) {
     displayCalcErrorMessage(ERROR_NO_BACKUP_DATA, ERR_REGISTER_LINE, REGISTER_X);
-    #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-      moreInfoOnError("In function fnLoad: cannot find or read backup data file wp43.sav", NULL, NULL, NULL);
-    #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+    errorMoreInfo("cannot find or read backup data file wp43.sav");
     return;
   }
 
@@ -1893,10 +1891,7 @@ void fnDeleteBackup(uint16_t confirmation) {
     uint32_t errorNumber;
     if(!ioFileRemove(ioPathSaveFile, &errorNumber)) {
       displayCalcErrorMessage(ERROR_IO, ERR_REGISTER_LINE, REGISTER_X);
-      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-        sprintf(errorMessage, "removing the backup failed with error code %d", errorNumber);
-        moreInfoOnError("In function fnDeleteBackup:", errorMessage, NULL, NULL);
-      #endif
+      errorMoreInfo("removing the backup failed with error code %d", errorNumber);
     }
   }
 }

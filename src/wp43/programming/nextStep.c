@@ -169,11 +169,11 @@ uint8_t *countLiteralBytes(uint8_t *step) {
     //}
 
     case BINARY_REAL34: {
-      return step + TO_BYTES(REAL34_SIZE_IN_BLOCKS);
+      return step + TO_BYTES(TO_BLOCKS(REAL34_SIZE_IN_BYTES));
     }
 
     case BINARY_COMPLEX34: {
-      return step + TO_BYTES(REAL34_SIZE_IN_BLOCKS * 2);
+      return step + TO_BYTES(TO_BLOCKS(REAL34_SIZE_IN_BYTES) * 2);
     }
 
     //case BINARY_DATE: {
@@ -593,10 +593,7 @@ void fnCase(uint16_t regist) {
     }
     default: {
       displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, REGISTER_X);
-      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-        sprintf(errorMessage, "cannot use %s for the parameter of CASE", getRegisterDataTypeName(REGISTER_X, true, false));
-        moreInfoOnError("In function fnCase:", errorMessage, NULL, NULL);
-      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+      errorMoreInfo("cannot use %s for the parameter of CASE", getRegisterDataTypeName(REGISTER_X, true, false));
       return;
     }
   }

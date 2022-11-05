@@ -51,10 +51,7 @@ void fn1stDeriv(uint16_t label) {
     label = findNamedLabel(buf);
     if(label == INVALID_VARIABLE) {
       displayCalcErrorMessage(ERROR_LABEL_NOT_FOUND, ERR_REGISTER_LINE, REGISTER_X);
-      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-        sprintf(errorMessage, "string '%s' is not a named label", buf);
-        moreInfoOnError("In function fn1stDeriv:", errorMessage, NULL, NULL);
-      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+      errorMoreInfo("string '%s' is not a named label", buf);
     }
     else {
       firstDerivative(label);
@@ -62,10 +59,7 @@ void fn1stDeriv(uint16_t label) {
   }
   else {
     displayCalcErrorMessage(ERROR_OUT_OF_RANGE, ERR_REGISTER_LINE, REGISTER_X);
-    #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-      sprintf(errorMessage, "unexpected parameter %u", label);
-      moreInfoOnError("In function fn1stDeriv:", errorMessage, NULL, NULL);
-    #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+    errorMoreInfo("unexpected parameter %u", label);
   }
 }
 
@@ -99,10 +93,7 @@ void fn2ndDeriv(uint16_t label) {
     label = findNamedLabel(buf);
     if(label == INVALID_VARIABLE) {
       displayCalcErrorMessage(ERROR_LABEL_NOT_FOUND, ERR_REGISTER_LINE, REGISTER_X);
-      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-        sprintf(errorMessage, "string '%s' is not a named label", buf);
-        moreInfoOnError("In function fn2ndDeriv:", errorMessage, NULL, NULL);
-      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+      errorMoreInfo("string '%s' is not a named label", buf);
     }
     else {
       secondDerivative(label);
@@ -110,10 +101,7 @@ void fn2ndDeriv(uint16_t label) {
   }
   else {
     displayCalcErrorMessage(ERROR_OUT_OF_RANGE, ERR_REGISTER_LINE, REGISTER_X);
-    #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-      sprintf(errorMessage, "unexpected parameter %u", label);
-      moreInfoOnError("In function fn2ndDeriv:", errorMessage, NULL, NULL);
-    #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+    errorMoreInfo("unexpected parameter %u", label);
   }
 }
 
@@ -154,7 +142,7 @@ static void deriv_found_lbl(calcRegister_t deltaX, real_t *h) {
 static void deriv_default_h(real_t *h) {
   calcRegister_t deltaX;
 
-  reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
+  reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
   realToReal34(h, REGISTER_REAL34_DATA(REGISTER_X));
   fnFillStack(NOPARAM);
 
@@ -179,7 +167,7 @@ static void deriv_default_h(real_t *h) {
 
 
 static void _differentiatorIteration(calcRegister_t label, real_t *r0) {
-  reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
+  reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
   realToReal34(r0, REGISTER_REAL34_DATA(REGISTER_X));
   fnFillStack(NOPARAM);
 
@@ -400,10 +388,7 @@ void firstDerivative(calcRegister_t label) {
     }
     default: {
       displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, REGISTER_X);
-      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-        sprintf(errorMessage, "cannot use %s for derivative", getRegisterDataTypeName(REGISTER_X, true, true));
-        moreInfoOnError("In function firstDerivative:", errorMessage, NULL, NULL);
-      #endif //  (EXTRA_INFO_ON_CALC_ERROR == 1)
+      errorMoreInfo("cannot use %s for derivative", getRegisterDataTypeName(REGISTER_X, true, true));
       return;
     }
   }
@@ -428,10 +413,7 @@ void secondDerivative(calcRegister_t label) {
     }
     default: {
       displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, REGISTER_X);
-      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-        sprintf(errorMessage, "cannot use %s for derivative", getRegisterDataTypeName(REGISTER_X, true, true));
-        moreInfoOnError("In function firstDerivative:", errorMessage, NULL, NULL);
-      #endif //  (EXTRA_INFO_ON_CALC_ERROR == 1)
+      errorMoreInfo("cannot use %s for derivative", getRegisterDataTypeName(REGISTER_X, true, true));
       return;
     }
   }

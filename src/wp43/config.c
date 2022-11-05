@@ -293,19 +293,16 @@ void fnSetSignificantDigits(uint16_t unusedButMandatoryParameter) {
     }
     else {
       displayCalcErrorMessage(ERROR_ARG_EXCEEDS_FUNCTION_DOMAIN, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
-      #if defined(PC_BUILD)
+      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
         longIntegerToAllocatedString(sigDigits, errorMessage, sizeof(errorMessage));
-        moreInfoOnError("In function fnSetSignificantDigits:", errorMessage, "is out of range.", "");
-      #endif // PC_BUILD
+        errorMoreInfo("'%s' is out of range", errorMessage);
+      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
     }
     longIntegerFree(sigDigits);
   }
   else {
     displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
-    #if defined(PC_BUILD)
-      sprintf(errorMessage, "DataType %" PRIu32, getRegisterDataType(REGISTER_X));
-      moreInfoOnError("In function fnSetSignificantDigits:", errorMessage, "is not a long integer.", "");
-    #endif // PC_BUILD
+    errorMoreInfo("DataType %" PRIu32 " is not a long integer", getRegisterDataType(REGISTER_X));
   }
 }
 
@@ -400,10 +397,7 @@ void fnRange(uint16_t unusedButMandatoryParameter) {
   }
   else {
     displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, REGISTER_X);
-    #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-      sprintf(errorMessage, "cannot use %s for setting RANGE", getRegisterDataTypeName(REGISTER_X, true, true));
-      moreInfoOnError("In function fnRange:", errorMessage, NULL, NULL);
-    #endif //  (EXTRA_INFO_ON_CALC_ERROR == 1)
+    errorMoreInfo("cannot use %s for setting RANGE", getRegisterDataTypeName(REGISTER_X, true, true));
     return;
   }
 
@@ -448,10 +442,7 @@ void fnHide(uint16_t unusedButMandatoryParameter) {
   }
   else {
     displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, REGISTER_X);
-    #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-      sprintf(errorMessage, "cannot use %s for setting HIDE", getRegisterDataTypeName(REGISTER_X, true, true));
-      moreInfoOnError("In function fnHide:", errorMessage, NULL, NULL);
-    #endif //  (EXTRA_INFO_ON_CALC_ERROR == 1)
+    errorMoreInfo("cannot use %s for setting HIDE", getRegisterDataTypeName(REGISTER_X, true, true));
     return;
   }
 
@@ -498,7 +489,7 @@ void fnClAll(uint16_t confirmation) {
     fnClPAll(CONFIRMED);  // Clears all the programs
     fnClSigma(CONFIRMED); // Clears and releases the memory of all statistical sums
     if(savedStatisticalSumsPointer != NULL) {
-      freeWp43(savedStatisticalSumsPointer, NUMBER_OF_STATISTICAL_SUMS * REAL_SIZE_IN_BLOCKS);
+      freeWp43(savedStatisticalSumsPointer, NUMBER_OF_STATISTICAL_SUMS * REAL_SIZE_IN_BYTES);
     }
 
     // Clear local registers
@@ -673,15 +664,15 @@ void fnReset(uint16_t confirmation) {
 
     // initialize 9 real34 reserved variables: ACC, ↑Lim, ↓Lim, FV, i%/a, NPER, PER/a, PMT, and PV
     for(int i=0; i<9; i++) {
-      real34Zero(allocWp43(REAL34_SIZE_IN_BLOCKS));
+      real34Zero(allocWp43(REAL34_SIZE_IN_BYTES));
     }
 
     // initialize 1 long integer reserved variables: GRAMOD
     #if defined(OS64BIT)
-      memPtr = allocWp43(3);
+      memPtr = allocWp43(12);
       ((dataBlock_t *)memPtr)->dataMaxLength = 2;
     #else // !OS64BIT
-      memPtr = allocWp43(2);
+      memPtr = allocWp43(8);
       ((dataBlock_t *)memPtr)->dataMaxLength = 1;
     #endif // OS64BIT
 
@@ -689,7 +680,7 @@ void fnReset(uint16_t confirmation) {
     memset(globalRegister, 0, sizeof(globalRegister));
     for(calcRegister_t regist=0; regist<=LAST_GLOBAL_REGISTER; regist++) {
       setRegisterDataType(regist, dtReal34, amNone);
-      memPtr = allocWp43(REAL34_SIZE_IN_BLOCKS);
+      memPtr = allocWp43(REAL34_SIZE_IN_BYTES);
       setRegisterDataPointer(regist, memPtr);
       real34Zero(memPtr);
     }
@@ -698,7 +689,7 @@ void fnReset(uint16_t confirmation) {
     memset(savedStackRegister, 0, sizeof(savedStackRegister));
     for(calcRegister_t regist=FIRST_SAVED_STACK_REGISTER; regist<=LAST_TEMP_REGISTER; regist++) {
       setRegisterDataType(regist, dtReal34, amNone);
-      memPtr = allocWp43(REAL34_SIZE_IN_BLOCKS);
+      memPtr = allocWp43(REAL34_SIZE_IN_BYTES);
       setRegisterDataPointer(regist, memPtr);
       real34Zero(memPtr);
     }
@@ -708,7 +699,7 @@ void fnReset(uint16_t confirmation) {
 
     // allocate space for the local register list
     allSubroutineLevels.numberOfSubroutineLevels = 1;
-    currentSubroutineLevelData = allocWp43(3);
+    currentSubroutineLevelData = allocWp43(12);
     allSubroutineLevels.ptrToSubroutineLevel0Data = TO_WP43MEMPTR(currentSubroutineLevelData);
     currentReturnProgramNumber = 0;
     currentReturnLocalStep = 0;
@@ -725,19 +716,19 @@ void fnReset(uint16_t confirmation) {
     allNamedVariables = NULL;
 
 
-    allocateNamedVariable("Mat_A", dtReal34Matrix, REAL34_SIZE_IN_BLOCKS + 1);
+    allocateNamedVariable("Mat_A", dtReal34Matrix, TO_BLOCKS(REAL34_SIZE_IN_BYTES) + 1);
     memPtr = getRegisterDataPointer(FIRST_NAMED_VARIABLE);
     ((dataBlock_t *)memPtr)->matrixRows = 1;
     ((dataBlock_t *)memPtr)->matrixColumns = 1;
     real34Zero(memPtr + 4);
 
-    allocateNamedVariable("Mat_B", dtReal34Matrix, REAL34_SIZE_IN_BLOCKS + 1);
+    allocateNamedVariable("Mat_B", dtReal34Matrix, TO_BLOCKS(REAL34_SIZE_IN_BYTES) + 1);
     memPtr = getRegisterDataPointer(FIRST_NAMED_VARIABLE + 1);
     ((dataBlock_t *)memPtr)->matrixRows = 1;
     ((dataBlock_t *)memPtr)->matrixColumns = 1;
     real34Zero(memPtr + 4);
 
-    allocateNamedVariable("Mat_X", dtReal34Matrix, REAL34_SIZE_IN_BLOCKS + 1);
+    allocateNamedVariable("Mat_X", dtReal34Matrix, TO_BLOCKS(REAL34_SIZE_IN_BYTES) + 1);
     memPtr = getRegisterDataPointer(FIRST_NAMED_VARIABLE + 2);
     ((dataBlock_t *)memPtr)->matrixRows = 1;
     ((dataBlock_t *)memPtr)->matrixColumns = 1;
@@ -898,7 +889,7 @@ void fnReset(uint16_t confirmation) {
     numberOfUserMenus = 0;
     currentUserMenu = 0;
     userKeyLabelSize = 37/*keys*/ * 6/*states*/ * 1/*byte terminator*/ + 1/*byte sentinel*/;
-    userKeyLabel = allocWp43(TO_BLOCKS(userKeyLabelSize));
+    userKeyLabel = allocWp43(userKeyLabelSize);
     memset(userKeyLabel,   0, TO_BYTES(TO_BLOCKS(userKeyLabelSize)));
 
     fnClearMenu(NOPARAM);
@@ -921,7 +912,7 @@ void fnReset(uint16_t confirmation) {
     //allocateLocalRegisters(3);
     //fnSetFlag(FIRST_LOCAL_REGISTER+0);
     //fnSetFlag(NUMBER_OF_GLOBAL_FLAGS+2);
-    //reallocateRegister(FIRST_LOCAL_REGISTER+0, dtReal34, REAL34_SIZE_IN_BLOCKS, RT_REAL);
+    //reallocateRegister(FIRST_LOCAL_REGISTER+0, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), RT_REAL);
     //stringToReal34("5.555", REGISTER_REAL34_DATA(FIRST_LOCAL_REGISTER));
 
     //strcpy(tmpString, "Pure ASCII string requiring 38 bytes!");

@@ -89,7 +89,7 @@ bool checkDateArgument(calcRegister_t regist, real34_t *jd) {
 
     case dtReal34: {
       if(getRegisterAngularMode(regist) == amNone) {
-        reallocateRegister(TEMP_REGISTER_1, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone); // make sure TEMP_REGISTER_1 is not of dtDate type here
+        reallocateRegister(TEMP_REGISTER_1, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone); // make sure TEMP_REGISTER_1 is not of dtDate type here
         convertReal34RegisterToDateRegister(regist, TEMP_REGISTER_1);
         if(getRegisterDataType(TEMP_REGISTER_1) != dtDate) {
           return false; // invalid date
@@ -102,10 +102,7 @@ bool checkDateArgument(calcRegister_t regist, real34_t *jd) {
 
     default: {
       displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, REGISTER_X);
-      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-        sprintf(errorMessage, "data type %s cannot be converted to date!", getRegisterDataTypeName(REGISTER_X, false, false));
-        moreInfoOnError("In function checkDateArgument:", errorMessage, NULL, NULL);
-      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+      errorMoreInfo("data type %s cannot be converted to date!", getRegisterDataTypeName(REGISTER_X, false, false));
       return false;
     }
   }
@@ -370,10 +367,7 @@ uint32_t getDayOfWeek(calcRegister_t regist) {
 void checkDateRange(const real34_t *date34) {
   if(real34CompareGreaterEqual(date34, const34_maxDate) || real34IsNegative(date34)) {
     displayCalcErrorMessage(ERROR_OUT_OF_RANGE, ERR_REGISTER_LINE, REGISTER_X);
-    #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-      sprintf(errorMessage, "value of date type is too large");
-      moreInfoOnError("In function checkDateRange:", errorMessage, NULL, NULL);
-    #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+    errorMoreInfo("value of date type is too large");
     return;
   }
 }
@@ -415,7 +409,7 @@ void hmmssInRegisterToSeconds(calcRegister_t regist) {
   real34_t real34;
 
   real34Copy(REGISTER_REAL34_DATA(regist), &real34);
-  reallocateRegister(regist, dtTime, REAL34_SIZE_IN_BLOCKS, amNone);
+  reallocateRegister(regist, dtTime, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
   hmmssToSeconds(&real34, REGISTER_REAL34_DATA(regist));
   checkTimeRange(REGISTER_REAL34_DATA(regist));
 }
@@ -428,10 +422,7 @@ void checkTimeRange(const real34_t *time34) {
   real34CopyAbs(time34, &t);
   if(real34CompareGreaterEqual(&t, const34_maxTime)) {
     displayCalcErrorMessage(ERROR_OUT_OF_RANGE, ERR_REGISTER_LINE, REGISTER_X);
-    #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-      sprintf(errorMessage, "value of time type is too large");
-      moreInfoOnError("In function checkTimeRange:", errorMessage, NULL, NULL);
-    #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+    errorMoreInfo("value of time type is too large");
     return;
   }
 }
@@ -449,17 +440,14 @@ void fnJulianToDate(uint16_t unusedButMandatoryParameter) {
     case dtLongInteger: {
       convertLongIntegerRegisterToReal34Register(REGISTER_X, REGISTER_X);
       julianDayToInternalDate(REGISTER_REAL34_DATA(REGISTER_X), &date);
-      reallocateRegister(REGISTER_X, dtDate, REAL34_SIZE_IN_BLOCKS, amNone);
+      reallocateRegister(REGISTER_X, dtDate, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
       real34Copy(&date, REGISTER_REAL34_DATA(REGISTER_X));
       break;
     }
 
     default: {
       displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, REGISTER_X);
-      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-        sprintf(errorMessage, "data type %s cannot be converted to date!", getRegisterDataTypeName(REGISTER_X, false, false));
-        moreInfoOnError("In function fnDateToJulian:", errorMessage, NULL, NULL);
-      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+      errorMoreInfo("data type %s cannot be converted to date!", getRegisterDataTypeName(REGISTER_X, false, false));
       return;
     }
   }
@@ -515,12 +503,11 @@ void fnSetFirstGregorianDay(uint16_t unusedButMandatoryParameter) {
     displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, REGISTER_X);
     #if (EXTRA_INFO_ON_CALC_ERROR == 1)
       if(getRegisterDataType(REGISTER_X) == dtDate) {
-        sprintf(errorMessage, "data type %s is disabled as input because of complicated Julian-Gregorian issue!", getRegisterDataTypeName(REGISTER_X, false, false));
+        errorMoreInfo("data type %s is disabled as input because of complicated Julian-Gregorian issue!", getRegisterDataTypeName(REGISTER_X, false, false));
       }
       else {
-        sprintf(errorMessage, "data type %s cannot be interpreted as a date!", getRegisterDataTypeName(REGISTER_X, false, false));
+        errorMoreInfo("data type %s cannot be interpreted as a date!", getRegisterDataTypeName(REGISTER_X, false, false));
       }
-      moreInfoOnError("In function fnSetFirstGregorianDay:", errorMessage, NULL, NULL);
     #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
   }
 }
@@ -532,7 +519,7 @@ void fnGetFirstGregorianDay(uint16_t unusedButMandatoryParameter) {
 
   uInt32ToReal34(firstGregorianDay, &j);
   liftStack();
-  reallocateRegister(REGISTER_X, dtDate, REAL34_SIZE_IN_BLOCKS, amNone);
+  reallocateRegister(REGISTER_X, dtDate, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
   julianDayToInternalDate(&j, REGISTER_REAL34_DATA(REGISTER_X));
 }
 
@@ -565,10 +552,7 @@ void fnXToDate(uint16_t unusedButMandatoryParameter) {
 
     default: {
       displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, REGISTER_X);
-      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-        sprintf(errorMessage, "data type %s cannot be converted to date!", getRegisterDataTypeName(REGISTER_X, false, false));
-        moreInfoOnError("In function fnXToDate:", errorMessage, NULL, NULL);
-      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+      errorMoreInfo("data type %s cannot be converted to date!", getRegisterDataTypeName(REGISTER_X, false, false));
       return;
     }
   }
@@ -705,10 +689,7 @@ void fnToDate(uint16_t unusedButMandatoryParameter) {
 
       default: {
         displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, REGISTER_X);
-        #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-          sprintf(errorMessage, "data type %s cannot be converted to a real34!", getRegisterDataTypeName(r[i], false, false));
-          moreInfoOnError("In function fnToReal:", errorMessage, NULL, NULL);
-        #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+        errorMoreInfo("data type %s cannot be converted to a real34!", getRegisterDataTypeName(r[i], false, false));
         return;
       }
     }
@@ -717,9 +698,7 @@ void fnToDate(uint16_t unusedButMandatoryParameter) {
 
   if(!isValidDay(&y, &m, &d)) {
       displayCalcErrorMessage(ERROR_BAD_TIME_OR_DATE_INPUT, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
-      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-        moreInfoOnError("In function fnToDate:", "Invalid date input like 30 Feb.", NULL, NULL);
-      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+      errorMoreInfo("Invalid date input like 30 Feb.");
       return;
   }
 
@@ -729,7 +708,7 @@ void fnToDate(uint16_t unusedButMandatoryParameter) {
     fnDropY(NOPARAM);
     if(lastErrorCode == ERROR_NONE) {
       composeJulianDay(&y, &m, &d, &j);
-      reallocateRegister(REGISTER_X, dtDate, REAL34_SIZE_IN_BLOCKS, amNone);
+      reallocateRegister(REGISTER_X, dtDate, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
       julianDayToInternalDate(&j, REGISTER_REAL34_DATA(REGISTER_X));
 
       // check range
@@ -756,10 +735,7 @@ void fnToHr(uint16_t unusedButMandatoryParameter) {
 
     default: {
       displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, REGISTER_X);
-      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-        sprintf(errorMessage, "data type %s cannot be converted to a real34!", getRegisterDataTypeName(REGISTER_X, false, false));
-        moreInfoOnError("In function fnToReal:", errorMessage, NULL, NULL);
-      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+      errorMoreInfo("data type %s cannot be converted to a real34!", getRegisterDataTypeName(REGISTER_X, false, false));
       return;
     }
   }
@@ -795,10 +771,7 @@ void fnToHms(uint16_t unusedButMandatoryParameter) {
 
     default: {
       displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, REGISTER_X);
-      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-        sprintf(errorMessage, "data type %s cannot be converted to time!", getRegisterDataTypeName(REGISTER_X, false, false));
-        moreInfoOnError("In function fnToReal:", errorMessage, NULL, NULL);
-      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+      errorMoreInfo("data type %s cannot be converted to time!", getRegisterDataTypeName(REGISTER_X, false, false));
       return;
     }
   }
@@ -822,7 +795,7 @@ void fnDate(uint16_t unusedButMandatoryParameter) {
 
   composeJulianDay(&y, &m, &d, &j);
   liftStack();
-  reallocateRegister(REGISTER_X, dtDate, REAL34_SIZE_IN_BLOCKS, amNone);
+  reallocateRegister(REGISTER_X, dtDate, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
   julianDayToInternalDate(&j, REGISTER_REAL34_DATA(REGISTER_X));
   temporaryInformation = TI_DAY_OF_WEEK;
 }
@@ -837,7 +810,7 @@ void fnTime(uint16_t unusedButMandatoryParameter) {
   uInt32ToReal34((uint32_t)timeInfo.hour * 3600u + (uint32_t)timeInfo.min * 60u + (uint32_t)timeInfo.sec, &time34);
 
   liftStack();
-  reallocateRegister(REGISTER_X, dtTime, REAL34_SIZE_IN_BLOCKS, amNone);
+  reallocateRegister(REGISTER_X, dtTime, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
   real34Copy(&time34, REGISTER_REAL34_DATA(REGISTER_X));
 }
 
@@ -857,10 +830,7 @@ void fnSetDate(uint16_t unusedButMandatoryParameter) {
     }
   #else // !DMCP_BUILD
     displayCalcErrorMessage(ERROR_FUNCTION_NOT_FOUND, ERR_REGISTER_LINE, REGISTER_X);
-    #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-      sprintf(errorMessage, "real calculator only!");
-      moreInfoOnError("In function fnSetDate:", errorMessage, NULL, NULL);
-    #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+    errorMoreInfo("real calculator only!");
   #endif // DMCP_BUILD
 }
 
@@ -912,10 +882,7 @@ void fnSetTime(uint16_t unusedButMandatoryParameter) {
     }
   #else // !DMCP_BUILD
     displayCalcErrorMessage(ERROR_FUNCTION_NOT_FOUND, ERR_REGISTER_LINE, REGISTER_X);
-    #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-      sprintf(errorMessage, "real calculator only!");
-      moreInfoOnError("In function fnSetTime:", errorMessage, NULL, NULL);
-    #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+    errorMoreInfo("real calculator only!");
   #endif // DMCP_BUILD
 }
 

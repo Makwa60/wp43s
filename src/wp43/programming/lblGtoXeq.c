@@ -66,15 +66,12 @@ void fnGoto(uint16_t label) {
       }
 
       displayCalcErrorMessage(ERROR_LABEL_NOT_FOUND, ERR_REGISTER_LINE, REGISTER_X);
-      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-        if(label < REGISTER_X) {
-          sprintf(errorMessage, "there is no local label %02u in current program", label);
-        }
-        else {
-          sprintf(errorMessage, "there is no local label %c in current program", 'A' + (label - 100));
-        }
-        moreInfoOnError("In function fnGoto:", errorMessage, NULL, NULL);
-      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+      if(label < REGISTER_X) {
+        errorMoreInfo("there is no local label %02u in current program", label);
+      }
+      else {
+        errorMoreInfo("there is no local label %c in current program", 'A' + (label - 100));
+      }
     }
     else if(label >= FIRST_LABEL && label <= LAST_LABEL) { // Global named label
       if((label - FIRST_LABEL) < numberOfLabels) {
@@ -83,18 +80,12 @@ void fnGoto(uint16_t label) {
       }
       else {
         displayCalcErrorMessage(ERROR_LABEL_NOT_FOUND, ERR_REGISTER_LINE, REGISTER_X);
-        #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-          sprintf(errorMessage, "label ID %u out of range", label - FIRST_LABEL);
-          moreInfoOnError("In function fnGoto:", errorMessage, NULL, NULL);
-        #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+        errorMoreInfo("label ID %u out of range", label - FIRST_LABEL);
       }
     }
     else {
       displayCalcErrorMessage(ERROR_LABEL_NOT_FOUND, ERR_REGISTER_LINE, REGISTER_X);
-      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-        sprintf(errorMessage, "invalid parameter %u", label);
-        moreInfoOnError("In function fnGoto:", errorMessage, NULL, NULL);
-      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+      errorMoreInfo("invalid parameter %u", label);
     }
   }
   else {
@@ -187,7 +178,7 @@ void fnExecute(uint16_t label) {
   if(programRunStop == PGM_RUNNING) {
     dataBlock_t *_currentSubroutineLevelData = currentSubroutineLevelData;
     allSubroutineLevels.numberOfSubroutineLevels += 1;
-    currentSubroutineLevelData = allocWp43(3);
+    currentSubroutineLevelData = allocWp43(12);
     if(currentSubroutineLevelData) {
       _currentSubroutineLevelData[2].ptrToNextLevel = TO_WP43MEMPTR(currentSubroutineLevelData);
       currentReturnProgramNumber = currentProgramNumber;
@@ -255,7 +246,7 @@ void fnReturn(uint16_t skip) {
       allocateLocalRegisters(0);
       _currentSubroutineLevelData = currentSubroutineLevelData;
     }
-    sizeToBeFreedInBlocks = 3 + (currentNumberOfLocalFlags > 0 ? 1 : 0);
+    sizeToBeFreedInBlocks = TO_BLOCKS(12 + 4*(currentNumberOfLocalFlags > 0 ? 1 : 0));
     currentSubroutineLevelData = TO_PCMEMPTR(currentPtrToPreviousLevel);
     freeWp43(_currentSubroutineLevelData, sizeToBeFreedInBlocks);
     currentPtrToNextLevel = WP43_NULL;
@@ -272,7 +263,7 @@ void fnReturn(uint16_t skip) {
       allocateLocalRegisters(0);
     }
     if(currentNumberOfLocalFlags > 0) {
-      freeWp43(currentSubroutineLevelData + 3, 1);
+      freeWp43(currentSubroutineLevelData + 3, 16); // TODO: is this 16 correct?
       currentNumberOfLocalFlags = 0;
     }
     currentLocalFlags = NULL;
@@ -314,7 +305,7 @@ void fnStopProgram(uint16_t unusedButMandatoryParameter) {
     uint8_t opParam = *(uint8_t *)paramAddress;
     if(opParam <= LAST_LOCAL_REGISTER) { // Local register from .00 to .98
       int16_t realParam = indirectAddressing(opParam, (indexOfItems[op].param == tmFlagR || indexOfItems[op].param == tmFlagW) ? INDPM_FLAG : (indexOfItems[op].param == tmStoRcl || indexOfItems[op].param == tmMDim) ? INDPM_REGISTER : INDPM_PARAM, indexOfItems[op].tamMinMax >> TAM_MAX_BITS, indexOfItems[op].tamMinMax & TAM_MAX_MASK);
-      if(realParam < 9999) {
+      if(realParam != FAILED_INDIRECTION) {
         reallyRunFunction(op, realParam);
       }
     }
@@ -331,16 +322,17 @@ void fnStopProgram(uint16_t unusedButMandatoryParameter) {
     regist = findNamedVariable(tmpStringLabelOrVariableName);
     if(regist != INVALID_VARIABLE) {
       int16_t realParam = indirectAddressing(regist, (indexOfItems[op].param == tmFlagR || indexOfItems[op].param == tmFlagW) ? INDPM_FLAG : (indexOfItems[op].param == tmStoRcl || indexOfItems[op].param == tmMDim) ? INDPM_REGISTER : INDPM_PARAM, indexOfItems[op].tamMinMax >> TAM_MAX_BITS, indexOfItems[op].tamMinMax & TAM_MAX_MASK);
-      if(realParam < 9999) {
+      if(realParam != FAILED_INDIRECTION) {
         reallyRunFunction(op, realParam);
       }
     }
+    else if(getSystemFlag(FLAG_IGN1ER)) {
+      clearSystemFlag(FLAG_IGN1ER);
+      errorMoreInfo("string '%s' is not a named variable\nignored since IGN1ER was set", tmpStringLabelOrVariableName);
+    }
     else {
       displayCalcErrorMessage(ERROR_UNDEF_SOURCE_VAR, ERR_REGISTER_LINE, REGISTER_X);
-      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-        sprintf(errorMessage, "string '%s' is not a named variable", tmpStringLabelOrVariableName);
-        moreInfoOnError("In function _executeOp:", errorMessage, NULL, NULL);
-      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+      errorMoreInfo("string '%s' is not a named variable", tmpStringLabelOrVariableName);
     }
   }
 
@@ -366,12 +358,13 @@ void fnStopProgram(uint16_t unusedButMandatoryParameter) {
           if(label != INVALID_VARIABLE || op == ITM_LBLQ) {
             reallyRunFunction(op, label);
           }
+          else if(getSystemFlag(FLAG_IGN1ER)) {
+            clearSystemFlag(FLAG_IGN1ER);
+            errorMoreInfo("string '%s' is not a named label\nignored since IGN1ER was set", tmpStringLabelOrVariableName);
+          }
           else {
             displayCalcErrorMessage(ERROR_LABEL_NOT_FOUND, ERR_REGISTER_LINE, REGISTER_X);
-            #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-              sprintf(errorMessage, "string '%s' is not a named label", tmpStringLabelOrVariableName);
-              moreInfoOnError("In function _executeOp:", errorMessage, NULL, NULL);
-            #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+            errorMoreInfo("string '%s' is not a named label", tmpStringLabelOrVariableName);
           }
         }
         else if(opParam == INDIRECT_REGISTER) {
@@ -466,21 +459,22 @@ void fnStopProgram(uint16_t unusedButMandatoryParameter) {
           else if(regist != INVALID_VARIABLE) {
             reallyRunFunction(op, regist);
           }
+          else if(getSystemFlag(FLAG_IGN1ER)) {
+            clearSystemFlag(FLAG_IGN1ER);
+            errorMoreInfo("string '%s' is not a named variable\nignored since IGN1ER was set", tmpStringLabelOrVariableName);
+          }
           else {
             displayCalcErrorMessage(ERROR_UNDEF_SOURCE_VAR, ERR_REGISTER_LINE, REGISTER_X);
-            #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-              sprintf(errorMessage, "string '%s' is not a named variable", tmpStringLabelOrVariableName);
-              moreInfoOnError("In function _executeOp:", errorMessage, NULL, NULL);
-            #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+            errorMoreInfo("string '%s' is not a named variable", tmpStringLabelOrVariableName);
           }
         }
         else if(paramMode == PARAM_COMPARE && opParam == VALUE_0) {
-          reallocateRegister(TEMP_REGISTER_1, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
+          reallocateRegister(TEMP_REGISTER_1, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
           real34Copy(const34_0, REGISTER_REAL34_DATA(TEMP_REGISTER_1));
           reallyRunFunction(op, TEMP_REGISTER_1);
         }
         else if(paramMode == PARAM_COMPARE && opParam == VALUE_1) {
-          reallocateRegister(TEMP_REGISTER_1, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
+          reallocateRegister(TEMP_REGISTER_1, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
           real34Copy(const34_1, REGISTER_REAL34_DATA(TEMP_REGISTER_1));
           reallyRunFunction(op, TEMP_REGISTER_1);
         }
@@ -527,7 +521,7 @@ void fnStopProgram(uint16_t unusedButMandatoryParameter) {
       case BINARY_REAL34: {
         liftStack();
         setSystemFlag(FLAG_ASLIFT);
-        reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
+        reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
         real34Copy((real34_t *)literalAddress, REGISTER_REAL34_DATA(REGISTER_X));
         break;
       }
@@ -536,7 +530,7 @@ void fnStopProgram(uint16_t unusedButMandatoryParameter) {
         complex34_t complexLiteral;
         liftStack();
         setSystemFlag(FLAG_ASLIFT);
-        reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE_IN_BLOCKS, amNone);
+        reallocateRegister(REGISTER_X, dtComplex34, TO_BLOCKS(COMPLEX34_SIZE_IN_BYTES), amNone);
         xcopy(VARIABLE_REAL34_DATA(&complexLiteral), literalAddress     , 16);
         xcopy(VARIABLE_IMAG34_DATA(&complexLiteral), literalAddress + 16, 16);
         complex34Copy(&complexLiteral, REGISTER_COMPLEX34_DATA(REGISTER_X));
@@ -584,7 +578,7 @@ void fnStopProgram(uint16_t unusedButMandatoryParameter) {
         _getStringLabelOrVariableName(literalAddress);
         liftStack();
         setSystemFlag(FLAG_ASLIFT);
-        reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
+        reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
         stringToReal34(tmpStringLabelOrVariableName, REGISTER_REAL34_DATA(REGISTER_X));
         break;
       }
@@ -609,7 +603,7 @@ void fnStopProgram(uint16_t unusedButMandatoryParameter) {
         }
         liftStack();
         setSystemFlag(FLAG_ASLIFT);
-        reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE_IN_BLOCKS, amNone);
+        reallocateRegister(REGISTER_X, dtComplex34, TO_BLOCKS(COMPLEX34_SIZE_IN_BYTES), amNone);
         stringToReal34(tmpStringLabelOrVariableName, REGISTER_REAL34_DATA(REGISTER_X));
         stringToReal34(imag,                         REGISTER_IMAG34_DATA(REGISTER_X));
         break;
@@ -628,7 +622,7 @@ void fnStopProgram(uint16_t unusedButMandatoryParameter) {
         _getStringLabelOrVariableName(literalAddress);
         liftStack();
         setSystemFlag(FLAG_ASLIFT);
-        reallocateRegister(REGISTER_X, dtDate, REAL34_SIZE_IN_BLOCKS, amNone);
+        reallocateRegister(REGISTER_X, dtDate, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
         stringToReal34(tmpStringLabelOrVariableName, REGISTER_REAL34_DATA(REGISTER_X));
         julianDayToInternalDate(REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X));
         break;
@@ -638,7 +632,7 @@ void fnStopProgram(uint16_t unusedButMandatoryParameter) {
         _getStringLabelOrVariableName(literalAddress);
         liftStack();
         setSystemFlag(FLAG_ASLIFT);
-        reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
+        reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
         stringToReal34(tmpStringLabelOrVariableName, REGISTER_REAL34_DATA(REGISTER_X));
         hmmssInRegisterToSeconds(REGISTER_X);
         break;
@@ -648,7 +642,7 @@ void fnStopProgram(uint16_t unusedButMandatoryParameter) {
         _getStringLabelOrVariableName(literalAddress);
         liftStack();
         setSystemFlag(FLAG_ASLIFT);
-        reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BLOCKS, amDMS);
+        reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amDMS);
         stringToReal34(tmpStringLabelOrVariableName, REGISTER_REAL34_DATA(REGISTER_X));
         real34FromDmsToDeg(REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X));
         break;
@@ -728,9 +722,7 @@ int16_t executeOneStep(pgmPtr_t step) {
 
           case PTP_DISABLED: {
             displayCalcErrorMessage(ERROR_NON_PROGRAMMABLE_COMMAND, ERR_REGISTER_LINE, REGISTER_X);
-            #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-              moreInfoOnError("In function decodeOneStep:", "non-programmable function", indexOfItems[op].itemCatalogName, "appeared in the program!");
-            #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+            errorMoreInfo("non-programmable function '%s' appeared in the program!", indexOfItems[op].itemCatalogName);
             return 0;
           }
 

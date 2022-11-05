@@ -239,7 +239,7 @@ void timerAppResetState(void) {
     if(timerAppState.isFirstDigit) {
       real_t lapTimeReal;
       _timerAppGetLapTimeReal(&lapTimeReal);
-      reallocateRegister(timerAppState.currentRegister, dtTime, REAL34_SIZE_IN_BLOCKS, amNone);
+      reallocateRegister(timerAppState.currentRegister, dtTime, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
       realToReal34(&lapTimeReal, REGISTER_REAL34_DATA(timerAppState.currentRegister));
       timerAppUp();
     }
@@ -348,20 +348,14 @@ void timerAppResetState(void) {
       }
       default: {
         displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, REGISTER_X);
-        #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-          sprintf(errorMessage, "cannot recall %s to the stopwatch", getRegisterDataTypeName(regist, true, false));
-          moreInfoOnError("In function fnRecallTimerApp:", errorMessage, NULL, NULL);
-        #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+        errorMoreInfo("cannot recall %s to the stopwatch", getRegisterDataTypeName(regist, true, false));
         return;
       }
     }
 
     if(overflow) {
       displayCalcErrorMessage(ERROR_OUT_OF_RANGE, ERR_REGISTER_LINE, REGISTER_X);
-      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-        sprintf(errorMessage, "the %s does not fit to uint32_t", getRegisterDataTypeName(regist, true, false));
-        moreInfoOnError("In function fnRecallTimerApp:", errorMessage, NULL, NULL);
-      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+      errorMoreInfo("the %s does not fit to uint32_t", getRegisterDataTypeName(regist, true, false));
     }
     else {
       timerAppState.lapTime += regValueUInt32;

@@ -53,17 +53,6 @@ void itemToBeCoded(uint16_t unusedButMandatoryParameter) {
 
 
 
-//#if !defined(GENERATE_CATALOGS)
-//void fnToBeCoded(void) {
-//  displayCalcErrorMessage(ERROR_FUNCTION_TO_BE_CODED, ERR_REGISTER_LINE, REGISTER_X);
-//  #if defined(PC_BUILD)
-//    moreInfoOnError("Function to be coded", "for that data type(s)!", NULL, NULL);
-//  #endif // PC_BUILD
-//}
-//#endif // !GENERATE_CATALOGS
-
-
-
 void fnNop(uint16_t unusedButMandatoryParameter) {
 }
 
@@ -81,17 +70,13 @@ void fnNop(uint16_t unusedButMandatoryParameter) {
       if(lastErrorCode == ERROR_RAM_FULL) {
         if((indexOfItems[func].status & US_STATUS) == US_ENABLED || calcMode == cmConfirmation) {
           displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
-          #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-            moreInfoOnError("In function reallyRunFunction:", "there is not enough memory to save for undo!", NULL, NULL);
-          #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+          errorMoreInfo("there is not enough memory to save for undo!");
           return;
         }
         else {
           lastErrorCode = ERROR_NONE;
           temporaryInformation = TI_UNDO_DISABLED;
-          #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-            moreInfoOnError("In function reallyRunFunction:", "there is not enough memory to save for undo!", NULL, NULL);
-          #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+          errorMoreInfo("there is not enough memory to save for undo!");
         }
       }
     }
@@ -154,12 +139,9 @@ void fnNop(uint16_t unusedButMandatoryParameter) {
   void runFunction(int16_t func) {
     funcOK = true;
 
-    #if defined(PC_BUILD)
-      if(func >= LAST_ITEM) {
-        sprintf(errorMessage, "item (%" PRId16 ") must be below LAST_ITEM", func);
-        moreInfoOnError("In function runFunction:", errorMessage, NULL, NULL);
-      }
-    #endif // PC_BUILD
+    if(func >= LAST_ITEM) {
+      errorMoreInfo("item (%" PRId16 ") must be below LAST_ITEM", func);
+    }
 
     if(programRunStop != PGM_RUNNING) {
       if(func == ITM_RCL && dynamicMenuItem > -1) {
@@ -168,12 +150,13 @@ void fnNop(uint16_t unusedButMandatoryParameter) {
         if(regist != INVALID_VARIABLE) {
           reallyRunFunction(func, regist);
         }
+        else if(getSystemFlag(FLAG_IGN1ER)) {
+          clearSystemFlag(FLAG_IGN1ER);
+          errorMoreInfo("string '%s' is not a named variable\nignored since IGN1ER was set", varCatalogItem);
+        }
         else {
           displayCalcErrorMessage(ERROR_UNDEF_SOURCE_VAR, ERR_REGISTER_LINE, REGISTER_X);
-          #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-            sprintf(errorMessage, "string '%s' is not a named variable", varCatalogItem);
-            moreInfoOnError("In function runFunction:", errorMessage, NULL, NULL);
-          #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+          errorMoreInfo("string '%s' is not a named variable", varCatalogItem);
         }
         return;
       }
@@ -183,12 +166,13 @@ void fnNop(uint16_t unusedButMandatoryParameter) {
         if(regist != INVALID_VARIABLE) {
           reallyRunFunction(func, regist);
         }
+        else if(getSystemFlag(FLAG_IGN1ER)) {
+          clearSystemFlag(FLAG_IGN1ER);
+          errorMoreInfo("string '%s' is not a named label\nignored since IGN1ER was set", varCatalogItem);
+        }
         else {
           displayCalcErrorMessage(ERROR_LABEL_NOT_FOUND, ERR_REGISTER_LINE, REGISTER_X);
-          #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-            sprintf(errorMessage, "string '%s' is not a named label", varCatalogItem);
-            moreInfoOnError("In function runFunction:", errorMessage, NULL, NULL);
-          #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+          errorMoreInfo("string '%s' is not a named label", varCatalogItem);
         }
         return;
       }
@@ -207,10 +191,7 @@ void fnNop(uint16_t unusedButMandatoryParameter) {
 
     if(!funcOK) {
       displayCalcErrorMessage(ERROR_ITEM_TO_BE_CODED, ERR_REGISTER_LINE, REGISTER_X);
-      #if defined(PC_BUILD)
-        sprintf(errorMessage, "%" PRId16 " = %s", func, indexOfItems[func].itemCatalogName);
-        moreInfoOnError("In function runFunction:", "Item not implemented", errorMessage, "to be coded");
-      #endif // PC_BUILD
+      errorMoreInfo("Item not implemented:\n%" PRId16 " = %s to be coded", func, indexOfItems[func].itemCatalogName);
     }
   }
 #endif // !TESTSUITE_BUILD && !GENERATE_CATALOGS

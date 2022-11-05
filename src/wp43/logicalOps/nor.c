@@ -12,6 +12,17 @@
 
 #include "wp43.h"
 
+#if (EXTRA_INFO_ON_CALC_ERROR == 1)
+  /**
+   * Data type error in NOR
+   */
+  void norError24  (void);
+  void norError31  (void);
+#else // (EXTRA_INFO_ON_CALC_ERROR == 1)
+  #define norError24 typeError
+  #define norError31 typeError
+#endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+
 TO_QSPI void (* const logicalNor[NUMBER_OF_DATA_TYPES_FOR_CALCULATIONS][NUMBER_OF_DATA_TYPES_FOR_CALCULATIONS])(void) = {
 // regX |    regY ==>   1            2            3           4           5           6           7           8            9             10
 //      V               Long integer Real34       Complex34   Time        Date        String      Real34 mat  Complex34 m  Short integer Config data
@@ -30,22 +41,16 @@ TO_QSPI void (* const logicalNor[NUMBER_OF_DATA_TYPES_FOR_CALCULATIONS][NUMBER_O
 #if (EXTRA_INFO_ON_CALC_ERROR == 1)
   void norError24(void) {
     displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, REGISTER_X);
-    sprintf(errorMessage, "%s NOR %s", getRegisterDataTypeName(REGISTER_Y, false, false), getRegisterDataTypeName(REGISTER_X, false, false));
-    sprintf(errorMessage + ERROR_MESSAGE_LENGTH/2, "data type of one of the NOR parameters is not allowed");
-    moreInfoOnError("In function norError24:", errorMessage, errorMessage + ERROR_MESSAGE_LENGTH/2, NULL);
+    errorMoreInfo("%s NOR %s\ndata type of one of the NOR parameters is not allowed", getRegisterDataTypeName(REGISTER_Y, false, false), getRegisterDataTypeName(REGISTER_X, false, false));
+  }
+
+
+
+  void norError31(void) {
+    displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, REGISTER_X);
+    errorMoreInfo("%s NOR %s\nNOR doesn't allow mixing data types real/long integer and short integer", getRegisterDataTypeName(REGISTER_Y, false, false), getRegisterDataTypeName(REGISTER_X, false, false));
   }
 #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
-
-
-
-void norError31(void) {
-  displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, REGISTER_X);
-  #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-    sprintf(errorMessage, "%s NOR %s", getRegisterDataTypeName(REGISTER_Y, false, false), getRegisterDataTypeName(REGISTER_X, false, false));
-    sprintf(errorMessage + ERROR_MESSAGE_LENGTH/2, "NOR doesn't allow mixing data types real/long integer and short integer");
-    moreInfoOnError("In function norError31:", errorMessage, errorMessage + ERROR_MESSAGE_LENGTH/2, NULL);
-  #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
-}
 
 
 

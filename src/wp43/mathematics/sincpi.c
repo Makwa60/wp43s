@@ -99,11 +99,11 @@ void sincpiComplex(const real_t *real, const real_t *imag, real_t *resReal, real
 
 void sincpiLonI(void) {
   if(longIntegerIsZeroRegister(REGISTER_X)) {
-    reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
+    reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
     convertRealToReal34ResultRegister(const_1, REGISTER_X);
   }
   else {
-    reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
+    reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
     convertRealToReal34ResultRegister(const_0, REGISTER_X);
   }
 }

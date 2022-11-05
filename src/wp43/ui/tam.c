@@ -578,7 +578,7 @@ void tamReset(void) {
       }
     }
     else if(item == ITM_0P || item == ITM_1P) {
-      reallocateRegister(TEMP_REGISTER_1, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
+      reallocateRegister(TEMP_REGISTER_1, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
       real34Copy(item == ITM_1P ? const34_1 : const34_0, REGISTER_REAL34_DATA(TEMP_REGISTER_1));
       if(!tam.digitsSoFar && tam.function != ITM_BESTF && tam.function != ITM_CNST && tam.mode != tmValue && tam.mode != tmValueChb) {
         tam.value = TEMP_REGISTER_1;
@@ -706,7 +706,7 @@ void tamReset(void) {
         }
         if(tam.indirect && calcMode != cmPem) {
           value = indirectAddressing(value, (indexOfItems[tamOperation()].param == tmFlagR || indexOfItems[tamOperation()].param == tmFlagW) ? INDPM_FLAG : (tam.mode == tmStoRcl || tam.mode == tmMDim) ? INDPM_REGISTER : INDPM_PARAM, min, max);
-          run = (lastErrorCode == 0);
+          run = (value != FAILED_INDIRECTION);
         }
         if(tam.function == ITM_GTOP) {
           if(tam.digitsSoFar < 3) {
@@ -777,10 +777,7 @@ void tamReset(void) {
               tamLeaveMode();
             }
             displayCalcErrorMessage(ERROR_FUNCTION_NOT_FOUND, ERR_REGISTER_LINE, REGISTER_X);
-            #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-              sprintf(errorMessage, "string '%s' is neither a named label nor a function name", buffer);
-              moreInfoOnError("In function _tamProcessInput:", errorMessage, NULL, NULL);
-            #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+            errorMoreInfo("string '%s' is neither a named label nor a function name", buffer);
             return;
           }
         }
@@ -788,11 +785,14 @@ void tamReset(void) {
       else if(tam.mode == tmLabel || tam.mode == tmSolve || (tam.mode == tmKey && tam.keyInputFinished)) {
         value = findNamedLabel(buffer);
         if(value == INVALID_VARIABLE && tam.function != ITM_LBL && tam.function != ITM_LBLQ) {
-          displayCalcErrorMessage(ERROR_LABEL_NOT_FOUND, ERR_REGISTER_LINE, REGISTER_X);
-          #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-            sprintf(errorMessage, "string '%s' is not a named label", buffer);
-            moreInfoOnError("In function _tamProcessInput:", errorMessage, NULL, NULL);
-          #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+          if(calcMode != cmPem && getSystemFlag(FLAG_IGN1ER)) {
+            clearSystemFlag(FLAG_IGN1ER);
+            errorMoreInfo("string '%s' is not a named label\nignored since IGN1ER was set", buffer);
+          }
+          else {
+            displayCalcErrorMessage(ERROR_LABEL_NOT_FOUND, ERR_REGISTER_LINE, REGISTER_X);
+            errorMoreInfo("string '%s' is not a named label", buffer);
+          }
         }
       }
       else if(tryAllocate) {
@@ -801,11 +801,14 @@ void tamReset(void) {
       else {
         value = findNamedVariable(buffer);
         if(value == INVALID_VARIABLE) {
-          displayCalcErrorMessage(ERROR_UNDEF_SOURCE_VAR, ERR_REGISTER_LINE, REGISTER_X);
-          #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-            sprintf(errorMessage, "string '%s' is not a named variable", buffer);
-            moreInfoOnError("In function _tamProcessInput:", errorMessage, NULL, NULL);
-          #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+          if(calcMode != cmPem && getSystemFlag(FLAG_IGN1ER)) {
+            clearSystemFlag(FLAG_IGN1ER);
+            errorMoreInfo("string '%s' is not a named variable\nignored since IGN1ER was set", buffer);
+          }
+          else {
+            displayCalcErrorMessage(ERROR_UNDEF_SOURCE_VAR, ERR_REGISTER_LINE, REGISTER_X);
+            errorMoreInfo("string '%s' is not a named variable", buffer);
+          }
         }
       }
       if(calcMode == cmPem) {
@@ -816,7 +819,7 @@ void tamReset(void) {
       }
       if(tam.indirect && value != INVALID_VARIABLE && calcMode != cmPem) {
         value = indirectAddressing(value, (indexOfItems[tam.function].param == tmFlagR || indexOfItems[tam.function].param == tmFlagW) ? INDPM_FLAG : (tam.mode == tmStoRcl || tam.mode == tmMDim) ? INDPM_REGISTER : INDPM_PARAM, min, max);
-        if(lastErrorCode != 0) {
+        if(value == FAILED_INDIRECTION) {
           value = INVALID_VARIABLE;
         }
       }

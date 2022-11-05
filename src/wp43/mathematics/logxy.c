@@ -89,14 +89,14 @@ static bool checkArgs(const real_t *xReal, const real_t *xImag, const real_t *yR
    */
   if(COMPLEX_IS_ZERO(xReal, xImag) && COMPLEX_IS_ZERO(yReal, yImag)) {
     displayCalcErrorMessage(ERROR_OVERFLOW_PLUS_INF, ERR_REGISTER_LINE, REGISTER_X);
-    EXTRA_INFO_MESSAGE("checkArgs", "cannot calculate LogXY with x=0 and y=0");
+    errorMoreInfo("cannot calculate LogXY with x=0 and y=0");
   }
   else if(!COMPLEX_IS_ZERO(xReal, xImag) && COMPLEX_IS_ZERO(yReal, yImag)) {
     displayCalcErrorMessage(ERROR_OVERFLOW_MINUS_INF, ERR_REGISTER_LINE, REGISTER_X);
-    EXTRA_INFO_MESSAGE("checkArgs", "cannot calculate LogXY with x=0 and y!=0");
+    errorMoreInfo("cannot calculate LogXY with x=0 and y!=0");
   }
   else if(COMPLEX_IS_ZERO(xReal, xImag) && !COMPLEX_IS_ZERO(yReal, yImag)) {
-    reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
+    reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
     convertRealToReal34ResultRegister(const_NaN, REGISTER_X);
   }
   else {
@@ -120,24 +120,24 @@ static void logxy(const real_t *xReal, const real_t *yReal, realContext_t *realC
         logXYComplex(xReal, const_0, yReal, const_0, &rReal, &rImag, realContext);
 
         if(realIsZero(&rImag)) {
-          reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
+          reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
           convertRealToReal34ResultRegister(&rReal, REGISTER_X);
         }
         else {
-          reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE_IN_BLOCKS, amNone);
+          reallocateRegister(REGISTER_X, dtComplex34, TO_BLOCKS(COMPLEX34_SIZE_IN_BYTES), amNone);
           convertRealToReal34ResultRegister(&rReal, REGISTER_X);
           convertRealToImag34ResultRegister(&rImag, REGISTER_X);
         }
       }
       else {
         displayCalcErrorMessage(ERROR_ARG_EXCEEDS_FUNCTION_DOMAIN, ERR_REGISTER_LINE, REGISTER_X);
-        EXTRA_INFO_MESSAGE("logxy", "cannot calculate LogXY with x<0 when flag I is not set");
+        errorMoreInfo("cannot calculate LogXY with x<0 when flag I is not set");
       }
     }
     else {
       WP34S_Logxy(yReal, xReal, &rReal, realContext);
 
-      reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
+      reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
       convertRealToReal34ResultRegister(&rReal, REGISTER_X);
     }
   }
@@ -198,7 +198,7 @@ void logxyCplxLonI(void) {
   if(checkArgs(&xReal, &xImag, &yReal, &yImag)) {
     logXYComplex(&xReal, &xImag, &yReal, &yImag, &rReal, &rImag, &ctxtReal39);
 
-    reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE_IN_BLOCKS, amNone);
+    reallocateRegister(REGISTER_X, dtComplex34, TO_BLOCKS(COMPLEX34_SIZE_IN_BYTES), amNone);
     convertRealToReal34ResultRegister(&rReal, REGISTER_X);
     convertRealToImag34ResultRegister(&rImag, REGISTER_X);
   }
@@ -218,7 +218,7 @@ void logxyShoILonI(void) {
   if(getRegisterDataType(REGISTER_X) == dtReal34) {
     if(real34IsNaN(REGISTER_REAL34_DATA(REGISTER_X)) && !getSystemFlag(FLAG_SPCRES)) {
       displayCalcErrorMessage(ERROR_ARG_EXCEEDS_FUNCTION_DOMAIN, ERR_REGISTER_LINE, REGISTER_X);
-      EXTRA_INFO_MESSAGE("logxy", "cannot calculate LogXY with x=0");
+      errorMoreInfo("cannot calculate LogXY with x=0");
       return;
     }
     else if(real34IsAnInteger(REGISTER_REAL34_DATA(REGISTER_X))) {
@@ -267,7 +267,7 @@ void logxyCplxReal(void) {
   if(checkArgs(&xReal, &xImag, &yReal, &yImag)) {
     logXYComplex(&xReal, &xImag, &yReal, &yImag, &rReal, &rImag, &ctxtReal39);
 
-    reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE_IN_BLOCKS, amNone);
+    reallocateRegister(REGISTER_X, dtComplex34, TO_BLOCKS(COMPLEX34_SIZE_IN_BYTES), amNone);
     convertRealToReal34ResultRegister(&rReal, REGISTER_X);
     convertRealToImag34ResultRegister(&rImag, REGISTER_X);
   }
@@ -287,7 +287,7 @@ void logxyShoIReal(void) {
   if(getRegisterDataType(REGISTER_X) == dtReal34) {
     if(real34IsNaN(REGISTER_REAL34_DATA(REGISTER_X)) && !getSystemFlag(FLAG_SPCRES)) {
       displayCalcErrorMessage(ERROR_ARG_EXCEEDS_FUNCTION_DOMAIN, ERR_REGISTER_LINE, REGISTER_X);
-      EXTRA_INFO_MESSAGE("logxy", "cannot calculate LogXY with x=0");
+      errorMoreInfo("cannot calculate LogXY with x=0");
       return;
     }
     else if(real34IsAnInteger(REGISTER_REAL34_DATA(REGISTER_X))) {
@@ -408,7 +408,7 @@ void logxyCplxShoI(void) {
   if(checkArgs(&xReal, &xImag, &yReal, &yImag)) {
     logXYComplex(&xReal, &xImag, &yReal, &yImag, &rReal, &rImag, &ctxtReal39);
 
-    reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE_IN_BLOCKS, amNone);
+    reallocateRegister(REGISTER_X, dtComplex34, TO_BLOCKS(COMPLEX34_SIZE_IN_BYTES), amNone);
     convertRealToReal34ResultRegister(&rReal, REGISTER_X);
     convertRealToImag34ResultRegister(&rImag, REGISTER_X);
   }
@@ -428,7 +428,7 @@ void logxyShoIShoI(void) {
   if(getRegisterDataType(REGISTER_X) == dtReal34) {
     if(real34IsNaN(REGISTER_REAL34_DATA(REGISTER_X)) && !getSystemFlag(FLAG_SPCRES)) {
       displayCalcErrorMessage(ERROR_ARG_EXCEEDS_FUNCTION_DOMAIN, ERR_REGISTER_LINE, REGISTER_X);
-      EXTRA_INFO_MESSAGE("logxy", "cannot calculate LogXY with x=0");
+      errorMoreInfo("cannot calculate LogXY with x=0");
       return;
     }
     else if(real34IsAnInteger(REGISTER_REAL34_DATA(REGISTER_X))) {

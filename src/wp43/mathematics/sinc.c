@@ -111,7 +111,7 @@ void sincLonI(void) {
     realDivide(&x, &xx, &x, &ctxtReal39);
   }
 
-  reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
+  reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
   convertRealToReal34ResultRegister(&x, REGISTER_X);
 }
 

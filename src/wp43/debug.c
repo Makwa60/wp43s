@@ -627,7 +627,7 @@ void debugNIM(void) {
 
   void formatComplex34Debug(char *str, void *addr) {
     formatReal34Debug(str     , addr             );
-    formatReal34Debug(str + 64, (real34_t *)((dataBlock_t *)addr + REAL34_SIZE_IN_BLOCKS));
+    formatReal34Debug(str + 64, (real34_t *)((dataBlock_t *)addr + TO_BLOCKS(REAL34_SIZE_IN_BYTES)));
 
     strcat(str, " ");
     xcopy(strchr(str, '\0'), str + 64, strlen(str + 64) + 1);

@@ -73,7 +73,7 @@
 
 void fnEqNew(uint16_t unusedButMandatoryParameter) {
   if(numberOfFormulae == 0) {
-    allFormulae = allocWp43(TO_BLOCKS(sizeof(formulaHeader_t)));
+    allFormulae = allocWp43(sizeof(formulaHeader_t));
     if(allFormulae) {
       numberOfFormulae = 1;
       currentFormula = 0;
@@ -83,14 +83,12 @@ void fnEqNew(uint16_t unusedButMandatoryParameter) {
     }
     else {
       displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
-      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-        moreInfoOnError("In function fnEqNew:", "there is not enough memory for a new equation!", NULL, NULL);
-      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+      errorMoreInfo("there is not enough memory for a new equation!");
       return;
     }
   }
   else {
-    formulaHeader_t *newPtr = allocWp43(TO_BLOCKS(sizeof(formulaHeader_t)) * (numberOfFormulae + 1));
+    formulaHeader_t *newPtr = allocWp43(sizeof(formulaHeader_t) * (numberOfFormulae + 1));
     if(newPtr) {
       for(uint32_t i = 0; i < numberOfFormulae; ++i) {
         newPtr[i + (i > currentFormula ? 1 : 0)] = allFormulae[i];
@@ -98,16 +96,14 @@ void fnEqNew(uint16_t unusedButMandatoryParameter) {
       ++currentFormula;
       newPtr[currentFormula].pointerToFormulaData = WP43_NULL;
       newPtr[currentFormula].sizeInBlocks = 0;
-      freeWp43(allFormulae, TO_BLOCKS(sizeof(formulaHeader_t)) * (numberOfFormulae));
+      freeWp43(allFormulae, sizeof(formulaHeader_t) * numberOfFormulae);
       allFormulae = newPtr;
       ++numberOfFormulae;
       graphVariable = 0;
     }
     else {
       displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
-      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-        moreInfoOnError("In function fnEqNew:", "there is not enough memory for a new equation!", NULL, NULL);
-      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+      errorMoreInfo("there is not enough memory for a new equation!");
       return;
     }
   }
@@ -173,25 +169,23 @@ void fnEqCalc(uint16_t unusedButMandatoryParameter) {
 
 
 void setEquation(uint16_t equationId, const char *equationString) {
-  uint32_t newSizeInBlocks = TO_BLOCKS(stringByteLength(equationString) + 1);
+  uint32_t newSizeInBytes = stringByteLength(equationString) + 1;
   uint8_t *newPtr;
   if(allFormulae[equationId].sizeInBlocks == 0) {
-    newPtr = allocWp43(newSizeInBlocks);
+    newPtr = allocWp43(newSizeInBytes);
   }
   else {
-    newPtr = reallocWp43(TO_PCMEMPTR(allFormulae[equationId].pointerToFormulaData), allFormulae[equationId].sizeInBlocks, newSizeInBlocks);
+    newPtr = reallocWp43(TO_PCMEMPTR(allFormulae[equationId].pointerToFormulaData), TO_BYTES(allFormulae[equationId].sizeInBlocks), newSizeInBytes);
   }
   if(newPtr) {
     allFormulae[equationId].pointerToFormulaData = TO_WP43MEMPTR(newPtr);
   }
   else {
     displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
-    #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-      moreInfoOnError("In function setEquation:", "there is not enough memory for a new equation!", NULL, NULL);
-    #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+    errorMoreInfo("there is not enough memory for a new equation!");
     return;
   }
-  allFormulae[equationId].sizeInBlocks = newSizeInBlocks;
+  allFormulae[equationId].sizeInBlocks = TO_BLOCKS(newSizeInBytes);
   xcopy(TO_PCMEMPTR(allFormulae[equationId].pointerToFormulaData), equationString, stringByteLength(equationString) + 1);
 }
 
@@ -200,12 +194,12 @@ void setEquation(uint16_t equationId, const char *equationString) {
 void deleteEquation(uint16_t equationId) {
   if(equationId < numberOfFormulae) {
     if(allFormulae[equationId].sizeInBlocks > 0) {
-      freeWp43(TO_PCMEMPTR(allFormulae[equationId].pointerToFormulaData), allFormulae[equationId].sizeInBlocks);
+      freeWp43(TO_PCMEMPTR(allFormulae[equationId].pointerToFormulaData), TO_BYTES(allFormulae[equationId].sizeInBlocks));
     }
     for(uint16_t i = equationId + 1; i < numberOfFormulae; ++i) {
       allFormulae[i - 1] = allFormulae[i];
     }
-    freeWp43(allFormulae + (--numberOfFormulae), TO_BLOCKS(sizeof(formulaHeader_t)));
+    freeWp43(allFormulae + (--numberOfFormulae), sizeof(formulaHeader_t));
     if(numberOfFormulae == 0) {
       allFormulae = NULL;
     }
@@ -721,9 +715,7 @@ void showEquation(uint16_t equationId, uint16_t startAt, uint16_t cursorAt, bool
     }
     else {
       displayCalcErrorMessage(ERROR_EQUATION_TOO_COMPLEX, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
-      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-        moreInfoOnError("In function parseEquation:", "numeric stack overflow!", NULL, NULL);
-      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+      errorMoreInfo("numeric stack overflow!");
     }
   }
 
@@ -739,9 +731,7 @@ void showEquation(uint16_t equationId, uint16_t startAt, uint16_t cursorAt, bool
     }
     else {
       displayCalcErrorMessage(ERROR_SYNTAX_ERROR_IN_EQUATION, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
-      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-        moreInfoOnError("In function parseEquation:", "numeric stack is empty!", NULL, NULL);
-      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+      errorMoreInfo("numeric stack is empty!");
       realToReal34(const_NaN, re);
       if(im) {
         realToReal34(const_NaN, im);
@@ -762,7 +752,7 @@ void showEquation(uint16_t equationId, uint16_t startAt, uint16_t cursorAt, bool
       real34Copy(&re, REGISTER_REAL34_DATA(REGISTER_X));
     }
     else {
-      reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE_IN_BLOCKS, amNone);
+      reallocateRegister(REGISTER_X, dtComplex34, TO_BLOCKS(COMPLEX34_SIZE_IN_BYTES), amNone);
       real34Copy(&re, REGISTER_REAL34_DATA(REGISTER_X));
       real34Copy(&im, REGISTER_IMAG34_DATA(REGISTER_X));
     }
@@ -772,7 +762,7 @@ void showEquation(uint16_t equationId, uint16_t startAt, uint16_t cursorAt, bool
       real34Copy(&re, REGISTER_REAL34_DATA(REGISTER_Y));
     }
     else {
-      reallocateRegister(REGISTER_Y, dtComplex34, COMPLEX34_SIZE_IN_BLOCKS, amNone);
+      reallocateRegister(REGISTER_Y, dtComplex34, TO_BLOCKS(COMPLEX34_SIZE_IN_BYTES), amNone);
       real34Copy(&re, REGISTER_REAL34_DATA(REGISTER_Y));
       real34Copy(&im, REGISTER_IMAG34_DATA(REGISTER_Y));
     }
@@ -801,7 +791,7 @@ void showEquation(uint16_t equationId, uint16_t startAt, uint16_t cursorAt, bool
       real34Copy(&re, REGISTER_REAL34_DATA(REGISTER_X));
     }
     else {
-      reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE_IN_BLOCKS, amNone);
+      reallocateRegister(REGISTER_X, dtComplex34, TO_BLOCKS(COMPLEX34_SIZE_IN_BYTES), amNone);
       real34Copy(&re, REGISTER_REAL34_DATA(REGISTER_X));
       real34Copy(&im, REGISTER_IMAG34_DATA(REGISTER_X));
     }
@@ -872,9 +862,7 @@ void showEquation(uint16_t equationId, uint16_t startAt, uint16_t cursorAt, bool
             case PARSER_OPERATOR_ITM_PARENTHESIS_LEFT: {
               if(func == PARSER_OPERATOR_ITM_VERTICAL_BAR_RIGHT) {
                 displayCalcErrorMessage(ERROR_SYNTAX_ERROR_IN_EQUATION, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
-                #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-                  moreInfoOnError("In function parseEquation:", "parentheses mismatch!", "parenthesis not closed", NULL);
-                #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+                errorMoreInfo("parentheses mismatch!\nparenthesis not closed");
               }
               break;
             }
@@ -882,9 +870,7 @@ void showEquation(uint16_t equationId, uint16_t startAt, uint16_t cursorAt, bool
               _runEqFunction(mvarBuffer, ITM_ABS);
               if(func == PARSER_OPERATOR_ITM_PARENTHESIS_RIGHT) {
                 displayCalcErrorMessage(ERROR_SYNTAX_ERROR_IN_EQUATION, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
-                #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-                  moreInfoOnError("In function parseEquation:", "parentheses mismatch!", "unpaired vertical bar within parentheses", NULL);
-                #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+                errorMoreInfo("parentheses mismatch!\nunpaired vertical bar within parentheses");
               }
               break;
             }
@@ -916,9 +902,7 @@ void showEquation(uint16_t equationId, uint16_t startAt, uint16_t cursorAt, bool
                 return;
               }
               displayCalcErrorMessage(ERROR_SYNTAX_ERROR_IN_EQUATION, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
-              #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-                moreInfoOnError("In function parseEquation:", "parentheses mismatch!", "parenthesis not closed", NULL);
-              #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+              errorMoreInfo("parentheses mismatch!\nparenthesis not closed");
               break;
             }
           }
@@ -926,16 +910,12 @@ void showEquation(uint16_t equationId, uint16_t startAt, uint16_t cursorAt, bool
         switch(func) {
           case PARSER_OPERATOR_ITM_PARENTHESIS_RIGHT: {
             displayCalcErrorMessage(ERROR_SYNTAX_ERROR_IN_EQUATION, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
-            #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-              moreInfoOnError("In function parseEquation:", "parentheses mismatch!", "no corresponding opening parenthesis", NULL);
-            #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+            errorMoreInfo("parentheses mismatch!\nno corresponding opening parenthesis");
             break;
           }
           case PARSER_OPERATOR_ITM_VERTICAL_BAR_RIGHT: {
             displayCalcErrorMessage(ERROR_SYNTAX_ERROR_IN_EQUATION, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
-            #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-              moreInfoOnError("In function parseEquation:", "parentheses mismatch!", "no corresponding opening vertical bar", NULL);
-            #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+            errorMoreInfo("parentheses mismatch!\nno corresponding opening vertical bar");
             break;
           }
           case PARSER_OPERATOR_ITM_EQUAL: {
@@ -947,11 +927,11 @@ void showEquation(uint16_t equationId, uint16_t startAt, uint16_t cursorAt, bool
             setSystemFlag(FLAG_ASLIFT);
             liftStack();
             if((real34IsZero(PARSER_LEFT_VALUE_IMAG) || real34IsNaN(PARSER_LEFT_VALUE_IMAG)) && (real34IsZero(&PARSER_NUMERIC_STACK[(*PARSER_NUMERIC_STACK_POINTER) * 2 - 1]) || real34IsNaN(&PARSER_NUMERIC_STACK[(*PARSER_NUMERIC_STACK_POINTER) * 2 - 1]))) {
-              reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
+              reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
               real34Subtract(&PARSER_NUMERIC_STACK[(*PARSER_NUMERIC_STACK_POINTER) * 2 - 2], PARSER_LEFT_VALUE_REAL, REGISTER_REAL34_DATA(REGISTER_X));
             }
             else {
-              reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE_IN_BLOCKS, amNone);
+              reallocateRegister(REGISTER_X, dtComplex34, TO_BLOCKS(COMPLEX34_SIZE_IN_BYTES), amNone);
               real34Subtract(&PARSER_NUMERIC_STACK[(*PARSER_NUMERIC_STACK_POINTER) * 2 - 2], PARSER_LEFT_VALUE_REAL, REGISTER_REAL34_DATA(REGISTER_X));
               real34Subtract(&PARSER_NUMERIC_STACK[(*PARSER_NUMERIC_STACK_POINTER) * 2 - 1], PARSER_LEFT_VALUE_IMAG, REGISTER_IMAG34_DATA(REGISTER_X));
             }
@@ -986,9 +966,7 @@ void showEquation(uint16_t equationId, uint16_t startAt, uint16_t cursorAt, bool
           }
           else {
             displayCalcErrorMessage(ERROR_EQUATION_TOO_COMPLEX, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
-            #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-              moreInfoOnError("In function parseEquation:", "operator stack overflow!", NULL, NULL);
-            #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+            errorMoreInfo("operator stack overflow!");
           }
           return;
         }
@@ -1011,9 +989,7 @@ void showEquation(uint16_t equationId, uint16_t startAt, uint16_t cursorAt, bool
     }
     else {
       displayCalcErrorMessage(ERROR_EQUATION_TOO_COMPLEX, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
-      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-        moreInfoOnError("In function parseEquation:", "operator stack overflow!", NULL, NULL);
-      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+      errorMoreInfo("operator stack overflow!");
     }
   }
 
@@ -1023,9 +999,7 @@ void showEquation(uint16_t equationId, uint16_t startAt, uint16_t cursorAt, bool
     uint32_t tmpVal = 0;
     if(parserHint != PARSER_HINT_NUMERIC && stringGlyphLength(strPtr) > 7) {
       displayCalcErrorMessage(ERROR_SYNTAX_ERROR_IN_EQUATION, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
-      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-        moreInfoOnError("In function parseEquation:", strPtr, "token too long!", NULL);
-      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+      errorMoreInfo("'%s' token too long!", strPtr);
       return;
     }
     if(strPtr[0] == 0) {
@@ -1058,9 +1032,7 @@ void showEquation(uint16_t equationId, uint16_t startAt, uint16_t cursorAt, bool
             bufPtr[0] = 0;
             if((currentSolverStatus & SOLVER_STATUS_EQUATION_MODE) == SOLVER_STATUS_EQUATION_SOLVER && var >= FIRST_RESERVED_VARIABLE) {
               displayCalcErrorMessage(ERROR_INVALID_NAME, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
-              #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-                moreInfoOnError("In function parseEquation:", strPtr, "names a register or a reserved variable!", NULL);
-              #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+              errorMoreInfo("'%s' names a register or a reserved variable!", strPtr);
             }
             else {
               if(tmpVal == 2 && ((currentSolverStatus & SOLVER_STATUS_EQUATION_MODE) == SOLVER_STATUS_EQUATION_SOLVER)) {   // If the 4th variable has just been added, add Draw and Calc.
@@ -1084,9 +1056,7 @@ void showEquation(uint16_t equationId, uint16_t startAt, uint16_t cursorAt, bool
           }
           else {
             displayCalcErrorMessage(ERROR_SYNTAX_ERROR_IN_EQUATION, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
-            #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-              moreInfoOnError("In function parseEquation:", strPtr, "is not a valid name!", NULL);
-            #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+            errorMoreInfo("'%s' is not a valid name!", strPtr);
           }
         }
         break;
@@ -1121,9 +1091,7 @@ void showEquation(uint16_t equationId, uint16_t startAt, uint16_t cursorAt, bool
           }
           else {
             displayCalcErrorMessage(ERROR_SYNTAX_ERROR_IN_EQUATION, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
-            #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-              moreInfoOnError("In function parseEquation:", strPtr, "is not a valid name!", NULL);
-            #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+            errorMoreInfo("'%s' is not a valid name!", strPtr);
           }
         }
         else if(parserHint == PARSER_HINT_NUMERIC) {
@@ -1192,9 +1160,7 @@ void showEquation(uint16_t equationId, uint16_t startAt, uint16_t cursorAt, bool
             }
           }
           displayCalcErrorMessage(ERROR_FUNCTION_NOT_FOUND, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
-          #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-            moreInfoOnError("In function parseEquation:", strPtr, "is not recognized as a function", "or not for equations");
-          #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+          errorMoreInfo("'%s' is not recognized as a function\nor not for equations", strPtr);
         }
         break;
       }
@@ -1258,10 +1224,7 @@ void parseEquation(uint16_t equationId, uint16_t parseMode, char *buffer, char *
         case ';':
         case ',': {
           displayCalcErrorMessage(ERROR_SYNTAX_ERROR_IN_EQUATION, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
-          #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-            sprintf(errorMessage, "%c", *strPtr);
-            moreInfoOnError("In function parseEquation:", errorMessage, "cannot be appeared in equations", NULL);
-          #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+          errorMoreInfo("%c cannot appear in equations", *strPtr);
           return;
         }
 
@@ -1271,9 +1234,7 @@ void parseEquation(uint16_t equationId, uint16_t parseMode, char *buffer, char *
             ++strPtr;
             if(stringGlyphLength(buffer) == numericCount) {
               displayCalcErrorMessage(ERROR_SYNTAX_ERROR_IN_EQUATION, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
-              #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-                moreInfoOnError("In function parseEquation:", "attempt to call a number as a function!", NULL, NULL);
-              #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+              errorMoreInfo("attempt to call a number as a function!");
               return;
             }
             else {
@@ -1303,9 +1264,7 @@ void parseEquation(uint16_t equationId, uint16_t parseMode, char *buffer, char *
         case '|': {
           if(equalAppeared && (*strPtr == '=')) {
             displayCalcErrorMessage(ERROR_SYNTAX_ERROR_IN_EQUATION, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
-            #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-              moreInfoOnError("In function parseEquation:", "= appears more than once", NULL, NULL);
-            #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+            errorMoreInfo("= appears more than once");
             return;
           }
           else if((bufPtr != buffer) && (*strPtr == '|')) {
@@ -1393,9 +1352,7 @@ void parseEquation(uint16_t equationId, uint16_t parseMode, char *buffer, char *
           }
           else {
             displayCalcErrorMessage(ERROR_SYNTAX_ERROR_IN_EQUATION, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
-            #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-              moreInfoOnError("In function parseEquation:", buffer, "unexpected operator", NULL);
-            #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+            errorMoreInfo("'%s' unexpected operator", buffer);
             return;
           }
           if(*strPtr == '=') {

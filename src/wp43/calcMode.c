@@ -131,9 +131,7 @@ calcMode_t calcMode;
     saveForUndo();
     if(lastErrorCode == ERROR_RAM_FULL) {
       displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
-      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-        moreInfoOnError("In function calcModeNim:", "there is not enough memory to save for undo!", NULL, NULL);
-      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+      errorMoreInfo("there is not enough memory to save for undo!");
       return;
     }
 

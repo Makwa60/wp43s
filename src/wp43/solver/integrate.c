@@ -54,10 +54,7 @@ void fnPgmInt(uint16_t label) {
     label = findNamedLabel(buf);
     if(label == INVALID_VARIABLE) {
       displayCalcErrorMessage(ERROR_LABEL_NOT_FOUND, ERR_REGISTER_LINE, REGISTER_X);
-      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-        sprintf(errorMessage, "string '%s' is not a named label", buf);
-        moreInfoOnError("In function fnPgmInt:", errorMessage, NULL, NULL);
-      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+      errorMoreInfo("string '%s' is not a named label", buf);
     }
     else {
       currentSolverProgram = label - FIRST_LABEL;
@@ -65,10 +62,7 @@ void fnPgmInt(uint16_t label) {
   }
   else {
     displayCalcErrorMessage(ERROR_OUT_OF_RANGE, ERR_REGISTER_LINE, REGISTER_X);
-    #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-      sprintf(errorMessage, "unexpected parameter %u", label);
-      moreInfoOnError("In function fnPgmInt:", errorMessage, NULL, NULL);
-    #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+    errorMoreInfo("unexpected parameter %u", label);
   }
 }
 
@@ -110,8 +104,8 @@ void fnIntegrate(uint16_t labelOrVariable) {
     integrate(labelOrVariable, &llim, &ulim, &acc, &res, &ctxtReal39);
     liftStack();
     liftStack();
-    reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
-    reallocateRegister(REGISTER_Y, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
+    reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
+    reallocateRegister(REGISTER_Y, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
     convertRealToReal34ResultRegister(&res, REGISTER_X);
     convertRealToReal34ResultRegister(&acc, REGISTER_Y);
     temporaryInformation = TI_INTEGRAL;
@@ -119,10 +113,7 @@ void fnIntegrate(uint16_t labelOrVariable) {
   }
   else {
     displayCalcErrorMessage(ERROR_OUT_OF_RANGE, ERR_REGISTER_LINE, REGISTER_X);
-    #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-      sprintf(errorMessage, "unexpected parameter %u", labelOrVariable);
-      moreInfoOnError("In function fnIntegrate:", errorMessage, NULL, NULL);
-    #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+    errorMoreInfo("unexpected parameter %u", labelOrVariable);
   }
 }
 
@@ -243,7 +234,7 @@ static void DEI_xeq_user(calcRegister_t regist, const real_t *x, real_t *res, re
   if(!realIsSpecial(x)) { // abscissa is good?
     bool d = getSystemFlag(FLAG_SPCRES);
     clearSystemFlag(FLAG_SPCRES);
-    reallocateRegister(regist, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
+    reallocateRegister(regist, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
     realToReal34(x, REGISTER_REAL34_DATA(regist));
     fnFillStack(NOPARAM);
     //printReal34ToConsole(REGISTER_REAL34_DATA(regist), "", " -> ");

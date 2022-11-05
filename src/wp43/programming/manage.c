@@ -90,8 +90,8 @@ void scanLabelsAndPrograms(void) {
   uint8_t *nextStep, *step = beginOfProgramMemory;
   uint16_t numberOfProgramsInRam;
 
-  freeWp43(labelList, TO_BLOCKS(sizeof(labelList_t)) * numberOfLabels);
-  freeWp43(programList, TO_BLOCKS(sizeof(programList_t)) * numberOfPrograms);
+  freeWp43(labelList, sizeof(labelList_t) * numberOfLabels);
+  freeWp43(programList, sizeof(programList_t) * numberOfPrograms);
 
   numberOfLabels = 0;
   numberOfPrograms = 1;
@@ -105,14 +105,14 @@ void scanLabelsAndPrograms(void) {
     step = findNextStep_ram(step);
   }
 
-  labelList = allocWp43(TO_BLOCKS(sizeof(labelList_t)) * (numberOfLabels + numberOfLabelsInFlash));
+  labelList = allocWp43(sizeof(labelList_t) * (numberOfLabels + numberOfLabelsInFlash));
   if(labelList == NULL) {
     // unlikely
     lastErrorCode = ERROR_RAM_FULL;
     return;
   }
 
-  programList = allocWp43(TO_BLOCKS(sizeof(programList_t)) * (numberOfPrograms + numberOfProgramsInFlash));
+  programList = allocWp43(sizeof(programList_t) * (numberOfPrograms + numberOfProgramsInFlash));
   if(programList == NULL) {
     // unlikely
     lastErrorCode = ERROR_RAM_FULL;
@@ -874,7 +874,7 @@ static void _pemCloseDateInput(void) {
         *(tmpPtr++) = ITM_LITERAL;
         *(tmpPtr++) = STRING_DATE;
 
-        reallocateRegister(TEMP_REGISTER_1, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
+        reallocateRegister(TEMP_REGISTER_1, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
         stringToReal34(numBuffer, REGISTER_REAL34_DATA(TEMP_REGISTER_1));
         convertReal34RegisterToDateRegister(TEMP_REGISTER_1, TEMP_REGISTER_1);
         internalDateToJulianDay(REGISTER_REAL34_DATA(TEMP_REGISTER_1), REGISTER_REAL34_DATA(TEMP_REGISTER_1));

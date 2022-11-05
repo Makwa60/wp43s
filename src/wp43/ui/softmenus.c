@@ -592,7 +592,7 @@ void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
     uint16_t  flashOffset = 0;
     uint8_t  *step;
     if(inFlash) {
-      step = allocWp43(TO_BLOCKS(400));
+      step = allocWp43(400);
       if(step) {
         readStepInFlashPgmLibrary(step, 400, labelList[label].instructionPointer.flash);
       }
@@ -618,7 +618,7 @@ void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
       }
     }
     if(inFlash) {
-      freeWp43(step, TO_BLOCKS(400));
+      freeWp43(step, 400);
     }
   }
 
@@ -1307,9 +1307,7 @@ void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
       }
       if(numberOfVars > 12) {
         displayCalcErrorMessage(ERROR_EQUATION_TOO_COMPLEX, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
-        #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-          moreInfoOnError("In function showSoftmenu:", "there are more than 11 variables in this equation!", NULL, NULL);
-        #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+        errorMoreInfo("there are more than 11 variables in this equation!");
       }
       else if((currentSolverStatus & SOLVER_STATUS_EQUATION_MODE) == SOLVER_STATUS_EQUATION_1ST_DERIVATIVE || (currentSolverStatus & SOLVER_STATUS_EQUATION_MODE) == SOLVER_STATUS_EQUATION_2ND_DERIVATIVE) {
         if((getNthString((uint8_t *)tmpString, 1))[0] == 0) {

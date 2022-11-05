@@ -136,9 +136,7 @@ void fnPSto(uint16_t unusedButMandatoryParameter) {
     // Append to Flash
     if(!ioFileOpen(ioPathPgmFile, ioModeUpdate)) {
       displayCalcErrorMessage(ERROR_NO_BACKUP_DATA, ERR_REGISTER_LINE, REGISTER_X);
-      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-        moreInfoOnError("In function deleteFromFlashPgmLibrary: cannot find or read backup data file wp43.sav", NULL, NULL, NULL);
-      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+      errorMoreInfo("cannot find or read backup data file wp43.sav");
       return;
     }
 
@@ -153,9 +151,7 @@ void fnPSto(uint16_t unusedButMandatoryParameter) {
   }
   else {
     displayCalcErrorMessage(ERROR_FLASH_MEMORY_WRITE_PROTECTED, ERR_REGISTER_LINE, REGISTER_X);
-    #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-      moreInfoOnError("In function fnPSto: cannot copy a program from FM to FM", NULL, NULL, NULL);
-    #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+    errorMoreInfo("cannot copy a program from FM to FM");
   }
 }
 
@@ -164,9 +160,7 @@ void fnPSto(uint16_t unusedButMandatoryParameter) {
 void deleteFromFlashPgmLibrary(uint32_t fromAddr, uint32_t toAddr) {
   if(!ioFileOpen(ioPathPgmFile, ioModeUpdate)) {
     displayCalcErrorMessage(ERROR_NO_BACKUP_DATA, ERR_REGISTER_LINE, REGISTER_X);
-    #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-      moreInfoOnError("In function deleteFromFlashPgmLibrary: cannot find or read backup data file wp43.sav", NULL, NULL, NULL);
-    #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+    errorMoreInfo("cannot find or read backup data file wp43.sav");
     return;
   }
 
@@ -189,9 +183,7 @@ void deleteFromFlashPgmLibrary(uint32_t fromAddr, uint32_t toAddr) {
 void readStepInFlashPgmLibrary(uint8_t *buffer, uint16_t bufferSize, uint32_t pointer) {
   if(!ioFileOpen(ioPathPgmFile, ioModeRead)) {
     displayCalcErrorMessage(ERROR_NO_BACKUP_DATA, ERR_REGISTER_LINE, REGISTER_X);
-    #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-      moreInfoOnError("In function scanFlashProgramLibrary: cannot find or read backup data file wp43.sav", NULL, NULL, NULL);
-    #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+    errorMoreInfo("cannot find or read backup data file wp43.sav");
     return;
   }
 
@@ -208,9 +200,7 @@ void scanFlashPgmLibrary(void) {
     initFlashPgmLibrary();
     if(!ioFileOpen(ioPathPgmFile, ioModeRead)) {
       displayCalcErrorMessage(ERROR_NO_BACKUP_DATA, ERR_REGISTER_LINE, REGISTER_X);
-      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-        moreInfoOnError("In function scanFlashProgramLibrary: cannot find or read backup data file wp43.sav", NULL, NULL, NULL);
-      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+      errorMoreInfo("cannot find or read backup data file wp43.sav");
       return;
     }
   }
@@ -219,8 +209,8 @@ void scanFlashPgmLibrary(void) {
   int32_t seekPos = 0;
   uint32_t stepNumber = 0;
 
-  freeWp43(flashLabelList, TO_BLOCKS(sizeof(labelList_t)) * numberOfLabelsInFlash);
-  freeWp43(flashProgramList, TO_BLOCKS(sizeof(programList_t)) * numberOfProgramsInFlash);
+  freeWp43(flashLabelList, sizeof(labelList_t) * numberOfLabelsInFlash);
+  freeWp43(flashProgramList, sizeof(programList_t) * numberOfProgramsInFlash);
 
   numberOfLabelsInFlash = 0;
   numberOfProgramsInFlash = 1;
@@ -244,14 +234,14 @@ void scanFlashPgmLibrary(void) {
 
   sizeOfFlashPgmLibrary = (uint32_t)(((intptr_t)step - (intptr_t)tmpString) + seekPos);
 
-  flashLabelList = allocWp43(TO_BLOCKS(sizeof(labelList_t)) * numberOfLabelsInFlash);
+  flashLabelList = allocWp43(sizeof(labelList_t) * numberOfLabelsInFlash);
   if(flashLabelList == NULL) {
     // unlikely
     lastErrorCode = ERROR_RAM_FULL;
     return;
   }
 
-  flashProgramList = allocWp43(TO_BLOCKS(sizeof(programList_t)) * numberOfProgramsInFlash);
+  flashProgramList = allocWp43(sizeof(programList_t) * numberOfProgramsInFlash);
   if(flashProgramList == NULL) {
     // unlikely
     lastErrorCode = ERROR_RAM_FULL;

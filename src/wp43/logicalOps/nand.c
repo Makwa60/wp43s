@@ -12,6 +12,17 @@
 
 #include "wp43.h"
 
+#if (EXTRA_INFO_ON_CALC_ERROR == 1)
+  /**
+   * Data type error in NAND
+   */
+  void nandError24  (void);
+  void nandError31  (void);
+#else // (EXTRA_INFO_ON_CALC_ERROR == 1)
+  #define nandError24 typeError
+  #define nandError31 typeError
+#endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+
 TO_QSPI void (* const logicalNand[NUMBER_OF_DATA_TYPES_FOR_CALCULATIONS][NUMBER_OF_DATA_TYPES_FOR_CALCULATIONS])(void) = {
 // regX |    regY ==>   1             2             3            4            5            6            7            8             9             10
 //      V               Long integer  Real34        Complex34    Time         Date         String       Real34 mat   Complex34 m   Short integer Config data
@@ -30,22 +41,16 @@ TO_QSPI void (* const logicalNand[NUMBER_OF_DATA_TYPES_FOR_CALCULATIONS][NUMBER_
 #if (EXTRA_INFO_ON_CALC_ERROR == 1)
   void nandError24(void) {
     displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, REGISTER_X);
-    sprintf(errorMessage, "%s NAND %s", getRegisterDataTypeName(REGISTER_Y, false, false), getRegisterDataTypeName(REGISTER_X, false, false));
-    sprintf(errorMessage + ERROR_MESSAGE_LENGTH/2, "data type of one of the NAND parameters is not allowed");
-    moreInfoOnError("In function nandError24:", errorMessage, errorMessage + ERROR_MESSAGE_LENGTH/2, NULL);
+    errorMoreInfo("%s NAND %s\ndata type of one of the NAND parameters is not allowed", getRegisterDataTypeName(REGISTER_Y, false, false), getRegisterDataTypeName(REGISTER_X, false, false));
+  }
+
+
+
+  void nandError31(void) {
+    displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, REGISTER_X);
+    errorMoreInfo("%s NAND %s\nNAND doesn't allow mixing data types real/long integer and short integer", getRegisterDataTypeName(REGISTER_Y, false, false), getRegisterDataTypeName(REGISTER_X, false, false));
   }
 #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
-
-
-
-void nandError31(void) {
-  displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, REGISTER_X);
-  #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-    sprintf(errorMessage, "%s NAND %s", getRegisterDataTypeName(REGISTER_Y, false, false), getRegisterDataTypeName(REGISTER_X, false, false));
-    sprintf(errorMessage + ERROR_MESSAGE_LENGTH/2, "NAND doesn't allow mixing data types real/long integer and short integer");
-    moreInfoOnError("In function nandError31:", errorMessage, errorMessage + ERROR_MESSAGE_LENGTH/2, NULL);
-  #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
-}
 
 
 

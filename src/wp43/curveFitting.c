@@ -182,24 +182,22 @@ void fnProcessLRfind(uint16_t curveFitting) {
     if(s == CF_CAUCHY_FITTING || s == CF_GAUSS_FITTING || s == CF_PARABOLIC_FITTING) {
       liftStack();
       setSystemFlag(FLAG_ASLIFT);
-      reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
+      reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
       convertRealToReal34ResultRegister(&aa2, REGISTER_X);
     }
     liftStack();
     setSystemFlag(FLAG_ASLIFT);
-    reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
+    reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
     convertRealToReal34ResultRegister(&aa1, REGISTER_X);
     liftStack();
     setSystemFlag(FLAG_ASLIFT);
-    reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
+    reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
     convertRealToReal34ResultRegister(&aa0, REGISTER_X);
   }
   else {
     if(minLRDataPoints(s) == 65535) {
       displayCalcErrorMessage(ERROR_TOO_FEW_DATA, ERR_REGISTER_LINE, REGISTER_X);
-      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-        moreInfoOnError("In function fnProcessLRfind:", "There is insufficient statistical data to do L.R., possibly due to data manipulation!", NULL, NULL);
-      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+      errorMoreInfo("There is insufficient statistical data to do L.R., possibly due to data manipulation!");
     }
     else {
       uInt32ToReal((uint32_t)minLRDataPoints(s),&NN);
@@ -1077,10 +1075,7 @@ void fnYIsFnx(uint16_t unusedButMandatoryParameter) {
     }
     else {
       displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, REGISTER_X);
-      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-        sprintf(errorMessage, "data type %s cannot be used with L.R.!", getRegisterDataTypeName(REGISTER_X, false, false));
-        moreInfoOnError("In function fnYIsFnx:", errorMessage, NULL, NULL);
-      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+      errorMoreInfo("data type %s cannot be used with L.R.!", getRegisterDataTypeName(REGISTER_X, false, false));
     }
   }
 }
@@ -1223,7 +1218,7 @@ void fnXIsFny(uint16_t unusedButMandatoryParameter) {
         xIsFny(lrChosen, 2, &XX, &YY, &RR, &SMI, &aa0, &aa1, &aa2);
         liftStack();
         setSystemFlag(FLAG_ASLIFT);
-        reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BLOCKS, amNone);
+        reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
         realToReal34(&XX,REGISTER_REAL34_DATA(REGISTER_X));
       }
 
@@ -1231,10 +1226,7 @@ void fnXIsFny(uint16_t unusedButMandatoryParameter) {
     }
     else {
       displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, REGISTER_X);
-      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-        sprintf(errorMessage, "data type %s cannot be used with L.R.!", getRegisterDataTypeName(REGISTER_X, false, false));
-        moreInfoOnError("In function fnXIsFny:", errorMessage, NULL, NULL);
-      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+      errorMoreInfo("data type %s cannot be used with L.R.!", getRegisterDataTypeName(REGISTER_X, false, false));
     }
   }
 }

@@ -18,16 +18,6 @@
    */
   void fnLogicalAnd(uint16_t unusedButMandatoryParameter);
 
-  #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-    /**
-     * Data type error in AND
-     */
-    void andError24  (void);
-  #else // (EXTRA_INFO_ON_CALC_ERROR == 1)
-    #define andError24 typeError
-  #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
-
-  void andError31  (void);
   void andLonILonI (void);
   void andLonIReal (void);
   void andRealLonI (void);
