@@ -16,6 +16,12 @@
 
 #include "wp43.h"
 
+#if (EXTRA_INFO_ON_CALC_ERROR == 1)
+  void betaError   (void);
+#else // (EXTRA_INFO_ON_CALC_ERROR == 1)
+  #define betaError typeError
+#endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+
 TO_QSPI void (* const beta[NUMBER_OF_DATA_TYPES_FOR_CALCULATIONS][NUMBER_OF_DATA_TYPES_FOR_CALCULATIONS])() = {
 // regX |    regY ==>    1             2             3             4          5          6          7          8          9          10
 //      V                Long integer  Real34        Complex34     Time       Date       String     Real34 mat Complex34  mat Short  Config data
@@ -31,29 +37,15 @@ TO_QSPI void (* const beta[NUMBER_OF_DATA_TYPES_FOR_CALCULATIONS][NUMBER_OF_DATA
 /* 10 Config data   */ { betaError,    betaError,    betaError,    betaError, betaError, betaError, betaError, betaError, betaError, betaError }
 };
 
-/********************************************//**
- * \brief Data type error in beta
- *
- * \param void
- * \return void
- ***********************************************/
 #if (EXTRA_INFO_ON_CALC_ERROR == 1)
   void betaError(void) {
     displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, REGISTER_X);
-    sprintf(errorMessage, "cannot calculate Beta of (%s, %s)", getRegisterDataTypeName(REGISTER_Y, true, false), getRegisterDataTypeName(REGISTER_X, true, false));
-    moreInfoOnError("In function fnBeta:", errorMessage, NULL, NULL);
+    errorMoreInfo("cannot calculate Beta of (%s, %s)", getRegisterDataTypeName(REGISTER_Y, true, false), getRegisterDataTypeName(REGISTER_X, true, false));
   }
 #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
 
 
 
-/********************************************//**
- * \brief regX ==> regL and beta(regX, RegY) ==> regX
- * enables stack lift and refreshes the stack
- *
- * \param[in] unusedButMandatoryParameter uint16_t
- * \return void
- ***********************************************/
 void fnBeta(uint16_t unusedButMandatoryParameter) {
   if(!saveLastX()) {
     return;
@@ -65,24 +57,19 @@ void fnBeta(uint16_t unusedButMandatoryParameter) {
 }
 
 
+
 static bool _beta(real_t *xReal, real_t *xImag, real_t *yReal, real_t *yImag, real_t *rReal, real_t *rImag, realContext_t *realContext) {
   // Beta(x, y) := Gamma(x) * Gamma(y) / Gamma(x+y)
   real_t tReal, tImag;
 
   if(realCompareLessEqual(xReal, const_0)) {
     displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, REGISTER_X);
-    #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-      sprintf(errorMessage, "cannot calculate Beta of (%s, %s) with Re(x)<=0", getRegisterDataTypeName(REGISTER_Y, true, false), getRegisterDataTypeName(REGISTER_X, true, false));
-      moreInfoOnError("In function fnBeta:", errorMessage, NULL, NULL);
-    #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+    errorMoreInfo("cannot calculate Beta of (%s, %s) with Re(x)<=0", getRegisterDataTypeName(REGISTER_Y, true, false), getRegisterDataTypeName(REGISTER_X, true, false));
     return false;
   }
   else if(realCompareLessEqual(yReal, const_0)) {
     displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, REGISTER_X);
-    #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-      sprintf(errorMessage, "cannot calculate Beta of (%s, %s with Re(y)<=0", getRegisterDataTypeName(REGISTER_Y, true, false), getRegisterDataTypeName(REGISTER_X, true, false));
-      moreInfoOnError("In function fnBeta:", errorMessage, NULL, NULL);
-    #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+    errorMoreInfo("cannot calculate Beta of (%s, %s with Re(y)<=0", getRegisterDataTypeName(REGISTER_Y, true, false), getRegisterDataTypeName(REGISTER_X, true, false));
     return false;
   }
 
@@ -99,15 +86,14 @@ static bool _beta(real_t *xReal, real_t *xImag, real_t *yReal, real_t *yImag, re
 
   if(realIsNaN(rImag) || realIsNaN(rReal)) {
     displayCalcErrorMessage(ERROR_OUT_OF_RANGE, ERR_REGISTER_LINE, REGISTER_X);
-    #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-      sprintf(errorMessage, "cannot calculate Beta of (%s, %s) out of range", getRegisterDataTypeName(REGISTER_Y, true, false), getRegisterDataTypeName(REGISTER_X, true, false));
-      moreInfoOnError("In function fnBeta:", errorMessage, NULL, NULL);
-    #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+    errorMoreInfo("cannot calculate Beta of (%s, %s) out of range", getRegisterDataTypeName(REGISTER_Y, true, false), getRegisterDataTypeName(REGISTER_X, true, false));
     return false;
   }
 
   return true;
 }
+
+
 
 static void _betaComplex(real_t *xReal, real_t *xImag, real_t *yReal, real_t *yImag, realContext_t *realContext) {
   real_t rReal, rImag;
@@ -118,6 +104,8 @@ static void _betaComplex(real_t *xReal, real_t *xImag, real_t *yReal, real_t *yI
     convertRealToImag34ResultRegister(&rImag, REGISTER_X);
   }
 }
+
+
 
 static void _betaReal(real_t *xReal, real_t *yReal, realContext_t *realContext) {
   real_t rReal, rImag;

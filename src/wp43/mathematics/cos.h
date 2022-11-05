@@ -11,13 +11,13 @@
   #include "realType.h"
   #include <stdint.h>
 
+  /**
+   * regX ==> regL and cos(regX) ==> regX
+   * enables stack lift and refreshes the stack
+   *
+   * \param[in] unusedButMandatoryParameter
+   */
   void fnCos   (uint16_t unusedButMandatoryParameter);
-
-  #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-    void cosError(void);
-  #else // (EXTRA_INFO_ON_CALC_ERROR == 1)
-    #define cosError typeError
-  #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
 
   void cosLonI (void);
   void cosRema (void);

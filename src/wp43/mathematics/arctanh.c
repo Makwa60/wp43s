@@ -40,8 +40,7 @@ TO_QSPI void (* const arctanh[NUMBER_OF_DATA_TYPES_FOR_CALCULATIONS])(void) = {
 #if (EXTRA_INFO_ON_CALC_ERROR == 1)
   void arctanhError(void) {
     displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, REGISTER_X);
-    sprintf(errorMessage, "cannot calculate arctanh for %s", getRegisterDataTypeName(REGISTER_X, true, false));
-    moreInfoOnError("In function fnArctanh:", errorMessage, NULL, NULL);
+    errorMoreInfo("cannot calculate arctanh for %s", getRegisterDataTypeName(REGISTER_X, true, false));
   }
 #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
 
@@ -76,10 +75,8 @@ void arctanhLonI(void) {
       }
       else {
         displayCalcErrorMessage(ERROR_ARG_EXCEEDS_FUNCTION_DOMAIN, ERR_REGISTER_LINE, REGISTER_X);
-        #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-          moreInfoOnError("In function arctanhLonI:", "X = 1", "and DANGER flag is not set!", NULL);
-        #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
-       }
+        errorMoreInfo("X = 1\nand DANGER flag is not set!");
+      }
     }
     else if(realCompareEqual(&x, const__1)) {
       if(getSystemFlag(FLAG_SPCRES)) {
@@ -88,10 +85,8 @@ void arctanhLonI(void) {
       }
       else {
         displayCalcErrorMessage(ERROR_ARG_EXCEEDS_FUNCTION_DOMAIN, ERR_REGISTER_LINE, REGISTER_X);
-        #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-          moreInfoOnError("In function arctanhLonI:", "X = -1", "and DANGER flag is not set!", NULL);
-        #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
-       }
+        errorMoreInfo("X = -1\nand DANGER flag is not set!");
+      }
     }
     else {
       if(getFlag(FLAG_CPXRES)) {
@@ -106,9 +101,7 @@ void arctanhLonI(void) {
       }
       else {
         displayCalcErrorMessage(ERROR_ARG_EXCEEDS_FUNCTION_DOMAIN, ERR_REGISTER_LINE, REGISTER_X);
-        #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-          moreInfoOnError("In function arctanhLonI:", "|X| > 1", "and CPXRES is not set!", NULL);
-        #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+        errorMoreInfo("|X| > 1\nand CPXRES is not set!");
       }
     }
   }
@@ -143,10 +136,8 @@ void arctanhReal(void) {
       }
       else {
         displayCalcErrorMessage(ERROR_ARG_EXCEEDS_FUNCTION_DOMAIN, ERR_REGISTER_LINE, REGISTER_X);
-        #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-          moreInfoOnError("In function arctanhReal:", "X = 1", "and DANGER flag is not set!", NULL);
-        #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
-       }
+        errorMoreInfo("X = 1\nand DANGER flag is not set!");
+      }
     }
     else if(realCompareEqual(&x, const__1)) {
       if(getSystemFlag(FLAG_SPCRES)) {
@@ -154,10 +145,8 @@ void arctanhReal(void) {
       }
       else {
         displayCalcErrorMessage(ERROR_ARG_EXCEEDS_FUNCTION_DOMAIN, ERR_REGISTER_LINE, REGISTER_X);
-        #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-          moreInfoOnError("In function arctanhReal:", "X = -1", "and DANGER flag is not set!", NULL);
-        #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
-       }
+        errorMoreInfo("X = -1\nand DANGER flag is not set!");
+      }
     }
     else {
       if(realCompareAbsGreaterThan(&x, const_1)) {
@@ -172,9 +161,7 @@ void arctanhReal(void) {
         }
         else {
           displayCalcErrorMessage(ERROR_ARG_EXCEEDS_FUNCTION_DOMAIN, ERR_REGISTER_LINE, REGISTER_X);
-          #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-            moreInfoOnError("In function arctanhReal:", "|X| > 1", "and CPXRES is not set!", NULL);
-          #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+          errorMoreInfo("|X| > 1\nand CPXRES is not set!");
         }
       }
       else {
