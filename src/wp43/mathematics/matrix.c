@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // SPDX-FileCopyrightText: Copyright The WP43 Authors
 
-#include "matrix.h"
+#include "mathematics/matrix.h"
 
 #include "charString.h"
 #include "constantPointers.h"

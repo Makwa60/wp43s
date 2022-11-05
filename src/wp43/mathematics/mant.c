@@ -5,7 +5,7 @@
 
 #include "debug.h"
 #include "error.h"
-#include "matrix.h"
+#include "mathematics/matrix.h"
 #include "registers.h"
 #include "registerValueConversions.h"
 

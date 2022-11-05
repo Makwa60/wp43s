@@ -7,7 +7,7 @@
 #include "debug.h"
 #include "error.h"
 #include "flags.h"
-#include "matrix.h"
+#include "mathematics/matrix.h"
 #include "registers.h"
 #include "registerValueConversions.h"
 #include <stdbool.h>

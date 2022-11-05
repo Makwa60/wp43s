@@ -25,7 +25,6 @@
 #include "integers.h"
 #include "logicalOps/logicalOps.h"
 #include "mathematics/mathematics.h"
-#include "matrix.h"
 #include "plotstat.h"
 #include "programming/programming.h"
 #include "recall.h"

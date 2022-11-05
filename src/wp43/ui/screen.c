@@ -32,7 +32,7 @@
 #include "longIntegerType.h"
 #include "mathematics/comparisonReals.h"
 #include "mathematics/incDec.h"
-#include "matrix.h"
+#include "mathematics/matrix.h"
 #include "plotstat.h"
 #include "programming/manage.h"
 #include "registers.h"

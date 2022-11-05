@@ -13,7 +13,7 @@
 #include "items.h"
 #include "mathematics/comparisonReals.h"
 #include "mathematics/invert.h"
-#include "matrix.h"
+#include "mathematics/matrix.h"
 #include "plotstat.h"
 #include "recall.h"
 #include "registers.h"

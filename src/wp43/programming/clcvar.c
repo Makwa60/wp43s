@@ -11,7 +11,7 @@
 #include "fonts.h"
 #include "items.h"
 #include "longIntegerType.h"
-#include "matrix.h"
+#include "mathematics/matrix.h"
 #include "programming/flash.h"
 #include "programming/nextStep.h"
 #include "realType.h"

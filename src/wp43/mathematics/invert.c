@@ -11,7 +11,7 @@
 #include "fonts.h"
 #include "items.h"
 #include "mathematics/division.h"
-#include "matrix.h"
+#include "mathematics/matrix.h"
 #include "registers.h"
 #include "registerValueConversions.h"
 

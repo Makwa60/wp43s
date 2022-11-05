@@ -15,7 +15,7 @@
 #include "items.h"
 #include "mathematics/fractionalPart.h"
 #include "mathematics/integerPart.h"
-#include "matrix.h"
+#include "mathematics/matrix.h"
 #include "programming/lblGtoXeq.h"
 #include "programming/manage.h"
 #include "programming/nextStep.h"

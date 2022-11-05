@@ -11,7 +11,7 @@
 #include "hal/gui.h"
 #include "hal/system.h"
 #include "items.h"
-#include "matrix.h"
+#include "mathematics/matrix.h"
 #include "registers.h"
 #include "saveRestoreCalcState.h"
 #include "stack.h"

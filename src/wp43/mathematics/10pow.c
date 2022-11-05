@@ -11,8 +11,8 @@
 #include "fonts.h"
 #include "integers.h"
 #include "items.h"
+#include "mathematics/matrix.h"
 #include "mathematics/toRect.h"
-#include "matrix.h"
 #include "registers.h"
 #include "registerValueConversions.h"
 

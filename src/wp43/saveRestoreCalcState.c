@@ -19,7 +19,7 @@
 #include "hal/gui.h"
 #include "hal/io.h"
 #include "items.h"
-#include "matrix.h"
+#include "mathematics/matrix.h"
 #include "plotstat.h"
 #include "programming/flash.h"
 #include "programming/lblGtoXeq.h"

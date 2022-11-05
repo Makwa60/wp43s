@@ -10,10 +10,10 @@
 #include "integers.h"
 #include "items.h"
 #include "mathematics/comparisonReals.h"
+#include "mathematics/matrix.h"
 #include "mathematics/toPolar.h"
 #include "mathematics/toRect.h"
 #include "mathematics/wp34s.h"
-#include "matrix.h"
 #include "registers.h"
 #include "registerValueConversions.h"
 
