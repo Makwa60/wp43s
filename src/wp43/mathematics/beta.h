@@ -10,13 +10,13 @@
   #include "defines.h"
   #include <stdint.h>
 
+  /**
+   * regX ==> regL and beta(regX, RegY) ==> regX
+   * enables stack lift and refreshes the stack
+   *
+   * \param[in] unusedButMandatoryParameter
+   */
   void fnBeta      (uint16_t unusedButMandatoryParameter);
-
-  #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-    void betaError   (void);
-  #else // (EXTRA_INFO_ON_CALC_ERROR == 1)
-    #define betaError typeError
-  #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
 
   void betaLonILonI(void);
   void betaRealLonI(void);

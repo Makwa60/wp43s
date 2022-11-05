@@ -10,7 +10,22 @@
   #include "realType.h"
   #include <stdint.h>
 
+  /**
+   * regX ==> regL and Cyx(regX, RegY) ==> regX
+   * enables stack lift and refreshes the stack.
+   * C(n,k) = n! / [k! * (n-k)!]
+   *
+   * \param[in] unusedButMandatoryParameter
+   */
   void fnCyx(uint16_t unusedButMandatoryParameter);
+
+  /**
+   * regX ==> regL and Pyx(regX, RegY) ==> regX
+   * enables stack lift and refreshes the stack.
+   * P(n,k) = n! / (n-k)!
+   *
+   * \param[in] unusedButMandatoryParameter
+   */
   void fnPyx(uint16_t unusedButMandatoryParameter);
 
   void logCyxReal(real_t *y, real_t *x, real_t *result, realContext_t *realContext);
