@@ -40,6 +40,7 @@
 #include "ui/bufferize.h"
 #include "ui/cursor.h"
 #include "ui/keyboard.h"
+#include "ui/matrixEditor.h"
 #include "ui/softmenus.h"
 #include "ui/statusBar.h"
 #include "ui/tam.h"

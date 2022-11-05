@@ -39,6 +39,7 @@
 #include "stringFuncs.h"
 #include "ui/bufferize.h"
 #include "ui/keyboard.h"
+#include "ui/matrixEditor.h"
 #include "ui/screen.h"
 #include "ui/softmenus.h"
 #include "ui/statusBar.h"

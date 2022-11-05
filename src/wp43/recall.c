@@ -16,6 +16,7 @@
 #include "registers.h"
 #include "stack.h"
 #include "store.h"
+#include "ui/matrixEditor.h"
 #include <stdbool.h>
 
 #include "wp43.h"

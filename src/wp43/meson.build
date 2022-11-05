@@ -200,6 +200,7 @@ wp43_src = files(
   'ui/bufferize.c',
   'ui/cursor.c',
   'ui/keyboard.c',
+  'ui/matrixEditor.c',
   'ui/screen.c',
   'ui/softmenus.c',
   'ui/statusBar.c',

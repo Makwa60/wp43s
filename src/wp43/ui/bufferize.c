@@ -31,6 +31,7 @@
 #include "sort.h"
 #include "stack.h"
 #include "ui/cursor.h"
+#include "ui/matrixEditor.h"
 #include "ui/tam.h"
 #include <stdbool.h>
 #include <string.h>
