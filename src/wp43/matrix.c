@@ -463,7 +463,7 @@ bool recallStatsMatrix(void) {
       if(cols == 2 && rows >= 1) {
         regStats = findNamedVariable("STATS");
         if(regStats == INVALID_VARIABLE) {
-          allocateNamedVariable("STATS", dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES));
+          allocateNamedVariable("STATS", dtReal34, REAL34_SIZE_IN_BYTES);
           regStats = findNamedVariable("STATS");
         }
         #if defined(DEBUGUNDO)

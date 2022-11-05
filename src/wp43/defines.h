@@ -699,8 +699,9 @@
   #define storeToDtConfigDescriptor(config)    (configToStore->config = config)
   #define recallFromDtConfigDescriptor(config) (config = configToRecall->config)
   #define getRecalledSystemFlag(sf)            ((configToRecall->systemFlags &   ((uint64_t)1 << (sf & 0x3fff))) != 0)
-  #define TO_BLOCKS(n)                         (((n) + 3) >> 2)
-  #define TO_BYTES(n)                          ((n) << 2)
+  #define BITS_TO_SHIFT                        2 // 2 for a 2^2=4 byte block, 3 for a 2^3=8 byte block, ...
+  #define TO_BLOCKS(n)                         (((n) + ((1 << BITS_TO_SHIFT) - 1)) >> BITS_TO_SHIFT)
+  #define TO_BYTES(n)                          ((n) << BITS_TO_SHIFT)
   #define WP43_NULL                            65535 // NULL pointer
   #define TO_PCMEMPTR(p)                       ((void *)((p) == WP43_NULL ? NULL : ram + (p)))
   #define TO_WP43MEMPTR(p)                     ((p) == NULL ? WP43_NULL : (uint16_t)((dataBlock_t *)(p) - ram))

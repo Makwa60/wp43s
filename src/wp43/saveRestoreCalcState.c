@@ -1299,7 +1299,7 @@ static void skipMatrixData(char *type, char *value) {
 
 
 static bool restoreOneSection(uint16_t loadMode, uint16_t s, uint16_t n, uint16_t d) {
-  int16_t i, numberOfRegs;
+  int16_t numberOfRegs;
   calcRegister_t regist;
   char *str;
 
@@ -1308,7 +1308,7 @@ static bool restoreOneSection(uint16_t loadMode, uint16_t s, uint16_t n, uint16_
   if(strcmp(tmpString, "GLOBAL_REGISTERS") == 0) {
     readLine(tmpString); // Number of global registers
     numberOfRegs = stringToInt16(tmpString);
-    for(i=0; i<numberOfRegs; i++) {
+    for(int16_t i=0; i<numberOfRegs; i++) {
       readLine(tmpString); // Register number
       regist = stringToInt16(tmpString + 1);
       readLine(aimBuffer); // Register data type
@@ -1388,7 +1388,7 @@ static bool restoreOneSection(uint16_t loadMode, uint16_t s, uint16_t n, uint16_
     }
 
     if((loadMode != LM_ALL && loadMode != LM_REGISTERS) || lastErrorCode == ERROR_NONE) {
-      for(i=0; i<numberOfRegs; i++) {
+      for(int16_t i=0; i<numberOfRegs; i++) {
         readLine(tmpString); // Register number
         regist = stringToInt16(tmpString + 2) + FIRST_LOCAL_REGISTER;
         readLine(aimBuffer); // Register data type
@@ -1415,7 +1415,7 @@ static bool restoreOneSection(uint16_t loadMode, uint16_t s, uint16_t n, uint16_
   else if(strcmp(tmpString, "NAMED_VARIABLES") == 0) {
     readLine(tmpString); // Number of named variables
     numberOfRegs = stringToInt16(tmpString);
-    for(i=0; i<numberOfRegs; i++) {
+    for(int16_t i=0; i<numberOfRegs; i++) {
       readLine(errorMessage); // Variable name
       readLine(aimBuffer); // Variable data type
       readLine(tmpString); // Variable value
@@ -1436,7 +1436,7 @@ static bool restoreOneSection(uint16_t loadMode, uint16_t s, uint16_t n, uint16_
       initStatisticalSums();
     }
 
-    for(i=0; i<numberOfRegs; i++) {
+    for(int16_t i=0; i<numberOfRegs; i++) {
       readLine(tmpString); // statistical sum
       if(statisticalSumsPointer) { // likely
         if(loadMode == LM_ALL || loadMode == LM_SUMS) {
@@ -1456,7 +1456,7 @@ static bool restoreOneSection(uint16_t loadMode, uint16_t s, uint16_t n, uint16_
   else if(strcmp(tmpString, "KEYBOARD_ASSIGNMENTS") == 0) {
     readLine(tmpString); // Number of keys
     numberOfRegs = stringToInt16(tmpString);
-    for(i=0; i<numberOfRegs; i++) {
+    for(int16_t i=0; i<numberOfRegs; i++) {
       readLine(tmpString); // key
       if(loadMode == LM_ALL || loadMode == LM_SYSTEM_STATE) {
         str = tmpString;
@@ -1538,7 +1538,7 @@ static bool restoreOneSection(uint16_t loadMode, uint16_t s, uint16_t n, uint16_
       userKeyLabel = allocWp43(userKeyLabelSize);
       memset(userKeyLabel,   0, TO_BYTES(TO_BLOCKS(userKeyLabelSize)));
     }
-    for(i=0; i<numberOfRegs; i++) {
+    for(int16_t i=0; i<numberOfRegs; i++) {
       readLine(tmpString); // key
       if(loadMode == LM_ALL || loadMode == LM_SYSTEM_STATE) {
         str = tmpString;
@@ -1564,7 +1564,7 @@ static bool restoreOneSection(uint16_t loadMode, uint16_t s, uint16_t n, uint16_
   else if(strcmp(tmpString, "MYMENU") == 0) {
     readLine(tmpString); // Number of keys
     numberOfRegs = stringToInt16(tmpString);
-    for(i=0; i<numberOfRegs; i++) {
+    for(int16_t i=0; i<numberOfRegs; i++) {
       readLine(tmpString); // key
       if(loadMode == LM_ALL || loadMode == LM_SYSTEM_STATE) {
         str = tmpString;
@@ -1589,7 +1589,7 @@ static bool restoreOneSection(uint16_t loadMode, uint16_t s, uint16_t n, uint16_
   else if(strcmp(tmpString, "MYALPHA") == 0) {
     readLine(tmpString); // Number of keys
     numberOfRegs = stringToInt16(tmpString);
-    for(i=0; i<numberOfRegs; i++) {
+    for(int16_t i=0; i<numberOfRegs; i++) {
       readLine(tmpString); // key
       if(loadMode == LM_ALL || loadMode == LM_SYSTEM_STATE) {
         str = tmpString;
@@ -1619,7 +1619,7 @@ static bool restoreOneSection(uint16_t loadMode, uint16_t s, uint16_t n, uint16_
       int16_t target = -1;
       if(loadMode == LM_ALL || loadMode == LM_SYSTEM_STATE) {
         utf8ToString((uint8_t *)tmpString, tmpString + TMP_STR_LENGTH / 2);
-        for(i = 0; i < numberOfUserMenus; ++i) {
+        for(int16_t i = 0; i < numberOfUserMenus; ++i) {
           if(compareString(tmpString + TMP_STR_LENGTH / 2, userMenus[i].menuName, CMP_NAME) == 0) {
             target = i;
           }
@@ -1632,7 +1632,7 @@ static bool restoreOneSection(uint16_t loadMode, uint16_t s, uint16_t n, uint16_
 
       readLine(tmpString);
       numberOfRegs = stringToInt16(tmpString);
-      for(i=0; i<numberOfRegs; i++) {
+      for(int16_t i=0; i<numberOfRegs; i++) {
         readLine(tmpString); // key
         if(loadMode == LM_ALL || loadMode == LM_SYSTEM_STATE) {
           str = tmpString;
@@ -1656,19 +1656,19 @@ static bool restoreOneSection(uint16_t loadMode, uint16_t s, uint16_t n, uint16_
   }
 
   else if(strcmp(tmpString, "PROGRAMS") == 0) {
-    uint16_t numberOfBlocks;
-    uint16_t oldSizeInBlocks = RAM_SIZE - freeMemoryRegions[numberOfFreeMemoryRegions - 1].address - freeMemoryRegions[numberOfFreeMemoryRegions - 1].sizeInBlocks;
+    size_t numberOfBytes;
+    uint16_t oldSizeInBytes = TO_BYTES(RAM_SIZE - freeMemoryRegions[numberOfFreeMemoryRegions - 1].address - freeMemoryRegions[numberOfFreeMemoryRegions - 1].sizeInBlocks);
     uint8_t *oldFirstFreeProgramByte = firstFreeProgramByte;
     uint16_t oldFreeProgramBytes = freeProgramBytes;
 
     readLine(tmpString); // Number of blocks
-    numberOfBlocks = stringToUint16(tmpString);
+    numberOfBytes = TO_BYTES(stringToUint16(tmpString));
     if(loadMode == LM_ALL) {
-      resizeProgramMemory(numberOfBlocks);
+      resizeProgramMemory(numberOfBytes);
     }
     else if(loadMode == LM_PROGRAMS) {
-      resizeProgramMemory(oldSizeInBlocks + numberOfBlocks);
-      oldFirstFreeProgramByte = beginOfProgramMemory + TO_BYTES(oldSizeInBlocks) - oldFreeProgramBytes - 2;
+      resizeProgramMemory(oldSizeInBytes + numberOfBytes);
+      oldFirstFreeProgramByte = beginOfProgramMemory + oldSizeInBytes - oldFreeProgramBytes - 2;
     }
 
     readLine(tmpString); // currentStep (pointer to block)
@@ -1681,10 +1681,10 @@ static bool restoreOneSection(uint16_t loadMode, uint16_t s, uint16_t n, uint16_
     }
     else if(loadMode == LM_PROGRAMS) {
       if(programList[currentProgramNumber - 1].step > 0) {
-        currentStep.ram           -= TO_BYTES(numberOfBlocks);
-        firstDisplayedStep.ram    -= TO_BYTES(numberOfBlocks);
-        beginOfCurrentProgram.ram -= TO_BYTES(numberOfBlocks);
-        endOfCurrentProgram.ram   -= TO_BYTES(numberOfBlocks);
+        currentStep.ram           -= numberOfBytes;
+        firstDisplayedStep.ram    -= numberOfBytes;
+        beginOfCurrentProgram.ram -= numberOfBytes;
+        endOfCurrentProgram.ram   -= numberOfBytes;
       }
     }
 
@@ -1709,7 +1709,7 @@ static bool restoreOneSection(uint16_t loadMode, uint16_t s, uint16_t n, uint16_
       else {
         if(oldFreeProgramBytes + freeProgramBytes < 2) {
           uint16_t tmpFreeProgramBytes = freeProgramBytes;
-          resizeProgramMemory(oldSizeInBlocks + numberOfBlocks + 1);
+          resizeProgramMemory(oldSizeInBytes + numberOfBytes + TO_BYTES(1));
           oldFirstFreeProgramByte -= 4;
           freeProgramBytes = tmpFreeProgramBytes + 4;
           if(programList[currentProgramNumber - 1].step > 0) {
@@ -1726,14 +1726,13 @@ static bool restoreOneSection(uint16_t loadMode, uint16_t s, uint16_t n, uint16_
       }
     }
 
-    for(i=0; i<numberOfBlocks; i++) {
-      readLine(tmpString); // One block
+    for(size_t i=0; i<numberOfBytes; i++) {
+      readLine(tmpString); // One byte
       if(loadMode == LM_ALL) {
-        *(((uint32_t *)(beginOfProgramMemory)) + i) = stringToUint32(tmpString);
+        beginOfProgramMemory[i] = stringToUint8(tmpString);
       }
       else if(loadMode == LM_PROGRAMS) {
-        uint32_t tmpBlock = stringToUint32(tmpString);
-        xcopy(oldFirstFreeProgramByte + TO_BYTES(i), (uint8_t *)(&tmpBlock), 4);
+        oldFirstFreeProgramByte[i] = stringToUint8(tmpString);
       }
     }
 
@@ -1744,7 +1743,7 @@ static bool restoreOneSection(uint16_t loadMode, uint16_t s, uint16_t n, uint16_
     uint16_t formulae;
 
     if(loadMode == LM_ALL || loadMode == LM_PROGRAMS) {
-      for(i = numberOfFormulae; i > 0; --i) {
+      for(int16_t i = numberOfFormulae; i > 0; --i) {
         deleteEquation(i - 1);
       }
     }
@@ -1755,13 +1754,13 @@ static bool restoreOneSection(uint16_t loadMode, uint16_t s, uint16_t n, uint16_
       allFormulae = allocWp43(sizeof(formulaHeader_t) * formulae);
       numberOfFormulae = formulae;
       currentFormula = 0;
-      for(i = 0; i < formulae; i++) {
+      for(int16_t i = 0; i < formulae; i++) {
         allFormulae[i].pointerToFormulaData = WP43_NULL;
         allFormulae[i].sizeInBlocks = 0;
       }
     }
 
-    for(i = 0; i < formulae; i++) {
+    for(int16_t i = 0; i < formulae; i++) {
       readLine(tmpString); // One formula
       if(loadMode == LM_ALL || loadMode == LM_PROGRAMS) {
         utf8ToString((uint8_t *)tmpString, tmpString + TMP_STR_LENGTH / 2);
@@ -1773,7 +1772,7 @@ static bool restoreOneSection(uint16_t loadMode, uint16_t s, uint16_t n, uint16_
   else if(strcmp(tmpString, "OTHER_CONFIGURATION_STUFF") == 0) {
     readLine(tmpString); // Number params
     numberOfRegs = stringToInt16(tmpString);
-    for(i=0; i<numberOfRegs; i++) {
+    for(int16_t i=0; i<numberOfRegs; i++) {
       readLine(aimBuffer); // param
       readLine(tmpString); // value
       if(loadMode == LM_ALL || loadMode == LM_SYSTEM_STATE) {

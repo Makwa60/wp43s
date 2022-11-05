@@ -980,20 +980,21 @@ bool      _kbSeenInterrupt     = false;
 
 
   void leavePem(void) {
+      const uint16_t mask = ~((1 << BITS_TO_SHIFT) - 1); // 0xfffc for 4 byte blocks, 0xfff8 for 8 byte blocks, ...
     if(freeProgramBytes >= TO_BYTES(1)) { // Push the programs to the end of RAM
-      uint32_t newProgramSize = (uint32_t)((uint8_t *)(ram + RAM_SIZE) - beginOfProgramMemory) - (freeProgramBytes & 0xfffc);
+      uint32_t newProgramSize = (uint32_t)((uint8_t *)(ram + RAM_SIZE) - beginOfProgramMemory) - (freeProgramBytes & mask);
       uint16_t localStepNumber = currentLocalStepNumber;
       uint16_t programNumber = currentProgramNumber;
       uint16_t fdLocalStepNumber = firstDisplayedLocalStepNumber;
       bool     inRam = (programList[currentProgramNumber - 1].step > 0);
       if(inRam) {
-        currentStep.ram           += (freeProgramBytes & 0xfffc);
-        firstDisplayedStep.ram    += (freeProgramBytes & 0xfffc);
-        beginOfCurrentProgram.ram += (freeProgramBytes & 0xfffc);
-        endOfCurrentProgram.ram   += (freeProgramBytes & 0xfffc);
+        currentStep.ram           += (freeProgramBytes & mask);
+        firstDisplayedStep.ram    += (freeProgramBytes & mask);
+        beginOfCurrentProgram.ram += (freeProgramBytes & mask);
+        endOfCurrentProgram.ram   += (freeProgramBytes & mask);
       }
       freeProgramBytes &= 0x03;
-      resizeProgramMemory(TO_BLOCKS(newProgramSize));
+      resizeProgramMemory(newProgramSize);
       scanLabelsAndPrograms();
       if(inRam) {
         currentLocalStepNumber = localStepNumber;
