@@ -90,7 +90,7 @@ void fnNegBinomialP(uint16_t unusedButMandatoryParameter) {
       errorMoreInfo("a parameter is invalid");
     }
     else {
-      reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
+      reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
       convertRealToReal34ResultRegister(&ans, REGISTER_X);
     }
   }
@@ -114,7 +114,7 @@ void fnNegBinomialL(uint16_t unusedButMandatoryParameter) {
       errorMoreInfo("a parameter is invalid");
     }
     else {
-      reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
+      reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
       convertRealToReal34ResultRegister(&ans, REGISTER_X);
     }
   }
@@ -138,7 +138,7 @@ void fnNegBinomialR(uint16_t unusedButMandatoryParameter) {
       errorMoreInfo("a parameter is invalid");
     }
     else {
-      reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
+      reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
       convertRealToReal34ResultRegister(&ans, REGISTER_X);
     }
   }
@@ -167,7 +167,7 @@ void fnNegBinomialI(uint16_t unusedButMandatoryParameter) {
         errorMoreInfo("WP34S_Qf_Binomial did not converge");
       }
       else {
-        reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
+        reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
         convertRealToReal34ResultRegister(&ans, REGISTER_X);
       }
     }

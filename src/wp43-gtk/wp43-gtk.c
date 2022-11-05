@@ -13,6 +13,7 @@
 #include "saveRestoreCalcState.h"
 #include "ui/keyboard.h"
 #include "ui/screen.h"
+#include <assert.h>
 #include <stdbool.h>
 
 #include "wp43.h"
@@ -40,6 +41,7 @@ char                debugString[10000];
 #endif // EXPORT_ITEMS
 
 int main(int argc, char* argv[]) {
+  assert(sizeof(dataBlock_t) == (1 << BITS_TO_SHIFT));
   #if defined(__APPLE__)
     // we take the directory where the application is as the root for this application.
     // in argv[0] is the application itself. We strip the name of the app by searching for the last '/':

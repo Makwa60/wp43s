@@ -47,7 +47,7 @@ void fnBn(uint16_t unusedButMandatoryParameter) {
     #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
   }
   else {
-    reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
+    reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
     convertRealToReal34ResultRegister(&res, REGISTER_X);
   }
 
@@ -83,7 +83,7 @@ void fnBnStar(uint16_t unusedButMandatoryParameter) {
     #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
   }
   else {
-    reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
+    reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
     convertRealToReal34ResultRegister(&res, REGISTER_X);
   }
 

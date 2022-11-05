@@ -982,7 +982,7 @@ bool      _kbSeenInterrupt     = false;
   void leavePem(void) {
       const uint16_t mask = ~((1 << BITS_TO_SHIFT) - 1); // 0xfffc for 4 byte blocks, 0xfff8 for 8 byte blocks, ...
     if(freeProgramBytes >= TO_BYTES(1)) { // Push the programs to the end of RAM
-      uint32_t newProgramSize = (uint32_t)((uint8_t *)(ram + RAM_SIZE) - beginOfProgramMemory) - (freeProgramBytes & mask);
+      uint32_t newProgramSize = (uint32_t)((uint8_t *)(ram + RAM_SIZE_IN_BLOCKS) - beginOfProgramMemory) - (freeProgramBytes & mask);
       uint16_t localStepNumber = currentLocalStepNumber;
       uint16_t programNumber = currentProgramNumber;
       uint16_t fdLocalStepNumber = firstDisplayedLocalStepNumber;
@@ -1524,10 +1524,10 @@ void fnKeyEnter(uint16_t unusedButMandatoryParameter) {
           undo();
         }
         else {
-          int16_t len = stringByteLength(aimBuffer) + 1;
+          int16_t lenInBytes = stringByteLength(aimBuffer) + 1;
 
-          reallocateRegister(REGISTER_X, dtString, TO_BLOCKS(len), amNone);
-          xcopy(REGISTER_STRING_DATA(REGISTER_X), aimBuffer, len);
+          reallocateRegister(REGISTER_X, dtString, lenInBytes, amNone);
+          xcopy(REGISTER_STRING_DATA(REGISTER_X), aimBuffer, lenInBytes);
 
           setSystemFlag(FLAG_ASLIFT);
           #if defined(DEBUGUNDO)

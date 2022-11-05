@@ -66,7 +66,7 @@ void zetaLonI(void) {
 
   convertLongIntegerRegisterToReal(REGISTER_X, &x, &ctxtReal39);
   WP34S_Zeta(&x, &res, &ctxtReal39);
-  reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
+  reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
   convertRealToReal34ResultRegister(&res, REGISTER_X);
 }
 

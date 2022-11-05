@@ -139,7 +139,7 @@ void fnXToAlpha(uint16_t unusedButMandatoryParameter) {
 
   longIntegerFree(lgInt);
 
-  reallocateRegister(REGISTER_X, dtString, 1, amNone);
+  reallocateRegister(REGISTER_X, dtString, TO_BYTES(1), amNone);
   *(REGISTER_STRING_DATA(REGISTER_X))     = char1;
   *(REGISTER_STRING_DATA(REGISTER_X) + 1) = char2;
   *(REGISTER_STRING_DATA(REGISTER_X) + 2) = 0;

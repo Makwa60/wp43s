@@ -664,13 +664,13 @@ void debugNIM(void) {
 
     situationIsBad = false;
     for(i=0; i<FIRST_LOCAL_REGISTER; i++) {
-      if(TO_WP43MEMPTR(getRegisterDataPointer(i)) >= RAM_SIZE) {
+      if(TO_WP43MEMPTR(getRegisterDataPointer(i)) >= RAM_SIZE_IN_BLOCKS) {
         situationIsBad = true;
         break;
       }
 
       if(getRegisterDataType(i) == dtString || getRegisterDataType(i) == dtLongInteger) {
-        if(getRegisterMaxDataLength(i) >= RAM_SIZE) {
+        if(getRegisterMaxDataLength(i) >= RAM_SIZE_IN_BLOCKS) {
           situationIsBad = true;
           break;
         }
@@ -680,12 +680,12 @@ void debugNIM(void) {
     if(situationIsBad) {
       printf("\nsituation is bad %s\n", text);
       for(i=0; i<FIRST_LOCAL_REGISTER; i++) {
-        if(TO_WP43MEMPTR(getRegisterDataPointer(i)) >= RAM_SIZE) {
+        if(TO_WP43MEMPTR(getRegisterDataPointer(i)) >= RAM_SIZE_IN_BLOCKS) {
           printf("register %d    ptr=%d\n", i, TO_WP43MEMPTR(getRegisterDataPointer(i)));
         }
 
         if(getRegisterDataType(i) == dtString || getRegisterDataType(i) == dtLongInteger) {
-          if(getRegisterMaxDataLength(i) >= RAM_SIZE) {
+          if(getRegisterMaxDataLength(i) >= RAM_SIZE_IN_BLOCKS) {
             printf("register %d    ptr=%d     dataLen=%d (%d %d)\n", i, TO_WP43MEMPTR(getRegisterDataPointer(i)), TO_BYTES(getRegisterMaxDataLength(i)), TO_BYTES(getRegisterMaxDataLength(i)), TO_BYTES(getRegisterMaxDataLength(i)+1));
           }
         }
@@ -703,7 +703,7 @@ void debugNIM(void) {
 
     //if(debug) {
     //  debugCounter++;
-      printf("\n\n%s\nTotal memory = %d bytes = %d blocks\n", text, TO_BYTES(RAM_SIZE), RAM_SIZE);
+      printf("\n\n%s\nTotal memory = %d bytes = %d blocks\n", text, TO_BYTES(RAM_SIZE_IN_BLOCKS), RAM_SIZE_IN_BLOCKS);
       printf("Free blocks (%" PRId32 "):\n", numberOfFreeMemoryRegions);
 
       for(i=0; i<numberOfFreeMemoryRegions; i++) {

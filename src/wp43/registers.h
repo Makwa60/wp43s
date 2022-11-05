@@ -205,7 +205,7 @@
    */
   int16_t        indirectAddressing              (calcRegister_t regist, uint16_t parameterType, int16_t minValue, int16_t maxValue);
 
-  void           reallocateRegister              (calcRegister_t regist, uint32_t dataType, uint16_t dataSizeWithoutDataLenBlocks, uint32_t tag);
+  void           reallocateRegister              (calcRegister_t regist, uint32_t dataType, size_t dataSizeWithoutDataLenBytes, uint32_t tag);
   void           fnToReal                        (uint16_t unusedButMandatoryParameter);
 
   #if !defined(DMCP_BUILD)
