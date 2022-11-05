@@ -76,7 +76,7 @@ void fnTvmVar(uint16_t variable) {
               real34ChangeSign(&x);
           }
           if(solver(variable, &y, &x, &resZ, &resY, &resX) == SOLVER_RESULT_NORMAL) {
-            reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
+            reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
             real34Copy(&resX, REGISTER_REAL34_DATA(REGISTER_X));
             temporaryInformation = TI_SOLVER_VARIABLE;
             thereIsSomethingToUndo = false;
@@ -156,6 +156,6 @@ void tvmEquation(void) {
   realFMA(&pv, &i1nPer, &val, &val, &ctxtReal39);
   realSubtract(&val, &fv, &val, &ctxtReal39);
 
-  reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
+  reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
   convertRealToReal34ResultRegister(&val, REGISTER_X);
 }

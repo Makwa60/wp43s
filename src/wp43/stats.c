@@ -716,9 +716,9 @@ void fnSigma(uint16_t plusMinus) {
           }
 
           liftStack();
-          reallocateRegister(REGISTER_Y, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
+          reallocateRegister(REGISTER_Y, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
           convertRealToReal34ResultRegister(&y, REGISTER_Y);
-          reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
+          reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
           convertRealToReal34ResultRegister(&x, REGISTER_X);
           temporaryInformation = TI_STATISTIC_SUMS;
         }
@@ -1100,11 +1100,11 @@ static void convertStatsMatrixToHistoMatrix(uint16_t statsVariableToHistogram) {
         liftStack();
         liftStack();
         liftStack();
-        reallocateRegister(REGISTER_Z, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
+        reallocateRegister(REGISTER_Z, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
         convertRealToReal34ResultRegister(&nb, REGISTER_Z);
-        reallocateRegister(REGISTER_Y, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
+        reallocateRegister(REGISTER_Y, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
         convertRealToReal34ResultRegister(&lb, REGISTER_Y);
-        reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
+        reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
         convertRealToReal34ResultRegister(&hb, REGISTER_X);
         temporaryInformation = TI_STATISTIC_HISTO;
       }

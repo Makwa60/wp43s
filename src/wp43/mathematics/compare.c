@@ -299,7 +299,7 @@ static bool isEqualRealComplex(calcRegister_t registC, calcRegister_t registR) {
     return real34CompareEqual(REGISTER_REAL34_DATA(registC), REGISTER_REAL34_DATA(TEMP_REGISTER_1));
   }
   else {
-    reallocateRegister(TEMP_REGISTER_1, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
+    reallocateRegister(TEMP_REGISTER_1, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
     real34Copy(REGISTER_REAL34_DATA(registC), REGISTER_REAL34_DATA(TEMP_REGISTER_1));
     registerCmp(TEMP_REGISTER_1, registR, &result);
     return (result == 0);

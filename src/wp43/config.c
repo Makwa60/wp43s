@@ -597,12 +597,12 @@ void fnReset(uint16_t confirmation) {
     void *memPtr;
 
     if(ram == NULL) {
-      ram = (dataBlock_t *)malloc(TO_BYTES(RAM_SIZE));
+      ram = (dataBlock_t *)malloc(TO_BYTES(RAM_SIZE_IN_BLOCKS));
     }
-    memset(ram, 0, TO_BYTES(RAM_SIZE));
+    memset(ram, 0, TO_BYTES(RAM_SIZE_IN_BLOCKS));
     numberOfFreeMemoryRegions = 1;
     freeMemoryRegions[0].address = TO_BLOCKS(160);         // for reserved variables
-    freeMemoryRegions[0].sizeInBlocks = RAM_SIZE -  TO_BLOCKS(160) - 1; // - 1: one block for an empty program
+    freeMemoryRegions[0].sizeInBlocks = RAM_SIZE_IN_BLOCKS -  TO_BLOCKS(160) - 1; // - 1: one block for an empty program
 
     if(tmpString == NULL) {
       #if defined(DMCP_BUILD)
@@ -912,11 +912,11 @@ void fnReset(uint16_t confirmation) {
     //allocateLocalRegisters(3);
     //fnSetFlag(FIRST_LOCAL_REGISTER+0);
     //fnSetFlag(NUMBER_OF_GLOBAL_FLAGS+2);
-    //reallocateRegister(FIRST_LOCAL_REGISTER+0, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), RT_REAL);
+    //reallocateRegister(FIRST_LOCAL_REGISTER+0, dtReal34, REAL34_SIZE_IN_BYTES, RT_REAL);
     //stringToReal34("5.555", REGISTER_REAL34_DATA(FIRST_LOCAL_REGISTER));
 
     //strcpy(tmpString, "Pure ASCII string requiring 38 bytes!");
-    //reallocateRegister(FIRST_LOCAL_REGISTER+1, dtString, TO_BLOCKS(strlen(tmpString) + 1), amNone);
+    //reallocateRegister(FIRST_LOCAL_REGISTER+1, dtString, strlen(tmpString) + 1, amNone);
     //strcpy(REGISTER_STRING_DATA(FIRST_LOCAL_REGISTER + 1), tmpString);
 
 

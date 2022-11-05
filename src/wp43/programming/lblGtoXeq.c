@@ -469,12 +469,12 @@ void fnStopProgram(uint16_t unusedButMandatoryParameter) {
           }
         }
         else if(paramMode == PARAM_COMPARE && opParam == VALUE_0) {
-          reallocateRegister(TEMP_REGISTER_1, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
+          reallocateRegister(TEMP_REGISTER_1, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
           real34Copy(const34_0, REGISTER_REAL34_DATA(TEMP_REGISTER_1));
           reallyRunFunction(op, TEMP_REGISTER_1);
         }
         else if(paramMode == PARAM_COMPARE && opParam == VALUE_1) {
-          reallocateRegister(TEMP_REGISTER_1, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
+          reallocateRegister(TEMP_REGISTER_1, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
           real34Copy(const34_1, REGISTER_REAL34_DATA(TEMP_REGISTER_1));
           reallyRunFunction(op, TEMP_REGISTER_1);
         }
@@ -509,8 +509,8 @@ void fnStopProgram(uint16_t unusedButMandatoryParameter) {
       case BINARY_SHORT_INTEGER: {
         liftStack();
         setSystemFlag(FLAG_ASLIFT);
-        reallocateRegister(REGISTER_X, dtShortInteger, SHORT_INTEGER_SIZE, *(uint8_t *)(literalAddress++));
-        xcopy(REGISTER_DATA(REGISTER_X), literalAddress, TO_BYTES(SHORT_INTEGER_SIZE));
+        reallocateRegister(REGISTER_X, dtShortInteger, SHORT_INTEGER_SIZE_IN_BYTES, *(uint8_t *)(literalAddress++));
+        xcopy(REGISTER_DATA(REGISTER_X), literalAddress, SHORT_INTEGER_SIZE_IN_BYTES);
         break;
       }
 
@@ -521,7 +521,7 @@ void fnStopProgram(uint16_t unusedButMandatoryParameter) {
       case BINARY_REAL34: {
         liftStack();
         setSystemFlag(FLAG_ASLIFT);
-        reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
+        reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
         real34Copy((real34_t *)literalAddress, REGISTER_REAL34_DATA(REGISTER_X));
         break;
       }
@@ -530,7 +530,7 @@ void fnStopProgram(uint16_t unusedButMandatoryParameter) {
         complex34_t complexLiteral;
         liftStack();
         setSystemFlag(FLAG_ASLIFT);
-        reallocateRegister(REGISTER_X, dtComplex34, TO_BLOCKS(COMPLEX34_SIZE_IN_BYTES), amNone);
+        reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE_IN_BYTES, amNone);
         xcopy(VARIABLE_REAL34_DATA(&complexLiteral), literalAddress     , 16);
         xcopy(VARIABLE_IMAG34_DATA(&complexLiteral), literalAddress + 16, 16);
         complex34Copy(&complexLiteral, REGISTER_COMPLEX34_DATA(REGISTER_X));
@@ -578,7 +578,7 @@ void fnStopProgram(uint16_t unusedButMandatoryParameter) {
         _getStringLabelOrVariableName(literalAddress);
         liftStack();
         setSystemFlag(FLAG_ASLIFT);
-        reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
+        reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
         stringToReal34(tmpStringLabelOrVariableName, REGISTER_REAL34_DATA(REGISTER_X));
         break;
       }
@@ -603,7 +603,7 @@ void fnStopProgram(uint16_t unusedButMandatoryParameter) {
         }
         liftStack();
         setSystemFlag(FLAG_ASLIFT);
-        reallocateRegister(REGISTER_X, dtComplex34, TO_BLOCKS(COMPLEX34_SIZE_IN_BYTES), amNone);
+        reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE_IN_BYTES, amNone);
         stringToReal34(tmpStringLabelOrVariableName, REGISTER_REAL34_DATA(REGISTER_X));
         stringToReal34(imag,                         REGISTER_IMAG34_DATA(REGISTER_X));
         break;
@@ -613,7 +613,7 @@ void fnStopProgram(uint16_t unusedButMandatoryParameter) {
         _getStringLabelOrVariableName(literalAddress);
         liftStack();
         setSystemFlag(FLAG_ASLIFT);
-        reallocateRegister(REGISTER_X, dtString, TO_BLOCKS(stringByteLength(tmpStringLabelOrVariableName) + 1), amNone);
+        reallocateRegister(REGISTER_X, dtString, stringByteLength(tmpStringLabelOrVariableName) + 1, amNone);
         xcopy(REGISTER_STRING_DATA(REGISTER_X), tmpStringLabelOrVariableName, stringByteLength(tmpStringLabelOrVariableName) + 1);
         break;
       }
@@ -622,7 +622,7 @@ void fnStopProgram(uint16_t unusedButMandatoryParameter) {
         _getStringLabelOrVariableName(literalAddress);
         liftStack();
         setSystemFlag(FLAG_ASLIFT);
-        reallocateRegister(REGISTER_X, dtDate, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
+        reallocateRegister(REGISTER_X, dtDate, REAL34_SIZE_IN_BYTES, amNone);
         stringToReal34(tmpStringLabelOrVariableName, REGISTER_REAL34_DATA(REGISTER_X));
         julianDayToInternalDate(REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X));
         break;
@@ -632,7 +632,7 @@ void fnStopProgram(uint16_t unusedButMandatoryParameter) {
         _getStringLabelOrVariableName(literalAddress);
         liftStack();
         setSystemFlag(FLAG_ASLIFT);
-        reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
+        reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
         stringToReal34(tmpStringLabelOrVariableName, REGISTER_REAL34_DATA(REGISTER_X));
         hmmssInRegisterToSeconds(REGISTER_X);
         break;
@@ -642,7 +642,7 @@ void fnStopProgram(uint16_t unusedButMandatoryParameter) {
         _getStringLabelOrVariableName(literalAddress);
         liftStack();
         setSystemFlag(FLAG_ASLIFT);
-        reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amDMS);
+        reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, amDMS);
         stringToReal34(tmpStringLabelOrVariableName, REGISTER_REAL34_DATA(REGISTER_X));
         real34FromDmsToDeg(REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X));
         break;

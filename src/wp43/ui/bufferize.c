@@ -2159,7 +2159,7 @@
               return;
             }
 
-            reallocateRegister(REGISTER_X, dtShortInteger, SHORT_INTEGER_SIZE, base);
+            reallocateRegister(REGISTER_X, dtShortInteger, SHORT_INTEGER_SIZE_IN_BYTES, base);
 
             char strValue[22];
             longIntegerToAllocatedString(value, strValue, sizeof(strValue));
@@ -2197,15 +2197,15 @@
             longIntegerFree(value);
           }
           else if(nimNumberPart == NP_REAL_FLOAT_PART || nimNumberPart == NP_REAL_EXPONENT) {
-            reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
+            reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
             stringToReal34(aimBuffer, REGISTER_REAL34_DATA(REGISTER_X));
           }
           else if(nimNumberPart == NP_FRACTION_DENOMINATOR) {
-            reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
+            reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
             closeNimWithFraction(REGISTER_REAL34_DATA(REGISTER_X));
           }
           else if(nimNumberPart == NP_COMPLEX_INT_PART || nimNumberPart == NP_COMPLEX_FLOAT_PART || nimNumberPart == NP_COMPLEX_EXPONENT) {
-            reallocateRegister(REGISTER_X, dtComplex34, TO_BLOCKS(COMPLEX34_SIZE_IN_BYTES), amNone);
+            reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE_IN_BYTES, amNone);
             closeNimWithComplex(REGISTER_REAL34_DATA(REGISTER_X), REGISTER_IMAG34_DATA(REGISTER_X));
           }
           else {
@@ -2230,11 +2230,11 @@
       undo();
     }
     else {
-      int16_t len = stringByteLength(aimBuffer) + 1;
+      int16_t lenInBytes = stringByteLength(aimBuffer) + 1;
 
-      reallocateRegister(REGISTER_X, dtString, TO_BLOCKS(len), amNone);
+      reallocateRegister(REGISTER_X, dtString, lenInBytes, amNone);
 
-      xcopy(REGISTER_STRING_DATA(REGISTER_X), aimBuffer, len);
+      xcopy(REGISTER_STRING_DATA(REGISTER_X), aimBuffer, lenInBytes);
       aimBuffer[0] = 0;
 
       setSystemFlag(FLAG_ASLIFT);

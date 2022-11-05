@@ -204,7 +204,7 @@ void freeGmp(void *pcMemPtr, size_t sizeInBytes) {
 
 
 void resizeProgramMemory(size_t newSizeInBytes) {
-  size_t currentSizeInBytes = TO_BYTES(RAM_SIZE - freeMemoryRegions[numberOfFreeMemoryRegions - 1].address - freeMemoryRegions[numberOfFreeMemoryRegions - 1].sizeInBlocks);
+  size_t currentSizeInBytes = TO_BYTES(RAM_SIZE_IN_BLOCKS - freeMemoryRegions[numberOfFreeMemoryRegions - 1].address - freeMemoryRegions[numberOfFreeMemoryRegions - 1].sizeInBlocks);
   size_t deltaBytes, bytesToMove = 0;
   uint8_t *newProgramMemoryPointer = NULL;
 
@@ -735,7 +735,7 @@ void resizeProgramMemory(size_t newSizeInBytes) {
     }
 
     fprintf(stdout, "\n| block | hex               dec | hec      dec | hex  dec |\n");
-    for(uint16_t block=0; block<RAM_SIZE; block++) {
+    for(uint16_t block=0; block<RAM_SIZE_IN_BLOCKS; block++) {
       fprintf(stdout, "+-------+-----------------------+--------------+----------+\n");
       fprintf(stdout, "| %5u | %08x = %10u | %04x = %5u | %02x = %3u |  ", block, *(uint32_t *)(ram + block), *(uint32_t *)(ram + block), *(uint16_t *)(ram + block), *(uint16_t *)(ram + block), *(uint8_t *)(ram + block), *(uint8_t *)(ram + block));
       findBlockUsage(block);

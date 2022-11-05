@@ -68,7 +68,7 @@ void fnGeometricP(uint16_t unusedButMandatoryParameter) {
 
   if(checkParamGeometric(&val, &prob)) {
     WP34S_Pdf_Geom(&val, &prob, &ans, &ctxtReal39);
-    reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
+    reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
     convertRealToReal34ResultRegister(&ans, REGISTER_X);
   }
 
@@ -86,7 +86,7 @@ void fnGeometricL(uint16_t unusedButMandatoryParameter) {
 
   if(checkParamGeometric(&val, &prob)) {
     WP34S_Cdf_Geom(&val, &prob, &ans, &ctxtReal39);
-    reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
+    reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
     convertRealToReal34ResultRegister(&ans, REGISTER_X);
   }
 
@@ -104,7 +104,7 @@ void fnGeometricR(uint16_t unusedButMandatoryParameter) {
 
   if(checkParamGeometric(&val, &prob)) {
     WP34S_Cdfu_Geom(&val, &prob, &ans, &ctxtReal39);
-    reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
+    reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
     convertRealToReal34ResultRegister(&ans, REGISTER_X);
   }
 
@@ -127,7 +127,7 @@ void fnGeometricI(uint16_t unusedButMandatoryParameter) {
     }
     else {
       WP34S_Qf_Geom(&val, &prob, &ans, &ctxtReal39);
-      reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
+      reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
       convertRealToReal34ResultRegister(&ans, REGISTER_X);
     }
   }

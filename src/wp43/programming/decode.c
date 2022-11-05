@@ -445,8 +445,8 @@ static void _decodeNumeral(char *startPtr, const char *srcStartPtr, bool isLongI
 static void decodeLiteral(uint8_t *literalAddress) {
   switch(*(uint8_t *)(literalAddress++)) {
     case BINARY_SHORT_INTEGER: {
-      reallocateRegister(TEMP_REGISTER_1, dtShortInteger, SHORT_INTEGER_SIZE, *(uint8_t *)(literalAddress++));
-      xcopy(REGISTER_DATA(TEMP_REGISTER_1), literalAddress, TO_BYTES(SHORT_INTEGER_SIZE));
+      reallocateRegister(TEMP_REGISTER_1, dtShortInteger, SHORT_INTEGER_SIZE_IN_BYTES, *(uint8_t *)(literalAddress++));
+      xcopy(REGISTER_DATA(TEMP_REGISTER_1), literalAddress, SHORT_INTEGER_SIZE_IN_BYTES);
       shortIntegerToDisplayString(TEMP_REGISTER_1, tmpString, false);
       break;
     }
@@ -559,7 +559,7 @@ static void decodeLiteral(uint8_t *literalAddress) {
 
     case STRING_DATE: {
       getStringLabelOrVariableName(literalAddress);
-      reallocateRegister(TEMP_REGISTER_1, dtDate, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
+      reallocateRegister(TEMP_REGISTER_1, dtDate, REAL34_SIZE_IN_BYTES, amNone);
       stringToReal34(tmpStringLabelOrVariableName, REGISTER_REAL34_DATA(TEMP_REGISTER_1));
       julianDayToInternalDate(REGISTER_REAL34_DATA(TEMP_REGISTER_1), REGISTER_REAL34_DATA(TEMP_REGISTER_1));
       dateToDisplayString(TEMP_REGISTER_1, tmpString);

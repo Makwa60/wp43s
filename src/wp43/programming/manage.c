@@ -559,7 +559,7 @@ static void _insertInProgram(const uint8_t *dat, uint16_t sizeInBytes) {
   uint16_t globalStepNumber;
   if(freeProgramBytes < sizeInBytes) {
     uint8_t *oldBeginOfProgramMemory = beginOfProgramMemory;
-    uint32_t programSizeInBytes = TO_BYTES(RAM_SIZE - freeMemoryRegions[numberOfFreeMemoryRegions - 1].address - freeMemoryRegions[numberOfFreeMemoryRegions - 1].sizeInBlocks);
+    uint32_t programSizeInBytes = TO_BYTES(RAM_SIZE_IN_BLOCKS - freeMemoryRegions[numberOfFreeMemoryRegions - 1].address - freeMemoryRegions[numberOfFreeMemoryRegions - 1].sizeInBlocks);
     uint32_t newProgramSizeInBytes = TO_BYTES(TO_BLOCKS(programSizeInBytes - freeProgramBytes + sizeInBytes));
     freeProgramBytes      += newProgramSizeInBytes - programSizeInBytes;
     resizeProgramMemory(newProgramSizeInBytes);
@@ -874,7 +874,7 @@ static void _pemCloseDateInput(void) {
         *(tmpPtr++) = ITM_LITERAL;
         *(tmpPtr++) = STRING_DATE;
 
-        reallocateRegister(TEMP_REGISTER_1, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
+        reallocateRegister(TEMP_REGISTER_1, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
         stringToReal34(numBuffer, REGISTER_REAL34_DATA(TEMP_REGISTER_1));
         convertReal34RegisterToDateRegister(TEMP_REGISTER_1, TEMP_REGISTER_1);
         internalDateToJulianDay(REGISTER_REAL34_DATA(TEMP_REGISTER_1), REGISTER_REAL34_DATA(TEMP_REGISTER_1));
