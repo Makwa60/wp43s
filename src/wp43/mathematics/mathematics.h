@@ -109,6 +109,7 @@
   #include "sinc.h"
   #include "sincpi.h"
   #include "sinh.h"
+  #include "slvc.h"
   #include "slvq.h"
   #include "sqrt1Px2.h"
   #include "square.h"
