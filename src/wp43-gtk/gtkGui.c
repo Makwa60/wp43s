@@ -194,7 +194,7 @@ void frmCalcMouseButtonReleased(GtkWidget *notUsed, GdkEvent *event, gpointer da
 
     skin = fopen(BASEPATH "res/artwork/skin.cfg", "rb");
     if(skin == NULL) {
-      moreInfoOnError("In function prepareSkin:", "error opening file " BASEPATH "res/artwork/skin.cfg!", NULL, NULL);
+      errorMoreInfo("error opening file " BASEPATH "res/artwork/skin.cfg!");
       exit(1);
     }
 
@@ -210,7 +210,7 @@ void frmCalcMouseButtonReleased(GtkWidget *notUsed, GdkEvent *event, gpointer da
     }
 
     if(skinDirectory[0] == 0) {
-      moreInfoOnError("In function prepareSkin:", "cannot find skinDirectory in file res/artwork/skin.cfg!", NULL, NULL);
+      errorMoreInfo("cannot find skinDirectory in file res/artwork/skin.cfg!");
       exit(1);
     }
 
@@ -219,7 +219,7 @@ void frmCalcMouseButtonReleased(GtkWidget *notUsed, GdkEvent *event, gpointer da
     sprintf(fileName, "%s%s", skinDirectory, calcLandscape ? "landscapeSkin.cfg" : "portraitSkin.cfg");
     skin = fopen(fileName, "rb");
     if(skin == NULL) {
-      moreInfoOnError("In function prepareSkin:", "error opening file", fileName, NULL);
+      errorMoreInfo("error opening file '%s'", fileName);
       exit(1);
     }
 
@@ -231,7 +231,7 @@ void frmCalcMouseButtonReleased(GtkWidget *notUsed, GdkEvent *event, gpointer da
         if(!strcmp(parameter, "backgroundImage")) {
           sprintf(fileName, "%s%s", skinDirectory, value);
           if(access(fileName, F_OK) != 0) {
-            moreInfoOnError("In function prepareSkin:", "error: cannot access file", fileName, NULL);
+            errorMoreInfo("error: cannot access file '%s'", fileName);
             exit(1);
           }
           backgroundImage = gtk_image_new_from_file(fileName);
@@ -254,7 +254,7 @@ void frmCalcMouseButtonReleased(GtkWidget *notUsed, GdkEvent *event, gpointer da
         if(!strcmp(parameter, "behindScreen")) {
           sprintf(fileName, "%s%s", skinDirectory, value);
           if(access(fileName, F_OK) != 0) {
-            moreInfoOnError("In function prepareSkin:", "error: cannot access file", fileName, NULL);
+            errorMoreInfo("error: cannot access file '%s'", fileName);
             exit(1);
           }
           behindScreenImage = gtk_image_new_from_file(fileName);
@@ -274,7 +274,7 @@ void frmCalcMouseButtonReleased(GtkWidget *notUsed, GdkEvent *event, gpointer da
         if(!strcmp(parameter, "fgShiftedArea")) {
           sprintf(fileName, "%s%s", skinDirectory, value);
           if(access(fileName, F_OK) != 0) {
-            moreInfoOnError("In function prepareSkin:", "error: cannot access file", fileName, NULL);
+            errorMoreInfo("error: cannot access file '%s'", fileName);
             exit(1);
           }
           fgShiftedArea1 = gtk_image_new_from_file(fileName);
@@ -309,7 +309,7 @@ void frmCalcMouseButtonReleased(GtkWidget *notUsed, GdkEvent *event, gpointer da
               if(parameter[5] == 'i') {
                 sprintf(fileName, "%s%s", skinDirectory, value);
                 if(access(fileName, F_OK) != 0) {
-                  moreInfoOnError("In function prepareSkin:", "error: cannot access file", fileName, NULL);
+                  errorMoreInfo("error: cannot access file '%s'", fileName);
                   exit(1);
                 }
                 bezelImage[layout] = gtk_image_new_from_file(fileName);
@@ -377,7 +377,7 @@ void frmCalcMouseButtonReleased(GtkWidget *notUsed, GdkEvent *event, gpointer da
             if(!strcmp(parameter + 5, _layoutNames[layout])) {
               sprintf(fileName, "%s%s", skinDirectory, value);
               if(access(fileName, F_OK) != 0) {
-                moreInfoOnError("In function prepareSkin:", "error: cannot access file", fileName, NULL);
+                errorMoreInfo("error: cannot access file '%s'", fileName);
                 exit(1);
               }
               calcKeyboard[calcKey].keyImage[layout] = gtk_image_new_from_file(fileName);
@@ -395,7 +395,7 @@ void frmCalcMouseButtonReleased(GtkWidget *notUsed, GdkEvent *event, gpointer da
           if(!strcmp(parameter + 5, "TAM_L")) {
             sprintf(fileName, "%s%s", skinDirectory, value);
             if(access(fileName, F_OK) != 0) {
-              moreInfoOnError("In function prepareSkin:", "error: cannot access file", fileName, NULL);
+              errorMoreInfo("error: cannot access file '%s'", fileName);
               exit(1);
             }
             calcKeyboard[calcKey].keyImage[TAM_L_LAYOUT] = gtk_image_new_from_file(fileName);
@@ -425,7 +425,7 @@ void frmCalcMouseButtonReleased(GtkWidget *notUsed, GdkEvent *event, gpointer da
     // Convert the pre-CSS data to CSS data
     cssFile = fopen(CSSFILE, "rb");
     if(cssFile == NULL) {
-      moreInfoOnError("In function prepareCssData:", "error opening file " CSSFILE "!", NULL, NULL);
+      errorMoreInfo("error opening file " CSSFILE "!");
       exit(1);
     }
 
@@ -436,7 +436,7 @@ void frmCalcMouseButtonReleased(GtkWidget *notUsed, GdkEvent *event, gpointer da
 
     cssData = malloc(2*fileLg); // To be sure there is enough space
     if(cssData == NULL) {
-      moreInfoOnError("In function prepareCssData:", "error allocating 10000 bytes for CSS data", NULL, NULL);
+      errorMoreInfo("error allocating 10000 bytes for CSS data");
       exit(1);
     }
 
@@ -457,7 +457,7 @@ void frmCalcMouseButtonReleased(GtkWidget *notUsed, GdkEvent *event, gpointer da
 
       replaceWith = strstr(toReplace, " with ");
       if(replaceWith == NULL) {
-        moreInfoOnError("In function prepareCssData:", "Can't find \" with \" after \"/* Replace $\" in CSS file " CSSFILE, NULL, NULL);
+        errorMoreInfo("Can't find \" with \" after \"/* Replace $\" in CSS file " CSSFILE);
         exit(1);
       }
 
@@ -475,7 +475,7 @@ void frmCalcMouseButtonReleased(GtkWidget *notUsed, GdkEvent *event, gpointer da
     }
 
     if(strstr(cssData, "$") != NULL) {
-      moreInfoOnError("In function prepareCssData:", "There is still an unreplaced $ in the CSS file!\nPlease check file " CSSFILE, NULL, NULL);
+      errorMoreInfo("There is still an unreplaced $ in the CSS file!\nPlease check file " CSSFILE);
       printf("%s\n", cssData);
       exit(1);
     }
@@ -707,7 +707,7 @@ void setupUI(void) {
     error = NULL;
     gtk_css_provider_load_from_data(cssProvider, cssData, -1, &error);
     if(error != NULL) {
-      moreInfoOnError("In function setupUI:", "error while loading CSS style sheet " CSSFILE, NULL, NULL);
+      errorMoreInfo("error while loading CSS style sheet " CSSFILE);
       exit(1);
     }
     g_object_unref(cssProvider);
@@ -769,8 +769,7 @@ void setupUI(void) {
     int numBytes = screenStride * SCREEN_HEIGHT * 4;
     screenData = malloc(numBytes);
     if(screenData == NULL) {
-      sprintf(errorMessage, "error allocating %d x %d = %d bytes for screenData", screenStride * 4, SCREEN_HEIGHT, numBytes);
-      moreInfoOnError("In function setupUI:", errorMessage, NULL, NULL);
+      errorMoreInfo("error allocating %d x %d = %d bytes for screenData", screenStride * 4, SCREEN_HEIGHT, numBytes);
       exit(1);
     }
 
@@ -936,8 +935,7 @@ void setupUI(void) {
     int numBytes = screenStride * SCREEN_HEIGHT * 4;
     screenData = malloc(numBytes);
     if(screenData == NULL) {
-      sprintf(errorMessage, "error allocating %d x %d = %d bytes for screenData", screenStride * 4, SCREEN_HEIGHT, numBytes);
-      moreInfoOnError("In function setupUI:", errorMessage, NULL, NULL);
+      errorMoreInfo("error allocating %d x %d = %d bytes for screenData", screenStride * 4, SCREEN_HEIGHT, numBytes);
       exit(1);
     }
 

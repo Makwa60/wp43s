@@ -99,10 +99,7 @@ static uint16_t _getKeyArg(uint16_t regist) {
       }
       default: {
         displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, REGISTER_X);
-        #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-          sprintf(errorMessage, "cannot use %s for the parameter of CASE", getRegisterDataTypeName(REGISTER_X, true, false));
-          moreInfoOnError("In function fnCase:", errorMessage, NULL, NULL);
-        #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+        errorMoreInfo("cannot use %s for the parameter of CASE", getRegisterDataTypeName(REGISTER_X, true, false));
         return 0;
       }
     }
@@ -142,10 +139,7 @@ void fnKey(uint16_t regist) {
     }
     else {
       displayCalcErrorMessage(ERROR_OUT_OF_RANGE, ERR_REGISTER_LINE, REGISTER_X);
-      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-        sprintf(errorMessage, "register %u is out of range", regist);
-        moreInfoOnError("In function fnKey:", errorMessage, NULL, NULL);
-      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+      errorMoreInfo("register %u is out of range", regist);
     }
   }
 }
@@ -249,10 +243,7 @@ void fnKeyType(uint16_t regist) {
 
     default: {
       displayCalcErrorMessage(ERROR_OUT_OF_RANGE, ERR_REGISTER_LINE, REGISTER_X);
-      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-        sprintf(errorMessage, "keycode %u is out of range", rowColumn);
-        moreInfoOnError("In function fnKeyType:", errorMessage, NULL, NULL);
-      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+      errorMoreInfo("keycode %u is out of range", rowColumn);
       longIntegerFree(kt);
       return;
     }
@@ -276,10 +267,7 @@ void fnPutKey(uint16_t regist) {
     }
     else {
       displayCalcErrorMessage(ERROR_OUT_OF_RANGE, ERR_REGISTER_LINE, REGISTER_X);
-      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-        sprintf(errorMessage, "keycode %u is out of range", keyCode);
-        moreInfoOnError("In function fnPutKey:", errorMessage, NULL, NULL);
-      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+      errorMoreInfo("keycode %u is out of range", keyCode);
     }
 
     programRunStop = PGM_WAITING;

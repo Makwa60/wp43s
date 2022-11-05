@@ -293,19 +293,16 @@ void fnSetSignificantDigits(uint16_t unusedButMandatoryParameter) {
     }
     else {
       displayCalcErrorMessage(ERROR_ARG_EXCEEDS_FUNCTION_DOMAIN, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
-      #if defined(PC_BUILD)
+      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
         longIntegerToAllocatedString(sigDigits, errorMessage, sizeof(errorMessage));
-        moreInfoOnError("In function fnSetSignificantDigits:", errorMessage, "is out of range.", "");
-      #endif // PC_BUILD
+        errorMoreInfo("'%s' is out of range", errorMessage);
+      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
     }
     longIntegerFree(sigDigits);
   }
   else {
     displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
-    #if defined(PC_BUILD)
-      sprintf(errorMessage, "DataType %" PRIu32, getRegisterDataType(REGISTER_X));
-      moreInfoOnError("In function fnSetSignificantDigits:", errorMessage, "is not a long integer.", "");
-    #endif // PC_BUILD
+    errorMoreInfo("DataType %" PRIu32 " is not a long integer", getRegisterDataType(REGISTER_X));
   }
 }
 
@@ -400,10 +397,7 @@ void fnRange(uint16_t unusedButMandatoryParameter) {
   }
   else {
     displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, REGISTER_X);
-    #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-      sprintf(errorMessage, "cannot use %s for setting RANGE", getRegisterDataTypeName(REGISTER_X, true, true));
-      moreInfoOnError("In function fnRange:", errorMessage, NULL, NULL);
-    #endif //  (EXTRA_INFO_ON_CALC_ERROR == 1)
+    errorMoreInfo("cannot use %s for setting RANGE", getRegisterDataTypeName(REGISTER_X, true, true));
     return;
   }
 
@@ -448,10 +442,7 @@ void fnHide(uint16_t unusedButMandatoryParameter) {
   }
   else {
     displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, REGISTER_X);
-    #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-      sprintf(errorMessage, "cannot use %s for setting HIDE", getRegisterDataTypeName(REGISTER_X, true, true));
-      moreInfoOnError("In function fnHide:", errorMessage, NULL, NULL);
-    #endif //  (EXTRA_INFO_ON_CALC_ERROR == 1)
+    errorMoreInfo("cannot use %s for setting HIDE", getRegisterDataTypeName(REGISTER_X, true, true));
     return;
   }
 
@@ -532,7 +523,7 @@ void fnClAll(uint16_t confirmation) {
 void addTestPrograms(void) {
   uint32_t numberOfBytesUsed, numberOfBytesForTheTestPrograms = TO_BYTES(TO_BLOCKS(11509));
 
-  resizeProgramMemory(TO_BLOCKS(numberOfBytesForTheTestPrograms));
+  resizeProgramMemory(numberOfBytesForTheTestPrograms);
   firstDisplayedStep.ram        = beginOfProgramMemory;
   currentStep.ram               = beginOfProgramMemory;
   currentLocalStepNumber        = 1;
@@ -606,12 +597,12 @@ void fnReset(uint16_t confirmation) {
     void *memPtr;
 
     if(ram == NULL) {
-      ram = (dataBlock_t *)malloc(TO_BYTES(RAM_SIZE));
+      ram = (dataBlock_t *)malloc(TO_BYTES(RAM_SIZE_IN_BLOCKS));
     }
-    memset(ram, 0, TO_BYTES(RAM_SIZE));
+    memset(ram, 0, TO_BYTES(RAM_SIZE_IN_BLOCKS));
     numberOfFreeMemoryRegions = 1;
-    freeMemoryRegions[0].address = 40;                     // for reserved variables
-    freeMemoryRegions[0].sizeInBlocks = RAM_SIZE - 40 - 1; // - 1: one block for an empty program
+    freeMemoryRegions[0].address = TO_BLOCKS(160);         // for reserved variables
+    freeMemoryRegions[0].sizeInBlocks = RAM_SIZE_IN_BLOCKS -  TO_BLOCKS(160) - 1; // - 1: one block for an empty program
 
     if(tmpString == NULL) {
       #if defined(DMCP_BUILD)
@@ -725,19 +716,19 @@ void fnReset(uint16_t confirmation) {
     allNamedVariables = NULL;
 
 
-    allocateNamedVariable("Mat_A", dtReal34Matrix, TO_BLOCKS(REAL34_SIZE_IN_BYTES) + 1);
+    allocateNamedVariable("Mat_A", dtReal34Matrix, REAL34_SIZE_IN_BYTES + 4);
     memPtr = getRegisterDataPointer(FIRST_NAMED_VARIABLE);
     ((dataBlock_t *)memPtr)->matrixRows = 1;
     ((dataBlock_t *)memPtr)->matrixColumns = 1;
     real34Zero(memPtr + 4);
 
-    allocateNamedVariable("Mat_B", dtReal34Matrix, TO_BLOCKS(REAL34_SIZE_IN_BYTES) + 1);
+    allocateNamedVariable("Mat_B", dtReal34Matrix, REAL34_SIZE_IN_BYTES + 4);
     memPtr = getRegisterDataPointer(FIRST_NAMED_VARIABLE + 1);
     ((dataBlock_t *)memPtr)->matrixRows = 1;
     ((dataBlock_t *)memPtr)->matrixColumns = 1;
     real34Zero(memPtr + 4);
 
-    allocateNamedVariable("Mat_X", dtReal34Matrix, TO_BLOCKS(REAL34_SIZE_IN_BYTES) + 1);
+    allocateNamedVariable("Mat_X", dtReal34Matrix, REAL34_SIZE_IN_BYTES + 4);
     memPtr = getRegisterDataPointer(FIRST_NAMED_VARIABLE + 2);
     ((dataBlock_t *)memPtr)->matrixRows = 1;
     ((dataBlock_t *)memPtr)->matrixColumns = 1;
@@ -921,11 +912,11 @@ void fnReset(uint16_t confirmation) {
     //allocateLocalRegisters(3);
     //fnSetFlag(FIRST_LOCAL_REGISTER+0);
     //fnSetFlag(NUMBER_OF_GLOBAL_FLAGS+2);
-    //reallocateRegister(FIRST_LOCAL_REGISTER+0, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), RT_REAL);
+    //reallocateRegister(FIRST_LOCAL_REGISTER+0, dtReal34, REAL34_SIZE_IN_BYTES, RT_REAL);
     //stringToReal34("5.555", REGISTER_REAL34_DATA(FIRST_LOCAL_REGISTER));
 
     //strcpy(tmpString, "Pure ASCII string requiring 38 bytes!");
-    //reallocateRegister(FIRST_LOCAL_REGISTER+1, dtString, TO_BLOCKS(strlen(tmpString) + 1), amNone);
+    //reallocateRegister(FIRST_LOCAL_REGISTER+1, dtString, strlen(tmpString) + 1, amNone);
     //strcpy(REGISTER_STRING_DATA(FIRST_LOCAL_REGISTER + 1), tmpString);
 
 

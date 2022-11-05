@@ -60,10 +60,7 @@
     }
     else {
       displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, REGISTER_X);
-      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-        sprintf(errorMessage, "cannot accept %s as the argument", getRegisterDataTypeName(regist, true, false));
-        moreInfoOnError("In function getArg:", errorMessage, NULL, NULL);
-      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+      errorMoreInfo("cannot accept %s as the argument", getRegisterDataTypeName(regist, true, false));
       return false;
     }
     return true;
@@ -76,10 +73,7 @@
     if(((getRegisterDataType(REGISTER_X) != dtLongInteger) && (getRegisterDataType(REGISTER_X) != dtReal34)) ||
       ((getRegisterDataType(REGISTER_Y) != dtLongInteger) && (getRegisterDataType(REGISTER_Y) != dtReal34))) {
         displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
-        #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-          sprintf(errorMessage, "invalid data type %s and %s", getRegisterDataTypeName(REGISTER_Y, true, false), getRegisterDataTypeName(REGISTER_X, true, false));
-          moreInfoOnError("In function getDimensionArg:", errorMessage, NULL, NULL);
-        #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+        errorMoreInfo("invalid data type %s and %s", getRegisterDataTypeName(REGISTER_Y, true, false), getRegisterDataTypeName(REGISTER_X, true, false));
         return false;
     }
 
@@ -94,8 +88,7 @@
       #if (EXTRA_INFO_ON_CALC_ERROR == 1)
         char strbuf[32];
         longIntegerToAllocatedString(tmp_lgInt, strbuf, 32);
-        sprintf(errorMessage, "invalid number of columns");
-        moreInfoOnError("In function getDimensionArg:", errorMessage, NULL, NULL);
+        errorMoreInfo("invalid number of columns %s", strbuf);
       #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
       return false;
     }
@@ -112,8 +105,7 @@
       #if (EXTRA_INFO_ON_CALC_ERROR == 1)
         char strbuf[32];
         longIntegerToAllocatedString(tmp_lgInt, strbuf, 32);
-        sprintf(errorMessage, "invalid number of rows");
-        moreInfoOnError("In function getDimensionArg:", errorMessage, NULL, NULL);
+        errorMoreInfo("invalid number of rows %s", strbuf);
       #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
       return false;
     }
@@ -144,10 +136,7 @@
     }
     else {
       displayCalcErrorMessage(ERROR_OUT_OF_RANGE, ERR_REGISTER_LINE, REGISTER_X);
-      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-        sprintf(errorMessage, "rows %" PRIu16 " and/or %" PRIu16 " out of range", a, b);
-        moreInfoOnError("In function swapRowsReal:", errorMessage, NULL, NULL);
-      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+      errorMoreInfo("rows %" PRIu16 " and/or %" PRIu16 " out of range", a, b);
       return false;
     }
 
@@ -173,10 +162,7 @@
     }
     else {
       displayCalcErrorMessage(ERROR_OUT_OF_RANGE, ERR_REGISTER_LINE, REGISTER_X);
-      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-        sprintf(errorMessage, "rows %" PRIu16 " and/or %" PRIu16 " out of range", a, b);
-        moreInfoOnError("In function swapRowsComplex:", errorMessage, NULL, NULL);
-      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+      errorMoreInfo("rows %" PRIu16 " and/or %" PRIu16 " out of range", a, b);
       return false;
     }
 
@@ -221,10 +207,7 @@
     }
     else {
       displayCalcErrorMessage(ERROR_OUT_OF_RANGE, ERR_REGISTER_LINE, REGISTER_X);
-      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-        sprintf(errorMessage, "%" PRIu16 " " STD_CROSS " %" PRIu16 " out of range", a, b);
-        moreInfoOnError("In function getMatrixReal:", errorMessage, NULL, NULL);
-      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+      errorMoreInfo("%" PRIu16 " " STD_CROSS " %" PRIu16 " out of range", a, b);
       return false;
     }
 
@@ -266,10 +249,7 @@
     }
     else {
       displayCalcErrorMessage(ERROR_OUT_OF_RANGE, ERR_REGISTER_LINE, REGISTER_X);
-      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-        sprintf(errorMessage, "%" PRIu16 " " STD_CROSS " %" PRIu16 " out of range", a, b);
-        moreInfoOnError("In function getMatrixComplex:", errorMessage, NULL, NULL);
-      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+      errorMoreInfo("%" PRIu16 " " STD_CROSS " %" PRIu16 " out of range", a, b);
       return false;
     }
 
@@ -287,10 +267,7 @@
 
     if(getRegisterDataType(REGISTER_X) != dtReal34Matrix) {
       displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, REGISTER_X);
-      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-        sprintf(errorMessage, "%s is not a real matrix", getRegisterDataTypeName(REGISTER_X, true, false));
-        moreInfoOnError("In function putMatrixReal:", errorMessage, NULL, NULL);
-      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+      errorMoreInfo("%s is not a real matrix", getRegisterDataTypeName(REGISTER_X, true, false));
       return false;
     }
 
@@ -304,10 +281,7 @@
     }
     else {
       displayCalcErrorMessage(ERROR_OUT_OF_RANGE, ERR_REGISTER_LINE, REGISTER_X);
-      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-        sprintf(errorMessage, "%" PRIu16 " " STD_CROSS " %" PRIu16 " out of range", mat.header.matrixRows, mat.header.matrixColumns);
-        moreInfoOnError("In function putMatrixReal:", errorMessage, NULL, NULL);
-      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+      errorMoreInfo("%" PRIu16 " " STD_CROSS " %" PRIu16 " out of range", mat.header.matrixRows, mat.header.matrixColumns);
       return false;
     }
 
@@ -323,10 +297,7 @@
 
     if(getRegisterDataType(REGISTER_X) != dtComplex34Matrix) {
       displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, REGISTER_X);
-      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-        sprintf(errorMessage, "%s is not a complex matrix", getRegisterDataTypeName(REGISTER_X, true, false));
-        moreInfoOnError("In function putMatrixComplex:", errorMessage, NULL, NULL);
-      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+      errorMoreInfo("%s is not a complex matrix", getRegisterDataTypeName(REGISTER_X, true, false));
       return false;
     }
 
@@ -340,10 +311,7 @@
     }
     else {
       displayCalcErrorMessage(ERROR_OUT_OF_RANGE, ERR_REGISTER_LINE, REGISTER_X);
-      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-        sprintf(errorMessage, "%" PRIu16 " " STD_CROSS " %" PRIu16 " out of range", mat.header.matrixRows, mat.header.matrixColumns);
-        moreInfoOnError("In function putMatrixComplex:", errorMessage, NULL, NULL);
-      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+      errorMoreInfo("%" PRIu16 " " STD_CROSS " %" PRIu16 " out of range", mat.header.matrixRows, mat.header.matrixColumns);
       return false;
     }
 
@@ -424,10 +392,7 @@ void fnNewMatrix(uint16_t unusedParamButMandatory) {
     }
     else {
       displayCalcErrorMessage(ERROR_NOT_ENOUGH_MEMORY_FOR_NEW_MATRIX, ERR_REGISTER_LINE, REGISTER_X);
-      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-        sprintf(errorMessage, "Not enough memory for a %" PRIu32 STD_CROSS "%" PRIu32 " matrix", rows, cols);
-        moreInfoOnError("In function fnNewMatrix:", errorMessage, NULL, NULL);
-      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+      errorMoreInfo("Not enough memory for a %" PRIu32 STD_CROSS "%" PRIu32 " matrix", rows, cols);
       return;
     }
 
@@ -465,10 +430,7 @@ bool saveStatsMatrix(void) {
         }
         else {
           displayCalcErrorMessage(ERROR_NOT_ENOUGH_MEMORY_FOR_NEW_MATRIX, ERR_REGISTER_LINE, REGISTER_X);
-          #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-            sprintf(errorMessage, "Not enough memory for STATS undo matrix: rows=%i, cols=%i", rows, cols);
-            moreInfoOnError("In function saveStatsMatrix:", errorMessage, NULL, NULL);
-          #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+          errorMoreInfo("Not enough memory for STATS undo matrix: rows=%i, cols=%i", rows, cols);
           return false;
         }
       }
@@ -501,7 +463,7 @@ bool recallStatsMatrix(void) {
       if(cols == 2 && rows >= 1) {
         regStats = findNamedVariable("STATS");
         if(regStats == INVALID_VARIABLE) {
-          allocateNamedVariable("STATS", dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES));
+          allocateNamedVariable("STATS", dtReal34, REAL34_SIZE_IN_BYTES);
           regStats = findNamedVariable("STATS");
         }
         #if defined(DEBUGUNDO)
@@ -520,10 +482,7 @@ bool recallStatsMatrix(void) {
         }
         else {
           displayCalcErrorMessage(ERROR_NOT_ENOUGH_MEMORY_FOR_NEW_MATRIX, ERR_REGISTER_LINE, REGISTER_X);
-          #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-            sprintf(errorMessage, "Not enough memory to undo STATS undo matrix: rows=%i, cols=%i", rows, cols);
-            moreInfoOnError("In function recallStatsMatrix:", errorMessage, NULL, NULL);
-          #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+          errorMoreInfo("Not enough memory to undo STATS undo matrix: rows=%i, cols=%i", rows, cols);
           return false; //not enough memory
         }
       }
@@ -559,10 +518,7 @@ void fnEditMatrix(uint16_t regist) {
     }
     else {
       displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
-      #if defined(PC_BUILD)
-        sprintf(errorMessage, "DataType %" PRIu32, getRegisterDataType(reg));
-        moreInfoOnError("In function fnEditMatrix:", errorMessage, "is not a matrix.", "");
-      #endif // PC_BUILD
+      errorMoreInfo("DataType %" PRIu32 " is not a matrix", getRegisterDataType(reg));
     }
   #endif // !TESTSUITE_BUILD
 }
@@ -590,10 +546,7 @@ void fnOldMatrix(uint16_t unusedParamButMandatory) {
     }
     else {
       displayCalcErrorMessage(ERROR_OPERATION_UNDEFINED, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
-      #if defined(PC_BUILD)
-        sprintf(errorMessage, "works in MIM only");
-        moreInfoOnError("In function fnOldMatrix:", errorMessage, NULL, NULL);
-      #endif // PC_BUILD
+      errorMoreInfo("works in MIM only");
     }
   #endif // !TESTSUITE_BUILD
 }
@@ -607,10 +560,7 @@ void fnGoToElement(uint16_t unusedParamButMandatory) {
     }
     else {
       displayCalcErrorMessage(ERROR_OPERATION_UNDEFINED, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
-      #if defined(PC_BUILD)
-        sprintf(errorMessage, "works in MIM only");
-        moreInfoOnError("In function fnGoToElement:", errorMessage, NULL, NULL);
-      #endif // PC_BUILD
+      errorMoreInfo("works in MIM only");
     }
   #endif // !TESTSUITE_BUILD
 }
@@ -623,10 +573,7 @@ void fnGoToRow(uint16_t row) {
     }
     else {
       displayCalcErrorMessage(ERROR_OPERATION_UNDEFINED, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
-      #if defined(PC_BUILD)
-        sprintf(errorMessage, "works in MIM only");
-        moreInfoOnError("In function fnGoToRow:", errorMessage, NULL, NULL);
-      #endif // PC_BUILD
+      errorMoreInfo("works in MIM only");
     }
   #endif // !TESTSUITE_BUILD
 }
@@ -637,10 +584,7 @@ void fnGoToColumn(uint16_t col) {
     if(calcMode == cmMim) {
       if(tmpRow == 0 || tmpRow > openMatrixMIMPointer.header.matrixRows || col == 0 || col > openMatrixMIMPointer.header.matrixColumns) {
         displayCalcErrorMessage(ERROR_OUT_OF_RANGE, ERR_REGISTER_LINE, REGISTER_X);
-        #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-          sprintf(errorMessage, "(%" PRIu16 ", %" PRIu16 ") out of range", tmpRow, col);
-          moreInfoOnError("In function putGoToColumn:", errorMessage, NULL, NULL);
-        #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+        errorMoreInfo("(%" PRIu16 ", %" PRIu16 ") out of range", tmpRow, col);
       }
       else {
         if(getRegisterDataType(matrixIndex) == dtReal34Matrix) {
@@ -656,10 +600,7 @@ void fnGoToColumn(uint16_t col) {
     }
     else {
       displayCalcErrorMessage(ERROR_OPERATION_UNDEFINED, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
-      #if defined(PC_BUILD)
-        sprintf(errorMessage, "works in MIM only");
-        moreInfoOnError("In function fnGoToColumn:", errorMessage, NULL, NULL);
-      #endif // PC_BUILD
+      errorMoreInfo("works in MIM only");
     }
   #endif // !TESTSUITE_BUILD
 }
@@ -703,10 +644,7 @@ void fnInsRow(uint16_t unusedParamButMandatory) {
     }
     else {
       displayCalcErrorMessage(ERROR_OPERATION_UNDEFINED, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
-      #if defined(PC_BUILD)
-        sprintf(errorMessage, "works in MIM only");
-        moreInfoOnError("In function fnGoToElement:", errorMessage, NULL, NULL);
-      #endif // PC_BUILD
+      errorMoreInfo("works in MIM only");
     }
   #endif // !TESTSUITE_BUILD
 }
@@ -728,10 +666,7 @@ void fnDelRow(uint16_t unusedParamButMandatory) {
     }
     else {
       displayCalcErrorMessage(ERROR_OPERATION_UNDEFINED, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
-      #if defined(PC_BUILD)
-        sprintf(errorMessage, "works in MIM only");
-        moreInfoOnError("In function fnGoToElement:", errorMessage, NULL, NULL);
-      #endif // PC_BUILD
+      errorMoreInfo("works in MIM only");
     }
   #endif // !TESTSUITE_BUILD
 }
@@ -747,10 +682,7 @@ void fnSetMatrixDimensions(uint16_t regist) {
     }
     else {
       displayCalcErrorMessage(ERROR_NOT_ENOUGH_MEMORY_FOR_NEW_MATRIX, ERR_REGISTER_LINE, REGISTER_X);
-      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-        sprintf(errorMessage, "Not enough memory for a %" PRIu32 STD_CROSS "%" PRIu32 " matrix", y, x);
-        moreInfoOnError("In function fnSetMatrixDimensions:", errorMessage, NULL, NULL);
-      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+      errorMoreInfo("Not enough memory for a %" PRIu32 STD_CROSS "%" PRIu32 " matrix", y, x);
       return;
     }
   #endif // !TESTSUITE_BUILD
@@ -768,9 +700,9 @@ void fnGetMatrixDimensions(uint16_t unusedButMandatoryParameter) {
       const uint16_t cols = REGISTER_DATA(REGISTER_X)->matrixColumns;
       longInteger_t li;
 
-      reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
+      reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
       liftStack();
-      reallocateRegister(REGISTER_Y, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
+      reallocateRegister(REGISTER_Y, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
 
       longIntegerInit(li);
       uIntToLongInteger(rows, li);
@@ -781,10 +713,7 @@ void fnGetMatrixDimensions(uint16_t unusedButMandatoryParameter) {
     }
     else {
       displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
-      #if defined(PC_BUILD)
-        sprintf(errorMessage, "DataType %" PRIu32, getRegisterDataType(REGISTER_X));
-        moreInfoOnError("In function fnGetMatrixDimensions:", errorMessage, "is not a matrix.", "");
-      #endif // PC_BUILD
+      errorMoreInfo("DataType %" PRIu32 " is not a matrix", getRegisterDataType(REGISTER_X));
     }
 
     adjustResult(REGISTER_X, false, true, REGISTER_X, -1, -1);
@@ -816,10 +745,7 @@ void fnTranspose(uint16_t unusedButMandatoryParameter) {
     }
     else {
       displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
-      #if defined(PC_BUILD)
-        sprintf(errorMessage, "DataType %" PRIu32, getRegisterDataType(REGISTER_X));
-        moreInfoOnError("In function fnTranspose:", errorMessage, "is not a matrix.", "");
-      #endif // PC_BUILD
+      errorMoreInfo("DataType %" PRIu32 " is not a matrix", getRegisterDataType(REGISTER_X));
     }
 
     adjustResult(REGISTER_X, false, true, REGISTER_X, -1, -1);
@@ -841,11 +767,7 @@ void fnLuDecomposition(uint16_t unusedParamButMandatory) {
 
       if(x.header.matrixRows != x.header.matrixColumns) {
         displayCalcErrorMessage(ERROR_MATRIX_MISMATCH, ERR_REGISTER_LINE, REGISTER_X);
-        #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-          sprintf(errorMessage, "not a square matrix (%d" STD_CROSS "%d)",
-                  x.header.matrixRows, x.header.matrixColumns);
-          moreInfoOnError("In function fnLuDecomposition:", errorMessage, NULL, NULL);
-        #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+        errorMoreInfo("not a square matrix (%d" STD_CROSS "%d)", x.header.matrixRows, x.header.matrixColumns);
       }
       else {
         if((p = allocWp43(x.header.matrixRows * 8))) {
@@ -885,10 +807,7 @@ void fnLuDecomposition(uint16_t unusedParamButMandatory) {
           }
           else {
             displayCalcErrorMessage(ERROR_SINGULAR_MATRIX, ERR_REGISTER_LINE, REGISTER_X);
-            #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-              sprintf(errorMessage, "attempt to LU-decompose a singular matrix");
-              moreInfoOnError("In function fnLuDecomposition:", errorMessage, NULL, NULL);
-            #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+            errorMoreInfo("attempt to LU-decompose a singular matrix");
           }
           freeWp43(p, x.header.matrixRows * 8);
         }
@@ -908,11 +827,7 @@ void fnLuDecomposition(uint16_t unusedParamButMandatory) {
 
       if(x.header.matrixRows != x.header.matrixColumns) {
         displayCalcErrorMessage(ERROR_MATRIX_MISMATCH, ERR_REGISTER_LINE, REGISTER_X);
-        #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-          sprintf(errorMessage, "not a square matrix (%d" STD_CROSS "%d)",
-                  x.header.matrixRows, x.header.matrixColumns);
-          moreInfoOnError("In function fnLuDecomposition:", errorMessage, NULL, NULL);
-        #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+        errorMoreInfo("not a square matrix (%d" STD_CROSS "%d)", x.header.matrixRows, x.header.matrixColumns);
       }
       else {
         if((p = allocWp43(x.header.matrixRows * 8))) {
@@ -962,10 +877,7 @@ void fnLuDecomposition(uint16_t unusedParamButMandatory) {
           }
           else {
             displayCalcErrorMessage(ERROR_SINGULAR_MATRIX, ERR_REGISTER_LINE, REGISTER_X);
-            #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-              sprintf(errorMessage, "attempt to LU-decompose a singular matrix");
-              moreInfoOnError("In function fnLuDecomposition:", errorMessage, NULL, NULL);
-            #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+            errorMoreInfo("attempt to LU-decompose a singular matrix");
           }
           freeWp43(p, x.header.matrixRows * 8);
         }
@@ -978,10 +890,7 @@ void fnLuDecomposition(uint16_t unusedParamButMandatory) {
     }
     else {
       displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
-      #if defined(PC_BUILD)
-        sprintf(errorMessage, "DataType %" PRIu32, getRegisterDataType(REGISTER_X));
-        moreInfoOnError("In function fnLuDecomposition:", errorMessage, "is not a matrix.", "");
-      #endif // PC_BUILD
+      errorMoreInfo("DataType %" PRIu32 " is not a matrix", getRegisterDataType(REGISTER_X));
     }
 
     adjustResult(REGISTER_X, false, true, REGISTER_X, -1, -1);
@@ -1003,16 +912,12 @@ void fnDeterminant(uint16_t unusedParamButMandatory) {
 
       if(x.header.matrixRows != x.header.matrixColumns) {
         displayCalcErrorMessage(ERROR_MATRIX_MISMATCH, ERR_REGISTER_LINE, REGISTER_X);
-        #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-          sprintf(errorMessage, "not a square matrix (%d" STD_CROSS "%d)",
-                  x.header.matrixRows, x.header.matrixColumns);
-          moreInfoOnError("In function fnDeterminant:", errorMessage, NULL, NULL);
-        #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+        errorMoreInfo("not a square matrix (%d" STD_CROSS "%d)", x.header.matrixRows, x.header.matrixColumns);
       }
       else {
         detRealMatrix(&x, &res);
         if(lastErrorCode == ERROR_NONE) {
-          reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
+          reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
           real34Copy(&res, REGISTER_REAL34_DATA(REGISTER_X));
         }
       }
@@ -1025,16 +930,12 @@ void fnDeterminant(uint16_t unusedParamButMandatory) {
 
       if(x.header.matrixRows != x.header.matrixColumns) {
         displayCalcErrorMessage(ERROR_MATRIX_MISMATCH, ERR_REGISTER_LINE, REGISTER_X);
-        #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-          sprintf(errorMessage, "not a square matrix (%d" STD_CROSS "%d)",
-                  x.header.matrixRows, x.header.matrixColumns);
-          moreInfoOnError("In function fnDeterminant:", errorMessage, NULL, NULL);
-        #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+        errorMoreInfo("not a square matrix (%d" STD_CROSS "%d)", x.header.matrixRows, x.header.matrixColumns);
       }
       else {
         detComplexMatrix(&x, &res_r, &res_i);
         if(lastErrorCode == ERROR_NONE) {
-          reallocateRegister(REGISTER_X, dtComplex34, TO_BLOCKS(COMPLEX34_SIZE_IN_BYTES), amNone);
+          reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE_IN_BYTES, amNone);
           real34Copy(&res_r, REGISTER_REAL34_DATA(REGISTER_X));
           real34Copy(&res_i, REGISTER_IMAG34_DATA(REGISTER_X));
         }
@@ -1042,10 +943,7 @@ void fnDeterminant(uint16_t unusedParamButMandatory) {
     }
     else {
       displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
-      #if defined(PC_BUILD)
-        sprintf(errorMessage, "DataType %" PRIu32, getRegisterDataType(REGISTER_X));
-        moreInfoOnError("In function fnLuDecomposition:", errorMessage, "is not a matrix.", "");
-      #endif // PC_BUILD
+      errorMoreInfo("DataType %" PRIu32 " is not a matrix", getRegisterDataType(REGISTER_X));
     }
 
     adjustResult(REGISTER_X, false, true, REGISTER_X, -1, -1);
@@ -1066,11 +964,7 @@ void fnInvertMatrix(uint16_t unusedParamButMandatory) {
 
       if(x.header.matrixRows != x.header.matrixColumns) {
         displayCalcErrorMessage(ERROR_MATRIX_MISMATCH, ERR_REGISTER_LINE, REGISTER_X);
-        #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-          sprintf(errorMessage, "not a square matrix (%d" STD_CROSS "%d)",
-                  x.header.matrixRows, x.header.matrixColumns);
-          moreInfoOnError("In function fnInvertMatrix:", errorMessage, NULL, NULL);
-        #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+        errorMoreInfo("not a square matrix (%d" STD_CROSS "%d)", x.header.matrixRows, x.header.matrixColumns);
       }
       else {
         invertRealMatrix(&x, &res);
@@ -1082,10 +976,7 @@ void fnInvertMatrix(uint16_t unusedParamButMandatory) {
           }
           else {
             displayCalcErrorMessage(ERROR_SINGULAR_MATRIX, ERR_REGISTER_LINE, REGISTER_X);
-            #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-              sprintf(errorMessage, "attempt to invert a singular matrix");
-              moreInfoOnError("In function fnInvertMatrix:", errorMessage, NULL, NULL);
-            #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+            errorMoreInfo("attempt to invert a singular matrix");
           }
         }
         else {
@@ -1103,11 +994,7 @@ void fnInvertMatrix(uint16_t unusedParamButMandatory) {
 
       if(x.header.matrixRows != x.header.matrixColumns) {
         displayCalcErrorMessage(ERROR_MATRIX_MISMATCH, ERR_REGISTER_LINE, REGISTER_X);
-        #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-          sprintf(errorMessage, "not a square matrix (%d" STD_CROSS "%d)",
-                  x.header.matrixRows, x.header.matrixColumns);
-          moreInfoOnError("In function fnInvertMatrix:", errorMessage, NULL, NULL);
-        #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+        errorMoreInfo("not a square matrix (%d" STD_CROSS "%d)", x.header.matrixRows, x.header.matrixColumns);
       }
       else {
         invertComplexMatrix(&x, &res);
@@ -1119,10 +1006,7 @@ void fnInvertMatrix(uint16_t unusedParamButMandatory) {
           }
           else {
             displayCalcErrorMessage(ERROR_SINGULAR_MATRIX, ERR_REGISTER_LINE, REGISTER_X);
-            #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-              sprintf(errorMessage, "attempt to invert a singular matrix");
-              moreInfoOnError("In function fnInvertMatrix:", errorMessage, NULL, NULL);
-            #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+            errorMoreInfo("attempt to invert a singular matrix");
           }
         }
         else {
@@ -1135,10 +1019,7 @@ void fnInvertMatrix(uint16_t unusedParamButMandatory) {
     }
     else {
       displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
-      #if defined(PC_BUILD)
-        sprintf(errorMessage, "DataType %" PRIu32, getRegisterDataType(REGISTER_X));
-        moreInfoOnError("In function fnInvertMatrix:", errorMessage, "is not a matrix.", "");
-      #endif // PC_BUILD
+      errorMoreInfo("DataType %" PRIu32 " is not a matrix", getRegisterDataType(REGISTER_X));
     }
 
     adjustResult(REGISTER_X, false, true, REGISTER_X, -1, -1);
@@ -1161,7 +1042,7 @@ void fnEuclideanNorm(uint16_t unusedParamButMandatory) {
       euclideanNormRealMatrix(&matrix, &sum);
 
       // `matrix` invalidates here
-      reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
+      reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
       real34Copy(&sum, REGISTER_REAL34_DATA(REGISTER_X));
     }
     else if(getRegisterDataType(REGISTER_X) == dtComplex34Matrix) {
@@ -1173,15 +1054,12 @@ void fnEuclideanNorm(uint16_t unusedParamButMandatory) {
       euclideanNormComplexMatrix(&matrix, &sum);
 
       // `matrix` invalidates here
-      reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
+      reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
       real34Copy(&sum, REGISTER_REAL34_DATA(REGISTER_X));
     }
     else {
       displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
-      #if defined(PC_BUILD)
-        sprintf(errorMessage, "DataType %" PRIu32, getRegisterDataType(REGISTER_X));
-        moreInfoOnError("In function fnInvertMatrix:", errorMessage, "is not a matrix.", "");
-      #endif // PC_BUILD
+      errorMoreInfo("DataType %" PRIu32 " is not a matrix", getRegisterDataType(REGISTER_X));
     }
 
     adjustResult(REGISTER_X, false, true, REGISTER_X, -1, -1);
@@ -1244,10 +1122,7 @@ void fnRowSum(uint16_t unusedParamButMandatory) {
     }
     else {
       displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
-      #if defined(PC_BUILD)
-        sprintf(errorMessage, "DataType %" PRIu32, getRegisterDataType(REGISTER_X));
-        moreInfoOnError("In function fnInvertMatrix:", errorMessage, "is not a matrix.", "");
-      #endif // PC_BUILD
+      errorMoreInfo("DataType %" PRIu32 " is not a matrix", getRegisterDataType(REGISTER_X));
     }
 
     adjustResult(REGISTER_X, false, true, REGISTER_X, -1, -1);
@@ -1279,7 +1154,7 @@ void fnRowNorm(uint16_t unusedParamButMandatory) {
         }
       }
 
-      reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
+      reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
       convertRealToReal34ResultRegister(&norm, REGISTER_X);
     }
     else if(getRegisterDataType(REGISTER_X) == dtComplex34Matrix) {
@@ -1301,15 +1176,12 @@ void fnRowNorm(uint16_t unusedParamButMandatory) {
         }
       }
 
-      reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
+      reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
       convertRealToReal34ResultRegister(&norm, REGISTER_X);
     }
     else {
       displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
-      #if defined(PC_BUILD)
-        sprintf(errorMessage, "DataType %" PRIu32, getRegisterDataType(REGISTER_X));
-        moreInfoOnError("In function fnInvertMatrix:", errorMessage, "is not a matrix.", "");
-      #endif // PC_BUILD
+      errorMoreInfo("DataType %" PRIu32 " is not a matrix", getRegisterDataType(REGISTER_X));
     }
 
     adjustResult(REGISTER_X, false, true, REGISTER_X, -1, -1);
@@ -1331,26 +1203,20 @@ void fnVectorAngle(uint16_t unusedParamButMandatory) {
 
       if((realVectorSize(&y) < 2) || (realVectorSize(&x) < 2) || (realVectorSize(&y) > 3) || (realVectorSize(&x) > 3) || (realVectorSize(&y) != realVectorSize(&x))) {
         displayCalcErrorMessage(ERROR_MATRIX_MISMATCH, ERR_REGISTER_LINE, REGISTER_X);
-        #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-          sprintf(errorMessage, "invalid numbers of elements of %d" STD_CROSS "%d-matrix to %d" STD_CROSS "%d-matrix",
-                  x.header.matrixRows, x.header.matrixColumns,
-                  y.header.matrixRows, y.header.matrixColumns);
-          moreInfoOnError("In function fnVectorAngle:", errorMessage, NULL, NULL);
-        #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+        errorMoreInfo("invalid numbers of elements of %d" STD_CROSS "%d-matrix to %d" STD_CROSS "%d-matrix",
+            x.header.matrixRows, x.header.matrixColumns,
+            y.header.matrixRows, y.header.matrixColumns);
       }
       else {
         vectorAngle(&y, &x, &res);
         convertAngle34FromTo(&res, amRadian, currentAngularMode);
-        reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), currentAngularMode);
+        reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, currentAngularMode);
         real34Copy(&res, REGISTER_REAL34_DATA(REGISTER_X));
       }
     }
     else {
       displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
-      #if defined(PC_BUILD)
-        sprintf(errorMessage, "DataType %" PRIu32, getRegisterDataType(REGISTER_X));
-        moreInfoOnError("In function fnVectorAngle:", errorMessage, "is not a real matrix.", "");
-      #endif // PC_BUILD
+      errorMoreInfo("DataType %" PRIu32 " is not a real matrix", getRegisterDataType(REGISTER_X));
     }
 
     adjustResult(REGISTER_X, true, true, REGISTER_X, REGISTER_Y, -1);
@@ -1367,10 +1233,7 @@ void fnIndexMatrix(uint16_t regist) {
     }
     else {
       displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
-      #if defined(PC_BUILD)
-        sprintf(errorMessage, "DataType %" PRIu32, getRegisterDataType(regist));
-        moreInfoOnError("In function fnIndexMatrix:", errorMessage, "is not a matrix.", "");
-      #endif
+      errorMoreInfo("DataType %" PRIu32 " is not a matrix", getRegisterDataType(regist));
     }
 #endif // !TESTSUITE_BUILD
 }
@@ -1430,10 +1293,7 @@ void fnEditLinearEquationMatrixX(uint16_t unusedParamButMandatory) {
   #if !defined(TESTSUITE_BUILD)
     if(findNamedVariable("Mat_A") == INVALID_VARIABLE || findNamedVariable("Mat_B") == INVALID_VARIABLE || findNamedVariable("Mat_X") == INVALID_VARIABLE) {
       displayCalcErrorMessage(ERROR_UNDEF_SOURCE_VAR, ERR_REGISTER_LINE, REGISTER_X);
-      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-        sprintf(errorMessage, "At least one of Mat_A, Mat_B or Mat_X is missing");
-        moreInfoOnError("In function fnEditLinearEquationMatrixX:", errorMessage, NULL, NULL);
-      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+      errorMoreInfo("At least one of Mat_A, Mat_B or Mat_X is missing");
     }
     else if(getRegisterDataType(findNamedVariable("Mat_A")) == dtReal34Matrix && getRegisterDataType(findNamedVariable("Mat_B")) == dtReal34Matrix) {
       real34Matrix_t a, b, x;
@@ -1499,11 +1359,7 @@ void fnQrDecomposition(uint16_t unusedParamButMandatory) {
 
       if(x.header.matrixRows != x.header.matrixColumns) {
         displayCalcErrorMessage(ERROR_MATRIX_MISMATCH, ERR_REGISTER_LINE, REGISTER_X);
-        #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-          sprintf(errorMessage, "not a square matrix (%d" STD_CROSS "%d)",
-                  x.header.matrixRows, x.header.matrixColumns);
-          moreInfoOnError("In function fnQrDecomposition:", errorMessage, NULL, NULL);
-        #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+        errorMoreInfo("not a square matrix (%d" STD_CROSS "%d)", x.header.matrixRows, x.header.matrixColumns);
       }
       else {
         real_QR_decomposition(&x, &q, &r);
@@ -1522,11 +1378,7 @@ void fnQrDecomposition(uint16_t unusedParamButMandatory) {
 
       if(x.header.matrixRows != x.header.matrixColumns) {
         displayCalcErrorMessage(ERROR_MATRIX_MISMATCH, ERR_REGISTER_LINE, REGISTER_X);
-        #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-          sprintf(errorMessage, "not a square matrix (%d" STD_CROSS "%d)",
-                  x.header.matrixRows, x.header.matrixColumns);
-          moreInfoOnError("In function fnQrDecomposition:", errorMessage, NULL, NULL);
-        #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+        errorMoreInfo("not a square matrix (%d" STD_CROSS "%d)", x.header.matrixRows, x.header.matrixColumns);
       }
       else {
         complex_QR_decomposition(&x, &q, &r);
@@ -1540,10 +1392,7 @@ void fnQrDecomposition(uint16_t unusedParamButMandatory) {
     }
     else {
       displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
-      #if defined(PC_BUILD)
-        sprintf(errorMessage, "DataType %" PRIu32, getRegisterDataType(REGISTER_X));
-        moreInfoOnError("In function fnQrDecomposition:", errorMessage, "is not a matrix.", "");
-      #endif // PC_BUILD
+      errorMoreInfo("DataType %" PRIu32 " is not a matrix", getRegisterDataType(REGISTER_X));
     }
 
     adjustResult(REGISTER_X, false, true, REGISTER_X, -1, -1);
@@ -1560,10 +1409,7 @@ void fnEigenvalues(uint16_t unusedParamButMandatory) {
 
       if(x.header.matrixRows != x.header.matrixColumns && x.header.matrixRows >= 2) {
         displayCalcErrorMessage(ERROR_MATRIX_MISMATCH, ERR_REGISTER_LINE, REGISTER_X);
-        #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-          sprintf(errorMessage, "rectangular or single-element matrix or (%d" STD_CROSS "%d)", x.header.matrixRows, x.header.matrixColumns);
-          moreInfoOnError("In function fnEigenvalues:", errorMessage, NULL, NULL);
-        #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+        errorMoreInfo("rectangular or single-element matrix or (%d" STD_CROSS "%d)", x.header.matrixRows, x.header.matrixColumns);
       }
       else {
         setSystemFlag(FLAG_ASLIFT);
@@ -1602,10 +1448,7 @@ void fnEigenvalues(uint16_t unusedParamButMandatory) {
 
       if(x.header.matrixRows != x.header.matrixColumns && x.header.matrixRows >= 2) {
         displayCalcErrorMessage(ERROR_MATRIX_MISMATCH, ERR_REGISTER_LINE, REGISTER_X);
-        #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-          sprintf(errorMessage, "rectangular or single-element matrix or (%d" STD_CROSS "%d)", x.header.matrixRows, x.header.matrixColumns);
-          moreInfoOnError("In function fnEigenvalues:", errorMessage, NULL, NULL);
-        #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+        errorMoreInfo("rectangular or single-element matrix or (%d" STD_CROSS "%d)", x.header.matrixRows, x.header.matrixColumns);
       }
       else {
         setSystemFlag(FLAG_ASLIFT);
@@ -1617,10 +1460,7 @@ void fnEigenvalues(uint16_t unusedParamButMandatory) {
     }
     else {
       displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
-      #if defined(PC_BUILD)
-        sprintf(errorMessage, "DataType %" PRIu32, getRegisterDataType(REGISTER_X));
-        moreInfoOnError("In function fnEigenvalues:", errorMessage, "is not a matrix.", "");
-      #endif // PC_BUILD
+      errorMoreInfo("DataType %" PRIu32 " is not a matrix", getRegisterDataType(REGISTER_X));
     }
 
     adjustResult(REGISTER_X, false, true, REGISTER_X, -1, -1);
@@ -1637,11 +1477,7 @@ void fnEigenvectors(uint16_t unusedParamButMandatory) {
 
       if(x.header.matrixRows != x.header.matrixColumns && x.header.matrixRows >= 2) {
         displayCalcErrorMessage(ERROR_MATRIX_MISMATCH, ERR_REGISTER_LINE, REGISTER_X);
-        #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-          sprintf(errorMessage, "rectangular or single-element matrix or (%d" STD_CROSS "%d)",
-                  x.header.matrixRows, x.header.matrixColumns);
-          moreInfoOnError("In function fnEigenvectors:", errorMessage, NULL, NULL);
-        #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+        errorMoreInfo("rectangular or single-element matrix or (%d" STD_CROSS "%d)", x.header.matrixRows, x.header.matrixColumns);
       }
       else {
         setSystemFlag(FLAG_ASLIFT);
@@ -1677,11 +1513,7 @@ void fnEigenvectors(uint16_t unusedParamButMandatory) {
 
       if(x.header.matrixRows != x.header.matrixColumns && x.header.matrixRows >= 2) {
         displayCalcErrorMessage(ERROR_MATRIX_MISMATCH, ERR_REGISTER_LINE, REGISTER_X);
-        #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-          sprintf(errorMessage, "rectangular or single-element matrix or (%d" STD_CROSS "%d)",
-                  x.header.matrixRows, x.header.matrixColumns);
-          moreInfoOnError("In function fnEigenvectors:", errorMessage, NULL, NULL);
-        #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+        errorMoreInfo("rectangular or single-element matrix or (%d" STD_CROSS "%d)", x.header.matrixRows, x.header.matrixColumns);
       }
       else {
         setSystemFlag(FLAG_ASLIFT);
@@ -1693,10 +1525,7 @@ void fnEigenvectors(uint16_t unusedParamButMandatory) {
     }
     else {
       displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
-      #if defined(PC_BUILD)
-        sprintf(errorMessage, "DataType %" PRIu32, getRegisterDataType(REGISTER_X));
-        moreInfoOnError("In function fnEigenvectors:", errorMessage, "is not a matrix.", "");
-      #endif // PC_BUILD
+      errorMoreInfo("DataType %" PRIu32 " is not a matrix", getRegisterDataType(REGISTER_X));
     }
 
     adjustResult(REGISTER_X, false, true, REGISTER_X, -1, -1);
@@ -2149,12 +1978,12 @@ void fnEigenvectors(uint16_t unusedParamButMandatory) {
       real34Zero(&im);
     }
     if(isComplex) {
-      reallocateRegister(REGISTER_X, dtComplex34, TO_BLOCKS(COMPLEX34_SIZE_IN_BYTES), amNone);
+      reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE_IN_BYTES, amNone);
       real34Copy(&re, REGISTER_REAL34_DATA(REGISTER_X));
       real34Copy(&im, REGISTER_IMAG34_DATA(REGISTER_X));
     }
     else {
-      reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
+      reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
       real34Copy(&re, REGISTER_REAL34_DATA(REGISTER_X));
     }
 
@@ -3059,19 +2888,16 @@ smallFont:
       openMatrixMIMPointer.complexMatrix = matrix;
     }
     else {
-      #if defined(PC_BUILD)
-        sprintf(errorMessage, "DataType %" PRIu32, getRegisterDataType(regist));
-        moreInfoOnError("In function getMatrixFromRegister:", errorMessage, "is not dataType dtRealMatrix.", "");
-      #endif // PC_BUILD
       displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
+      errorMoreInfo("DataType %" PRIu32 " is not dataType dtRealMatrix", getRegisterDataType(regist));
       return;
     }
   }
 
 
   bool initMatrixRegister(calcRegister_t regist, uint16_t rows, uint16_t cols, bool complex) {
-    const size_t neededSize = (rows * cols) * (complex ? TO_BLOCKS(COMPLEX34_SIZE_IN_BYTES) : TO_BLOCKS(REAL34_SIZE_IN_BYTES));
-    reallocateRegister(regist, complex ? dtComplex34Matrix : dtReal34Matrix, neededSize, amNone);
+    const size_t neededSizeInBytes = (rows * cols) * (complex ? COMPLEX34_SIZE_IN_BYTES : REAL34_SIZE_IN_BYTES);
+    reallocateRegister(regist, complex ? dtComplex34Matrix : dtReal34Matrix, neededSizeInBytes, amNone);
     if(regist == INVALID_VARIABLE) {
       return false;
     }
@@ -3118,7 +2944,7 @@ smallFont:
         real34Matrix_t newMatrix;
         convertReal34MatrixRegisterToReal34Matrix(regist, &newMatrix);
         if(lastErrorCode == ERROR_NONE) {
-          reallocateRegister(regist, dtReal34Matrix, TO_BLOCKS(newSizeInBytes), amNone);
+          reallocateRegister(regist, dtReal34Matrix, newSizeInBytes, amNone);
           if(lastErrorCode == ERROR_NONE) {
             REGISTER_REAL34_MATRIX_DBLOCK(regist)->matrixRows    = rows;
             REGISTER_REAL34_MATRIX_DBLOCK(regist)->matrixColumns = cols;
@@ -3142,8 +2968,8 @@ smallFont:
       }
     }
     else if(getRegisterDataType(regist) == dtComplex34Matrix) {
-      const size_t oldSizeInBytes = (origRows * origCols) * TO_BLOCKS(COMPLEX34_SIZE_IN_BYTES);
-      const size_t newSizeInBytes = (rows     * cols    ) * TO_BLOCKS(COMPLEX34_SIZE_IN_BYTES);
+      const size_t oldSizeInBytes = (origRows * origCols) * COMPLEX34_SIZE_IN_BYTES;
+      const size_t newSizeInBytes = (rows     * cols    ) * COMPLEX34_SIZE_IN_BYTES;
       if(oldSizeInBytes >= newSizeInBytes) {
         if(oldSizeInBytes > newSizeInBytes) {
           freeWp43(REGISTER_COMPLEX34_MATRIX_M_ELEMENTS(regist) + rows * cols, oldSizeInBytes - newSizeInBytes);
@@ -3156,7 +2982,7 @@ smallFont:
         complex34Matrix_t newMatrix;
         convertComplex34MatrixRegisterToComplex34Matrix(regist, &newMatrix);
         if(lastErrorCode == ERROR_NONE) {
-          reallocateRegister(regist, dtComplex34Matrix, TO_BLOCKS(newSizeInBytes), amNone);
+          reallocateRegister(regist, dtComplex34Matrix, newSizeInBytes, amNone);
           if(lastErrorCode == ERROR_NONE) {
             REGISTER_COMPLEX34_MATRIX_DBLOCK(regist)->matrixRows    = rows;
             REGISTER_COMPLEX34_MATRIX_DBLOCK(regist)->matrixColumns = cols;
@@ -4283,7 +4109,7 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
     real_t tr, ti;
 
     if((lu = allocWp43(size * size * REAL_SIZE_IN_BYTES * 2))) {
-      xcopy(lu, matrix, TO_BYTES(size * size * TO_BLOCKS(REAL_SIZE_IN_BYTES) * 2));
+      xcopy(lu, matrix, size * size * REAL_SIZE_IN_BYTES * 2);
       if((p = allocWp43(size * 2))) {
         realCopy(const_1, &tr), realCopy(const_0, &ti);
         if(luCpxMat(lu, size, p, realContext)) {
@@ -4900,16 +4726,13 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
     real_t *inv_a;
 
     if((inv_a = allocWp43(size * size * REAL_SIZE_IN_BYTES * 2))) {
-      xcopy(inv_a, a, TO_BYTES(size * size * TO_BLOCKS(REAL_SIZE_IN_BYTES) * 2));
+      xcopy(inv_a, a, size * size * REAL_SIZE_IN_BYTES * 2);
       if(invCpxMat(inv_a, size, realContext)) {
         mulCpxMat(inv_a, b, size, size, 1, r, realContext);
       }
       else if(lastErrorCode != ERROR_RAM_FULL) {
         displayCalcErrorMessage(ERROR_SINGULAR_MATRIX, ERR_REGISTER_LINE, REGISTER_X);
-        #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-          sprintf(errorMessage, "attempt to invert a singular matrix");
-          moreInfoOnError("In function cpxLinearEqn:", errorMessage, NULL, NULL);
-        #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+        errorMoreInfo("attempt to invert a singular matrix");
       }
       freeWp43(inv_a, size * size * REAL_SIZE_IN_BYTES * 2);
     }
@@ -4925,18 +4748,12 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
 
     if(size != a->header.matrixRows) {
       displayCalcErrorMessage(ERROR_MATRIX_MISMATCH, ERR_REGISTER_LINE, REGISTER_X);
-      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-        sprintf(errorMessage, "not a square matrix (%d" STD_CROSS "%d)", a->header.matrixRows, a->header.matrixColumns);
-        moreInfoOnError("In function real_matrix_linear_eqn:", errorMessage, NULL, NULL);
-      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+      errorMoreInfo("not a square matrix (%d" STD_CROSS "%d)", a->header.matrixRows, a->header.matrixColumns);
       return;
     }
     if(b->header.matrixRows != size || b->header.matrixColumns != 1) {
       displayCalcErrorMessage(ERROR_MATRIX_MISMATCH, ERR_REGISTER_LINE, REGISTER_X);
-      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-        sprintf(errorMessage, "not a column vector or size mismatch (%d" STD_CROSS "%d)", b->header.matrixRows, b->header.matrixColumns);
-        moreInfoOnError("In function real_matrix_linear_eqn:", errorMessage, NULL, NULL);
-      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+      errorMoreInfo("not a column vector or size mismatch (%d" STD_CROSS "%d)", b->header.matrixRows, b->header.matrixColumns);
       return;
     }
 
@@ -5008,18 +4825,12 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
 
     if(size != a->header.matrixRows) {
       displayCalcErrorMessage(ERROR_MATRIX_MISMATCH, ERR_REGISTER_LINE, REGISTER_X);
-      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-        sprintf(errorMessage, "not a square matrix (%d" STD_CROSS "%d)", a->header.matrixRows, a->header.matrixColumns);
-        moreInfoOnError("In function complex_matrix_linear_eqn:", errorMessage, NULL, NULL);
-      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+      errorMoreInfo("not a square matrix (%d" STD_CROSS "%d)", a->header.matrixRows, a->header.matrixColumns);
       return;
     }
     if(b->header.matrixRows != size || b->header.matrixColumns != 1) {
       displayCalcErrorMessage(ERROR_MATRIX_MISMATCH, ERR_REGISTER_LINE, REGISTER_X);
-      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-        sprintf(errorMessage, "not a column vector or size mismatch (%d" STD_CROSS "%d)", b->header.matrixRows, b->header.matrixColumns);
-        moreInfoOnError("In function complex_matrix_linear_eqn:", errorMessage, NULL, NULL);
-      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+      errorMoreInfo("not a column vector or size mismatch (%d" STD_CROSS "%d)", b->header.matrixRows, b->header.matrixColumns);
       return;
     }
 
@@ -6072,7 +5883,7 @@ void elementwiseRema(void (*f)(void)) {
     const int numOfElements = x.header.matrixRows * x.header.matrixColumns;
 
     for(int i = 0; i < numOfElements; ++i) {
-      reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
+      reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
       if(complex) {
         real34Copy(VARIABLE_REAL34_DATA(&xc.matrixElements[i]), REGISTER_REAL34_DATA(REGISTER_X));
       }
@@ -6105,7 +5916,7 @@ void elementwiseRema_UInt16(void (*f)(uint16_t), uint16_t param) {
     const int numOfElements = x.header.matrixRows * x.header.matrixColumns;
 
     for(int i = 0; i < numOfElements; ++i) {
-      reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
+      reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
       if(complex) {
         real34Copy(VARIABLE_REAL34_DATA(&xc.matrixElements[i]), REGISTER_REAL34_DATA(REGISTER_X));
       }
@@ -6140,7 +5951,7 @@ void elementwiseRemaLonI(void (*f)(void)) {
     const int numOfElements = y.header.matrixRows * y.header.matrixColumns;
 
     for(int i = 0; i < numOfElements; ++i) {
-      reallocateRegister(REGISTER_Y, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
+      reallocateRegister(REGISTER_Y, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
       if(complex) {
         real34Copy(VARIABLE_REAL34_DATA(&yc.matrixElements[i]), REGISTER_REAL34_DATA(REGISTER_Y));
       }
@@ -6177,8 +5988,8 @@ void elementwiseRemaReal(void (*f)(void)) {
     const int numOfElements = y.header.matrixRows * y.header.matrixColumns;
 
     for(int i = 0; i < numOfElements; ++i) {
-      reallocateRegister(REGISTER_Y, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
-      reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
+      reallocateRegister(REGISTER_Y, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
+      reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
       if(complex) {
         real34Copy(VARIABLE_REAL34_DATA(&yc.matrixElements[i]), REGISTER_REAL34_DATA(REGISTER_Y));
       }
@@ -6217,7 +6028,7 @@ void elementwiseRemaShoI(void (*f)(void)) {
     const int numOfElements = y.header.matrixRows * y.header.matrixColumns;
 
     for(int i = 0; i < numOfElements; ++i) {
-      reallocateRegister(REGISTER_Y, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
+      reallocateRegister(REGISTER_Y, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
       if(complex) {
         real34Copy(VARIABLE_REAL34_DATA(&yc.matrixElements[i]), REGISTER_REAL34_DATA(REGISTER_Y));
       }
@@ -6253,8 +6064,8 @@ void elementwiseRealRema(void (*f)(void)) {
     const int numOfElements = x.header.matrixRows * x.header.matrixColumns;
 
     for(int i = 0; i < numOfElements; ++i) {
-      reallocateRegister(REGISTER_Y, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
-      reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
+      reallocateRegister(REGISTER_Y, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
+      reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
       real34Copy(&y, REGISTER_REAL34_DATA(REGISTER_Y));
       if(complex) {
         real34Copy(VARIABLE_REAL34_DATA(&xc.matrixElements[i]), REGISTER_REAL34_DATA(REGISTER_X));
@@ -6303,7 +6114,7 @@ void elementwiseCxma(void (*f)(void)) {
     convertComplex34MatrixRegisterToComplex34Matrix(REGISTER_X, &x);
 
     for(int i = 0; i < x.header.matrixRows * x.header.matrixColumns; ++i) {
-      reallocateRegister(REGISTER_X, dtComplex34, TO_BLOCKS(COMPLEX34_SIZE_IN_BYTES), amNone);
+      reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE_IN_BYTES, amNone);
       complex34Copy(&x.matrixElements[i], REGISTER_COMPLEX34_DATA(REGISTER_X));
       f();
       elementwiseCxmaGetResult(&x, i);
@@ -6323,7 +6134,7 @@ void elementwiseCxma_UInt16(void (*f)(uint16_t), uint16_t param) {
     convertComplex34MatrixRegisterToComplex34Matrix(REGISTER_X, &x);
 
     for(int i = 0; i < x.header.matrixRows * x.header.matrixColumns; ++i) {
-      reallocateRegister(REGISTER_X, dtComplex34, TO_BLOCKS(COMPLEX34_SIZE_IN_BYTES), amNone);
+      reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE_IN_BYTES, amNone);
       complex34Copy(&x.matrixElements[i], REGISTER_COMPLEX34_DATA(REGISTER_X));
       f(param);
       elementwiseCxmaGetResult(&x, i);
@@ -6345,7 +6156,7 @@ void elementwiseCxmaLonI(void (*f)(void)) {
     convertLongIntegerRegisterToLongInteger(REGISTER_X, x);
 
     for(int i = 0; i < y.header.matrixRows * y.header.matrixColumns; ++i) {
-      reallocateRegister(REGISTER_Y, dtComplex34, TO_BLOCKS(COMPLEX34_SIZE_IN_BYTES), amNone);
+      reallocateRegister(REGISTER_Y, dtComplex34, COMPLEX34_SIZE_IN_BYTES, amNone);
       complex34Copy(&y.matrixElements[i], REGISTER_COMPLEX34_DATA(REGISTER_Y));
       convertLongIntegerToLongIntegerRegister(x, REGISTER_X);
       f();
@@ -6369,8 +6180,8 @@ void elementwiseCxmaReal(void (*f)(void)) {
     real34Copy(REGISTER_REAL34_DATA(REGISTER_X), &x);
 
     for(int i = 0; i < y.header.matrixRows * y.header.matrixColumns; ++i) {
-      reallocateRegister(REGISTER_Y, dtComplex34, TO_BLOCKS(COMPLEX34_SIZE_IN_BYTES), amNone);
-      reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
+      reallocateRegister(REGISTER_Y, dtComplex34, COMPLEX34_SIZE_IN_BYTES, amNone);
+      reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
       complex34Copy(&y.matrixElements[i], REGISTER_COMPLEX34_DATA(REGISTER_Y));
       real34Copy(&x, REGISTER_REAL34_DATA(REGISTER_X));
       f();
@@ -6394,7 +6205,7 @@ void elementwiseCxmaShoI(void (*f)(void)) {
     base = getRegisterShortIntegerBase(REGISTER_X);
 
     for(int i = 0; i < y.header.matrixRows * y.header.matrixColumns; ++i) {
-      reallocateRegister(REGISTER_Y, dtComplex34, TO_BLOCKS(COMPLEX34_SIZE_IN_BYTES), amNone);
+      reallocateRegister(REGISTER_Y, dtComplex34, COMPLEX34_SIZE_IN_BYTES, amNone);
       complex34Copy(&y.matrixElements[i], REGISTER_COMPLEX34_DATA(REGISTER_Y));
       convertUInt64ToShortIntegerRegister(sign, x, base, REGISTER_X);
       f();
@@ -6417,8 +6228,8 @@ void elementwiseCxmaCplx(void (*f)(void)) {
     complex34Copy(REGISTER_COMPLEX34_DATA(REGISTER_X), &x);
 
     for(int i = 0; i < y.header.matrixRows * y.header.matrixColumns; ++i) {
-      reallocateRegister(REGISTER_Y, dtComplex34, TO_BLOCKS(COMPLEX34_SIZE_IN_BYTES), amNone);
-      reallocateRegister(REGISTER_X, dtComplex34, TO_BLOCKS(COMPLEX34_SIZE_IN_BYTES), amNone);
+      reallocateRegister(REGISTER_Y, dtComplex34, COMPLEX34_SIZE_IN_BYTES, amNone);
+      reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE_IN_BYTES, amNone);
       complex34Copy(&y.matrixElements[i], REGISTER_COMPLEX34_DATA(REGISTER_Y));
       complex34Copy(&x, REGISTER_COMPLEX34_DATA(REGISTER_X));
       f();
@@ -6441,8 +6252,8 @@ void elementwiseRealCxma(void (*f)(void)) {
     real34Copy(REGISTER_REAL34_DATA(REGISTER_Y), &y);
 
     for(int i = 0; i < x.header.matrixRows * x.header.matrixColumns; ++i) {
-      reallocateRegister(REGISTER_Y, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
-      reallocateRegister(REGISTER_X, dtComplex34, TO_BLOCKS(COMPLEX34_SIZE_IN_BYTES), amNone);
+      reallocateRegister(REGISTER_Y, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
+      reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE_IN_BYTES, amNone);
       real34Copy(&y, REGISTER_REAL34_DATA(REGISTER_Y));
       complex34Copy(&x.matrixElements[i], REGISTER_COMPLEX34_DATA(REGISTER_X));
       f();
@@ -6463,20 +6274,14 @@ void elementwiseRealCxma(void (*f)(void)) {
 
     if(matrixIndex == INVALID_VARIABLE || !regInRange(matrixIndex)) {
       displayCalcErrorMessage(ERROR_OUT_OF_RANGE, ERR_REGISTER_LINE, REGISTER_X);
-      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-        sprintf(errorMessage, "Cannot execute, destination register is out of range: %d", matrixIndex);
-        moreInfoOnError("In function callByIndexedMatrix:", errorMessage, NULL, NULL);
-      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+      errorMoreInfo("Cannot execute, destination register is out of range: %d", matrixIndex);
     }
     else if(getRegisterDataType(matrixIndex) == dtReal34Matrix) {
       real34Matrix_t mat;
       convertReal34MatrixRegisterToReal34Matrix(matrixIndex, &mat);
       if(i < 0 || i >= mat.header.matrixRows || j < 0 || j >= mat.header.matrixColumns) {
         displayCalcErrorMessage(ERROR_OUT_OF_RANGE, ERR_REGISTER_LINE, REGISTER_X);
-        #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-          sprintf(errorMessage, "Cannot execute: element (%" PRId16 ", %" PRId16 ") out of range", (int16_t)(i + 1), (int16_t)(j + 1));
-          moreInfoOnError("In function callByIndexedMatrix:", errorMessage, NULL, NULL);
-        #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+        errorMoreInfo("Cannot execute: element (%" PRId16 ", %" PRId16 ") out of range", (int16_t)(i + 1), (int16_t)(j + 1));
       }
       else {
         if(real_f(&mat)) {
@@ -6490,10 +6295,7 @@ void elementwiseRealCxma(void (*f)(void)) {
       convertComplex34MatrixRegisterToComplex34Matrix(matrixIndex, &mat);
       if(i < 0 || i >= mat.header.matrixRows || j < 0 || j >= mat.header.matrixColumns) {
         displayCalcErrorMessage(ERROR_OUT_OF_RANGE, ERR_REGISTER_LINE, REGISTER_X);
-        #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-          sprintf(errorMessage, "Cannot execute: element (%" PRId16 ", %" PRId16 ") out of range", (int16_t)(i + 1), (int16_t)(j + 1));
-          moreInfoOnError("In function callByIndexedMatrix:", errorMessage, NULL, NULL);
-        #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+        errorMoreInfo("Cannot execute: element (%" PRId16 ", %" PRId16 ") out of range", (int16_t)(i + 1), (int16_t)(j + 1));
       }
       else {
         if(complex_f(&mat)) {
@@ -6504,10 +6306,7 @@ void elementwiseRealCxma(void (*f)(void)) {
     }
     else {
       displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, REGISTER_X);
-      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-        sprintf(errorMessage, "Cannot execute: something other than a matrix is indexed %s", getRegisterDataTypeName(REGISTER_X, true, false));
-        moreInfoOnError("In function callByIndexedMatrix:", errorMessage, NULL, NULL);
-      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+      errorMoreInfo("Cannot execute: something other than a matrix is indexed %s", getRegisterDataTypeName(REGISTER_X, true, false));
     }
   }
 #endif // !TESTSUITE_BUILD

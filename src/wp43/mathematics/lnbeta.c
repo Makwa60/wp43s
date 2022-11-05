@@ -82,7 +82,7 @@ static bool _checkLnGammaArgs(int8_t *resultType, real_t *xReal, realContext_t *
   if(realIsInfinite(xReal)) {
     if(!getSystemFlag(FLAG_SPCRES)) {
       displayCalcErrorMessage(ERROR_ARG_EXCEEDS_FUNCTION_DOMAIN, ERR_REGISTER_LINE, REGISTER_X);
-      EXTRA_INFO_MESSAGE("_checkLnGammaArgs", "cannot use " STD_PLUS_MINUS STD_INFINITY " as X input of lnbeta when flag D is not set");
+      errorMoreInfo("cannot use " STD_PLUS_MINUS STD_INFINITY " as X input of lnbeta when flag D is not set");
     }
     else {
       realToReal34((real34IsPositive(xReal) ? const_plusInfinity : const_NaN), REGISTER_REAL34_DATA(REGISTER_X));
@@ -94,10 +94,10 @@ static bool _checkLnGammaArgs(int8_t *resultType, real_t *xReal, realContext_t *
     if(realIsAnInteger(xReal)) {
       if(!getSystemFlag(FLAG_SPCRES)) {
         displayCalcErrorMessage(ERROR_ARG_EXCEEDS_FUNCTION_DOMAIN, ERR_REGISTER_LINE, REGISTER_X);
-        EXTRA_INFO_MESSAGE("_checkLnGammaArgs", "cannot use a negative integer as X input of lnbeta when flag D is not set");
+        errorMoreInfo("cannot use a negative integer as X input of lnbeta when flag D is not set");
       }
       else {
-        reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
+        reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
         convertRealToReal34ResultRegister(const_NaN, REGISTER_X);
       }
 
@@ -118,7 +118,7 @@ static bool _checkLnGammaArgs(int8_t *resultType, real_t *xReal, realContext_t *
         }
         else { // Domain error
           displayCalcErrorMessage(ERROR_ARG_EXCEEDS_FUNCTION_DOMAIN, ERR_REGISTER_LINE, REGISTER_X);
-          EXTRA_INFO_MESSAGE("_checkLnGammaArgs", "cannot use a as X input of lnbeta if gamma(X)<0 when flag I is not set");
+          errorMoreInfo("cannot use a as X input of lnbeta if gamma(X)<0 when flag I is not set");
           result = false;
         }
       }
@@ -227,11 +227,11 @@ static void _lnBeta(real_t *x, real_t *y, realContext_t *realContext) {
 
   if(_lnBetaReal(x, y, &rReal, &rImag, &ctxtReal39)) {
     if(realIsZero(&rImag)) {
-      reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
+      reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
       convertRealToReal34ResultRegister(&rReal, REGISTER_X);
     }
     else {
-      reallocateRegister(REGISTER_X, dtComplex34, TO_BLOCKS(COMPLEX34_SIZE_IN_BYTES), amNone);
+      reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE_IN_BYTES, amNone);
       convertRealToReal34ResultRegister(&rReal, REGISTER_X);
       convertRealToImag34ResultRegister(&rImag, REGISTER_X);
     }
@@ -273,7 +273,7 @@ void lnbetaCplxLonI(void) {
 
   _lnBetaComplex(&xReal, &xImag, &yImag, &yImag, &rReal, &rImag, &ctxtReal39);
 
-  reallocateRegister(REGISTER_X, dtComplex34, TO_BLOCKS(COMPLEX34_SIZE_IN_BYTES), amNone);
+  reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE_IN_BYTES, amNone);
   convertRealToReal34ResultRegister(&rReal, REGISTER_X);
   convertRealToImag34ResultRegister(&rImag, REGISTER_X);
 }
@@ -313,7 +313,7 @@ void lnbetaCplxReal(void) {
 
   _lnBetaComplex(&xReal, &xImag, &yImag, &yImag, &rReal, &rImag, &ctxtReal39);
 
-  reallocateRegister(REGISTER_X, dtComplex34, TO_BLOCKS(COMPLEX34_SIZE_IN_BYTES), amNone);
+  reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE_IN_BYTES, amNone);
   convertRealToReal34ResultRegister(&rReal, REGISTER_X);
   convertRealToImag34ResultRegister(&rImag, REGISTER_X);
 }

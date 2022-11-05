@@ -52,7 +52,7 @@
       }
 
       case dtString: {
-        reallocateRegister(regist, dtString, 1, amNone);
+        reallocateRegister(regist, dtString, TO_BYTES(1), amNone);
         break;
       }
 
@@ -253,9 +253,7 @@
 
         case PTP_DISABLED: {
           displayCalcErrorMessage(ERROR_NON_PROGRAMMABLE_COMMAND, ERR_REGISTER_LINE, REGISTER_X);
-          #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-            moreInfoOnError("In function decodeOneStep:", "non-programmable function", indexOfItems[op].itemCatalogName, "appeared in the program!");
-          #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+          errorMoreInfo("non-programmable function '%s' appeared in the program!", indexOfItems[op].itemCatalogName);
           return false;
         }
 

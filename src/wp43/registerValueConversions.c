@@ -23,7 +23,7 @@
 void convertLongIntegerToLongIntegerRegister(const longInteger_t lgInt, calcRegister_t regist) {
   uint16_t sizeInBytes = longIntegerSizeInBytes(lgInt);
 
-  reallocateRegister(regist, dtLongInteger, TO_BLOCKS(sizeInBytes), longIntegerSignTag(lgInt));
+  reallocateRegister(regist, dtLongInteger, sizeInBytes, longIntegerSignTag(lgInt));
   xcopy(REGISTER_LONG_INTEGER_DATA(regist), lgInt->_mp_d, sizeInBytes);
 }
 
@@ -52,7 +52,7 @@ void convertLongIntegerRegisterToReal34Register(calcRegister_t source, calcRegis
   convertLongIntegerRegisterToLongInteger(source, lgInt);
   longIntegerToAllocatedString(lgInt, tmpString, TMP_STR_LENGTH);
   longIntegerFree(lgInt);
-  reallocateRegister(destination, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
+  reallocateRegister(destination, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
   stringToReal34(tmpString, REGISTER_REAL34_DATA(destination));
 }
 
@@ -87,7 +87,7 @@ void convertLongIntegerToReal(longInteger_t source, real_t *destination, realCon
 
 
 void convertLongIntegerToShortIntegerRegister(longInteger_t lgInt, uint32_t base, calcRegister_t destination) {
-  reallocateRegister(destination, dtShortInteger, SHORT_INTEGER_SIZE, base);
+  reallocateRegister(destination, dtShortInteger, SHORT_INTEGER_SIZE_IN_BYTES, base);
   if(longIntegerIsZero(lgInt)) {
     *(REGISTER_SHORT_INTEGER_DATA(destination)) = 0;
   }
@@ -125,7 +125,7 @@ void convertShortIntegerRegisterToReal34Register(calcRegister_t source, calcRegi
   real34_t lowWord;
 
   convertShortIntegerRegisterToUInt64(source, &sign, &value);
-  reallocateRegister(destination, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
+  reallocateRegister(destination, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
 
   uInt32ToReal34(value >> 32, REGISTER_REAL34_DATA(destination));
   uInt32ToReal34(value & 0x00000000ffffffff, &lowWord);
@@ -237,7 +237,7 @@ void convertUInt64ToShortIntegerRegister(int16_t sign, uint64_t value, uint32_t 
     }
   }
 
-  reallocateRegister(regist, dtShortInteger, SHORT_INTEGER_SIZE, base);
+  reallocateRegister(regist, dtShortInteger, SHORT_INTEGER_SIZE_IN_BYTES, base);
   *(REGISTER_SHORT_INTEGER_DATA(regist)) = value & shortIntegerMask;
 }
 
@@ -397,7 +397,7 @@ void convertTimeRegisterToReal34Register(calcRegister_t source, calcRegister_t d
   real34_t real34, value34;
   real34Copy(REGISTER_REAL34_DATA(source), &real34);
   int32ToReal34(3600, &value34);
-  reallocateRegister(destination, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
+  reallocateRegister(destination, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
   real34Divide(&real34, &value34, REGISTER_REAL34_DATA(destination));
 }
 
@@ -407,7 +407,7 @@ void convertReal34RegisterToTimeRegister(calcRegister_t source, calcRegister_t d
   real34_t real34, value34;
   real34Copy(REGISTER_REAL34_DATA(source), &real34);
   int32ToReal34(3600, &value34);
-  reallocateRegister(destination, dtTime, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
+  reallocateRegister(destination, dtTime, REAL34_SIZE_IN_BYTES, amNone);
   real34Multiply(&real34, &value34, REGISTER_REAL34_DATA(destination));
 }
 
@@ -442,7 +442,7 @@ void convertDateRegisterToReal34Register(calcRegister_t source, calcRegister_t d
     int32ToReal34(1000000, &val), real34Divide(&y, &val, &y);
   }
 
-  reallocateRegister(destination, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
+  reallocateRegister(destination, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
   real34Add(&y, &m, REGISTER_REAL34_DATA(destination));
   real34Add(REGISTER_REAL34_DATA(destination), &d, REGISTER_REAL34_DATA(destination));
   if(isNegative) {
@@ -481,13 +481,11 @@ void convertReal34RegisterToDateRegister(calcRegister_t source, calcRegister_t d
     ( getSystemFlag(FLAG_MDY) && !isValidDay(&part3, &part1, &part2)) ||
     ( getSystemFlag(FLAG_DMY) && !isValidDay(&part3, &part2, &part1))) {
       displayCalcErrorMessage(ERROR_BAD_TIME_OR_DATE_INPUT, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
-      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-        moreInfoOnError("In function convertReal34RegisterToDateRegister:", "Invalid date input like 30 Feb.", NULL, NULL);
-      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+      errorMoreInfo("Invalid date input like 30 Feb.");
       return;
   }
 
-  reallocateRegister(destination, dtDate, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
+  reallocateRegister(destination, dtDate, REAL34_SIZE_IN_BYTES, amNone);
   if(getSystemFlag(FLAG_YMD)) {
     composeJulianDay(&part1, &part2, &part3, REGISTER_REAL34_DATA(destination));
   }
@@ -526,11 +524,11 @@ void convertReal34RegisterToDateRegister(calcRegister_t source, calcRegister_t d
 
 
   void convertReal34MatrixToReal34MatrixRegister(const real34Matrix_t *matrix, calcRegister_t regist) {
-    const size_t neededSize = (matrix->header.matrixColumns * matrix->header.matrixRows) * sizeof(real34_t);
-    reallocateRegister(regist, dtReal34Matrix, TO_BLOCKS(neededSize), amNone);
+    const size_t neededSizeInBytes = (matrix->header.matrixColumns * matrix->header.matrixRows) * REAL34_SIZE_IN_BYTES;
+    reallocateRegister(regist, dtReal34Matrix, neededSizeInBytes, amNone);
     if(lastErrorCode != ERROR_RAM_FULL) {
       xcopy(REGISTER_REAL34_MATRIX(regist), matrix, sizeof(dataBlock_t));
-      xcopy(REGISTER_REAL34_MATRIX_M_ELEMENTS(regist), matrix->matrixElements, neededSize);
+      xcopy(REGISTER_REAL34_MATRIX_M_ELEMENTS(regist), matrix->matrixElements, neededSizeInBytes);
     }
   }
 
@@ -557,7 +555,7 @@ void convertReal34RegisterToDateRegister(calcRegister_t source, calcRegister_t d
 
 
   void convertComplex34MatrixToComplex34MatrixRegister(const complex34Matrix_t *matrix, calcRegister_t regist) {
-    reallocateRegister(regist, dtComplex34Matrix, TO_BLOCKS((matrix->header.matrixColumns * matrix->header.matrixRows) * sizeof(complex34_t)), amNone);
+    reallocateRegister(regist, dtComplex34Matrix, matrix->header.matrixColumns * matrix->header.matrixRows * COMPLEX34_SIZE_IN_BYTES, amNone);
     if(lastErrorCode != ERROR_RAM_FULL) {
       xcopy(REGISTER_COMPLEX34_MATRIX(regist), matrix, sizeof(dataBlock_t));
       xcopy(REGISTER_COMPLEX34_MATRIX_M_ELEMENTS(regist), matrix->matrixElements, (matrix->header.matrixColumns * matrix->header.matrixRows) * sizeof(complex34_t));
@@ -668,7 +666,7 @@ void convertReal34RegisterToDateRegister(calcRegister_t source, calcRegister_t d
   void convertDoubleToReal34Register(double x, calcRegister_t destination) {
     char buff[100];
 
-    reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
+    reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
     convertDoubleToString(x, 100, buff);
     stringToReal34(buff, REGISTER_REAL34_DATA(REGISTER_X));
 

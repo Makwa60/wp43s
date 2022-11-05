@@ -18,7 +18,7 @@
   #define MMHG_PA_133_3224                 1 // mmHg to Pa conversion coefficient is 133.3224 an not 133.322387415
   #define FN_KEY_TIMEOUT_TO_NOP            0 // Set to 1 if you want the 6 function keys to timeout
   #define MAX_LONG_INTEGER_SIZE_IN_BITS 3328 // 1001 decimal digits: 3328 ≃ log2(10^1001)
-  #define SHORT_INTEGER_SIZE               2 // 2 blocks = 8 bytes = 64 bits
+  #define SHORT_INTEGER_SIZE_IN_BYTES      8 // 8 bytes = 64 bits
 
   #define DECNUMDIGITS                    75 // Default number of digits used in the decNumber library
 
@@ -567,10 +567,10 @@
   #define SCREEN_REFRESH_PERIOD                    500 // in milliseconds
   #define KEY_AUTOREPEAT_FIRST_PERIOD              400 // in milliseconds
   #define KEY_AUTOREPEAT_PERIOD                    200 // in milliseconds
-  #define RAM_SIZE                               16384 // 16384 blocks = 65536 bytes  MUST be a multiple of 4 and MUST be <= 262140 (not 262144)
-  //#define RAM_SIZE                                3072 // 16384 blocks = 65536 bytes  MUST be a multiple of 4 and MUST be <= 262140 (not 262144)
+  #define RAM_SIZE_IN_BLOCKS                     16384 // 16384 blocks = 65536 bytes  MUST be a multiple of 4 and MUST be <= 262140 (not 262144)
+  //#define RAM_SIZE_IN_BLOCKS                      3072 // 16384 blocks = 65536 bytes  MUST be a multiple of 4 and MUST be <= 262140 (not 262144)
 
-  #define CONFIG_SIZE            TO_BLOCKS(sizeof(dtConfigDescriptor_t))
+  #define CONFIG_SIZE_IN_BYTES        sizeof(dtConfigDescriptor_t)
 
   #define FLASH_PGM_PAGE_SIZE                      512
   #define FLASH_PGM_NUMBER_OF_PAGES                 64
@@ -693,20 +693,15 @@
   //******************************
   //* Macros replacing functions *
   //******************************
-  #if (EXTRA_INFO_ON_CALC_ERROR == 0) || defined(TESTSUITE_BUILD) || defined(DMCP_BUILD)
-    #define EXTRA_INFO_MESSAGE(function, msg)
-  #else // EXTRA_INFO_ON_CALC_ERROR != 0 && !TESTSUITE_BUILD && !DMCP_BUILD
-    #define EXTRA_INFO_MESSAGE(function, msg)  {sprintf(errorMessage, msg); moreInfoOnError("In function ", function, errorMessage, NULL);}
-  #endif // EXTRA_INFO_ON_CALC_ERROR == 0 || TESTSUITE_BUILD || DMCP_BUILD
-
   #define shortIntegerIsZero(op)               (((*(uint64_t *)(op)) == 0) || (shortIntegerMode == SIM_SIGNMT && (((*(uint64_t *)(op)) == 1u<<((uint64_t)shortIntegerWordSize-1)))))
   #define getStackTop()                        (getSystemFlag(FLAG_SSIZE8) ? REGISTER_D : REGISTER_T)
   #define freeRegisterData(regist)             freeWp43((void *)getRegisterDataPointer(regist), TO_BYTES(getRegisterFullSize(regist)))
   #define storeToDtConfigDescriptor(config)    (configToStore->config = config)
   #define recallFromDtConfigDescriptor(config) (config = configToRecall->config)
   #define getRecalledSystemFlag(sf)            ((configToRecall->systemFlags &   ((uint64_t)1 << (sf & 0x3fff))) != 0)
-  #define TO_BLOCKS(n)                         (((n) + 3) >> 2)
-  #define TO_BYTES(n)                          ((n) << 2)
+  #define BITS_TO_SHIFT                        2 // 2 for a 2^2=4 byte block, 3 for a 2^3=8 byte block, ... When changing this: you MUST change dataBlock_t
+  #define TO_BLOCKS(n)                         (((n) + ((1 << BITS_TO_SHIFT) - 1)) >> BITS_TO_SHIFT)
+  #define TO_BYTES(n)                          ((n) << BITS_TO_SHIFT)
   #define WP43_NULL                            65535 // NULL pointer
   #define TO_PCMEMPTR(p)                       ((void *)((p) == WP43_NULL ? NULL : ram + (p)))
   #define TO_WP43MEMPTR(p)                     ((p) == NULL ? WP43_NULL : (uint16_t)((dataBlock_t *)(p) - ram))

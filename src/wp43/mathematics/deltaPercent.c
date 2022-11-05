@@ -129,7 +129,7 @@ void deltaPercentLonILonI(void) {
   convertLongIntegerRegisterToReal(REGISTER_Y, &yReal, &ctxtReal39);
 
   if(deltaPercentReal(&xReal, &yReal, &rReal, &ctxtReal34)) {
-    reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
+    reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
     convertRealToReal34ResultRegister(&rReal, REGISTER_X);
     setRegisterAngularMode(REGISTER_X, amNone);
   }
@@ -167,7 +167,7 @@ void deltaPercentRealLonI(void) {
   real34ToReal(REGISTER_REAL34_DATA(REGISTER_Y), &yReal);
 
   if(deltaPercentReal(&xReal, &yReal, &rReal, &ctxtReal34)) {
-    reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
+    reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
     convertRealToReal34ResultRegister(&rReal, REGISTER_X);
     setRegisterAngularMode(REGISTER_X, amNone);
   }
