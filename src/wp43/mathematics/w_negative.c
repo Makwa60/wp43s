@@ -36,8 +36,7 @@ TO_QSPI void (* const WNegative[NUMBER_OF_DATA_TYPES_FOR_CALCULATIONS])(void) = 
 #if (EXTRA_INFO_ON_CALC_ERROR == 1)
   void wNegError(void) {
     displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, REGISTER_X);
-    sprintf(errorMessage, "cannot calculate Wm for %s", getRegisterDataTypeName(REGISTER_X, true, false));
-    moreInfoOnError("In function fnWNegative:", errorMessage, NULL, NULL);
+    errorMoreInfo("cannot calculate Wm for %s", getRegisterDataTypeName(REGISTER_X, true, false));
   }
 #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
 
@@ -59,7 +58,7 @@ void wNegLonI(void) {
   real_t x;
 
   convertLongIntegerRegisterToReal(REGISTER_X, &x, &ctxtReal39);
-  reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
+  reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
   convertRealToReal34ResultRegister(&x, REGISTER_X);
   wNegReal();
 }
@@ -79,9 +78,7 @@ void wNegReal(void) {
     }
     else {
       displayCalcErrorMessage(ERROR_ARG_EXCEEDS_FUNCTION_DOMAIN, ERR_REGISTER_LINE, REGISTER_X);
-      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-        moreInfoOnError("In function wNegCplx:", "X < -e^(-1) || 0 < X", NULL, NULL);
-      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+      errorMoreInfo("X < -e^(-1) || 0 < X");
     }
   }
   else {
@@ -102,9 +99,7 @@ void wNegCplx(void) {
   }
   else {
     displayCalcErrorMessage(ERROR_ARG_EXCEEDS_FUNCTION_DOMAIN, ERR_REGISTER_LINE, REGISTER_X);
-    #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-      moreInfoOnError("In function wNegCplx:", "Cannot calculate Wm for complex number with non-zero imaginary part", NULL, NULL);
-    #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+    errorMoreInfo("Cannot calculate Wm for complex number with non-zero imaginary part");
   }
 }
 

@@ -185,7 +185,7 @@ void fnClPAll(uint16_t confirmation) {
     setConfirmationMode(fnClPAll);
   }
   else {
-    resizeProgramMemory(1); // 1 block for an empty program
+    resizeProgramMemory(TO_BYTES(1)); // 1 block for an empty program
     *(beginOfProgramMemory + 0)   = (ITM_END >> 8) | 0x80;
     *(beginOfProgramMemory + 1)   =  ITM_END       & 0xff;
     *(beginOfProgramMemory + 2)   = 255; // .END.
@@ -554,30 +554,30 @@ void fnPem(uint16_t unusedButMandatoryParameter) {
 
 
 
-static void _insertInProgram(const uint8_t *dat, uint16_t size) {
+static void _insertInProgram(const uint8_t *dat, uint16_t sizeInBytes) {
   int16_t _dynamicMenuItem = dynamicMenuItem;
   uint16_t globalStepNumber;
-  if(freeProgramBytes < size) {
+  if(freeProgramBytes < sizeInBytes) {
     uint8_t *oldBeginOfProgramMemory = beginOfProgramMemory;
-    uint32_t programSizeInBlocks = RAM_SIZE - freeMemoryRegions[numberOfFreeMemoryRegions - 1].address - freeMemoryRegions[numberOfFreeMemoryRegions - 1].sizeInBlocks;
-    uint32_t newProgramSizeInBlocks = TO_BLOCKS(TO_BYTES(programSizeInBlocks) - freeProgramBytes + size);
-    freeProgramBytes      += TO_BYTES(newProgramSizeInBlocks - programSizeInBlocks);
-    resizeProgramMemory(newProgramSizeInBlocks);
+    uint32_t programSizeInBytes = TO_BYTES(RAM_SIZE_IN_BLOCKS - freeMemoryRegions[numberOfFreeMemoryRegions - 1].address - freeMemoryRegions[numberOfFreeMemoryRegions - 1].sizeInBlocks);
+    uint32_t newProgramSizeInBytes = TO_BYTES(TO_BLOCKS(programSizeInBytes - freeProgramBytes + sizeInBytes));
+    freeProgramBytes      += newProgramSizeInBytes - programSizeInBytes;
+    resizeProgramMemory(newProgramSizeInBytes);
     currentStep.ram           = currentStep.ram           - oldBeginOfProgramMemory + beginOfProgramMemory;
     firstDisplayedStep.ram    = firstDisplayedStep.ram    - oldBeginOfProgramMemory + beginOfProgramMemory;
     beginOfCurrentProgram.ram = beginOfCurrentProgram.ram - oldBeginOfProgramMemory + beginOfProgramMemory;
     endOfCurrentProgram.ram   = endOfCurrentProgram.ram   - oldBeginOfProgramMemory + beginOfProgramMemory;
   }
-  for(uint8_t *pos = firstFreeProgramByte + 1 + size; pos > currentStep.ram; --pos) {
-    *pos = *(pos - size);
+  for(uint8_t *pos = firstFreeProgramByte + 1 + sizeInBytes; pos > currentStep.ram; --pos) {
+    *pos = *(pos - sizeInBytes);
   }
-  for(uint16_t i = 0; i < size; ++i) {
+  for(uint16_t i = 0; i < sizeInBytes; ++i) {
     *(currentStep.ram++) = *(dat++);
   }
-  firstFreeProgramByte    += size;
-  freeProgramBytes        -= size;
+  firstFreeProgramByte    += sizeInBytes;
+  freeProgramBytes        -= sizeInBytes;
   currentLocalStepNumber  += 1;
-  endOfCurrentProgram.ram += size;
+  endOfCurrentProgram.ram += sizeInBytes;
   globalStepNumber = currentLocalStepNumber + programList[currentProgramNumber - 1].step - 1;
   scanLabelsAndPrograms();
   dynamicMenuItem = -1;
@@ -874,7 +874,7 @@ static void _pemCloseDateInput(void) {
         *(tmpPtr++) = ITM_LITERAL;
         *(tmpPtr++) = STRING_DATE;
 
-        reallocateRegister(TEMP_REGISTER_1, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
+        reallocateRegister(TEMP_REGISTER_1, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
         stringToReal34(numBuffer, REGISTER_REAL34_DATA(TEMP_REGISTER_1));
         convertReal34RegisterToDateRegister(TEMP_REGISTER_1, TEMP_REGISTER_1);
         internalDateToJulianDay(REGISTER_REAL34_DATA(TEMP_REGISTER_1), REGISTER_REAL34_DATA(TEMP_REGISTER_1));

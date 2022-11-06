@@ -30,13 +30,13 @@ static uint32_t load(void *buffer, uint32_t size) {
 
 
 
-static void _addSpaceAfterPrograms(uint16_t size) {
-  if(freeProgramBytes < size) {
+static void _addSpaceAfterPrograms(uint16_t sizeInBytes) {
+  if(freeProgramBytes < sizeInBytes) {
     uint8_t *oldBeginOfProgramMemory = beginOfProgramMemory;
-    uint32_t programSizeInBlocks = RAM_SIZE - freeMemoryRegions[numberOfFreeMemoryRegions - 1].address - freeMemoryRegions[numberOfFreeMemoryRegions - 1].sizeInBlocks;
-    uint32_t newProgramSizeInBlocks = TO_BLOCKS(TO_BYTES(programSizeInBlocks) - freeProgramBytes + size);
-    freeProgramBytes      += TO_BYTES(newProgramSizeInBlocks - programSizeInBlocks);
-    resizeProgramMemory(newProgramSizeInBlocks);
+    uint32_t programSizeInBytes = TO_BYTES(RAM_SIZE_IN_BLOCKS - freeMemoryRegions[numberOfFreeMemoryRegions - 1].address - freeMemoryRegions[numberOfFreeMemoryRegions - 1].sizeInBlocks);
+    uint32_t newProgramSizeInBytes = TO_BYTES(TO_BLOCKS(programSizeInBytes - freeProgramBytes + sizeInBytes));
+    freeProgramBytes      += newProgramSizeInBytes - programSizeInBytes;
+    resizeProgramMemory(newProgramSizeInBytes);
     if(programList[currentProgramNumber - 1].step > 0) { // RAM
       currentStep.ram           = currentStep.ram           - oldBeginOfProgramMemory + beginOfProgramMemory;
       firstDisplayedStep.ram    = firstDisplayedStep.ram    - oldBeginOfProgramMemory + beginOfProgramMemory;
@@ -45,14 +45,14 @@ static void _addSpaceAfterPrograms(uint16_t size) {
     }
   }
 
-  firstFreeProgramByte   += size;
-  freeProgramBytes       -= size;
+  firstFreeProgramByte   += sizeInBytes;
+  freeProgramBytes       -= sizeInBytes;
 }
 
 
 
 void fnPRcl(uint16_t unusedButMandatoryParameter) {
-  uint32_t pgmSize = endOfCurrentProgram.any - beginOfCurrentProgram.any;
+  uint32_t pgmSizeInByte = endOfCurrentProgram.any - beginOfCurrentProgram.any;
 
   if((*(firstFreeProgramByte - 2) != ((ITM_END >> 8) | 0x80)) || (*(firstFreeProgramByte - 1) != (ITM_END & 0xff))) {
     _addSpaceAfterPrograms(2);
@@ -61,16 +61,16 @@ void fnPRcl(uint16_t unusedButMandatoryParameter) {
     *(firstFreeProgramByte    ) = 0xffu;
     *(firstFreeProgramByte + 1) = 0xffu;
     scanLabelsAndPrograms();
-    pgmSize = endOfCurrentProgram.any - beginOfCurrentProgram.any;
+    pgmSizeInByte = endOfCurrentProgram.any - beginOfCurrentProgram.any;
   }
 
-  _addSpaceAfterPrograms(pgmSize);
+  _addSpaceAfterPrograms(pgmSizeInByte);
   if(programList[currentProgramNumber - 1].step < 0) { // flash memory
-    readStepInFlashPgmLibrary(firstFreeProgramByte - pgmSize, pgmSize, beginOfCurrentProgram.flash);
+    readStepInFlashPgmLibrary(firstFreeProgramByte - pgmSizeInByte, pgmSizeInByte, beginOfCurrentProgram.flash);
     ++currentProgramNumber;
   }
   else { // RAM
-    xcopy(firstFreeProgramByte - pgmSize, beginOfCurrentProgram.ram, pgmSize);
+    xcopy(firstFreeProgramByte - pgmSizeInByte, beginOfCurrentProgram.ram, pgmSizeInByte);
   }
   *(firstFreeProgramByte    ) = 0xffu;
   *(firstFreeProgramByte + 1) = 0xffu;

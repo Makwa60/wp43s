@@ -52,7 +52,7 @@
       }
 
       case dtString: {
-        reallocateRegister(regist, dtString, 1, amNone);
+        reallocateRegister(regist, dtString, TO_BYTES(1), amNone);
         break;
       }
 

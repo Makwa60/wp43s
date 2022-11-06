@@ -71,9 +71,9 @@ TO_QSPI void (* const xthRoot[NUMBER_OF_DATA_TYPES_FOR_CALCULATIONS][NUMBER_OF_D
 #if (EXTRA_INFO_ON_CALC_ERROR == 1)
   void xthRootError(void) {
     displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, REGISTER_X);
-    sprintf(errorMessage, "cannot obtain xthRoot of %s", getRegisterDataTypeName(REGISTER_Y, true, false));
-    sprintf(errorMessage + ERROR_MESSAGE_LENGTH/2, "to %s", getRegisterDataTypeName(REGISTER_X, true, false));
-    moreInfoOnError("In function fnRoot:", errorMessage, errorMessage + ERROR_MESSAGE_LENGTH/2, NULL);
+    errorMoreInfo("cannot obtain xthRoot of %s\nto %s",
+        getRegisterDataTypeName(REGISTER_Y, true, false),
+        getRegisterDataTypeName(REGISTER_X, true, false));
   }
 #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
 
@@ -107,14 +107,12 @@ static void _xthRootComplex(const real_t *aa, const real_t *bb, const real_t *cc
   if(!getSystemFlag(FLAG_SPCRES)) {
     if(realIsZero(&c)&&realIsZero(&d)) {
       displayCalcErrorMessage(ERROR_ARG_EXCEEDS_FUNCTION_DOMAIN, ERR_REGISTER_LINE, REGISTER_X);
-      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-        moreInfoOnError("In function xthRootComplexComplex: 0th Root is not defined!", NULL, NULL, NULL);
-      #endif //  (EXTRA_INFO_ON_CALC_ERROR == 1)
+      errorMoreInfo("0th Root is not defined!");
       return;
      }
     else {
       if(realIsNaN(&a)||realIsNaN(&b)||realIsNaN(&c)||realIsNaN(&d)) {
-        reallocateRegister(REGISTER_X, dtComplex34, TO_BLOCKS(COMPLEX34_SIZE_IN_BYTES), amNone);
+        reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE_IN_BYTES, amNone);
         convertRealToReal34ResultRegister(const_NaN, REGISTER_X);
         convertRealToImag34ResultRegister(const_NaN, REGISTER_X);
         return;
@@ -137,7 +135,7 @@ static void _xthRootComplex(const real_t *aa, const real_t *bb, const real_t *cc
   realMultiply(&c, &b, &d, realContext);
   realMultiply(&c, &a, &c, realContext);
 
-  reallocateRegister(REGISTER_X, dtComplex34, TO_BLOCKS(COMPLEX34_SIZE_IN_BYTES), amNone);
+  reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE_IN_BYTES, amNone);
   convertRealToReal34ResultRegister(&c, REGISTER_X);
   convertRealToImag34ResultRegister(&d, REGISTER_X);
 }
@@ -196,7 +194,7 @@ void xthRootReal(real_t *yy, real_t *xx, realContext_t *realContext) {
 
 
     if(telltale != 0) {
-      reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
+      reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
       convertRealToReal34ResultRegister(&o, REGISTER_X);
       setRegisterAngularMode(REGISTER_X, amNone);
       return;
@@ -205,14 +203,12 @@ void xthRootReal(real_t *yy, real_t *xx, realContext_t *realContext) {
   else { // not DANGER
     if(realIsZero(&x)) {
       displayCalcErrorMessage(ERROR_ARG_EXCEEDS_FUNCTION_DOMAIN, ERR_REGISTER_LINE, REGISTER_X);
-      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-        moreInfoOnError("In function xthRootRealReal: 0th Root is not defined!", NULL, NULL, NULL);
-      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+      errorMoreInfo("0th Root is not defined!");
       return;
     }
     else {
       if(realIsNaN(&x)||realIsNaN(&y)) {
-        reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
+        reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
         convertRealToReal34ResultRegister(const_NaN, REGISTER_X);
         setRegisterAngularMode(REGISTER_X, amNone);
         return;
@@ -224,7 +220,7 @@ void xthRootReal(real_t *yy, real_t *xx, realContext_t *realContext) {
     realDivide(const_1, &x, &x, realContext);
 
     realPower(&y, &x, &x, realContext);
-    reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
+    reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
     convertRealToReal34ResultRegister(&x, REGISTER_X);
     setRegisterAngularMode(REGISTER_X, amNone);
     return;
@@ -235,9 +231,7 @@ void xthRootReal(real_t *yy, real_t *xx, realContext_t *realContext) {
       if(realIsZero(&r)) {                                          // negative base and even exp     (zero means no remainder means even)
         if(!getFlag(FLAG_CPXRES)) {
           displayCalcErrorMessage(ERROR_ARG_EXCEEDS_FUNCTION_DOMAIN, ERR_REGISTER_LINE, REGISTER_X);
-          #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-            moreInfoOnError("In function xthRootRealReal:", "cannot do complex xthRoots when CPXRES is not set", NULL, NULL);
-          #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+          errorMoreInfo("cannot do complex xthRoots when CPXRES is not set");
           return;
         }
         else {
@@ -254,7 +248,7 @@ void xthRootReal(real_t *yy, real_t *xx, realContext_t *realContext) {
           realPower(&y, &x, &x, realContext);
           realSetNegativeSign(&x);
 
-          reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
+          reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
           convertRealToReal34ResultRegister(&x, REGISTER_X);
           setRegisterAngularMode(REGISTER_X, amNone);
           return;
@@ -262,9 +256,7 @@ void xthRootReal(real_t *yy, real_t *xx, realContext_t *realContext) {
         else {      //neither odd nor even, i.e. not integer
           if(!getFlag(FLAG_CPXRES)) {
             displayCalcErrorMessage(ERROR_ARG_EXCEEDS_FUNCTION_DOMAIN, ERR_REGISTER_LINE, REGISTER_X);
-            #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-              moreInfoOnError("In function xthRootRealReal:", "cannot do complex xthRoots when CPXRES is not set", NULL, NULL);
-            #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+            errorMoreInfo("cannot do complex xthRoots when CPXRES is not set");
             return;
           }
           else {
@@ -275,7 +267,7 @@ void xthRootReal(real_t *yy, real_t *xx, realContext_t *realContext) {
     }
     else {
       if(realIsZero(&y)) {
-        reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
+        reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
 
         if(!realIsZero(&x)) {                                         // zero base and non-zero exp
           convertRealToReal34ResultRegister(const_1, REGISTER_X);
@@ -302,9 +294,7 @@ void xthRootLonILonI(void) {
 
   if(longIntegerIsZero(exponent)) {    // 1/0 is not possible
     displayCalcErrorMessage(ERROR_ARG_EXCEEDS_FUNCTION_DOMAIN, ERR_REGISTER_LINE, REGISTER_X);
-    #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-      moreInfoOnError("In function xthRootLonILonI: Cannot divide by 0!", NULL, NULL, NULL);
-    #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+    errorMoreInfo("Cannot divide by 0!");
     longIntegerFree(base);
     longIntegerFree(exponent);
     return;
@@ -585,9 +575,7 @@ void xthRootRealReal(void) {
 
   if((real34IsInfinite(REGISTER_REAL34_DATA(REGISTER_X)) || real34IsInfinite(REGISTER_REAL34_DATA(REGISTER_Y))) && !getSystemFlag(FLAG_SPCRES)) {
     displayCalcErrorMessage(ERROR_ARG_EXCEEDS_FUNCTION_DOMAIN, ERR_REGISTER_LINE, REGISTER_X);
-    #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-      moreInfoOnError("In function xthRootRealReal:", "cannot use " STD_PLUS_MINUS STD_INFINITY " as X or Y input of xthRoot when flag D is not set", NULL, NULL);
-    #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+    errorMoreInfo("cannot use " STD_PLUS_MINUS STD_INFINITY " as X or Y input of xthRoot when flag D is not set");
     return;
   }
 
@@ -604,12 +592,12 @@ void xthRootRealCplx(void) {
 
   if(real34IsInfinite(REGISTER_REAL34_DATA(REGISTER_Y))) {
     if(real34IsZero(REGISTER_REAL34_DATA(REGISTER_X)) && real34IsZero(REGISTER_IMAG34_DATA(REGISTER_X))) {
-      reallocateRegister(REGISTER_X, dtComplex34, TO_BLOCKS(COMPLEX34_SIZE_IN_BYTES), amNone);
+      reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE_IN_BYTES, amNone);
       convertRealToReal34ResultRegister(const_NaN, REGISTER_X);
       convertRealToImag34ResultRegister(const_NaN, REGISTER_X);
     }
     else {
-      reallocateRegister(REGISTER_X, dtComplex34, TO_BLOCKS(COMPLEX34_SIZE_IN_BYTES), amNone);
+      reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE_IN_BYTES, amNone);
       convertRealToReal34ResultRegister(const_plusInfinity, REGISTER_X);
       convertRealToImag34ResultRegister(const_plusInfinity, REGISTER_X);
     }
@@ -631,12 +619,12 @@ void xthRootCplxReal(void) {
 
   if(real34IsInfinite(REGISTER_REAL34_DATA(REGISTER_Y)) || real34IsInfinite(REGISTER_REAL34_DATA(REGISTER_Y))) {
     if(real34IsZero(REGISTER_REAL34_DATA(REGISTER_X))) {
-      reallocateRegister(REGISTER_X, dtComplex34, TO_BLOCKS(COMPLEX34_SIZE_IN_BYTES), amNone);
+      reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE_IN_BYTES, amNone);
       convertRealToReal34ResultRegister(const_NaN, REGISTER_X);
       convertRealToImag34ResultRegister(const_NaN, REGISTER_X);
     }
     else {
-      reallocateRegister(REGISTER_X, dtComplex34, TO_BLOCKS(COMPLEX34_SIZE_IN_BYTES), amNone);
+      reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE_IN_BYTES, amNone);
       convertRealToReal34ResultRegister(const_plusInfinity, REGISTER_X);
       convertRealToImag34ResultRegister(const_plusInfinity, REGISTER_X);
     }
@@ -658,12 +646,12 @@ void xthRootCplxCplx(void) {
 
   if(real34IsInfinite(REGISTER_REAL34_DATA(REGISTER_Y)) || real34IsInfinite(REGISTER_IMAG34_DATA(REGISTER_Y))) {
     if(real34IsZero(REGISTER_REAL34_DATA(REGISTER_X)) && real34IsZero(REGISTER_IMAG34_DATA(REGISTER_X))) {
-      reallocateRegister(REGISTER_X, dtComplex34, TO_BLOCKS(COMPLEX34_SIZE_IN_BYTES), amNone);
+      reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE_IN_BYTES, amNone);
       convertRealToReal34ResultRegister(const_NaN, REGISTER_X);
       convertRealToImag34ResultRegister(const_NaN, REGISTER_X);
     }
     else {
-      reallocateRegister(REGISTER_X, dtComplex34, TO_BLOCKS(COMPLEX34_SIZE_IN_BYTES), amNone);
+      reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE_IN_BYTES, amNone);
       convertRealToReal34ResultRegister(const_plusInfinity, REGISTER_X);
       convertRealToImag34ResultRegister(const_plusInfinity, REGISTER_X);
     }

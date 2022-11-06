@@ -21,7 +21,7 @@
   void    freeGmp               (void *pcMemPtr, size_t sizeInBytes);
 
   int32_t getFreeRamMemory      (void);
-  void    resizeProgramMemory   (uint16_t newSizeInBlocks);
+  void    resizeProgramMemory   (size_t newSizeInBytes);
   bool    isMemoryBlockAvailable(size_t sizeInBytes);
 
   #if !defined(DMCP_BUILD)

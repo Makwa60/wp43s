@@ -129,11 +129,11 @@
   /**
    * Allocates one named variable.
    *
-   * \param[in] variableName         Variable name
-   * \param[in] dataType             The content type of the variable
-   * \param[in] fullDataSizeInBlocks How many blocks the named variable will require for storage
+   * \param[in] variableName        Variable name
+   * \param[in] dataType            The content type of the variable
+   * \param[in] fullDataSizeInBytes How many bytes the named variable will require for storage
    */
-  void           allocateNamedVariable           (const char *variableName, dataType_t dataType, uint16_t fullDataSizeInBlocks);
+  void           allocateNamedVariable           (const char *variableName, dataType_t dataType, uint16_t fullDataSizeInBytes);
 
   /**
    * Retrieves the register number for the named variable.
@@ -205,7 +205,7 @@
    */
   int16_t        indirectAddressing              (calcRegister_t regist, uint16_t parameterType, int16_t minValue, int16_t maxValue);
 
-  void           reallocateRegister              (calcRegister_t regist, uint32_t dataType, uint16_t dataSizeWithoutDataLenBlocks, uint32_t tag);
+  void           reallocateRegister              (calcRegister_t regist, uint32_t dataType, size_t dataSizeWithoutDataLenBytes, uint32_t tag);
   void           fnToReal                        (uint16_t unusedButMandatoryParameter);
 
   #if !defined(DMCP_BUILD)

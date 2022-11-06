@@ -37,8 +37,7 @@ TO_QSPI void (* const arcsinh[NUMBER_OF_DATA_TYPES_FOR_CALCULATIONS])(void) = {
 #if (EXTRA_INFO_ON_CALC_ERROR == 1)
   void arcsinhError(void) {
     displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, REGISTER_X);
-    sprintf(errorMessage, "cannot calculate arcsinh for %s", getRegisterDataTypeName(REGISTER_X, true, false));
-    moreInfoOnError("In function fnArcsinh:", errorMessage, NULL, NULL);
+    errorMoreInfo("cannot calculate arcsinh for %s", getRegisterDataTypeName(REGISTER_X, true, false));
   }
 #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
 
@@ -60,7 +59,7 @@ void arcsinhLonI(void) {
   real_t x, xSquared;
 
   convertLongIntegerRegisterToReal(REGISTER_X, &x, &ctxtReal39);
-  reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
+  reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
 
   // arcsinh(x) = ln(x + sqrt(x� + 1))
   realMultiply(&x, &x, &xSquared, &ctxtReal39);

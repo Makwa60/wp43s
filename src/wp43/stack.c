@@ -128,7 +128,7 @@ static void _swapRegs(uint16_t srcReg, uint16_t regist) {
   }
   else if(regist <= LAST_TEMP_REGISTER) {
     displayCalcErrorMessage(ERROR_OUT_OF_RANGE, ERR_REGISTER_LINE, REGISTER_X);
-    errorMoreInfo(errorMessage, "register %d is unsupported!", regist);
+    errorMoreInfo("register %d is unsupported!", regist);
   }
   else if(regist < FIRST_NAMED_VARIABLE + numberOfNamedVariables) {
     globalRegister[srcReg] = allNamedVariables[regist - FIRST_NAMED_VARIABLE].header;
@@ -136,7 +136,7 @@ static void _swapRegs(uint16_t srcReg, uint16_t regist) {
   }
   else {
     displayCalcErrorMessage(ERROR_OUT_OF_RANGE, ERR_REGISTER_LINE, REGISTER_X);
-    errorMoreInfo(errorMessage, "register %d is unsupported!", regist);
+    errorMoreInfo("register %d is unsupported!", regist);
   }
 }
 

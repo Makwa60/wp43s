@@ -48,6 +48,7 @@ bool real34CompareGreaterEqual(const real34_t *number1, const real34_t *number2)
 }
 
 
+
 /* never used
 bool real34CompareGreaterThan(const real34_t *number1, const real34_t *number2) {
   real34_t compare;
@@ -56,6 +57,7 @@ bool real34CompareGreaterThan(const real34_t *number1, const real34_t *number2) 
   return real34ToInt32(&compare) > 0;
 }
 */
+
 
 
 bool real34CompareLessEqual(const real34_t *number1, const real34_t *number2) {

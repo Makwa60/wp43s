@@ -94,9 +94,9 @@ TO_QSPI void (* const addition[NUMBER_OF_DATA_TYPES_FOR_CALCULATIONS][NUMBER_OF_
 #if (EXTRA_INFO_ON_CALC_ERROR == 1)
   void addError(void) {
     displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, REGISTER_X);
-    sprintf(errorMessage, "cannot add %s", getRegisterDataTypeName(REGISTER_X, true, false));
-    sprintf(errorMessage + ERROR_MESSAGE_LENGTH/2, "to %s", getRegisterDataTypeName(REGISTER_Y, true, false));
-    moreInfoOnError("In function fnAdd:", errorMessage, errorMessage + ERROR_MESSAGE_LENGTH/2, NULL);
+    errorMoreInfo("cannot add %s\nto%s",
+        getRegisterDataTypeName(REGISTER_X, true, false),
+        getRegisterDataTypeName(REGISTER_Y, true, false));
   }
 #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
 
@@ -159,7 +159,7 @@ void addDateLonI(void) {
   convertLongIntegerRegisterToReal34Register(REGISTER_X, REGISTER_X);
   int32ToReal34(86400, &val);
   real34Multiply(REGISTER_REAL34_DATA(REGISTER_X), &val, &val);
-  reallocateRegister(REGISTER_X, dtDate, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
+  reallocateRegister(REGISTER_X, dtDate, REAL34_SIZE_IN_BYTES, amNone);
   real34Add(REGISTER_REAL34_DATA(REGISTER_Y), &val, REGISTER_REAL34_DATA(REGISTER_X));
 }
 
@@ -229,7 +229,7 @@ void addRealLonI(void) {
   real34ToReal(REGISTER_REAL34_DATA(REGISTER_Y), &y);
   yAngularMode = getRegisterAngularMode(REGISTER_Y);
   convertLongIntegerRegisterToReal(REGISTER_X, &x, &ctxtReal39);
-  reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
+  reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
 
   if(yAngularMode == amNone) {
     realAdd(&y, &x, &x, &ctxtReal39);
@@ -271,7 +271,7 @@ void addCplxLonI(void) {
 
   realAdd(&a, &c, &c, &ctxtReal39);
 
-  reallocateRegister(REGISTER_X, dtComplex34, TO_BLOCKS(COMPLEX34_SIZE_IN_BYTES), amNone);
+  reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE_IN_BYTES, amNone);
   convertRealToReal34ResultRegister(&c, REGISTER_X);
   real34Copy(&b, REGISTER_IMAG34_DATA(REGISTER_X));
 }
@@ -326,7 +326,7 @@ void addDateReal(void) {
     int32ToReal34(86400, &val);
     real34ToIntegralValue(REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X), roundingModeTable[roundingMode]);
     real34Multiply(REGISTER_REAL34_DATA(REGISTER_X), &val, &val);
-    reallocateRegister(REGISTER_X, dtDate, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
+    reallocateRegister(REGISTER_X, dtDate, REAL34_SIZE_IN_BYTES, amNone);
     real34Add(REGISTER_REAL34_DATA(REGISTER_Y), &val, REGISTER_REAL34_DATA(REGISTER_X));
   }
   else {
@@ -362,19 +362,16 @@ void addStriLonI(void) {
 
   if(stringGlyphLength(REGISTER_STRING_DATA(REGISTER_Y)) + stringGlyphLength(tmpString) > MAX_NUMBER_OF_GLYPHS_IN_STRING) {
     displayCalcErrorMessage(ERROR_STRING_WOULD_BE_TOO_LONG, ERR_REGISTER_LINE, REGISTER_X);
-    #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-      sprintf(errorMessage, "the resulting string would be %d (Y %d + X %d) characters long. Maximum is %d",
-                                                           stringGlyphLength(REGISTER_STRING_DATA(REGISTER_Y)) + stringGlyphLength(tmpString),
-                                                                 stringGlyphLength(REGISTER_STRING_DATA(REGISTER_Y)),
-                                                                        stringGlyphLength(tmpString),  MAX_NUMBER_OF_GLYPHS_IN_STRING);
-      moreInfoOnError("In function addStriLonI:", errorMessage, NULL, NULL);
-    #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+    errorMoreInfo("the resulting string would be %d (Y %d + X %d) characters long. Maximum is %d",
+        stringGlyphLength(REGISTER_STRING_DATA(REGISTER_Y)) + stringGlyphLength(tmpString),
+        stringGlyphLength(REGISTER_STRING_DATA(REGISTER_Y)),
+        stringGlyphLength(tmpString), MAX_NUMBER_OF_GLYPHS_IN_STRING);
   }
   else {
     len1 = stringByteLength(REGISTER_STRING_DATA(REGISTER_Y));
     len2 = stringByteLength(tmpString) + 1;
 
-    reallocateRegister(REGISTER_X, dtString, TO_BLOCKS(len1 + len2), amNone);
+    reallocateRegister(REGISTER_X, dtString, len1 + len2, amNone);
 
     xcopy(REGISTER_STRING_DATA(REGISTER_X),        REGISTER_STRING_DATA(REGISTER_Y), len1);
     xcopy(REGISTER_STRING_DATA(REGISTER_X) + len1, tmpString,                        len2);
@@ -390,19 +387,16 @@ void addStriTime(void) {
 
   if(stringGlyphLength(REGISTER_STRING_DATA(REGISTER_Y)) + stringGlyphLength(tmpString) > MAX_NUMBER_OF_GLYPHS_IN_STRING) {
     displayCalcErrorMessage(ERROR_STRING_WOULD_BE_TOO_LONG, ERR_REGISTER_LINE, REGISTER_X);
-    #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-      sprintf(errorMessage, "the resulting string would be %d (Y %d + X %d) characters long. Maximum is %d",
-                                                           stringGlyphLength(REGISTER_STRING_DATA(REGISTER_Y)) + stringGlyphLength(tmpString),
-                                                                 stringGlyphLength(REGISTER_STRING_DATA(REGISTER_Y)),
-                                                                        stringGlyphLength(tmpString),  MAX_NUMBER_OF_GLYPHS_IN_STRING);
-      moreInfoOnError("In function addStriTime:", errorMessage, NULL, NULL);
-    #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+    errorMoreInfo("the resulting string would be %d (Y %d + X %d) characters long. Maximum is %d",
+        stringGlyphLength(REGISTER_STRING_DATA(REGISTER_Y)) + stringGlyphLength(tmpString),
+        stringGlyphLength(REGISTER_STRING_DATA(REGISTER_Y)),
+        stringGlyphLength(tmpString), MAX_NUMBER_OF_GLYPHS_IN_STRING);
   }
   else {
     len1 = stringByteLength(REGISTER_STRING_DATA(REGISTER_Y));
     len2 = stringByteLength(tmpString) + 1;
 
-    reallocateRegister(REGISTER_X, dtString, TO_BLOCKS(len1 + len2), amNone);
+    reallocateRegister(REGISTER_X, dtString, len1 + len2, amNone);
 
     xcopy(REGISTER_STRING_DATA(REGISTER_X)       , REGISTER_STRING_DATA(REGISTER_Y), len1);
     xcopy(REGISTER_STRING_DATA(REGISTER_X) + len1, tmpString,                        len2);
@@ -418,19 +412,16 @@ void addStriDate(void) {
 
   if(stringGlyphLength(REGISTER_STRING_DATA(REGISTER_Y)) + stringGlyphLength(tmpString) > MAX_NUMBER_OF_GLYPHS_IN_STRING) {
     displayCalcErrorMessage(ERROR_STRING_WOULD_BE_TOO_LONG, ERR_REGISTER_LINE, REGISTER_X);
-    #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-      sprintf(errorMessage, "the resulting string would be %d (Y %d + X %d) characters long. Maximum is %d",
-                                                           stringGlyphLength(REGISTER_STRING_DATA(REGISTER_Y)) + stringGlyphLength(tmpString),
-                                                                 stringGlyphLength(REGISTER_STRING_DATA(REGISTER_Y)),
-                                                                        stringGlyphLength(tmpString),  MAX_NUMBER_OF_GLYPHS_IN_STRING);
-      moreInfoOnError("In function addStriDate:", errorMessage, NULL, NULL);
-    #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+    errorMoreInfo("the resulting string would be %d (Y %d + X %d) characters long. Maximum is %d",
+        stringGlyphLength(REGISTER_STRING_DATA(REGISTER_Y)) + stringGlyphLength(tmpString),
+        stringGlyphLength(REGISTER_STRING_DATA(REGISTER_Y)),
+        stringGlyphLength(tmpString), MAX_NUMBER_OF_GLYPHS_IN_STRING);
   }
   else {
     len1 = stringByteLength(REGISTER_STRING_DATA(REGISTER_Y));
     len2 = stringByteLength(tmpString) + 1;
 
-    reallocateRegister(REGISTER_X, dtString, TO_BLOCKS(len1 + len2), amNone);
+    reallocateRegister(REGISTER_X, dtString, len1 + len2, amNone);
 
     xcopy(REGISTER_STRING_DATA(REGISTER_X)       , REGISTER_STRING_DATA(REGISTER_Y), len1);
     xcopy(REGISTER_STRING_DATA(REGISTER_X) + len1, tmpString,                        len2);
@@ -444,21 +435,18 @@ void addStriStri(void) {
 
   if(stringGlyphLength(REGISTER_STRING_DATA(REGISTER_Y)) + stringGlyphLength(REGISTER_STRING_DATA(REGISTER_X)) > MAX_NUMBER_OF_GLYPHS_IN_STRING) {
     displayCalcErrorMessage(ERROR_STRING_WOULD_BE_TOO_LONG, ERR_REGISTER_LINE, REGISTER_X);
-    #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-      sprintf(errorMessage, "the resulting string would be %d (Y %d + X %d) characters long. Maximum is %d",
-                                                           stringGlyphLength(REGISTER_STRING_DATA(REGISTER_Y)) + stringGlyphLength(REGISTER_STRING_DATA(REGISTER_X)),
-                                                                 stringGlyphLength(REGISTER_STRING_DATA(REGISTER_Y)),
-                                                                        stringGlyphLength(REGISTER_STRING_DATA(REGISTER_X)),
-                                                                                                        MAX_NUMBER_OF_GLYPHS_IN_STRING);
-      moreInfoOnError("In function addStriStri:", errorMessage, NULL, NULL);
-    #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+    errorMoreInfo("the resulting string would be %d (Y %d + X %d) characters long. Maximum is %d",
+        stringGlyphLength(REGISTER_STRING_DATA(REGISTER_Y)) + stringGlyphLength(REGISTER_STRING_DATA(REGISTER_X)),
+        stringGlyphLength(REGISTER_STRING_DATA(REGISTER_Y)),
+        stringGlyphLength(REGISTER_STRING_DATA(REGISTER_X)),
+        MAX_NUMBER_OF_GLYPHS_IN_STRING);
   }
   else {
     len1 = stringByteLength(REGISTER_STRING_DATA(REGISTER_Y));
     len2 = stringByteLength(REGISTER_STRING_DATA(REGISTER_X)) + 1;
 
     xcopy(tmpString, REGISTER_STRING_DATA(REGISTER_X), min(TMP_STR_LENGTH, len2));
-    reallocateRegister(REGISTER_X, dtString, TO_BLOCKS(len1 + len2), amNone);
+    reallocateRegister(REGISTER_X, dtString, len1 + len2, amNone);
 
     xcopy(REGISTER_STRING_DATA(REGISTER_X)       , REGISTER_STRING_DATA(REGISTER_Y), len1);
     xcopy(REGISTER_STRING_DATA(REGISTER_X) + len1, tmpString,                        len2);
@@ -474,19 +462,16 @@ void addStriRema(void) {
 
   if(stringGlyphLength(REGISTER_STRING_DATA(REGISTER_Y)) + stringGlyphLength(tmpString) > MAX_NUMBER_OF_GLYPHS_IN_STRING) {
     displayCalcErrorMessage(ERROR_STRING_WOULD_BE_TOO_LONG, ERR_REGISTER_LINE, REGISTER_X);
-    #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-      sprintf(errorMessage, "the resulting string would be %d (Y %d + X %d) characters long. Maximum is %d",
-                                                           stringGlyphLength(REGISTER_STRING_DATA(REGISTER_Y)) + stringGlyphLength(tmpString),
-                                                                 stringGlyphLength(REGISTER_STRING_DATA(REGISTER_Y)),
-                                                                        stringGlyphLength(tmpString),  MAX_NUMBER_OF_GLYPHS_IN_STRING);
-      moreInfoOnError("In function addStriRema:", errorMessage, NULL, NULL);
-    #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+    errorMoreInfo("the resulting string would be %d (Y %d + X %d) characters long. Maximum is %d",
+        stringGlyphLength(REGISTER_STRING_DATA(REGISTER_Y)) + stringGlyphLength(tmpString),
+        stringGlyphLength(REGISTER_STRING_DATA(REGISTER_Y)),
+        stringGlyphLength(tmpString), MAX_NUMBER_OF_GLYPHS_IN_STRING);
   }
   else {
     len1 = stringByteLength(REGISTER_STRING_DATA(REGISTER_Y));
     len2 = stringByteLength(tmpString) + 1;
 
-    reallocateRegister(REGISTER_X, dtString, TO_BLOCKS(len1 + len2), amNone);
+    reallocateRegister(REGISTER_X, dtString, len1 + len2, amNone);
 
     xcopy(REGISTER_STRING_DATA(REGISTER_X)       , REGISTER_STRING_DATA(REGISTER_Y), len1);
     xcopy(REGISTER_STRING_DATA(REGISTER_X) + len1, tmpString,                        len2);
@@ -502,19 +487,16 @@ void addStriCxma(void) {
 
   if(stringGlyphLength(REGISTER_STRING_DATA(REGISTER_Y)) + stringGlyphLength(tmpString) > MAX_NUMBER_OF_GLYPHS_IN_STRING) {
     displayCalcErrorMessage(ERROR_STRING_WOULD_BE_TOO_LONG, ERR_REGISTER_LINE, REGISTER_X);
-    #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-      sprintf(errorMessage, "the resulting string would be %d (Y %d + X %d) characters long. Maximum is %d",
-                                                           stringGlyphLength(REGISTER_STRING_DATA(REGISTER_Y)) + stringGlyphLength(tmpString),
-                                                                 stringGlyphLength(REGISTER_STRING_DATA(REGISTER_Y)),
-                                                                        stringGlyphLength(tmpString),  MAX_NUMBER_OF_GLYPHS_IN_STRING);
-      moreInfoOnError("In function addStriCxma:", errorMessage, NULL, NULL);
-    #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+    errorMoreInfo("the resulting string would be %d (Y %d + X %d) characters long. Maximum is %d",
+        stringGlyphLength(REGISTER_STRING_DATA(REGISTER_Y)) + stringGlyphLength(tmpString),
+        stringGlyphLength(REGISTER_STRING_DATA(REGISTER_Y)),
+        stringGlyphLength(tmpString), MAX_NUMBER_OF_GLYPHS_IN_STRING);
   }
   else {
     len1 = stringByteLength(REGISTER_STRING_DATA(REGISTER_Y));
     len2 = stringByteLength(tmpString) + 1;
 
-    reallocateRegister(REGISTER_X, dtString, TO_BLOCKS(len1 + len2), amNone);
+    reallocateRegister(REGISTER_X, dtString, len1 + len2, amNone);
 
     xcopy(REGISTER_STRING_DATA(REGISTER_X)       , REGISTER_STRING_DATA(REGISTER_Y), len1);
     xcopy(REGISTER_STRING_DATA(REGISTER_X) + len1, tmpString,                        len2);
@@ -530,19 +512,16 @@ void addStriShoI(void) {
 
   if(stringGlyphLength(REGISTER_STRING_DATA(REGISTER_Y)) + stringGlyphLength(tmpString) > MAX_NUMBER_OF_GLYPHS_IN_STRING) {
     displayCalcErrorMessage(ERROR_STRING_WOULD_BE_TOO_LONG, ERR_REGISTER_LINE, REGISTER_X);
-    #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-      sprintf(errorMessage, "the resulting string would be %d (Y %d + X %d) characters long. Maximum is %d",
-                                                           stringGlyphLength(REGISTER_STRING_DATA(REGISTER_Y)) + stringGlyphLength(tmpString),
-                                                                 stringGlyphLength(REGISTER_STRING_DATA(REGISTER_Y)),
-                                                                        stringGlyphLength(tmpString),  MAX_NUMBER_OF_GLYPHS_IN_STRING);
-      moreInfoOnError("In function addStriShoI:", errorMessage, NULL, NULL);
-    #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+    errorMoreInfo("the resulting string would be %d (Y %d + X %d) characters long. Maximum is %d",
+        stringGlyphLength(REGISTER_STRING_DATA(REGISTER_Y)) + stringGlyphLength(tmpString),
+        stringGlyphLength(REGISTER_STRING_DATA(REGISTER_Y)),
+        stringGlyphLength(tmpString), MAX_NUMBER_OF_GLYPHS_IN_STRING);
   }
   else {
     len1 = stringByteLength(REGISTER_STRING_DATA(REGISTER_Y));
     len2 = stringByteLength(tmpString) + 1;
 
-    reallocateRegister(REGISTER_X, dtString, TO_BLOCKS(len1 + len2), amNone);
+    reallocateRegister(REGISTER_X, dtString, len1 + len2, amNone);
 
     xcopy(REGISTER_STRING_DATA(REGISTER_X)       , REGISTER_STRING_DATA(REGISTER_Y), len1);
     xcopy(REGISTER_STRING_DATA(REGISTER_X) + len1, tmpString,                        len2);
@@ -558,19 +537,16 @@ void addStriReal(void) {
 
   if(stringGlyphLength(REGISTER_STRING_DATA(REGISTER_Y)) + stringGlyphLength(tmpString) > MAX_NUMBER_OF_GLYPHS_IN_STRING) {
     displayCalcErrorMessage(ERROR_STRING_WOULD_BE_TOO_LONG, ERR_REGISTER_LINE, REGISTER_X);
-    #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-      sprintf(errorMessage, "the resulting string would be %d (Y %d + X %d) characters long. Maximum is %d",
-                                                           stringGlyphLength(REGISTER_STRING_DATA(REGISTER_Y)) + stringGlyphLength(tmpString),
-                                                                 stringGlyphLength(REGISTER_STRING_DATA(REGISTER_Y)),
-                                                                        stringGlyphLength(tmpString),  MAX_NUMBER_OF_GLYPHS_IN_STRING);
-      moreInfoOnError("In function addStriReal:", errorMessage, NULL, NULL);
-    #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+    errorMoreInfo("the resulting string would be %d (Y %d + X %d) characters long. Maximum is %d",
+        stringGlyphLength(REGISTER_STRING_DATA(REGISTER_Y)) + stringGlyphLength(tmpString),
+        stringGlyphLength(REGISTER_STRING_DATA(REGISTER_Y)),
+        stringGlyphLength(tmpString), MAX_NUMBER_OF_GLYPHS_IN_STRING);
   }
   else {
     len1 = stringByteLength(REGISTER_STRING_DATA(REGISTER_Y));
     len2 = stringByteLength(tmpString) + 1;
 
-    reallocateRegister(REGISTER_X, dtString, TO_BLOCKS(len1 + len2), amNone);
+    reallocateRegister(REGISTER_X, dtString, len1 + len2, amNone);
 
     xcopy(REGISTER_STRING_DATA(REGISTER_X),        REGISTER_STRING_DATA(REGISTER_Y), len1);
     xcopy(REGISTER_STRING_DATA(REGISTER_X) + len1, tmpString,                        len2);
@@ -586,19 +562,16 @@ void addStriCplx(void) {
 
   if(stringGlyphLength(REGISTER_STRING_DATA(REGISTER_Y)) + stringGlyphLength(tmpString) > MAX_NUMBER_OF_GLYPHS_IN_STRING) {
     displayCalcErrorMessage(ERROR_STRING_WOULD_BE_TOO_LONG, ERR_REGISTER_LINE, REGISTER_X);
-    #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-      sprintf(errorMessage, "the resulting string would be %d (Y %d + X %d) characters long. Maximum is %d",
-                                                           stringGlyphLength(REGISTER_STRING_DATA(REGISTER_Y)) + stringGlyphLength(tmpString),
-                                                                 stringGlyphLength(REGISTER_STRING_DATA(REGISTER_Y)),
-                                                                        stringGlyphLength(tmpString),  MAX_NUMBER_OF_GLYPHS_IN_STRING);
-      moreInfoOnError("In function addStriCplx:", errorMessage, NULL, NULL);
-    #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+    errorMoreInfo("the resulting string would be %d (Y %d + X %d) characters long. Maximum is %d",
+        stringGlyphLength(REGISTER_STRING_DATA(REGISTER_Y)) + stringGlyphLength(tmpString),
+        stringGlyphLength(REGISTER_STRING_DATA(REGISTER_Y)),
+        stringGlyphLength(tmpString), MAX_NUMBER_OF_GLYPHS_IN_STRING);
   }
   else {
     len1 = stringByteLength(REGISTER_STRING_DATA(REGISTER_Y));
     len2 = stringByteLength(tmpString) + 1;
 
-    reallocateRegister(REGISTER_X, dtString, TO_BLOCKS(len1 + len2), amNone);
+    reallocateRegister(REGISTER_X, dtString, len1 + len2, amNone);
 
     xcopy(REGISTER_STRING_DATA(REGISTER_X)       , REGISTER_STRING_DATA(REGISTER_Y), len1);
     xcopy(REGISTER_STRING_DATA(REGISTER_X) + len1, tmpString,                        len2);
@@ -667,12 +640,9 @@ void addRemaRema(void) {
     }
     else {
       displayCalcErrorMessage(ERROR_MATRIX_MISMATCH, ERR_REGISTER_LINE, REGISTER_X);
-      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-        sprintf(errorMessage, "cannot add %d" STD_CROSS "%d-matrix to %d" STD_CROSS "%d-matrix",
-                x.header.matrixRows, x.header.matrixColumns,
-                y.header.matrixRows, y.header.matrixColumns);
-        moreInfoOnError("In function addRemaRema:", errorMessage, NULL, NULL);
-      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+      errorMoreInfo("cannot add %d" STD_CROSS "%d-matrix to %d" STD_CROSS "%d-matrix",
+          x.header.matrixRows, x.header.matrixColumns,
+          y.header.matrixRows, y.header.matrixColumns);
     }
 
     realMatrixFree(&x);
@@ -875,12 +845,9 @@ void addCxmaCxma(void) {
     }
     else {
       displayCalcErrorMessage(ERROR_MATRIX_MISMATCH, ERR_REGISTER_LINE, REGISTER_X);
-      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-        sprintf(errorMessage, "cannot add %d" STD_CROSS "%d-matrix to %d" STD_CROSS "%d-matrix",
-                x.header.matrixRows, x.header.matrixColumns,
-                y.header.matrixRows, y.header.matrixColumns);
-        moreInfoOnError("In function addRemaRema:", errorMessage, NULL, NULL);
-      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+      errorMoreInfo("cannot add %d" STD_CROSS "%d-matrix to %d" STD_CROSS "%d-matrix",
+          x.header.matrixRows, x.header.matrixColumns,
+          y.header.matrixRows, y.header.matrixColumns);
     }
 
     complexMatrixFree(&x);
@@ -1065,7 +1032,7 @@ void addRealShoI(void) {
   real34ToReal(REGISTER_REAL34_DATA(REGISTER_Y), &y);
   yAngularMode = getRegisterAngularMode(REGISTER_Y);
   convertShortIntegerRegisterToReal(REGISTER_X, &x, &ctxtReal39);
-  reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
+  reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
 
   if(yAngularMode == amNone) {
     realAdd(&y, &x, &x, &ctxtReal39);
@@ -1094,7 +1061,7 @@ void addShoICplx(void) {
 void addCplxShoI(void) {
   convertShortIntegerRegisterToReal34Register(REGISTER_X, REGISTER_X);
   real34Add(REGISTER_REAL34_DATA(REGISTER_Y), REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_Y)); // real part
-  reallocateRegister(REGISTER_X, dtComplex34, TO_BLOCKS(COMPLEX34_SIZE_IN_BYTES), amNone);
+  reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE_IN_BYTES, amNone);
   complex34Copy(REGISTER_COMPLEX34_DATA(REGISTER_Y), REGISTER_COMPLEX34_DATA(REGISTER_X));
 }
 
@@ -1147,7 +1114,7 @@ void addRealCplx(void) {
 
 void addCplxReal(void) {
   real34Add(REGISTER_REAL34_DATA(REGISTER_Y), REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_Y)); // real part
-  reallocateRegister(REGISTER_X, dtComplex34, TO_BLOCKS(COMPLEX34_SIZE_IN_BYTES), amNone);
+  reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE_IN_BYTES, amNone);
   complex34Copy(REGISTER_COMPLEX34_DATA(REGISTER_Y), REGISTER_COMPLEX34_DATA(REGISTER_X)); // imaginary part
 }
 

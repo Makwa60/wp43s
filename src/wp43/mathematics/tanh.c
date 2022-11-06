@@ -38,8 +38,7 @@ TO_QSPI void (* const Tanh[NUMBER_OF_DATA_TYPES_FOR_CALCULATIONS])(void) = {
 #if (EXTRA_INFO_ON_CALC_ERROR == 1)
   void tanhError(void) {
     displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, REGISTER_X);
-    sprintf(errorMessage, "cannot calculate Tan for %s", getRegisterDataTypeName(REGISTER_X, true, false));
-    moreInfoOnError("In function fnTanh:", errorMessage, NULL, NULL);
+    errorMoreInfo("cannot calculate Tan for %s", getRegisterDataTypeName(REGISTER_X, true, false));
   }
 #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
 
@@ -63,7 +62,7 @@ void tanhLonI(void) {
   convertLongIntegerRegisterToReal(REGISTER_X, &x, &ctxtReal39);
   WP34S_Tanh(&x, &x, &ctxtReal39);
 
-  reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
+  reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
   convertRealToReal34ResultRegister(&x, REGISTER_X);
 }
 
@@ -84,9 +83,7 @@ void tanhCxma(void) {
 void tanhReal(void) {
   if(real34IsInfinite(REGISTER_REAL34_DATA(REGISTER_X)) && !getSystemFlag(FLAG_SPCRES)) {
     displayCalcErrorMessage(ERROR_ARG_EXCEEDS_FUNCTION_DOMAIN, ERR_REGISTER_LINE, REGISTER_X);
-    #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-      moreInfoOnError("In function tanhReal:", "cannot use " STD_PLUS_MINUS STD_INFINITY " as X input of tanh when flag D is not set", NULL, NULL);
-    #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+    errorMoreInfo("cannot use " STD_PLUS_MINUS STD_INFINITY " as X input of tanh when flag D is not set");
     return;
   }
 

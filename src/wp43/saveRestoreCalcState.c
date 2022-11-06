@@ -60,7 +60,7 @@ static uint32_t restore(void *buffer, uint32_t size) {
 #if defined(PC_BUILD)
   void saveCalc(void) {
     uint32_t backupVersion = BACKUP_VERSION;
-    uint32_t ramSize       = RAM_SIZE;
+    uint32_t ramSize       = RAM_SIZE_IN_BLOCKS;
     uint32_t ramPtr;
 
     if(!ioFileOpen(ioPathBackup, ioModeWrite)) {
@@ -77,7 +77,7 @@ static uint32_t restore(void *buffer, uint32_t size) {
 
     save(&backupVersion,                      sizeof(backupVersion));
     save(&ramSize,                            sizeof(ramSize));
-    save(ram,                                 TO_BYTES(RAM_SIZE));
+    save(ram,                                 TO_BYTES(RAM_SIZE_IN_BLOCKS));
     save(freeMemoryRegions,                   sizeof(freeMemoryRegions));
     save(&numberOfFreeMemoryRegions,          sizeof(numberOfFreeMemoryRegions));
     save(globalFlags,                         sizeof(globalFlags));
@@ -321,21 +321,21 @@ static uint32_t restore(void *buffer, uint32_t size) {
 
     restore(&backupVersion,                      sizeof(backupVersion));
     restore(&ramSize,                            sizeof(ramSize));
-    if(backupVersion != BACKUP_VERSION || ramSize != RAM_SIZE) {
+    if(backupVersion != BACKUP_VERSION || ramSize != RAM_SIZE_IN_BLOCKS) {
       ioFileClose();
       refreshScreen();
 
       printf("Cannot restore calc's memory from file backup.bin! File backup.bin is from another backup version.\n");
       printf("               Backup file      Program\n");
       printf("backupVersion  %6u           %6d\n", backupVersion, BACKUP_VERSION);
-      printf("ramSize blocks %6u           %6d\n", ramSize, RAM_SIZE);
-      printf("ramSize bytes  %6u           %6d\n", TO_BYTES(ramSize), TO_BYTES(RAM_SIZE));
+      printf("ramSize blocks %6u           %6d\n", ramSize, RAM_SIZE_IN_BLOCKS);
+      printf("ramSize bytes  %6u           %6d\n", TO_BYTES(ramSize), TO_BYTES(RAM_SIZE_IN_BLOCKS));
       return;
     }
     else {
       printf("Begin of calc's restoration\n");
 
-      restore(ram,                                 TO_BYTES(RAM_SIZE));
+      restore(ram,                                 TO_BYTES(RAM_SIZE_IN_BLOCKS));
       restore(freeMemoryRegions,                   sizeof(freeMemoryRegions));
       restore(&numberOfFreeMemoryRegions,          sizeof(numberOfFreeMemoryRegions));
       restore(globalFlags,                         sizeof(globalFlags));
@@ -914,8 +914,8 @@ void fnSave(uint16_t unusedButMandatoryParameter) {
   }
 
   // Programs
-  uint16_t currentSizeInBlocks = RAM_SIZE - freeMemoryRegions[numberOfFreeMemoryRegions - 1].address - freeMemoryRegions[numberOfFreeMemoryRegions - 1].sizeInBlocks;
-  sprintf(tmpString, "PROGRAMS\n%" PRIu16 "\n", currentSizeInBlocks);
+  size_t currentSizeInBytes = TO_BYTES(RAM_SIZE_IN_BLOCKS - freeMemoryRegions[numberOfFreeMemoryRegions - 1].address - freeMemoryRegions[numberOfFreeMemoryRegions - 1].sizeInBlocks);
+  sprintf(tmpString, "PROGRAMS\n%" PRIu32 "\n", (uint32_t)currentSizeInBytes);
   save(tmpString, strlen(tmpString));
 
   sprintf(tmpString, "%" PRIu32 "\n%" PRIu32 "\n", (uint32_t)TO_WP43MEMPTR(currentStep.ram), (uint32_t)((void *)currentStep.ram - TO_PCMEMPTR(TO_WP43MEMPTR(currentStep.ram)))); // currentStep block pointer + offset within block
@@ -927,8 +927,8 @@ void fnSave(uint16_t unusedButMandatoryParameter) {
   sprintf(tmpString, "%" PRIu16 "\n", freeProgramBytes);
   save(tmpString, strlen(tmpString));
 
-  for(i=0; i<currentSizeInBlocks; i++) {
-    sprintf(tmpString, "%" PRIu32 "\n", *(((uint32_t *)(beginOfProgramMemory)) + i));
+  for(i=0; i<currentSizeInBytes; i++) {
+    sprintf(tmpString, "%" PRIu8 "\n", beginOfProgramMemory[i]);
     save(tmpString, strlen(tmpString));
   }
 
@@ -1121,22 +1121,22 @@ static void restoreRegister(calcRegister_t regist, char *type, char *value) {
       tag = amNone;
     }
 
-    reallocateRegister(regist, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), tag);
+    reallocateRegister(regist, dtReal34, REAL34_SIZE_IN_BYTES, tag);
     stringToReal34(value, REGISTER_REAL34_DATA(regist));
   }
 
   else if(strcmp(type, "Real") == 0) {
-    reallocateRegister(regist, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), tag);
+    reallocateRegister(regist, dtReal34, REAL34_SIZE_IN_BYTES, tag);
     stringToReal34(value, REGISTER_REAL34_DATA(regist));
   }
 
   else if(strcmp(type, "Time") == 0) {
-    reallocateRegister(regist, dtTime, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
+    reallocateRegister(regist, dtTime, REAL34_SIZE_IN_BYTES, amNone);
     stringToReal34(value, REGISTER_REAL34_DATA(regist));
   }
 
   else if(strcmp(type, "Date") == 0) {
-    reallocateRegister(regist, dtDate, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
+    reallocateRegister(regist, dtDate, REAL34_SIZE_IN_BYTES, amNone);
     stringToReal34(value, REGISTER_REAL34_DATA(regist));
   }
 
@@ -1150,12 +1150,12 @@ static void restoreRegister(calcRegister_t regist, char *type, char *value) {
   }
 
   else if(strcmp(type, "Stri") == 0) {
-    int32_t len;
+    int32_t lenInBytes;
 
     utf8ToString((uint8_t *)value, errorMessage);
-    len = stringByteLength(errorMessage) + 1;
-    reallocateRegister(regist, dtString, TO_BLOCKS(len), amNone);
-    xcopy(REGISTER_STRING_DATA(regist), errorMessage, len);
+    lenInBytes = stringByteLength(errorMessage) + 1;
+    reallocateRegister(regist, dtString, lenInBytes, amNone);
+    xcopy(REGISTER_STRING_DATA(regist), errorMessage, lenInBytes);
   }
 
   else if(strcmp(type, "ShoI") == 0) {
@@ -1176,7 +1176,7 @@ static void restoreRegister(calcRegister_t regist, char *type, char *value) {
   else if(strcmp(type, "Cplx") == 0) {
     char *imaginaryPart;
 
-    reallocateRegister(regist, dtComplex34, TO_BLOCKS(COMPLEX34_SIZE_IN_BYTES), amNone);
+    reallocateRegister(regist, dtComplex34, COMPLEX34_SIZE_IN_BYTES, amNone);
     imaginaryPart = value;
     while(*imaginaryPart != ' ') {
       imaginaryPart++;
@@ -1198,7 +1198,7 @@ static void restoreRegister(calcRegister_t regist, char *type, char *value) {
     *(numOfCols++) = 0;
     rows = stringToUint16(value);
     cols = stringToUint16(numOfCols);
-    reallocateRegister(regist, dtReal34Matrix, TO_BLOCKS(REAL34_SIZE_IN_BYTES) * rows * cols, amNone);
+    reallocateRegister(regist, dtReal34Matrix, REAL34_SIZE_IN_BYTES * rows * cols, amNone);
     REGISTER_REAL34_MATRIX_DBLOCK(regist)->matrixRows = rows;
     REGISTER_REAL34_MATRIX_DBLOCK(regist)->matrixColumns = cols;
   }
@@ -1214,7 +1214,7 @@ static void restoreRegister(calcRegister_t regist, char *type, char *value) {
     *(numOfCols++) = 0;
     rows = stringToUint16(value);
     cols = stringToUint16(numOfCols);
-    reallocateRegister(regist, dtComplex34Matrix, TO_BLOCKS(COMPLEX34_SIZE_IN_BYTES) * rows * cols, amNone);
+    reallocateRegister(regist, dtComplex34Matrix, COMPLEX34_SIZE_IN_BYTES * rows * cols, amNone);
     REGISTER_COMPLEX34_MATRIX_DBLOCK(regist)->matrixRows = rows;
     REGISTER_COMPLEX34_MATRIX_DBLOCK(regist)->matrixColumns = cols;
   }
@@ -1223,7 +1223,7 @@ static void restoreRegister(calcRegister_t regist, char *type, char *value) {
   else if(strcmp(type, "Conf") == 0) {
     char *cfg;
 
-    reallocateRegister(regist, dtConfig, CONFIG_SIZE, amNone);
+    reallocateRegister(regist, dtConfig, CONFIG_SIZE_IN_BYTES, amNone);
     for(cfg=(char *)REGISTER_CONFIG_DATA(regist), tag=0; tag<sizeof(dtConfigDescriptor_t); tag++, value+=2, cfg++) {
       *cfg = ((*value >= 'A' ? *value - 'A' + 10 : *value - '0') << 4) | (*(value + 1) >= 'A' ? *(value + 1) - 'A' + 10 : *(value + 1) - '0');
     }
@@ -1299,7 +1299,7 @@ static void skipMatrixData(char *type, char *value) {
 
 
 static bool restoreOneSection(uint16_t loadMode, uint16_t s, uint16_t n, uint16_t d) {
-  int16_t i, numberOfRegs;
+  int16_t numberOfRegs;
   calcRegister_t regist;
   char *str;
 
@@ -1308,7 +1308,7 @@ static bool restoreOneSection(uint16_t loadMode, uint16_t s, uint16_t n, uint16_
   if(strcmp(tmpString, "GLOBAL_REGISTERS") == 0) {
     readLine(tmpString); // Number of global registers
     numberOfRegs = stringToInt16(tmpString);
-    for(i=0; i<numberOfRegs; i++) {
+    for(int16_t i=0; i<numberOfRegs; i++) {
       readLine(tmpString); // Register number
       regist = stringToInt16(tmpString + 1);
       readLine(aimBuffer); // Register data type
@@ -1388,7 +1388,7 @@ static bool restoreOneSection(uint16_t loadMode, uint16_t s, uint16_t n, uint16_
     }
 
     if((loadMode != LM_ALL && loadMode != LM_REGISTERS) || lastErrorCode == ERROR_NONE) {
-      for(i=0; i<numberOfRegs; i++) {
+      for(int16_t i=0; i<numberOfRegs; i++) {
         readLine(tmpString); // Register number
         regist = stringToInt16(tmpString + 2) + FIRST_LOCAL_REGISTER;
         readLine(aimBuffer); // Register data type
@@ -1415,7 +1415,7 @@ static bool restoreOneSection(uint16_t loadMode, uint16_t s, uint16_t n, uint16_
   else if(strcmp(tmpString, "NAMED_VARIABLES") == 0) {
     readLine(tmpString); // Number of named variables
     numberOfRegs = stringToInt16(tmpString);
-    for(i=0; i<numberOfRegs; i++) {
+    for(int16_t i=0; i<numberOfRegs; i++) {
       readLine(errorMessage); // Variable name
       readLine(aimBuffer); // Variable data type
       readLine(tmpString); // Variable value
@@ -1436,7 +1436,7 @@ static bool restoreOneSection(uint16_t loadMode, uint16_t s, uint16_t n, uint16_
       initStatisticalSums();
     }
 
-    for(i=0; i<numberOfRegs; i++) {
+    for(int16_t i=0; i<numberOfRegs; i++) {
       readLine(tmpString); // statistical sum
       if(statisticalSumsPointer) { // likely
         if(loadMode == LM_ALL || loadMode == LM_SUMS) {
@@ -1456,7 +1456,7 @@ static bool restoreOneSection(uint16_t loadMode, uint16_t s, uint16_t n, uint16_
   else if(strcmp(tmpString, "KEYBOARD_ASSIGNMENTS") == 0) {
     readLine(tmpString); // Number of keys
     numberOfRegs = stringToInt16(tmpString);
-    for(i=0; i<numberOfRegs; i++) {
+    for(int16_t i=0; i<numberOfRegs; i++) {
       readLine(tmpString); // key
       if(loadMode == LM_ALL || loadMode == LM_SYSTEM_STATE) {
         str = tmpString;
@@ -1538,7 +1538,7 @@ static bool restoreOneSection(uint16_t loadMode, uint16_t s, uint16_t n, uint16_
       userKeyLabel = allocWp43(userKeyLabelSize);
       memset(userKeyLabel,   0, TO_BYTES(TO_BLOCKS(userKeyLabelSize)));
     }
-    for(i=0; i<numberOfRegs; i++) {
+    for(int16_t i=0; i<numberOfRegs; i++) {
       readLine(tmpString); // key
       if(loadMode == LM_ALL || loadMode == LM_SYSTEM_STATE) {
         str = tmpString;
@@ -1564,7 +1564,7 @@ static bool restoreOneSection(uint16_t loadMode, uint16_t s, uint16_t n, uint16_
   else if(strcmp(tmpString, "MYMENU") == 0) {
     readLine(tmpString); // Number of keys
     numberOfRegs = stringToInt16(tmpString);
-    for(i=0; i<numberOfRegs; i++) {
+    for(int16_t i=0; i<numberOfRegs; i++) {
       readLine(tmpString); // key
       if(loadMode == LM_ALL || loadMode == LM_SYSTEM_STATE) {
         str = tmpString;
@@ -1589,7 +1589,7 @@ static bool restoreOneSection(uint16_t loadMode, uint16_t s, uint16_t n, uint16_
   else if(strcmp(tmpString, "MYALPHA") == 0) {
     readLine(tmpString); // Number of keys
     numberOfRegs = stringToInt16(tmpString);
-    for(i=0; i<numberOfRegs; i++) {
+    for(int16_t i=0; i<numberOfRegs; i++) {
       readLine(tmpString); // key
       if(loadMode == LM_ALL || loadMode == LM_SYSTEM_STATE) {
         str = tmpString;
@@ -1619,7 +1619,7 @@ static bool restoreOneSection(uint16_t loadMode, uint16_t s, uint16_t n, uint16_
       int16_t target = -1;
       if(loadMode == LM_ALL || loadMode == LM_SYSTEM_STATE) {
         utf8ToString((uint8_t *)tmpString, tmpString + TMP_STR_LENGTH / 2);
-        for(i = 0; i < numberOfUserMenus; ++i) {
+        for(int16_t i = 0; i < numberOfUserMenus; ++i) {
           if(compareString(tmpString + TMP_STR_LENGTH / 2, userMenus[i].menuName, CMP_NAME) == 0) {
             target = i;
           }
@@ -1632,7 +1632,7 @@ static bool restoreOneSection(uint16_t loadMode, uint16_t s, uint16_t n, uint16_
 
       readLine(tmpString);
       numberOfRegs = stringToInt16(tmpString);
-      for(i=0; i<numberOfRegs; i++) {
+      for(int16_t i=0; i<numberOfRegs; i++) {
         readLine(tmpString); // key
         if(loadMode == LM_ALL || loadMode == LM_SYSTEM_STATE) {
           str = tmpString;
@@ -1656,19 +1656,19 @@ static bool restoreOneSection(uint16_t loadMode, uint16_t s, uint16_t n, uint16_
   }
 
   else if(strcmp(tmpString, "PROGRAMS") == 0) {
-    uint16_t numberOfBlocks;
-    uint16_t oldSizeInBlocks = RAM_SIZE - freeMemoryRegions[numberOfFreeMemoryRegions - 1].address - freeMemoryRegions[numberOfFreeMemoryRegions - 1].sizeInBlocks;
+    size_t numberOfBytes;
+    uint16_t oldSizeInBytes = TO_BYTES(RAM_SIZE_IN_BLOCKS - freeMemoryRegions[numberOfFreeMemoryRegions - 1].address - freeMemoryRegions[numberOfFreeMemoryRegions - 1].sizeInBlocks);
     uint8_t *oldFirstFreeProgramByte = firstFreeProgramByte;
     uint16_t oldFreeProgramBytes = freeProgramBytes;
 
-    readLine(tmpString); // Number of blocks
-    numberOfBlocks = stringToUint16(tmpString);
+    readLine(tmpString); // Number of bytes
+    numberOfBytes = stringToUint16(tmpString);
     if(loadMode == LM_ALL) {
-      resizeProgramMemory(numberOfBlocks);
+      resizeProgramMemory(numberOfBytes);
     }
     else if(loadMode == LM_PROGRAMS) {
-      resizeProgramMemory(oldSizeInBlocks + numberOfBlocks);
-      oldFirstFreeProgramByte = beginOfProgramMemory + TO_BYTES(oldSizeInBlocks) - oldFreeProgramBytes - 2;
+      resizeProgramMemory(oldSizeInBytes + numberOfBytes);
+      oldFirstFreeProgramByte = beginOfProgramMemory + oldSizeInBytes - oldFreeProgramBytes - 2;
     }
 
     readLine(tmpString); // currentStep (pointer to block)
@@ -1681,10 +1681,10 @@ static bool restoreOneSection(uint16_t loadMode, uint16_t s, uint16_t n, uint16_
     }
     else if(loadMode == LM_PROGRAMS) {
       if(programList[currentProgramNumber - 1].step > 0) {
-        currentStep.ram           -= TO_BYTES(numberOfBlocks);
-        firstDisplayedStep.ram    -= TO_BYTES(numberOfBlocks);
-        beginOfCurrentProgram.ram -= TO_BYTES(numberOfBlocks);
-        endOfCurrentProgram.ram   -= TO_BYTES(numberOfBlocks);
+        currentStep.ram           -= numberOfBytes;
+        firstDisplayedStep.ram    -= numberOfBytes;
+        beginOfCurrentProgram.ram -= numberOfBytes;
+        endOfCurrentProgram.ram   -= numberOfBytes;
       }
     }
 
@@ -1709,7 +1709,7 @@ static bool restoreOneSection(uint16_t loadMode, uint16_t s, uint16_t n, uint16_
       else {
         if(oldFreeProgramBytes + freeProgramBytes < 2) {
           uint16_t tmpFreeProgramBytes = freeProgramBytes;
-          resizeProgramMemory(oldSizeInBlocks + numberOfBlocks + 1);
+          resizeProgramMemory(oldSizeInBytes + numberOfBytes + TO_BYTES(1));
           oldFirstFreeProgramByte -= 4;
           freeProgramBytes = tmpFreeProgramBytes + 4;
           if(programList[currentProgramNumber - 1].step > 0) {
@@ -1726,14 +1726,13 @@ static bool restoreOneSection(uint16_t loadMode, uint16_t s, uint16_t n, uint16_
       }
     }
 
-    for(i=0; i<numberOfBlocks; i++) {
-      readLine(tmpString); // One block
+    for(size_t i=0; i<numberOfBytes; i++) {
+      readLine(tmpString); // One byte
       if(loadMode == LM_ALL) {
-        *(((uint32_t *)(beginOfProgramMemory)) + i) = stringToUint32(tmpString);
+        beginOfProgramMemory[i] = stringToUint8(tmpString);
       }
       else if(loadMode == LM_PROGRAMS) {
-        uint32_t tmpBlock = stringToUint32(tmpString);
-        xcopy(oldFirstFreeProgramByte + TO_BYTES(i), (uint8_t *)(&tmpBlock), 4);
+        oldFirstFreeProgramByte[i] = stringToUint8(tmpString);
       }
     }
 
@@ -1744,7 +1743,7 @@ static bool restoreOneSection(uint16_t loadMode, uint16_t s, uint16_t n, uint16_
     uint16_t formulae;
 
     if(loadMode == LM_ALL || loadMode == LM_PROGRAMS) {
-      for(i = numberOfFormulae; i > 0; --i) {
+      for(int16_t i = numberOfFormulae; i > 0; --i) {
         deleteEquation(i - 1);
       }
     }
@@ -1755,13 +1754,13 @@ static bool restoreOneSection(uint16_t loadMode, uint16_t s, uint16_t n, uint16_
       allFormulae = allocWp43(sizeof(formulaHeader_t) * formulae);
       numberOfFormulae = formulae;
       currentFormula = 0;
-      for(i = 0; i < formulae; i++) {
+      for(int16_t i = 0; i < formulae; i++) {
         allFormulae[i].pointerToFormulaData = WP43_NULL;
         allFormulae[i].sizeInBlocks = 0;
       }
     }
 
-    for(i = 0; i < formulae; i++) {
+    for(int16_t i = 0; i < formulae; i++) {
       readLine(tmpString); // One formula
       if(loadMode == LM_ALL || loadMode == LM_PROGRAMS) {
         utf8ToString((uint8_t *)tmpString, tmpString + TMP_STR_LENGTH / 2);
@@ -1773,7 +1772,7 @@ static bool restoreOneSection(uint16_t loadMode, uint16_t s, uint16_t n, uint16_
   else if(strcmp(tmpString, "OTHER_CONFIGURATION_STUFF") == 0) {
     readLine(tmpString); // Number params
     numberOfRegs = stringToInt16(tmpString);
-    for(i=0; i<numberOfRegs; i++) {
+    for(int16_t i=0; i<numberOfRegs; i++) {
       readLine(aimBuffer); // param
       readLine(tmpString); // value
       if(loadMode == LM_ALL || loadMode == LM_SYSTEM_STATE) {

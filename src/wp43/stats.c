@@ -594,7 +594,7 @@ static calcRegister_t fnClHisto(void) {
   #if !defined(TESTSUITE_BUILD)
     calcRegister_t regHisto = findNamedVariable("HISTO");
     if(regHisto == INVALID_VARIABLE) {
-      allocateNamedVariable("HISTO", dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES));
+      allocateNamedVariable("HISTO", dtReal34, REAL34_SIZE_IN_BYTES);
       regHisto = findNamedVariable("HISTO");
     }
     if(regHisto == INVALID_VARIABLE) {
@@ -616,7 +616,7 @@ void fnClSigma(uint16_t unusedButMandatoryParameter) {
   strcpy(statMx,"STATS");                     //any stats operation restores the stats matrix. The purpose of the changed names are just to be able to exchange the matrixes for reading and graphing
   calcRegister_t regStats = findNamedVariable(statMx);
   if(regStats == INVALID_VARIABLE) {
-    allocateNamedVariable(statMx, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES));
+    allocateNamedVariable(statMx, dtReal34, REAL34_SIZE_IN_BYTES);
     regStats = findNamedVariable(statMx);
   }
   if(regStats == INVALID_VARIABLE) {
@@ -716,9 +716,9 @@ void fnSigma(uint16_t plusMinus) {
           }
 
           liftStack();
-          reallocateRegister(REGISTER_Y, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
+          reallocateRegister(REGISTER_Y, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
           convertRealToReal34ResultRegister(&y, REGISTER_Y);
-          reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
+          reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
           convertRealToReal34ResultRegister(&x, REGISTER_X);
           temporaryInformation = TI_STATISTIC_SUMS;
         }
@@ -1100,11 +1100,11 @@ static void convertStatsMatrixToHistoMatrix(uint16_t statsVariableToHistogram) {
         liftStack();
         liftStack();
         liftStack();
-        reallocateRegister(REGISTER_Z, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
+        reallocateRegister(REGISTER_Z, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
         convertRealToReal34ResultRegister(&nb, REGISTER_Z);
-        reallocateRegister(REGISTER_Y, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
+        reallocateRegister(REGISTER_Y, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
         convertRealToReal34ResultRegister(&lb, REGISTER_Y);
-        reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
+        reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
         convertRealToReal34ResultRegister(&hb, REGISTER_X);
         temporaryInformation = TI_STATISTIC_HISTO;
       }

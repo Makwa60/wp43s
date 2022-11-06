@@ -32,12 +32,11 @@ static bool besselGetParam(calcRegister_t regist, real_t *r, realContext_t *real
     }
   }
   displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, REGISTER_X);
-  #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-    sprintf(errorMessage, "cannot calculate Bessel function for %s and %s", getRegisterDataTypeName(REGISTER_X, true, false), getRegisterDataTypeName(REGISTER_Y, true, false));
-    moreInfoOnError("In function besselGetParam:", errorMessage, NULL, NULL);
-  #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+  errorMoreInfo("cannot calculate Bessel function for %s and %s", getRegisterDataTypeName(REGISTER_X, true, false), getRegisterDataTypeName(REGISTER_Y, true, false));
   return false;
 }
+
+
 
 void fnBesselJ(uint16_t unusedButMandatoryParameter) {
   real_t x, n, r, a;
@@ -49,7 +48,7 @@ void fnBesselJ(uint16_t unusedButMandatoryParameter) {
  if(besselGetParam(REGISTER_X, &x, &ctxtReal75) && besselGetParam(REGISTER_Y, &n, &ctxtReal75)) {
     if(realIsAnInteger(&n) || (!realIsNegative(&x))) {
       WP34S_BesselJ(&n, &x, &r, &ctxtReal75);
-      reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
+      reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
       convertRealToReal34ResultRegister(&r, REGISTER_X);
     }
     else if(getSystemFlag(FLAG_CPXRES)) { // Real -> Complex
@@ -58,7 +57,7 @@ void fnBesselJ(uint16_t unusedButMandatoryParameter) {
       WP34S_Mod(&n, const_2, &a, &ctxtReal75);
       realMultiply(&a, const_pi, &a, &ctxtReal75);
       realPolarToRectangular(&r, &a, &r, &a, &ctxtReal75);
-      reallocateRegister(REGISTER_X, dtComplex34, TO_BLOCKS(COMPLEX34_SIZE_IN_BYTES), amNone);
+      reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE_IN_BYTES, amNone);
       convertRealToReal34ResultRegister(&r, REGISTER_X);
       convertRealToImag34ResultRegister(&a, REGISTER_X);
     }
@@ -73,6 +72,8 @@ void fnBesselJ(uint16_t unusedButMandatoryParameter) {
   adjustResult(REGISTER_X, true, true, REGISTER_X, REGISTER_Y, -1);
 }
 
+
+
 void fnBesselY(uint16_t unusedButMandatoryParameter) {
   real_t x, n, r, a, b, c;
 
@@ -83,7 +84,7 @@ void fnBesselY(uint16_t unusedButMandatoryParameter) {
   if(besselGetParam(REGISTER_X, &x, &ctxtReal75) && besselGetParam(REGISTER_Y, &n, &ctxtReal75)) {
     if(!realIsNegative(&x)) {
       WP34S_BesselY(&n, &x, &r, &ctxtReal75);
-      reallocateRegister(REGISTER_X, dtReal34, TO_BLOCKS(REAL34_SIZE_IN_BYTES), amNone);
+      reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
       convertRealToReal34ResultRegister(&r, REGISTER_X);
     }
     else if(getSystemFlag(FLAG_CPXRES)) { // Real -> Complex
@@ -100,7 +101,7 @@ void fnBesselY(uint16_t unusedButMandatoryParameter) {
       realAdd(&b, &b, &b, &ctxtReal75);
       realAdd(&a, &b, &a, &ctxtReal75);
 
-      reallocateRegister(REGISTER_X, dtComplex34, TO_BLOCKS(COMPLEX34_SIZE_IN_BYTES), amNone);
+      reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE_IN_BYTES, amNone);
       convertRealToReal34ResultRegister(&r, REGISTER_X);
       convertRealToImag34ResultRegister(&a, REGISTER_X);
     }
@@ -213,6 +214,7 @@ static void u_k(uint32_t k, const real_t *coeff/*array*/, const real_t *t_r, con
     mulComplexComplex(&t_n_r, &t_n_i, t_r, t_i, &t_n_r, &t_n_i, realContext);
   }
 }
+
 
 
 static void Sigma_u_k(const real_t *nu, const real_t *t_r, const real_t *t_i, int32_t odd, int32_t even, real_t *res_r, real_t *res_i, realContext_t *realContext) {
@@ -337,6 +339,8 @@ static void Sigma_u_k(const real_t *nu, const real_t *t_r, const real_t *t_i, in
 #undef COEFF_BUFFER_SIZE_IN_BYTES
 #undef NUMBER_OF_COEFF
 
+
+
 // Debye's asymptotic expansion (based on Abramowitz and Stegun, p.366)
 static void bessel_asymptotic_large_order_hyp(const real_t *nu, const real_t *x, bool is_y, real_t *res, realContext_t *realContext) {
   real_t alpha, tanh_alpha, coefficient, itrval, t, tmp;
@@ -367,6 +371,8 @@ static void bessel_asymptotic_large_order_hyp(const real_t *nu, const real_t *x,
   Sigma_u_k(nu, &t, const_0, is_y ? -1 : 1, 1, &itrval, &tmp, realContext);
   realMultiply(&coefficient, &itrval, res, realContext);
 }
+
+
 
 static void bessel_asymptotic_large_order_trig(const real_t *nu, const real_t *x, bool is_y, real_t *res, realContext_t *realContext) {
   real_t beta, sin_beta, cos_beta, tan_beta, cot_beta, coefficient, psi, sin_psi, cos_psi, lr, li, mr, mi;
@@ -424,6 +430,9 @@ static void plusMinus(bool subtracting, const real_t *a, const real_t *b, real_t
     realAdd(a, b, res, realContext);
   }
 }
+
+
+
 static void bessel_recur(const real_t *nu, const real_t *x, bool is_y, bool descending, real_t *res, realContext_t *realContext) {
   real_t jnx, jn_1x, alpha, floor_nu;
 
@@ -453,6 +462,7 @@ static void bessel_recur(const real_t *nu, const real_t *x, bool is_y, bool desc
     realCopy(res, &jnx);
   }
 }
+
 
 
 // Digamma function (integer arguments only)
@@ -511,6 +521,8 @@ static void bessel(const real_t *alpha, const real_t *x, bool neg, real_t *res, 
   return;
 }
 
+
+
 void WP34S_BesselJ(const real_t *alpha, const real_t *x, real_t *res, realContext_t *realContext) {
   real_t a, beta, gamma;
 
@@ -552,6 +564,8 @@ void WP34S_BesselJ(const real_t *alpha, const real_t *x, real_t *res, realContex
     bessel(&a, x, true, res, realContext);
   }
 }
+
+
 
 // See A&S page 360 section 9.1.11
 static void bessel2_int_series(const real_t *n, const real_t *x, real_t *res, realContext_t *realContext) {
@@ -643,6 +657,8 @@ static void bessel2_int_series(const real_t *n, const real_t *x, real_t *res, re
     realChangeSign(res);
   }
 }
+
+
 
 void WP34S_BesselY(const real_t *alpha, const real_t *x, real_t *res, realContext_t *realContext) {
   real_t a, t, u, s, c, beta, gamma;
