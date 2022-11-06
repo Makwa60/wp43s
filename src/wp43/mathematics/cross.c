@@ -31,47 +31,16 @@ TO_QSPI void (* const cross[NUMBER_OF_DATA_TYPES_FOR_CALCULATIONS][NUMBER_OF_DAT
 /* 10 Config data   */ { crossDataTypeError,  crossDataTypeError,  crossDataTypeError,  crossDataTypeError,  crossDataTypeError,  crossDataTypeError,  crossDataTypeError,  crossDataTypeError,  crossDataTypeError, crossDataTypeError}
 };
 
-//=============================================================================
-// Error handling
-//-----------------------------------------------------------------------------
-
-/********************************************//**
- * \brief Data type error in CROSS
- *
- * \param void
- * \return void
- ***********************************************/
 static void crossDataTypeError(void) {
   displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, REGISTER_X);
 
-  #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-    sprintf(errorMessage, "cannot raise %s", getRegisterDataTypeName(REGISTER_Y, true, false));
-    sprintf(errorMessage + ERROR_MESSAGE_LENGTH/2, "to %s", getRegisterDataTypeName(REGISTER_X, true, false));
-    moreInfoOnError("In function fnCross:", errorMessage, errorMessage + ERROR_MESSAGE_LENGTH/2, NULL);
-  #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+  errorMoreInfo("cannot raise %s\nto %s",
+      getRegisterDataTypeName(REGISTER_Y, true, false),
+      getRegisterDataTypeName(REGISTER_X, true, false));
 }
 
-//static void crossSizeError() {
-//  displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, REGISTER_X);
 
-//  #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-//    sprintf(errorMessage, "cannot calculate CROSS product, matrix size mismatch.");
-//    moreInfoOnError("In function fnCross:", errorMessage, NULL, NULL);
-//  #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
-//}
 
-//=============================================================================
-// Main function
-//-----------------------------------------------------------------------------
-
-/********************************************//**
- * \brief regX ==> regL and CROSS(regX, RegY) ==> regX
- * enables stack lift and refreshes the stack.
- * Calculate the cross (or vector) product between complex and matrix
- *
- * \param[in] unusedButMandatoryParameter uint16_t
- * \return void
- ***********************************************/
 void fnCross(uint16_t unusedButMandatoryParameter) {
   if(!saveLastX()) {
     return;
@@ -82,9 +51,7 @@ void fnCross(uint16_t unusedButMandatoryParameter) {
   adjustResult(REGISTER_X, true, true, REGISTER_X, -1, -1);
 }
 
-//=============================================================================
-// Complex cross product calculation functionS
-//-----------------------------------------------------------------------------
+
 
 static void crossCplx(real_t *xReal, real_t *xImag, real_t *yReal, real_t *yImag, real_t *rReal, realContext_t *realContext) {
   real_t t;
@@ -95,12 +62,7 @@ static void crossCplx(real_t *xReal, real_t *xImag, real_t *yReal, real_t *yImag
 }
 
 
-/********************************************//**
- * \brief cross(Y(real34), X(complex34)) ==> X(real34)
- *
- * \param void
- * \return void
- ***********************************************/
+
 void crossRealCplx(void) {
   real_t xReal, xImag, yReal, yImag;
   real_t rReal;
@@ -118,12 +80,8 @@ void crossRealCplx(void) {
   setRegisterAngularMode(REGISTER_X, amNone);
 }
 
-/********************************************//**
- * \brief cross(Y(long integer), X(complex34)) ==> X(real34)
- *
- * \param void
- * \return void
- ***********************************************/
+
+
 void crossLonICplx(void) {
   real_t xReal, xImag, yReal, yImag;
   real_t rReal;
@@ -141,12 +99,8 @@ void crossLonICplx(void) {
   setRegisterAngularMode(REGISTER_X, amNone);
 }
 
-/********************************************//**
- * \brief cross(Y(short integer), X(complex34)) ==> X(real34)
- *
- * \param void
- * \return void
- ***********************************************/
+
+
 void crossShoICplx(void) {
   real_t xReal, xImag, yReal, yImag;
   real_t rReal;
@@ -164,12 +118,8 @@ void crossShoICplx(void) {
   setRegisterAngularMode(REGISTER_X, amNone);
 }
 
-/********************************************//**
- * \brief cross(Y(complex34), X(complex34)) ==> X(real34)
- *
- * \param void
- * \return void
- ***********************************************/
+
+
 void crossCplxCplx(void) {
   real_t xReal, xImag, yReal, yImag;
   real_t rReal;
@@ -187,12 +137,8 @@ void crossCplxCplx(void) {
   setRegisterAngularMode(REGISTER_X, amNone);
 }
 
-/********************************************//**
- * \brief cross(Y(complex34), X(real34)) ==> X(real34)
- *
- * \param void
- * \return void
- ***********************************************/
+
+
 void crossCplxReal(void) {
   real_t xReal, xImag, yReal, yImag;
   real_t rReal;
@@ -209,12 +155,8 @@ void crossCplxReal(void) {
   setRegisterAngularMode(REGISTER_X, amNone);
 }
 
-/********************************************//**
- * \brief cross(Y(complex34), X(long integer)) ==> X(real34)
- *
- * \param void
- * \return void
- ***********************************************/
+
+
 void crossCplxLonI(void) {
   real_t xReal, xImag, yReal, yImag;
   real_t rReal;
@@ -232,12 +174,8 @@ void crossCplxLonI(void) {
   setRegisterAngularMode(REGISTER_X, amNone);
 }
 
-/********************************************//**
- * \brief cross(Y(complex34), X(short integer)) ==> X(real34)
- *
- * \param void
- * \return void
- ***********************************************/
+
+
 void crossCplxShoI(void) {
   real_t xReal, xImag, yReal, yImag;
   real_t rReal;
@@ -255,16 +193,8 @@ void crossCplxShoI(void) {
   setRegisterAngularMode(REGISTER_X, amNone);
 }
 
-//=============================================================================
-// Matrix cross calculation function
-//-----------------------------------------------------------------------------
 
-/********************************************//**
- * \brief cross(Y(real34 matrix), X(real34 matrix)) ==> X(real34 matrix)
- *
- * \param void
- * \return void
- ***********************************************/
+
 void crossRemaRema(void) {
   #if !defined(TESTSUITE_BUILD)
     real34Matrix_t y, x, res;
@@ -274,12 +204,9 @@ void crossRemaRema(void) {
 
     if((realVectorSize(&y) == 0) || (realVectorSize(&x) == 0) || (realVectorSize(&y) > 3) || (realVectorSize(&x) > 3)) {
       displayCalcErrorMessage(ERROR_MATRIX_MISMATCH, ERR_REGISTER_LINE, REGISTER_X);
-      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-        sprintf(errorMessage, "invalid numbers of elements of %d" STD_CROSS "%d-matrix to %d" STD_CROSS "%d-matrix",
-                x.header.matrixRows, x.header.matrixColumns,
-                y.header.matrixRows, y.header.matrixColumns);
-        moreInfoOnError("In function crossRemaRema:", errorMessage, NULL, NULL);
-      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+      errorMoreInfo("invalid numbers of elements of %d" STD_CROSS "%d-matrix to %d" STD_CROSS "%d-matrix",
+          x.header.matrixRows, x.header.matrixColumns,
+          y.header.matrixRows, y.header.matrixColumns);
     }
     else {
       crossRealVectors(&y, &x, &res);
@@ -288,12 +215,8 @@ void crossRemaRema(void) {
   #endif // !TESTSUITE_BUILD
 }
 
-/********************************************//**
- * \brief cross(Y(complex34 matrix), X(real34 matrix)) ==> X(complex34 matrix)
- *
- * \param void
- * \return void
- ***********************************************/
+
+
 void crossCpmaRema(void) {
   #if !defined(TESTSUITE_BUILD)
     convertReal34MatrixRegisterToComplex34MatrixRegister(REGISTER_X, REGISTER_X);
@@ -301,12 +224,8 @@ void crossCpmaRema(void) {
   #endif // !TESTSUITE_BUILD
 }
 
-/********************************************//**
- * \brief cross(Y(real34 matrix), X(complex34 matrix)) ==> X(complex34 matrix)
- *
- * \param void
- * \return void
- ***********************************************/
+
+
 void crossRemaCpma(void) {
   #if !defined(TESTSUITE_BUILD)
     convertReal34MatrixRegisterToComplex34MatrixRegister(REGISTER_Y, REGISTER_Y);
@@ -314,12 +233,8 @@ void crossRemaCpma(void) {
   #endif // !TESTSUITE_BUILD
 }
 
-/********************************************//**
- * \brief cross(Y(complex34 matrix), X(complex34 matrix)) ==> X(complex34 matrix)
- *
- * \param void
- * \return void
- ***********************************************/
+
+
 void crossCpmaCpma(void) {
   #if !defined(TESTSUITE_BUILD)
     complex34Matrix_t y, x, res;
@@ -329,12 +244,9 @@ void crossCpmaCpma(void) {
 
     if((complexVectorSize(&y) == 0) || (complexVectorSize(&x) == 0) || (complexVectorSize(&y) > 3) || (complexVectorSize(&x) > 3)) {
       displayCalcErrorMessage(ERROR_MATRIX_MISMATCH, ERR_REGISTER_LINE, REGISTER_X);
-      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-        sprintf(errorMessage, "invalid numbers of elements of %d" STD_CROSS "%d-matrix to %d" STD_CROSS "%d-matrix",
-                x.header.matrixRows, x.header.matrixColumns,
-                y.header.matrixRows, y.header.matrixColumns);
-        moreInfoOnError("In function crossCpmaCpma:", errorMessage, NULL, NULL);
-      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+      errorMoreInfo("invalid numbers of elements of %d" STD_CROSS "%d-matrix to %d" STD_CROSS "%d-matrix",
+          x.header.matrixRows, x.header.matrixColumns,
+          y.header.matrixRows, y.header.matrixColumns);
     }
     else {
       crossComplexVectors(&y, &x, &res);

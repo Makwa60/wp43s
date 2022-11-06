@@ -11,13 +11,13 @@
   #include "realType.h"
   #include <stdint.h>
 
+  /**
+   * regX ==> regL and curt(regX) ==> regX
+   * enables stack lift and refreshes the stack
+   *
+   * \param[in] unusedButMandatoryParameter
+   */
   void fnCubeRoot(uint16_t unusedButMandatoryParameter);
-
-  #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-    void curtError  (void);
-  #else // (EXTRA_INFO_ON_CALC_ERROR == 1)
-    #define curtError typeError
-  #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
 
   void curtLonI   (void);
   void curtRema   (void);

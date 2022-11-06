@@ -16,37 +16,27 @@
 
 #include "wp43.h"
 
+#if (EXTRA_INFO_ON_CALC_ERROR == 1)
+  void cubeError(void);
+#else // (EXTRA_INFO_ON_CALC_ERROR == 1)
+  #define cubeError typeError
+#endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+
 TO_QSPI void (* const cube[NUMBER_OF_DATA_TYPES_FOR_CALCULATIONS])(void) = {
 // regX ==> 1            2         3         4          5          6          7          8           9             10
 //          Long integer Real34    complex34 Time       Date       String     Real34 mat Complex34 m Short integer Config data
             cubeLonI,    cubeReal, cubeCplx, cubeError, cubeError, cubeError, cubeRema,  cubeCxma,   cubeShoI,     cubeError
 };
 
-
-
-/********************************************//**
- * \brief Data type error in cubing
- *
- * \param[in] unusedButMandatoryParameter
- * \return void
- ***********************************************/
 #if (EXTRA_INFO_ON_CALC_ERROR == 1)
   void cubeError(void) {
     displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, REGISTER_X);
-    sprintf(errorMessage, "cannot cube %s", getRegisterDataTypeName(REGISTER_X, true, false));
-    moreInfoOnError("In function fnCube:", errorMessage, NULL, NULL);
+    errorMoreInfo("cannot cube %s", getRegisterDataTypeName(REGISTER_X, true, false));
   }
 #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
 
 
 
-/********************************************//**
- * \brief regX ==> regL and regX × regX × regX ==> regX
- * enables stack lift and refreshes the stack
- *
- * \param[in] unusedButMandatoryParameter
- * \return void
- ***********************************************/
 void fnCube(uint16_t unusedButMandatoryParameter) {
   if(!saveLastX()) {
     return;
@@ -96,9 +86,7 @@ void cubeShoI(void) {
 void cubeReal(void) {
   if(real34IsInfinite(REGISTER_REAL34_DATA(REGISTER_X)) && !getSystemFlag(FLAG_SPCRES)) {
     displayCalcErrorMessage(ERROR_ARG_EXCEEDS_FUNCTION_DOMAIN, ERR_REGISTER_LINE, REGISTER_X);
-    #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-      moreInfoOnError("In function cubeReal:", "cannot use " STD_PLUS_MINUS STD_INFINITY " as X input of ^3 when flag D is not set", NULL, NULL);
-    #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+    errorMoreInfo("cannot use " STD_PLUS_MINUS STD_INFINITY " as X input of ^3 when flag D is not set");
     return;
   }
 

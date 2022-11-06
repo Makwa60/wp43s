@@ -10,13 +10,13 @@
   #include "defines.h"
   #include <stdint.h>
 
+  /**
+   * rexX ==> regL and -regX ==> regX
+   * Drops Y, enables stack lift and refreshes the stack
+   *
+   * \param[in] unusedButMandatoryParameter
+   */
   void fnChangeSign(uint16_t unusedButMandatoryParameter);
-
-  #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-    void chsError    (void);
-  #else // (EXTRA_INFO_ON_CALC_ERROR == 1)
-    #define chsError typeError
-  #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
 
   //      RegX
   void chsLonI     (void);

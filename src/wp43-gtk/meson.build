@@ -20,11 +20,11 @@ linkargs      = []
 if get_option('buildtype').startswith('release')
   override_opts += ['b_lto=true']
 else
-  cflags        += ['-D_FORTIFY_SOURCE=2', '-fstack-protector-strong']
+  cflags        += ['-fstack-protector-strong']
   linkargs      += ['-fstack-protector-strong']
   # Sanitizers not supported on MinGW
   if (host_machine.system() == 'linux' or host_machine.system() == 'darwin')
-    override_opts += ['b_sanitize=undefined']
+    override_opts += ['b_sanitize=address,undefined']
   endif
 endif
 

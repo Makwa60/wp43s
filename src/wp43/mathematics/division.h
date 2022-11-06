@@ -11,13 +11,13 @@
   #include "realType.h"
   #include <stdint.h>
 
+  /**
+   * regX ==> regL and regY ÷ regX ==> regX
+   * Drops Y, enables stack lift and refreshes the stack
+   *
+   * \param[in] unusedButMandatoryParameter
+   */
   void fnDivide(uint16_t unusedButMandatoryParameter);
-
-  #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-    void divError(void);
-  #else // (EXTRA_INFO_ON_CALC_ERROR == 1)
-    #define divError typeError
-  #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
 
   void divComplexComplex(const real_t *numerReal, const real_t *numerImag, const real_t *denomReal, const real_t *denomImag,    real_t *quotientReal, real_t *quotientImag, realContext_t *realContext);
   void divRealComplex   (const real_t *numer,     const real_t *denomReal, const real_t *denomImag,       real_t *quotientReal, real_t *quotientImag,                       realContext_t *realContext);

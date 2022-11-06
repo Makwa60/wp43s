@@ -9,6 +9,13 @@
 
   #include <stdint.h>
 
+  /**
+   * regX ==> regL and CROSS(regX, RegY) ==> regX
+   * enables stack lift and refreshes the stack.
+   * Calculate the cross (or vector) product between complex and matrix
+   *
+   * \param[in] unusedButMandatoryParameter
+   */
   void fnCross(uint16_t unusedButMandatoryParameter);
 
   void crossRealCplx(void);

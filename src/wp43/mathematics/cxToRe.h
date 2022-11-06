@@ -9,6 +9,12 @@
 
   #include <stdint.h>
 
+  /**
+   * regX ==> regL and re(regX) ==> regY, im(regX) ==> regX or magnitude(regX) ==> regY, angle(regX) ==> regX
+   * enables stack lift and refreshes the stack
+   *
+   * \param[in] unusedButMandatoryParameter
+   */
   void fnCxToRe(uint16_t unusedButMandatoryParameter);
 
 #endif // !CXTORE_H

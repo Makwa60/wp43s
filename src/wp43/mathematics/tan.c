@@ -70,8 +70,7 @@ void longIntegerAngleReduction(calcRegister_t regist, angularMode_t angularMode,
 #if (EXTRA_INFO_ON_CALC_ERROR == 1)
   void tanError(void) {
     displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, REGISTER_X);
-    sprintf(errorMessage, "cannot calculate Tan for %s", getRegisterDataTypeName(REGISTER_X, true, false));
-    moreInfoOnError("In function fnTan:", errorMessage, NULL, NULL);
+    errorMoreInfo("cannot calculate Tan for %s", getRegisterDataTypeName(REGISTER_X, true, false));
   }
 #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
 
@@ -109,9 +108,7 @@ void tanLonI(void) {
 
   if(realIsZero(&cos) && !getSystemFlag(FLAG_SPCRES)) {
     displayCalcErrorMessage(ERROR_ARG_EXCEEDS_FUNCTION_DOMAIN, ERR_REGISTER_LINE, REGISTER_X);
-    #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-      moreInfoOnError("In function tanLonI:", "X = " STD_PLUS_MINUS "90" STD_DEGREE, NULL, NULL);
-    #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+    errorMoreInfo("X = " STD_PLUS_MINUS "90" STD_DEGREE);
     return;
   }
 
@@ -156,9 +153,7 @@ void tanReal(void) {
 
     if(realIsZero(&cos) && !getSystemFlag(FLAG_SPCRES)) {
       displayCalcErrorMessage(ERROR_ARG_EXCEEDS_FUNCTION_DOMAIN, ERR_REGISTER_LINE, REGISTER_X);
-      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-        moreInfoOnError("In function tanReal:", "X = " STD_PLUS_MINUS "90" STD_DEGREE, NULL, NULL);
-      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+      errorMoreInfo("X = " STD_PLUS_MINUS "90" STD_DEGREE);
       return;
     }
     else {

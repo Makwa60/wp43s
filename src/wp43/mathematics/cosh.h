@@ -10,13 +10,13 @@
   #include "defines.h"
   #include <stdint.h>
 
+  /**
+   * regX ==> regL and cosh(regX) ==> regX
+   * enables stack lift and refreshes the stack
+   *
+   * \param[in] unusedButMandatoryParameter
+   */
   void fnCosh   (uint16_t unusedButMandatoryParameter);
-
-  #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-    void coshError(void);
-  #else // (EXTRA_INFO_ON_CALC_ERROR == 1)
-    #define coshError typeError
-  #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
 
   void coshLonI (void);
   void coshRema (void);
