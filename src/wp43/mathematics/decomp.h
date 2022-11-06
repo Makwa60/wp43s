@@ -10,13 +10,15 @@
   #include "defines.h"
   #include <stdint.h>
 
+  /**
+   * regX ==> regL and DECOMP(regX) ==> regX, regY
+   * enables stack lift and refreshes the stack.
+   * Decomposes x (after converting it to an improper fraction, if applicable), returning a stack with
+   * [denominator(x), numerator(x)]
+   *
+   * \param[in] unusedButMandatoryParameter
+   */
   void fnDecomp(uint16_t unusedButMandatoryParameter);
-
-  #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-    void decompError(void);
-  #else // (EXTRA_INFO_ON_CALC_ERROR == 1)
-    #define decompError typeError
-  #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
 
   void decompLonI(void);
   void decompReal(void);

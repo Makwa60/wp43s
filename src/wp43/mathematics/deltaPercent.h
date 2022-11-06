@@ -9,6 +9,13 @@
 
   #include <stdint.h>
 
+  /**
+   * regX ==> regL and DeltaPercent(regX, RegY) ==> regX
+   * enables stack lift and refreshes the stack.
+   * Calculate x*y/100
+   *
+   * \param[in] unusedButMandatoryParameter
+   */
   void fnDeltaPercent(uint16_t unusedButMandatoryParameter);
 
   void deltaPercentLonILonI(void);
