@@ -111,6 +111,13 @@
   void           allocateLocalRegisters          (uint16_t numberOfRegistersToAllocate);
 
   /**
+   * Pops all local registers and local flags.
+   *
+   * \param[in] unusedButMandatoryParameter
+   */
+  void           popAllLocalRegistersAndFlags    (uint16_t unusedButMandatoryParameter);
+
+  /**
    * Check if the given name follows the naming convention
    *
    * \param[in] name                 Name of variable/label/menu
