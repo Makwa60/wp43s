@@ -31,38 +31,15 @@ TO_QSPI void (* const deltaPercent[NUMBER_OF_DATA_TYPES_FOR_CALCULATIONS][NUMBER
 /* 10 Config data   */ { dataTypeError,        dataTypeError,        dataTypeError, dataTypeError, dataTypeError, dataTypeError, dataTypeError, dataTypeError, dataTypeError, dataTypeError}
 };
 
-//=============================================================================
-// Error handling
-//-----------------------------------------------------------------------------
-
-/********************************************//**
- * \brief Data type error in %T
- *
- * \param void
- * \return void
- ***********************************************/
 static void dataTypeError(void) {
   displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, REGISTER_X);
-
-  #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-    sprintf(errorMessage, "cannot raise %s", getRegisterDataTypeName(REGISTER_Y, true, false));
-    sprintf(errorMessage + ERROR_MESSAGE_LENGTH/2, "to %s", getRegisterDataTypeName(REGISTER_X, true, false));
-    moreInfoOnError("In function fnDeltaPercent:", errorMessage, errorMessage + ERROR_MESSAGE_LENGTH/2, NULL);
-  #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+  errorMoreInfo("cannot raise %s\nto%s",
+      getRegisterDataTypeName(REGISTER_Y, true, false),
+      getRegisterDataTypeName(REGISTER_X, true, false));
 }
 
-//=============================================================================
-// Main function
-//-----------------------------------------------------------------------------
 
-/********************************************//**
- * \brief regX ==> regL and DeltaPercent(regX, RegY) ==> regX
- * enables stack lift and refreshes the stack.
- * Calculate x*y/100
- *
- * \param[in] unusedButMandatoryParameter uint16_t
- * \return void
- ***********************************************/
+
 void fnDeltaPercent(uint16_t unusedButMandatoryParameter) {
   if(!saveLastX()) {
     return;
@@ -74,9 +51,6 @@ void fnDeltaPercent(uint16_t unusedButMandatoryParameter) {
 }
 
 
-//=============================================================================
-// Delta% calculation functions
-//-----------------------------------------------------------------------------
 
 static bool deltaPercentReal(real_t *xReal, real_t *yReal, real_t *rReal, realContext_t *realContext) {
   /*
@@ -115,12 +89,8 @@ static bool deltaPercentReal(real_t *xReal, real_t *yReal, real_t *rReal, realCo
   return true;
 }
 
-/********************************************//**
- * \brief DeltaPercent(Y(long integer), X(long integer)) ==> X(real34)
- *
- * \param void
- * \return void
- ***********************************************/
+
+
 void deltaPercentLonILonI(void) {
   real_t xReal, yReal;
   real_t rReal;
@@ -135,12 +105,8 @@ void deltaPercentLonILonI(void) {
   }
 }
 
-/********************************************//**
- * \brief DeltaPercent(Y(long integer), X(real34)) ==> X(real34)
- *
- * \param void
- * \return void
- ***********************************************/
+
+
 void deltaPercentLonIReal(void) {
   real_t xReal, yReal;
   real_t rReal;
@@ -153,12 +119,8 @@ void deltaPercentLonIReal(void) {
   }
 }
 
-/********************************************//**
- * \brief DeltaPercent(Y(real34), X(long integer)) ==> X(real34)
- *
- * \param void
- * \return void
- ***********************************************/
+
+
 void deltaPercentRealLonI(void) {
   real_t xReal, yReal;
   real_t rReal;
@@ -173,12 +135,8 @@ void deltaPercentRealLonI(void) {
   }
 }
 
-/********************************************//**
- * \brief DeltaPercent(Y(real34), X(real34)) ==> X(real34)
- *
- * \param void
- * \return void
- ***********************************************/
+
+
 void deltaPercentRealReal(void) {
   real_t xReal, yReal;
   real_t rReal;

@@ -14,23 +14,27 @@
 
 #include "wp43.h"
 
+#if (EXTRA_INFO_ON_CALC_ERROR == 1)
+  void decompError(void);
+#else // (EXTRA_INFO_ON_CALC_ERROR == 1)
+  #define decompError typeError
+#endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+
 TO_QSPI void (*const Decomp[NUMBER_OF_DATA_TYPES_FOR_CALCULATIONS])(void) = {
 // regX ==> 1            2           3            4            5            6            7            8            9             10
 //          Long integer Real34      Complex34    Time         Date         String       Real34 mat   Complex34 m  Short integer Config data
             decompLonI,  decompReal, decompError, decompError, decompError, decompError, decompError, decompError, decompError,  decompError
 };
 
+#if (EXTRA_INFO_ON_CALC_ERROR == 1)
+  void decompError(void) {
+    displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, REGISTER_X);
+    errorMoreInfo("cannot calculate Decomp for %s", getRegisterDataTypeName(REGISTER_X, true, false));
+  }
+#endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
 
 
-/********************************************//**
- * \brief regX ==> regL and DECOMP(regX) ==> regX, regY
- * enables stack lift and refreshes the stack.
- * Decomposes x (after converting it to an improper fraction, if applicable), returning a stack with
- * [denominator(x), numerator(x)]
- *
- * \param[in] unusedButMandatoryParameter uint16_t
- * \return void
- ***********************************************/
+
 void fnDecomp(uint16_t unusedButMandatoryParameter) {
   if(!saveLastX()) {
     return;
@@ -41,16 +45,6 @@ void fnDecomp(uint16_t unusedButMandatoryParameter) {
   adjustResult(REGISTER_X, false, false, REGISTER_X, -1, -1);
   adjustResult(REGISTER_Y, false, false, REGISTER_Y, -1, -1);
 }
-
-
-
-#if (EXTRA_INFO_ON_CALC_ERROR == 1)
-  void decompError(void) {
-    displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, REGISTER_X);
-    sprintf(errorMessage, "cannot calculate Decomp for %s", getRegisterDataTypeName(REGISTER_X, true, false));
-    moreInfoOnError("In function fnDecomp:", errorMessage, NULL, NULL);
-  }
-#endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
 
 
 

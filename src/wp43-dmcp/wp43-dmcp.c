@@ -25,10 +25,22 @@ bool     backToDMCP;
 uint32_t nextTimerRefresh;
 bool     wp43KbdLayout;
 
+#define M0 1   //  20 000 Hz  Read Key1 & 2
+#define M1 2   //  10 000 Hz  Key Pressed
+#define M2 3   //   6 666 Hz  Key Released
+#define M3 4   //   5 000 Hz  Main loop start
+#define M4 5   //   4 000 Hz  TEST loop start
+#define M5 6   //   3 333 Hz
+#define M6 8   //   2 500 Hz 
+#define M7 10  //   2 000 Hz
 #if defined(DEBUG_POWER)
   static void powerDebugMark(uint32_t markNumber) {
-    start_buzzer_freq(5000000);
-    sys_delay(markNumber);
+    #define basef 20000 //Hz
+    sys_delay(1); //start off with a delay before the mark.
+    start_buzzer_freq(30000000); // 30 kHz start pulse for identification. DMCP always breaks the first pulse or couple
+    sys_delay(1);
+    start_buzzer_freq(1000 * (uint32_t)((float)(basef)/(float)(markNumber + 0.0f))); //Variable frequency Mark
+    sys_delay(1);
     stop_buzzer();
   }
 #else
@@ -176,7 +188,7 @@ void dmcpWaitForEvent(void) {
   // efficient, so use that wakeup if we can
   uint32_t timeToNextSecondMs = 1000 - (newCapturedTime % 1000);
   if(nextTimerRefresh <= 100 || nextTimerRefresh < timeToNextSecondMs) {
-    powerDebugMark(4);
+    powerDebugMark(M4);
     // Use the sys_timer because the timer will expire before the next second wakeup
     // Also allow 100ms for this function which is a conservative estimate
     const int TimerId = 0;
@@ -189,11 +201,11 @@ void dmcpWaitForEvent(void) {
     // Use the MINUTE wakeup if we can, otherwise use the SECOND wakeup
     uint32_t timeToNextMinuteMs = 60000 - (newCapturedTime % 60000);
     if(nextTimerRefresh < timeToNextMinuteMs) {
-      powerDebugMark(5);
+      powerDebugMark(M5);
       SET_ST(STAT_CLK_WKUP_SECONDS);
     }
     else {
-      powerDebugMark(6);
+      powerDebugMark(M6);
       CLR_ST(STAT_CLK_WKUP_SECONDS);
     }
     sys_sleep();
@@ -334,7 +346,7 @@ void program_main(void) {
   SET_ST(STAT_RUNNING);
 
   while(!backToDMCP) {
-    powerDebugMark(3);
+    powerDebugMark(M3);
     if(ST(STAT_PGM_END)) {
       // Going to off mode
       lcd_set_buf_cleared(0); // Mark no buffer change region
@@ -395,12 +407,12 @@ void program_main(void) {
     key = convertKeyCode(key);
 
     if(1 <= key && key <= 43) {
-      powerDebugMark(1);
+      powerDebugMark(M1);
       btnPressed(key);
       lastKey = key;
     }
     else if(key == 0) { // Key released
-      powerDebugMark(2);
+      powerDebugMark(M2);
       btnReleased(lastKey);
     }
 

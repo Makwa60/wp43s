@@ -289,6 +289,7 @@ void fnNop(uint16_t unusedButMandatoryParameter) {
   void fnFp                        (uint16_t unusedButMandatoryParameter) {}
   void fnIp                        (uint16_t unusedButMandatoryParameter) {}
   void allocateLocalRegisters      (uint16_t unusedButMandatoryParameter) {}
+  void popAllLocalRegistersAndFlags(uint16_t unusedButMandatoryParameter) {}
   void fnLeadingZeros              (uint16_t unusedButMandatoryParameter) {}
   void fnNeighb                    (uint16_t unusedButMandatoryParameter) {}
   void fnGcd                       (uint16_t unusedButMandatoryParameter) {}
@@ -2400,7 +2401,7 @@ TO_QSPI const item_t indexOfItems[] = {
 /* 1550 */  { fnLegendre,                   NOPARAM,                     "P" STD_SUB_n,                                 "P" STD_SUB_n,                                 (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_ENABLED  | PTP_NONE         },
 /* 1551 */  { fnPoint,                      NOPARAM,                     "POINT",                                       "POINT",                                       (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
 /* 1552 */  { fnLoad,                       LM_NAMED_VARIABLES,          "LOADV",                                       "LOADV",                                       (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_DISABLED     },
-/* 1553 */  { allocateLocalRegisters,       0,                           "PopLR",                                       "PopLR",                                       (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/* 1553 */  { popAllLocalRegistersAndFlags, NOPARAM,                     "PopLR",                                       "PopLR",                                       (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
 /* 1554 */  { fnPRcl,                       NOPARAM,                     "PRCL",                                        "PRCL",                                        (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
 /* 1555 */  { fnPSto,                       NOPARAM,                     "PSTO",                                        "PSTO",                                        (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_DISABLED     },
 /* 1556 */  { fnPutKey,                     tmRegister,                  "PUTK",                                        "PUTK",                                        (0 << TAM_MAX_BITS) |    99, CAT_FNCT | SLS_ENABLED   | US_ENABL_XEQ | EIM_DISABLED | PTP_REGISTER     },

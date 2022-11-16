@@ -31,6 +31,7 @@
 #include "ui/softmenus.h"
 #include "ui/statusBar.h"
 #include "ui/tam.h"
+#include <assert.h>
 #include <stdbool.h>
 
 #include "wp43.h"
@@ -224,7 +225,6 @@ void fnExecute(uint16_t label) {
 
 void fnReturn(uint16_t skip) {
   dataBlock_t *_currentSubroutineLevelData = currentSubroutineLevelData;
-  uint16_t sizeToBeFreedInBlocks;
 
   /* A subroutine is running */
   if(currentSubroutineLevel > 0) {
@@ -242,13 +242,14 @@ void fnReturn(uint16_t skip) {
       ++currentLocalStepNumber;
       currentStep = findNextStep(currentStep);
     }
-    if(currentNumberOfLocalRegisters > 0) {
-      allocateLocalRegisters(0);
-      _currentSubroutineLevelData = currentSubroutineLevelData;
-    }
-    sizeToBeFreedInBlocks = TO_BLOCKS(12 + 4*(currentNumberOfLocalFlags > 0 ? 1 : 0));
+    popAllLocalRegistersAndFlags(NOPARAM);
+    assert(currentNumberOfLocalRegisters == 0);
+    assert(currentNumberOfLocalFlags == 0);
+    assert(currentLocalRegisters == NULL);
+    assert(currentLocalFlags == NULL);
+    _currentSubroutineLevelData = currentSubroutineLevelData;
     currentSubroutineLevelData = TO_PCMEMPTR(currentPtrToPreviousLevel);
-    freeWp43(_currentSubroutineLevelData, sizeToBeFreedInBlocks);
+    freeWp43(_currentSubroutineLevelData, 12);
     currentPtrToNextLevel = WP43_NULL;
     allSubroutineLevels.numberOfSubroutineLevels -= 1;
 
@@ -259,15 +260,7 @@ void fnReturn(uint16_t skip) {
   /* Not in a subroutine */
   else {
     fnGotoDot(programList[currentProgramNumber - 1].step);
-    if(currentNumberOfLocalRegisters > 0) {
-      allocateLocalRegisters(0);
-    }
-    if(currentNumberOfLocalFlags > 0) {
-      freeWp43(currentSubroutineLevelData + 3, 16); // TODO: is this 16 correct?
-      currentNumberOfLocalFlags = 0;
-    }
-    currentLocalFlags = NULL;
-    currentLocalRegisters = NULL;
+    popAllLocalRegistersAndFlags(NOPARAM);
     pemCursorIsZerothStep = true;
   }
 }

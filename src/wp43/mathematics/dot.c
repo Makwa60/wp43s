@@ -16,7 +16,6 @@
 
 static void dotDataTypeError(void);
 
-
 TO_QSPI void (* const dot[NUMBER_OF_DATA_TYPES_FOR_CALCULATIONS][NUMBER_OF_DATA_TYPES_FOR_CALCULATIONS])(void) = {
 // regX |    regY ==>    1                  2                  3                  4                  5                  6                  7                  8                  9                 10
 //      V                Long integer       Real34             Complex34          Time               Date               String             Real34 mat         Complex34 mat      Short integer     Config data
@@ -32,48 +31,16 @@ TO_QSPI void (* const dot[NUMBER_OF_DATA_TYPES_FOR_CALCULATIONS][NUMBER_OF_DATA_
 /* 10 Config data   */ { dotDataTypeError,  dotDataTypeError,  dotDataTypeError,  dotDataTypeError,  dotDataTypeError,  dotDataTypeError,  dotDataTypeError,  dotDataTypeError,  dotDataTypeError, dotDataTypeError}
 };
 
-
-//=============================================================================
-// Error handling
-//-----------------------------------------------------------------------------
-
-/********************************************//**
- * \brief Data type error in DOT
- *
- * \param void
- * \return void
- ***********************************************/
 static void dotDataTypeError(void) {
   displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, REGISTER_X);
 
-  #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-    sprintf(errorMessage, "cannot raise %s", getRegisterDataTypeName(REGISTER_Y, true, false));
-    sprintf(errorMessage + ERROR_MESSAGE_LENGTH/2, "to %s", getRegisterDataTypeName(REGISTER_X, true, false));
-    moreInfoOnError("In function fnDot:", errorMessage, errorMessage + ERROR_MESSAGE_LENGTH/2, NULL);
-  #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+  errorMoreInfo("cannot raise %s\nto %s",
+      getRegisterDataTypeName(REGISTER_Y, true, false),
+      getRegisterDataTypeName(REGISTER_X, true, false));
 }
 
-//static void dotSizeError() {
-//  displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, REGISTER_X);
 
-//  #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-//    sprintf(errorMessage, "cannot calculate DOT product, matrix size mismatch.");
-//    moreInfoOnError("In function fnDot:", errorMessage, NULL, NULL);
-//  #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
-//}
 
-//=============================================================================
-// Main function
-//-----------------------------------------------------------------------------
-
-/********************************************//**
- * \brief regX ==> regL and Dot(regX, RegY) ==> regX
- * enables stack lift and refreshes the stack.
- * Calculate the dot (or scalar) product between complex and matrix
- *
- * \param[in] unusedButMandatoryParameter uint16_t
- * \return void
- ***********************************************/
 void fnDot(uint16_t unusedButMandatoryParameter) {
   if(!saveLastX()) {
     return;
@@ -84,9 +51,7 @@ void fnDot(uint16_t unusedButMandatoryParameter) {
   adjustResult(REGISTER_X, true, true, REGISTER_X, -1, -1);
 }
 
-//=============================================================================
-// Complex dot product calculation functionS
-//-----------------------------------------------------------------------------
+
 
 static void dotCplx(real_t *xReal, real_t *xImag, real_t *yReal, real_t *yImag, real_t *rReal, realContext_t *realContext) {
   real_t t;
@@ -96,12 +61,8 @@ static void dotCplx(real_t *xReal, real_t *xImag, real_t *yReal, real_t *yImag, 
   realAdd(&t, rReal, rReal, realContext);     // r = r + t
 }
 
-/********************************************//**
- * \brief Dot(Y(real34), X(complex34)) ==> X(real34)
- *
- * \param void
- * \return void
- ***********************************************/
+
+
 void dotRealCplx(void) {
   real_t xReal, xImag, yReal, yImag;
   real_t rReal;
@@ -119,12 +80,8 @@ void dotRealCplx(void) {
   setRegisterAngularMode(REGISTER_X, amNone);
 }
 
-/********************************************//**
- * \brief Dot(Y(long integer), X(complex34)) ==> X(real34)
- *
- * \param void
- * \return void
- ***********************************************/
+
+
 void dotLonICplx(void) {
   real_t xReal, xImag, yReal, yImag;
   real_t rReal;
@@ -142,12 +99,8 @@ void dotLonICplx(void) {
   setRegisterAngularMode(REGISTER_X, amNone);
 }
 
-/********************************************//**
- * \brief Dot(Y(short integer), X(complex34)) ==> X(real34)
- *
- * \param void
- * \return void
- ***********************************************/
+
+
 void dotShoICplx(void) {
   real_t xReal, xImag, yReal, yImag;
   real_t rReal;
@@ -165,12 +118,8 @@ void dotShoICplx(void) {
   setRegisterAngularMode(REGISTER_X, amNone);
 }
 
-/********************************************//**
- * \brief Dot(Y(complex34), X(complex34)) ==> X(real34)
- *
- * \param void
- * \return void
- ***********************************************/
+
+
 void dotCplxCplx(void) {
   real_t xReal, xImag, yReal, yImag;
   real_t rReal;
@@ -188,12 +137,8 @@ void dotCplxCplx(void) {
   setRegisterAngularMode(REGISTER_X, amNone);
 }
 
-/********************************************//**
- * \brief Dot(Y(complex34), X(real34)) ==> X(real34)
- *
- * \param void
- * \return void
- ***********************************************/
+
+
 void dotCplxReal(void) {
   real_t xReal, xImag, yReal, yImag;
   real_t rReal;
@@ -210,12 +155,8 @@ void dotCplxReal(void) {
   setRegisterAngularMode(REGISTER_X, amNone);
 }
 
-/********************************************//**
- * \brief Dot(Y(complex34), X(long integer)) ==> X(real34)
- *
- * \param void
- * \return void
- ***********************************************/
+
+
 void dotCplxLonI(void) {
   real_t xReal, xImag, yReal, yImag;
   real_t rReal;
@@ -233,12 +174,8 @@ void dotCplxLonI(void) {
   setRegisterAngularMode(REGISTER_X, amNone);
 }
 
-/********************************************//**
- * \brief Dot(Y(complex34), X(short integer)) ==> X(real34)
- *
- * \param void
- * \return void
- ***********************************************/
+
+
 void dotCplxShoI(void) {
   real_t xReal, xImag, yReal, yImag;
   real_t rReal;
@@ -256,16 +193,8 @@ void dotCplxShoI(void) {
   setRegisterAngularMode(REGISTER_X, amNone);
 }
 
-//=============================================================================
-// Matrix dot calculation function
-//-----------------------------------------------------------------------------
 
-/********************************************//**
- * \brief Dot(Y(real34 matrix), X(real34 matrix)) ==> X(real34 matrix)
- *
- * \param void
- * \return void
- ***********************************************/
+
 void dotRemaRema(void) {
   #if !defined(TESTSUITE_BUILD)
     real34Matrix_t y, x;
@@ -276,12 +205,9 @@ void dotRemaRema(void) {
 
     if((realVectorSize(&y) == 0) || (realVectorSize(&x) == 0) || (realVectorSize(&y) != realVectorSize(&x))) {
       displayCalcErrorMessage(ERROR_MATRIX_MISMATCH, ERR_REGISTER_LINE, REGISTER_X);
-      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-        sprintf(errorMessage, "numbers of elements of %d" STD_CROSS "%d-matrix to %d" STD_CROSS "%d-matrix mismatch",
-                x.header.matrixRows, x.header.matrixColumns,
-                y.header.matrixRows, y.header.matrixColumns);
-        moreInfoOnError("In function dotRemaRema:", errorMessage, NULL, NULL);
-      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+      errorMoreInfo("numbers of elements of %d" STD_CROSS "%d-matrix to %d" STD_CROSS "%d-matrix mismatch",
+          x.header.matrixRows, x.header.matrixColumns,
+          y.header.matrixRows, y.header.matrixColumns);
     }
     else {
       dotRealVectors(&y, &x, &res);
@@ -291,12 +217,8 @@ void dotRemaRema(void) {
   #endif // !TESTSUITE_BUILD
 }
 
-/********************************************//**
- * \brief Dot(Y(complex34 matrix), X(real34 matrix)) ==> X(complex34 matrix)
- *
- * \param void
- * \return void
- ***********************************************/
+
+
 void dotCpmaRema(void) {
   #if !defined(TESTSUITE_BUILD)
     convertReal34MatrixRegisterToComplex34MatrixRegister(REGISTER_X, REGISTER_X);
@@ -304,12 +226,8 @@ void dotCpmaRema(void) {
   #endif // !TESTSUITE_BUILD
 }
 
-/********************************************//**
- * \brief Dot(Y(real34 matrix), X(complex34 matrix)) ==> X(complex34 matrix)
- *
- * \param void
- * \return void
- ***********************************************/
+
+
 void dotRemaCpma(void) {
   #if !defined(TESTSUITE_BUILD)
     convertReal34MatrixRegisterToComplex34MatrixRegister(REGISTER_Y, REGISTER_Y);
@@ -317,12 +235,8 @@ void dotRemaCpma(void) {
   #endif // !TESTSUITE_BUILD
 }
 
-/********************************************//**
- * \brief Dot(Y(complex34 matrix), X(complex34 matrix)) ==> X(complex34 matrix)
- *
- * \param void
- * \return void
- ***********************************************/
+
+
 void dotCpmaCpma(void) {
   #if !defined(TESTSUITE_BUILD)
     complex34Matrix_t y, x;
@@ -333,12 +247,9 @@ void dotCpmaCpma(void) {
 
     if((complexVectorSize(&y) == 0) || (complexVectorSize(&x) == 0) || (complexVectorSize(&y) != complexVectorSize(&x))) {
       displayCalcErrorMessage(ERROR_MATRIX_MISMATCH, ERR_REGISTER_LINE, REGISTER_X);
-      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-        sprintf(errorMessage, "numbers of elements of %d" STD_CROSS "%d-matrix to %d" STD_CROSS "%d-matrix mismatch",
-                x.header.matrixRows, x.header.matrixColumns,
-                y.header.matrixRows, y.header.matrixColumns);
-        moreInfoOnError("In function dotCpmaCpma:", errorMessage, NULL, NULL);
-      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+      errorMoreInfo("numbers of elements of %d" STD_CROSS "%d-matrix to %d" STD_CROSS "%d-matrix mismatch",
+          x.header.matrixRows, x.header.matrixColumns,
+          y.header.matrixRows, y.header.matrixColumns);
     }
     else {
       dotComplexVectors(&y, &x, &res_r, &res_i);

@@ -20,18 +20,12 @@ void fnDblMultiply(uint16_t unusedButMandatoryParameter) {
 
   if(getRegisterDataType(REGISTER_X) != dtShortInteger) {
     displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, REGISTER_T);
-    #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-      sprintf(errorMessage, "the input type %s is not allowed for DBL" STD_CROSS "!", getDataTypeName(getRegisterDataType(REGISTER_X), false, false));
-      moreInfoOnError("In function fnDblMultiply:", errorMessage, NULL, NULL);
-    #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+    errorMoreInfo("the input type %s is not allowed for DBL" STD_CROSS "!", getDataTypeName(getRegisterDataType(REGISTER_X), false, false));
     return;
   }
   if(getRegisterDataType(REGISTER_Y) != dtShortInteger) {
     displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, REGISTER_T);
-    #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-      sprintf(errorMessage, "the input type %s is not allowed for DBL" STD_CROSS "!", getDataTypeName(getRegisterDataType(REGISTER_Y), false, false));
-      moreInfoOnError("In function fnDblMultiply:", errorMessage, NULL, NULL);
-    #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+    errorMoreInfo("the input type %s is not allowed for DBL" STD_CROSS "!", getDataTypeName(getRegisterDataType(REGISTER_Y), false, false));
     return;
   }
 

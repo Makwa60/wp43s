@@ -18,6 +18,12 @@
 
 #include "wp43.h"
 
+#if (EXTRA_INFO_ON_CALC_ERROR == 1)
+  void divError(void);
+#else // (EXTRA_INFO_ON_CALC_ERROR == 1)
+  #define divError typeError
+#endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+
 TO_QSPI void (* const division[NUMBER_OF_DATA_TYPES_FOR_CALCULATIONS][NUMBER_OF_DATA_TYPES_FOR_CALCULATIONS])(void) = {
 // regX |    regY ==>   1            2            3            4            5         6         7            8            9             10
 //      V               Long integer Real34       Complex34    Time         Date      String    Real34 mat   Complex34 m  Short integer Config data
@@ -33,32 +39,17 @@ TO_QSPI void (* const division[NUMBER_OF_DATA_TYPES_FOR_CALCULATIONS][NUMBER_OF_
 /* 10 Config data   */ {divError,    divError,    divError,    divError,    divError, divError, divError,    divError,    divError,     divError}
 };
 
-
-
-/********************************************//**
- * \brief Data type error in division
- *
- * \param[in] unusedButMandatoryParameter
- * \return void
- ***********************************************/
 #if (EXTRA_INFO_ON_CALC_ERROR == 1)
   void divError(void) {
     displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, REGISTER_X);
-    sprintf(errorMessage, "cannot divide %s", getRegisterDataTypeName(REGISTER_Y, true, false));
-    sprintf(errorMessage + ERROR_MESSAGE_LENGTH/2, "by %s", getRegisterDataTypeName(REGISTER_X, true, false));
-    moreInfoOnError("In function fnDivide:", errorMessage, errorMessage + ERROR_MESSAGE_LENGTH/2, NULL);
+    errorMoreInfo("cannot divide %s\nby %s",
+        getRegisterDataTypeName(REGISTER_Y, true, false),
+        getRegisterDataTypeName(REGISTER_X, true, false));
   }
 #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
 
 
 
-/********************************************//**
- * \brief regX ==> regL and regY ÷ regX ==> regX
- * Drops Y, enables stack lift and refreshes the stack
- *
- * \param[in] unusedButMandatoryParameter
- * \return void
- ***********************************************/
 void fnDivide(uint16_t unusedButMandatoryParameter) {
   copySourceRegisterToDestRegister(REGISTER_X, REGISTER_L);
 
@@ -157,16 +148,6 @@ void divRealComplex(const real_t *numerReal, const real_t *denomReal, const real
 
 
 
-/******************************************************************************************************************************************************************************************/
-/* long integer / ...                                                                                                                                                                     */
-/******************************************************************************************************************************************************************************************/
-
-/********************************************//**
- * \brief Y(long integer) ÷ X(long integer) ==> X(long integer or real34)
- *
- * \param void
- * \return void
- ***********************************************/
 void divLonILonI(void) {
   longInteger_t x;
 
@@ -174,9 +155,7 @@ void divLonILonI(void) {
 
   if(longIntegerIsZero(x)) {
     displayCalcErrorMessage(ERROR_ARG_EXCEEDS_FUNCTION_DOMAIN, ERR_REGISTER_LINE, REGISTER_X);
-    #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-      moreInfoOnError("In function divLonILonI:", "cannot divide a long integer by 0", NULL, NULL);
-    #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+    errorMoreInfo("cannot divide a long integer by 0");
   }
   else {
     longInteger_t y, quotient, remainder;
@@ -210,12 +189,6 @@ void divLonILonI(void) {
 
 
 
-/********************************************//**
- * \brief Y(long integer) ÷ X(short integer) ==> X(long integer)
- *
- * \param void
- * \return void
- ***********************************************/
 void divLonIShoI(void) {
   longInteger_t a, c;
 
@@ -225,9 +198,7 @@ void divLonIShoI(void) {
 
   if(longIntegerIsZero(c)) {
     displayCalcErrorMessage(ERROR_ARG_EXCEEDS_FUNCTION_DOMAIN, ERR_REGISTER_LINE, REGISTER_X);
-    #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-      moreInfoOnError("In function divLonIShoI:", "cannot divide a long integer by 0", NULL, NULL);
-    #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+    errorMoreInfo("cannot divide a long integer by 0");
   }
   else {
     longIntegerDivideQuotientRemainder(a, c, a, c);
@@ -240,12 +211,6 @@ void divLonIShoI(void) {
 
 
 
-/********************************************//**
- * \brief Y(short integer) ÷ X(long integer) ==> X(long integer)
- *
- * \param void
- * \return void
- ***********************************************/
 void divShoILonI(void) {
   longInteger_t a, c;
 
@@ -255,9 +220,7 @@ void divShoILonI(void) {
 
   if(longIntegerIsZero(c)) {
     displayCalcErrorMessage(ERROR_ARG_EXCEEDS_FUNCTION_DOMAIN, ERR_REGISTER_LINE, REGISTER_X);
-    #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-      moreInfoOnError("In function divShoILonI:", "cannot divide a short integer by 0", NULL, NULL);
-    #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+    errorMoreInfo("cannot divide a short integer by 0");
   }
   else {
     longIntegerDivideQuotientRemainder(a, c, a, c);
@@ -270,12 +233,6 @@ void divShoILonI(void) {
 
 
 
-/********************************************//**
- * \brief Y(long integer) ÷ X(real34) ==> X(real34)
- *
- * \param void
- * \return void
- ***********************************************/
 void divLonIReal(void) {
   real_t y, x;
 
@@ -289,9 +246,7 @@ void divLonIReal(void) {
       }
       else {
         displayCalcErrorMessage(ERROR_ARG_EXCEEDS_FUNCTION_DOMAIN, ERR_REGISTER_LINE, REGISTER_X);
-        #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-          moreInfoOnError("In function divLonIReal:", "cannot divide 0 by 0", NULL, NULL);
-        #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+        errorMoreInfo("cannot divide 0 by 0");
       }
     }
     else {
@@ -300,9 +255,7 @@ void divLonIReal(void) {
       }
       else {
         displayCalcErrorMessage(ERROR_ARG_EXCEEDS_FUNCTION_DOMAIN, ERR_REGISTER_LINE, REGISTER_X);
-        #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-          moreInfoOnError("In function divLonIReal:", "cannot divide a long integer by 0", NULL, NULL);
-        #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+        errorMoreInfo("cannot divide a long integer by 0");
       }
     }
   }
@@ -316,12 +269,6 @@ void divLonIReal(void) {
 
 
 
-/********************************************//**
- * \brief Y(real34) ÷ X(long integer) ==> X(real34)
- *
- * \param void
- * \return void
- ***********************************************/
 void divRealLonI(void) {
   real_t y, x;
   angularMode_t yAngularMode;
@@ -336,9 +283,7 @@ void divRealLonI(void) {
       }
       else {
         displayCalcErrorMessage(ERROR_ARG_EXCEEDS_FUNCTION_DOMAIN, ERR_REGISTER_LINE, REGISTER_X);
-        #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-          moreInfoOnError("In function divLonIReal:", "cannot divide 0 by 0", NULL, NULL);
-        #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+        errorMoreInfo("cannot divide 0 by 0");
       }
     }
     else {
@@ -347,9 +292,7 @@ void divRealLonI(void) {
       }
       else {
         displayCalcErrorMessage(ERROR_ARG_EXCEEDS_FUNCTION_DOMAIN, ERR_REGISTER_LINE, REGISTER_X);
-        #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-          moreInfoOnError("In function divLonIReal:", "cannot divide a real34 by 0", NULL, NULL);
-        #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+        errorMoreInfo("cannot divide a real34 by 0");
       }
     }
   }
@@ -373,12 +316,6 @@ void divRealLonI(void) {
 
 
 
-/********************************************//**
- * \brief Y(long integer) ÷ X(complex34) ==> X(complex34)
- *
- * \param void
- * \return void
- ***********************************************/
 void divLonICplx(void) {
   real_t y, xReal, xImag;
 
@@ -394,12 +331,6 @@ void divLonICplx(void) {
 
 
 
-/********************************************//**
- * \brief Y(complex34) ÷ X(long integer) ==> X(complex34)
- *
- * \param void
- * \return void
- ***********************************************/
 void divCplxLonI(void) {
   real_t a, b, c;
 
@@ -417,16 +348,6 @@ void divCplxLonI(void) {
 
 
 
-/******************************************************************************************************************************************************************************************/
-/* time / ...                                                                                                                                                                             */
-/******************************************************************************************************************************************************************************************/
-
-/********************************************//**
- * \brief Y(time) ÷ X(long integer) ==> X(time)
- *
- * \param void
- * \return void
- ***********************************************/
 void divTimeLonI(void) {
   real_t y, x;
 
@@ -440,9 +361,7 @@ void divTimeLonI(void) {
       }
       else {
         displayCalcErrorMessage(ERROR_ARG_EXCEEDS_FUNCTION_DOMAIN, ERR_REGISTER_LINE, REGISTER_X);
-        #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-          moreInfoOnError("In function divTimeLonI:", "cannot divide 0 by 0", NULL, NULL);
-        #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+        errorMoreInfo("cannot divide 0 by 0");
       }
     }
     else {
@@ -451,9 +370,7 @@ void divTimeLonI(void) {
       }
       else {
         displayCalcErrorMessage(ERROR_ARG_EXCEEDS_FUNCTION_DOMAIN, ERR_REGISTER_LINE, REGISTER_X);
-        #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-          moreInfoOnError("In function divTimeLonI:", "cannot divide time by 0", NULL, NULL);
-        #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+        errorMoreInfo("cannot divide time by 0");
       }
     }
   }
@@ -468,12 +385,6 @@ void divTimeLonI(void) {
 
 
 
-/********************************************//**
- * \brief Y(long integer) ÷ X(time) ==> X(real34)
- *
- * \param void
- * \return void
- ***********************************************/
 void divLonITime(void) {
   convertTimeRegisterToReal34Register(REGISTER_X, REGISTER_X);
   divLonIReal();
@@ -481,12 +392,6 @@ void divLonITime(void) {
 
 
 
-/********************************************//**
- * \brief Y(time) ÷ X(short integer) ==> X(time)
- *
- * \param void
- * \return void
- ***********************************************/
 void divTimeShoI(void) {
   real_t y, x;
 
@@ -500,9 +405,7 @@ void divTimeShoI(void) {
       }
       else {
         displayCalcErrorMessage(ERROR_ARG_EXCEEDS_FUNCTION_DOMAIN, ERR_REGISTER_LINE, REGISTER_X);
-        #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-          moreInfoOnError("In function divTimeShoI:", "cannot divide 0 by 0", NULL, NULL);
-        #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+        errorMoreInfo("cannot divide 0 by 0");
       }
     }
     else {
@@ -511,9 +414,7 @@ void divTimeShoI(void) {
       }
       else {
         displayCalcErrorMessage(ERROR_ARG_EXCEEDS_FUNCTION_DOMAIN, ERR_REGISTER_LINE, REGISTER_X);
-        #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-          moreInfoOnError("In function divTimeShoI:", "cannot divide time by 0", NULL, NULL);
-        #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+        errorMoreInfo("cannot divide time by 0");
       }
     }
   }
@@ -528,12 +429,6 @@ void divTimeShoI(void) {
 
 
 
-/********************************************//**
- * \brief Y(short integer) ÷ X(time) ==> X(real34)
- *
- * \param void
- * \return void
- ***********************************************/
 void divShoITime(void) {
   convertTimeRegisterToReal34Register(REGISTER_X, REGISTER_X);
   divShoIReal();
@@ -541,12 +436,6 @@ void divShoITime(void) {
 
 
 
-/********************************************//**
- * \brief Y(time) ÷ X(real34) ==> X(time)
- *
- * \param void
- * \return void
- ***********************************************/
 void divTimeReal(void) {
   if(real34IsZero(REGISTER_REAL34_DATA(REGISTER_Y)) && real34IsZero(REGISTER_REAL34_DATA(REGISTER_X))) {
     if(getSystemFlag(FLAG_SPCRES)) {
@@ -554,9 +443,7 @@ void divTimeReal(void) {
     }
     else {
       displayCalcErrorMessage(ERROR_ARG_EXCEEDS_FUNCTION_DOMAIN, ERR_REGISTER_LINE, REGISTER_X);
-      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-        moreInfoOnError("In function divTimeReal:", "cannot divide 0 by 0", NULL, NULL);
-      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+      errorMoreInfo("cannot divide 0 by 0");
     }
   }
 
@@ -566,9 +453,7 @@ void divTimeReal(void) {
     }
     else {
       displayCalcErrorMessage(ERROR_ARG_EXCEEDS_FUNCTION_DOMAIN, ERR_REGISTER_LINE, REGISTER_X);
-      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-        moreInfoOnError("In function divTimeReal:", "cannot divide a real34 by 0", NULL, NULL);
-      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+      errorMoreInfo("cannot divide a real34 by 0");
     }
   }
 
@@ -591,12 +476,6 @@ void divTimeReal(void) {
 
 
 
-/********************************************//**
- * \brief Y(real34) ÷ X(time) ==> X(real34)
- *
- * \param void
- * \return void
- ***********************************************/
 void divRealTime(void) {
   convertTimeRegisterToReal34Register(REGISTER_X, REGISTER_X);
   divRealReal();
@@ -604,12 +483,6 @@ void divRealTime(void) {
 
 
 
-/********************************************//**
- * \brief Y(time) ÷ X(time) ==> X(real34)
- *
- * \param void
- * \return void
- ***********************************************/
 void divTimeTime(void) {
   if(real34IsZero(REGISTER_REAL34_DATA(REGISTER_Y)) && real34IsZero(REGISTER_REAL34_DATA(REGISTER_X))) {
     if(getSystemFlag(FLAG_SPCRES)) {
@@ -617,9 +490,7 @@ void divTimeTime(void) {
     }
     else {
       displayCalcErrorMessage(ERROR_ARG_EXCEEDS_FUNCTION_DOMAIN, ERR_REGISTER_LINE, REGISTER_X);
-      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-        moreInfoOnError("In function divTimeTime:", "cannot divide 0 by 0", NULL, NULL);
-      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+      errorMoreInfo("cannot divide 0 by 0");
     }
   }
 
@@ -629,9 +500,7 @@ void divTimeTime(void) {
     }
     else {
       displayCalcErrorMessage(ERROR_ARG_EXCEEDS_FUNCTION_DOMAIN, ERR_REGISTER_LINE, REGISTER_X);
-      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-        moreInfoOnError("In function divTimeTime:", "cannot divide time by 0", NULL, NULL);
-      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+      errorMoreInfo("cannot divide time by 0");
     }
   }
 
@@ -647,24 +516,6 @@ void divTimeTime(void) {
 
 
 
-/******************************************************************************************************************************************************************************************/
-/* date / ...                                                                                                                                                                             */
-/******************************************************************************************************************************************************************************************/
-
-/******************************************************************************************************************************************************************************************/
-/* string / ...                                                                                                                                                                           */
-/******************************************************************************************************************************************************************************************/
-
-/******************************************************************************************************************************************************************************************/
-/* real34 matrix / ...                                                                                                                                                                    */
-/******************************************************************************************************************************************************************************************/
-
-/********************************************//**
- * \brief Y(real34 matrix) ÷ X(long integer) ==> X(real34 matrix)
- *
- * \param void
- * \return void
- ***********************************************/
 void divRemaLonI(void) {
   #if !defined(TESTSUITE_BUILD)
     real34Matrix_t matrix, res;
@@ -673,9 +524,7 @@ void divRemaLonI(void) {
     convertLongIntegerRegisterToReal(REGISTER_X, &x, &ctxtReal39);
     if(!getSystemFlag(FLAG_SPCRES) && realIsZero(&x)) {
       displayCalcErrorMessage(ERROR_ARG_EXCEEDS_FUNCTION_DOMAIN, ERR_REGISTER_LINE, REGISTER_X);
-      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-        moreInfoOnError("In function divRemaLonI:", "cannot divide by 0", NULL, NULL);
-      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+      errorMoreInfo("cannot divide by 0");
     }
 
     else {
@@ -689,12 +538,6 @@ void divRemaLonI(void) {
 
 
 
-/********************************************//**
- * \brief Y(long integer) ÷ X(real34 matrix) ==> X(real34 matrix)
- *
- * \param void
- * \return void
- ***********************************************/
 void divLonIRema(void) {
   #if !defined(TESTSUITE_BUILD)
     real34Matrix_t matrix, res;
@@ -717,9 +560,7 @@ void divLonIRema(void) {
 
     if(divZeroOccurs) {
       displayCalcErrorMessage(ERROR_ARG_EXCEEDS_FUNCTION_DOMAIN, ERR_REGISTER_LINE, REGISTER_X);
-      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-        moreInfoOnError("In function divLonIRema:", "cannot divide by 0", NULL, NULL);
-      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+      errorMoreInfo("cannot divide by 0");
     }
 
     else {
@@ -732,12 +573,6 @@ void divLonIRema(void) {
 
 
 
-/********************************************//**
- * \brief Y(real34 matrix) ÷ X(real34 matrix) ==> X(real34 matrix)
- *
- * \param void
- * \return void
- ***********************************************/
 void divRemaRema(void) {
   #if !defined(TESTSUITE_BUILD)
     real34Matrix_t y, x, res;
@@ -747,12 +582,9 @@ void divRemaRema(void) {
 
     if(y.header.matrixColumns != x.header.matrixRows || y.header.matrixColumns != x.header.matrixColumns || x.header.matrixRows != x.header.matrixColumns) {
       displayCalcErrorMessage(ERROR_MATRIX_MISMATCH, ERR_REGISTER_LINE, REGISTER_X);
-      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-        sprintf(errorMessage, "cannot divide %d" STD_CROSS "%d-matrix and %d" STD_CROSS "%d-matrix",
-                y.header.matrixRows, y.header.matrixColumns,
-                x.header.matrixRows, x.header.matrixColumns);
-        moreInfoOnError("In function divRemaRema:", errorMessage, NULL, NULL);
-      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+      errorMoreInfo("cannot divide %d" STD_CROSS "%d-matrix and %d" STD_CROSS "%d-matrix",
+          y.header.matrixRows, y.header.matrixColumns,
+          x.header.matrixRows, x.header.matrixColumns);
     }
     else {
       divideRealMatrices(&y, &x, &res);
@@ -762,10 +594,7 @@ void divRemaRema(void) {
       }
       else {
         displayCalcErrorMessage(ERROR_MATRIX_MISMATCH, ERR_REGISTER_LINE, REGISTER_X);
-        #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-          sprintf(errorMessage, "cannot divide by a singular matrix");
-          moreInfoOnError("In function divRemaRema:", errorMessage, NULL, NULL);
-        #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+        errorMoreInfo("cannot divide by a singular matrix");
       }
     }
   #endif // !TESTSUITE_BUILD
@@ -773,12 +602,6 @@ void divRemaRema(void) {
 
 
 
-/********************************************//**
- * \brief Y(real34 matrix) ÷ X(complex34 matrix) ==> X(complex34 matrix)
- *
- * \param void
- * \return void
- ***********************************************/
 void divRemaCxma(void) {
   #if !defined(TESTSUITE_BUILD)
     convertReal34MatrixRegisterToComplex34MatrixRegister(REGISTER_Y, REGISTER_Y);
@@ -788,12 +611,6 @@ void divRemaCxma(void) {
 
 
 
-/********************************************//**
- * \brief Y(real34 matrix) ÷ X(short integer) ==> X(real34 matrix)
- *
- * \param void
- * \return void
- ***********************************************/
 void divRemaShoI(void) {
   #if !defined(TESTSUITE_BUILD)
     real34Matrix_t matrix, res;
@@ -802,9 +619,7 @@ void divRemaShoI(void) {
     convertShortIntegerRegisterToReal(REGISTER_X, &x, &ctxtReal39);
     if(!getSystemFlag(FLAG_SPCRES) && realIsZero(&x)) {
       displayCalcErrorMessage(ERROR_ARG_EXCEEDS_FUNCTION_DOMAIN, ERR_REGISTER_LINE, REGISTER_X);
-      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-        moreInfoOnError("In function divRemaShoI:", "cannot divide by 0", NULL, NULL);
-      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+      errorMoreInfo("cannot divide by 0");
     }
 
     else {
@@ -818,12 +633,6 @@ void divRemaShoI(void) {
 
 
 
-/********************************************//**
- * \brief Y(short integer) ÷ X(real34 matrix) ==> X(real34 matrix)
- *
- * \param void
- * \return void
- ***********************************************/
 void divShoIRema(void) {
   #if !defined(TESTSUITE_BUILD)
     real34Matrix_t matrix, res;
@@ -846,9 +655,7 @@ void divShoIRema(void) {
 
     if(divZeroOccurs) {
       displayCalcErrorMessage(ERROR_ARG_EXCEEDS_FUNCTION_DOMAIN, ERR_REGISTER_LINE, REGISTER_X);
-      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-        moreInfoOnError("In function divShoIRema:", "cannot divide by 0", NULL, NULL);
-      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+      errorMoreInfo("cannot divide by 0");
     }
 
     else {
@@ -861,20 +668,12 @@ void divShoIRema(void) {
 
 
 
-/********************************************//**
- * \brief Y(real34 matrix) ÷ X(real34) ==> X(real34 matrix)
- *
- * \param void
- * \return void
- ***********************************************/
 void divRemaReal(void) {
   #if !defined(TESTSUITE_BUILD)
     real34Matrix_t matrix;
     if(!getSystemFlag(FLAG_SPCRES) && real34IsZero(REGISTER_REAL34_DATA(REGISTER_X))) {
       displayCalcErrorMessage(ERROR_ARG_EXCEEDS_FUNCTION_DOMAIN, ERR_REGISTER_LINE, REGISTER_X);
-      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-        moreInfoOnError("In function divRemaReal:", "cannot divide by 0", NULL, NULL);
-      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+      errorMoreInfo("cannot divide by 0");
     }
     else if(getRegisterAngularMode(REGISTER_X) == amNone) {
       linkToRealMatrixRegister(REGISTER_Y, &matrix);
@@ -889,12 +688,6 @@ void divRemaReal(void) {
 
 
 
-/********************************************//**
- * \brief Y(real34) ÷ X(real34 matrix) ==> X(real34 matrix)
- *
- * \param void
- * \return void
- ***********************************************/
 void divRealRema(void) {
   #if !defined(TESTSUITE_BUILD)
     real34Matrix_t matrix, res;
@@ -915,9 +708,7 @@ void divRealRema(void) {
 
     if(divZeroOccurs) {
       displayCalcErrorMessage(ERROR_ARG_EXCEEDS_FUNCTION_DOMAIN, ERR_REGISTER_LINE, REGISTER_X);
-      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-        moreInfoOnError("In function divRealRema:", "cannot divide by 0", NULL, NULL);
-      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+      errorMoreInfo("cannot divide by 0");
     }
 
     else if(getRegisterAngularMode(REGISTER_Y) == amNone) {
@@ -934,12 +725,6 @@ void divRealRema(void) {
 
 
 
-/********************************************//**
- * \brief Y(real34 matrix) ÷ X(complex34) ==> X(complex34 matrix)
- *
- * \param void
- * \return void
- ***********************************************/
 void divRemaCplx(void) {
   #if !defined(TESTSUITE_BUILD)
     convertReal34MatrixRegisterToComplex34MatrixRegister(REGISTER_Y, REGISTER_Y);
@@ -949,12 +734,6 @@ void divRemaCplx(void) {
 
 
 
-/********************************************//**
- * \brief Y(complex34) ÷ X(real34 matrix) ==> X(complex34 matrix)
- *
- * \param void
- * \return void
- ***********************************************/
 void divCplxRema(void) {
   #if !defined(TESTSUITE_BUILD)
     convertReal34MatrixRegisterToComplex34MatrixRegister(REGISTER_X, REGISTER_X);
@@ -964,16 +743,6 @@ void divCplxRema(void) {
 
 
 
-/******************************************************************************************************************************************************************************************/
-/* complex34 matrix / ...                                                                                                                                                                 */
-/******************************************************************************************************************************************************************************************/
-
-/********************************************//**
- * \brief Y(complex34 matrix) ÷ X(long integer) ==> X(complex34 matrix)
- *
- * \param void
- * \return void
- ***********************************************/
 void divCxmaLonI(void) {
   #if !defined(TESTSUITE_BUILD)
     complex34Matrix_t matrix, res;
@@ -989,12 +758,6 @@ void divCxmaLonI(void) {
 
 
 
-/********************************************//**
- * \brief Y(long integer) ÷ X(complex34 matrix) ==> X(complex34 matrix)
- *
- * \param void
- * \return void
- ***********************************************/
 void divLonICxma(void) {
   #if !defined(TESTSUITE_BUILD)
     complex34Matrix_t matrix, res;
@@ -1010,12 +773,6 @@ void divLonICxma(void) {
 
 
 
-/********************************************//**
- * \brief Y(complex34 matrix) ÷ X(real34 matrix) ==> X(complex34 matrix)
- *
- * \param void
- * \return void
- ***********************************************/
 void divCxmaRema(void) {
   #if !defined(TESTSUITE_BUILD)
     convertReal34MatrixRegisterToComplex34MatrixRegister(REGISTER_X, REGISTER_X);
@@ -1025,12 +782,6 @@ void divCxmaRema(void) {
 
 
 
-/********************************************//**
- * \brief Y(complex34 matrix) ÷ X(complex34 matrix) ==> X(complex34 matrix)
- *
- * \param void
- * \return void
- ***********************************************/
 void divCxmaCxma(void) {
   #if !defined(TESTSUITE_BUILD)
     complex34Matrix_t y, x, res;
@@ -1040,12 +791,9 @@ void divCxmaCxma(void) {
 
     if(y.header.matrixColumns != x.header.matrixRows || y.header.matrixColumns != x.header.matrixColumns || x.header.matrixRows != x.header.matrixColumns) {
       displayCalcErrorMessage(ERROR_MATRIX_MISMATCH, ERR_REGISTER_LINE, REGISTER_X);
-      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-        sprintf(errorMessage, "cannot divide %d" STD_CROSS "%d-matrix and %d" STD_CROSS "%d-matrix",
-                y.header.matrixRows, y.header.matrixColumns,
-                x.header.matrixRows, x.header.matrixColumns);
-        moreInfoOnError("In function divCxmaCxma:", errorMessage, NULL, NULL);
-      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+      errorMoreInfo("cannot divide %d" STD_CROSS "%d-matrix and %d" STD_CROSS "%d-matrix",
+          y.header.matrixRows, y.header.matrixColumns,
+          x.header.matrixRows, x.header.matrixColumns);
     }
     else {
       divideComplexMatrices(&y, &x, &res);
@@ -1055,10 +803,7 @@ void divCxmaCxma(void) {
       }
       else {
         displayCalcErrorMessage(ERROR_MATRIX_MISMATCH, ERR_REGISTER_LINE, REGISTER_X);
-        #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-          sprintf(errorMessage, "cannot divide by a singular matrix");
-          moreInfoOnError("In function divRemaRema:", errorMessage, NULL, NULL);
-        #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+        errorMoreInfo("cannot divide by a singular matrix");
       }
     }
   #endif // !TESTSUITE_BUILD
@@ -1066,12 +811,6 @@ void divCxmaCxma(void) {
 
 
 
-/********************************************//**
- * \brief Y(complex34 matrix) ÷ X(short integer) ==> X(complex34 matrix)
- *
- * \param void
- * \return void
- ***********************************************/
 void divCxmaShoI(void) {
   #if !defined(TESTSUITE_BUILD)
     convertShortIntegerRegisterToReal34Register(REGISTER_X, REGISTER_X);
@@ -1081,12 +820,6 @@ void divCxmaShoI(void) {
 
 
 
-/********************************************//**
- * \brief Y(short integer) ÷ X(complex34 matrix) ==> X(complex34 matrix)
- *
- * \param void
- * \return void
- ***********************************************/
 void divShoICxma(void) {
   #if !defined(TESTSUITE_BUILD)
     convertShortIntegerRegisterToReal34Register(REGISTER_Y, REGISTER_Y);
@@ -1096,12 +829,6 @@ void divShoICxma(void) {
 
 
 
-/********************************************//**
- * \brief Y(complex34 matrix) ÷ X(real34) ==> X(complex34 matrix)
- *
- * \param void
- * \return void
- ***********************************************/
 void divCxmaReal(void) {
   #if !defined(TESTSUITE_BUILD)
     complex34Matrix_t matrix;
@@ -1118,12 +845,6 @@ void divCxmaReal(void) {
 
 
 
-/********************************************//**
- * \brief Y(real34) ÷ X(complex34 matrix) ==> X(complex34 matrix)
- *
- * \param void
- * \return void
- ***********************************************/
 void divRealCxma(void) {
   #if !defined(TESTSUITE_BUILD)
     complex34Matrix_t matrix;
@@ -1139,12 +860,6 @@ void divRealCxma(void) {
 
 
 
-/********************************************//**
- * \brief Y(complex34 matrix) ÷ X(complex34) ==> X(complex34 matrix)
- *
- * \param void
- * \return void
- ***********************************************/
 void divCxmaCplx(void) {
   #if !defined(TESTSUITE_BUILD)
     complex34Matrix_t matrix;
@@ -1156,12 +871,6 @@ void divCxmaCplx(void) {
 
 
 
-/********************************************//**
- * \brief Y(complex34) ÷ X(complex34 matrix) ==> X(complex34 matrix)
- *
- * \param void
- * \return void
- ***********************************************/
 void divCplxCxma(void) {
   #if !defined(TESTSUITE_BUILD)
     complex34Matrix_t matrix;
@@ -1172,16 +881,6 @@ void divCplxCxma(void) {
 
 
 
-/******************************************************************************************************************************************************************************************/
-/* short integer / ...                                                                                                                                                                    */
-/******************************************************************************************************************************************************************************************/
-
-/********************************************//**
- * \brief Y(short integer) ÷ X(short integer) ==> X(short integer)
- *
- * \param void
- * \return void
- ***********************************************/
 void divShoIShoI(void) {
   int16_t sign;
   uint64_t value;
@@ -1189,9 +888,7 @@ void divShoIShoI(void) {
   convertShortIntegerRegisterToUInt64(REGISTER_X, &sign, &value);
   if(value == 0) {
     displayCalcErrorMessage(ERROR_ARG_EXCEEDS_FUNCTION_DOMAIN, ERR_REGISTER_LINE, REGISTER_X);
-    #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-      moreInfoOnError("In function divShoIShoI:", "cannot divide a short integer by 0", NULL, NULL);
-    #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+    errorMoreInfo("cannot divide a short integer by 0");
   }
   else {
     *(REGISTER_SHORT_INTEGER_DATA(REGISTER_X)) = WP34S_intDivide(*(REGISTER_SHORT_INTEGER_DATA(REGISTER_Y)), *(REGISTER_SHORT_INTEGER_DATA(REGISTER_X)));
@@ -1201,12 +898,6 @@ void divShoIShoI(void) {
 
 
 
-/********************************************//**
- * \brief Y(short integer) ÷ X(real34) ==> X(real34)
- *
- * \param void
- * \return void
- ***********************************************/
 void divShoIReal(void) {
   real_t y, x;
 
@@ -1220,9 +911,7 @@ void divShoIReal(void) {
       }
       else {
         displayCalcErrorMessage(ERROR_ARG_EXCEEDS_FUNCTION_DOMAIN, ERR_REGISTER_LINE, REGISTER_X);
-        #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-          moreInfoOnError("In function divShoIReal:", "cannot divide 0 by 0", NULL, NULL);
-        #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+        errorMoreInfo("cannot divide 0 by 0");
       }
     }
     else {
@@ -1231,9 +920,7 @@ void divShoIReal(void) {
       }
       else {
         displayCalcErrorMessage(ERROR_ARG_EXCEEDS_FUNCTION_DOMAIN, ERR_REGISTER_LINE, REGISTER_X);
-        #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-          moreInfoOnError("In function divShoIReal:", "cannot divide a short integer by 0", NULL, NULL);
-        #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+        errorMoreInfo("cannot divide a short integer by 0");
       }
     }
   }
@@ -1247,12 +934,6 @@ void divShoIReal(void) {
 
 
 
-/********************************************//**
- * \brief Y(real34) ÷ X(short integer) ==> X(real34)
- *
- * \param void
- * \return void
- ***********************************************/
 void divRealShoI(void) {
   real_t y, x;
   angularMode_t yAngularMode;
@@ -1267,9 +948,7 @@ void divRealShoI(void) {
       }
       else {
         displayCalcErrorMessage(ERROR_ARG_EXCEEDS_FUNCTION_DOMAIN, ERR_REGISTER_LINE, REGISTER_X);
-        #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-          moreInfoOnError("In function divRealShoI:", "cannot divide 0 by 0", NULL, NULL);
-        #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+        errorMoreInfo("cannot divide 0 by 0");
       }
     }
     else {
@@ -1278,9 +957,7 @@ void divRealShoI(void) {
       }
       else {
         displayCalcErrorMessage(ERROR_ARG_EXCEEDS_FUNCTION_DOMAIN, ERR_REGISTER_LINE, REGISTER_X);
-        #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-          moreInfoOnError("In function divRealShoI:", "cannot divide a real34 by 0", NULL, NULL);
-        #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+        errorMoreInfo("cannot divide a real34 by 0");
       }
     }
   }
@@ -1304,12 +981,6 @@ void divRealShoI(void) {
 
 
 
-/********************************************//**
- * \brief Y(short integer) ÷ X(complex34) ==> X(complex34)
- *
- * \param void
- * \return void
- ***********************************************/
 void divShoICplx(void) {
   real_t y, xReal, xImag;
 
@@ -1325,12 +996,6 @@ void divShoICplx(void) {
 
 
 
-/********************************************//**
- * \brief Y(complex34) ÷ X(short integer) ==> X(complex34)
- *
- * \param void
- * \return void
- ***********************************************/
 void divCplxShoI(void) {
   convertShortIntegerRegisterToReal34Register(REGISTER_X, REGISTER_X);
   real34Divide(REGISTER_REAL34_DATA(REGISTER_Y), REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_Y)); // real part
@@ -1341,16 +1006,6 @@ void divCplxShoI(void) {
 
 
 
-/******************************************************************************************************************************************************************************************/
-/* real34 / ...                                                                                                                                                                           */
-/******************************************************************************************************************************************************************************************/
-
-/********************************************//**
- * \brief Y(real34) ÷ X(real34) ==> X(real34)
- *
- * \param void
- * \return void
- ***********************************************/
 void divRealReal(void) {
   if(real34IsZero(REGISTER_REAL34_DATA(REGISTER_Y)) && real34IsZero(REGISTER_REAL34_DATA(REGISTER_X))) {
     if(getSystemFlag(FLAG_SPCRES)) {
@@ -1358,9 +1013,7 @@ void divRealReal(void) {
     }
     else {
       displayCalcErrorMessage(ERROR_ARG_EXCEEDS_FUNCTION_DOMAIN, ERR_REGISTER_LINE, REGISTER_X);
-      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-        moreInfoOnError("In function divRealReal:", "cannot divide 0 by 0", NULL, NULL);
-      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+      errorMoreInfo("cannot divide 0 by 0");
     }
   }
 
@@ -1370,9 +1023,7 @@ void divRealReal(void) {
     }
     else {
       displayCalcErrorMessage(ERROR_ARG_EXCEEDS_FUNCTION_DOMAIN, ERR_REGISTER_LINE, REGISTER_X);
-      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-        moreInfoOnError("In function divRealReal:", "cannot divide a real34 by 0", NULL, NULL);
-      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+      errorMoreInfo("cannot divide a real34 by 0");
     }
   }
 
@@ -1407,12 +1058,6 @@ void divRealReal(void) {
 
 
 
-/********************************************//**
- * \brief Y(real34) ÷ X(complex34) ==> X(complex34)
- *
- * \param void
- * \return void
- ***********************************************/
 void divRealCplx(void) {
   real_t y, xReal, xImag;
 
@@ -1428,12 +1073,6 @@ void divRealCplx(void) {
 
 
 
-/********************************************//**
- * \brief Y(complex34) ÷ X(real34) ==> X(complex34)
- *
- * \param void
- * \return void
- ***********************************************/
 void divCplxReal(void) {
   real34Divide(REGISTER_REAL34_DATA(REGISTER_Y), REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_Y)); // real part
   real34Divide(REGISTER_IMAG34_DATA(REGISTER_Y), REGISTER_REAL34_DATA(REGISTER_X), REGISTER_IMAG34_DATA(REGISTER_Y)); // imaginary part
@@ -1443,16 +1082,6 @@ void divCplxReal(void) {
 
 
 
-/******************************************************************************************************************************************************************************************/
-/* complex34 / ...                                                                                                                                                                        */
-/******************************************************************************************************************************************************************************************/
-
-/********************************************//**
- * \brief Y(complex34) ÷ X(complex34) ==> X(complex34)
- *
- * \param void
- * \return void
- ***********************************************/
 void divCplxCplx(void) {
   real_t yReal, yImag, xReal, xImag;
 

@@ -501,6 +501,21 @@ void allocateLocalRegisters(uint16_t numberOfRegistersToAllocate) {
 
 
 
+void popAllLocalRegistersAndFlags(uint16_t unusedButMandatoryParameter) {
+  if(currentNumberOfLocalRegisters > 0) {
+    allocateLocalRegisters(0);
+  }
+  assert(currentNumberOfLocalRegisters == 0);
+  assert(currentLocalRegisters == NULL);
+  if(currentNumberOfLocalFlags > 0) {
+    freeWp43(currentSubroutineLevelData + 3, sizeof(dataBlock_t));
+    currentNumberOfLocalFlags = 0;
+  }
+  currentLocalFlags = NULL;
+}
+
+
+
 bool validateName(const char *name) {
   if(stringGlyphLength(name)  > 7) {
     return false; // Given name is too long

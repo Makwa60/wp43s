@@ -51,10 +51,25 @@ static void _addSpaceAfterPrograms(uint16_t sizeInBytes) {
 
 
 
+static bool _addEndNeeded(void) {
+  if(firstFreeProgramByte <= beginOfProgramMemory) {
+    return false;
+  }
+  if(firstFreeProgramByte == beginOfProgramMemory + 1) {
+    return true;
+  }
+  if((*(firstFreeProgramByte - 2) == ((ITM_END >> 8) | 0x80)) && (*(firstFreeProgramByte - 1) == (ITM_END & 0xff))) {
+    return false;
+  }
+  return true;
+}
+
+
 void fnPRcl(uint16_t unusedButMandatoryParameter) {
   uint32_t pgmSizeInByte = endOfCurrentProgram.any - beginOfCurrentProgram.any;
+  bool fromFlash = (programList[currentProgramNumber - 1].step < 0); // flash memory
 
-  if((*(firstFreeProgramByte - 2) != ((ITM_END >> 8) | 0x80)) || (*(firstFreeProgramByte - 1) != (ITM_END & 0xff))) {
+  if(_addEndNeeded()) {
     _addSpaceAfterPrograms(2);
     *(firstFreeProgramByte - 2) = (ITM_END >> 8) | 0x80;
     *(firstFreeProgramByte - 1) =  ITM_END       & 0xff;
@@ -62,10 +77,13 @@ void fnPRcl(uint16_t unusedButMandatoryParameter) {
     *(firstFreeProgramByte + 1) = 0xffu;
     scanLabelsAndPrograms();
     pgmSizeInByte = endOfCurrentProgram.any - beginOfCurrentProgram.any;
+    if(fromFlash) { // flash memory
+      ++currentProgramNumber;
+    }
   }
 
   _addSpaceAfterPrograms(pgmSizeInByte);
-  if(programList[currentProgramNumber - 1].step < 0) { // flash memory
+  if(fromFlash) { // flash memory
     readStepInFlashPgmLibrary(firstFreeProgramByte - pgmSizeInByte, pgmSizeInByte, beginOfCurrentProgram.flash);
     ++currentProgramNumber;
   }
