@@ -238,6 +238,12 @@
 
 
 
+  void showStackSize(void) {
+    showGlyph(getSystemFlag(FLAG_SSIZE8) ? STD_8 : STD_4, &standardFont, X_SSIZE_BEGIN, 0, vmNormal, true, false); // is 0+6+2 pixel wide
+  }
+
+
+
   void showHideWatch(void) {
     if(watchIconEnabled) {
       showGlyph(STD_TIMER, &standardFont, X_WATCH, 0, vmNormal, true, false); // is 0+13+1 pixel wide
@@ -423,6 +429,7 @@
       }
       showHideAlphaMode();
       showHideHourGlass();
+      showStackSize();
       showHideWatch();
       showHideSerialIO();
       showHidePrinter();
