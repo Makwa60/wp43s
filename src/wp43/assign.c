@@ -716,6 +716,8 @@ static bool _assignToKey(int16_t keyFunc) {
       }
       if(keyFunc == kf && (!getSystemFlag(FLAG_USER) || getNthString((uint8_t *)userKeyLabel, j * 6 + keyStateCode + i) == 0)) {
         keyCode_t kc = j + 1;
+        shiftF = (i == 1);
+        shiftG = (i == 2);
         assignToKey(kc);
         return true;
       }
@@ -732,10 +734,10 @@ void assignGetName2(void) {
   else if(compareString(aimBuffer, "EXIT", CMP_NAME) == 0) {
     result = _assignToKey(ITM_EXIT);
   }
-  /*else if(compareString(aimBuffer, "USER", CMP_NAME) == 0) {
+  else if(compareString(aimBuffer, "USER", CMP_NAME) == 0) {
     result = _assignToKey(ITM_USERMODE);
   }
-  else if(compareString(aimBuffer, STD_alpha, CMP_NAME) == 0) {
+  /*else if(compareString(aimBuffer, STD_alpha, CMP_NAME) == 0) {
     result = _assignToKey(ITM_AIM);
   }
   else if(compareString(aimBuffer, "f", CMP_NAME) == 0) {
@@ -744,6 +746,9 @@ void assignGetName2(void) {
   else if(compareString(aimBuffer, "g", CMP_NAME) == 0) {
     result = _assignToKey(ITM_SHIFTg);
   }*/
+  else if(compareString(aimBuffer, "CATALOG", CMP_NAME) == 0) {
+    result = _assignToKey(-MNU_CATALOG);
+  }
   else if(aimBuffer[0] == 0 && alphaCase == AC_LOWER) {
     result = _assignToKey(ITM_DOWN);
   }
