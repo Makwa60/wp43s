@@ -1264,6 +1264,9 @@ void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
   void showSoftmenu(int16_t id) {
     int16_t m;
 
+    if(softmenu[softmenuStack[0].softmenuId].menuItem == -MNU_MENUS) {
+      leaveAsmMode();
+    }
     enterAsmModeIfMenuIsACatalog(id);
 
     if(id == 0) {
