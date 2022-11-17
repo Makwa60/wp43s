@@ -320,7 +320,7 @@
   #define X_OVERFLOW_CARRY                         292
   #define X_ALPHA_MODE                             300
   #define X_HOURGLASS                              311
-  #define X_PROGRAM_BEGIN                          324
+  #define X_SSIZE_BEGIN                            325
   #define X_WATCH                                  336
   #define X_SERIAL_IO                              351
   #define X_PRINTER                                361

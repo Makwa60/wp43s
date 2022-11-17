@@ -238,6 +238,12 @@
 
 
 
+  void showStackSize(void) {
+    showGlyph(getSystemFlag(FLAG_SSIZE8) ? STD_8 : STD_4, &standardFont, X_SSIZE_BEGIN, 0, vmNormal, true, false); // is 0+6+2 pixel wide
+  }
+
+
+
   void showHideWatch(void) {
     if(watchIconEnabled) {
       showGlyph(STD_TIMER, &standardFont, X_WATCH, 0, vmNormal, true, false); // is 0+13+1 pixel wide
@@ -311,75 +317,6 @@
 
 
 
-  #if !defined(DMCP_BUILD)
-    void showHideStackLift(void) {
-      if(getSystemFlag(FLAG_ASLIFT)) {
-        // Draw S
-        setBlackPixel(392,  1);
-        setBlackPixel(393,  1);
-        setBlackPixel(394,  1);
-        setBlackPixel(391,  2);
-        setBlackPixel(395,  2);
-        setBlackPixel(391,  3);
-        setBlackPixel(392,  4);
-        setBlackPixel(393,  4);
-        setBlackPixel(394,  4);
-        setBlackPixel(395,  5);
-        setBlackPixel(391,  6);
-        setBlackPixel(395,  6);
-        setBlackPixel(392,  7);
-        setBlackPixel(393,  7);
-        setBlackPixel(394,  7);
-
-        // Draw L
-        setBlackPixel(391, 10);
-        setBlackPixel(391, 11);
-        setBlackPixel(391, 12);
-        setBlackPixel(391, 13);
-        setBlackPixel(391, 14);
-        setBlackPixel(391, 15);
-        setBlackPixel(391, 16);
-        setBlackPixel(392, 16);
-        setBlackPixel(393, 16);
-        setBlackPixel(394, 16);
-        setBlackPixel(395, 16);
-      }
-      else {
-        // Erase S
-        setWhitePixel(392,  1);
-        setWhitePixel(393,  1);
-        setWhitePixel(394,  1);
-        setWhitePixel(391,  2);
-        setWhitePixel(395,  2);
-        setWhitePixel(391,  3);
-        setWhitePixel(392,  4);
-        setWhitePixel(393,  4);
-        setWhitePixel(394,  4);
-        setWhitePixel(395,  5);
-        setWhitePixel(391,  6);
-        setWhitePixel(395,  6);
-        setWhitePixel(392,  7);
-        setWhitePixel(393,  7);
-        setWhitePixel(394,  7);
-
-        // Erase L
-        setWhitePixel(391, 10);
-        setWhitePixel(391, 11);
-        setWhitePixel(391, 12);
-        setWhitePixel(391, 13);
-        setWhitePixel(391, 14);
-        setWhitePixel(391, 15);
-        setWhitePixel(391, 16);
-        setWhitePixel(392, 16);
-        setWhitePixel(393, 16);
-        setWhitePixel(394, 16);
-        setWhitePixel(395, 16);
-      }
-    }
-  #endif // !DMCP_BUILD
-
-
-
   void refreshStatusBar(void) {
     if(screenUpdatingMode & SCRUPD_MANUAL_STATUSBAR) {
       switch(calcMode) {
@@ -423,14 +360,13 @@
       }
       showHideAlphaMode();
       showHideHourGlass();
+      showStackSize();
       showHideWatch();
       showHideSerialIO();
       showHidePrinter();
       showHideUserMode();
       #if defined(DMCP_BUILD)
         showHideUsbLowBattery();
-      #else // !DMCP_BUILD
-        showHideStackLift();
       #endif // DMCP_BUILD
     #endif // DEBUG_INSTEAD_STATUS_BAR == 1
   }
