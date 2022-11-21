@@ -11,8 +11,9 @@
 #include "flags.h"
 #include "items.h"
 #include "mathematics/comparisonReals.h"
-#include "mathematics/toRect.h"
-#include "mathematics/toPolar.h"
+#include "mathematics/ln.h"
+#include "mathematics/multiplication.h"
+#include "mathematics/squareRoot.h"
 #include "mathematics/wp34s.h"
 #include "matrix.h"
 #include "registers.h"
@@ -148,35 +149,28 @@ void arccosCplx(void) {
   real34ToReal(REGISTER_REAL34_DATA(REGISTER_X), &a);
   real34ToReal(REGISTER_IMAG34_DATA(REGISTER_X), &b);
 
-  // arccos(z) = -i.ln(z + sqrt(z� - 1))
-  // calculate z�   real part
-  realMultiply(&b, &b, &real, &ctxtReal39);
+  // arccos(z) = -i.ln(z + i.sqrt(1 - z²))
+  // calculate z²
+  mulComplexComplex(&a, &b, &a, &b, &real, &imag, &ctxtReal39);
+
+  // calculate 1 - z²
+  realSubtract(const_1, &real, &real, &ctxtReal39);
+  realChangeSign(&imag);
+
+  // calculate i.sqrt(1 - z²)
+  sqrtComplex(&real, &imag, &imag, &real, &ctxtReal39);
   realChangeSign(&real);
-  realFMA(&a, &a, &real, &real, &ctxtReal39);
 
-  // calculate z�   imaginary part
-  realMultiply(&a, &b, &imag, &ctxtReal39);
-  realMultiply(&imag, const_2, &imag, &ctxtReal39);
-
-  // calculate z� - 1
-  realSubtract(&real, const_1, &real, &ctxtReal39);
-
-  // calculate sqrt(z� - 1)
-  realRectangularToPolar(&real, &imag, &real, &imag, &ctxtReal39);
-  realSquareRoot(&real, &real, &ctxtReal39);
-  realMultiply(&imag, const_1on2, &imag, &ctxtReal39);
-  realPolarToRectangular(&real, &imag, &real, &imag, &ctxtReal39);
-
-  // calculate z + sqrt(z� - 1)
+  // calculate z + i.sqrt(1 - z²)
   realAdd(&a, &real, &real, &ctxtReal39);
   realAdd(&b, &imag, &imag, &ctxtReal39);
 
-  // calculate ln(z + sqtr(z� - 1))
-  realRectangularToPolar(&real, &imag, &a, &b, &ctxtReal39);
-  WP34S_Ln(&a, &a, &ctxtReal39);
+  // calculate ln(z + i.sqrt(1 - z²))
+  lnComplex(&real, &imag, &real, &imag, &ctxtReal39);
 
-  // calculate = -i.ln(z + sqtr(z� - 1))
-  realChangeSign(&a);
+  // calculate = -i.ln(z + i.sqrt(1 - z²))
+  realMinus(&real, &a, &ctxtReal39);
+  realCopy(&imag, &b);
 
   convertRealToReal34ResultRegister(&b, REGISTER_X);
   convertRealToImag34ResultRegister(&a, REGISTER_X);
