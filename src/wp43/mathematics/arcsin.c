@@ -11,8 +11,9 @@
 #include "flags.h"
 #include "items.h"
 #include "mathematics/comparisonReals.h"
-#include "mathematics/toRect.h"
-#include "mathematics/toPolar.h"
+#include "mathematics/ln.h"
+#include "mathematics/multiplication.h"
+#include "mathematics/squareRoot.h"
 #include "mathematics/wp34s.h"
 #include "matrix.h"
 #include "registers.h"
@@ -157,36 +158,26 @@ uint8_t ArcsinComplex(const real_t *xReal, const real_t *xImag, real_t *rReal, r
   realCopy(xReal, &a);
   realCopy(xImag, &b);
 
-  // arcsin(z) = -i.ln(iz + sqrt(1 - z�))
-  // calculate z�   real part
-  realMultiply(&b, &b, rReal, realContext);
-  realChangeSign(rReal);
-  realFMA(&a, &a, rReal, rReal, realContext);
+  // arcsin(z) = -i.ln(iz + sqrt(1 - z²))
+  // calculate z²
+  mulComplexComplex(&a, &b, &a, &b, rReal, rImag, realContext);
 
-  // calculate z�   imaginary part
-  realMultiply(&a, &b, rImag, realContext);
-  realMultiply(rImag, const_2, rImag, realContext);
-
-  // calculate 1 - z�
+  // calculate 1 - z²
   realSubtract(const_1, rReal, rReal, realContext);
   realChangeSign(rImag);
 
-  // calculate sqrt(1 - z�)
-  realRectangularToPolar(rReal, rImag, rReal, rImag, realContext);
-  realSquareRoot(rReal, rReal, realContext);
-  realMultiply(rImag, const_1on2, rImag, realContext);
-  realPolarToRectangular(rReal, rImag, rReal, rImag, realContext);
+  // calculate sqrt(1 - z²)
+  sqrtComplex(rReal, rImag, rReal, rImag, realContext);
 
-  // calculate iz + sqrt(1 - z�)
+  // calculate iz + sqrt(1 - z²)
   realChangeSign(&b);
   realAdd(rReal, &b, rReal, realContext);
   realAdd(rImag, &a, rImag, realContext);
 
-  // calculate ln(iz + sqrt(1 - z�))
-  realRectangularToPolar(rReal, rImag, &a, &b, realContext);
-  WP34S_Ln(&a, &a, realContext);
+  // calculate ln(iz + sqrt(1 - z²))
+  lnComplex(rReal, rImag, &a, &b, realContext);
 
-  // calculate = -i.ln(iz + sqrt(1 - z�))
+  // calculate = -i.ln(iz + sqrt(1 - z²))
   realChangeSign(&a);
 
   realCopy(&b, rReal);
