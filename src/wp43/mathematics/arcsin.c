@@ -13,7 +13,7 @@
 #include "mathematics/comparisonReals.h"
 #include "mathematics/ln.h"
 #include "mathematics/multiplication.h"
-#include "mathematics/squareRoot.h"
+#include "mathematics/sqrt1Px2.h"
 #include "mathematics/wp34s.h"
 #include "matrix.h"
 #include "registers.h"
@@ -159,18 +159,11 @@ uint8_t ArcsinComplex(const real_t *xReal, const real_t *xImag, real_t *rReal, r
   realCopy(xImag, &b);
 
   // arcsin(z) = -i.ln(iz + sqrt(1 - z²))
-  // calculate z²
-  mulComplexComplex(&a, &b, &a, &b, rReal, rImag, realContext);
-
-  // calculate 1 - z²
-  realSubtract(const_1, rReal, rReal, realContext);
-  realChangeSign(rImag);
-
   // calculate sqrt(1 - z²)
-  sqrtComplex(rReal, rImag, rReal, rImag, realContext);
+  realChangeSign(&b);
+  sqrt1Px2Complex(&b, &a, rReal, rImag, realContext);
 
   // calculate iz + sqrt(1 - z²)
-  realChangeSign(&b);
   realAdd(rReal, &b, rReal, realContext);
   realAdd(rImag, &a, rImag, realContext);
 
