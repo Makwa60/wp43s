@@ -13,7 +13,7 @@
 #include "mathematics/comparisonReals.h"
 #include "mathematics/ln.h"
 #include "mathematics/multiplication.h"
-#include "mathematics/squareRoot.h"
+#include "mathematics/sqrt1Px2.h"
 #include "mathematics/wp34s.h"
 #include "matrix.h"
 #include "registers.h"
@@ -150,15 +150,9 @@ void arccosCplx(void) {
   real34ToReal(REGISTER_IMAG34_DATA(REGISTER_X), &b);
 
   // arccos(z) = -i.ln(z + i.sqrt(1 - z²))
-  // calculate z²
-  mulComplexComplex(&a, &b, &a, &b, &real, &imag, &ctxtReal39);
-
-  // calculate 1 - z²
-  realSubtract(const_1, &real, &real, &ctxtReal39);
-  realChangeSign(&imag);
-
   // calculate i.sqrt(1 - z²)
-  sqrtComplex(&real, &imag, &imag, &real, &ctxtReal39);
+  realMinus(&b, &real, &ctxtReal39);
+  sqrt1Px2Complex(&real, &a, &imag, &real, &ctxtReal39);
   realChangeSign(&real);
 
   // calculate z + i.sqrt(1 - z²)
