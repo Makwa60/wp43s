@@ -206,6 +206,7 @@ bool realIsAnInteger(const real_t *x) {
 
 
 
+/*
 int16_t realIdenticalDigits(real_t *a, real_t *b) {
   int16_t counter, smallest;
 
@@ -224,3 +225,4 @@ int16_t realIdenticalDigits(real_t *a, real_t *b) {
 
   return counter;
 }
+*/

@@ -284,6 +284,9 @@ bool      _kbSeenInterrupt     = false;
         inCatalog = true;
         break;
       }
+      else if(softmenu[softmenuStack[i].softmenuId].menuItem == -MNU_MENUS) {
+        break;
+      }
     }
     if(inCatalog || softmenu[softmenuStack[0].softmenuId].menuItem == -MNU_CONST) {
       switch(-softmenu[softmenuStack[0].softmenuId].menuItem) {
@@ -388,7 +391,7 @@ bool      _kbSeenInterrupt     = false;
         }
       }
       #pragma GCC diagnostic pop
-      _closeCatalog();
+      //_closeCatalog();
     }
     else if(calcMode != cmApp) {
       int16_t item = determineFunctionKeyItem(keyCode);
@@ -1163,6 +1166,10 @@ bool      _kbSeenInterrupt     = false;
         }
         else if(calcMode == cmAssign && item == ITM_AIM) {
           assignEnterAlpha();
+          keyActionProcessed = true;
+        }
+        else if(calcMode == cmAssign && itemToBeAssigned != 0 && item == -MNU_CATALOG) {
+          showSoftmenu(-MNU_CATALOG);
           keyActionProcessed = true;
         }
         else if((calcMode != cmPem || !getSystemFlag(FLAG_ALPHA)) && catalog && catalog != CATALOG_MVAR) {
