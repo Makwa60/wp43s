@@ -2002,6 +2002,10 @@ void fnKeyBackspace(uint16_t unusedButMandatoryParameter) {
           lg = stringLastGlyph(aimBuffer);
           aimBuffer[lg] = 0;
         }
+        if(aimBuffer[0] == 0) {
+          closeAim();
+          updateMatrixHeightCache();
+        }
         break;
       }
 
@@ -2077,6 +2081,10 @@ void fnKeyBackspace(uint16_t unusedButMandatoryParameter) {
         }
         if(getSystemFlag(FLAG_ALPHA)) {
           pemAlpha(ITM_BACKSPACE);
+          if(aimBuffer[0] == 0 && getSystemFlag(FLAG_ALPHA)) {
+            // close if no characters left
+            pemAlpha(ITM_BACKSPACE);
+          }
           if(aimBuffer[0] == 0 && !getSystemFlag(FLAG_ALPHA)) {
             if(currentLocalStepNumber > 1) {
               --currentLocalStepNumber;
