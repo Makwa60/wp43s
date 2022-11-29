@@ -445,6 +445,14 @@ void fnJulianToDate(uint16_t unusedButMandatoryParameter) {
       break;
     }
 
+    case dtReal34: {
+      real34ToIntegralValue(REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X), DEC_ROUND_DOWN);
+      julianDayToInternalDate(REGISTER_REAL34_DATA(REGISTER_X), &date);
+      reallocateRegister(REGISTER_X, dtDate, REAL34_SIZE_IN_BYTES, amNone);
+      real34Copy(&date, REGISTER_REAL34_DATA(REGISTER_X));
+      break;
+    }
+
     default: {
       displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, REGISTER_X);
       errorMoreInfo("data type %s cannot be converted to date!", getRegisterDataTypeName(REGISTER_X, false, false));
