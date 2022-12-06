@@ -26,13 +26,16 @@ void addLonIRema(void);
 void addLonICxma(void);
 void addLonITime(void);
 void addLonIDate(void);
+void addLonIStri(void);
 void addLonIShoI(void);
 void addLonIReal(void);
 void addLonICplx(void);
 void addTimeLonI(void);
 void addTimeTime(void);
+void addTimeStri(void);
 void addTimeReal(void);
 void addDateLonI(void);
+void addDateStri(void);
 void addDateReal(void);
 void addStriLonI(void);
 void addStriTime(void);
@@ -46,18 +49,21 @@ void addStriCplx(void);
 void addRemaLonI(void);
 void addRemaRema(void);
 void addRemaCxma(void);
+void addRemaStri(void);
 void addRemaShoI(void);
 void addRemaReal(void);
 void addRemaCplx(void);
 void addCxmaLonI(void);
 void addCxmaRema(void);
 void addCxmaCxma(void);
+void addCxmaStri(void);
 void addCxmaShoI(void);
 void addCxmaReal(void);
 void addCxmaCplx(void);
 void addShoILonI(void);
 void addShoIRema(void);
 void addShoICxma(void);
+void addShoIStri(void);
 void addShoIShoI(void);
 void addShoIReal(void);
 void addShoICplx(void);
@@ -66,12 +72,14 @@ void addRealRema(void);
 void addRealCxma(void);
 void addRealTime(void);
 void addRealDate(void);
+void addRealStri(void);
 void addRealShoI(void);
 void addRealReal(void);
 void addRealCplx(void);
 void addCplxLonI(void);
 void addCplxRema(void);
 void addCplxCxma(void);
+void addCplxStri(void);
 void addCplxShoI(void);
 void addCplxReal(void);
 void addCplxCplx(void);
@@ -84,7 +92,7 @@ TO_QSPI void (* const addition[NUMBER_OF_DATA_TYPES_FOR_CALCULATIONS][NUMBER_OF_
 /*  3 Complex34     */ {addLonICplx, addRealCplx, addCplxCplx, addError,    addError,    addStriCplx, addRemaCplx, addCxmaCplx, addShoICplx,  addError},
 /*  4 Time          */ {addLonITime, addRealTime, addError,    addTimeTime, addError,    addStriTime, addError,    addError,    addError,     addError},
 /*  5 Date          */ {addLonIDate, addRealDate, addError,    addError,    addError,    addStriDate, addError,    addError,    addError,     addError},
-/*  6 String        */ {addError,    addError,    addError,    addError,    addError,    addStriStri, addError,    addError,    addError,     addError},
+/*  6 String        */ {addLonIStri, addRealStri, addCplxStri, addTimeStri, addDateStri, addStriStri, addRemaStri, addCxmaStri, addShoIStri,  addError},
 /*  7 Real34 mat    */ {addLonIRema, addRealRema, addCplxRema, addError,    addError,    addStriRema, addRemaRema, addCxmaRema, addShoIRema,  addError},
 /*  8 Complex34 mat */ {addLonICxma, addRealCxma, addCplxCxma, addError,    addError,    addStriCxma, addRemaCxma, addCxmaCxma, addShoICxma,  addError},
 /*  9 Short integer */ {addLonIShoI, addRealShoI, addCplxShoI, addError,    addError,    addStriShoI, addRemaShoI, addCxmaShoI, addShoIShoI,  addError},
@@ -380,6 +388,32 @@ void addStriLonI(void) {
 
 
 
+void addLonIStri(void) {
+  int16_t len1, len2;
+
+  longIntegerRegisterToDisplayString(REGISTER_Y, tmpString, TMP_STR_LENGTH, SCREEN_WIDTH, 50, STD_SPACE_PUNCTUATION);
+
+  if(stringGlyphLength(REGISTER_STRING_DATA(REGISTER_X)) + stringGlyphLength(tmpString) > MAX_NUMBER_OF_GLYPHS_IN_STRING) {
+    displayCalcErrorMessage(ERROR_STRING_WOULD_BE_TOO_LONG, ERR_REGISTER_LINE, REGISTER_X);
+    errorMoreInfo("the resulting string would be %d (Y %d + X %d) characters long. Maximum is %d",
+        stringGlyphLength(REGISTER_STRING_DATA(REGISTER_X)) + stringGlyphLength(tmpString),
+        stringGlyphLength(tmpString),
+        stringGlyphLength(REGISTER_STRING_DATA(REGISTER_X)), MAX_NUMBER_OF_GLYPHS_IN_STRING);
+  }
+  else {
+    len1 = stringByteLength(tmpString);
+    len2 = stringByteLength(REGISTER_STRING_DATA(REGISTER_X)) + 1;
+
+    fnSwapXY(NOPARAM);
+    reallocateRegister(REGISTER_X, dtString, len1 + len2, amNone);
+
+    xcopy(REGISTER_STRING_DATA(REGISTER_X),        tmpString,                        len1);
+    xcopy(REGISTER_STRING_DATA(REGISTER_X) + len1, REGISTER_STRING_DATA(REGISTER_Y), len2);
+  }
+}
+
+
+
 void addStriTime(void) {
   int16_t len1, len2;
 
@@ -405,6 +439,32 @@ void addStriTime(void) {
 
 
 
+void addTimeStri(void) {
+  int16_t len1, len2;
+
+  timeToDisplayString(REGISTER_Y, tmpString, false);
+
+  if(stringGlyphLength(REGISTER_STRING_DATA(REGISTER_X)) + stringGlyphLength(tmpString) > MAX_NUMBER_OF_GLYPHS_IN_STRING) {
+    displayCalcErrorMessage(ERROR_STRING_WOULD_BE_TOO_LONG, ERR_REGISTER_LINE, REGISTER_X);
+    errorMoreInfo("the resulting string would be %d (Y %d + X %d) characters long. Maximum is %d",
+        stringGlyphLength(REGISTER_STRING_DATA(REGISTER_X)) + stringGlyphLength(tmpString),
+        stringGlyphLength(tmpString),
+        stringGlyphLength(REGISTER_STRING_DATA(REGISTER_X)), MAX_NUMBER_OF_GLYPHS_IN_STRING);
+  }
+  else {
+    len1 = stringByteLength(tmpString);
+    len2 = stringByteLength(REGISTER_STRING_DATA(REGISTER_X)) + 1;
+
+    fnSwapXY(NOPARAM);
+    reallocateRegister(REGISTER_X, dtString, len1 + len2, amNone);
+
+    xcopy(REGISTER_STRING_DATA(REGISTER_X),        tmpString,                        len1);
+    xcopy(REGISTER_STRING_DATA(REGISTER_X) + len1, REGISTER_STRING_DATA(REGISTER_Y), len2);
+  }
+}
+
+
+
 void addStriDate(void) {
   int16_t len1, len2;
 
@@ -425,6 +485,32 @@ void addStriDate(void) {
 
     xcopy(REGISTER_STRING_DATA(REGISTER_X)       , REGISTER_STRING_DATA(REGISTER_Y), len1);
     xcopy(REGISTER_STRING_DATA(REGISTER_X) + len1, tmpString,                        len2);
+  }
+}
+
+
+
+void addDateStri(void) {
+  int16_t len1, len2;
+
+  dateToDisplayString(REGISTER_Y, tmpString);
+
+  if(stringGlyphLength(REGISTER_STRING_DATA(REGISTER_X)) + stringGlyphLength(tmpString) > MAX_NUMBER_OF_GLYPHS_IN_STRING) {
+    displayCalcErrorMessage(ERROR_STRING_WOULD_BE_TOO_LONG, ERR_REGISTER_LINE, REGISTER_X);
+    errorMoreInfo("the resulting string would be %d (Y %d + X %d) characters long. Maximum is %d",
+        stringGlyphLength(REGISTER_STRING_DATA(REGISTER_X)) + stringGlyphLength(tmpString),
+        stringGlyphLength(tmpString),
+        stringGlyphLength(REGISTER_STRING_DATA(REGISTER_X)), MAX_NUMBER_OF_GLYPHS_IN_STRING);
+  }
+  else {
+    len1 = stringByteLength(tmpString);
+    len2 = stringByteLength(REGISTER_STRING_DATA(REGISTER_X)) + 1;
+
+    fnSwapXY(NOPARAM);
+    reallocateRegister(REGISTER_X, dtString, len1 + len2, amNone);
+
+    xcopy(REGISTER_STRING_DATA(REGISTER_X),        tmpString,                        len1);
+    xcopy(REGISTER_STRING_DATA(REGISTER_X) + len1, REGISTER_STRING_DATA(REGISTER_Y), len2);
   }
 }
 
@@ -480,6 +566,32 @@ void addStriRema(void) {
 
 
 
+void addRemaStri(void) {
+  int16_t len1, len2;
+
+  real34MatrixToDisplayString(REGISTER_Y, tmpString);
+
+  if(stringGlyphLength(REGISTER_STRING_DATA(REGISTER_X)) + stringGlyphLength(tmpString) > MAX_NUMBER_OF_GLYPHS_IN_STRING) {
+    displayCalcErrorMessage(ERROR_STRING_WOULD_BE_TOO_LONG, ERR_REGISTER_LINE, REGISTER_X);
+    errorMoreInfo("the resulting string would be %d (Y %d + X %d) characters long. Maximum is %d",
+        stringGlyphLength(REGISTER_STRING_DATA(REGISTER_X)) + stringGlyphLength(tmpString),
+        stringGlyphLength(tmpString),
+        stringGlyphLength(REGISTER_STRING_DATA(REGISTER_X)), MAX_NUMBER_OF_GLYPHS_IN_STRING);
+  }
+  else {
+    len1 = stringByteLength(tmpString);
+    len2 = stringByteLength(REGISTER_STRING_DATA(REGISTER_X)) + 1;
+
+    fnSwapXY(NOPARAM);
+    reallocateRegister(REGISTER_X, dtString, len1 + len2, amNone);
+
+    xcopy(REGISTER_STRING_DATA(REGISTER_X),        tmpString,                        len1);
+    xcopy(REGISTER_STRING_DATA(REGISTER_X) + len1, REGISTER_STRING_DATA(REGISTER_Y), len2);
+  }
+}
+
+
+
 void addStriCxma(void) {
   int16_t len1, len2;
 
@@ -500,6 +612,32 @@ void addStriCxma(void) {
 
     xcopy(REGISTER_STRING_DATA(REGISTER_X)       , REGISTER_STRING_DATA(REGISTER_Y), len1);
     xcopy(REGISTER_STRING_DATA(REGISTER_X) + len1, tmpString,                        len2);
+  }
+}
+
+
+
+void addCxmaStri(void) {
+  int16_t len1, len2;
+
+  complex34MatrixToDisplayString(REGISTER_Y, tmpString);
+
+  if(stringGlyphLength(REGISTER_STRING_DATA(REGISTER_X)) + stringGlyphLength(tmpString) > MAX_NUMBER_OF_GLYPHS_IN_STRING) {
+    displayCalcErrorMessage(ERROR_STRING_WOULD_BE_TOO_LONG, ERR_REGISTER_LINE, REGISTER_X);
+    errorMoreInfo("the resulting string would be %d (Y %d + X %d) characters long. Maximum is %d",
+        stringGlyphLength(REGISTER_STRING_DATA(REGISTER_X)) + stringGlyphLength(tmpString),
+        stringGlyphLength(tmpString),
+        stringGlyphLength(REGISTER_STRING_DATA(REGISTER_X)), MAX_NUMBER_OF_GLYPHS_IN_STRING);
+  }
+  else {
+    len1 = stringByteLength(tmpString);
+    len2 = stringByteLength(REGISTER_STRING_DATA(REGISTER_X)) + 1;
+
+    fnSwapXY(NOPARAM);
+    reallocateRegister(REGISTER_X, dtString, len1 + len2, amNone);
+
+    xcopy(REGISTER_STRING_DATA(REGISTER_X),        tmpString,                        len1);
+    xcopy(REGISTER_STRING_DATA(REGISTER_X) + len1, REGISTER_STRING_DATA(REGISTER_Y), len2);
   }
 }
 
@@ -530,6 +668,32 @@ void addStriShoI(void) {
 
 
 
+void addShoIStri(void) {
+  int16_t len1, len2;
+
+  shortIntegerToDisplayString(REGISTER_Y, tmpString, false);
+
+  if(stringGlyphLength(REGISTER_STRING_DATA(REGISTER_X)) + stringGlyphLength(tmpString) > MAX_NUMBER_OF_GLYPHS_IN_STRING) {
+    displayCalcErrorMessage(ERROR_STRING_WOULD_BE_TOO_LONG, ERR_REGISTER_LINE, REGISTER_X);
+    errorMoreInfo("the resulting string would be %d (Y %d + X %d) characters long. Maximum is %d",
+        stringGlyphLength(REGISTER_STRING_DATA(REGISTER_X)) + stringGlyphLength(tmpString),
+        stringGlyphLength(tmpString),
+        stringGlyphLength(REGISTER_STRING_DATA(REGISTER_X)), MAX_NUMBER_OF_GLYPHS_IN_STRING);
+  }
+  else {
+    len1 = stringByteLength(tmpString);
+    len2 = stringByteLength(REGISTER_STRING_DATA(REGISTER_X)) + 1;
+
+    fnSwapXY(NOPARAM);
+    reallocateRegister(REGISTER_X, dtString, len1 + len2, amNone);
+
+    xcopy(REGISTER_STRING_DATA(REGISTER_X),        tmpString,                        len1);
+    xcopy(REGISTER_STRING_DATA(REGISTER_X) + len1, REGISTER_STRING_DATA(REGISTER_Y), len2);
+  }
+}
+
+
+
 void addStriReal(void) {
   int16_t len1, len2;
 
@@ -555,6 +719,32 @@ void addStriReal(void) {
 
 
 
+void addRealStri(void) {
+  int16_t len1, len2;
+
+  real34ToDisplayString(REGISTER_REAL34_DATA(REGISTER_Y), getRegisterAngularMode(REGISTER_Y), tmpString, &standardFont, SCREEN_WIDTH, NUMBER_OF_DISPLAY_DIGITS, false, STD_SPACE_PUNCTUATION, true);
+
+  if(stringGlyphLength(REGISTER_STRING_DATA(REGISTER_X)) + stringGlyphLength(tmpString) > MAX_NUMBER_OF_GLYPHS_IN_STRING) {
+    displayCalcErrorMessage(ERROR_STRING_WOULD_BE_TOO_LONG, ERR_REGISTER_LINE, REGISTER_X);
+    errorMoreInfo("the resulting string would be %d (Y %d + X %d) characters long. Maximum is %d",
+        stringGlyphLength(REGISTER_STRING_DATA(REGISTER_X)) + stringGlyphLength(tmpString),
+        stringGlyphLength(tmpString),
+        stringGlyphLength(REGISTER_STRING_DATA(REGISTER_X)), MAX_NUMBER_OF_GLYPHS_IN_STRING);
+  }
+  else {
+    len1 = stringByteLength(tmpString);
+    len2 = stringByteLength(REGISTER_STRING_DATA(REGISTER_X)) + 1;
+
+    fnSwapXY(NOPARAM);
+    reallocateRegister(REGISTER_X, dtString, len1 + len2, amNone);
+
+    xcopy(REGISTER_STRING_DATA(REGISTER_X),        tmpString,                        len1);
+    xcopy(REGISTER_STRING_DATA(REGISTER_X) + len1, REGISTER_STRING_DATA(REGISTER_Y), len2);
+  }
+}
+
+
+
 void addStriCplx(void) {
   int16_t len1, len2;
 
@@ -575,6 +765,32 @@ void addStriCplx(void) {
 
     xcopy(REGISTER_STRING_DATA(REGISTER_X)       , REGISTER_STRING_DATA(REGISTER_Y), len1);
     xcopy(REGISTER_STRING_DATA(REGISTER_X) + len1, tmpString,                        len2);
+  }
+}
+
+
+
+void addCplxStri(void) {
+  int16_t len1, len2;
+
+  complex34ToDisplayString(REGISTER_COMPLEX34_DATA(REGISTER_Y), tmpString, &numericFont, SCREEN_WIDTH, NUMBER_OF_DISPLAY_DIGITS, false, STD_SPACE_PUNCTUATION, true);
+
+  if(stringGlyphLength(REGISTER_STRING_DATA(REGISTER_X)) + stringGlyphLength(tmpString) > MAX_NUMBER_OF_GLYPHS_IN_STRING) {
+    displayCalcErrorMessage(ERROR_STRING_WOULD_BE_TOO_LONG, ERR_REGISTER_LINE, REGISTER_X);
+    errorMoreInfo("the resulting string would be %d (Y %d + X %d) characters long. Maximum is %d",
+        stringGlyphLength(REGISTER_STRING_DATA(REGISTER_X)) + stringGlyphLength(tmpString),
+        stringGlyphLength(tmpString),
+        stringGlyphLength(REGISTER_STRING_DATA(REGISTER_X)), MAX_NUMBER_OF_GLYPHS_IN_STRING);
+  }
+  else {
+    len1 = stringByteLength(tmpString);
+    len2 = stringByteLength(REGISTER_STRING_DATA(REGISTER_X)) + 1;
+
+    fnSwapXY(NOPARAM);
+    reallocateRegister(REGISTER_X, dtString, len1 + len2, amNone);
+
+    xcopy(REGISTER_STRING_DATA(REGISTER_X),        tmpString,                        len1);
+    xcopy(REGISTER_STRING_DATA(REGISTER_X) + len1, REGISTER_STRING_DATA(REGISTER_Y), len2);
   }
 }
 
