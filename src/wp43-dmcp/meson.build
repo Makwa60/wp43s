@@ -105,6 +105,6 @@ keymap = custom_target(
   build_by_default : false,
   input            : files('keymap.txt'),
   output           : 'keymap.bin',
-  command          : [mk_keymap, 'WP43', '@INPUT@'])
+  command          : [bash, mk_keymap, 'WP43', '@INPUT@'])
 
 alias_target('keymap', keymap)
