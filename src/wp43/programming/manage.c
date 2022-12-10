@@ -85,6 +85,25 @@
 //
 //  freeProgramBytes = 1
 
+
+
+bool isAtEndOfPrograms(const uint8_t *step) {
+  return (step == NULL) || (*step == 255 && *(step + 1) == 255);
+}
+
+
+
+bool checkOpCodeOfStep(const uint8_t *step, uint16_t op) {
+  if(op < 128) {
+    return step && *step == op;
+  }
+  else {
+    return step && (*step & 0x7f) == (op >> 8) && *(step + 1) == (op & 0xff);
+  }
+}
+
+
+
 void scanLabelsAndPrograms(void) {
   uint32_t stepNumber = 0;
   uint8_t *nextStep, *step = beginOfProgramMemory;
@@ -95,11 +114,11 @@ void scanLabelsAndPrograms(void) {
 
   numberOfLabels = 0;
   numberOfPrograms = 1;
-  while(*step != 255 || *(step + 1) != 255) { // .END.
+  while(!isAtEndOfPrograms(step)) { // .END.
     if(*step == ITM_LBL) { // LBL
       numberOfLabels++;
     }
-    if((*step & 0x7f) == (ITM_END >> 8) && *(step + 1) == (ITM_END & 0xff)) { // END
+    if(isAtEndOfProgram(step)) { // END
       numberOfPrograms++;
     }
     step = findNextStep_ram(step);
@@ -125,9 +144,9 @@ void scanLabelsAndPrograms(void) {
   programList[0].step = (0 + 1);
   numberOfPrograms = 1;
   stepNumber = 1;
-  while(*step != 255 || *(step + 1) != 255) { // .END.
+  while(!isAtEndOfPrograms(step)) { // .END.
     nextStep = findNextStep_ram(step);
-    if(*step == 1) { // LBL
+    if(checkOpCodeOfStep(step, ITM_LBL)) { // LBL
       labelList[numberOfLabels].program = numberOfPrograms;
       if(*(step + 1) <= 109) { // Local label
         labelList[numberOfLabels].step = -stepNumber;
@@ -142,7 +161,7 @@ void scanLabelsAndPrograms(void) {
       numberOfLabels++;
     }
 
-    if((*step & 0x7f) == (ITM_END >> 8) && *(step + 1) == (ITM_END & 0xff)) { // END
+    if(isAtEndOfProgram(step)) { // END
       programList[numberOfPrograms].instructionPointer.ram = step + 2;
       programList[numberOfPrograms].step = stepNumber + 1;
       numberOfPrograms++;
@@ -245,7 +264,7 @@ static uint32_t _getProgramSize(void) {
   if(currentProgramNumber == (numberOfPrograms - numberOfProgramsInFlash)) {
     uint16_t numberOfSteps = 1;
     uint8_t *step = programList[currentProgramNumber - 1].instructionPointer.ram;
-    while(*step != 255 || *(step + 1) != 255) { // .END.
+    while(!isAtEndOfPrograms(step)) { // .END.
       ++numberOfSteps;
       step = findNextStep_ram(step);
     }
@@ -419,7 +438,7 @@ void fnPem(uint16_t unusedButMandatoryParameter) {
       else {
         showString(tmpString, &standardFont, 1, Y_POSITION_OF_REGISTER_T_LINE + 21 * line, vmNormal,  false, true);
       }
-      lblOrEnd = (*step == ITM_LBL) || ((*step == ((ITM_END >> 8) | 0x80)) && (*(step + 1) == (ITM_END & 0xff))) || ((*step == 0xff) && (*(step + 1) == 0xff));
+      lblOrEnd = !checkOpCodeOfStep(step, ITM_LBL) || isAtEndOfProgram(step) || isAtEndOfPrograms(step);
       if(programList[currentProgramNumber - 1].step > 0) {
         if((!pemCursorIsZerothStep && firstDisplayedStepNumber + line - lineOffset == currentStepNumber + 1) || (line == 1 && tamIsActive() && pemCursorIsZerothStep)) {
           tamOverPemYPos = Y_POSITION_OF_REGISTER_T_LINE + 21 * line;
@@ -509,7 +528,7 @@ void fnPem(uint16_t unusedButMandatoryParameter) {
         cursorHide();
       }
 
-      if((*step == ((ITM_END >> 8) | 0x80)) && (*(step + 1) == (ITM_END & 0xff))) {
+      if(isAtEndOfProgram(step)) {
         programListEnd = true;
         if(*nextStep == 255 && *(nextStep + 1) == 255) {
           lastProgramListEnd = true;
@@ -1149,7 +1168,7 @@ void addStepInProgram(int16_t func) {
     aimBuffer[0] = 0;
     return;
   }
-  if((!pemCursorIsZerothStep) && ((aimBuffer[0] == 0 && !getSystemFlag(FLAG_ALPHA)) || tamIsActive()) && ((*currentStep.ram != ((ITM_END >> 8) | 0x80)) || (*(currentStep.ram + 1) != (ITM_END & 0xff))) && ((*currentStep.ram != 0xff) || (*(currentStep.ram + 1) != 0xff))) {
+  if((!pemCursorIsZerothStep) && ((aimBuffer[0] == 0 && !getSystemFlag(FLAG_ALPHA)) || tamIsActive()) && !isAtEndOfProgram(currentStep.ram) && !isAtEndOfPrograms(currentStep.ram)) {
     currentStep = findNextStep(currentStep);
     ++currentLocalStepNumber;
   }
@@ -1215,7 +1234,7 @@ uint16_t getNumberOfSteps(void) {
   if(currentProgramNumber == (numberOfPrograms - numberOfProgramsInFlash) || currentProgramNumber == numberOfPrograms) {
     uint16_t numberOfSteps = 1;
     uint8_t *step = programList[currentProgramNumber - 1].instructionPointer.ram;
-    while(*step != 255 || *(step + 1) != 255) { // .END.
+    while(!isAtEndOfPrograms(step)) { // .END.
       ++numberOfSteps;
       step = findNextStep_ram(step);
     }

@@ -12,6 +12,7 @@
 #include "hal/lcd.h"
 #include "items.h"
 #include "programming/flash.h"
+#include "programming/manage.h"
 #include "programming/nextStep.h"
 #include "registers.h"
 #include "solver/differentiate.h"
@@ -604,7 +605,7 @@ void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
     else {
       step = labelList[label].instructionPointer.ram;
     }
-    while((*numberOfVars < 18) && *step == ((ITM_MVAR >> 8) | 0x80) && *(step + 1) == (ITM_MVAR & 0xff) && *(step + 2) == STRING_LABEL_VARIABLE) {
+    while((*numberOfVars < 18) && checkOpCodeOfStep(step, ITM_MVAR) && *(step + 2) == STRING_LABEL_VARIABLE) {
       xcopy(tmpString + *numberOfBytes, step + 4, *(step + 3));
       (void)findOrAllocateNamedVariable(tmpString + *numberOfBytes);
       *numberOfBytes += *(step + 3) + 1;

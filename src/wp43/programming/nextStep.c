@@ -210,7 +210,7 @@ uint8_t *countLiteralBytes(uint8_t *step) {
 
 
 uint8_t *findNextStep_ram(uint8_t *step) {
-  if((*step == ((ITM_KEY >> 8) | 0x80)) && (*(step + 1) == (ITM_KEY & 0xff))) {
+  if((*step == ((ITM_KEY >> 8) )) && (*(step + 1) == (ITM_KEY & 0xff))) {
     return findKey2ndParam_ram(findKey2ndParam_ram(step));
   }
   else {
@@ -226,7 +226,7 @@ pgmPtr_t findNextStep(pgmPtr_t step) {
     readStepInFlashPgmLibrary((uint8_t *)(tmpString + 1600), 2, step.flash);
     stepByte1 = *(uint8_t *)(tmpString + 1600);
     stepByte2 = *(uint8_t *)(tmpString + 1601);
-    if((stepByte1 == ((ITM_KEY >> 8) | 0x80)) && (stepByte2 == (ITM_KEY & 0xff))) {
+    if((stepByte1 == ((ITM_KEY >> 8) )) && (stepByte2 == (ITM_KEY & 0xff))) {
       return findKey2ndParam(findKey2ndParam(step));
     }
     else {
@@ -373,7 +373,7 @@ static void _showStep(void) {
     else {
       tmpStep = currentStep.ram;
     }
-    lblOrEnd = (*tmpStep == ITM_LBL) || ((*tmpStep == ((ITM_END >> 8) | 0x80)) && (*(tmpStep + 1) == (ITM_END & 0xff))) || ((*tmpStep == 0xff) && (*(tmpStep + 1) == 0xff));
+    lblOrEnd = (*tmpStep == ITM_LBL) || ((*tmpStep == ((ITM_END >> 8) )) && (*(tmpStep + 1) == (ITM_END & 0xff))) || ((*tmpStep == 0xff) && (*(tmpStep + 1) == 0xff));
     int16_t xPos = (lblOrEnd ? 42 : 62);
     int16_t maxWidth = SCREEN_WIDTH - xPos;
 
@@ -562,7 +562,7 @@ void fnSkip(uint16_t numberOfSteps) {
     else {
       tmpStep = currentStep.ram;
     }
-    if((*tmpStep != ((ITM_END >> 8) | 0x80) || *(tmpStep + 1) != (ITM_END & 0xff)) && (*tmpStep != 255 || *(tmpStep + 1) != 255)) {
+    if(!isAtEndOfProgram(tmpStep) && !isAtEndOfPrograms(tmpStep)) {
       ++currentLocalStepNumber;
       currentStep = findNextStep(currentStep);
     }

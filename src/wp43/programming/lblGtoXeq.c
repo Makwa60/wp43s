@@ -238,7 +238,7 @@ void fnReturn(uint16_t skip) {
       fnGotoDot(returnGlobalStepNumber);
     }
 
-    if(skip > 0 && (*currentStep.ram != ((ITM_END >> 8) | 0x80) || *(currentStep.ram + 1) != (ITM_END & 0xff)) && (*currentStep.ram != 255 || *(currentStep.ram + 1) != 255)) {
+    if(skip > 0 && !isAtEndOfProgram(currentStep.ram) && !isAtEndOfPrograms(currentStep.ram)) {
       ++currentLocalStepNumber;
       currentStep = findNextStep(currentStep);
     }
