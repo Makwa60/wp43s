@@ -438,7 +438,7 @@ void fnPem(uint16_t unusedButMandatoryParameter) {
       else {
         showString(tmpString, &standardFont, 1, Y_POSITION_OF_REGISTER_T_LINE + 21 * line, vmNormal,  false, true);
       }
-      lblOrEnd = !checkOpCodeOfStep(step, ITM_LBL) || isAtEndOfProgram(step) || isAtEndOfPrograms(step);
+      lblOrEnd = checkOpCodeOfStep(step, ITM_LBL) || isAtEndOfProgram(step) || isAtEndOfPrograms(step);
       if(programList[currentProgramNumber - 1].step > 0) {
         if((!pemCursorIsZerothStep && firstDisplayedStepNumber + line - lineOffset == currentStepNumber + 1) || (line == 1 && tamIsActive() && pemCursorIsZerothStep)) {
           tamOverPemYPos = Y_POSITION_OF_REGISTER_T_LINE + 21 * line;
