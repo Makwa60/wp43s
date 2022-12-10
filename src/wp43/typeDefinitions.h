@@ -346,8 +346,8 @@
   typedef struct {
     void     (*func)(uint16_t); ///< Function called to execute the item
     uint16_t param;             ///< 1st parameter to the above function
-    char     *itemCatalogName;  ///< Name of the item in the catalogs and in programs
-    char     *itemSoftmenuName; ///< Representation of the item in the menus and on the keyboard
+    char     itemCatalogName [16]; ///< Name of the item in the catalogs and in programs
+    char     itemSoftmenuName[16]; ///< Representation of the item in the menus and on the keyboard
     uint16_t tamMinMax;         ///< Minimal value (2 bits) and maximal value (14 bits) for TAM argument
     //uint16_t tamMin;            ///< Minimal value for TAM argument
     //uint16_t tamMax;            ///< Maximal value for TAM argument
