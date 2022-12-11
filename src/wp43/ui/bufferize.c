@@ -19,9 +19,9 @@
 #include "hal/timer.h"
 #include "items.h"
 #include "mathematics/comparisonReals.h"
+#include "mathematics/matrix.h"
 #include "mathematics/toRect.h"
 #include "mathematics/wp34s.h"
-#include "matrix.h"
 #include "programming/manage.h"
 #include "registers.h"
 #include "registerValueConversions.h"
@@ -31,6 +31,7 @@
 #include "sort.h"
 #include "stack.h"
 #include "ui/cursor.h"
+#include "ui/matrixEditor.h"
 #include "ui/tam.h"
 #include <stdbool.h>
 #include <string.h>

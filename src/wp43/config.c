@@ -22,7 +22,7 @@
 #include "hal/system.h"
 #include "hal/timer.h"
 #include "items.h"
-#include "matrix.h"
+#include "mathematics/matrix.h"
 #include "plotstat.h"
 #include "programming/flash.h"
 #include "programming/manage.h"

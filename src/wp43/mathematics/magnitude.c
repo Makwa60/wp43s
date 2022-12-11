@@ -7,7 +7,7 @@
 #include "error.h"
 #include "integers.h"
 #include "items.h"
-#include "matrix.h"
+#include "mathematics/matrix.h"
 #include "registerValueConversions.h"
 #include "registers.h"
 #include "toPolar.h"

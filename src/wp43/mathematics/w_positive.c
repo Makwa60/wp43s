@@ -9,8 +9,8 @@
 #include "error.h"
 #include "flags.h"
 #include "mathematics/comparisonReals.h"
+#include "mathematics/matrix.h"
 #include "mathematics/wp34s.h"
-#include "matrix.h"
 #include "registers.h"
 #include "registerValueConversions.h"
 

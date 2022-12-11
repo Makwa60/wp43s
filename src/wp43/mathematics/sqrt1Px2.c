@@ -9,9 +9,9 @@
 #include "flags.h"
 #include "fonts.h"
 #include "items.h"
+#include "mathematics/matrix.h"
 #include "mathematics/squareRoot.h"
 #include "mathematics/wp34s.h"
-#include "matrix.h"
 #include "registers.h"
 #include "registerValueConversions.h"
 

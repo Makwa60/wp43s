@@ -12,10 +12,10 @@
 #include "items.h"
 #include "mathematics/comparisonReals.h"
 #include "mathematics/ln.h"
+#include "mathematics/matrix.h"
 #include "mathematics/multiplication.h"
 #include "mathematics/sqrt1Px2.h"
 #include "mathematics/wp34s.h"
-#include "matrix.h"
 #include "registers.h"
 #include "registerValueConversions.h"
 

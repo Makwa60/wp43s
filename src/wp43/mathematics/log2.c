@@ -10,9 +10,9 @@
 #include "fonts.h"
 #include "integers.h"
 #include "items.h"
+#include "mathematics/matrix.h"
 #include "mathematics/toPolar.h"
 #include "mathematics/wp34s.h"
-#include "matrix.h"
 #include "registers.h"
 #include "registerValueConversions.h"
 

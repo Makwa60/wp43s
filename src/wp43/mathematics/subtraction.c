@@ -12,7 +12,7 @@
 #include "integers.h"
 #include "items.h"
 #include "mathematics/addition.h"
-#include "matrix.h"
+#include "mathematics/matrix.h"
 #include "registers.h"
 #include "registerValueConversions.h"
 #include "rsd.h"

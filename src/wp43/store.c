@@ -11,10 +11,11 @@
 #include "items.h"
 #include "mathematics/compare.h"
 #include "mathematics/integerPart.h"
-#include "matrix.h"
+#include "mathematics/matrix.h"
 #include "registerValueConversions.h"
 #include "registers.h"
 #include "stats.h"
+#include "ui/matrixEditor.h"
 #include <stdbool.h>
 
 #include "wp43.h"

@@ -15,11 +15,11 @@
 #include "fractions.h"
 #include "mathematics/comparisonReals.h"
 #include "mathematics/toPolar.h"
-#include "matrix.h"
 #include "programming/input.h"
 #include "registers.h"
 #include "registerValueConversions.h"
 #include "store.h"
+#include "ui/matrixEditor.h"
 #include "ui/screen.h"
 #include <stdbool.h>
 #include <string.h>
