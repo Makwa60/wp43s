@@ -38,14 +38,36 @@ static int medianCompare(const void *v1, const void *v2)
   return 1;
 }
 
-static void computeMedian(real_t *vals, unsigned int numVals, real_t *median) {
-  qsort(vals, numVals, sizeof(*vals), &medianCompare);
+static void computeMedianSorted(real_t *vals, unsigned int numVals, real_t *median) {
   if (numVals & 1) {  // Odd number of values
     realCopy(vals + numVals / 2, median);
   } else {            // Even number of vlaues
     realAdd(vals + numVals / 2 - 1, vals + numVals / 2, median, &ctxtReal39);
     realMultiply(median, const_1on2, median, &ctxtReal39);
   }
+}
+
+static void computeQ1Sorted(real_t *vals, unsigned int numVals, real_t *quartile) {
+  computeMedianSorted(vals, numVals / 2, quartile);
+}
+
+static void computeQ3Sorted(real_t *vals, unsigned int numVals, real_t *quartile) {
+  computeMedianSorted(vals + numVals / 2 + (numVals & 1), numVals / 2, quartile);
+}
+
+static void computeMedianUnsorted(real_t *vals, unsigned int numVals, real_t *median) {
+  qsort(vals, numVals, sizeof(*vals), &medianCompare);
+  computeMedianSorted(vals, numVals, median);
+}
+
+static void computeQ1Unsorted(real_t *vals, unsigned int numVals, real_t *quartile) {
+  qsort(vals, numVals, sizeof(*vals), &medianCompare);
+  computeQ1Sorted(vals, numVals, quartile);
+}
+
+static void computeQ3Unsorted(real_t *vals, unsigned int numVals, real_t *quartile) {
+  qsort(vals, numVals, sizeof(*vals), &medianCompare);
+  computeQ3Sorted(vals, numVals, quartile);
 }
 
 static real_t *getXvalues(uint16_t *n) {
@@ -106,11 +128,11 @@ void fnMedianXY(uint16_t unusedButMandatoryParameter) {
       setSystemFlag(FLAG_ASLIFT);
       liftStack();
 
-      computeMedian(data, n, &median);
+      computeMedianUnsorted(data, n, &median);
       convertRealToReal34ResultRegister(&median, REGISTER_X);
 
       getYvalues(data);
-      computeMedian(data, n, &median);
+      computeMedianUnsorted(data, n, &median);
       convertRealToReal34ResultRegister(&median, REGISTER_Y);
       freeWp43(data, n * REAL_SIZE_IN_BYTES);
     }
@@ -118,17 +140,79 @@ void fnMedianXY(uint16_t unusedButMandatoryParameter) {
   }
 }
 
+/**********************************************
+ * \brief Q1 ==> regX, regY
+ * enables stack lift and refreshes the stack.
+ * regX = Lower quartile x, regY = Lower quartile y
+ *
+ * \param[in] unusedButMandatoryParameter uint16_t
+ * \return void
+ ***********************************************/
+void fnLowerQuartileXY(uint16_t unusedButMandatoryParameter) {
+  uint16_t n;
+  real_t *data, quartile;
+
+  if(checkMinimumDataPoints(const_3)) {
+    data = getXvalues(&n);
+    if (data != NULL) {
+      liftStack();
+      setSystemFlag(FLAG_ASLIFT);
+      liftStack();
+
+      computeQ1Unsorted(data, n, &quartile);
+      convertRealToReal34ResultRegister(&quartile, REGISTER_X);
+
+      getYvalues(data);
+      computeQ1Unsorted(data, n, &quartile);
+      convertRealToReal34ResultRegister(&quartile, REGISTER_Y);
+      freeWp43(data, n * REAL_SIZE_IN_BYTES);
+    }
+    //temporaryInformation = TI_Q1X_Q1Y;
+  }
+}
+
+/**********************************************
+ * \brief Q3 ==> regX, regY
+ * enables stack lift and refreshes the stack.
+ * regX = Upper quartile x, regY = Upper quartile y
+ *
+ * \param[in] unusedButMandatoryParameter uint16_t
+ * \return void
+ ***********************************************/
+void fnUpperQuartileXY(uint16_t unusedButMandatoryParameter) {
+  uint16_t n;
+  real_t *data, quartile;
+
+  if(checkMinimumDataPoints(const_3)) {
+    data = getXvalues(&n);
+    if (data != NULL) {
+      liftStack();
+      setSystemFlag(FLAG_ASLIFT);
+      liftStack();
+
+      computeQ3Unsorted(data, n, &quartile);
+      convertRealToReal34ResultRegister(&quartile, REGISTER_X);
+
+      getYvalues(data);
+      computeQ3Unsorted(data, n, &quartile);
+      convertRealToReal34ResultRegister(&quartile, REGISTER_Y);
+      freeWp43(data, n * REAL_SIZE_IN_BYTES);
+    }
+    //temporaryInformation = TI_Q3X_Q3Y;
+  }
+}
+
 // Sort the data and compute the median absolute deviation
 static void calcMAD(real_t *data, uint16_t n, real_t *mad) {
   uint16_t i;
 
-  computeMedian(data, n, mad);
+  computeMedianUnsorted(data, n, mad);
   for (i = 0; i < n; i++) {
     realSubtract(data + i, mad, data + i, &ctxtReal39);
     if (realIsNegative(data + i))
       realChangeSign(data + i);
   }
-  computeMedian(data, n, mad);
+  computeMedianUnsorted(data, n, mad);
 }
 
 /**********************************************
@@ -162,20 +246,15 @@ void fnMADXY              (uint16_t unusedButMandatoryParameter) {
   }
 }
 
+
 // Sort the data and compute the inter-quartile range
 static void calcIQR(real_t *data, uint16_t n, real_t *iqr) {
     real_t t;
-    const uint16_t i = (n - 1) / 4;
 
     qsort(data, n, sizeof(*data), &medianCompare);
-    if (n % 4 == 0) {
-      realSubtract(data + (n - i - 1), data + i, iqr, &ctxtReal39);
-    } else {
-      realAdd(data + i, data + i + 1, iqr, &ctxtReal39);
-      realAdd(data + (n - i - 1), data + (n - i - 2), &t, &ctxtReal39);
-      realSubtract(&t, iqr, &t, &ctxtReal39);
-      realMultiply(&t, const_1on2, iqr, &ctxtReal39);
-    }
+    computeQ1Unsorted(data, n, &t);
+    computeQ3Sorted(data, n, iqr);
+    realSubtract(iqr, &t, iqr, &ctxtReal39);
 }
 
 /**********************************************
