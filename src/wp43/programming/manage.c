@@ -470,13 +470,12 @@ void fnPem(uint16_t unusedButMandatoryParameter) {
       // Split long lines
       int numberOfExtraLines = 0;
       int offset = 0;
-      while(offset <= 1500 && stringWidth(tmpString + offset, &standardFont, false, false) > 337) {
+      const char *endStr = NULL;
+      while(offset <= 1500 && (*(endStr = stringAfterPixels(tmpString + offset, &standardFont, 337, false, false)) != 0)) {
+        int lineByteLength = endStr - (tmpString + offset);
         numberOfExtraLines++;
-        xcopy(tmpString + 2100, tmpString + offset, stringByteLength(tmpString + offset) + 1);
-        while(stringWidth(tmpString + offset, &standardFont, false, false) > 337) {
-          tmpString[offset + stringLastGlyph(tmpString + offset)] = 0;
-        }
-        xcopy(tmpString + offset + 300, tmpString + 2100 + stringByteLength(tmpString + offset), stringByteLength(tmpString + 2100 + stringByteLength(tmpString + offset)) + 1);
+        xcopy(tmpString + offset + 300, tmpString + offset + lineByteLength, stringByteLength(endStr) + 1);
+        tmpString[offset + lineByteLength] = 0;
         offset += 300;
       }
       stepsThatWouldBeDisplayed -= numberOfExtraLines;

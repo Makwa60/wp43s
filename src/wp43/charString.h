@@ -55,6 +55,18 @@
    */
   int16_t  stringWidth      (const char *str, const font_t *font, bool withLeadingEmptyRows, bool withEndingEmptyRows);
 
+  /**
+   * Calculates the first character which does not fit to specified width using a certain font
+   *
+   * \param[in] str String
+   * \param[in] font Font
+   * \param[in] width Width of where to show the string
+   * \param[in] withLeadingEmptyRows With the leading empty rows
+   * \param[in] withEndingEmptyRows With the ending empty rows
+   * \return Width in pixel of the string
+   */
+  char    *stringAfterPixels(const char *str, const font_t *font, int16_t width, bool withLeadingEmptyRows, bool withEndingEmptyRows);
+
 
   /**
    * Converts an unicode code point to utf8

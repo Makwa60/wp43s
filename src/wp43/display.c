@@ -2044,14 +2044,16 @@ void fnShow(uint16_t unusedButMandatoryParameter) {
     }
 
     case dtString: {
+      char *remainingString;
       offset = 0;
       thereIsANextLine = true;
       bytesProcessed = 0;
       while(thereIsANextLine) {
         xcopy(tmpString + offset, REGISTER_STRING_DATA(REGISTER_X) + bytesProcessed, stringByteLength(REGISTER_STRING_DATA(REGISTER_X) + bytesProcessed) + 1);
         thereIsANextLine = false;
-        while(stringWidth(tmpString + offset, &standardFont, false, true) >= SCREEN_WIDTH) {
-          tmpString[offset + stringLastGlyph(tmpString + offset)] = 0;
+        remainingString = stringAfterPixels(tmpString + offset, &standardFont, SCREEN_WIDTH - 1, false, true);
+        if(*remainingString != 0) {
+          *remainingString = 0;
           thereIsANextLine = true;
         }
         bytesProcessed += stringByteLength(tmpString + offset);

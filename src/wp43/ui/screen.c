@@ -647,13 +647,13 @@ void clearScreen(void) {
             cursorShow(true, xCursor, yCursor);
           }
           else {
+            char *aimw;
             w = stringByteLength(aimBuffer) + 1;
             xcopy(tmpString,        aimBuffer, w);
             xcopy(tmpString + 1500, aimBuffer, w);
-            while(stringWidth(tmpString, &standardFont, true, true) >= SCREEN_WIDTH - 1) {
-              w = stringLastGlyph(tmpString);
-              tmpString[w] = 0;
-            }
+            aimw = stringAfterPixels(tmpString, &standardFont, SCREEN_WIDTH - 2, true, true);
+            w = aimw - tmpString;
+            *aimw = 0;
 
             if(stringWidth(tmpString + 1500 + w, &standardFont, true, true) >= SCREEN_WIDTH - 8) { // 8 is the standard font cursor width
               btnClicked(kcBackspace);
@@ -1512,13 +1512,13 @@ void clearScreen(void) {
       }
     }
     else {
+      char *nimw;
       w = stringByteLength(nim) + 1;
       xcopy(tmpString,        nim, w);
       xcopy(tmpString + 1500, nim, w);
-      while(stringWidth(tmpString, &standardFont, true, true) >= SCREEN_WIDTH) {
-        w = stringLastGlyph(tmpString);
-        tmpString[w] = 0;
-      }
+      nimw = stringAfterPixels(tmpString, &standardFont, SCREEN_WIDTH - 1, true, true);
+      w = nimw - tmpString;
+      *nimw = 0;
 
       if(stringWidth(tmpString + 1500 + w, &standardFont, true, true) + wLastBaseStandard > SCREEN_WIDTH - 8) { // 8 is the standard font cursor width
         btnClicked(kcBackspace);

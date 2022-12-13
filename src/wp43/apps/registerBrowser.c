@@ -87,11 +87,8 @@ int16_t currentRegisterBrowserScreen;
           strncat(tmpString, REGISTER_STRING_DATA(regist), stringByteLength(REGISTER_STRING_DATA(regist)) + 1);
           strcat(tmpString, STD_RIGHT_SINGLE_QUOTE);
           if(stringWidth(tmpString, &standardFont, false, true) >= SCREEN_WIDTH - 12 - registerNameWidth) { // 12 is the width of STD_ELLIPSIS
-            tmpString[stringLastGlyph(tmpString)] = 0;
-            while(stringWidth(tmpString, &standardFont, false, true) >= SCREEN_WIDTH - 12 - registerNameWidth) { // 12 is the width of STD_ELLIPSIS
-              tmpString[stringLastGlyph(tmpString)] = 0;
-            }
-           strcat(tmpString + stringByteLength(tmpString), STD_ELLIPSIS);
+            *(stringAfterPixels(tmpString, &standardFont, SCREEN_WIDTH - 12 - registerNameWidth, false, true)) = 0;
+            strcat(tmpString + stringByteLength(tmpString), STD_ELLIPSIS);
           }
         }
         else {
