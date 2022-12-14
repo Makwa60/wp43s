@@ -986,6 +986,7 @@ void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
     xcopy(l, label, stringByteLength(label) + 1);
     char *lw = stringAfterPixels(l, &standardFont, (xSoftkey == 5 ? 65 : 66), false, false);
     *lw = 0;
+    w = stringWidth(l, &standardFont, false, false);
 
     showString(l, &standardFont, x1 + (xSoftkey == 5 ? 33 : 34) - w/2, y1 + 2, videoMode, false, false);
   }
