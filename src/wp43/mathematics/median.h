@@ -11,6 +11,7 @@
 
   #include <stdint.h>
 
+  void fnPercentileXY       (uint16_t unusedButMandatoryParameter);
   void fnMedianXY           (uint16_t unusedButMandatoryParameter);
   void fnLowerQuartileXY    (uint16_t unusedButMandatoryParameter);
   void fnUpperQuartileXY    (uint16_t unusedButMandatoryParameter);
