@@ -1846,7 +1846,6 @@ void fnKeyExit(uint16_t unusedButMandatoryParameter) {
 
       case cmGraph:
       case cmPlotStat: {
-        restoreStats();
         if(calcMode == cmPlotStat) {
           for(int16_t ii = 0; ii < 3; ii++) {
             if( (softmenuStack[0].softmenuId > 1) && !((-softmenu[softmenuStack[0].softmenuId].menuItem == MNU_HIST) || (-softmenu[softmenuStack[0].softmenuId].menuItem == MNU_STAT))) {
@@ -1864,6 +1863,7 @@ void fnKeyExit(uint16_t unusedButMandatoryParameter) {
         #endif // DEBUGUNDO
         fnUndo(NOPARAM);
         fnClDrawMx();
+        restoreStats();
         break;
       }
 
@@ -2043,7 +2043,6 @@ void fnKeyBackspace(uint16_t unusedButMandatoryParameter) {
 
       case cmPlotStat:
       case cmGraph: {
-        restoreStats();
         if(calcMode == cmPlotStat) {
           for(int16_t ii = 0; ii < 3; ii++) {
             if( (softmenuStack[0].softmenuId > 1) && !((-softmenu[softmenuStack[0].softmenuId].menuItem == MNU_HIST) || (-softmenu[softmenuStack[0].softmenuId].menuItem == MNU_STAT))) {
@@ -2061,6 +2060,7 @@ void fnKeyBackspace(uint16_t unusedButMandatoryParameter) {
         #endif // DEBUGUNDO
         fnUndo(NOPARAM);
         fnClDrawMx();
+        restoreStats();
         break;
       }
 
