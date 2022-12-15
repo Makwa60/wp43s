@@ -984,11 +984,9 @@ void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
     lcd_fill_rect(x1 + 1, y1 + 1, min(x2, SCREEN_WIDTH) - x1 - 1, min(y2, SCREEN_HEIGHT) - y1 - 1, (videoMode == vmNormal ? LCD_SET_VALUE : LCD_EMPTY_VALUE));
 
     xcopy(l, label, stringByteLength(label) + 1);
+    char *lw = stringAfterPixels(l, &standardFont, (xSoftkey == 5 ? 65 : 66), false, false);
+    *lw = 0;
     w = stringWidth(l, &standardFont, false, false);
-    while(w > (xSoftkey == 5 ? 65 : 66)) {
-      l[stringLastGlyph(l)] = 0;
-      w = stringWidth(l, &standardFont, false, false);
-    }
 
     showString(l, &standardFont, x1 + (xSoftkey == 5 ? 33 : 34) - w/2, y1 + 2, videoMode, false, false);
   }

@@ -647,13 +647,13 @@ void clearScreen(void) {
             cursorShow(true, xCursor, yCursor);
           }
           else {
+            char *aimw;
             w = stringByteLength(aimBuffer) + 1;
             xcopy(tmpString,        aimBuffer, w);
             xcopy(tmpString + 1500, aimBuffer, w);
-            while(stringWidth(tmpString, &standardFont, true, true) >= SCREEN_WIDTH - 1) {
-              w = stringLastGlyph(tmpString);
-              tmpString[w] = 0;
-            }
+            aimw = stringAfterPixels(tmpString, &standardFont, SCREEN_WIDTH - 2, true, true);
+            w = aimw - tmpString;
+            *aimw = 0;
 
             if(stringWidth(tmpString + 1500 + w, &standardFont, true, true) >= SCREEN_WIDTH - 8) { // 8 is the standard font cursor width
               btnClicked(kcBackspace);
@@ -1233,12 +1233,12 @@ void clearScreen(void) {
           w = stringWidth(REGISTER_STRING_DATA(regist), &standardFont, false, true);
 
           if(w >= SCREEN_WIDTH - prefixWidth) {
+            char *tmpStrW;
             if(regist == REGISTER_X || (temporaryInformation == TI_VIEW_REGISTER && origRegist == REGISTER_T)) {
               xcopy(tmpString, REGISTER_STRING_DATA(regist), stringByteLength(REGISTER_STRING_DATA(regist)) + 1);
-              do {
-                tmpString[stringLastGlyph(tmpString)] = 0;
-                w = stringWidth(tmpString, &standardFont, false, true);
-              } while(w >= SCREEN_WIDTH - prefixWidth);
+              tmpStrW = stringAfterPixels(tmpString, &standardFont, SCREEN_WIDTH - prefixWidth - 1, false, true);
+              *tmpStrW = 0;
+              w = stringWidth(tmpString, &standardFont, false, true);
               if(temporaryInformation == TI_VIEW_REGISTER && origRegist == REGISTER_T) {
                 showString(tmpString, &standardFont, prefixWidth     , Y_POSITION_OF_REGISTER_T_LINE - 3, vmNormal, false, true);
               }
@@ -1250,12 +1250,9 @@ void clearScreen(void) {
               xcopy(tmpString, REGISTER_STRING_DATA(regist) + w, stringByteLength(REGISTER_STRING_DATA(regist) + w) + 1);
               w = stringWidth(tmpString, &standardFont, false, true);
               if(w >= SCREEN_WIDTH - prefixWidth) {
-                do {
-                  tmpString[stringLastGlyph(tmpString)] = 0;
-                  w = stringWidth(tmpString, &standardFont, false, true);
-                } while(w >= SCREEN_WIDTH - prefixWidth - 14); // 14 is the width of STD_ELLIPSIS
-                xcopy(tmpString + stringByteLength(tmpString), STD_ELLIPSIS, 3);
-                w += 14;
+                tmpStrW = stringAfterPixels(tmpString, &standardFont, SCREEN_WIDTH - prefixWidth - 14 - 1, false, true); // 14 is the width of STD_ELLIPSIS
+                xcopy(tmpStrW, STD_ELLIPSIS, 3);
+                w = stringWidth(tmpString, &standardFont, false, true);
               }
               if(temporaryInformation == TI_VIEW_REGISTER && origRegist == REGISTER_T) {
                 showString(tmpString, &standardFont, prefixWidth     , Y_POSITION_OF_REGISTER_T_LINE + 18, vmNormal, false, true);
@@ -1266,12 +1263,9 @@ void clearScreen(void) {
             }
             else {
               xcopy(tmpString, REGISTER_STRING_DATA(regist), stringByteLength(REGISTER_STRING_DATA(regist)) + 1);
-              do {
-                tmpString[stringLastGlyph(tmpString)] = 0;
-                w = stringWidth(tmpString, &standardFont, false, true);
-              } while(w >= SCREEN_WIDTH - prefixWidth - 14); // 14 is the width of STD_ELLIPSIS
-              xcopy(tmpString + stringByteLength(tmpString), STD_ELLIPSIS, 3);
-              w += 14;
+              tmpStrW = stringAfterPixels(tmpString, &standardFont, SCREEN_WIDTH - prefixWidth - 14 - 1, false, true); // 14 is the width of STD_ELLIPSIS
+              xcopy(tmpStrW, STD_ELLIPSIS, 3);
+              w = stringWidth(tmpString, &standardFont, false, true);
               lineWidth = w;
               showString(tmpString, &standardFont, SCREEN_WIDTH - w, baseY + 6, vmNormal, false, true);
             }
@@ -1512,13 +1506,13 @@ void clearScreen(void) {
       }
     }
     else {
+      char *nimw;
       w = stringByteLength(nim) + 1;
       xcopy(tmpString,        nim, w);
       xcopy(tmpString + 1500, nim, w);
-      while(stringWidth(tmpString, &standardFont, true, true) >= SCREEN_WIDTH) {
-        w = stringLastGlyph(tmpString);
-        tmpString[w] = 0;
-      }
+      nimw = stringAfterPixels(tmpString, &standardFont, SCREEN_WIDTH - 1, true, true);
+      w = nimw - tmpString;
+      *nimw = 0;
 
       if(stringWidth(tmpString + 1500 + w, &standardFont, true, true) + wLastBaseStandard > SCREEN_WIDTH - 8) { // 8 is the standard font cursor width
         btnClicked(kcBackspace);
