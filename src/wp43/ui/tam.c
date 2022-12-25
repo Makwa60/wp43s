@@ -811,7 +811,11 @@ void tamReset(void) {
           }
         }
       }
-      if(calcMode == cmPem) {
+      if(calcMode == cmPem
+      #if CLP_WITH_MENU != 0
+        && tam.function != ITM_CLP
+      #endif /* CLP_WITH_MENU != 0 */
+      ) {
         addStepInProgram(tamOperation());
       }
       if(tam.mode != tmNewMenu) {
@@ -830,6 +834,11 @@ void tamReset(void) {
         else if(tam.function == ITM_GTOP) {
           goToGlobalStep(labelList[value - FIRST_LABEL].step);
         }
+        #if CLP_WITH_MENU != 0
+          else if(tam.function == ITM_CLP) {
+            reallyRunFunction(ITM_CLP, value);
+          }
+        #endif /* CLP_WITH_MENU != 0 */
         else if(calcMode == cmPem) {
           // already done
         }
