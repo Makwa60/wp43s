@@ -214,10 +214,10 @@ void fnClP(uint16_t unusedButMandatoryParameter) {
     scanLabelsAndPrograms();
 
     if(savedCurrentProgramNumber >= numberOfPrograms) { // The last program
-      fnGotoDot(programList[numberOfPrograms - 2].step);
+      goToPgmStep(numberOfPrograms - 1, 1);
     }
     else { // Not the last program
-      fnGotoDot(programList[savedCurrentProgramNumber - 1].step);
+      goToPgmStep(savedCurrentProgramNumber, 1);
     }
   }
   else if(beginOfCurrentProgram.ram == beginOfProgramMemory && *endOfCurrentProgram.ram == 255 && *(endOfCurrentProgram.ram + 1) == 255) { // There is only one program in memory
@@ -231,10 +231,10 @@ void fnClP(uint16_t unusedButMandatoryParameter) {
     // unlikely fails
 
     if(savedCurrentProgramNumber >= (numberOfPrograms - numberOfProgramsInFlash)) { // The last program
-      fnGotoDot(programList[numberOfPrograms - numberOfProgramsInFlash - 2].step);
+      goToPgmStep(numberOfPrograms - numberOfProgramsInFlash - 1, 1);
     }
     else { // Not the last program
-      fnGotoDot(programList[savedCurrentProgramNumber - 1].step);
+      goToPgmStep(savedCurrentProgramNumber, 1);
     }
   }
 }
@@ -580,7 +580,7 @@ static void _insertInProgram(const uint8_t *dat, uint16_t sizeInBytes) {
   globalStepNumber = currentLocalStepNumber + programList[currentProgramNumber - 1].step - 1;
   scanLabelsAndPrograms();
   dynamicMenuItem = -1;
-  fnGotoDot(globalStepNumber);
+  goToGlobalStep(globalStepNumber);
   dynamicMenuItem = _dynamicMenuItem;
 }
 

@@ -718,7 +718,7 @@ void tamReset(void) {
             if(value == 0) {
               value = 1;
             }
-            reallyRunFunction(tamOperation(), value + programList[currentProgramNumber - 1].step - 1);
+            goToPgmStep(currentProgramNumber, value);
           }
         }
         else if(run) {
@@ -828,7 +828,7 @@ void tamReset(void) {
           mimRunFunction(tamOperation(), value);
         }
         else if(tam.function == ITM_GTOP) {
-          reallyRunFunction(ITM_GTOP, labelList[value - FIRST_LABEL].step);
+          goToGlobalStep(labelList[value - FIRST_LABEL].step);
         }
         else if(calcMode == cmPem) {
           // already done
