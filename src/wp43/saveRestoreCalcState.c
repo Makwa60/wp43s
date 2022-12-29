@@ -810,7 +810,8 @@ void fnSave(uint16_t unusedButMandatoryParameter) {
   save(tmpString, strlen(tmpString));
   for(i=0; i<numberOfNamedVariables; i++) {
     registerToSaveString(FIRST_NAMED_VARIABLE + i);
-    sprintf(tmpString, "%s\n%s\n%s\n", "name", aimBuffer, tmpRegisterString);
+    stringToUtf8((char *)allNamedVariables[i].variableName + 1, (uint8_t *)tmpString);
+    sprintf(tmpString + strlen(tmpString), "\n%s\n%s\n", aimBuffer, tmpRegisterString);
     save(tmpString, strlen(tmpString));
     saveMatrixElements(FIRST_NAMED_VARIABLE + i);
   }
@@ -1421,11 +1422,20 @@ static bool restoreOneSection(uint16_t loadMode, uint16_t s, uint16_t n, uint16_
       readLine(tmpString); // Variable value
 
       if(loadMode == LM_ALL || loadMode == LM_NAMED_VARIABLES) {
-        //printf("Variable %s ", errorMessage);
-        //printf("%s = ", aimBuffer);
-        //printf("%s\n", tmpString);
+        char *varName = errorMessage + strlen(errorMessage) + 1;
+        utf8ToString((uint8_t *)errorMessage, varName);
+        regist = findOrAllocateNamedVariable(varName);
+        if(regist != INVALID_VARIABLE) {
+          restoreRegister(regist, aimBuffer, tmpString);
+          restoreMatrixData(regist);
+        }
+        else {
+          skipMatrixData(aimBuffer, tmpString);
+        }
       }
-      skipMatrixData(aimBuffer, tmpString);
+      else {
+        skipMatrixData(aimBuffer, tmpString);
+      }
     }
   }
 
