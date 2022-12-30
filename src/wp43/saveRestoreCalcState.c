@@ -610,130 +610,139 @@ static uint32_t restore(void *buffer, uint32_t size) {
 #endif // PC_BUILD
 
 
+char aimBuffer1[400];             //The concurrent use of the global aimBuffer 
+                                  //does not work. See tmpString.
+                                  //Temporary solution is to use a local variable of sufficient length for the target.
 
-static void registerToSaveString(calcRegister_t regist) {
-  longInteger_t lgInt;
-  int16_t sign;
-  uint64_t value;
-  char *str;
-  uint8_t *cfg;
+#if !defined(TESTSUITE_BUILD)
+  static void UI64toString(uint64_t value, char * tmpRegisterString);
+  static void registerToSaveString(calcRegister_t regist) {
+    longInteger_t lgInt;
+    int16_t sign;
+    uint64_t value;
+    uint32_t base; 
+    char *str;
+    uint8_t *cfg;
 
   tmpRegisterString = tmpString + START_REGISTER_VALUE;
 
-  switch(getRegisterDataType(regist)) {
-    case dtLongInteger: {
-      convertLongIntegerRegisterToLongInteger(regist, lgInt);
-      longIntegerToAllocatedString(lgInt, tmpRegisterString, TMP_STR_LENGTH - START_REGISTER_VALUE - 1);
-      longIntegerFree(lgInt);
-      strcpy(aimBuffer, "LonI");
-      break;
-    }
-
-    case dtString: {
-      stringToUtf8(REGISTER_STRING_DATA(regist), (uint8_t *)(tmpRegisterString));
-      strcpy(aimBuffer, "Stri");
-      break;
-    }
-
-    case dtShortInteger: {
-      convertShortIntegerRegisterToUInt64(regist, &sign, &value);
-      sprintf(tmpRegisterString, "%c%" PRIu64 " %" PRIu32, sign ? '-' : '+', value, getRegisterShortIntegerBase(regist));
-      strcpy(aimBuffer, "ShoI");
-      break;
-    }
-
-    case dtReal34: {
-      real34ToString(REGISTER_REAL34_DATA(regist), tmpRegisterString);
-      switch(getRegisterAngularMode(regist)) {
-        case amDegree: {
-          strcpy(aimBuffer, "Real:DEG");
-          break;
-        }
-
-        case amDMS: {
-          strcpy(aimBuffer, "Real:DMS");
-          break;
-        }
-
-        case amRadian: {
-          strcpy(aimBuffer, "Real:RAD");
-          break;
-        }
-
-        case amMultPi: {
-          strcpy(aimBuffer, "Real:MULTPI");
-          break;
-        }
-
-        case amGrad: {
-          strcpy(aimBuffer, "Real:GRAD");
-          break;
-        }
-
-        case amNone: {
-          strcpy(aimBuffer, "Real");
-          break;
-        }
-
-        default: {
-          strcpy(aimBuffer, "Real:???");
-          break;
-        }
+    switch(getRegisterDataType(regist)) {
+      case dtLongInteger: {
+        convertLongIntegerRegisterToLongInteger(regist, lgInt);
+        longIntegerToAllocatedString(lgInt, tmpRegisterString, TMP_STR_LENGTH - START_REGISTER_VALUE - 1);
+        longIntegerFree(lgInt);
+        strcpy(aimBuffer1, "LonI");
+        break;
       }
-      break;
-    }
 
-    case dtComplex34: {
-      real34ToString(REGISTER_REAL34_DATA(regist), tmpRegisterString);
-      strcat(tmpRegisterString, " ");
-      real34ToString(REGISTER_IMAG34_DATA(regist), tmpRegisterString + strlen(tmpRegisterString));
-      strcpy(aimBuffer, "Cplx");
-      break;
-    }
-
-    case dtTime: {
-      real34ToString(REGISTER_REAL34_DATA(regist), tmpRegisterString);
-      strcpy(aimBuffer, "Time");
-      break;
-    }
-
-    case dtDate: {
-      real34ToString(REGISTER_REAL34_DATA(regist), tmpRegisterString);
-      strcpy(aimBuffer, "Date");
-      break;
-    }
-
-    case dtReal34Matrix: {
-      sprintf(tmpRegisterString, "%" PRIu16 " %" PRIu16, REGISTER_REAL34_MATRIX_DBLOCK(regist)->matrixRows, REGISTER_REAL34_MATRIX_DBLOCK(regist)->matrixColumns);
-      strcpy(aimBuffer, "Rema");
-      break;
-    }
-
-    case dtComplex34Matrix: {
-      sprintf(tmpRegisterString, "%" PRIu16 " %" PRIu16, REGISTER_COMPLEX34_MATRIX_DBLOCK(regist)->matrixRows, REGISTER_COMPLEX34_MATRIX_DBLOCK(regist)->matrixColumns);
-      strcpy(aimBuffer, "Cxma");
-      break;
-    }
-
-    case dtConfig: {
-      for(str=tmpRegisterString, cfg=(uint8_t *)REGISTER_CONFIG_DATA(regist), value=0; value<sizeof(dtConfigDescriptor_t); value++, cfg++, str+=2) {
-        sprintf(str, "%02X", *cfg);
+      case dtString: {
+        stringToUtf8(REGISTER_STRING_DATA(regist), (uint8_t *)(tmpRegisterString));
+        strcpy(aimBuffer1, "Stri");
+        break;
       }
-      strcpy(aimBuffer, "Conf");
-      break;
-    }
 
-    default: {
-      strcpy(tmpRegisterString, "???");
-      strcpy(aimBuffer, "????");
+      case dtShortInteger: {
+        convertShortIntegerRegisterToUInt64(regist, &sign, &value);
+        base = getRegisterShortIntegerBase(regist);
+
+        char yy[25];
+        UI64toString(value, yy);
+        sprintf(tmpRegisterString, "%c%s %" PRIu32, sign ? '-' : '+', yy, base);
+        strcpy(aimBuffer1, "ShoI");
+        break;
+      }
+
+      case dtReal34: {
+        real34ToString(REGISTER_REAL34_DATA(regist), tmpRegisterString);
+        switch(getRegisterAngularMode(regist)) {
+          case amDegree: {
+            strcpy(aimBuffer1, "Real:DEG");
+            break;
+          }
+
+          case amDMS: {
+            strcpy(aimBuffer1, "Real:DMS");
+            break;
+          }
+
+          case amRadian: {
+            strcpy(aimBuffer1, "Real:RAD");
+            break;
+          }
+
+          case amMultPi: {
+            strcpy(aimBuffer1, "Real:MULTPI");
+            break;
+          }
+
+          case amGrad: {
+            strcpy(aimBuffer1, "Real:GRAD");
+            break;
+          }
+
+          case amNone: {
+            strcpy(aimBuffer1, "Real");
+            break;
+          }
+
+          default: {
+            strcpy(aimBuffer1, "Real:???");
+            break;
+          }
+        }
+        break;
+      }
+
+      case dtComplex34: {
+        real34ToString(REGISTER_REAL34_DATA(regist), tmpRegisterString);
+        strcat(tmpRegisterString, " ");
+        real34ToString(REGISTER_IMAG34_DATA(regist), tmpRegisterString + strlen(tmpRegisterString));
+        strcpy(aimBuffer1, "Cplx");
+        break;
+      }
+
+      case dtTime: {
+        real34ToString(REGISTER_REAL34_DATA(regist), tmpRegisterString);
+        strcpy(aimBuffer1, "Time");
+        break;
+      }
+
+      case dtDate: {
+        real34ToString(REGISTER_REAL34_DATA(regist), tmpRegisterString);
+        strcpy(aimBuffer1, "Date");
+        break;
+      }
+
+      case dtReal34Matrix: {
+        sprintf(tmpRegisterString, "%" PRIu16 " %" PRIu16, REGISTER_REAL34_MATRIX_DBLOCK(regist)->matrixRows, REGISTER_REAL34_MATRIX_DBLOCK(regist)->matrixColumns);
+        strcpy(aimBuffer1, "Rema");
+        break;
+      }
+
+      case dtComplex34Matrix: {
+        sprintf(tmpRegisterString, "%" PRIu16 " %" PRIu16, REGISTER_COMPLEX34_MATRIX_DBLOCK(regist)->matrixRows, REGISTER_COMPLEX34_MATRIX_DBLOCK(regist)->matrixColumns);
+        strcpy(aimBuffer1, "Cxma");
+        break;
+      }
+
+      case dtConfig: {
+        for(str=tmpRegisterString, cfg=(uint8_t *)REGISTER_CONFIG_DATA(regist), value=0; value<sizeof(dtConfigDescriptor_t); value++, cfg++, str+=2) {
+          sprintf(str, "%02X", *cfg);
+        }
+        strcpy(aimBuffer1, "Conf");
+        break;
+      }
+
+      default: {
+        strcpy(tmpRegisterString, "???");
+        strcpy(aimBuffer1, "????");
+      }
     }
   }
-}
 
 
 
 static void saveMatrixElements(calcRegister_t regist) {
-  #if !defined(TESTSUITE_BUILD)
     if(getRegisterDataType(regist) == dtReal34Matrix) {
       for(uint32_t element = 0; element < REGISTER_REAL34_MATRIX_DBLOCK(regist)->matrixRows * REGISTER_REAL34_MATRIX_DBLOCK(regist)->matrixColumns; ++element) {
         real34ToString(REGISTER_REAL34_MATRIX_M_ELEMENTS(regist) + element, tmpString);
@@ -750,14 +759,21 @@ static void saveMatrixElements(calcRegister_t regist) {
         save(tmpString, strlen(tmpString));
       }
     }
-  #endif // !TESTSUITE_BUILD
 }
+#endif // !TESTSUITE_BUILD
 
 
 
 void fnSave(uint16_t unusedButMandatoryParameter) {
+#if !defined(TESTSUITE_BUILD)
+char tmpString[3000];             //The concurrent use of the global tmpString 
+                                  //as target does not work while the source is at
+                                  //tmpRegisterString = tmpString + START_REGISTER_VALUE;
+                                  //Temporary solution is to use a local variable of sufficient length for the target.
+
   calcRegister_t regist;
   uint32_t i;
+  char yy1[35], yy2[35];
 
   if(!ioFileOpen(ioPathSaveFile, ioModeWrite)) {
     #if !defined(DMCP_BUILD)
@@ -771,7 +787,7 @@ void fnSave(uint16_t unusedButMandatoryParameter) {
   save(tmpString, strlen(tmpString));
   for(regist=0; regist<FIRST_LOCAL_REGISTER; regist++) {
     registerToSaveString(regist);
-    sprintf(tmpString, "R%03" PRId16 "\n%s\n%s\n", regist, aimBuffer, tmpRegisterString);
+    sprintf(tmpString, "R%03" PRId16 "\n%s\n%s\n", regist, aimBuffer1, tmpRegisterString);
     save(tmpString, strlen(tmpString));
     saveMatrixElements(regist);
   }
@@ -794,7 +810,7 @@ void fnSave(uint16_t unusedButMandatoryParameter) {
   save(tmpString, strlen(tmpString));
   for(i=0; i<currentNumberOfLocalRegisters; i++) {
     registerToSaveString(FIRST_LOCAL_REGISTER + i);
-    sprintf(tmpString, "R.%02" PRIu32 "\n%s\n%s\n", i, aimBuffer, tmpRegisterString);
+    sprintf(tmpString, "R.%02" PRIu32 "\n%s\n%s\n", i, aimBuffer1, tmpRegisterString);
     save(tmpString, strlen(tmpString));
     saveMatrixElements(FIRST_LOCAL_REGISTER + i);
   }
@@ -811,7 +827,7 @@ void fnSave(uint16_t unusedButMandatoryParameter) {
   for(i=0; i<numberOfNamedVariables; i++) {
     registerToSaveString(FIRST_NAMED_VARIABLE + i);
     stringToUtf8((char *)allNamedVariables[i].variableName + 1, (uint8_t *)tmpString);
-    sprintf(tmpString + strlen(tmpString), "\n%s\n%s\n", aimBuffer, tmpRegisterString);
+    sprintf(tmpString + strlen(tmpString), "\n%s\n%s\n", aimBuffer1, tmpRegisterString);
     save(tmpString, strlen(tmpString));
     saveMatrixElements(FIRST_NAMED_VARIABLE + i);
   }
@@ -826,7 +842,8 @@ void fnSave(uint16_t unusedButMandatoryParameter) {
   }
 
   // System flags
-  sprintf(tmpString, "SYSTEM_FLAGS\n%" PRIu64 "\n", systemFlags);
+  UI64toString(systemFlags, yy1);
+  sprintf(tmpString, "SYSTEM_FLAGS\n%s\n", yy1);
   save(tmpString, strlen(tmpString));
 
   // Keyboard assignments
@@ -970,7 +987,9 @@ void fnSave(uint16_t unusedButMandatoryParameter) {
   save(tmpString, strlen(tmpString));
   sprintf(tmpString, "displayStack\n%" PRIu8 "\n", displayStack);
   save(tmpString, strlen(tmpString));
-  sprintf(tmpString, "rngState\n%" PRIu64 " %" PRIu64 "\n", pcg32_global.state, pcg32_global.inc);
+  UI64toString(pcg32_global.state, yy1);
+  UI64toString(pcg32_global.inc, yy2);
+  sprintf(tmpString, "rngState\n%s %s\n", yy1, yy2);
   save(tmpString, strlen(tmpString));
   sprintf(tmpString, "exponentLimit\n%" PRId16 "\n", exponentLimit);
   save(tmpString, strlen(tmpString));
@@ -982,6 +1001,7 @@ void fnSave(uint16_t unusedButMandatoryParameter) {
   ioFileClose();
 
   temporaryInformation = TI_SAVED;
+#endif // !TESTSUITE_BUILD
 }
 
 
@@ -998,6 +1018,24 @@ static void readLine(char *line) {
 
   *line = 0;
 }
+
+
+
+#ifndef TESTSUITE_BUILD
+static void UI64toString(uint64_t value, char * tmpRegisterString) {
+  uint32_t v0,v1,v2;
+  v2 =  value /      1000000000000000000;
+  v1 = (value - v2 * 1000000000000000000) /      1000000000;
+  v0 = (value - v2 * 1000000000000000000) - v1 * 1000000000;
+  if(v2 == 0 && v1 == 0) {
+    sprintf(tmpRegisterString,"%" PRIu32, v0);
+  } else if (v2 == 0) {
+    sprintf(tmpRegisterString,"%" PRIu32 "%" PRIu32, v1,v0);
+  } else {
+    sprintf(tmpRegisterString,"%" PRIu32 "%" PRIu32 "%" PRIu32, v2,v1,v0);
+  }
+}
+#endif //TESTSUITE_BUILD
 
 
 
@@ -1444,13 +1482,13 @@ static bool restoreOneSection(uint16_t loadMode, uint16_t s, uint16_t n, uint16_
     numberOfRegs = stringToInt16(tmpString);
     if(numberOfRegs > 0 && (loadMode == LM_ALL || loadMode == LM_SUMS)) {
       initStatisticalSums();
-    }
 
-    for(int16_t i=0; i<numberOfRegs; i++) {
-      readLine(tmpString); // statistical sum
-      if(statisticalSumsPointer) { // likely
-        if(loadMode == LM_ALL || loadMode == LM_SUMS) {
-          stringToReal(tmpString, (real_t *)(statisticalSumsPointer + TO_BLOCKS(REAL_SIZE_IN_BYTES) * i), &ctxtReal75);
+      for(int16_t i=0; i<numberOfRegs; i++) {
+        readLine(tmpString); // statistical sum
+        if(statisticalSumsPointer) { // likely
+          if(loadMode == LM_ALL || loadMode == LM_SUMS) {
+            stringToReal(tmpString, (real_t *)(statisticalSumsPointer + TO_BLOCKS(REAL_SIZE_IN_BYTES) * i), &ctxtReal75);
+          }
         }
       }
     }
