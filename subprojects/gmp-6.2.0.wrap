@@ -4,7 +4,8 @@
 [wrap-file]
 directory = gmp-6.2.0
 
-source_url = https://gmplib.org/download/gmp/gmp-6.2.0.tar.bz2
+#source_url = https://gmplib.org/download/gmp/gmp-6.2.0.tar.bz2
+source_url = https://www.cjoint.com/data/LLEjzlyi5zm_gmp-6.2.0.tar.bz2
 source_filename = gmp-6.2.0.tar.bz2
 source_hash = f51c99cb114deb21a60075ffb494c1a210eb9d7cb729ed042ddb7de9534451ea
 
