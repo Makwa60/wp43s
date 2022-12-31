@@ -43,6 +43,8 @@
 #define BACKUP_VERSION         86  // equationEditorCursor and equationEditorScrollPosition
 #define START_REGISTER_VALUE 1000  // was 1522, why?
 
+#define configFileVersion       1
+
 static char *tmpRegisterString = NULL;
 
 static void save(const void *buffer, uint32_t size) {
@@ -781,6 +783,12 @@ char tmpString[3000];             //The concurrent use of the global tmpString
     #endif
     return;
   }
+
+  // SAVE file version
+  sprintf(tmpString, "SAVE_FILE_REVISION\n%" PRIu8 "\n", (uint8_t)0);
+  save(tmpString, strlen(tmpString));
+  sprintf(tmpString, "WP43_save_file_00\n%" PRIu32 "\n", (uint32_t)configFileVersion);
+  save(tmpString, strlen(tmpString));
 
   // Global registers
   sprintf(tmpString, "GLOBAL_REGISTERS\n%" PRIu16 "\n", (uint16_t)(FIRST_LOCAL_REGISTER));
@@ -1906,7 +1914,23 @@ void doLoad(uint16_t loadMode, uint16_t s, uint16_t n, uint16_t d) {
     }
   }
 
-  while(restoreOneSection(loadMode, s, n, d)) {
+  //Check save file version
+  uint32_t loadedVersion = 0;
+  if(loadMode == LM_ALL) {
+    readLine(tmpString);
+    if(strcmp(tmpString, "SAVE_FILE_REVISION") == 0) {
+      readLine(aimBuffer); // internal rev number (ignore now)
+      readLine(aimBuffer); // param
+      readLine(tmpString); // value
+      if(strcmp(aimBuffer, "WP43_save_file_00") == 0) {
+        loadedVersion = stringToUint32(tmpString);
+      }
+    }
+  }
+
+  if(loadMode != LM_ALL || loadedVersion == configFileVersion) {
+    while(restoreOneSection(loadMode, s, n, d)) {
+    }
   }
 
   lastErrorCode = ERROR_NONE;
