@@ -1,5 +1,5 @@
 project('gmp', 'c',
-  version       : '6.2.0',
+  version       : '6.2.1',
   meson_version : '>=0.56.0',
   license       : ['LGPL-3.0-only', 'GPL-2.0-only'],
 )
@@ -27,5 +27,5 @@ p = mod.add_project(
 )
 
 arm_gmp_dep = p.dependency('gmp')
-meson.override_dependency('arm-gmp-6.2.0', arm_gmp_dep)
+meson.override_dependency('arm-gmp-6.2.1', arm_gmp_dep)
 
