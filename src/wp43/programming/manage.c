@@ -424,7 +424,7 @@ void fnPem(uint16_t unusedButMandatoryParameter) {
     uint16_t linesOfCurrentStep = 1;
     bool     cursorAppeared = false;
 
-    if(calcMode != cmPem) {
+    if(calcMode != cmPem && !(calcMode == cmConfirmation && previousCalcMode == cmPem)) {
       calcMode = cmPem;
       hourGlassIconEnabled = false;
       aimBuffer[0] = 0;
@@ -588,6 +588,10 @@ void fnPem(uint16_t unusedButMandatoryParameter) {
         break;
       }
       step = nextStep;
+    }
+
+    if(calcMode == cmConfirmation) {
+      refreshRegisterLine(REGISTER_X);
     }
 
     if(programList[currentProgramNumber - 1].step < 0) { // Flash
@@ -1086,10 +1090,12 @@ void insertStepInProgram(int16_t func) {
           break;
         }
 
-        //case ITM_CLP: {          // 1425
-        //  fnClP(NOPARAM);
-        //  break;
-        //}
+        #if CLP_WITH_MENU == 0
+          case ITM_CLP: {          // 1425
+            fnClP(NOT_CONFIRMED);
+            break;
+          }
+        #endif /* CLP_WITH_MENU == 0 */
 
         case ITM_CLPALL: {       // 1426
           fnClPAll(NOT_CONFIRMED);
@@ -1206,12 +1212,15 @@ void insertStepInProgram(int16_t func) {
 
 void addStepInProgram(int16_t func) {
   if(programList[currentProgramNumber - 1].step < 0) { // attempt to modify a program in the flash memory
-    //if(func == ITM_CLP) {
-    //  fnClP(NOPARAM);
-    //}
-    //else {
+    #if CLP_WITH_MENU == 0
+      if(func == ITM_CLP) {
+        fnClP(NOT_CONFIRMED);
+      }
+      else
+    #endif /* CLP_WITH_MENU == 0 */
+    {
       displayCalcErrorMessage(ERROR_FLASH_MEMORY_WRITE_PROTECTED, ERR_REGISTER_LINE, REGISTER_X);
-    //}
+    }
     aimBuffer[0] = 0;
     return;
   }
