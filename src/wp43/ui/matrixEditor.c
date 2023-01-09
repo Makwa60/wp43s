@@ -454,6 +454,10 @@ void fnDelRow(uint16_t unusedParamButMandatory) {
         refreshRegisterLine(REGISTER_Z);
       }
     }
+
+    if(lastErrorCode != ERROR_NONE) {
+      refreshRegisterLine(errorMessageRegisterLine);
+    }
   }
 
   void mimEnter(bool commit) {
@@ -661,9 +665,9 @@ void fnDelRow(uint16_t unusedParamButMandatory) {
       real34Zero(&im1);
     }
 
-    lastErrorCode = ERROR_NONE;
     mimEnter(true);
     clearSystemFlag(FLAG_ASLIFT);
+    lastErrorCode = ERROR_NONE;
 
     if(isComplex) {
       real34Copy(VARIABLE_REAL34_DATA(&openMatrixMIMPointer.complexMatrix.matrixElements[i * openMatrixMIMPointer.header.matrixColumns + j]), &re);
