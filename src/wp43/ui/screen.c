@@ -1587,6 +1587,126 @@ void clearScreen(void) {
 
 
 
+  static void _refreshPemScreen(void) {
+    clearScreen();
+    showSoftmenuCurrentPart();
+    fnPem(NOPARAM);
+    displayShiftAndTamBuffer();
+    refreshStatusBar();
+  }
+
+
+
+  static void _refreshNormalScreen(void) {
+    if(calcMode == cmConfirmation) {
+      screenUpdatingMode = SCRUPD_AUTO;
+    }
+    else if(calcMode == cmMim) {
+      screenUpdatingMode = (aimBuffer[0] == 0) ? SCRUPD_AUTO : (SCRUPD_MANUAL_STACK | SCRUPD_MANUAL_SHIFT_STATUS);
+    }
+
+    if(screenUpdatingMode == SCRUPD_AUTO) {
+      clearScreen();
+    }
+    else {
+      if(!(screenUpdatingMode & SCRUPD_MANUAL_STATUSBAR)) {
+        lcd_fill_rect(0, 0, SCREEN_WIDTH, Y_POSITION_OF_REGISTER_T_LINE, LCD_SET_VALUE);
+      }
+      if(!(screenUpdatingMode & (SCRUPD_MANUAL_STACK | SCRUPD_SKIP_STACK_ONE_TIME))) {
+        lcd_fill_rect(0, Y_POSITION_OF_REGISTER_T_LINE, SCREEN_WIDTH, 240 - Y_POSITION_OF_REGISTER_T_LINE - SOFTMENU_HEIGHT * 3, LCD_SET_VALUE);
+      }
+      if(!(screenUpdatingMode & (SCRUPD_MANUAL_MENU | SCRUPD_SKIP_MENU_ONE_TIME))) {
+        lcd_fill_rect(0, 240 - SOFTMENU_HEIGHT * 3, SCREEN_WIDTH, SOFTMENU_HEIGHT * 3, LCD_SET_VALUE);
+      }
+    }
+
+    // The ordering of the 4 lines below is important for SHOW (temporaryInformation == TI_SHOW_REGISTER)
+    if(!(screenUpdatingMode & (SCRUPD_MANUAL_STACK | SCRUPD_SKIP_STACK_ONE_TIME))) {
+      if(calcMode != cmTimerApp && temporaryInformation != TI_VIEW_REGISTER) {
+        refreshRegisterLine(REGISTER_T);
+      }
+      refreshRegisterLine(REGISTER_Z);
+      refreshRegisterLine(REGISTER_Y);
+      refreshRegisterLine(REGISTER_X);
+      if(temporaryInformation == TI_VIEW_REGISTER) {
+        clearRegisterLine(REGISTER_T, true, true);
+        refreshRegisterLine(REGISTER_T);
+      }
+    }
+    else if(calcMode == cmNim) {
+      refreshRegisterLine(NIM_REGISTER_LINE);
+    }
+
+
+    if(calcMode == cmMim) {
+      showMatrixEditor();
+    }
+    if(calcMode == cmTimerApp) {
+      timerAppDraw();
+    }
+
+    if(currentSolverStatus & SOLVER_STATUS_INTERACTIVE) {
+      bool mvarMenu = false;
+      for(int i = 0; i < SOFTMENU_STACK_SIZE; i++) {
+        if(softmenu[softmenuStack[i].softmenuId].menuItem == -MNU_MVAR) {
+          mvarMenu = true;
+          break;
+        }
+      }
+      if(!mvarMenu) {
+        if(currentSolverStatus & SOLVER_STATUS_USES_FORMULA) {
+          if((currentSolverStatus & SOLVER_STATUS_EQUATION_MODE) == SOLVER_STATUS_EQUATION_INTEGRATE) {
+            showSoftmenu(-MNU_Sf);
+          }
+          else {
+            showSoftmenu(-MNU_Solver);
+          }
+        }
+        else {
+          currentMvarLabel = INVALID_VARIABLE;
+          showSoftmenu(-MNU_MVAR);
+        }
+      }
+    }
+    if(calcMode == cmEim) {
+      bool mvarMenu = false;
+      for(int i = 0; i < SOFTMENU_STACK_SIZE; i++) {
+        if(softmenu[softmenuStack[i].softmenuId].menuItem == -MNU_EQ_EDIT) {
+          mvarMenu = true;
+          break;
+        }
+      }
+      if(!mvarMenu) {
+        showSoftmenu(-MNU_EQ_EDIT);
+      }
+    }
+
+    if(!(screenUpdatingMode & SCRUPD_MANUAL_SHIFT_STATUS)) {
+      if(screenUpdatingMode & (SCRUPD_MANUAL_STACK | SCRUPD_SKIP_STACK_ONE_TIME)) {
+        clearShiftState();
+      }
+      displayShiftAndTamBuffer();
+    }
+
+    if(!(screenUpdatingMode & (SCRUPD_MANUAL_MENU | SCRUPD_SKIP_MENU_ONE_TIME))) {
+      showSoftmenuCurrentPart();
+    }
+
+    if(programRunStop == PGM_STOPPED || programRunStop == PGM_WAITING) {
+      hourGlassIconEnabled = false;
+    }
+    if(!(screenUpdatingMode & SCRUPD_MANUAL_STATUSBAR)) {
+      refreshStatusBar();
+    }
+    #if (REAL34_WIDTH_TEST == 1)
+      for(int y=Y_POSITION_OF_REGISTER_Y_LINE; y<Y_POSITION_OF_REGISTER_Y_LINE + 2*REGISTER_LINE_HEIGHT; y++ ) {
+        setBlackPixel(SCREEN_WIDTH - largeur - 1, y);
+      }
+    #endif // (REAL34_WIDTH_TEST == 1)
+  }
+
+
+
   void refreshScreen(void) {
     switch(calcMode) {
       case cmApp: {
@@ -1597,11 +1717,17 @@ void clearScreen(void) {
       }
 
       case cmPem: {
-        clearScreen();
-        showSoftmenuCurrentPart();
-        fnPem(NOPARAM);
-        displayShiftAndTamBuffer();
-        refreshStatusBar();
+        _refreshPemScreen();
+        break;
+      }
+
+      case cmConfirmation: {
+        if(previousCalcMode == cmPem) {
+          _refreshPemScreen();
+        }
+        else {
+          _refreshNormalScreen();
+        }
         break;
       }
 
@@ -1612,113 +1738,8 @@ void clearScreen(void) {
       case cmEim:
       case cmAssign:
       case cmErrorMessage:
-      case cmConfirmation:
       case cmTimerApp: {
-        if(calcMode == cmConfirmation) {
-          screenUpdatingMode = SCRUPD_AUTO;
-        }
-        else if(calcMode == cmMim) {
-          screenUpdatingMode = (aimBuffer[0] == 0) ? SCRUPD_AUTO : (SCRUPD_MANUAL_STACK | SCRUPD_MANUAL_SHIFT_STATUS);
-        }
-
-        if(screenUpdatingMode == SCRUPD_AUTO) {
-          clearScreen();
-        }
-        else {
-          if(!(screenUpdatingMode & SCRUPD_MANUAL_STATUSBAR)) {
-            lcd_fill_rect(0, 0, SCREEN_WIDTH, Y_POSITION_OF_REGISTER_T_LINE, LCD_SET_VALUE);
-          }
-          if(!(screenUpdatingMode & (SCRUPD_MANUAL_STACK | SCRUPD_SKIP_STACK_ONE_TIME))) {
-            lcd_fill_rect(0, Y_POSITION_OF_REGISTER_T_LINE, SCREEN_WIDTH, 240 - Y_POSITION_OF_REGISTER_T_LINE - SOFTMENU_HEIGHT * 3, LCD_SET_VALUE);
-          }
-          if(!(screenUpdatingMode & (SCRUPD_MANUAL_MENU | SCRUPD_SKIP_MENU_ONE_TIME))) {
-            lcd_fill_rect(0, 240 - SOFTMENU_HEIGHT * 3, SCREEN_WIDTH, SOFTMENU_HEIGHT * 3, LCD_SET_VALUE);
-          }
-        }
-
-        // The ordering of the 4 lines below is important for SHOW (temporaryInformation == TI_SHOW_REGISTER)
-        if(!(screenUpdatingMode & (SCRUPD_MANUAL_STACK | SCRUPD_SKIP_STACK_ONE_TIME))) {
-          if(calcMode != cmTimerApp && temporaryInformation != TI_VIEW_REGISTER) {
-            refreshRegisterLine(REGISTER_T);
-          }
-          refreshRegisterLine(REGISTER_Z);
-          refreshRegisterLine(REGISTER_Y);
-          refreshRegisterLine(REGISTER_X);
-          if(temporaryInformation == TI_VIEW_REGISTER) {
-            clearRegisterLine(REGISTER_T, true, true);
-            refreshRegisterLine(REGISTER_T);
-          }
-        }
-        else if(calcMode == cmNim) {
-          refreshRegisterLine(NIM_REGISTER_LINE);
-        }
-
-
-        if(calcMode == cmMim) {
-          showMatrixEditor();
-        }
-        if(calcMode == cmTimerApp) {
-          timerAppDraw();
-        }
-
-        if(currentSolverStatus & SOLVER_STATUS_INTERACTIVE) {
-          bool mvarMenu = false;
-          for(int i = 0; i < SOFTMENU_STACK_SIZE; i++) {
-            if(softmenu[softmenuStack[i].softmenuId].menuItem == -MNU_MVAR) {
-              mvarMenu = true;
-              break;
-            }
-          }
-          if(!mvarMenu) {
-            if(currentSolverStatus & SOLVER_STATUS_USES_FORMULA) {
-              if((currentSolverStatus & SOLVER_STATUS_EQUATION_MODE) == SOLVER_STATUS_EQUATION_INTEGRATE) {
-                showSoftmenu(-MNU_Sf);
-              }
-              else {
-                showSoftmenu(-MNU_Solver);
-              }
-            }
-            else {
-              currentMvarLabel = INVALID_VARIABLE;
-              showSoftmenu(-MNU_MVAR);
-            }
-          }
-        }
-        if(calcMode == cmEim) {
-          bool mvarMenu = false;
-          for(int i = 0; i < SOFTMENU_STACK_SIZE; i++) {
-            if(softmenu[softmenuStack[i].softmenuId].menuItem == -MNU_EQ_EDIT) {
-              mvarMenu = true;
-              break;
-            }
-          }
-          if(!mvarMenu) {
-            showSoftmenu(-MNU_EQ_EDIT);
-          }
-        }
-
-        if(!(screenUpdatingMode & SCRUPD_MANUAL_SHIFT_STATUS)) {
-          if(screenUpdatingMode & (SCRUPD_MANUAL_STACK | SCRUPD_SKIP_STACK_ONE_TIME)) {
-            clearShiftState();
-          }
-          displayShiftAndTamBuffer();
-        }
-
-        if(!(screenUpdatingMode & (SCRUPD_MANUAL_MENU | SCRUPD_SKIP_MENU_ONE_TIME))) {
-          showSoftmenuCurrentPart();
-        }
-
-        if(programRunStop == PGM_STOPPED || programRunStop == PGM_WAITING) {
-          hourGlassIconEnabled = false;
-        }
-        if(!(screenUpdatingMode & SCRUPD_MANUAL_STATUSBAR)) {
-          refreshStatusBar();
-        }
-        #if (REAL34_WIDTH_TEST == 1)
-          for(int y=Y_POSITION_OF_REGISTER_Y_LINE; y<Y_POSITION_OF_REGISTER_Y_LINE + 2*REGISTER_LINE_HEIGHT; y++ ) {
-            setBlackPixel(SCREEN_WIDTH - largeur - 1, y);
-          }
-        #endif // (REAL34_WIDTH_TEST == 1)
+        _refreshNormalScreen();
         break;
       }
 

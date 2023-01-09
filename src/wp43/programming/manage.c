@@ -204,7 +204,7 @@ void fnClPAll(uint16_t confirmation) {
 
 
 
-void fnClP(uint16_t unusedButMandatoryParameter) {
+static int _clearProgram(void) {
   if(programList[currentProgramNumber - 1].step < 0) { // flash memory
     uint16_t savedCurrentProgramNumber = currentProgramNumber;
 
@@ -219,9 +219,11 @@ void fnClP(uint16_t unusedButMandatoryParameter) {
     else { // Not the last program
       goToPgmStep(savedCurrentProgramNumber, 1);
     }
+    return 2;
   }
   else if(beginOfCurrentProgram.ram == beginOfProgramMemory && *endOfCurrentProgram.ram == 255 && *(endOfCurrentProgram.ram + 1) == 255) { // There is only one program in memory
     fnClPAll(CONFIRMED);
+    return 1;
   }
   else {
     uint16_t savedCurrentProgramNumber = currentProgramNumber;
@@ -236,8 +238,73 @@ void fnClP(uint16_t unusedButMandatoryParameter) {
     else { // Not the last program
       goToPgmStep(savedCurrentProgramNumber, 1);
     }
+    return 0;
   }
 }
+
+
+
+#if CLP_WITH_MENU != 0
+void fnClP(uint16_t label) {
+  if(label == 0 && !tam.alpha && tam.digitsSoFar == 0) {
+    _clearProgram();
+  }
+  else if(label >= FIRST_LABEL && label <= LAST_LABEL) {
+    const uint16_t savedCurrentLocalStepNumber = currentLocalStepNumber;
+    uint16_t savedCurrentProgramNumber = currentProgramNumber;
+    fnGoto(label);
+    const uint16_t programNumberToDelete = currentProgramNumber;
+    const int result = _clearProgram();
+    switch(result) {
+      case 2: {
+        int32_t globalStepNumber = programList[savedCurrentProgramNumber - 1].step;
+        if(globalStepNumber < 0) { // flash memory
+          fnGotoDot(programList[savedCurrentProgramNumber - 1].step - savedCurrentLocalStepNumber + 1);
+        }
+        else { // RAM
+          fnGotoDot(programList[savedCurrentProgramNumber - 1].step + savedCurrentLocalStepNumber - 1);
+        }
+        break;
+      }
+      case 0: {
+        if(programNumberToDelete != savedCurrentProgramNumber) {
+          if(programNumberToDelete < savedCurrentProgramNumber) {
+            --savedCurrentProgramNumber;
+          }
+          int32_t globalStepNumber = programList[savedCurrentProgramNumber - 1].step;
+          if(globalStepNumber < 0) { // flash memory
+            fnGotoDot(programList[savedCurrentProgramNumber - 1].step - savedCurrentLocalStepNumber + 1);
+          }
+          else { // RAM
+            fnGotoDot(programList[savedCurrentProgramNumber - 1].step + savedCurrentLocalStepNumber - 1);
+          }
+          break;
+        }
+        break;
+      }
+      default: {
+        break;
+      }
+    }
+  }
+  else {
+    displayCalcErrorMessage(ERROR_OUT_OF_RANGE, ERR_REGISTER_LINE, REGISTER_X);
+    #if (EXTRA_INFO_ON_CALC_ERROR == 1)
+      sprintf(errorMessage, "label %" PRIu16 " is not a global label", label);
+      moreInfoOnError("In function fnClP:", errorMessage, NULL, NULL);
+    #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+  }
+}
+#else /* CLP_WITH_MENU != 0 */
+void fnClP(uint16_t confirmation) {
+  if(confirmation == NOT_CONFIRMED) {
+    setConfirmationMode(fnClP);
+  }
+  else {
+    _clearProgram();
+  }
+}
+#endif /* CLP_WITH_MENU != 0 */
 
 
 
@@ -357,7 +424,7 @@ void fnPem(uint16_t unusedButMandatoryParameter) {
     uint16_t linesOfCurrentStep = 1;
     bool     cursorAppeared = false;
 
-    if(calcMode != cmPem) {
+    if(calcMode != cmPem && !(calcMode == cmConfirmation && previousCalcMode == cmPem)) {
       calcMode = cmPem;
       hourGlassIconEnabled = false;
       aimBuffer[0] = 0;
@@ -521,6 +588,14 @@ void fnPem(uint16_t unusedButMandatoryParameter) {
         break;
       }
       step = nextStep;
+    }
+
+    if(calcMode == cmConfirmation) {
+      refreshRegisterLine(REGISTER_X);
+    }
+
+    if(lastErrorCode != ERROR_NONE) {
+      refreshRegisterLine(errorMessageRegisterLine);
     }
 
     if(programList[currentProgramNumber - 1].step < 0) { // Flash
@@ -1019,10 +1094,12 @@ void insertStepInProgram(int16_t func) {
           break;
         }
 
-        case ITM_CLP: {          // 1425
-          fnClP(NOPARAM);
-          break;
-        }
+        #if CLP_WITH_MENU == 0
+          case ITM_CLP: {          // 1425
+            fnClP(NOT_CONFIRMED);
+            break;
+          }
+        #endif /* CLP_WITH_MENU == 0 */
 
         case ITM_CLPALL: {       // 1426
           fnClPAll(NOT_CONFIRMED);
@@ -1139,10 +1216,13 @@ void insertStepInProgram(int16_t func) {
 
 void addStepInProgram(int16_t func) {
   if(programList[currentProgramNumber - 1].step < 0) { // attempt to modify a program in the flash memory
-    if(func == ITM_CLP) {
-      fnClP(NOPARAM);
-    }
-    else {
+    #if CLP_WITH_MENU == 0
+      if(func == ITM_CLP) {
+        fnClP(NOT_CONFIRMED);
+      }
+      else
+    #endif /* CLP_WITH_MENU == 0 */
+    {
       displayCalcErrorMessage(ERROR_FLASH_MEMORY_WRITE_PROTECTED, ERR_REGISTER_LINE, REGISTER_X);
     }
     aimBuffer[0] = 0;

@@ -616,7 +616,11 @@ bool      _kbSeenInterrupt     = false;
             screenUpdatingMode &= ~SCRUPD_ONE_TIME_FLAGS;
             return;
           }
-          else if(calcMode == cmPem && catalog && catalog != CATALOG_MVAR) { // TODO: is that correct
+          else if(calcMode == cmPem && catalog && catalog != CATALOG_MVAR
+          #if CLP_WITH_MENU != 0
+            && (!tam.mode || tam.function != ITM_CLP)
+          #endif /* CLP_WITH_MENU != 0 */
+          ) { // TODO: is that correct
             if(indexOfItems[item].func == fnGetSystemFlag && (tam.mode == tmFlagR || tam.mode == tmFlagW) && !tam.indirect) {
               tam.value = (indexOfItems[item].param & 0xff);
               tam.alpha = true;
@@ -1783,6 +1787,10 @@ void fnKeyExit(uint16_t unusedButMandatoryParameter) {
       }
 
       case cmPem: {
+        if(lastErrorCode != 0) {
+          lastErrorCode = 0;
+          break;
+        }
         if(getSystemFlag(FLAG_ALPHA) && aimBuffer[0] == 0 && !tamIsActive()) {
           pemAlpha(ITM_BACKSPACE);
           fnBst(NOPARAM); // Set the PGM pointer to the original position
@@ -2074,6 +2082,10 @@ void fnKeyBackspace(uint16_t unusedButMandatoryParameter) {
       }
 
       case cmPem: {
+        if(lastErrorCode != 0) {
+          lastErrorCode = 0;
+          return;
+        }
         if(programList[currentProgramNumber - 1].step < 0) {
           // attempt to modify a program in the flash memory
           displayCalcErrorMessage(ERROR_FLASH_MEMORY_WRITE_PROTECTED, ERR_REGISTER_LINE, REGISTER_X);
