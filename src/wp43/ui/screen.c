@@ -1640,6 +1640,7 @@ void clearScreen(void) {
 
     if(calcMode == cmMim) {
       showMatrixEditor();
+      displayShiftAndTamBuffer();
     }
     if(calcMode == cmTimerApp) {
       timerAppDraw();

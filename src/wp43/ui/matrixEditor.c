@@ -22,6 +22,7 @@
 #include "ui/cursor.h"
 #include "ui/screen.h"
 #include "ui/softmenus.h"
+#include "ui/tam.h"
 #include "wp43.h"
 #include <string.h>
 
@@ -416,7 +417,7 @@ void fnDelRow(uint16_t unusedParamButMandatory) {
       scrollRow = matSelRow - 3;
     }
 
-    if(aimBuffer[0] == 0) {
+    if(aimBuffer[0] == 0 || tamIsActive()) {
       clearRegisterLine(NIM_REGISTER_LINE, true, true);
       if(getRegisterDataType(matrixIndex) == dtReal34Matrix) {
         showRealMatrix(&openMatrixMIMPointer.realMatrix, 0);
@@ -429,9 +430,9 @@ void fnDelRow(uint16_t unusedParamButMandatory) {
       clearRegisterLine(NIM_REGISTER_LINE, false, true);
     }
 
-    sprintf(tmpString, "%" PRIi16 ";%" PRIi16 "=" STD_SPACE_4_PER_EM "%s%s%s", (int16_t)(colVector ? matSelCol+1 : matSelRow+1), (int16_t)(colVector ? 1 : matSelCol+1), aimBuffer[0] == 0 ? STD_SPACE_HAIR : "", (aimBuffer[0] == 0 || aimBuffer[0] == '-') ? "" : " ", nimBufferDisplay);
+    sprintf(tmpString, "%" PRIi16 ";%" PRIi16 "=" STD_SPACE_4_PER_EM "%s%s%s", (int16_t)(colVector ? matSelCol+1 : matSelRow+1), (int16_t)(colVector ? 1 : matSelCol+1), (aimBuffer[0] == 0 || tamIsActive()) ? STD_SPACE_HAIR : "", (aimBuffer[0] == 0 || aimBuffer[0] == '-' || tamIsActive()) ? "" : " ", nimBufferDisplay);
     width = stringWidth(tmpString, &numericFont, true, true) + 1;
-    if(aimBuffer[0] == 0) {
+    if(aimBuffer[0] == 0 || tamIsActive()) {
       if(getRegisterDataType(matrixIndex) == dtReal34Matrix) {
         real34ToDisplayString(&openMatrixMIMPointer.realMatrix.matrixElements[matSelRow*cols+matSelCol], amNone, &tmpString[strlen(tmpString)], &numericFont, SCREEN_WIDTH - width, NUMBER_OF_DISPLAY_DIGITS, true, STD_SPACE_4_PER_EM, true);
       }
