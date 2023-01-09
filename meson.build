@@ -95,7 +95,7 @@ if meson.is_cross_build()
   gen_qspi_crc  = files('tools/gen_qspi_crc')[0]
   arm_objcopy   = find_program('arm-none-eabi-objcopy')
   bash          = find_program('bash')
-  subproject('gmp-6.2.0')
-  arm_gmp_dep   = dependency('arm-gmp-6.2.0', native : false)
+  subproject('gmp-6.2.1')
+  arm_gmp_dep   = dependency('arm-gmp-6.2.1', native : false)
   subdir('src/wp43-dmcp')
 endif
