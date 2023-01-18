@@ -961,6 +961,11 @@ void tamReset(void) {
         break;
       }
 
+      case tmDelItem: {
+        showSoftmenu(-ITM_DELITM);
+        break;
+      }
+
       default: {
         sprintf(errorMessage, "In function calcModeTam: %" PRIu16 " is an unexpected value for tam.mode!", (uint16_t)tam.mode);
         bugScreen(errorMessage);

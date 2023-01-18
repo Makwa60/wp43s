@@ -189,6 +189,15 @@
   void           fnClearRegisters                (uint16_t confirmation);
 
   /**
+   * Deletes one named variable.
+   * After deleting a variable, register numbers of remaining named variables
+   * will be shifted so that there is no unallocated gap.
+   *
+   * \param[in] confirmation Current status of the confirmation of clearing registers
+   */
+  void           fnDeleteVariable                (uint16_t regist);
+
+  /**
    * Sets X to the number of local registers.
    *
    * \param[in] unusedButMandatoryParameter

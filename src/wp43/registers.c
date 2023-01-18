@@ -764,6 +764,27 @@ calcRegister_t findOrAllocateNamedVariable(const char *variableName) {
 
 
 
+void fnDeleteVariable(uint16_t regist) {
+  if(regist >= FIRST_NAMED_VARIABLE && regist < (FIRST_NAMED_VARIABLE + numberOfNamedVariables)) {
+    freeRegisterData(regist);
+    for(uint16_t i = (regist - FIRST_NAMED_VARIABLE); i < (numberOfNamedVariables - 1); --i) {
+      allNamedVariables[i] = allNamedVariables[i + 1];
+    }
+    allNamedVariables[numberOfNamedVariables - 1].header.descriptor = 0;
+    allNamedVariables[numberOfNamedVariables - 1].variableName[0] = 0;
+    allNamedVariables[numberOfNamedVariables - 1].variableName[1] = 0;
+    numberOfNamedVariables -= 1;
+  }
+  else if(regist >= FIRST_NAMED_VARIABLE && regist < LAST_NAMED_VARIABLE) {
+    displayCalcErrorMessage(ERROR_UNDEF_SOURCE_VAR, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
+  }
+  else {
+    displayCalcErrorMessage(ERROR_CANNOT_DELETE_PREDEF_ITEM, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
+  }
+}
+
+
+
 void setRegisterMaxDataLength(calcRegister_t regist, uint16_t maxDataLen) {
   if(regist <= LAST_GLOBAL_REGISTER) { // Global register
     ((dataBlock_t *)TO_PCMEMPTR(globalRegister[regist].pointerToRegisterData))->dataMaxLength = maxDataLen;

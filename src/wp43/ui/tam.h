@@ -27,7 +27,8 @@
     tmNewMenu   = 10011,
     tmKey       = 10012,
     tmIntegrate = 10013,
-    tmCmp       = 10014  // tmCmp must be the last in this list
+    tmDelItem   = 10014,
+    tmCmp       = 10015  // tmCmp must be the last in this list
   } tamMode_t;
 
   /**
