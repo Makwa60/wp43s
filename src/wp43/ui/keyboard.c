@@ -180,7 +180,8 @@ bool      _kbSeenInterrupt     = false;
           for(uint32_t i = 0; softmenu[i].menuItem < 0; ++i) {
             if(compareString((char *)getNthString(dynamicSoftmenu[menuId].menuContent, dynamicMenuItem), indexOfItems[-softmenu[i].menuItem].itemCatalogName, CMP_NAME) == 0) {
               if(tamIsActive() && tam.mode == tmDelItem) {
-                item = ITM_NULL; /* TODO: implement this */
+                item = MNU_DYNAMIC;
+                currentUserMenu = numberOfUserMenus;
               }
               else {
                 item = softmenu[i].menuItem;
@@ -190,7 +191,7 @@ bool      _kbSeenInterrupt     = false;
           for(uint32_t i = 0; i < numberOfUserMenus; ++i) {
             if(compareString((char *)getNthString(dynamicSoftmenu[menuId].menuContent, dynamicMenuItem), userMenus[i].menuName, CMP_NAME) == 0) {
               if(tamIsActive() && tam.mode == tmDelItem) {
-                item = ITM_NULL; /* TODO: implement this */
+                item = MNU_DYNAMIC;
                 currentUserMenu = i;
               }
               else {

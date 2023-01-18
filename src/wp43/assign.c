@@ -90,6 +90,30 @@ void fnAssign(uint16_t mode) {
 
 
 
+void fnDeleteMenu(uint16_t id) {
+  if(id >= numberOfUserMenus) {
+    displayCalcErrorMessage(ERROR_CANNOT_DELETE_PREDEF_ITEM, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
+  }
+  else {
+    if(numberOfUserMenus == 1) {
+      freeWp43(userMenus, sizeof(userMenu_t));
+      userMenus = NULL;
+      numberOfUserMenus = 0;
+    }
+    else if(numberOfUserMenus > 1) {
+      if(id < numberOfUserMenus - 1) {
+        xcopy(userMenus + id, userMenus + id + 1, sizeof(userMenu_t) * (numberOfUserMenus - id - 1));
+      }
+      freeWp43(userMenus + numberOfUserMenus - 1, sizeof(userMenu_t));
+      --numberOfUserMenus;
+    }
+  }
+  showSoftmenu(-MNU_DYNAMIC);
+  popSoftmenu();
+}
+
+
+
 void updateAssignTamBuffer(void) {
   char *tbPtr = tamBuffer;
   tbPtr = stpcpy(tbPtr, "ASSIGN ");

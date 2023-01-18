@@ -120,6 +120,9 @@ void tamReset(void) {
           case MNU_FLASH: {
             return ITM_DELITM_PROG;
           }
+          case MNU_MENUS: {
+            return ITM_DELITM_MENU;
+          }
           default: {
             return ITM_DELITM;
           }
@@ -806,6 +809,9 @@ void tamReset(void) {
             errorMoreInfo("string '%s' is not a named label", buffer);
           }
         }
+      }
+      else if(tam.mode == tmDelItem && softmenu[softmenuStack[0].softmenuId].menuItem == -MNU_MENUS) {
+        value = currentUserMenu;
       }
       else if(tryAllocate) {
         value = findOrAllocateNamedVariable(buffer);

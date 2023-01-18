@@ -803,6 +803,7 @@ void fnNop(uint16_t unusedButMandatoryParameter) {
   void fnSqrt1Px2                  (uint16_t unusedButMandatoryParameter) {}
   void fnDeleteVariable            (uint16_t unusedButMandatoryParameter) {}
   void fnClP2                      (uint16_t unusedButMandatoryParameter) {}
+  void fnDeleteMenu                (uint16_t unusedButMandatoryParameter) {}
 #endif // GENERATE_CATALOGS
 
 
@@ -1973,8 +1974,8 @@ TO_QSPI const item_t indexOfItems[] = {
 /* 1139 */  { itemToBeCoded,                NOPARAM,                     "",                                            STD_SUB_x,                                     (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
 /* 1140 */  { itemToBeCoded,                NOPARAM,                     "",                                            STD_SUB_y,                                     (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
 /* 1141 */  { itemToBeCoded,                NOPARAM,                     "",                                            STD_SUB_z,                                     (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
-/* 1142 */  { fnClP2,                       tmDelItem,                   "DELITM",                                      "DELITM",                                      (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_CANCEL    | EIM_DISABLED | PTP_LABEL        },
-/* 1143 */  { itemToBeCoded,                NOPARAM,                     "1143",                                        "1143",                                        (0 << TAM_MAX_BITS) |     0, CAT_FREE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
+/* 1142 */  { fnClP2,                       tmDelItem,                   "DELITM",                                      "DELITM",                                      (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_CANCEL    | EIM_DISABLED | PTP_DISABLED     },
+/* 1143 */  { fnDeleteMenu,                 tmDelItem,                   "DELITM",                                      "DELITM",                                      (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_CANCEL    | EIM_DISABLED | PTP_DISABLED     },
 /* 1144 */  { itemToBeCoded,                NOPARAM,                     "1144",                                        "1144",                                        (0 << TAM_MAX_BITS) |     0, CAT_FREE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
 /* 1145 */  { itemToBeCoded,                NOPARAM,                     "1145",                                        "1145",                                        (0 << TAM_MAX_BITS) |     0, CAT_FREE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
 /* 1146 */  { itemToBeCoded,                NOPARAM,                     "1146",                                        "1146",                                        (0 << TAM_MAX_BITS) |     0, CAT_FREE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
