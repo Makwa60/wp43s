@@ -108,8 +108,10 @@ void fnDeleteMenu(uint16_t id) {
       --numberOfUserMenus;
     }
   }
-  showSoftmenu(-MNU_DYNAMIC);
-  popSoftmenu();
+  #if !defined(TESTSUITE_BUILD)
+    showSoftmenu(-MNU_DYNAMIC);
+    popSoftmenu();
+  #endif // !TESTSUITE_BUILD
 }
 
 
