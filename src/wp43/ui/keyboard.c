@@ -169,7 +169,7 @@ bool      _kbSeenInterrupt     = false;
       case MNU_RAM:
       case MNU_FLASH: {
         dynamicMenuItem = firstItem + itemShift + fn;
-        item = (dynamicMenuItem >= dynamicSoftmenu[menuId].numItems ? ITM_NOP : (tamIsActive() && tam.mode == tmDelItem) ? ITM_NULL /* TODO: implement this */ : ITM_XEQ);
+        item = (dynamicMenuItem >= dynamicSoftmenu[menuId].numItems ? ITM_NOP : (tamIsActive() && tam.mode == tmDelItem) ? MNU_DYNAMIC : ITM_XEQ);
         break;
       }
 

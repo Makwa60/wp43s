@@ -114,6 +114,18 @@ void tamReset(void) {
         }
       }
 
+      case ITM_DELITM: {
+        switch(-softmenu[softmenuStack[0].softmenuId].menuItem) {
+          case MNU_RAM:
+          case MNU_FLASH: {
+            return ITM_DELITM_PROG;
+          }
+          default: {
+            return ITM_DELITM;
+          }
+        }
+      }
+
       default: {
         return tam.function;
       }
@@ -782,7 +794,7 @@ void tamReset(void) {
           }
         }
       }
-      else if(tam.mode == tmLabel || tam.mode == tmSolve || (tam.mode == tmKey && tam.keyInputFinished)) {
+      else if(tam.mode == tmLabel || tam.mode == tmSolve || (tam.mode == tmKey && tam.keyInputFinished) || (tam.mode == tmDelItem && (softmenu[softmenuStack[0].softmenuId].menuItem == -MNU_RAM || softmenu[softmenuStack[0].softmenuId].menuItem == -MNU_FLASH))) {
         value = findNamedLabel(buffer);
         if(value == INVALID_VARIABLE && tam.function != ITM_LBL && tam.function != ITM_LBLQ) {
           if(calcMode != cmPem && getSystemFlag(FLAG_IGN1ER)) {

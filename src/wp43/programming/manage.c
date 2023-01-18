@@ -244,8 +244,7 @@ static int _clearProgram(void) {
 
 
 
-#if CLP_WITH_MENU != 0
-void fnClP(uint16_t label) {
+void fnClP2(uint16_t label) {
   if(label == 0 && !tam.alpha && tam.digitsSoFar == 0) {
     _clearProgram();
   }
@@ -294,6 +293,13 @@ void fnClP(uint16_t label) {
       moreInfoOnError("In function fnClP:", errorMessage, NULL, NULL);
     #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
   }
+}
+
+
+
+#if CLP_WITH_MENU != 0
+void fnClP(uint16_t label) {
+  fnClP2(label);
 }
 #else /* CLP_WITH_MENU != 0 */
 void fnClP(uint16_t confirmation) {

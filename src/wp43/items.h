@@ -1173,7 +1173,7 @@
   #define ITM_SUB_x                     1139
   #define ITM_SUB_y                     1140
   #define ITM_SUB_z                     1141
-  #define ITM_1142                      1142
+  #define ITM_DELITM_PROG               1142
   #define ITM_1143                      1143
   #define ITM_1144                      1144
   #define ITM_1145                      1145
