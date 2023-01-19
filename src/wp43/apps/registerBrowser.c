@@ -187,7 +187,7 @@ int16_t currentRegisterBrowserScreen;
           currentRegisterBrowserScreen = modulo(currentRegisterBrowserScreen - FIRST_LOCAL_REGISTER + 1, currentNumberOfLocalRegisters) + FIRST_LOCAL_REGISTER;
         }
         else if(rbrMode == RBR_NAMED) {
-          currentRegisterBrowserScreen = modulo(currentRegisterBrowserScreen - FIRST_NAMED_VARIABLE + 1, numberOfNamedVariables) + FIRST_NAMED_VARIABLE;
+          currentRegisterBrowserScreen = modulo(currentRegisterBrowserScreen - FIRST_NAMED_VARIABLE + 1, numberOfNamedVariables + LAST_RESERVED_VARIABLE - FIRST_RESERVED_VARIABLE - 11) + FIRST_NAMED_VARIABLE;
         }
         else {
           sprintf(errorMessage, "In function fnKeyUp: unexpected case while processing key UP! %" PRIu8 " is an unexpected value for rbrMode.", rbrMode);
@@ -204,7 +204,7 @@ int16_t currentRegisterBrowserScreen;
           currentRegisterBrowserScreen = modulo(currentRegisterBrowserScreen - FIRST_LOCAL_REGISTER - 1, currentNumberOfLocalRegisters) + FIRST_LOCAL_REGISTER;
         }
         else if(rbrMode == RBR_NAMED) {
-          currentRegisterBrowserScreen = modulo(currentRegisterBrowserScreen - 1000 - 1, numberOfNamedVariables) + 1000;
+          currentRegisterBrowserScreen = modulo(currentRegisterBrowserScreen - FIRST_NAMED_VARIABLE - 1, numberOfNamedVariables + LAST_RESERVED_VARIABLE - FIRST_RESERVED_VARIABLE - 11) + FIRST_NAMED_VARIABLE;
         }
         else {
           sprintf(errorMessage, "In function fnKeyDown: unexpected case while processing key DOWN! %" PRIu8 " is an unexpected value for rbrMode.", rbrMode);
@@ -219,20 +219,14 @@ int16_t currentRegisterBrowserScreen;
             rbrMode = RBR_LOCAL;
             currentRegisterBrowserScreen = FIRST_LOCAL_REGISTER;
           }
-          else if(numberOfNamedVariables > 0) {
+          else {
             rbrMode = RBR_NAMED;
             currentRegisterBrowserScreen = FIRST_NAMED_VARIABLE;
           }
         }
         else if(rbrMode == RBR_LOCAL) {
-          if(numberOfNamedVariables > 0) {
-            rbrMode = RBR_NAMED;
-            currentRegisterBrowserScreen = FIRST_NAMED_VARIABLE;
-          }
-          else {
-            rbrMode = RBR_GLOBAL;
-            currentRegisterBrowserScreen = REGISTER_X;
-          }
+          rbrMode = RBR_NAMED;
+          currentRegisterBrowserScreen = FIRST_NAMED_VARIABLE;
         }
         else if(rbrMode == RBR_NAMED) {
           rbrMode = RBR_GLOBAL;
@@ -253,6 +247,13 @@ int16_t currentRegisterBrowserScreen;
           calcModeLeave();
         }
         else if(rbrMode == RBR_NAMED) {
+          if(currentRegisterBrowserScreen >= FIRST_NAMED_VARIABLE + numberOfNamedVariables) { // Reserved variables
+            currentRegisterBrowserScreen -= FIRST_NAMED_VARIABLE + numberOfNamedVariables;
+            currentRegisterBrowserScreen += FIRST_RESERVED_VARIABLE + 12;
+          }
+          fnRecall(currentRegisterBrowserScreen);
+          setSystemFlag(FLAG_ASLIFT);
+          calcModeLeave();
         }
         break;
       }
@@ -357,8 +358,7 @@ int16_t currentRegisterBrowserScreen;
             // register number
             registerNameWidth = showString(tmpString, &standardFont, 1, 219 - 22 * row, vmNormal, true, true);
 
-            if(   (regist <  REGISTER_X && regist % 5 == 4)
-               || (regist >= REGISTER_X && regist % 4 == 3)) {
+            if(regist % 5 == 1) {
               lcd_fill_rect(0, 218 - 22 * row, SCREEN_WIDTH, 1, LCD_EMPTY_VALUE);
             }
 
@@ -371,6 +371,45 @@ int16_t currentRegisterBrowserScreen;
       else { // no local register allocated
         rbrMode = RBR_GLOBAL;
         _registerBrowserDraw();
+      }
+    }
+
+    else if(rbrMode == RBR_NAMED) { // Named variables
+      for(int16_t row=0; row<10; row++) {
+        calcRegister_t regist = currentRegisterBrowserScreen + row;
+        if(regist < FIRST_NAMED_VARIABLE + numberOfNamedVariables) { // Named variables
+          sprintf(tmpString, "%s:", (char *)allNamedVariables[regist - FIRST_NAMED_VARIABLE].variableName + 1);
+
+          // variable name
+          registerNameWidth = showString(tmpString, &standardFont, 1, 219 - 22 * row, vmNormal, true, true);
+
+          if((regist % 5 == 1) || (regist == FIRST_NAMED_VARIABLE + numberOfNamedVariables - 1)) {
+            lcd_fill_rect(0, 218 - 22 * row, SCREEN_WIDTH, 1, LCD_EMPTY_VALUE);
+          }
+
+          _showRegisterInRbr(regist, registerNameWidth);
+
+          showString(tmpString, &standardFont, SCREEN_WIDTH - stringWidth(tmpString, &standardFont, false, true), 219 - 22 * row, vmNormal, false, true);
+        }
+        else { // Reserved variables
+          regist -= FIRST_NAMED_VARIABLE + numberOfNamedVariables;
+          regist += FIRST_RESERVED_VARIABLE + 12;
+
+          if(regist <= LAST_RESERVED_VARIABLE) { // Named variables
+            sprintf(tmpString, "%s:", (char *)allReservedVariables[regist - FIRST_RESERVED_VARIABLE].reservedVariableName + 1);
+
+            // variable name
+            registerNameWidth = showString(tmpString, &standardFont, 1, 219 - 22 * row, vmNormal, true, true);
+
+            if(regist % 5 == 1) {
+              lcd_fill_rect(0, 218 - 22 * row, SCREEN_WIDTH, 1, LCD_EMPTY_VALUE);
+            }
+
+            _showRegisterInRbr(regist, registerNameWidth);
+
+            showString(tmpString, &standardFont, SCREEN_WIDTH - stringWidth(tmpString, &standardFont, false, true), 219 - 22 * row, vmNormal, false, true);
+          }
+        }
       }
     }
   }
