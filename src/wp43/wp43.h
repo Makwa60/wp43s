@@ -36,6 +36,7 @@
   #include "mathematics/pcg_basic.h"
   #include "realType.h"
   #include "typeDefinitions.h"
+  #include "apps/apps.h"
   #include <stdbool.h>
 
   // Variables for the simulator

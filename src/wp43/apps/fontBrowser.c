@@ -156,6 +156,7 @@ uint8_t currentFntScr;
 
 
   void fnFontBrowser(uint16_t unusedButMandatoryParameter) {
+    currentApp = appFontBrowser;
     appsEnter(glFlagFontBrowser, _fontBrowserKeyHandler, _fontBrowserDraw);
   }
 #endif // !TESTSUITE_BUILD

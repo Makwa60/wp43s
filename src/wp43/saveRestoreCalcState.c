@@ -3,6 +3,7 @@
 
 #include "saveRestoreCalcState.h"
 
+#include "apps/apps.h"
 #include "apps/bugScreen.h"
 #include "apps/flagBrowser.h"
 #include "apps/fontBrowser.h"
@@ -40,7 +41,7 @@
 
 #include "wp43.h"
 
-#define BACKUP_VERSION         86  // equationEditorCursor and equationEditorScrollPosition
+#define BACKUP_VERSION         87  // save running app
 #define START_REGISTER_VALUE 1000  // was 1522, why?
 
 #define configFileVersion       1
@@ -147,6 +148,7 @@ static uint32_t restore(void *buffer, uint32_t size) {
     save(&groupingGap,                        sizeof(groupingGap));
     save(&roundingMode,                       sizeof(roundingMode));
     save(&calcMode,                           sizeof(calcMode));
+    save(&currentApp,                         sizeof(currentApp));
     save(&nextChar,                           sizeof(nextChar));
     save(&alphaCase,                          sizeof(alphaCase));
     save(&hourGlassIconEnabled,               sizeof(hourGlassIconEnabled));
@@ -405,6 +407,7 @@ static uint32_t restore(void *buffer, uint32_t size) {
       restore(&groupingGap,                        sizeof(groupingGap));
       restore(&roundingMode,                       sizeof(roundingMode));
       restore(&calcMode,                           sizeof(calcMode));
+      restore(&currentApp,                         sizeof(currentApp));
       restore(&nextChar,                           sizeof(nextChar));
       restore(&alphaCase,                          sizeof(alphaCase));
       restore(&hourGlassIconEnabled,               sizeof(hourGlassIconEnabled));
@@ -556,6 +559,32 @@ static uint32_t restore(void *buffer, uint32_t size) {
 
       ioFileClose();
       printf("End of calc's restoration\n");
+
+      if(calcMode == cmApp) {
+        calcModeLeave();
+        switch(currentApp) {
+          case appRegisterBrowser: {
+            fnRegisterBrowser(NOPARAM);
+            break;
+          }
+          case appFlagBrowser: {
+            fnFlagBrowser(NOPARAM);
+            break;
+          }
+          case appFontBrowser: {
+            fnFontBrowser(NOPARAM);
+            break;
+          }
+          case appBugScreen: {
+            bugScreen("In function restoreCalc: Error message that was here was not saved!");
+            break;
+          }
+          default: {
+            bugScreen("In function restoreCalc: unrecognized app ID!");
+            break;
+          }
+        }
+      }
 
       if(currentProgramNumber >= (numberOfPrograms - numberOfProgramsInFlash)) {
         currentStep.flash = 1;

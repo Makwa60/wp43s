@@ -86,6 +86,7 @@
 
 
   void bugScreen(const char *msg) {
+    currentApp = appBugScreen;
     _bugScreenMsg = msg;
     appsEnter(glFlagFontBrowser, _bugScreenKeyHandler, _bugScreenDraw);
   }

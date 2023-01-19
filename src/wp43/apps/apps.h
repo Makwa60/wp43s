@@ -14,6 +14,19 @@
   // Interface for other modules
 
   /**
+   * App identifier
+   */
+  typedef enum {
+    appNone            = 0,
+    appRegisterBrowser = 1,
+    appFlagBrowser     = 2,
+    appFontBrowser     = 3,
+    appBugScreen       = 4,
+  } appId_t;
+  extern appId_t currentApp;
+
+
+  /**
    * Handles a key press when in app mode.
    * It should be assumed that the app will completely handle the key
    * press and no work need be done elsewhere related to this key press.

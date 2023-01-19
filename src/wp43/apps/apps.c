@@ -15,6 +15,8 @@ static guiLayout_t      _appsLayout;
 static appsKeyHandler_t _appsKeyHandler;
 static appsDraw_t       _appsDraw;
 
+appId_t                 currentApp;
+
 static bool _appsHandleKeyDefault(int16_t item) {
   switch(item) {
     case ITM_BACKSPACE:
