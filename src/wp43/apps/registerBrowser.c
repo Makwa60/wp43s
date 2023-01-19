@@ -417,6 +417,7 @@ int16_t currentRegisterBrowserScreen;
 
 
   void fnRegisterBrowser(uint16_t unusedButMandatoryParameter) {
+    currentApp = appRegisterBrowser;
     appsEnter(glRegisterBrowser, _registerBrowserKeyHandler, _registerBrowserDraw);
   }
 #endif // !TESTSUITE_BUILD

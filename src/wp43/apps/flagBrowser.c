@@ -302,6 +302,7 @@ flagScreen_t flagScreen;
 
 
   void fnFlagBrowser(uint16_t unusedButMandatoryParameter) {
+    currentApp = appFlagBrowser;
     flagScreen = fsUninitialized;
     appsEnter(glFlagFontBrowser, _flagBrowserKeyHandler, _flagBrowserDraw);
   }
