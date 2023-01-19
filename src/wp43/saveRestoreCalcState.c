@@ -1928,10 +1928,10 @@ void doLoad(uint16_t loadMode, uint16_t s, uint16_t n, uint16_t d) {
     }
   }
 
-  if(loadMode != LM_ALL || loadedVersion == configFileVersion) {
+  //if(loadMode != LM_ALL || loadedVersion == configFileVersion) {
     while(restoreOneSection(loadMode, s, n, d)) {
     }
-  }
+  //}
 
   lastErrorCode = ERROR_NONE;
 
