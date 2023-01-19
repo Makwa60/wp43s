@@ -302,6 +302,9 @@
       case tmIntegrate: {
         return "Integrat";
       }
+      case tmDelItem: {
+        return "DelItem ";
+      }
       case tmCmp: {
         return "Cmp     ";
       }
