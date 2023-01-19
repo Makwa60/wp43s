@@ -811,7 +811,7 @@ void tamReset(void) {
         }
       }
       else if(tam.mode == tmDelItem && softmenu[softmenuStack[0].softmenuId].menuItem == -MNU_MENUS) {
-        value = currentUserMenu;
+        value = tam.value;
       }
       else if(tryAllocate) {
         value = findOrAllocateNamedVariable(buffer);

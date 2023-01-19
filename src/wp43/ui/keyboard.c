@@ -181,7 +181,7 @@ bool      _kbSeenInterrupt     = false;
             if(compareString((char *)getNthString(dynamicSoftmenu[menuId].menuContent, dynamicMenuItem), indexOfItems[-softmenu[i].menuItem].itemCatalogName, CMP_NAME) == 0) {
               if(tamIsActive() && tam.mode == tmDelItem) {
                 item = MNU_DYNAMIC;
-                currentUserMenu = numberOfUserMenus;
+                tam.value = numberOfUserMenus;
               }
               else {
                 item = softmenu[i].menuItem;
@@ -192,7 +192,7 @@ bool      _kbSeenInterrupt     = false;
             if(compareString((char *)getNthString(dynamicSoftmenu[menuId].menuContent, dynamicMenuItem), userMenus[i].menuName, CMP_NAME) == 0) {
               if(tamIsActive() && tam.mode == tmDelItem) {
                 item = MNU_DYNAMIC;
-                currentUserMenu = i;
+                tam.value = i;
               }
               else {
                 item = -MNU_DYNAMIC;
