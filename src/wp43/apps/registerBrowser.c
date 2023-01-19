@@ -158,7 +158,7 @@ int16_t currentRegisterBrowserScreen;
 
 
   static bool _registerBrowserKeyHandler(int16_t item) {
-    if(ITM_0 <= item && item <= ITM_9 && (rbrMode == RBR_GLOBAL || rbrMode == RBR_LOCAL)) {
+    if(ITM_0 <= item && item <= ITM_9) {
       if(rbr1stDigit) {
         rbr1stDigit = false;
         rbrRegister = item - ITM_0;
@@ -167,12 +167,21 @@ int16_t currentRegisterBrowserScreen;
         rbr1stDigit = true;
         rbrRegister = rbrRegister*10 + item - ITM_0;
 
-        if(rbrMode == RBR_GLOBAL) {
-          currentRegisterBrowserScreen = rbrRegister;
-        }
-        else {
-          rbrRegister = (rbrRegister >= currentNumberOfLocalRegisters ? 0 : rbrRegister);
-          currentRegisterBrowserScreen = FIRST_LOCAL_REGISTER + rbrRegister;
+        switch(rbrMode) {
+          case RBR_GLOBAL: {
+            currentRegisterBrowserScreen = rbrRegister;
+            break;
+          }
+          case RBR_LOCAL: {
+            rbrRegister = (rbrRegister >= currentNumberOfLocalRegisters ? 0 : rbrRegister);
+            currentRegisterBrowserScreen = FIRST_LOCAL_REGISTER + rbrRegister;
+            break;
+          }
+          case RBR_NAMED: {
+            rbrMode = RBR_GLOBAL;
+            currentRegisterBrowserScreen = rbrRegister;
+            break;
+          }
         }
       }
       return true;
@@ -257,8 +266,36 @@ int16_t currentRegisterBrowserScreen;
         }
         break;
       }
-      default:
+      default: {
+        for(int i = 0; i < 37; ++i) {
+          const calcKey_t *key = getSystemFlag(FLAG_USER) ? &kbd_usr[i] : &kbd_std[i];
+          if(key->primary == item) {
+            switch(key->primaryAim) {
+              case ITM_A:
+              case ITM_B:
+              case ITM_C:
+              case ITM_D: {
+                rbrMode = RBR_GLOBAL;
+                currentRegisterBrowserScreen = key->primaryAim - ITM_A + REGISTER_A;
+                return true;
+              }
+              case ITM_L: {
+                rbrMode = RBR_GLOBAL;
+                currentRegisterBrowserScreen = REGISTER_L;
+                return true;
+              }
+              case ITM_I:
+              case ITM_J:
+              case ITM_K: {
+                rbrMode = RBR_GLOBAL;
+                currentRegisterBrowserScreen = key->primaryAim - ITM_I + REGISTER_I;
+                return true;
+              }
+            }
+          }
+        }
         return false;
+      }
     }
     return true;
   }
