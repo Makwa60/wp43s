@@ -58,7 +58,11 @@ int16_t currentRegisterBrowserScreen;
 
       case dtLongInteger: {
         if(showContent) {
-          if(getRegisterLongIntegerSign(regist) == liNegative) {
+          if(regist >= FIRST_RESERVED_VARIABLE) {
+            copySourceRegisterToDestRegister(regist, TEMP_REGISTER_1);
+            longIntegerRegisterToDisplayString(TEMP_REGISTER_1, tmpString, TMP_STR_LENGTH, SCREEN_WIDTH - 1 - registerNameWidth, 50, STD_SPACE_4_PER_EM);
+          }
+          else if(getRegisterLongIntegerSign(regist) == liNegative) {
             longIntegerRegisterToDisplayString(regist, tmpString, TMP_STR_LENGTH, SCREEN_WIDTH - 1 - registerNameWidth, 50, STD_SPACE_4_PER_EM);
           }
           else {
@@ -66,7 +70,12 @@ int16_t currentRegisterBrowserScreen;
           }
         }
         else {
-          sprintf(tmpString, "%" PRIu32 " bits " STD_CORRESPONDS_TO " 4+%" PRIu32 " bytes", (uint32_t)TO_BYTES(getRegisterMaxDataLength(regist)) * 8, (uint32_t)TO_BYTES(getRegisterMaxDataLength(regist)));
+          if(regist >= FIRST_RESERVED_VARIABLE) {
+            sprintf(tmpString, "4 bytes");
+          }
+          else {
+            sprintf(tmpString, "%" PRIu32 " bits " STD_CORRESPONDS_TO " 4+%" PRIu32 " bytes", (uint32_t)TO_BYTES(getRegisterMaxDataLength(regist)) * 8, (uint32_t)TO_BYTES(getRegisterMaxDataLength(regist)));
+          }
         }
         break;
       }
