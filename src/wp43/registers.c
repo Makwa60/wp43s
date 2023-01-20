@@ -767,7 +767,7 @@ calcRegister_t findOrAllocateNamedVariable(const char *variableName) {
 void fnDeleteVariable(uint16_t regist) {
   if(regist >= FIRST_NAMED_VARIABLE && regist < (FIRST_NAMED_VARIABLE + numberOfNamedVariables)) {
     freeRegisterData(regist);
-    for(uint16_t i = (regist - FIRST_NAMED_VARIABLE); i < (numberOfNamedVariables - 1); --i) {
+    for(uint16_t i = (regist - FIRST_NAMED_VARIABLE); i < (numberOfNamedVariables - 1); ++i) {
       allNamedVariables[i] = allNamedVariables[i + 1];
     }
     allNamedVariables[numberOfNamedVariables - 1].header.descriptor = 0;
