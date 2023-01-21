@@ -125,7 +125,7 @@ release:
         --assets-link "{\"name\":\"Windows Simulator\",\"url\":\"${PACKAGE_REGISTRY_URL}/wp43-windows-${CI_COMMIT_TAG}.zip\"}" \
         --assets-link "{\"name\":\"Firmware for DMCP\",\"url\":\"${PACKAGE_REGISTRY_URL}/wp43-dmcp-${CI_COMMIT_TAG}.zip\"}" \
         --assets-link "{\"name\":\"Reference Manual\",\"url\":\"${PACKAGE_REGISTRY_URL}/wp43-reference-manual-${CI_COMMIT_TAG}.pdf\"}" \
-        --assets-link "{\"name\":\"Owner's Manual\",\"url\":\"${PACKAGE_REGISTRY_URL}/wp43-owners-manual-${CI_COMMIT_TAG}.pdf\"}"
+        --assets-link "{\"name\":\"Owner's Manual\",\"url\":\"${PACKAGE_REGISTRY_URL}/wp43-owners-manual-${CI_COMMIT_TAG}.pdf\"}" \
         --assets-link "{\"name\":\"Addenda and Corrigenda\",\"url\":\"${PACKAGE_REGISTRY_URL}/wp43-manual-addenda-and-corrigenda-${CI_COMMIT_TAG}.md\"}"
   tags:
     - saas-linux-small-amd64
