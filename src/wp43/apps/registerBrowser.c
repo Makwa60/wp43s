@@ -233,7 +233,7 @@ int16_t currentRegisterBrowserScreen;
       case ITM_PERIOD: {
         rbr1stDigit = true;
         if(rbrMode == RBR_GLOBAL) {
-          if(currentLocalRegisters != NULL) {
+          if(currentNumberOfLocalRegisters != 0) {
             rbrMode = RBR_LOCAL;
             currentRegisterBrowserScreen = FIRST_LOCAL_REGISTER;
           }
@@ -438,8 +438,10 @@ int16_t currentRegisterBrowserScreen;
           showString(tmpString, &standardFont, SCREEN_WIDTH - stringWidth(tmpString, &standardFont, false, true), 219 - 22 * row, vmNormal, false, true);
         }
         else { // Reserved variables
-          regist -= FIRST_NAMED_VARIABLE + numberOfNamedVariables;
-          regist += FIRST_RESERVED_VARIABLE + 12;
+          if(regist < FIRST_RESERVED_VARIABLE) {
+            regist -= FIRST_NAMED_VARIABLE + numberOfNamedVariables;
+            regist += FIRST_RESERVED_VARIABLE + 12;
+          }
 
           if(regist <= LAST_RESERVED_VARIABLE) { // Named variables
             sprintf(tmpString, "%s:", (char *)allReservedVariables[regist - FIRST_RESERVED_VARIABLE].reservedVariableName + 1);
