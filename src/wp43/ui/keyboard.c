@@ -307,7 +307,8 @@ bool      _kbSeenInterrupt     = false;
         case MNU_TAMSTORCL:
         case MNU_TAMFLAG:
         case MNU_TAMSHUFFLE:
-        case MNU_TAMLABEL: {
+        case MNU_TAMLABEL:
+        case ITM_DELITM: {
           // TAM menus are processed elsewhere
           break;
         }
