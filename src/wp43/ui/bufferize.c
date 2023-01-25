@@ -305,7 +305,7 @@
         screenUpdatingMode &= ~(SCRUPD_MANUAL_STACK | SCRUPD_MANUAL_SHIFT_STATUS);
       }
       currentSolverStatus &= ~SOLVER_STATUS_READY_TO_EXECUTE;
-      if(calcMode == cmNormal && fnKeyInCatalog && isAlphabeticSoftmenu()) {
+      if(calcMode == cmNormal && fnKeyInCatalog && isAlphabeticSoftmenu() && !tamIsActive()) {
         fnAim(NOPARAM);
       }
       if((fnKeyInCatalog || !catalog || catalog == CATALOG_MVAR) && (((calcMode == cmAim || calcMode == cmEim) && !tamIsActive()) || tam.alpha)) {
