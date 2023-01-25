@@ -1804,14 +1804,14 @@ void fnScreenDump(uint16_t unusedButMandatoryParameter) {
 
 
 #if !defined(TESTSUITE_BUILD)
-  static int32_t _getPositionFromRegister(calcRegister_t regist, int16_t maxValue) {
+  static int32_t _getPositionFromRegister(calcRegister_t regist, int16_t maxValuePlusOne) {
     int32_t value;
 
     if(getRegisterDataType(regist) == dtReal34) {
       real34_t maxValue34;
 
-      int32ToReal34(maxValue, &maxValue34);
-      if(real34CompareLessThan(REGISTER_REAL34_DATA(regist), const34_0) || real34CompareLessThan(&maxValue34, REGISTER_REAL34_DATA(regist))) {
+      int32ToReal34(maxValuePlusOne, &maxValue34);
+      if(real34CompareLessThan(REGISTER_REAL34_DATA(regist), const34_0) || real34CompareLessEqual(&maxValue34, REGISTER_REAL34_DATA(regist))) {
         displayCalcErrorMessage(ERROR_OUT_OF_RANGE, ERR_REGISTER_LINE, REGISTER_X);
         #if (EXTRA_INFO_ON_CALC_ERROR == 1)
           real34ToString(REGISTER_REAL34_DATA(regist), errorMessage);
@@ -1826,7 +1826,7 @@ void fnScreenDump(uint16_t unusedButMandatoryParameter) {
       longInteger_t lgInt;
 
       convertLongIntegerRegisterToLongInteger(regist, lgInt);
-      if(longIntegerCompareUInt(lgInt, 0) < 0 || longIntegerCompareUInt(lgInt, maxValue) > 0) {
+      if(longIntegerCompareUInt(lgInt, 0) < 0 || longIntegerCompareUInt(lgInt, maxValuePlusOne) >= 0) {
         displayCalcErrorMessage(ERROR_OUT_OF_RANGE, ERR_REGISTER_LINE, REGISTER_X);
         #if (EXTRA_INFO_ON_CALC_ERROR == 1)
           longIntegerToAllocatedString(lgInt, errorMessage, ERROR_MESSAGE_LENGTH);
@@ -1851,8 +1851,8 @@ void fnScreenDump(uint16_t unusedButMandatoryParameter) {
 
 
 static void getPixelPos(int32_t *x, int32_t *y) {
-  *x = _getPositionFromRegister(REGISTER_X, SCREEN_WIDTH  - 1);
-  *y = _getPositionFromRegister(REGISTER_Y, SCREEN_HEIGHT - 1);
+  *x = _getPositionFromRegister(REGISTER_X, SCREEN_WIDTH);
+  *y = _getPositionFromRegister(REGISTER_Y, SCREEN_HEIGHT);
 }
 #endif // !TESTSUITE_BUILD
 
