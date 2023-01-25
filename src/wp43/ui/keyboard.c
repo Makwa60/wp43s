@@ -1208,7 +1208,12 @@ bool      _kbSeenInterrupt     = false;
         }
         else if(tamIsActive()) {
           if(tam.alpha) {
-            processAimInput(item);
+            if(indexOfItems[item].func == addItemToBuffer) {
+              processAimInput(item);
+            }
+            else {
+              keyActionProcessed = true;
+            }
           }
           else {
             addItemToBuffer(item);
