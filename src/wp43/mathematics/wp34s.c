@@ -7,6 +7,7 @@
 #include "conversionAngles.h"
 #include "distributions/normal.h"
 #include "mathematics/comparisonReals.h"
+#include "mathematics/cos.h"
 #include "mathematics/division.h"
 #include "mathematics/exp.h"
 #include "mathematics/ln.h"
@@ -118,7 +119,28 @@ void WP34S_Cvt2RadSinCosTan(const real_t *an, angularMode_t angularMode, real_t 
     }
 
     convertAngleFromTo(&angle, angularMode, amRadian, realContext);
-    WP34S_SinCosTanTaylor(&angle, swap, swap?cosOut:sinOut, swap?sinOut:cosOut, tanOut, realContext); // angle in radian
+    #if USE_REAL34_FUNCTIONS == 1
+      if(savedContextDigits <= 34) {
+        real34_t angle34, s34, c34, t34;
+        realToReal34(&angle, &angle34);
+        if((swap?cosOut:sinOut) != NULL) {
+          real34Sin(&angle34, &s34);
+          real34ToReal(&s34, (swap?cosOut:sinOut));
+        }
+        if((swap?sinOut:cosOut) != NULL) {
+          real34Cos(&angle34, &c34);
+          real34ToReal(&c34, (swap?sinOut:cosOut));
+        }
+        if(sinOut != NULL && cosOut != NULL && tanOut != NULL) {
+          real34Divide(swap?&c34:&s34, swap?&s34:&c34, &t34);
+          real34ToReal(&t34, tanOut);
+        }
+      }
+      else
+    #endif // USE_REAL34_FUNCTIONS == 1
+    {
+      WP34S_SinCosTanTaylor(&angle, swap, swap?cosOut:sinOut, swap?sinOut:cosOut, tanOut, realContext); // angle in radian
+    }
   }
 
   realContext->digits = savedContextDigits;

@@ -24,6 +24,7 @@
   void cosCxma (void);
   void cosReal (void);
   void cosCplx (void);
+  void real34Cos (const real34_t *x, real34_t *res);
   void cosComplex(const real_t *real, const real_t *imag, real_t *resReal, real_t *resImag, realContext_t *realContext);
 
 #endif // !COS_H

@@ -3,10 +3,12 @@
 
 #include "mathematics/sin.h"
 
+#include "conversionAngles.h"
 #include "constantPointers.h"
 #include "debug.h"
 #include "error.h"
 #include "items.h"
+#include "lookupTables.h"
 #include "mathematics/matrix.h"
 #include "mathematics/tan.h"
 #include "mathematics/wp34s.h"
@@ -58,6 +60,40 @@ void fnSin(uint16_t unusedButMandatoryParameter) {
 
 
 
+void real34Sin(const real34_t *x, real34_t *res) {
+  real34_t angle, angle2, k, s, compare;
+  int32_t i = 1;
+
+  if(real34IsSpecial(x)) {
+    realToReal34(const_NaN, res);
+  }
+  else {
+    real34Copy(x, &angle);
+    real34Multiply(&angle, &angle, &angle2);
+    real34Copy(&angle, res);
+    real34Copy(&angle, &k);
+    real34Copy(&angle, &s);
+    do {
+      real34Multiply(&k, &angle2, &k);
+      if(i < 100) {
+        real34Multiply(&k, reciprocalsOfOddP2_34 + i, &k);
+      }
+      else {
+        real34_t nx2p1;
+        int32ToReal34(i * 2,     &nx2p1); real34Divide(&k, &nx2p1, &k);
+        int32ToReal34(i * 2 + 1, &nx2p1); real34Divide(&k, &nx2p1, &k);
+      }
+      ++i;
+      real34ChangeSign(&k);
+      real34Copy(res, &s);
+      real34Add(res, &k, res);
+      real34Compare(res, &s, &compare);
+    } while(!real34IsZero(&compare));
+  }
+}
+
+
+
 void sinComplex(const real_t *real, const real_t *imag, real_t *resReal, real_t *resImag, realContext_t *realContext) {
   // sin(a + ib) = sin(a)*cosh(b) + i*cos(a)*sinh(b)
   real_t sina, cosa, sinhb, coshb;
@@ -75,22 +111,21 @@ void sinLonI(void) {
   real_t x;
 
   if(currentAngularMode == amMultPi) {
-    longInteger_t lgInt;
-    convertLongIntegerRegisterToLongInteger(REGISTER_X, lgInt);
-    if(longIntegerIsEven(lgInt)) {
-      realZero(&x);
-    }
-    else {
-      realPlus(const_pi, &x, &ctxtReal39);
-    }
+    reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
+    real34Zero(REGISTER_REAL34_DATA(REGISTER_X));
   }
   else {
     longIntegerAngleReduction(REGISTER_X, currentAngularMode, &x);
+    WP34S_Cvt2RadSinCosTan(&x, currentAngularMode, &x, NULL, NULL,
+      #if USE_REAL34_FUNCTIONS == 1
+        &ctxtReal34
+      #else // USE_REAL34_FUNCTIONS != 1
+        &ctxtReal39
+      #endif // USE_REAL34_FUNCTIONS == 1
+    );
+    reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
+    convertRealToReal34ResultRegister(&x, REGISTER_X);
   }
-  WP34S_Cvt2RadSinCosTan(&x, currentAngularMode, &x, NULL, NULL, &ctxtReal39);
-
-  reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
-  convertRealToReal34ResultRegister(&x, REGISTER_X);
 }
 
 
@@ -118,11 +153,18 @@ void sinReal(void) {
     real34ToReal(REGISTER_REAL34_DATA(REGISTER_X), &x);
     xAngularMode = getRegisterAngularMode(REGISTER_X);
 
+
     if(xAngularMode == amNone && currentAngularMode == amMultPi) {
       realMultiply(&x, const_pi, &x, &ctxtReal39);
     }
 
-    WP34S_Cvt2RadSinCosTan(&x, (xAngularMode == amNone ? currentAngularMode : xAngularMode), &x, NULL, NULL, &ctxtReal39);
+    WP34S_Cvt2RadSinCosTan(&x, (xAngularMode == amNone ? currentAngularMode : xAngularMode), &x, NULL, NULL,
+      #if USE_REAL34_FUNCTIONS == 1
+        &ctxtReal34
+      #else // USE_REAL34_FUNCTIONS != 1
+        &ctxtReal39
+      #endif // USE_REAL34_FUNCTIONS == 1
+    );
     convertRealToReal34ResultRegister(&x, REGISTER_X);
   }
   setRegisterAngularMode(REGISTER_X, amNone);

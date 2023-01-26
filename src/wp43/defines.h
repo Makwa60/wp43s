@@ -20,6 +20,7 @@
   #define MAX_LONG_INTEGER_SIZE_IN_BITS 3328 // 1001 decimal digits: 3328 ≃ log2(10^1001)
   #define SHORT_INTEGER_SIZE_IN_BYTES      8 // 8 bytes = 64 bits
   #define CLP_WITH_MENU                    0 // CLP shows menu (more like 42S than WP34S)
+  #define USE_REAL34_FUNCTIONS             1 // Set to 1 for faster functions, or 0 for more precise ones
 
   #define DECNUMDIGITS                    75 // Default number of digits used in the decNumber library
 

@@ -37,6 +37,7 @@ sim: build.sim testPgms
 	cp build.sim/src/generateCatalogs/softmenuCatalogs.h src/generated/
 	cp build.sim/src/generateConstants/constantPointers.* src/generated/
 	cp build.sim/src/ttf2RasterFonts/rasterFontsData.c src/generated/
+	cp build.sim/src/generateLookupTables/lookupTables.* src/generated/
 
 release: build.rel testPgms
 	cd build.rel && ninja sim
@@ -44,6 +45,7 @@ release: build.rel testPgms
 	cp build.rel/src/generateCatalogs/softmenuCatalogs.h src/generated/
 	cp build.rel/src/generateConstants/constantPointers.* src/generated/
 	cp build.rel/src/ttf2RasterFonts/rasterFontsData.c src/generated/
+	cp build.rel/src/generateLookupTables/lookupTables.* src/generated/
 
 test: build.sim
 	cd build.sim && ninja test

@@ -3,10 +3,12 @@
 
 #include "mathematics/cos.h"
 
+#include "conversionAngles.h"
 #include "constantPointers.h"
 #include "debug.h"
 #include "error.h"
 #include "items.h"
+#include "lookupTables.h"
 #include "mathematics/matrix.h"
 #include "mathematics/tan.h"
 #include "mathematics/wp34s.h"
@@ -48,6 +50,40 @@ void fnCos(uint16_t unusedButMandatoryParameter) {
 
 
 
+void real34Cos(const real34_t *x, real34_t *res) {
+  real34_t angle, angle2, k, s, compare;
+  int32_t i = 1;
+
+  if(real34IsSpecial(x)) {
+    realToReal34(const_NaN, res);
+  }
+  else {
+    real34Copy(x, &angle);
+    real34Multiply(&angle, &angle, &angle2);
+    real34Copy(const34_1, res);
+    real34Copy(const34_1, &k);
+    real34Copy(const34_1, &s);
+    do {
+      real34Multiply(&k, &angle2, &k);
+      if(i < 100) {
+        real34Multiply(&k, reciprocalsOfEvenP2_34 + i, &k);
+      }
+      else {
+        real34_t nx2p1;
+        int32ToReal34(i * 2 - 1, &nx2p1); real34Divide(&k, &nx2p1, &k);
+        int32ToReal34(i * 2,     &nx2p1); real34Divide(&k, &nx2p1, &k);
+      }
+      ++i;
+      real34ChangeSign(&k);
+      real34Copy(res, &s);
+      real34Add(res, &k, res);
+      real34Compare(res, &s, &compare);
+    } while(!real34IsZero(&compare));
+  }
+}
+
+
+
 void cosComplex(const real_t *real, const real_t *imag, real_t *resReal, real_t *resImag, realContext_t *realContext) {
   // cos(a + i b) = cos(a)*cosh(b) - i*sin(a)*sinh(b)
   real_t sina, cosa, sinhb, coshb;
@@ -69,19 +105,28 @@ void cosLonI(void) {
     longInteger_t lgInt;
     convertLongIntegerRegisterToLongInteger(REGISTER_X, lgInt);
     if(longIntegerIsEven(lgInt)) {
-      realZero(&x);
+      reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
+      real34Copy(const34_1, REGISTER_REAL34_DATA(REGISTER_X));
     }
     else {
-      realPlus(const_pi, &x, &ctxtReal39);
+      reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
+      real34Copy(const34_1, REGISTER_REAL34_DATA(REGISTER_X));
+      real34ChangeSign(REGISTER_REAL34_DATA(REGISTER_X));
     }
+    longIntegerFree(lgInt);
   }
   else {
     longIntegerAngleReduction(REGISTER_X, currentAngularMode, &x);
+    WP34S_Cvt2RadSinCosTan(&x, currentAngularMode, NULL, &x, NULL,
+      #if USE_REAL34_FUNCTIONS == 1
+        &ctxtReal34
+      #else // USE_REAL34_FUNCTIONS != 1
+        &ctxtReal39
+      #endif // USE_REAL34_FUNCTIONS == 1
+    );
+    reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
+    convertRealToReal34ResultRegister(&x, REGISTER_X);
   }
-  WP34S_Cvt2RadSinCosTan(&x, currentAngularMode, NULL, &x, NULL, &ctxtReal39);
-
-  reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
-  convertRealToReal34ResultRegister(&x, REGISTER_X);
 }
 
 
@@ -113,7 +158,13 @@ void cosReal(void) {
       realMultiply(&x, const_pi, &x, &ctxtReal39);
     }
 
-    WP34S_Cvt2RadSinCosTan(&x, (xAngularMode == amNone ? currentAngularMode : xAngularMode), NULL, &x, NULL, &ctxtReal39);
+    WP34S_Cvt2RadSinCosTan(&x, (xAngularMode == amNone ? currentAngularMode : xAngularMode), NULL, &x, NULL,
+      #if USE_REAL34_FUNCTIONS == 1
+        &ctxtReal34
+      #else // USE_REAL34_FUNCTIONS != 1
+        &ctxtReal39
+      #endif // USE_REAL34_FUNCTIONS == 1
+    );
     convertRealToReal34ResultRegister(&x, REGISTER_X);
   }
   setRegisterAngularMode(REGISTER_X, amNone);

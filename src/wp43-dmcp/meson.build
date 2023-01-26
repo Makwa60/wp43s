@@ -24,7 +24,7 @@ wp43_lib = static_library(
   build_by_default    : false,
   sources             : decNumber_src + wp43_src + wp43_dmcp_src +
                         [rasterFontsData_c, softmenuCatalogs_h,
-                          constantPointers_ch, vcs_h, version_h],
+                          constantPointers_ch, lookupTables_ch, vcs_h, version_h],
   c_args              : dmcp_cargs,
   include_directories : [decNumber_inc, wp43_inc, dmcp_inc],
   dependencies        : arm_gmp_dep,
