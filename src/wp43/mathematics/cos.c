@@ -7,6 +7,7 @@
 #include "constantPointers.h"
 #include "debug.h"
 #include "error.h"
+#include "flags.h"
 #include "items.h"
 #include "lookupTables.h"
 #include "mathematics/matrix.h"
@@ -119,10 +120,9 @@ void cosLonI(void) {
     longIntegerAngleReduction(REGISTER_X, currentAngularMode, &x);
     WP34S_Cvt2RadSinCosTan(&x, currentAngularMode, NULL, &x, NULL,
       #if USE_REAL34_FUNCTIONS == 1
-        &ctxtReal34
-      #else // USE_REAL34_FUNCTIONS != 1
-        &ctxtReal39
+        getSystemFlag(FLAG_FASTFN) ? &ctxtReal34 :
       #endif // USE_REAL34_FUNCTIONS == 1
+      &ctxtReal39
     );
     reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
     convertRealToReal34ResultRegister(&x, REGISTER_X);
@@ -160,10 +160,9 @@ void cosReal(void) {
 
     WP34S_Cvt2RadSinCosTan(&x, (xAngularMode == amNone ? currentAngularMode : xAngularMode), NULL, &x, NULL,
       #if USE_REAL34_FUNCTIONS == 1
-        &ctxtReal34
-      #else // USE_REAL34_FUNCTIONS != 1
-        &ctxtReal39
+        getSystemFlag(FLAG_FASTFN) ? &ctxtReal34 :
       #endif // USE_REAL34_FUNCTIONS == 1
+      &ctxtReal39
     );
     convertRealToReal34ResultRegister(&x, REGISTER_X);
   }

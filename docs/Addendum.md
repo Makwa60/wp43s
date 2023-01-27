@@ -19,6 +19,20 @@ _add_ <q>If pressed while _named variables_ are displayed, it jumps to the corre
 Reference Manual
 ----------------
 
+**Page 94, Names of System Variables and System Flags:**
+_add:_
+
+| _Name_ | Keystrokes | Remarks                            |
+|--------|------------|------------------------------------|
+| FASTFN |            | _System flags_ – see next chapter. |
+
+**Pages 96 to 100, Purposes of System Flags:**
+_add:_
+
+| Purpose         | _SBI_ | _Flag_ | Remarks                                                                                                                                                              |
+|-----------------|:-----:|:------:|----------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Faster function |   —   | FASTFN | If set, your _WP43_ calculates faster without using internal float of extended precision. This is a tradeoff between speed and precision. Affects sin, cos, and tan. |
+
 **Page 177, Appendix C, error 27:**
 _add_ <q>Cannot delete a predefined item</q> _in the leftmost blank field,
 and change its explanations in the rightmost field to_ <q>Self-explanatory</q>.

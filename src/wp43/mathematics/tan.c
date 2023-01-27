@@ -106,10 +106,9 @@ void tanLonI(void) {
   }
   WP34S_Cvt2RadSinCosTan(&tan, currentAngularMode, &sin, &cos, &tan,
     #if USE_REAL34_FUNCTIONS == 1
-      &ctxtReal34
-    #else // USE_REAL34_FUNCTIONS != 1
-      &ctxtReal39
+      getSystemFlag(FLAG_FASTFN) ? &ctxtReal34 :
     #endif // USE_REAL34_FUNCTIONS == 1
+    &ctxtReal39
   );
 
   if(realIsZero(&cos) && !getSystemFlag(FLAG_SPCRES)) {
@@ -157,10 +156,9 @@ void tanReal(void) {
 
     WP34S_Cvt2RadSinCosTan(&tan, (xAngularMode == amNone ? currentAngularMode : xAngularMode), &sin, &cos, &tan,
       #if USE_REAL34_FUNCTIONS == 1
-        &ctxtReal34
-      #else // USE_REAL34_FUNCTIONS != 1
-        &ctxtReal39
+        getSystemFlag(FLAG_FASTFN) ? &ctxtReal34 :
       #endif // USE_REAL34_FUNCTIONS == 1
+      &ctxtReal39
     );
 
     if(realIsZero(&cos) && !getSystemFlag(FLAG_SPCRES)) {

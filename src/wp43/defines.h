@@ -141,7 +141,12 @@
   #define FLAG_USB                              0xc028
   #define FLAG_ENDPMT                           0xc029
   #define FLAG_FRCSRN                           0x802a
-  #define NUMBER_OF_SYSTEM_FLAGS                    43
+  #if USE_REAL34_FUNCTIONS == 1
+    #define FLAG_FASTFN                         0x802b
+    #define NUMBER_OF_SYSTEM_FLAGS                  44
+  #else // USE_REAL34_FUNCTIONS == 1
+    #define NUMBER_OF_SYSTEM_FLAGS                  43
+  #endif // USE_REAL34_FUNCTIONS == 1
 
   #define TAM_MAX_BITS                              14
   #define TAM_MAX_MASK                          0x3fff
