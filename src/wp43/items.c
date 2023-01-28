@@ -1336,7 +1336,7 @@ TO_QSPI const item_t indexOfItems[] = {
 /*  504 */  { fnGetSystemFlag,              FLAG_ENDPMT,                 "ENDPMT",                                      "ENDPMT",                                      (0 << TAM_MAX_BITS) |     0, CAT_SYFL | SLS_ENABLED   | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
 /*  505 */  { fnGetSystemFlag,              FLAG_FRCSRN,                 "FRCSRN",                                      "FRCSRN",                                      (0 << TAM_MAX_BITS) |     0, CAT_SYFL | SLS_ENABLED   | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
 #if USE_REAL34_FUNCTIONS == 1
-/*  506 */  { itemToBeCoded,                NOPARAM,                     "FASTFN",                                      "FASTFN",                                      (0 << TAM_MAX_BITS) |     0, CAT_SYFL | SLS_ENABLED   | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
+/*  506 */  { fnGetSystemFlag,              FLAG_FASTFN,                 "FASTFN",                                      "FASTFN",                                      (0 << TAM_MAX_BITS) |     0, CAT_SYFL | SLS_ENABLED   | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
 #else // USE_REAL34_FUNCTIONS == 1
 /*  506 */  { itemToBeCoded,                NOPARAM,                     "0506",                                        "0506",                                        (0 << TAM_MAX_BITS) |     0, CAT_FREE | SLS_ENABLED   | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
 #endif // USE_REAL34_FUNCTIONS == 1

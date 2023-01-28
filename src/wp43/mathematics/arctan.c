@@ -59,7 +59,7 @@ void fnArctan(uint16_t unusedButMandatoryParameter) {
 
 void arctanLonI(void) {
   #if USE_REAL34_FUNCTIONS == 1
-    if(1) {
+    if(getSystemFlag(FLAG_FASTFN)) {
       convertLongIntegerRegisterToReal34Register(REGISTER_X, REGISTER_X);
       WP34S_Atan34(REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X));
       convertAngle34FromTo(REGISTER_REAL34_DATA(REGISTER_X), amRadian, currentAngularMode);
@@ -111,7 +111,7 @@ void arctanReal(void) {
     }
   }
   #if USE_REAL34_FUNCTIONS == 1
-    else if(1) {
+    else if(getSystemFlag(FLAG_FASTFN)) {
       WP34S_Atan34(REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X));
       convertAngle34FromTo(REGISTER_REAL34_DATA(REGISTER_X), amRadian, currentAngularMode);
     }

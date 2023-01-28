@@ -73,7 +73,7 @@ void sqrtLonI(void) {
       convertLongIntegerToLongIntegerRegister(value, REGISTER_X);
     }
     #if USE_REAL34_FUNCTIONS == 1
-      else if(1) {
+      else if(getSystemFlag(FLAG_FASTFN)) {
         convertLongIntegerRegisterToReal34Register(REGISTER_X, REGISTER_X);
         real34SquareRoot(REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X));
         setRegisterAngularMode(REGISTER_X, amNone);
@@ -152,7 +152,7 @@ void sqrtReal(void) {
   }
 
   #if USE_REAL34_FUNCTIONS == 1
-    if(!real34IsSpecial(REGISTER_REAL34_DATA(REGISTER_X)) && real34IsPositive(REGISTER_REAL34_DATA(REGISTER_X))) {
+    if(getSystemFlag(FLAG_FASTFN) && !real34IsSpecial(REGISTER_REAL34_DATA(REGISTER_X)) && real34IsPositive(REGISTER_REAL34_DATA(REGISTER_X))) {
       real34SquareRoot(REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X));
       setRegisterAngularMode(REGISTER_X, amNone);
       return;
