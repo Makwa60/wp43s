@@ -12,6 +12,15 @@ _for all 3 occurrences of_ <q>0.006</q> _read_ <q>−0.006</q>,
 _for_ <q>`−`</q> _at the left of_ <q>12.346 = lower limit</q> _read_ <q>`+`</q>,
 _and for_ <q>2 `×` `+`</q> _read_ <q>2 `×` `−`</q>.
 
+**Page 246, Section 3, To define a _softkey_ in the _programmable menu_:**
+_for_ <q>_register_ **K**</q> _read_ <q>_register_ **X**</q>,
+_for_ <q>the first characters of ***k***</q> _read_ <q>the first characters of ***x***</q>,
+_and change_ <q>**K** is not used</q> _to_ <q>**X** is neither used nor dropped</q>.
+
+**Page 247, Section 3, To define a _softkey_ in the _programmable menu_:**
+_add_ <q>**X** will be dropped unless you have just defined `▲`, `▼`, or `EXIT`.</q>
+_before_ <q>Repeat this procedure</q>.
+
 **Page 250, Section 3, Deleting Programs:**
 _change_ <q>move the program pointer into this program
 (e.g. by entering `GTO` `.` and picking the label of this program),
