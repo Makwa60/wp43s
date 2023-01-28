@@ -558,6 +558,38 @@ void WP34S_Asin(const real_t *x, real_t *angle, realContext_t *realContext) {
   WP34S_Atan(&z, &abx, realContext);
   realAdd(&abx, &abx, angle, realContext);
 }
+void WP34S_Asin34(const real34_t *x, real34_t *angle) {
+  real34_t abx, z;
+
+  if(real34IsNaN(x)) {
+    realToReal34(const_NaN, angle);
+    return;
+  }
+
+  real34CopyAbs(x, &abx);
+  if(real34CompareGreaterThan(&abx, const34_1)) {
+    realToReal34(const_NaN, angle);
+    return;
+  }
+
+  // angle = 2*atan(x/(1+sqrt(1-x*x)))
+  if(real34CompareEqual(x, const34_1)) {
+    real34Copy(const34_piOn2, angle);
+  }
+  else if(real34CompareEqual(x, const34__1)) {
+    real34Copy(const34_piOn2, angle);
+    real34ChangeSign(angle);
+  }
+  else {
+    real34Multiply(x, x, &z);
+    real34Subtract(const34_1, &z, &z);
+    real34SquareRoot(&z, &z);
+    real34Add(&z, const34_1, &z);
+    real34Divide(x, &z, &z);
+    WP34S_Atan34(&z, &abx);
+    real34Add(&abx, &abx, angle);
+  }
+}
 
 
 
@@ -587,6 +619,37 @@ void WP34S_Acos(const real_t *x, real_t *angle, realContext_t *realContext) {
     realDivide(&abx, &z, &z, realContext);
     WP34S_Atan(&z, &abx, realContext);
     realAdd(&abx, &abx, angle, realContext);
+  }
+}
+void WP34S_Acos34(const real34_t *x, real34_t *angle) {
+  real34_t abx, z;
+
+  if(real34IsNaN(x)) {
+    realToReal34(const_NaN, angle);
+    return;
+  }
+
+  real34CopyAbs(x, &abx);
+  if(real34CompareGreaterThan(&abx, const34_1)) {
+    realToReal34(const_NaN, angle);
+    return;
+  }
+
+  // angle = 2*atan((1-x)/sqrt(1-x*x))
+  if(real34CompareEqual(x, const34_1)) {
+    real34Zero(angle);
+  }
+  else if(real34CompareEqual(x, const34__1)) {
+    real34Copy(const34_pi, angle);
+  }
+  else {
+    real34Multiply(x, x, &z);
+    real34Subtract(const34_1, &z, &z);
+    real34SquareRoot(&z, &z);
+    real34Subtract(const34_1, x, &abx);
+    real34Divide(&abx, &z, &z);
+    WP34S_Atan34(&z, &abx);
+    real34Add(&abx, &abx, angle);
   }
 }
 
