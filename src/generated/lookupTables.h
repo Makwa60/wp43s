@@ -14,9 +14,6 @@
   #include "realType.h"
   #include <stdint.h>
 
-  extern const real_t * const reciprocalsOfOddP2;
-  extern const real_t * const reciprocalsOfEvenP2;
-
-  extern const real34_t * const reciprocalsOfOddP2_34;
-  extern const real34_t * const reciprocalsOfEvenP2_34;
+  extern const real34_t * const maclaurinCoeffSin34;
+  extern const real34_t * const maclaurinCoeffCos34;
 #endif // !LOOKUPTABLES_H

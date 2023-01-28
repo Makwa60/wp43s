@@ -67,15 +67,15 @@ void real34Cos(const real34_t *x, real34_t *res) {
     do {
       real34Multiply(&k, &angle2, &k);
       if(i < 100) {
-        real34Multiply(&k, reciprocalsOfEvenP2_34 + i, &k);
+        real34Multiply(&k, maclaurinCoeffCos34 + i, &k);
       }
       else {
         real34_t nx2p1;
         int32ToReal34(i * 2 - 1, &nx2p1); real34Divide(&k, &nx2p1, &k);
         int32ToReal34(i * 2,     &nx2p1); real34Divide(&k, &nx2p1, &k);
+        real34ChangeSign(&k);
       }
       ++i;
-      real34ChangeSign(&k);
       real34Copy(res, &s);
       real34Add(res, &k, res);
       real34Compare(res, &s, &compare);

@@ -68,10 +68,10 @@ void generateConstantArray34(const char *name, const real34_t *value) {
 }
 
 void generateArrayDef(const char *name) {
-  sprintf(realPointerDeclarations + strlen(realPointerDeclarations),
-    "TO_QSPI const real_t * const %s = (real_t *)(lookupTableRaw + %5d);\n", name, idx);
-  sprintf(externalDeclarations + strlen(externalDeclarations),
-    "  extern const real_t * const %s;\n", name);
+  //sprintf(realPointerDeclarations + strlen(realPointerDeclarations),
+  //  "TO_QSPI const real_t * const %s = (real_t *)(lookupTableRaw + %5d);\n", name, idx);
+  //sprintf(externalDeclarations + strlen(externalDeclarations),
+  //  "  extern const real_t * const %s;\n", name);
   sprintf(real34PointerDeclarations + strlen(real34PointerDeclarations),
     "TO_QSPI const real34_t * const %s%s34 = (real34_t *)(lookupTable34Raw + %5d);\n", name, isdigit(name[strlen(name) - 1]) ? "_" : "", idx34);
   sprintf(externalDeclarations34 + strlen(externalDeclarations34),
@@ -93,11 +93,11 @@ void generateLookupTable(void) {
     realDivide(&value, &value2, &value, &ctxtReal75);
   }*/
 
-  generateArrayDef("reciprocalsOfOddP2");
+  generateArrayDef("maclaurinCoeffSin");
   memset(&value, 0, sizeof(real_t));
   int32ToReal(1, &value);
   for(c = 0; c < 100; ++c) {
-    generateConstantArray("1/(2x+1)P2 ", &value);
+    //generateConstantArray("1/(2x+1)P2 ", &value);
     realToReal34(&value, &value34);
     generateConstantArray34("1/(2x+1)P2 ", &value34);
     int32ToReal(1, &value);
@@ -105,13 +105,16 @@ void generateLookupTable(void) {
     realDivide(&value, &value2, &value, &ctxtReal75);
     int32ToReal(c * 2 + 3, &value2);
     realDivide(&value, &value2, &value, &ctxtReal75);
+    if((c + 1) % 2 == 1) {
+      realChangeSign(&value);
+    }
   }
 
-  generateArrayDef("reciprocalsOfEvenP2");
+  generateArrayDef("maclaurinCoeffCos");
   memset(&value, 0, sizeof(real_t));
   int32ToReal(1, &value);
   for(c = 0; c < 100; ++c) {
-    generateConstantArray("1/(2x)P2 ", &value);
+    //generateConstantArray("1/(2x)P2 ", &value);
     realToReal34(&value, &value34);
     generateConstantArray34("1/(2x)P2 ", &value34);
     int32ToReal(1, &value);
@@ -119,6 +122,9 @@ void generateLookupTable(void) {
     realDivide(&value, &value2, &value, &ctxtReal75);
     int32ToReal(c * 2 + 2, &value2);
     realDivide(&value, &value2, &value, &ctxtReal75);
+    if((c + 1) % 2 == 1) {
+      realChangeSign(&value);
+    }
   }
 }
 
@@ -168,8 +174,8 @@ int main(int argc, char* argv[]) {
   fprintf(constantsH, "  #include \"realType.h\"\n");
   fprintf(constantsH, "  #include <stdint.h>\n\n");
 
-  fprintf(constantsH, "%s", externalDeclarations);
-  fprintf(constantsH, "\n");
+  //fprintf(constantsH, "%s", externalDeclarations);
+  //fprintf(constantsH, "\n");
 
   fprintf(constantsH, "%s", externalDeclarations34);
 
@@ -195,9 +201,9 @@ int main(int argc, char* argv[]) {
   fprintf(constantsC, "#include \"lookupTables.h\"\n\n");
   fprintf(constantsC, "#include \"wp43.h\"\n\n");
 
-  fprintf(constantsC, "TO_QSPI static const uint8_t lookupTableRaw[] = {\n");
-  fprintf(constantsC, "%s", realArray);
-  fprintf(constantsC, "};\n");
+  //fprintf(constantsC, "TO_QSPI static const uint8_t lookupTableRaw[] = {\n");
+  //fprintf(constantsC, "%s", realArray);
+  //fprintf(constantsC, "};\n");
   fprintf(constantsC, "\n");
   fprintf(constantsC, "TO_QSPI static const uint8_t lookupTable34Raw[] = {\n");
   fprintf(constantsC, "%s", real34Array);
