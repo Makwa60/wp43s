@@ -16,6 +16,7 @@
 #include "programming/manage.h"
 #include "programming/nextStep.h"
 #include "registers.h"
+#include "stack.h"
 #include "typeDefinitions.h"
 #include "ui/softmenus.h"
 #include "ui/tam.h"
@@ -192,49 +193,49 @@
   static void _setCaption(uint16_t keyNum) {
     if(1 <= keyNum && keyNum <= 18) {
       char *ts = tmpString;
-      switch(getRegisterDataType(REGISTER_K)) {
+      switch(getRegisterDataType(REGISTER_X)) {
         case dtString: {
-          xcopy(tmpString, REGISTER_STRING_DATA(REGISTER_K), stringByteLength(REGISTER_STRING_DATA(REGISTER_K)) + 1);
+          xcopy(tmpString, REGISTER_STRING_DATA(REGISTER_X), stringByteLength(REGISTER_STRING_DATA(REGISTER_X)) + 1);
           break;
         }
 
         case dtLongInteger: {
-          longIntegerRegisterToDisplayString(REGISTER_K, tmpString, TMP_STR_LENGTH, SCREEN_WIDTH, 50, STD_SPACE_PUNCTUATION);
+          longIntegerRegisterToDisplayString(REGISTER_X, tmpString, TMP_STR_LENGTH, SCREEN_WIDTH, 50, STD_SPACE_PUNCTUATION);
           break;
         }
 
         case dtTime: {
-          timeToDisplayString(REGISTER_K, tmpString, false);
+          timeToDisplayString(REGISTER_X, tmpString, false);
           break;
         }
 
         case dtDate: {
-          dateToDisplayString(REGISTER_K, tmpString);
+          dateToDisplayString(REGISTER_X, tmpString);
           break;
         }
 
         case dtReal34Matrix: {
-          real34MatrixToDisplayString(REGISTER_K, tmpString);
+          real34MatrixToDisplayString(REGISTER_X, tmpString);
           break;
         }
 
         case dtComplex34Matrix: {
-          complex34MatrixToDisplayString(REGISTER_K, tmpString);
+          complex34MatrixToDisplayString(REGISTER_X, tmpString);
           break;
         }
 
         case dtShortInteger: {
-          shortIntegerToDisplayString(REGISTER_K, tmpString, false);
+          shortIntegerToDisplayString(REGISTER_X, tmpString, false);
           break;
         }
 
         case dtReal34: {
-          real34ToDisplayString(REGISTER_REAL34_DATA(REGISTER_K), getRegisterAngularMode(REGISTER_K), tmpString, &standardFont, SCREEN_WIDTH, NUMBER_OF_DISPLAY_DIGITS, false, STD_SPACE_PUNCTUATION, true);
+          real34ToDisplayString(REGISTER_REAL34_DATA(REGISTER_X), getRegisterAngularMode(REGISTER_X), tmpString, &standardFont, SCREEN_WIDTH, NUMBER_OF_DISPLAY_DIGITS, false, STD_SPACE_PUNCTUATION, true);
           break;
         }
 
         case dtComplex34: {
-          complex34ToDisplayString(REGISTER_COMPLEX34_DATA(REGISTER_K), tmpString, &numericFont, SCREEN_WIDTH, NUMBER_OF_DISPLAY_DIGITS, false, STD_SPACE_PUNCTUATION, true);
+          complex34ToDisplayString(REGISTER_COMPLEX34_DATA(REGISTER_X), tmpString, &numericFont, SCREEN_WIDTH, NUMBER_OF_DISPLAY_DIGITS, false, STD_SPACE_PUNCTUATION, true);
           break;
         }
 
@@ -246,6 +247,8 @@
         default: {
           tmpString[0] = 0;
         }
+
+        fnDrop(NOPARAM);
       }
 
       for(int i = 0; i < 7 && *ts != 0; ++i) {
