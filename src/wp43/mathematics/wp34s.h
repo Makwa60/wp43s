@@ -55,4 +55,6 @@
   void   WP34S_InverseComplexW (const real_t *xReal, const real_t *xImag, real_t *resReal, real_t *resImag, realContext_t *realContext);
   void   WP34S_OrthoPoly       (uint16_t kind, const real_t *x, const real_t *n, const real_t *param, real_t *res, realContext_t *realContext);
 
+  void   WP34S_Atan34          (const real34_t *x, real34_t *angle);
+
 #endif // !WP34S_H

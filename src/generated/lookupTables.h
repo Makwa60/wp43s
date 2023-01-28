@@ -16,4 +16,5 @@
 
   extern const real34_t * const maclaurinCoeffSin34;
   extern const real34_t * const maclaurinCoeffCos34;
+  extern const real34_t * const maclaurinCoeffAtan34;
 #endif // !LOOKUPTABLES_H

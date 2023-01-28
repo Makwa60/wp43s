@@ -3,6 +3,7 @@
 
 #include "mathematics/squareRoot.h"
 
+#include "comparisonReals.h"
 #include "constantPointers.h"
 #include "debug.h"
 #include "error.h"
@@ -71,6 +72,13 @@ void sqrtLonI(void) {
       longIntegerSquareRoot(value, value);
       convertLongIntegerToLongIntegerRegister(value, REGISTER_X);
     }
+    #if USE_REAL34_FUNCTIONS == 1
+      else if(1) {
+        convertLongIntegerRegisterToReal34Register(REGISTER_X, REGISTER_X);
+        real34SquareRoot(REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X));
+        setRegisterAngularMode(REGISTER_X, amNone);
+      }
+    #endif // USE_REAL34_FUNCTIONS == 1
     else {
       real_t a;
 
@@ -143,6 +151,14 @@ void sqrtReal(void) {
     return;
   }
 
+  #if USE_REAL34_FUNCTIONS == 1
+    if(!real34IsSpecial(REGISTER_REAL34_DATA(REGISTER_X)) && real34IsPositive(REGISTER_REAL34_DATA(REGISTER_X))) {
+      real34SquareRoot(REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X));
+      setRegisterAngularMode(REGISTER_X, amNone);
+      return;
+    }
+  #endif // USE_REAL34_FUNCTIONS == 1
+
   real_t a;
 
   real34ToReal(REGISTER_REAL34_DATA(REGISTER_X), &a);
@@ -200,4 +216,19 @@ void sqrtComplex(const real_t *real, const real_t *imag, real_t *resReal, real_t
     realMultiply(resImag, const_1on2, resImag, realContext);
     realPolarToRectangular(resReal, resImag, resReal, resImag, realContext);
   }
+}
+
+
+
+// Newton-Raphson method
+void real34SquareRoot(const real34_t *x, real34_t *res) {
+  real34_t x1, r1;
+  real34Copy(x, &x1);
+  real34Copy(&x1, res);
+  do {
+    real34Copy(res, &r1);
+    real34Divide(&x1, &r1, res);
+    real34Add(res, &r1, res);
+    real34Multiply(res, const34_1on2, res);
+  } while(!real34CompareEqual(res, &r1));
 }

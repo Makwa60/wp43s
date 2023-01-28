@@ -97,9 +97,9 @@ void generateLookupTable(void) {
   memset(&value, 0, sizeof(real_t));
   int32ToReal(1, &value);
   for(c = 0; c < 100; ++c) {
-    //generateConstantArray("1/(2x+1)P2 ", &value);
+    //generateConstantArray("sin ", &value);
     realToReal34(&value, &value34);
-    generateConstantArray34("1/(2x+1)P2 ", &value34);
+    generateConstantArray34("sin ", &value34);
     int32ToReal(1, &value);
     int32ToReal(c * 2 + 2, &value2);
     realDivide(&value, &value2, &value, &ctxtReal75);
@@ -114,13 +114,28 @@ void generateLookupTable(void) {
   memset(&value, 0, sizeof(real_t));
   int32ToReal(1, &value);
   for(c = 0; c < 100; ++c) {
-    //generateConstantArray("1/(2x)P2 ", &value);
+    //generateConstantArray("cos ", &value);
     realToReal34(&value, &value34);
-    generateConstantArray34("1/(2x)P2 ", &value34);
+    generateConstantArray34("cos ", &value34);
     int32ToReal(1, &value);
     int32ToReal(c * 2 + 1, &value2);
     realDivide(&value, &value2, &value, &ctxtReal75);
     int32ToReal(c * 2 + 2, &value2);
+    realDivide(&value, &value2, &value, &ctxtReal75);
+    if((c + 1) % 2 == 1) {
+      realChangeSign(&value);
+    }
+  }
+
+  generateArrayDef("maclaurinCoeffAtan");
+  memset(&value, 0, sizeof(real_t));
+  int32ToReal(1, &value);
+  for(c = 0; c < 100; ++c) {
+    //generateConstantArray("arctan ", &value);
+    realToReal34(&value, &value34);
+    generateConstantArray34("arctan ", &value34);
+    int32ToReal(1, &value);
+    int32ToReal(c * 2 + 3, &value2);
     realDivide(&value, &value2, &value, &ctxtReal75);
     if((c + 1) % 2 == 1) {
       realChangeSign(&value);

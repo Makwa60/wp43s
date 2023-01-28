@@ -6,6 +6,7 @@
 #include "constantPointers.h"
 #include "conversionAngles.h"
 #include "distributions/normal.h"
+#include "lookupTables.h"
 #include "mathematics/comparisonReals.h"
 #include "mathematics/cos.h"
 #include "mathematics/division.h"
@@ -14,6 +15,7 @@
 #include "mathematics/lnbeta.h"
 #include "mathematics/multiplication.h"
 #include "mathematics/sin.h"
+#include "mathematics/squareRoot.h"
 #include "mathematics/toPolar.h"
 #include "realType.h"
 #include "registers.h"
@@ -339,6 +341,81 @@ void WP34S_Atan(const real_t *x, real_t *angle, realContext_t *realContext) {
 
   if(neg) {
     realChangeSign(angle);
+  }
+}
+void WP34S_Atan34(const real34_t *x, real34_t *angle) {
+  real34_t a, b, a2, t, z, last;
+  int doubles = 0;
+  int invert;
+  int n;
+  int j = 1;
+  int neg = real34IsNegative(x);
+
+  real34Copy(x, &a);
+
+  // arrange for a >= 0
+  if(neg) {
+    real34ChangeSign(&a);
+  }
+
+  // reduce range to 0 <= a < 1, using atan(x) = pi/2 - atan(1/x)
+  invert = real34CompareGreaterThan(&a, const34_1);
+  if(invert) {
+    real34Divide(const34_1, &a, &a);
+  }
+
+  // Range reduce to small enough limit to use taylor series using:
+  //  tan(x/2) = tan(x)/(1+sqrt(1+tan(x)²))
+  for(n=0; n<1000; n++) {
+    if(real34CompareLessEqual(&a, const34_1on10)) {
+      break;
+    }
+    doubles++;
+    // a = a/(1+sqrt(1+a²)) -- at most 3 iterations.
+    real34Multiply(&a, &a, &b);
+    real34Add(&b, const34_1, &b);
+    real34SquareRoot(&b, &b);
+    real34Add(&b, const34_1, &b);
+    real34Divide(&a, &b, &a);
+  }
+
+  // Now Taylor series
+  // atan(x) = x(1-x²/3+x⁴/5-x⁶/7...)
+  // We calculate pairs of terms and stop when the estimate doesn't change
+  real34Copy(&a, angle);
+  real34Multiply(&a, &a, &a2); // a²
+  real34Copy(&a, &t);
+
+  do { // Loop until there is no digits changed
+    real34Copy(angle, &last);
+
+    // rewritten with a lookup table
+    real34Multiply(&t, &a2, &t);
+    if(j < 100) {
+      real34Multiply(&t, maclaurinCoeffAtan34 + (j++), &z);
+    }
+    else {
+      real34_t jx2p1;
+      int32ToReal34(j * 2 + 1, &jx2p1); real34Divide(&t, &jx2p1, &z);
+      if(j % 2 == 1) {
+        real34ChangeSign(&z);
+      }
+      ++j;
+    }
+    real34Add(angle, &z, angle);
+  } while(!real34CompareEqual(angle, &last));
+
+  while(doubles) {
+    real34Add(angle, angle, angle);
+    doubles--;
+  }
+
+  if(invert) {
+    real34Subtract(const34_piOn2, angle, angle);
+  }
+
+  if(neg) {
+    real34ChangeSign(angle);
   }
 }
 

@@ -58,13 +58,24 @@ void fnArctan(uint16_t unusedButMandatoryParameter) {
 
 
 void arctanLonI(void) {
-  real_t x;
+  #if USE_REAL34_FUNCTIONS == 1
+    if(1) {
+      convertLongIntegerRegisterToReal34Register(REGISTER_X, REGISTER_X);
+      WP34S_Atan34(REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X));
+      convertAngle34FromTo(REGISTER_REAL34_DATA(REGISTER_X), amRadian, currentAngularMode);
+      setRegisterAngularMode(REGISTER_X, currentAngularMode);
+    }
+    else
+  #endif // USE_REAL34_FUNCTIONS == 1
+  {
+    real_t x;
 
-  convertLongIntegerRegisterToReal(REGISTER_X, &x, &ctxtReal39);
-  WP34S_Atan(&x, &x, &ctxtReal39);
-  convertAngleFromTo(&x, amRadian, currentAngularMode, &ctxtReal39);
-  reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, currentAngularMode);
-  convertRealToReal34ResultRegister(&x, REGISTER_X);
+    convertLongIntegerRegisterToReal(REGISTER_X, &x, &ctxtReal39);
+    WP34S_Atan(&x, &x, &ctxtReal39);
+    convertAngleFromTo(&x, amRadian, currentAngularMode, &ctxtReal39);
+    reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, currentAngularMode);
+    convertRealToReal34ResultRegister(&x, REGISTER_X);
+  }
 }
 
 
@@ -99,6 +110,12 @@ void arctanReal(void) {
       return;
     }
   }
+  #if USE_REAL34_FUNCTIONS == 1
+    else if(1) {
+      WP34S_Atan34(REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X));
+      convertAngle34FromTo(REGISTER_REAL34_DATA(REGISTER_X), amRadian, currentAngularMode);
+    }
+  #endif // USE_REAL34_FUNCTIONS == 1
   else {
     real_t x;
 
