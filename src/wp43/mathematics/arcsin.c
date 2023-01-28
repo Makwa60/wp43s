@@ -111,8 +111,7 @@ void arcsinCxma(void) {
 
 void arcsinReal(void) {
   #if USE_REAL34_FUNCTIONS == 1
-    //if(getSystemFlag(FLAG_FASTFN)) {
-    if(!real34CompareAbsGreaterThan(REGISTER_REAL34_DATA(REGISTER_X), const34_1)) {
+    if(getSystemFlag(FLAG_FASTFN) && !real34CompareAbsGreaterThan(REGISTER_REAL34_DATA(REGISTER_X), const34_1)) {
       WP34S_Asin34(REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X));
       convertAngle34FromTo(REGISTER_REAL34_DATA(REGISTER_X), amRadian, currentAngularMode);
       setRegisterAngularMode(REGISTER_X, currentAngularMode);

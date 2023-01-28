@@ -24,5 +24,4 @@ Func: fnSwapXY
 Out:  EC=0
 Func: fnSubtract
 In:   RX=Real:"9"
-;Out:  EC=0 FL_CPXRES=0 RX=Real:"-6.2465e-29":DEG
-Out:  EC=0 FL_CPXRES=0 RX=Real:"-4.3565E-29":DEG
+Out:  EC=0 FL_CPXRES=0 RX=Real:"-6.2465e-29":DEG
