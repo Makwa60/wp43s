@@ -318,7 +318,7 @@ void lnReal(void) {
     if(real34IsPositive(REGISTER_REAL34_DATA(REGISTER_X))) {
       WP34S_Ln(&x, &x, &ctxtReal39);
       convertRealToReal34ResultRegister(&x, REGISTER_X);
-     }
+    }
     else if(getFlag(FLAG_CPXRES)) {
       realSetPositiveSign(&x);
       WP34S_Ln(&x, &x, &ctxtReal39);
