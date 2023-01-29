@@ -86,7 +86,7 @@ void log2LonI(void) {
     }
   }
   #if USE_REAL34_FUNCTIONS == 1
-    else if(longIntegerIsPositive(lgInt)) {
+    else if(getSystemFlag(FLAG_FASTFN) && longIntegerIsPositive(lgInt)) {
       convertLongIntegerRegisterToReal34Register(REGISTER_X, REGISTER_X);
       real34Ln(REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X));
       real34Divide(REGISTER_REAL34_DATA(REGISTER_X), const34_ln2, REGISTER_REAL34_DATA(REGISTER_X));
@@ -188,7 +188,7 @@ void log2Real(void) {
   }
 
   #if USE_REAL34_FUNCTIONS == 1
-    else if(real34IsPositive(REGISTER_REAL34_DATA(REGISTER_X))) {
+    else if(getSystemFlag(FLAG_FASTFN) && real34IsPositive(REGISTER_REAL34_DATA(REGISTER_X))) {
       real34Ln(REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X));
       real34Divide(REGISTER_REAL34_DATA(REGISTER_X), const34_ln2, REGISTER_REAL34_DATA(REGISTER_X));
     }

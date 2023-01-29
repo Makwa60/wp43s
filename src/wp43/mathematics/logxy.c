@@ -170,12 +170,12 @@ void logxyLonILonI(void) {
   convertLongIntegerRegisterToLongInteger(REGISTER_X, xx);
 
   #if USE_REAL34_FUNCTIONS == 1
-    //if(1) {
-    //  convertLongIntegerRegisterToReal34Register(REGISTER_Y, REGISTER_Y);
-    //  convertLongIntegerRegisterToReal34Register(REGISTER_X, REGISTER_X);
-    //  logxy34();
-    //}
-    //else
+    if(getSystemFlag(FLAG_FASTFN)) {
+      convertLongIntegerRegisterToReal34Register(REGISTER_Y, REGISTER_Y);
+      convertLongIntegerRegisterToReal34Register(REGISTER_X, REGISTER_X);
+      logxy34();
+    }
+    else
   #endif // USE_REAL34_FUNCTIONS == 1
   {
     convertLongIntegerRegisterToReal(REGISTER_Y, &y, &ctxtReal39);
@@ -204,7 +204,7 @@ void logxyLonILonI(void) {
 
 void logxyRealLonI(void) {
   #if USE_REAL34_FUNCTIONS == 1
-    if(1) {
+    if(getSystemFlag(FLAG_FASTFN)) {
       convertLongIntegerRegisterToReal34Register(REGISTER_X, REGISTER_X);
       logxy34();
     }
@@ -271,7 +271,7 @@ void logxyShoILonI(void) {
 
 void logxyLonIReal(void) {
   #if USE_REAL34_FUNCTIONS == 1
-    if(1) {
+    if(getSystemFlag(FLAG_FASTFN)) {
       convertLongIntegerRegisterToReal34Register(REGISTER_Y, REGISTER_Y);
       logxy34();
     }
@@ -291,7 +291,7 @@ void logxyLonIReal(void) {
 
 void logxyRealReal(void) {
   #if USE_REAL34_FUNCTIONS == 1
-    if(1) {
+    if(getSystemFlag(FLAG_FASTFN)) {
       logxy34();
     }
     else
