@@ -142,6 +142,21 @@ void generateLookupTable(void) {
     }
   }
 
+  generateArrayDef("maclaurinCoeffLn1P");
+  memset(&value, 0, sizeof(real_t));
+  int32ToReal(1, &value);
+  for(c = 0; c < 100; ++c) {
+    //generateConstantArray("ln(1+x) ", &value);
+    realToReal34(&value, &value34);
+    generateConstantArray34("ln(1+x) ", &value34);
+    int32ToReal(1, &value);
+    int32ToReal(c + 2, &value2);
+    realDivide(&value, &value2, &value, &ctxtReal75);
+    if((c + 1) % 2 == 1) {
+      realChangeSign(&value);
+    }
+  }
+
   generateArrayDef("taylorCoeffLn");
   memset(&value, 0, sizeof(real_t));
   int32ToReal(2, &value);

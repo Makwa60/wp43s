@@ -27,5 +27,6 @@
   void lnP1Real (void);
   void lnP1Cplx (void);
   void lnP1Complex(const real_t *real, const real_t *imag, real_t *lnReal, real_t *lnImag, realContext_t *realContext);
+  void real34Ln1P (const real34_t *x, real34_t *res);
 
 #endif // !LNPONE_H

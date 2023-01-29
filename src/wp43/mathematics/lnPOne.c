@@ -9,7 +9,9 @@
 #include "flags.h"
 #include "fonts.h"
 #include "items.h"
+#include "lookupTables.h"
 #include "mathematics/comparisonReals.h"
+#include "mathematics/ln.h"
 #include "mathematics/matrix.h"
 #include "mathematics/toPolar.h"
 #include "mathematics/wp34s.h"
@@ -61,6 +63,45 @@ void fnLnP1(uint16_t unusedButMandatoryParameter) {
 
 
 
+// Abramowitz and Stegun §4.1.24
+void real34Ln1P(const real34_t *xin, real34_t *res) {
+  real34_t x, xx, r;
+  int32_t k = 1;
+
+  if(real34CompareAbsGreaterThan(xin, const34_1on2)) {
+    real34Add(xin, const34_1, &x);
+    real34Ln(&x, res);
+    return;
+  }
+
+  real34Copy(xin, &x);
+
+  // 1st term
+  real34Copy(&x, &xx);
+  real34Copy(&x, res);
+
+  // Taylor series
+  do {
+    real34Copy(res, &r);
+
+    real34Multiply(&xx, &x, &xx);
+    if(k < 100) {
+      real34FMA(&xx, maclaurinCoeffLn1P34 + (k++), res, res);
+    }
+    else { // unlikely
+      real34_t kp1;
+      int32ToReal34(k + 1, &kp1); real34Divide(&xx, &kp1, &kp1);
+      if(k % 2 == 1) {
+        real34SetNegativeSign(&kp1);
+      }
+      real34Add(res, &kp1, res);
+      ++k;
+    }
+  } while(!real34CompareEqual(res, &r));
+}
+
+
+
 void lnP1Complex(const real_t *real, const real_t *imag, real_t *lnReal, real_t *lnImag, realContext_t *realContext) {
   real_t r;
 
@@ -105,6 +146,11 @@ void lnP1LonI(void) {
         moreInfoOnError("In function lnP1LonI:", "cannot calculate Ln(0) in Ln(1 + x)", NULL, NULL);
       #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
     }
+  }
+  else if(longIntegerIsPositive(lgInt)) {
+    convertLongIntegerRegisterToReal34Register(REGISTER_X, REGISTER_X);
+    real34Ln1P(REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X));
+    setRegisterAngularMode(REGISTER_X, amNone);
   }
   else {
     real_t x;
@@ -198,6 +244,12 @@ void lnP1ShoI(void) {
 
 
 void lnP1Real(void) {
+  if(!real34IsSpecial(REGISTER_REAL34_DATA(REGISTER_X)) && real34CompareGreaterThan(REGISTER_REAL34_DATA(REGISTER_X), const34__1)) {
+    real34Ln1P(REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X));
+    setRegisterAngularMode(REGISTER_X, amNone);
+    return;
+  }
+
   real_t x;
   real34ToReal(REGISTER_REAL34_DATA(REGISTER_X), &x);
 
