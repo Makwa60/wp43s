@@ -147,11 +147,13 @@ void lnP1LonI(void) {
       #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
     }
   }
-  else if(longIntegerIsPositive(lgInt)) {
-    convertLongIntegerRegisterToReal34Register(REGISTER_X, REGISTER_X);
-    real34Ln1P(REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X));
-    setRegisterAngularMode(REGISTER_X, amNone);
-  }
+  #if USE_REAL34_FUNCTIONS == 1
+    else if(getSystemFlag(FLAG_FASTFN) && longIntegerIsPositive(lgInt)) {
+      convertLongIntegerRegisterToReal34Register(REGISTER_X, REGISTER_X);
+      real34Ln1P(REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X));
+      setRegisterAngularMode(REGISTER_X, amNone);
+    }
+  #endif // USE_REAL34_FUNCTIONS == 1
   else {
     real_t x;
 
@@ -244,11 +246,13 @@ void lnP1ShoI(void) {
 
 
 void lnP1Real(void) {
-  if(!real34IsSpecial(REGISTER_REAL34_DATA(REGISTER_X)) && real34CompareGreaterThan(REGISTER_REAL34_DATA(REGISTER_X), const34__1)) {
-    real34Ln1P(REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X));
-    setRegisterAngularMode(REGISTER_X, amNone);
-    return;
-  }
+  #if USE_REAL34_FUNCTIONS == 1
+    if(getSystemFlag(FLAG_FASTFN) && !real34IsSpecial(REGISTER_REAL34_DATA(REGISTER_X)) && real34CompareGreaterThan(REGISTER_REAL34_DATA(REGISTER_X), const34__1)) {
+      real34Ln1P(REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X));
+      setRegisterAngularMode(REGISTER_X, amNone);
+      return;
+    }
+  #endif // USE_REAL34_FUNCTIONS == 1
 
   real_t x;
   real34ToReal(REGISTER_REAL34_DATA(REGISTER_X), &x);
