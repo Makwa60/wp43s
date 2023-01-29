@@ -9,6 +9,8 @@
 #include "flags.h"
 #include "fonts.h"
 #include "items.h"
+#include "lookupTables.h"
+#include "mathematics/comparisonReals.h"
 #include "mathematics/toPolar.h"
 #include "mathematics/matrix.h"
 #include "mathematics/wp34s.h"
@@ -60,6 +62,81 @@ void fnLn(uint16_t unusedButMandatoryParameter) {
 
 
 
+// Abramowitz and Stegun §4.1.27
+void real34Ln(const real34_t *xin, real34_t *res) {
+  real34_t x, xm1xp1, xm1xp1sq, xm1xp1pw, r;
+  int32_t exponent = 0, exponent2 = 0;
+  int32_t k = 1;
+
+  // Special cases
+  if(real34IsZero(xin)) {
+    realToReal34(const_minusInfinity, res);
+    return;
+  }
+  else if(real34IsNegative(xin) || real34IsNaN(xin)) {
+    realToReal34(const_NaN, res);
+    return;
+  }
+  else if(real34IsInfinite(xin)) {
+    realToReal34(const_plusInfinity, res);
+    return;
+  }
+  else if(real34CompareEqual(xin, const34_1)) {
+    real34Zero(res);
+    return;
+  }
+
+  real34Copy(xin, &x);
+
+  // reduce value to make convergence faster
+  exponent = real34GetExponent(&x);
+  real34SetExponent(&x, 0);
+  for(int k = -1; real34CompareGreaterEqual(&x, const34_10); --k) {
+    real34SetExponent(&x, k);
+    ++exponent;
+  }
+  while(real34CompareGreaterEqual(&x, const34_2)) {
+    real34Multiply(&x, const34_1on2, &x);
+    ++exponent2;
+  }
+
+  // 1st term
+  real34Copy(&x, &xm1xp1);
+  real34Copy(&x, &xm1xp1sq);
+  real34Subtract(&xm1xp1, const34_1, &xm1xp1);
+  real34Add(&xm1xp1sq, const34_1, &xm1xp1sq);
+  real34Divide(&xm1xp1, &xm1xp1sq, &xm1xp1);
+  real34Multiply(&xm1xp1, &xm1xp1, &xm1xp1sq);
+
+  real34Copy(&xm1xp1, &xm1xp1pw);
+  real34Add(&xm1xp1, &xm1xp1, res);
+
+  // Taylor series
+  do {
+    real34Copy(res, &r);
+
+    real34Multiply(&xm1xp1pw, &xm1xp1sq, &xm1xp1pw);
+    if(k < 100) {
+      real34FMA(&xm1xp1pw, taylorCoeffLn34 + (k++), res, res);
+    }
+    else {
+      real34_t kx2p1;
+      int32ToReal34(k * 2 + 1, &kx2p1); real34Divide(&xm1xp1pw, &kx2p1, &kx2p1);
+      real34Add(res, &kx2p1, res);
+      real34Add(res, &kx2p1, res);
+      ++k;
+    }
+  } while(!real34CompareEqual(res, &r));
+
+  // Add pre-calculated logarithm
+  int32ToReal34(exponent2, &r);
+  real34FMA(const34_ln2, &r, res, res);
+  int32ToReal34(exponent, &r);
+  real34FMA(const34_ln10, &r, res, res);
+}
+
+
+
 void lnComplex(const real_t *real, const real_t *imag, real_t *lnReal, real_t *lnImag, realContext_t *realContext) {
   if(realIsZero(real) && realIsZero(imag)) {
     realCopy(const_minusInfinity, lnReal);
@@ -95,6 +172,11 @@ void lnLonI(void) {
         moreInfoOnError("In function lnLonI:", "cannot calculate Ln(0)", NULL, NULL);
       #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
     }
+  }
+  else if(longIntegerIsPositive(lgInt)) {
+    convertLongIntegerRegisterToReal34Register(REGISTER_X, REGISTER_X);
+    real34Ln(REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X));
+    setRegisterAngularMode(REGISTER_X, amNone);
   }
   else {
     real_t x;
@@ -219,6 +301,10 @@ void lnReal(void) {
     else {
       convertRealToReal34ResultRegister(const_NaN, REGISTER_X);
     }
+  }
+
+  else if(real34IsPositive(REGISTER_REAL34_DATA(REGISTER_X))) {
+    real34Ln(REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X));
   }
 
   else {

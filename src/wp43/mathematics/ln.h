@@ -26,5 +26,6 @@
   void lnReal (void);
   void lnCplx (void);
   void lnComplex(const real_t *real, const real_t *imag, real_t *lnReal, real_t *lnImag, realContext_t *realContext);
+  void real34Ln (const real34_t *x, real34_t *res);
 
 #endif // !LN_H

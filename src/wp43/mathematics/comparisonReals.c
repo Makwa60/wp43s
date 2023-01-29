@@ -20,6 +20,17 @@ bool real34CompareAbsGreaterThan(const real34_t *number1, const real34_t *number
 
 
 
+bool real34CompareAbsGreaterEqual(const real34_t *number1, const real34_t *number2) {
+  real34_t num1, num2;
+
+  real34CopyAbs(number1, &num1);
+  real34CopyAbs(number2, &num2);
+  real34Compare(&num1, &num2, &num2);
+  return real34ToInt32(&num2) >= 0;
+}
+
+
+
 bool real34CompareAbsLessThan(const real34_t *number1, const real34_t *number2) {
   real34_t num1, num2;
 

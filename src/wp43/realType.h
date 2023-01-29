@@ -127,6 +127,7 @@
   #define real34NextMinus(operand, res)                          decQuadNextPlus          ((real34_t *)(res), (real34_t *)(operand), &ctxtReal34)
   #define real34NextPlus(operand, res)                           decQuadNextPlus          ((real34_t *)(res), (real34_t *)(operand), &ctxtReal34)
   #define real34Plus(operand, res)                               decQuadPlus              ((real34_t *)(res), (real34_t *)(operand), &ctxtReal34)
+  #define real34SetExponent(operand, exponent)                   decQuadSetExponent       ((real34_t *)(operand), &ctxtReal34, exponent)
   #define real34SetNegativeSign(operand)                         ((real34_t *)(operand))->bytes[15] |= 0x80
   #define real34SetPositiveSign(operand)                         ((real34_t *)(operand))->bytes[15] &= 0x7F
   #define real34Subtract(operand1, operand2, res)                decQuadSubtract          ((real34_t *)(res), (real34_t *)(operand1), (real34_t *)(operand2), &ctxtReal34)

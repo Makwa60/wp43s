@@ -141,6 +141,18 @@ void generateLookupTable(void) {
       realChangeSign(&value);
     }
   }
+
+  generateArrayDef("taylorCoeffLn");
+  memset(&value, 0, sizeof(real_t));
+  int32ToReal(2, &value);
+  for(c = 0; c < 100; ++c) {
+    //generateConstantArray("ln ", &value);
+    realToReal34(&value, &value34);
+    generateConstantArray34("ln ", &value34);
+    int32ToReal(2, &value);
+    int32ToReal(c * 2 + 3, &value2);
+    realDivide(&value, &value2, &value, &ctxtReal75);
+  }
 }
 
 int main(int argc, char* argv[]) {
