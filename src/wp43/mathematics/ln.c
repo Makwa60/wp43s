@@ -173,11 +173,13 @@ void lnLonI(void) {
       #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
     }
   }
-  else if(longIntegerIsPositive(lgInt)) {
-    convertLongIntegerRegisterToReal34Register(REGISTER_X, REGISTER_X);
-    real34Ln(REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X));
-    setRegisterAngularMode(REGISTER_X, amNone);
-  }
+  #if USE_REAL34_FUNCTIONS == 1
+    else if(getSystemFlag(FLAG_FASTFN) && longIntegerIsPositive(lgInt)) {
+      convertLongIntegerRegisterToReal34Register(REGISTER_X, REGISTER_X);
+      real34Ln(REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X));
+      setRegisterAngularMode(REGISTER_X, amNone);
+    }
+  #endif // USE_REAL34_FUNCTIONS == 1
   else {
     real_t x;
 
@@ -303,9 +305,11 @@ void lnReal(void) {
     }
   }
 
-  else if(real34IsPositive(REGISTER_REAL34_DATA(REGISTER_X))) {
-    real34Ln(REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X));
-  }
+  #if USE_REAL34_FUNCTIONS == 1
+    else if(getSystemFlag(FLAG_FASTFN) && real34IsPositive(REGISTER_REAL34_DATA(REGISTER_X))) {
+      real34Ln(REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X));
+    }
+  #endif // USE_REAL34_FUNCTIONS == 1
 
   else {
     real_t x;
