@@ -56,9 +56,9 @@ _add:_
 **Pages 96 to 100, Purposes of System Flags:**
 _add:_
 
-| Purpose         | _SBI_ | _Flag_ | Remarks                                                                                                                                                                                                                                                     |
-|-----------------|:-----:|:------:|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Faster function |   —   | FASTFN | If set, your _WP43_ calculates faster without using internal float of extended precision. This is a tradeoff between speed and precision. Affects $\sqrt x$, ln, $\ln \left( 1 + x \right)$, lg, lb, $\log_x y$, sin, cos, tan, arcsin, arccos, and arctan. |
+| Purpose         | _SBI_ | _Flag_ | Remarks                                                                                                                                                                                                                                                            |
+|-----------------|:-----:|:------:|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Faster function |   —   | FASTFN | If set, your _WP43_ calculates faster without using internal float of extended precision. This is a tradeoff between speed and precision. Affects $\sqrt x$, ln, $\ln \left( 1 + x \right)$, lg, lb, $\log_x y$, $e^x$, sin, cos, tan, arcsin, arccos, and arctan. |
 
 **Page 177, Appendix C, error 27:**
 _add_ <q>Cannot delete a predefined item</q> _in the leftmost blank field,
