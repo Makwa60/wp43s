@@ -174,9 +174,9 @@ void WP34S_Pdf_Chi2(const real_t *x, const real_t *k, real_t *res, realContext_t
     return;
   }
 
-  realDivide(k, const_2, &p, realContext);
+  realMultiply(k, const_1on2, &p, realContext);
   WP34S_Ln(x, &q, realContext);
-  realDivide(x, const_2, &r, realContext);
+  realMultiply(x, const_1on2, &r, realContext);
   realChangeSign(&r);
   realSubtract(&p, const_1, &s, realContext);
   realMultiply(&q, &s, &q, realContext);
@@ -202,8 +202,8 @@ void WP34S_Cdfu_Chi2(const real_t *x, const real_t *k, real_t *res, realContext_
     return;
   }
 
-  realDivide(x, const_2, &p, realContext);
-  realDivide(k, const_2, &q, realContext);
+  realMultiply(x, const_1on2, &p, realContext);
+  realMultiply(k, const_1on2, &q, realContext);
   WP34S_GammaP(&p, &q, res, realContext, true, true);
 }
 
@@ -221,8 +221,8 @@ void WP34S_Cdf_Chi2(const real_t *x, const real_t *k, real_t *res, realContext_t
     return;
   }
 
-  realDivide(x, const_2, &p, realContext);
-  realDivide(k, const_2, &q, realContext);
+  realMultiply(x, const_1on2, &p, realContext);
+  realMultiply(k, const_1on2, &q, realContext);
   WP34S_GammaP(&p, &q, res, realContext, false, true);
 }
 
@@ -251,21 +251,22 @@ void WP34S_Qf_Chi2(const real_t *x, const real_t *k, real_t *res, realContext_t 
     realMultiply(&q, &r, &q, realContext);
     realAdd(&q, const_1, &q, realContext);
     realSubtract(&q, &s, &q, realContext);
-    realPower(&q, const_3, &q, realContext);
+    realMultiply(&q, &q, &r, realContext);
+    realMultiply(&r, &q, &q, realContext);
     realMultiply(&q, k, &q, realContext);
     realMultiply(const_eE, k, &r, realContext);
     realAdd(&r, const_8, &r, realContext);
     if(realCompareGreaterEqual(&q, &r)) {
-      realDivide(&q, const_2, &q, realContext);
+      realMultiply(&q, const_1on2, &q, realContext);
       WP34S_Ln(&q, &q, realContext);
-      realDivide(k, const_2, &t, realContext);
+      realMultiply(k, const_1on2, &t, realContext);
       realSubtract(&t, const_1, &t, realContext);
       realMultiply(&q, &t, &q, realContext);
       realChangeSign(&q);
       realMultiply(&reg0, const__1, &t, realContext);
       WP34S_Ln1P(&t, &t, realContext);
       realAdd(&q, &t, &q, realContext);
-      realDivide(k, const_2, &t, realContext);
+      realMultiply(k, const_1on2, &t, realContext);
       WP34S_LnGamma(&t, &t, realContext);
       realAdd(&q, &t, &q, realContext);
       realMultiply(&q, const_2, &q, realContext);
@@ -274,9 +275,9 @@ void WP34S_Qf_Chi2(const real_t *x, const real_t *k, real_t *res, realContext_t 
   }
   else { // chi2_q_low
     realDivide(&reg0, k, &q, realContext);
-    realDivide(&q, const_2, &q, realContext);
+    realMultiply(&q, const_1on2, &q, realContext);
     WP34S_Ln(&q, &q, realContext);
-    realDivide(k, const_2, &r, realContext);
+    realMultiply(k, const_1on2, &r, realContext);
     WP34S_LnGamma(&r, &r, realContext);
     realAdd(&q, &r, &q, realContext);
     realMultiply(&q, const_2, &q, realContext);
@@ -308,7 +309,7 @@ void WP34S_Qf_Chi2(const real_t *x, const real_t *k, real_t *res, realContext_t 
     realDivide(&s, &q, &s, realContext);
     realMultiply(&p, const_2, &p, realContext);
     realSubtract(&s, &p, &p, realContext);
-    realDivide(&p, const_4, &p, realContext);
+    realMultiply(&p, const_1on4, &p, realContext);
     realMultiply(&p, &r, &p, realContext);
     realChangeSign(&p);
     realAdd(&p, const_1, &p, realContext);

@@ -340,14 +340,14 @@ static void _integrate(calcRegister_t regist, const real_t *a, const real_t *b, 
   //DEI_ba2_rdy::
                                                // here with 2*bpa & 2*bma2 on stack
                                                // and mode flags ready
-  realDivide(&x, const_2, &bma2, realContext); // save bma2
-  realDivide(&y, const_2, &bpa2, realContext); // save bpa2
+  realMultiply(&x, const_1on2, &bma2, realContext); // save bma2
+  realMultiply(&y, const_1on2, &bpa2, realContext); // save bpa2
   // [bpa2 bma2]
   // done with mode flags, bpa2 and bma2  ****************
   // compute precision parameters ************************
   // [rewritten here for WP43]
   // [1e-34 -34 bpa2 bma2]
-  realDivide(acc, const_10, &eps, realContext);
+  realMultiply(acc, const_1on10, &eps, realContext);
   realMultiply(&eps, &eps, &eps, realContext);
   if(realCompareAbsLessThan(&eps, const_1e_32)) {
     realCopy(const_1e_32, &eps); // save epsilon = 10^-37
@@ -399,7 +399,7 @@ static void _integrate(calcRegister_t regist, const real_t *a, const real_t *b, 
     realCopy(&z, &ss1); // update ss1
     realCopy(const_0, &ssp); // ssp = 0
     realCopy(const_1, &j); // j = 1
-    realDivide(&h, const_2, &h, realContext); // h /= 2
+    realMultiply(&h, const_1on2, &h, realContext); // h /= 2
     realCopy(&h, &x); // X = t
     // j loop ++++++++++++++++++++++++++++++++++++++++++++++
     // compute abscissas and weights  ----------------------

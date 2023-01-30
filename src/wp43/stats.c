@@ -1030,7 +1030,7 @@ static void convertStatsMatrixToHistoMatrix(uint16_t statsVariableToHistogram) {
       int32_t NN = real34ToInt32(&nBins);
       realSubtract(&hb, &lb, &bw, &ctxtReal39);
       realDivide(&bw, &nb, &bw, &ctxtReal39);
-      realDivide(&bw, const_2, &bwon2, &ctxtReal39);                  //calculate bin width bw and half bin width bw_on_2
+      realMultiply(&bw, const_1on2, &bwon2, &ctxtReal39);                  //calculate bin width bw and half bin width bw_on_2
 
       real34Matrix_t stats;
       real34Matrix_t histo;

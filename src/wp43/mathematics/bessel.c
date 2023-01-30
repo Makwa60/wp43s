@@ -491,8 +491,8 @@ static void bessel(const real_t *alpha, const real_t *x, bool neg, real_t *res, 
   real_t x2on4, term, gfac;
   int16_t n;
 
-  realDivide(x, const_2, &q, realContext);     // q = x/2
-  realPower(&q, const_2, &x2on4, realContext); // factor each time around
+  realMultiply(x, const_1on2, &q, realContext);     // q = x/2
+  realMultiply(&q, &q, &x2on4, realContext); // factor each time around
   realPower(&q, alpha, &r, realContext);       // (x/2)^(2m+alpha)
 
   realAdd(alpha, const_1, &gfac, realContext);
@@ -586,7 +586,7 @@ static void bessel2_int_series(const real_t *n, const real_t *x, real_t *res, re
   }
   in = realToInt32(n);
 
-  realDivide(x, const_2, &xon2, realContext);      // xon2 = x/2
+  realMultiply(x, const_1on2, &xon2, realContext);      // xon2 = x/2
   realPower(&xon2, n, &xon2n, realContext);        // xon2n = (x/2)^n
   realMultiply(&xon2, &xon2, &x2on4, realContext); // x2on4 = +/- x^2/4
 

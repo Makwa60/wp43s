@@ -1469,7 +1469,7 @@ void WP34S_Erf(const real_t *x, real_t *res, realContext_t *realContext) {
     return;
   }
 
-  realPower(x, const_2, &p, realContext);
+  realMultiply(x, x, &p, realContext);
   WP34S_GammaP(&p, const_1on2, &p, realContext, false, false);
   realSquareRoot(const_pi, &q, realContext);
   realDivide(&p, &q, &p, realContext);
@@ -1641,7 +1641,7 @@ void WP34S_Bernoulli(const real_t *x, real_t *res, bool bn_star, realContext_t *
       realChangeSign(res);
       return;
     }
-    else if(realDivide(x, const_2, &p, realContext), (!realIsAnInteger(&p))) { // Bn_odd
+    else if(realMultiply(x, const_1on2, &p, realContext), (!realIsAnInteger(&p))) { // Bn_odd
       realZero(res);
       return;
     }
@@ -1693,9 +1693,9 @@ static void zeta_calc(const real_t *x, real_t *reg1, real_t *reg7, real_t *res, 
     realMultiply(&q, &reg0, &q, realContext);
     realSubtract(&q, &reg0, &q, realContext);
     realMultiply(&q, &reg4, &q, realContext);
-    realPower(&reg3, const_2, &r, realContext);
+    realMultiply(&reg3, &reg3, &r, realContext);
     realSubtract(&reg0, const_1, &s, realContext);
-    realPower(&s, const_2, &s, realContext);
+    realMultiply(&s, &s, &s, realContext);
     realSubtract(&r, &s, &r, realContext);
     realMultiply(&r, const_2, &r, realContext);
     realDivide(&q, &r, &q, realContext);
@@ -1787,7 +1787,7 @@ void WP34S_LambertW(const real_t *x, real_t *res, bool negativeBranch, realConte
     if(negativeBranch) {
       realChangeSign(&r);
     }
-    realDivide(&q, const_3, &q, realContext);
+    realMultiply(&q, const_1on3, &q, realContext);
     realSubtract(&r, &q, &q, realContext);
 
     // Newton iteration for W+1
@@ -1839,7 +1839,7 @@ void WP34S_LambertW(const real_t *x, real_t *res, bool negativeBranch, realConte
       realDivide(const_1, &p, &p, realContext);
       realAdd(&p, const_1, &p, realContext);
       realMultiply(&p, &r, &p, realContext);
-      realDivide(&p, const_2, &p, realContext);
+      realMultiply(&p, const_1on2, &p, realContext);
       realChangeSign(&p);
       realAdd(&p, const_1, &p, realContext);
       realDivide(&r, &p, &r, realContext);

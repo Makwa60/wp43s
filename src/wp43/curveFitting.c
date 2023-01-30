@@ -855,10 +855,10 @@ void processCurvefitSelectionAll(uint16_t selection, real_t *RR_, real_t *MX, re
       realAdd(       &WW,   &VV,     &VV, realContext);
       realSquareRoot(&VV,   &VV,          realContext); // sqrt term
 
-      realDivide(&UU, const_2, &UU, realContext); // term1
+      realMultiply(&UU, const_1on2, &UU, realContext); // term1
       realDivide(&UU, &S_XY,   &UU, realContext);
 
-      realDivide(&VV, const_2, &VV, realContext); // term2
+      realMultiply(&VV, const_1on2, &VV, realContext); // term2
       realDivide(&VV, &S_XY,   &VV, realContext);
 
       realAdd(     &UU,  &VV,  aa1, realContext); // a1

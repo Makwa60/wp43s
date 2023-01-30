@@ -211,7 +211,7 @@ uint8_t InverseGudermannianReal(const real_t *x, real_t *res, realContext_t *rea
        * InvGd(x) = Ln(Tan(x/2 + PI/4))
        * -PI/2 < x < PI/2
        */
-      realDivide(x, const_2, res, realContext);       // r = x/2
+      realMultiply(x, const_1on2, res, realContext);       // r = x/2
       realAdd(res, const_piOn4, res, realContext);    // r = x/2 + pi/4
       WP34S_Cvt2RadSinCosTan(res, amRadian, &sin, &cos, res, &ctxtReal39); // r = Tan(x/2 + pi/4)
       WP34S_Ln(res, res, &ctxtReal39);                // r = Ln(Tan(x/2 + pi/4))
@@ -236,8 +236,8 @@ uint8_t InverseGudermannianComplex(const real_t *xReal, const real_t *xImag, rea
    * This implementation provides same results as Mathematica.
    * InvGd(x) = Ln(Tan(x / 2 + PI / 4))
    */
-  realDivide(xReal, const_2, resReal, realContext);               // r = x/2
-  realDivide(xImag, const_2, resImag, realContext);
+  realMultiply(xReal, const_1on2, resReal, realContext);               // r = x/2
+  realMultiply(xImag, const_1on2, resImag, realContext);
 
   realAdd(xReal, const_piOn4, resReal, realContext);              // r = x/2 + pi/2
 
