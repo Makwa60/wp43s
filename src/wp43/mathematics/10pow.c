@@ -57,6 +57,13 @@ void fn10Pow(uint16_t unusedButMandatoryParameter) {
 
 
 
+void realPower10(const real_t *x, real_t *res, realContext_t *realContext) {
+  realMultiply(x, const_ln10, res, realContext);
+  realExp(res, res, realContext);
+}
+
+
+
 void tenPowLonI(void) {
   int32_t exponentSign;
   longInteger_t base, exponent;
@@ -139,7 +146,7 @@ void tenPowReal(void) {
   real_t x;
 
   real34ToReal(REGISTER_REAL34_DATA(REGISTER_X), &x);
-  realPower(const_10, &x, &x, &ctxtReal39);
+  realPower10(&x, &x, &ctxtReal39);
   convertRealToReal34ResultRegister(&x, REGISTER_X);
   setRegisterAngularMode(REGISTER_X, amNone);
 }

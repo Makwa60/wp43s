@@ -7,6 +7,7 @@
 #include "conversionAngles.h"
 #include "distributions/normal.h"
 #include "lookupTables.h"
+#include "mathematics/10pow.h"
 #include "mathematics/comparisonReals.h"
 #include "mathematics/cos.h"
 #include "mathematics/division.h"
@@ -880,7 +881,7 @@ void WP34S_Ln(const real_t *xin, real_t *res, realContext_t *realContext) {
   realCopy(const_3, &i);
 
   int32ToReal(1 - realContext->digits, &t); // t is the exponent
-  realPower(const_10, &t, &z, realContext); // z is the max error
+  realPower10(&t, &z, realContext); // z is the max error
 
   for(;;) {
     realMultiply(&m, &n, &n, realContext);

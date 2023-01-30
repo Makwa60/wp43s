@@ -56,6 +56,13 @@ void fn2Pow(uint16_t unusedButMandatoryParameter) {
 
 
 
+void realPower2(const real_t *x, real_t *res, realContext_t *realContext) {
+  realMultiply(x, const_ln2, res, realContext);
+  realExp(res, res, realContext);
+}
+
+
+
 void twoPowLonI(void) {
   int32_t exponentSign;
   longInteger_t base, exponent;
@@ -138,7 +145,7 @@ void twoPowReal(void) {
   real_t x;
 
   real34ToReal(REGISTER_REAL34_DATA(REGISTER_X), &x);
-  realPower(const_2, &x, &x, &ctxtReal39);
+  realPower2(&x, &x, &ctxtReal39);
   convertRealToReal34ResultRegister(&x, REGISTER_X);
   setRegisterAngularMode(REGISTER_X, amNone);
 }

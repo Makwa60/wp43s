@@ -6,6 +6,7 @@
 #include "constantPointers.h"
 #include "debug.h"
 #include "error.h"
+#include "mathematics/10pow.h"
 #include "mathematics/wp34s.h"
 #include "registers.h"
 #include "registerValueConversions.h"
@@ -431,7 +432,7 @@ void fnCvtDbRatio(uint16_t tenOrTwenty) { // ten: power ratio   twenty: field ra
   }
 
   realDivide(&reX, (tenOrTwenty == 10 ? const_10 : const_20), &reX, &ctxtReal39);
-  realPower(const_10, &reX, &reX, &ctxtReal39);
+  realPower10(&reX, &reX, &ctxtReal39);
 
   convertRealToReal34ResultRegister(&reX, REGISTER_X);
 
