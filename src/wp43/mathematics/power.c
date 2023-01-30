@@ -53,6 +53,16 @@ TO_QSPI void (* const power[NUMBER_OF_DATA_TYPES_FOR_CALCULATIONS][NUMBER_OF_DAT
 
 
 
+void PowerReal(const real_t *y, const real_t *x, real_t *res, realContext_t *realContext) {
+  real_t lny;
+  WP34S_Ln(y, &lny, realContext);
+  realMultiply(x, &lny, res, realContext);
+  realExp(res, res, realContext);
+}
+
+
+
+
 /********************************************//**
  * \brief regX ==> regL and regY ^ regX ==> regX
  * Drops Y, enables stack lift and refreshes the stack
@@ -516,7 +526,7 @@ void powRealReal(void) {
   real34ToReal(REGISTER_REAL34_DATA(REGISTER_Y), &y);
   real34ToReal(REGISTER_REAL34_DATA(REGISTER_X), &x);
 
-  realPower(&y, &x, &x, &ctxtReal39);
+  PowerReal(&y, &x, &x, &ctxtReal39);
 
   if(getFlag(FLAG_CPXRES) && realIsNaN(&x)) {
     real34ToReal(REGISTER_REAL34_DATA(REGISTER_X), &x);

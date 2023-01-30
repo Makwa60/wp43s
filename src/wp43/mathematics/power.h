@@ -20,6 +20,8 @@
     #define powError typeError
   #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
 
+  void PowerReal(const real_t *y, const real_t *x, real_t *res, realContext_t *realContext);
+
   uint8_t PowerComplex(const real_t *yReal, const real_t *yImag, const real_t *xReal, const real_t *xImag, real_t *rReal, real_t *rImag, realContext_t *realContext);
 
   void longIntegerPower(longInteger_t base, longInteger_t exponent, longInteger_t result);
