@@ -26,5 +26,6 @@
   void expReal (void);
   void expCplx (void);
   void expComplex(const real_t *real, const real_t *imag, real_t *resReal, real_t *resImag, realContext_t *realContext);
+  void real34Exp (const real34_t *xin, real34_t *res);
 
 #endif // !EXP_H
