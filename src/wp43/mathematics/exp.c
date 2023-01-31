@@ -126,7 +126,7 @@ void expComplex(const real_t *real, const real_t *imag, real_t *resReal, real_t 
 
 void expLonI(void) {
   #if USE_REAL34_FUNCTIONS == 1
-    if(1&&getSystemFlag(FLAG_FASTFN)) {
+    if(getSystemFlag(FLAG_FASTFN)) {
       convertLongIntegerRegisterToReal34Register(REGISTER_X, REGISTER_X);
       real34Exp(REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X));
       setRegisterAngularMode(REGISTER_X, amNone);
@@ -188,7 +188,7 @@ void expReal(void) {
   }
 
   #if USE_REAL34_FUNCTIONS == 1
-    if(1&&getSystemFlag(FLAG_FASTFN)) {
+    if(getSystemFlag(FLAG_FASTFN)) {
       real34Exp(REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X));
     }
     else
