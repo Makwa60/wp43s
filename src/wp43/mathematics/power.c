@@ -578,7 +578,7 @@ void powRealReal(void) {
   real34ToReal(REGISTER_REAL34_DATA(REGISTER_X), &x);
 
   #if USE_REAL34_FUNCTIONS == 1
-    if(1) {
+    if(getSystemFlag(FLAG_FASTFN)) {
       Power34Real(REGISTER_REAL34_DATA(REGISTER_Y), REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X));
       if(!getFlag(FLAG_CPXRES) || !real34IsNaN(REGISTER_REAL34_DATA(REGISTER_X))) {
         setRegisterAngularMode(REGISTER_X, amNone);

@@ -221,7 +221,7 @@ void xthRootReal(real_t *yy, real_t *xx, realContext_t *realContext) {
     realDivide(const_1, &x, &x, realContext);
 
     #if USE_REAL34_FUNCTIONS == 1
-      if(1) {
+      if(getSystemFlag(FLAG_FASTFN)) {
         real34_t _x, _y;
         realToReal34(&y, &_y);
         realToReal34(&x, &_x);
