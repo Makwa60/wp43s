@@ -11,6 +11,7 @@
 #include "fonts.h"
 #include "integers.h"
 #include "items.h"
+#include "mathematics/exp.h"
 #include "mathematics/matrix.h"
 #include "mathematics/toRect.h"
 #include "registers.h"
@@ -60,6 +61,13 @@ void fn10Pow(uint16_t unusedButMandatoryParameter) {
 void realPower10(const real_t *x, real_t *res, realContext_t *realContext) {
   realMultiply(x, const_ln10, res, realContext);
   realExp(res, res, realContext);
+}
+
+
+
+void real34Power10(const real34_t *x, real34_t *res) {
+  real34Multiply(x, const34_ln10, res);
+  real34Exp(res, res);
 }
 
 
@@ -143,11 +151,19 @@ void tenPowReal(void) {
     return;
   }
 
-  real_t x;
+  #if USE_REAL34_FUNCTIONS == 1
+    if(1) {
+      real34Power10(REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X));
+    }
+    else
+  #endif // USE_REAL34_FUNCTIONS == 1
+  {
+    real_t x;
 
-  real34ToReal(REGISTER_REAL34_DATA(REGISTER_X), &x);
-  realPower10(&x, &x, &ctxtReal39);
-  convertRealToReal34ResultRegister(&x, REGISTER_X);
+    real34ToReal(REGISTER_REAL34_DATA(REGISTER_X), &x);
+    realPower10(&x, &x, &ctxtReal39);
+    convertRealToReal34ResultRegister(&x, REGISTER_X);
+  }
   setRegisterAngularMode(REGISTER_X, amNone);
 }
 

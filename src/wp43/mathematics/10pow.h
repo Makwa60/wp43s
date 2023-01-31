@@ -19,5 +19,6 @@
   void fn10Pow(uint16_t unusedButMandatoryParameter);
 
   void realPower10(const real_t *x, real_t *res, realContext_t *realContext);
+  void real34Power10(const real34_t *x, real34_t *res);
 
 #endif // !FILE_10POW_H

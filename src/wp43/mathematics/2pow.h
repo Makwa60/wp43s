@@ -20,5 +20,6 @@
   void fn2Pow     (uint16_t unusedButMandatoryParameter);
 
   void realPower2 (const real_t *x, real_t *res, realContext_t *realContext);
+  void real34Power2(const real34_t *x, real34_t *res);
 
 #endif // !FILE_2POW_H
