@@ -220,7 +220,19 @@ void xthRootReal(real_t *yy, real_t *xx, realContext_t *realContext) {
   if(realIsPositive(&y)) {                                         //positive base, no problem, get the power function y^(1/x)
     realDivide(const_1, &x, &x, realContext);
 
-    PowerReal(&y, &x, &x, realContext);
+    #if USE_REAL34_FUNCTIONS == 1
+      if(1) {
+        real34_t _x, _y;
+        realToReal34(&y, &_y);
+        realToReal34(&x, &_x);
+        Power34Real(&_y, &_x, &_x);
+        real34ToReal(&_x, &x);
+      }
+      else
+    #endif // USE_REAL34_FUNCTIONS == 1
+    {
+      PowerReal(&y, &x, &x, realContext);
+    }
     reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
     convertRealToReal34ResultRegister(&x, REGISTER_X);
     setRegisterAngularMode(REGISTER_X, amNone);

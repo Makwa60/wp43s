@@ -10,6 +10,8 @@
 #include "integers.h"
 #include "items.h"
 #include "mathematics/comparisonReals.h"
+#include "mathematics/exp.h"
+#include "mathematics/ln.h"
 #include "mathematics/matrix.h"
 #include "mathematics/toPolar.h"
 #include "mathematics/toRect.h"
@@ -58,6 +60,55 @@ void PowerReal(const real_t *y, const real_t *x, real_t *res, realContext_t *rea
   WP34S_Ln(y, &lny, realContext);
   realMultiply(x, &lny, res, realContext);
   realExp(res, res, realContext);
+}
+
+
+
+void Power34Real(const real34_t *y, const real34_t *x, real34_t *res) {
+  real34_t lny, yy, xx, x1;
+  uint32_t exponent = 0;
+  bool inv = real34IsNegative(x);
+  if(real34IsZero(y)) {
+    if(real34IsZero(x)) {
+      realToReal34(const_NaN, res);
+    }
+    else if(real34IsNegative(x)) {
+      realToReal34(const_minusInfinity, res);
+    }
+    else {
+      real34Zero(res);
+    }
+    return;
+  }
+  else if(real34IsInfinite(x)) {
+    if(real34IsNegative(x)) {
+      real34Zero(res);
+    }
+    else {
+      realToReal34(const_plusInfinity, res);
+    }
+    return;
+  }
+  real34Copy(y, &yy);
+  real34CopyAbs(x, &x1);
+  real34Ln(&yy, &lny);
+  if(real34CompareLessThan(&x1, const34_2p32)) {
+    exponent = real34ToUInt32(&x1);
+    real34ToIntegralValue(&x1, &xx, DEC_ROUND_DOWN);
+    real34Subtract(&x1, &xx, &xx);
+  }
+  real34Multiply(&xx, &lny, res);
+  real34Exp(res, res);
+  while(exponent > 0) {
+    if(exponent & 0x1) {
+      real34Multiply(res, &yy, res);
+    }
+    exponent >>= 1;
+    real34Multiply(&yy, &yy, &yy);
+  }
+  if(inv) {
+    real34Divide(const34_1, res, res);
+  }
 }
 
 
@@ -526,7 +577,19 @@ void powRealReal(void) {
   real34ToReal(REGISTER_REAL34_DATA(REGISTER_Y), &y);
   real34ToReal(REGISTER_REAL34_DATA(REGISTER_X), &x);
 
-  PowerReal(&y, &x, &x, &ctxtReal39);
+  #if USE_REAL34_FUNCTIONS == 1
+    if(1) {
+      Power34Real(REGISTER_REAL34_DATA(REGISTER_Y), REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X));
+      if(!getFlag(FLAG_CPXRES) || !real34IsNaN(REGISTER_REAL34_DATA(REGISTER_X))) {
+        setRegisterAngularMode(REGISTER_X, amNone);
+        return;
+      }
+    }
+    else
+  #endif // USE_REAL34_FUNCTIONS == 1
+  {
+    PowerReal(&y, &x, &x, &ctxtReal39);
+  }
 
   if(getFlag(FLAG_CPXRES) && realIsNaN(&x)) {
     real34ToReal(REGISTER_REAL34_DATA(REGISTER_X), &x);
