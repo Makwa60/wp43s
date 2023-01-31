@@ -62,7 +62,7 @@ void fnExp(uint16_t unusedButMandatoryParameter) {
 
 // Abramowitz and Stegun §4.2.1
 void real34Exp(const real34_t *xin, real34_t *res) {
-  real34_t x, xx, k, r, r0, r1;
+  real34_t x, xx, k, r, d, rd;
   bool neg = real34IsNegative(xin);
   bool termOdd = true;
 
@@ -71,8 +71,7 @@ void real34Exp(const real34_t *xin, real34_t *res) {
   real34Copy(const34_1, &k);
   real34Copy(const34_1, &xx);
   real34Copy(const34_1, &xx);
-  real34Copy(const34_1, &r0);
-  real34Copy(const34_0, &r1);
+  real34Copy(const34_0, &d);
 
   // Taylor series
   do {
@@ -80,12 +79,14 @@ void real34Exp(const real34_t *xin, real34_t *res) {
 
     real34Multiply(&xx, &x, &xx);
     real34Divide(&xx, &k, &xx);
-    real34Add(res, &xx, res);
-    real34Add(termOdd ? &r1 : &r0, &xx, termOdd ? &r1 : &r0);
+    real34Subtract(&xx, &d, &xx); // <- Kahan compensation
+    real34Add(res, &xx, &rd);
+    real34Subtract(&rd, res, &d); // <- Kahan compensation
+    real34Subtract(&d, &xx, &d);  // <- Kahan compensation
+    real34Copy(&rd, res);
     real34Add(&k, const34_1, &k);
     termOdd = !termOdd;
   } while(!real34IsSpecial(res) && !real34CompareEqual(res, &r));
-  real34Add(&r0, &r1, res);
 
   if(neg) {
     real34Divide(const34_1, res, res);
@@ -125,7 +126,7 @@ void expComplex(const real_t *real, const real_t *imag, real_t *resReal, real_t 
 
 void expLonI(void) {
   #if USE_REAL34_FUNCTIONS == 1
-    if(getSystemFlag(FLAG_FASTFN)) {
+    if(1&&getSystemFlag(FLAG_FASTFN)) {
       convertLongIntegerRegisterToReal34Register(REGISTER_X, REGISTER_X);
       real34Exp(REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X));
       setRegisterAngularMode(REGISTER_X, amNone);
@@ -187,7 +188,7 @@ void expReal(void) {
   }
 
   #if USE_REAL34_FUNCTIONS == 1
-    if(getSystemFlag(FLAG_FASTFN)) {
+    if(1&&getSystemFlag(FLAG_FASTFN)) {
       real34Exp(REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X));
     }
     else
