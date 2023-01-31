@@ -152,7 +152,7 @@ void tenPowReal(void) {
   }
 
   #if USE_REAL34_FUNCTIONS == 1
-    if(1) {
+    if(getSystemFlag(FLAG_FASTFN)) {
       real34Power10(REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X));
     }
     else
