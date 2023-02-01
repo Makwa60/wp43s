@@ -537,7 +537,7 @@ void calcSigma(uint16_t maxOffset) {
       regStats = allocateNamedMatrix(statMx, 1, 2);
       real34Matrix_t stats;
       linkToRealMatrixRegister(regStats, &stats);
-      realMatrixInit(&stats,1,2);
+      //realMatrixInit(&stats,1,2);
     }
     else {
       if(appendRowAtMatrixRegister(regStats)) {
@@ -590,7 +590,7 @@ void calcSigma(uint16_t maxOffset) {
 
 
 
-static calcRegister_t fnClHisto(void) {
+static calcRegister_t fnClHisto(bool deleteVariable) {
   #if !defined(TESTSUITE_BUILD)
     calcRegister_t regHisto = findNamedVariable("HISTO");
     if(regHisto == INVALID_VARIABLE) {
@@ -602,8 +602,14 @@ static calcRegister_t fnClHisto(void) {
       errorMoreInfo("HISTO matrix not created");
       return INVALID_VARIABLE;
     }
-    clearRegister(regHisto);                  // this should change to delete the named variable HISTO once the delete function is available. Until then write 0.0 into STATS.
-    return regHisto;
+    if(deleteVariable) {
+      fnDeleteVariable(regHisto);
+      return INVALID_VARIABLE;
+    }
+    else {
+      clearRegister(regHisto);
+      return regHisto;
+    }
 #else
     return INVALID_VARIABLE;
 #endif //TESTSUITE_BUILD
@@ -612,7 +618,7 @@ static calcRegister_t fnClHisto(void) {
 
 
 void fnClSigma(uint16_t unusedButMandatoryParameter) {
-  fnClHisto();
+  fnClHisto(true);
   strcpy(statMx,"STATS");                     //any stats operation restores the stats matrix. The purpose of the changed names are just to be able to exchange the matrixes for reading and graphing
   calcRegister_t regStats = findNamedVariable(statMx);
   if(regStats == INVALID_VARIABLE) {
@@ -623,7 +629,7 @@ void fnClSigma(uint16_t unusedButMandatoryParameter) {
     displayCalcErrorMessage(ERROR_NO_MATRIX_INDEXED, ERR_REGISTER_LINE, REGISTER_X); // Invalid input data type for this operation
     errorMoreInfo("STATS matrix not created");
   }
-  clearRegister(regStats);                  // this should change to delete the named variable STATS once the delete function is available. Until then write 0.0 into STATS.
+  fnDeleteVariable(regStats);
   lrChosen = 0;                             // linear regression selection
   lastPlotMode = PLOT_NOTHING;              // last selected  plotmode
   plotSelection = 0;                        // Currently selected linear regression mode
@@ -859,7 +865,7 @@ void fnXmax(uint16_t unusedButMandatoryParameter) {
       regHisto = allocateNamedMatrix("HISTO", 1, 2);
       real34Matrix_t histo;
       linkToRealMatrixRegister(regHisto, &histo);
-      realMatrixInit(&histo, 1, 2);
+      //realMatrixInit(&histo, 1, 2);
       //printf("Initialising HISTO\n");
     }
     else {
@@ -1020,7 +1026,7 @@ static void convertStatsMatrixToHistoMatrix(uint16_t statsVariableToHistogram) {
     }
 
     calcRegister_t regStats = findNamedVariable(statMx);              //connect to STATS matrix
-    calcRegister_t regHisto = fnClHisto();                            //clear and connect to HISTO matrix
+    calcRegister_t regHisto = fnClHisto(false);                       //clear and connect to HISTO matrix
 
     if(isStatsMatrix(&i, statMx) && regStats != INVALID_VARIABLE && regHisto != INVALID_VARIABLE) {
 
