@@ -537,7 +537,7 @@ void calcSigma(uint16_t maxOffset) {
       regStats = allocateNamedMatrix(statMx, 1, 2);
       real34Matrix_t stats;
       linkToRealMatrixRegister(regStats, &stats);
-      realMatrixInit(&stats,1,2);
+      //realMatrixInit(&stats,1,2);
     }
     else {
       if(appendRowAtMatrixRegister(regStats)) {
@@ -859,7 +859,7 @@ void fnXmax(uint16_t unusedButMandatoryParameter) {
       regHisto = allocateNamedMatrix("HISTO", 1, 2);
       real34Matrix_t histo;
       linkToRealMatrixRegister(regHisto, &histo);
-      realMatrixInit(&histo, 1, 2);
+      //realMatrixInit(&histo, 1, 2);
       //printf("Initialising HISTO\n");
     }
     else {
