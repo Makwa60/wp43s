@@ -12,6 +12,7 @@
 #include "mathematics/cos.h"
 #include "mathematics/division.h"
 #include "mathematics/exp.h"
+#include "mathematics/expMOne.h"
 #include "mathematics/ln.h"
 #include "mathematics/lnPOne.h"
 #include "mathematics/lnbeta.h"
@@ -1004,7 +1005,7 @@ void WP34S_SinhCosh(const real_t *x, real_t *sinhOut, real_t *coshOut, realConte
 
   if(sinhOut != NULL) {
     if(realCompareAbsLessThan(x, const_1on2)) {
-      WP34S_ExpM1(x, &u, realContext);                         // u = e^x - 1
+      realExpM1(x, &u, realContext);                         // u = e^x - 1
       realMultiply(&u, const_1on2, &t, realContext);           // t = (e^x - 1) / 2
 
       realAdd(&u, const_1, &u, realContext);                   // u = e^x
@@ -1041,7 +1042,7 @@ void WP34S_Tanh(const real_t *x, real_t *res, realContext_t *realContext) {
     real_t a, b;
 
     realAdd(x, x, &a, realContext);        // a = 2x
-    WP34S_ExpM1(&a, &b, realContext);      // b = exp(2x) - 1
+    realExpM1(&a, &b, realContext);      // b = exp(2x) - 1
     realAdd(&b, const_2, &a, realContext); // a = exp(2x) - 1 + 2 = exp(2x) + 1
     realDivide(&b, &a, res, realContext);  // res = (exp(2x) - 1) / (exp(2x) + 1)
   }
@@ -1707,7 +1708,7 @@ static void zeta_calc(const real_t *x, real_t *reg1, real_t *reg7, real_t *res, 
   realDivide(&p, &reg5, &p, realContext);
   realSubtract(const_1, reg1, &r, realContext);
   realMultiply(const_ln2, &r, &r, realContext);
-  WP34S_ExpM1(&r, &q, realContext);
+  realExpM1(&r, &q, realContext);
   realDivide(&p, &q, res, realContext);
 }
 
@@ -1795,7 +1796,7 @@ void WP34S_LambertW(const real_t *x, real_t *res, bool negativeBranch, realConte
     do { //LamW0_wp1_newton
       // FILL and x close to -1/e
       realMultiply(&q, const__1, &p, realContext);
-      WP34S_ExpM1(&p, &p, realContext);
+      realExpM1(&p, &p, realContext);
       realMultiply(&p, &reg0, &p, realContext);
       realMultiply(&p, const_eE, &p, realContext);
       realSubtract(&p, &q, &p, realContext);

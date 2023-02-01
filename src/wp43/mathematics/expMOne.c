@@ -63,6 +63,33 @@ void fnExpM1(uint16_t unusedButMandatoryParameter) {
 
 
 
+void realExpM1(const real_t *xin, real_t *res, realContext_t *realContext) {
+  real_t x, xx, k, r;
+
+  if(!realCompareAbsLessThan(xin, const_1)) {
+    realExp(xin, res, realContext);
+    realSubtract(res, const_1, res, realContext);
+    return;
+  }
+
+  realCopy(xin, &x);
+  realCopy(const_0, res);
+  realCopy(const_1, &k);
+  realCopy(const_1, &xx);
+
+  // Taylor series
+  do {
+    realCopy(res, &r);
+
+    realMultiply(&xx, &x, &xx, realContext);
+    realDivide(&xx, &k, &xx, realContext);
+    realAdd(res, &xx, res, realContext);
+    realAdd(&k, const_1, &k, realContext);
+  } while(!realIsSpecial(res) && !realCompareEqual(res, &r));
+}
+
+
+
 void expM1Complex(const real_t *real, const real_t *imag, real_t *resReal, real_t *resImag, realContext_t *realContext) {
   real_t expa, sin, cos;
 
@@ -164,7 +191,7 @@ void expM1Real(void) {
     realCopy(const_NaN, &x);
   }
   else if(realCompareAbsLessThan(&x, const_1)) {
-    WP34S_ExpM1(&x, &x, &ctxtReal51);
+    realExpM1(&x, &x, &ctxtReal51);
   }
   else {
     realExp(&x, &x, &ctxtReal51);

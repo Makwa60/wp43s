@@ -8,6 +8,7 @@
 #include "flags.h"
 #include "fonts.h"
 #include "mathematics/comparisonReals.h"
+#include "mathematics/expMOne.h"
 #include "mathematics/lnPOne.h"
 #include "mathematics/wp34s.h"
 #include "registers.h"
@@ -198,7 +199,7 @@ void WP34S_Cdf_Weib(const real_t *x, const real_t *b, const real_t *t, real_t *r
   }
   realPower(&p, t, &p, realContext);
   realChangeSign(&p);
-  WP34S_ExpM1(&p, res, realContext);
+  realExpM1(&p, res, realContext);
   realChangeSign(res);
 }
 

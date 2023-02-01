@@ -12,6 +12,7 @@
 #include "fonts.h"
 #include "mathematics/comparisonReals.h"
 #include "mathematics/cpyx.h"
+#include "mathematics/expMOne.h"
 #include "mathematics/ln.h"
 #include "mathematics/wp34s.h"
 #include "registers.h"
@@ -246,7 +247,7 @@ static void cdf_Hypergeometric_common(const real_t *x, const real_t *p0, const r
     realExp(&binomPart, &b, realContext);
   }
   else {
-    WP34S_ExpM1(&binomPart, &b, realContext);
+    realExpM1(&binomPart, &b, realContext);
     realSetPositiveSign(&b);
   }
 

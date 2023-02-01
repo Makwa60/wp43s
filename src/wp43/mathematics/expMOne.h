@@ -27,5 +27,6 @@
   void expM1Real (void);
   void expM1Cplx (void);
   void expM1Complex(const real_t *real, const real_t *imag, real_t *resReal, real_t *resImag, realContext_t *realContext);
+  void realExpM1   (const real_t *xin, real_t *res, realContext_t *realContext);
 
 #endif // !EXPMONE_H

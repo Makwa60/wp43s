@@ -12,6 +12,7 @@
 #include "flags.h"
 #include "fonts.h"
 #include "mathematics/comparisonReals.h"
+#include "mathematics/expMOne.h"
 #include "mathematics/lnPOne.h"
 #include "mathematics/wp34s.h"
 #include "registers.h"
@@ -192,7 +193,7 @@ void WP34S_Cdf_Geom(const real_t *x, const real_t *p0, real_t *res, realContext_
   realMultiply(p0, const__1, &q, realContext);
   realLn1P(&q, &q, realContext);
   realMultiply(&p, &q, &p, realContext);
-  WP34S_ExpM1(&p, res, realContext);
+  realExpM1(&p, res, realContext);
   realChangeSign(res);
 }
 
