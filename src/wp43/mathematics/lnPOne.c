@@ -100,6 +100,42 @@ void real34Ln1P(const real34_t *xin, real34_t *res) {
   } while(!real34CompareEqual(res, &r));
 }
 
+void realLn1P(const real_t *xin, real_t *res, realContext_t *realContext) {
+  real_t x, xx, r;
+  int32_t k = 1;
+
+  if(realCompareAbsGreaterThan(xin, const_1on2)) {
+    realAdd(xin, const_1, &x, realContext);
+    realLn(&x, res, realContext);
+    return;
+  }
+
+  realCopy(xin, &x);
+
+  // 1st term
+  realCopy(&x, &xx);
+  realCopy(&x, res);
+
+  // Taylor series
+  do {
+    realCopy(res, &r);
+
+    realMultiply(&xx, &x, &xx, realContext);
+    //if(k < 100) {
+    //  real34FMA(&xx, maclaurinCoeffLn1P34 + (k++), res, res);
+    //}
+    //else { // unlikely
+      real_t kp1;
+      int32ToReal(k + 1, &kp1); realDivide(&xx, &kp1, &kp1, realContext);
+      if(k % 2 == 1) {
+        realSetNegativeSign(&kp1);
+      }
+      realAdd(res, &kp1, res, realContext);
+      ++k;
+    //}
+  } while(!realCompareEqual(res, &r));
+}
+
 
 
 void lnP1Complex(const real_t *real, const real_t *imag, real_t *lnReal, real_t *lnImag, realContext_t *realContext) {
@@ -161,13 +197,13 @@ void lnP1LonI(void) {
     realAdd(&x, const_1, &x, &ctxtReal39);
 
     if(longIntegerIsPositive(lgInt)) {
-      WP34S_Ln(&x, &x, &ctxtReal39);
+      realLn(&x, &x, &ctxtReal39);
       reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
       convertRealToReal34ResultRegister(&x, REGISTER_X);
      }
     else if(getFlag(FLAG_CPXRES)) {
       realSetPositiveSign(&x);
-      WP34S_Ln(&x, &x, &ctxtReal39);
+      realLn(&x, &x, &ctxtReal39);
       reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE_IN_BYTES, amNone);
       convertRealToReal34ResultRegister(&x, REGISTER_X);
       convertRealToImag34ResultRegister(const_pi, REGISTER_X);
@@ -221,12 +257,12 @@ void lnP1ShoI(void) {
   }
   else {
     if(realIsPositive(&x)) {
-      WP34S_Ln(&x, &x, &ctxtReal39);
+      realLn(&x, &x, &ctxtReal39);
       convertRealToReal34ResultRegister(&x, REGISTER_X);
      }
     else if(getFlag(FLAG_CPXRES)) {
       realSetPositiveSign(&x);
-      WP34S_Ln(&x, &x, &ctxtReal39);
+      realLn(&x, &x, &ctxtReal39);
       reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE_IN_BYTES, amNone);
       convertRealToReal34ResultRegister(&x, REGISTER_X);
       convertRealToImag34ResultRegister(const_pi, REGISTER_X);
@@ -298,13 +334,13 @@ void lnP1Real(void) {
 
   else {
     if(realCompareGreaterThan(&x, const__1)) {
-      WP34S_Ln1P(&x, &x, &ctxtReal39);
+      realLn1P(&x, &x, &ctxtReal39);
       convertRealToReal34ResultRegister(&x, REGISTER_X);
     }
     else if(getFlag(FLAG_CPXRES)) {
       realAdd(&x, const_1, &x, &ctxtReal39);
       realSetPositiveSign(&x);
-      WP34S_Ln(&x, &x, &ctxtReal39);
+      realLn(&x, &x, &ctxtReal39);
       reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE_IN_BYTES, amNone);
       convertRealToReal34ResultRegister(&x, REGISTER_X);
       convertRealToImag34ResultRegister(const_pi, REGISTER_X);

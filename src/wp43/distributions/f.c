@@ -15,6 +15,7 @@
 #include "flags.h"
 #include "fonts.h"
 #include "mathematics/comparisonReals.h"
+#include "mathematics/ln.h"
 #include "mathematics/lnbeta.h"
 #include "mathematics/wp34s.h"
 #include "registers.h"
@@ -167,14 +168,14 @@ void fnF_I(uint16_t unusedButMandatoryParameter) {
 void WP34S_Pdf_F(const real_t *x, const real_t *d1, const real_t *d2, real_t *res, realContext_t *realContext) {
   real_t p, q, r;
 
-  WP34S_Ln(d2, &p, realContext);
+  realLn(d2, &p, realContext);
   realMultiply(&p, d2, &p, realContext);
   realMultiply(d1, x, &q, realContext);
-  WP34S_Ln(&q, &r, realContext);
+  realLn(&q, &r, realContext);
   realMultiply(&r, d1, &r, realContext);
   realAdd(&p, &r, &p, realContext);
   realAdd(&q, d2, &q, realContext);
-  WP34S_Ln(&q, &q, realContext);
+  realLn(&q, &q, realContext);
   realAdd(d1, d2, &r, realContext);
   realMultiply(&q, &r, &q, realContext);
   realSubtract(&p, &q, &p, realContext);

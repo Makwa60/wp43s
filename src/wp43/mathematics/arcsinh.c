@@ -8,6 +8,7 @@
 #include "defines.h"
 #include "error.h"
 #include "items.h"
+#include "mathematics/ln.h"
 #include "mathematics/matrix.h"
 #include "mathematics/toRect.h"
 #include "mathematics/toPolar.h"
@@ -61,12 +62,12 @@ void arcsinhLonI(void) {
   convertLongIntegerRegisterToReal(REGISTER_X, &x, &ctxtReal39);
   reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
 
-  // arcsinh(x) = ln(x + sqrt(x� + 1))
+  // arcsinh(x) = ln(x + sqrt(x² + 1))
   realMultiply(&x, &x, &xSquared, &ctxtReal39);
   realAdd(&xSquared, const_1, &xSquared, &ctxtReal39);
   realSquareRoot(&xSquared, &xSquared, &ctxtReal39);
   realAdd(&xSquared, &x, &x, &ctxtReal39);
-  WP34S_Ln(&x, &x, &ctxtReal39);
+  realLn(&x, &x, &ctxtReal39);
 
   convertRealToReal34ResultRegister(&x, REGISTER_X);
 }
@@ -129,32 +130,32 @@ uint8_t ArcsinhComplex(const real_t *xReal, const real_t *xImag, real_t *rReal, 
   realCopy(xReal, &a);
   realCopy(xImag, &b);
 
-  // arcsinh(z) = ln(z + sqrt(z� + 1))
-  // calculate z�   real part
+  // arcsinh(z) = ln(z + sqrt(z² + 1))
+  // calculate z²   real part
   realMultiply(&b, &b, rReal, realContext);
   realChangeSign(rReal);
   realFMA(&a, &a, rReal, rReal, realContext);
 
-  // calculate z�   imaginary part
+  // calculate z²   imaginary part
   realMultiply(&a, &b, rImag, realContext);
   realMultiply(rImag, const_2, rImag, realContext);
 
-  // calculate z� + 1
+  // calculate z² + 1
   realAdd(rReal, const_1, rReal, realContext);
 
-  // calculate sqrt(z� + 1)
+  // calculate sqrt(z² + 1)
   realRectangularToPolar(rReal, rImag, rReal, rImag, realContext);
   realSquareRoot(rReal, rReal, realContext);
   realMultiply(rImag, const_1on2, rImag, realContext);
   realPolarToRectangular(rReal, rImag, rReal, rImag, realContext);
 
-  // calculate z + sqrt(z� + 1)
+  // calculate z + sqrt(z² + 1)
   realAdd(&a, rReal, rReal, realContext);
   realAdd(&b, rImag, rImag, realContext);
 
-  // calculate ln(z + sqtr(z� + 1))
+  // calculate ln(z + sqtr(z² + 1))
   realRectangularToPolar(rReal, rImag, &a, &b, realContext);
-  WP34S_Ln(&a, &a, realContext);
+  realLn(&a, &a, realContext);
 
   realCopy(&a, rReal);
   realCopy(&b, rImag);

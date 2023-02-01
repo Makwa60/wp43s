@@ -13,6 +13,7 @@
 #include "mathematics/division.h"
 #include "mathematics/exp.h"
 #include "mathematics/ln.h"
+#include "mathematics/lnPOne.h"
 #include "mathematics/lnbeta.h"
 #include "mathematics/multiplication.h"
 #include "mathematics/sin.h"
@@ -675,13 +676,13 @@ static void WP34S_Calc_Gamma_LnGamma_Lanczos(const real_t *xin, real_t *res, boo
   }
 
   realAdd(&s, const_gammaC00, &t, realContext);
-  WP34S_Ln(&t, &s, realContext);
+  realLn(&t, &s, realContext);
 
   //  r = z + g + 0.5;
   realAdd(&x, const_gammaR, &r, realContext); // const_gammaR is g + 0.5
 
   //  r = log(R[0][0]) + (z+0.5) * log(r) - r;
-  WP34S_Ln(&r, &u, realContext);
+  realLn(&r, &u, realContext);
   realAdd(&x, const_1on2, &t, realContext);
   realMultiply(&u, &t, &v, realContext);
 
@@ -727,7 +728,7 @@ static void WP34S_Gamma_LnGamma(const real_t *xin, const bool calculateLnGamma, 
     realDivide(const_1, xin, &x, realContext);
     realSubtract(&x, const_egamma, res, realContext);
     if(calculateLnGamma) {
-      WP34S_Ln(res, res, realContext);
+      realLn(res, res, realContext);
     }
     return;
   }
@@ -752,7 +753,7 @@ static void WP34S_Gamma_LnGamma(const real_t *xin, const bool calculateLnGamma, 
         realSubtract(&x, const_1, &x, realContext);
       }
       if(calculateLnGamma) {
-        WP34S_Ln(res, res, realContext);
+        realLn(res, res, realContext);
       }
       return;
     }
@@ -769,7 +770,7 @@ static void WP34S_Gamma_LnGamma(const real_t *xin, const bool calculateLnGamma, 
 
     if(calculateLnGamma) {
       realDivide(const_pi, &x, &t, realContext);                   // t = pi / sin(pi·xin)
-      WP34S_Ln(&t, &t, realContext);                               // t = ln(pi / sin(pi·xin))
+      realLn(&t, &t, realContext);                               // t = ln(pi / sin(pi·xin))
       realSubtract(&t, res, res, realContext);                     // res = ln(pi / sin(pi·xin)) - lngamma(1-xin)
     }
     else {
@@ -1058,7 +1059,7 @@ void WP34S_ArcSinh(const real_t *x, real_t *res, realContext_t *realContext) {
   realDivide(x, &a, &a, realContext);    // a = x / (sqrt(x²+1)+1)
   realAdd(&a, const_1, &a, realContext); // a = x / (sqrt(x²+1)+1) + 1
   realMultiply(x, &a, &a, realContext);  // y = x * (x / (sqrt(x²+1)+1) + 1)
-  WP34S_Ln1P(&a, res, realContext);      // res = ln(1 + (x * (x / (sqrt(x²+1)+1) + 1)))
+  realLn1P(&a, res, realContext);      // res = ln(1 + (x * (x / (sqrt(x²+1)+1) + 1)))
 }
 
 
@@ -1072,7 +1073,7 @@ void WP34S_ArcCosh(const real_t *xin, real_t *res, realContext_t *realContext) {
   realSubtract(res, const_1, &z, realContext); // z = x² - 1
   realSquareRoot(&z, res, realContext);        // res = sqrt(x²-1)
   realAdd(res, &x, &z, realContext);           // z = x + sqrt(x²-1)
-  WP34S_Ln(&z, res, realContext);              // res = ln(x + sqrt(x²-1))
+  realLn(&z, res, realContext);              // res = ln(x + sqrt(x²-1))
 }
 */
 
@@ -1089,7 +1090,7 @@ void WP34S_ArcTanh(const real_t *x, real_t *res, realContext_t *realContext) {
   realSubtract(const_1, x, &z, realContext);      // z = 1-x
   realDivide(x, &z, &y, realContext);             // y = x / (1-x)
   realMultiply(&y, const_2, &z, realContext);     // z = 2x / (1-x)
-  WP34S_Ln1P(&z, &y, realContext);                // y = ln(1 + 2x / (1-x))
+  realLn1P(&z, &y, realContext);                // y = ln(1 + 2x / (1-x))
   realMultiply(&y, const_1on2, res, realContext); // res = ln(1 + 2x / (1-x)) / 2
 }
 
@@ -1332,7 +1333,7 @@ static void gser(const real_t *a, const real_t *x, const real_t *gln, real_t *re
     }
     realCopy(&t, &sum);
   }
-  WP34S_Ln(x, &t, realContext);
+  realLn(x, &t, realContext);
   realMultiply(&t, a, &u, realContext);
   realSubtract(&u, x, &t, realContext);
   realSubtract(&t, gln, &u, realContext);
@@ -1381,7 +1382,7 @@ static void gcf(const real_t *a, const real_t *x, const real_t *gln, real_t *res
     }
     realCopy(&u, &h);
   }
-  WP34S_Ln(x, &t, realContext);
+  realLn(x, &t, realContext);
   realMultiply(&t, a, &u, realContext);
   realSubtract(&u, x, &t, realContext);
   realSubtract(&t, gln, &u, realContext);
@@ -1585,11 +1586,11 @@ void WP34S_betai(const real_t *b, const real_t *a, const real_t *x, real_t *res,
   }
   else {
     LnBeta(a, b, &u, realContext);
-    WP34S_Ln(x, &v, realContext);              // v = ln(x)
+    realLn(x, &v, realContext);              // v = ln(x)
     realMultiply(a, &v, &t, realContext);
     realSubtract(&t, &u, &v, realContext);     // v = lng(...)+a.ln(x)
     realSubtract(const_1, x, &y, realContext); // y = 1-x
-    WP34S_Ln(&y, &u, realContext);             // u = ln(1-x)
+    realLn(&y, &u, realContext);             // u = ln(1-x)
     realMultiply(&u, b, &t, realContext);
     realAdd(&t, &v, &u, realContext);          // u = lng(...)+a.ln(x)+b.ln(1-x)
     realExp(&u, &w, realContext);
@@ -1816,15 +1817,15 @@ void WP34S_LambertW(const real_t *x, real_t *res, bool negativeBranch, realConte
   else {// LamW0_normal
     if(negativeBranch) {// LamW0_smallx
       realMultiply(&reg0, const__1, &q, realContext);
-      WP34S_Ln(&q, &q, realContext);
+      realLn(&q, &q, realContext);
       realMultiply(&q, const__1, &r, realContext);
-      WP34S_Ln(&r, &r, realContext);
+      realLn(&r, &r, realContext);
       realSubtract(&q, &r, &q, realContext);
     }
     else {
-      WP34S_Ln1P(&reg0, &q, realContext);
+      realLn1P(&reg0, &q, realContext);
       if(realCompareGreaterThan(&q, const_1)) {
-        WP34S_Ln(&q, &r, realContext);
+        realLn(&q, &r, realContext);
         realSubtract(&q, &r, &q, realContext);
       }
     }

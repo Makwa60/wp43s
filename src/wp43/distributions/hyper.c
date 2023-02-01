@@ -12,6 +12,7 @@
 #include "fonts.h"
 #include "mathematics/comparisonReals.h"
 #include "mathematics/cpyx.h"
+#include "mathematics/ln.h"
 #include "mathematics/wp34s.h"
 #include "registers.h"
 #include "registerValueConversions.h"
@@ -257,12 +258,12 @@ static void cdf_Hypergeometric_common(const real_t *x, const real_t *p0, const r
     }
 
     signHgp = (realIsNegative(&a1) ? 1 : 0) ^ (realIsNegative(&a2) ? 1 : 0) ^ (realIsNegative(&a3) ? 1 : 0) ^ (realIsNegative(&b1) ? 1 : 0) ^ (realIsNegative(&b2) ? 1 : 0);
-    realCopyAbs(&a1, &a), WP34S_Ln(&a, &a, realContext), realAdd(&hypergeomPart, &a, &hypergeomPart, realContext);
-    realCopyAbs(&a2, &a), WP34S_Ln(&a, &a, realContext), realAdd(&hypergeomPart, &a, &hypergeomPart, realContext);
-    realCopyAbs(&a3, &a), WP34S_Ln(&a, &a, realContext), realAdd(&hypergeomPart, &a, &hypergeomPart, realContext);
-    realCopyAbs(&b1, &a), WP34S_Ln(&a, &a, realContext), realSubtract(&hypergeomPart, &a, &hypergeomPart, realContext);
-    realCopyAbs(&b2, &a), WP34S_Ln(&a, &a, realContext), realSubtract(&hypergeomPart, &a, &hypergeomPart, realContext);
-    WP34S_Ln(&i, &a, realContext), realSubtract(&hypergeomPart, &a, &hypergeomPart, realContext);
+    realCopyAbs(&a1, &a), realLn(&a, &a, realContext), realAdd(&hypergeomPart, &a, &hypergeomPart, realContext);
+    realCopyAbs(&a2, &a), realLn(&a, &a, realContext), realAdd(&hypergeomPart, &a, &hypergeomPart, realContext);
+    realCopyAbs(&a3, &a), realLn(&a, &a, realContext), realAdd(&hypergeomPart, &a, &hypergeomPart, realContext);
+    realCopyAbs(&b1, &a), realLn(&a, &a, realContext), realSubtract(&hypergeomPart, &a, &hypergeomPart, realContext);
+    realCopyAbs(&b2, &a), realLn(&a, &a, realContext), realSubtract(&hypergeomPart, &a, &hypergeomPart, realContext);
+    realLn(&i, &a, realContext), realSubtract(&hypergeomPart, &a, &hypergeomPart, realContext);
 
     realAdd(&binomPart, &hypergeomPart, &a, realContext);
     realExp(&a, &a, realContext);
@@ -320,11 +321,11 @@ static void mode_Hypergeometric(const real_t *p0, const real_t *n, const real_t 
   realMultiply(p0, n0, &x0, realContext); // p0 == x0 / n0
 
   realAdd(n, const_1, &a, realContext);
-  WP34S_Ln(&a, &q, realContext);
+  realLn(&a, &q, realContext);
   realAdd(&x0, const_1, &a, realContext);
-  WP34S_Ln(&a, &a, realContext), realAdd(&q, &a, &q, realContext);
+  realLn(&a, &a, realContext), realAdd(&q, &a, &q, realContext);
   realAdd(n0, const_2, &a, realContext);
-  WP34S_Ln(&a, &a, realContext), realSubtract(&q, &a, &q, realContext);
+  realLn(&a, &a, realContext), realSubtract(&q, &a, &q, realContext);
   realExp(&q, &q, realContext);
   realToIntegralValue(&q, res, DEC_ROUND_FLOOR, realContext);
 }
@@ -370,15 +371,15 @@ void qf_Hypergeometric(const real_t *x, const real_t *p0, const real_t *n, const
 
   realMultiply(p0, n0, &x0, realContext); // p0 == x0 / n0
 
-  WP34S_Ln(n,   &var, realContext);
-  WP34S_Ln(&x0, &s,   realContext), realAdd     (&var, &s, &var, realContext);
-  WP34S_Ln(n0,  &s,   realContext), realSubtract(&var, &s, &var, realContext);
+  realLn(n,   &var, realContext);
+  realLn(&x0, &s,   realContext), realAdd     (&var, &s, &var, realContext);
+  realLn(n0,  &s,   realContext), realSubtract(&var, &s, &var, realContext);
   realExp(&var, &mean, realContext);      // mean = nK/N
 
-  realSubtract(n0, &x0,     &s, realContext), WP34S_Ln(&s, &s, realContext), realAdd     (&var, &s, &var, realContext);
-                                              WP34S_Ln(n0, &s, realContext), realSubtract(&var, &s, &var, realContext);
-  realSubtract(n0, n,       &s, realContext), WP34S_Ln(&s, &s, realContext), realAdd     (&var, &s, &var, realContext);
-  realSubtract(n0, const_1, &s, realContext), WP34S_Ln(&s, &s, realContext), realSubtract(&var, &s, &var, realContext);
+  realSubtract(n0, &x0,     &s, realContext), realLn(&s, &s, realContext), realAdd     (&var, &s, &var, realContext);
+                                              realLn(n0, &s, realContext), realSubtract(&var, &s, &var, realContext);
+  realSubtract(n0, n,       &s, realContext), realLn(&s, &s, realContext), realAdd     (&var, &s, &var, realContext);
+  realSubtract(n0, const_1, &s, realContext), realLn(&s, &s, realContext), realSubtract(&var, &s, &var, realContext);
   realExp(&var, &var, realContext);       // variance = (nK/N) ((N-K)/N) ((N-n)/(N-1))
   realSquareRoot(&var, &var, realContext);
 

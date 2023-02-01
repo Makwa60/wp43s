@@ -9,6 +9,8 @@
 #include "flags.h"
 #include "fonts.h"
 #include "mathematics/comparisonReals.h"
+#include "mathematics/ln.h"
+#include "mathematics/lnPOne.h"
 #include "mathematics/wp34s.h"
 #include "registers.h"
 #include "registerValueConversions.h"
@@ -175,7 +177,7 @@ void WP34S_Pdf_Chi2(const real_t *x, const real_t *k, real_t *res, realContext_t
   }
 
   realMultiply(k, const_1on2, &p, realContext);
-  WP34S_Ln(x, &q, realContext);
+  realLn(x, &q, realContext);
   realMultiply(x, const_1on2, &r, realContext);
   realChangeSign(&r);
   realSubtract(&p, const_1, &s, realContext);
@@ -258,13 +260,13 @@ void WP34S_Qf_Chi2(const real_t *x, const real_t *k, real_t *res, realContext_t 
     realAdd(&r, const_8, &r, realContext);
     if(realCompareGreaterEqual(&q, &r)) {
       realMultiply(&q, const_1on2, &q, realContext);
-      WP34S_Ln(&q, &q, realContext);
+      realLn(&q, &q, realContext);
       realMultiply(k, const_1on2, &t, realContext);
       realSubtract(&t, const_1, &t, realContext);
       realMultiply(&q, &t, &q, realContext);
       realChangeSign(&q);
       realMultiply(&reg0, const__1, &t, realContext);
-      WP34S_Ln1P(&t, &t, realContext);
+      realLn1P(&t, &t, realContext);
       realAdd(&q, &t, &q, realContext);
       realMultiply(k, const_1on2, &t, realContext);
       WP34S_LnGamma(&t, &t, realContext);
@@ -276,7 +278,7 @@ void WP34S_Qf_Chi2(const real_t *x, const real_t *k, real_t *res, realContext_t 
   else { // chi2_q_low
     realDivide(&reg0, k, &q, realContext);
     realMultiply(&q, const_1on2, &q, realContext);
-    WP34S_Ln(&q, &q, realContext);
+    realLn(&q, &q, realContext);
     realMultiply(k, const_1on2, &r, realContext);
     WP34S_LnGamma(&r, &r, realContext);
     realAdd(&q, &r, &q, realContext);
@@ -290,7 +292,7 @@ void WP34S_Qf_Chi2(const real_t *x, const real_t *k, real_t *res, realContext_t 
     if(realCompareLessThan(&q, k)) {
       WP34S_Cdf_Chi2(&q, k, &p, realContext);
       realDivide(&p, &reg0, &r, realContext);
-      WP34S_Ln(&r, &r, realContext);
+      realLn(&r, &r, realContext);
     }
     else { // chi2_q_big
       realSubtract(const_1, &reg0, &r, realContext);
@@ -298,7 +300,7 @@ void WP34S_Qf_Chi2(const real_t *x, const real_t *k, real_t *res, realContext_t 
       realSubtract(const_1, &s, &p, realContext);
       realSubtract(&r, &s, &r, realContext);
       realDivide(&r, &reg0, &r, realContext);
-      WP34S_Ln1P(&r, &r, realContext);
+      realLn1P(&r, &r, realContext);
     }
     // chi2_q_common
     WP34S_Pdf_Chi2(&q, k, &s, realContext);

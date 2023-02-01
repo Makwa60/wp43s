@@ -11,6 +11,7 @@
 #include "fonts.h"
 #include "items.h"
 #include "mathematics/comparisonReals.h"
+#include "mathematics/ln.h"
 #include "mathematics/matrix.h"
 #include "mathematics/wp34s.h"
 #include "plotstat.h"
@@ -137,7 +138,7 @@ bool isStatsMatrix(uint16_t *rows, char *mx) {
     realAdd(SIGMA_XY, &tmpReal1, SIGMA_XY, realContext);
 
     // sigma ln(x)
-    WP34S_Ln(x, &tmpReal1, realContext);
+    realLn(x, &tmpReal1, realContext);
     realCopy(&tmpReal1 ,&tmpReal3);
     realAdd(SIGMA_lnX, &tmpReal1, SIGMA_lnX, realContext);
 
@@ -150,7 +151,7 @@ bool isStatsMatrix(uint16_t *rows, char *mx) {
     realAdd(SIGMA_YlnX, &tmpReal1, SIGMA_YlnX, realContext);
 
     // sigma ln(y)
-    WP34S_Ln(y, &tmpReal1, realContext);
+    realLn(y, &tmpReal1, realContext);
     realAdd(SIGMA_lnY, &tmpReal1, SIGMA_lnY, realContext);
 
     // sigma ln(x)×ln(y)
@@ -319,7 +320,7 @@ bool isStatsMatrix(uint16_t *rows, char *mx) {
     }
 
     // sigma ln(x)
-    WP34S_Ln(x, &tmpReal1, realContext);
+    realLn(x, &tmpReal1, realContext);
     realCopy(&tmpReal1 ,&tmpReal3);
     if(!realSubtractIfValid(SIGMA_lnX, &tmpReal1, SIGMA_lnX, realContext)) {
       goto toReturn;
@@ -338,7 +339,7 @@ bool isStatsMatrix(uint16_t *rows, char *mx) {
     }
 
     // sigma ln(y)
-    WP34S_Ln(y, &tmpReal1, realContext);
+    realLn(y, &tmpReal1, realContext);
     if(!realSubtractIfValid(SIGMA_lnY, &tmpReal1, SIGMA_lnY, realContext)) {
       goto toReturn;
     }

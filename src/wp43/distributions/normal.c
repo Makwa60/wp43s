@@ -8,6 +8,7 @@
 #include "flags.h"
 #include "fonts.h"
 #include "mathematics/comparisonReals.h"
+#include "mathematics/ln.h"
 #include "mathematics/rsd.h"
 #include "mathematics/wp34s.h"
 #include "registers.h"
@@ -77,7 +78,7 @@ static void normalP(bool logNormal) {
     else {
       if(logNormal) {
         realCopy(&val, &alval);
-        WP34S_Ln(&alval, &val, &ctxtReal39);
+        realLn(&alval, &val, &ctxtReal39);
       }
       realSubtract(&val, &mu, &val, &ctxtReal39);
       realDivide(&val, &sigma, &val, &ctxtReal39);
@@ -113,7 +114,7 @@ static void normalL(bool logNormal) {
     }
     else {
       if(logNormal) {
-        WP34S_Ln(&val, &val, &ctxtReal39);
+        realLn(&val, &val, &ctxtReal39);
       }
       realSubtract(&val, &mu, &val, &ctxtReal39);
       realDivide(&val, &sigma, &val, &ctxtReal39);
@@ -145,7 +146,7 @@ static void normalR(bool logNormal) {
     }
     else {
       if(logNormal) {
-        WP34S_Ln(&val, &val, &ctxtReal39);
+        realLn(&val, &val, &ctxtReal39);
       }
       realSubtract(&val, &mu, &val, &ctxtReal39);
       realDivide(&val, &sigma, &val, &ctxtReal39);
@@ -318,14 +319,14 @@ void WP34S_qf_q_est(const real_t *x, real_t *res, real_t* resY, realContext_t *r
   realMultiply(const_2, const_1on10, &q, realContext);
 
   if(realCompareLessThan(&p, &q)) {
-    WP34S_Ln(&p, &q, realContext);
+    realLn(&p, &q, realContext);
     realMultiply(&q, const_2, &q, realContext);
     realChangeSign(&q);
     realSubtract(&q, const_1, &r, realContext);
     realMultiply(&r, const_2pi, &r, realContext);
     realSquareRoot(&r, &r, realContext);
     realMultiply(&r, &p, &r, realContext);
-    WP34S_Ln(&r, &r, realContext);
+    realLn(&r, &r, realContext);
     realMultiply(&r, const_2, &r, realContext);
     realChangeSign(&r);
     realSquareRoot(&r, &r, realContext);

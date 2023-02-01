@@ -9,6 +9,8 @@
 #include "error.h"
 #include "mathematics/comparisonReals.h"
 #include "mathematics/division.h"
+#include "mathematics/ln.h"
+#include "mathematics/lnPOne.h"
 #include "mathematics/matrix.h"
 #include "mathematics/multiplication.h"
 #include "mathematics/power.h"
@@ -114,14 +116,14 @@ static void zeta_calc_complex(real_t *reg4, real_t *reg5, real_t *reg6, real_t *
   realCopyAbs(reg7, &p);
   realMultiply(const_piOn2, &p, &q, realContext);
   realMultiply(&p, const_2, &p, realContext);
-  WP34S_Ln1P(&p, &p, realContext);
+  realLn1P(&p, &p, realContext);
   realAdd(&q, &p, &p, realContext);
   realCopy(const_3, &q); q.exponent += 10;
-  WP34S_Ln(&q, &q, realContext);
+  realLn(&q, &q, realContext);
   realAdd(&p, &q, &p, realContext);
   realSquareRoot(const_8, &q, realContext);
   realAdd(&q, const_3, &q, realContext);
-  WP34S_Ln(&q, &q, realContext);
+  realLn(&q, &q, realContext);
   realDivide(&p, &q, &p, realContext);
   realToIntegralValue(&p, &p, DEC_ROUND_DOWN, realContext);
   realAdd(&p, const_1, &p, realContext);

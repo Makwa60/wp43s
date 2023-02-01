@@ -13,6 +13,7 @@
 #include "items.h"
 #include "mathematics/comparisonReals.h"
 #include "mathematics/division.h"
+#include "mathematics/ln.h"
 #include "mathematics/matrix.h"
 #include "mathematics/power.h"
 #include "mathematics/toPolar.h"
@@ -125,7 +126,7 @@ static void _xthRootComplex(const real_t *aa, const real_t *bb, const real_t *cc
 
   //From power.c
   realRectangularToPolar(&a, &b, &a, &theta, realContext);
-  WP34S_Ln(&a, &a, realContext);
+  realLn(&a, &a, realContext);
   realMultiply(&a, &d, &b, realContext);
   realFMA(&theta, &c, &b, &b, realContext);
   realChangeSign(&theta);

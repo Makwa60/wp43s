@@ -12,6 +12,7 @@
 #include "flags.h"
 #include "fonts.h"
 #include "mathematics/comparisonReals.h"
+#include "mathematics/lnPOne.h"
 #include "mathematics/wp34s.h"
 #include "registers.h"
 #include "registerValueConversions.h"
@@ -149,7 +150,7 @@ void WP34S_Pdf_Geom(const real_t *x, const real_t *p0, real_t *res, realContext_
     return;
   }
   realMultiply(p0, const__1, &p, realContext);
-  WP34S_Ln1P(&p, &p, realContext);
+  realLn1P(&p, &p, realContext);
   realMultiply(x, &p, &p, realContext);
   realExp(&p, &p, realContext);
   realMultiply(&p, p0, res, realContext);
@@ -189,7 +190,7 @@ void WP34S_Cdf_Geom(const real_t *x, const real_t *p0, real_t *res, realContext_
   realToIntegralValue(x, &p, DEC_ROUND_FLOOR, realContext);
   realAdd(&p, const_1, &p, realContext);
   realMultiply(p0, const__1, &q, realContext);
-  WP34S_Ln1P(&q, &q, realContext);
+  realLn1P(&q, &q, realContext);
   realMultiply(&p, &q, &p, realContext);
   WP34S_ExpM1(&p, res, realContext);
   realChangeSign(res);
@@ -205,9 +206,9 @@ void WP34S_Qf_Geom(const real_t *x, const real_t *p0, real_t *res, realContext_t
     return;
   }
   realMultiply(x, const__1, &p, realContext);
-  WP34S_Ln1P(&p, &p, realContext);
+  realLn1P(&p, &p, realContext);
   realMultiply(p0, const__1, &q, realContext);
-  WP34S_Ln1P(&q, &q, realContext);
+  realLn1P(&q, &q, realContext);
   realDivide(&p, &q, &p, realContext);
   realSubtract(&p, const_1, &p, realContext);
   realToIntegralValue(&p, &p, DEC_ROUND_FLOOR, realContext);

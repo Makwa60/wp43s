@@ -9,6 +9,7 @@
 #include "flags.h"
 #include "fonts.h"
 #include "mathematics/comparisonReals.h"
+#include "mathematics/ln.h"
 #include "mathematics/wp34s.h"
 #include "registers.h"
 #include "registerValueConversions.h"
@@ -143,7 +144,7 @@ static void _lnGammaComplex(real_t *xReal, real_t *rReal, real_t *rImag, realCon
   realCopy(xReal, rImag);
   WP34S_Gamma(xReal, xReal, realContext);
   realSetPositiveSign(xReal);
-  WP34S_Ln(xReal, xReal, realContext);
+  realLn(xReal, xReal, realContext);
   realCopy(xReal, rReal);
   realToIntegralValue(rImag, rImag, DEC_ROUND_FLOOR, realContext);
   realMultiply(rImag, const_pi, rImag, realContext);

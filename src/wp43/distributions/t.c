@@ -9,6 +9,7 @@
 #include "flags.h"
 #include "fonts.h"
 #include "mathematics/comparisonReals.h"
+#include "mathematics/lnPOne.h"
 #include "mathematics/wp34s.h"
 #include "registers.h"
 #include "registerValueConversions.h"
@@ -149,7 +150,7 @@ void WP34S_Pdf_T(const real_t *x, const real_t *nu, real_t *res, realContext_t *
   WP34S_LnGamma(&i, &s, realContext);
   realSubtract(&s, &r, &q, realContext);
   realDivide(&p, nu, &p, realContext);
-  WP34S_Ln1P(&p, &p, realContext);
+  realLn1P(&p, &p, realContext);
   realMultiply(&p, &i, &p, realContext);
   realSubtract(&q, &p, &p, realContext);
   realExp(&p, &p, realContext);

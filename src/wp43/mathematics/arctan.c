@@ -11,8 +11,9 @@
 #include "flags.h"
 #include "fonts.h"
 #include "items.h"
-#include "mathematics/toPolar.h"
+#include "mathematics/ln.h"
 #include "mathematics/matrix.h"
+#include "mathematics/toPolar.h"
 #include "mathematics/wp34s.h"
 #include "registers.h"
 #include "registerValueConversions.h"
@@ -167,7 +168,7 @@ void arctanCplx(void) {
   //
   //// calculate ln((1 - iz) / (1 + iz))
   //realRectangularToPolar(&a, &b, &a, &b, &ctxtReal39);
-  //WP34S_Ln(&a, &a, &ctxtReal39);
+  //realLn(&a, &a, &ctxtReal39);
   //
   //// arctan(z) = i/2 . ln((1 - iz) / (1 + iz))
   //realMultiply(&a, const_1on2, &a, &ctxtReal39);
@@ -207,7 +208,7 @@ uint8_t ArctanComplex(real_t *xReal, real_t *xImag, real_t *rReal, real_t *rImag
 
   // calculate ln((1 - iz) / (1 + iz))
   realRectangularToPolar(&a, &b, &a, &b, realContext);
-  WP34S_Ln(&a, &a, realContext);
+  realLn(&a, &a, realContext);
 
   // arctan(z) = i/2 . ln((1 - iz) / (1 + iz))
   realMultiply(&a, const_1on2, &a, realContext);

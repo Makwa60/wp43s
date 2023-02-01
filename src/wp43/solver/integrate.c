@@ -9,6 +9,7 @@
 #include "flags.h"
 #include "items.h"
 #include "mathematics/comparisonReals.h"
+#include "mathematics/ln.h"
 #include "mathematics/wp34s.h"
 #include "programming/lblGtoXeq.h"
 #include "programming/manage.h"
@@ -383,13 +384,13 @@ static void _integrate(calcRegister_t regist, const real_t *a, const real_t *b, 
   }
   // DEI_cont::
   realDivide(&x, &eps, &x, realContext); // continue tm computation for all cases
-  WP34S_Ln(&x, &x, realContext);
+  realLn(&x, &x, realContext);
   if(!TS) { // not in TS mode?
     realAdd(&x, &x, &x, realContext); // 2*ln(...) for all cases except TS
   }
   realAdd(&x, &x, &x, realContext); // 4*ln(...) for all cases except TS (2*LN(...))
   realDivide(&x, const_pi, &x, realContext);
-  WP34S_Ln(&x, &tm, realContext); // tm done
+  realLn(&x, &tm, realContext); // tm done
   // maximum t (tm) ready ********************************
   // level loop ******************************************
   realZero(&ss); realZero(&ss1);

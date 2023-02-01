@@ -57,7 +57,7 @@ TO_QSPI void (* const power[NUMBER_OF_DATA_TYPES_FOR_CALCULATIONS][NUMBER_OF_DAT
 
 void PowerReal(const real_t *y, const real_t *x, real_t *res, realContext_t *realContext) {
   real_t lny;
-  WP34S_Ln(y, &lny, realContext);
+  realLn(y, &lny, realContext);
   realMultiply(x, &lny, res, realContext);
   realExp(res, res, realContext);
 }
@@ -673,7 +673,7 @@ uint8_t PowerComplex(const real_t *yReal, const real_t *yImag, const real_t *xRe
       real_t tmp;
 
       realRectangularToPolar(yReal, yImag, rReal, &theta, realContext);
-      WP34S_Ln(rReal, rReal, realContext);
+      realLn(rReal, rReal, realContext);
 
       realMultiply(rReal, xImag, rImag, realContext);
       realFMA(&theta, xReal, rImag, rImag, realContext);

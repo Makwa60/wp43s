@@ -135,6 +135,74 @@ void real34Ln(const real34_t *xin, real34_t *res) {
   real34FMA(const34_ln10, &r, res, res);
 }
 
+void realLn(const real_t *xin, real_t *res, realContext_t *realContext) {
+  real_t x, xm1xp1, xm1xp1sq, xm1xp1pw, r;
+  int32_t exponent = 0, exponent2 = 0;
+  int32_t k = 1;
+
+  // Special cases
+  if(realIsZero(xin)) {
+    realCopy(const_minusInfinity, res);
+    return;
+  }
+  else if(realIsNegative(xin) || realIsNaN(xin)) {
+    realCopy(const_NaN, res);
+    return;
+  }
+  else if(realIsInfinite(xin)) {
+    realCopy(const_plusInfinity, res);
+    return;
+  }
+  else if(realCompareEqual(xin, const_1)) {
+    realZero(res);
+    return;
+  }
+
+  realCopy(xin, &x);
+
+  // reduce value to make convergence faster
+  exponent = x.exponent + x.digits;
+  x.exponent = -x.digits;
+  while(realCompareGreaterEqual(&x, const_2)) {
+    realMultiply(&x, const_1on2, &x, realContext);
+    ++exponent2;
+  }
+
+  // 1st term
+  realCopy(&x, &xm1xp1);
+  realCopy(&x, &xm1xp1sq);
+  realSubtract(&xm1xp1, const_1, &xm1xp1, realContext);
+  realAdd(&xm1xp1sq, const_1, &xm1xp1sq, realContext);
+  realDivide(&xm1xp1, &xm1xp1sq, &xm1xp1, realContext);
+  realMultiply(&xm1xp1, &xm1xp1, &xm1xp1sq, realContext);
+
+  realCopy(&xm1xp1, &xm1xp1pw);
+  realAdd(&xm1xp1, &xm1xp1, res, realContext);
+
+  // Taylor series
+  do {
+    realCopy(res, &r);
+
+    realMultiply(&xm1xp1pw, &xm1xp1sq, &xm1xp1pw, realContext);
+    //if(k < 100) {
+    //  realFMA(&xm1xp1pw, taylorCoeffLn + (k++), res, res, realContext);
+    //}
+    //else {
+      real_t kx2p1;
+      int32ToReal(k * 2 + 1, &kx2p1); realDivide(&xm1xp1pw, &kx2p1, &kx2p1, realContext);
+      realAdd(res, &kx2p1, res, realContext);
+      realAdd(res, &kx2p1, res, realContext);
+      ++k;
+    //}
+  } while(!realCompareEqual(res, &r));
+
+  // Add pre-calculated logarithm
+  int32ToReal(exponent2, &r);
+  realFMA(const_ln2, &r, res, res, realContext);
+  int32ToReal(exponent, &r);
+  realFMA(const_ln10, &r, res, res, realContext);
+}
+
 
 
 void lnComplex(const real_t *real, const real_t *imag, real_t *lnReal, real_t *lnImag, realContext_t *realContext) {
@@ -186,13 +254,13 @@ void lnLonI(void) {
     convertLongIntegerRegisterToReal(REGISTER_X, &x, &ctxtReal39);
 
     if(longIntegerIsPositive(lgInt)) {
-      WP34S_Ln(&x, &x, &ctxtReal39);
+      realLn(&x, &x, &ctxtReal39);
       reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
       convertRealToReal34ResultRegister(&x, REGISTER_X);
      }
     else if(getFlag(FLAG_CPXRES)) {
       realSetPositiveSign(&x);
-      WP34S_Ln(&x, &x, &ctxtReal39);
+      realLn(&x, &x, &ctxtReal39);
       reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE_IN_BYTES, amNone);
       convertRealToReal34ResultRegister(&x, REGISTER_X);
       convertRealToImag34ResultRegister(const_pi, REGISTER_X);
@@ -245,12 +313,12 @@ void lnShoI(void) {
   }
   else {
     if(realIsPositive(&x)) {
-      WP34S_Ln(&x, &x, &ctxtReal39);
+      realLn(&x, &x, &ctxtReal39);
       convertRealToReal34ResultRegister(&x, REGISTER_X);
      }
     else if(getFlag(FLAG_CPXRES)) {
       realSetPositiveSign(&x);
-      WP34S_Ln(&x, &x, &ctxtReal39);
+      realLn(&x, &x, &ctxtReal39);
       reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE_IN_BYTES, amNone);
       convertRealToReal34ResultRegister(&x, REGISTER_X);
       convertRealToImag34ResultRegister(const_pi, REGISTER_X);
@@ -316,12 +384,12 @@ void lnReal(void) {
 
     real34ToReal(REGISTER_REAL34_DATA(REGISTER_X), &x);
     if(real34IsPositive(REGISTER_REAL34_DATA(REGISTER_X))) {
-      WP34S_Ln(&x, &x, &ctxtReal39);
+      realLn(&x, &x, &ctxtReal39);
       convertRealToReal34ResultRegister(&x, REGISTER_X);
     }
     else if(getFlag(FLAG_CPXRES)) {
       realSetPositiveSign(&x);
-      WP34S_Ln(&x, &x, &ctxtReal39);
+      realLn(&x, &x, &ctxtReal39);
       reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE_IN_BYTES, amNone);
       convertRealToReal34ResultRegister(&x, REGISTER_X);
       convertRealToImag34ResultRegister(const_pi, REGISTER_X);

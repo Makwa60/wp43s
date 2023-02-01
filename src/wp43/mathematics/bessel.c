@@ -11,6 +11,7 @@
 #include "mathematics/arccosh.h"
 #include "mathematics/comparisonReals.h"
 #include "mathematics/division.h"
+#include "mathematics/ln.h"
 #include "mathematics/multiplication.h"
 #include "mathematics/toRect.h"
 #include "mathematics/wp34s.h"
@@ -616,7 +617,7 @@ static void bessel2_int_series(const real_t *n, const real_t *x, real_t *res, re
   WP34S_BesselJ(n, x, &u, realContext);
   realDivide(&u, const_piOn2, &t, realContext);
 
-  WP34S_Ln(&xon2, &u, realContext);
+  realLn(&xon2, &u, realContext);
   realMultiply(&u, &t, &v, realContext);
   realAdd(res, &v, res, realContext);
 

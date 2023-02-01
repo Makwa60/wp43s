@@ -10,6 +10,7 @@
 #include "flags.h"
 #include "fonts.h"
 #include "mathematics/comparisonReals.h"
+#include "mathematics/ln.h"
 #include "mathematics/wp34s.h"
 #include "registers.h"
 #include "registerValueConversions.h"
@@ -168,7 +169,7 @@ void WP34S_Pdf_Poisson(const real_t *x, const real_t *lambda, real_t *res, realC
     realZero(res);
     return;
   }
-  WP34S_Ln(lambda, &p, realContext);
+  realLn(lambda, &p, realContext);
   realMultiply(&p, x, &p, realContext);
   realSubtract(&p, lambda, &p, realContext);
   realAdd(x, const_1, &q, realContext);
