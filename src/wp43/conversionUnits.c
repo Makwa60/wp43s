@@ -7,6 +7,7 @@
 #include "debug.h"
 #include "error.h"
 #include "mathematics/10pow.h"
+#include "mathematics/log10.h"
 #include "mathematics/wp34s.h"
 #include "registers.h"
 #include "registerValueConversions.h"
@@ -401,7 +402,7 @@ void fnCvtRatioDb(uint16_t tenOrTwenty) { // ten: power ratio   twenty: field ra
     return;
   }
 
-  WP34S_Log10(&reX, &reX, &ctxtReal39);
+  realLog10(&reX, &reX, &ctxtReal39);
   realMultiply(&reX, (tenOrTwenty == 10 ? const_10 : const_20), &reX, &ctxtReal39);
 
   convertRealToReal34ResultRegister(&reX, REGISTER_X);

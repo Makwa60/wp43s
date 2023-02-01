@@ -135,7 +135,10 @@ static void logxy(const real_t *xReal, const real_t *yReal, realContext_t *realC
       }
     }
     else {
-      WP34S_Logxy(yReal, xReal, &rReal, realContext);
+      real_t logBase;
+      realLn(yReal, &rReal, realContext);
+      realLn(xReal, &logBase, realContext);
+      realDivide(&rReal, &logBase, &rReal, realContext);
 
       reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
       convertRealToReal34ResultRegister(&rReal, REGISTER_X);

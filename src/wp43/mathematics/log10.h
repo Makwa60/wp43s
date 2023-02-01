@@ -8,6 +8,7 @@
   #define LOG10_H
 
   #include "defines.h"
+  #include "realType.h"
   #include <stdint.h>
 
   void   fnLog10   (uint16_t unusedButMandatoryParameter);
@@ -24,5 +25,7 @@
   void   log10ShoI (void);
   void   log10Real (void);
   void   log10Cplx (void);
+
+  void   realLog10 (const real_t *x, real_t *res, realContext_t *realContext);
 
 #endif // !LOG10_H

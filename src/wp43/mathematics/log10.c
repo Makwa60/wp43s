@@ -62,6 +62,13 @@ void fnLog10(uint16_t unusedButMandatoryParameter) {
 
 
 
+void realLog10(const real_t *x, real_t *res, realContext_t *realContext) {
+  realLn(x, res, realContext);
+  realDivide(res, const_ln10, res, realContext);
+}
+
+
+
 /**********************************************************************
  * In all the functions below:
  * if X is a number then X = a + ib
