@@ -7,6 +7,7 @@
 #if !defined(MANAGE_H)
   #define MANAGE_H
 
+  #include "items.h"
   #include "typeDefinitions.h"
   #include <stdint.h>
 
@@ -30,4 +31,10 @@
   calcRegister_t findNamedLabel                (const char *labelName);
   uint16_t       getNumberOfSteps              (void);
 
+  bool           isAtEndOfPrograms             (const uint8_t *step); // check for .END.
+  bool           checkOpCodeOfStep             (const uint8_t *step, uint16_t op);
+
+  static inline bool isAtEndOfProgram          (const uint8_t *step) { // check for END
+    return checkOpCodeOfStep(step, ITM_END);
+  }
 #endif // !MANAGE_H

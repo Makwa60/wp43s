@@ -11,6 +11,7 @@
 #include "fonts.h"
 #include "items.h"
 #include "programming/flash.h"
+#include "programming/manage.h"
 #include "programming/nextStep.h"
 #include "registers.h"
 #include <stdbool.h>
@@ -49,7 +50,7 @@ TO_QSPI const char baseChars[36] = "??" STD_BASE_1 STD_BASE_2 STD_BASE_3 STD_BAS
             decodeOneStep_ram(step);
             stringToUtf8(tmpString, (uint8_t *)(tmpString + 2000));
 
-            if(*step != ITM_LBL && (*step != ((ITM_END >> 8) | 0x80) || *(step + 1) != (ITM_END & 0xff))) { // Not LBL and not END
+            if(!checkOpCodeOfStep(step, ITM_LBL) && !isAtEndOfProgram(step)) { // Not LBL and not END
               printf("   "); fflush(stdout);
             }
 
@@ -68,7 +69,7 @@ TO_QSPI const char baseChars[36] = "??" STD_BASE_1 STD_BASE_2 STD_BASE_3 STD_BAS
           decodeOneStep_ram(step);
           stringToUtf8(tmpString, (uint8_t *)(tmpString + 2000));
 
-          if(*step != ITM_LBL && (*step != ((ITM_END >> 8) | 0x80) || *(step + 1) != (ITM_END & 0xff))) { // Not LBL and not END
+          if(!checkOpCodeOfStep(step, ITM_LBL) && !isAtEndOfProgram(step)) { // Not LBL and not END
             printf("   "); fflush(stdout);
           }
 
