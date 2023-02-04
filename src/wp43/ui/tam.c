@@ -297,7 +297,7 @@ void tamReset(void) {
   static void _tamProcessInput(uint16_t item) {
     int16_t  min, max, min2, max2;
     bool     forceTry = false, tryOoR = false;
-    bool     valueParameter = (tam.function == ITM_GTOP || tam.function == ITM_BESTF || tam.function == ITM_CNST);
+    bool     valueParameter = (tam.function == ITM_GTOP || tam.function == ITM_BESTF || tam.function == ITM_SKIP || tam.function == ITM_BACK);
     char    *forcedVar = NULL;
 
     // Shuffle is handled completely differently to everything else
@@ -530,7 +530,7 @@ void tamReset(void) {
       tryOoR = true;
     }
     else if(REGISTER_X <= indexOfItems[item].param && indexOfItems[item].param <= REGISTER_K && !tam.dot) {
-      if(!tam.digitsSoFar && tam.function != ITM_BESTF && tam.function != ITM_CNST && (tam.indirect || (tam.mode != tmValue && tam.mode != tmValueChb))) {
+      if(!tam.digitsSoFar && tam.function != ITM_BESTF && (tam.indirect || (tam.mode != tmValue && tam.mode != tmValueChb))) {
         if((tam.mode == tmLabel || (tam.mode == tmKey && tam.keyInputFinished)) && !tam.indirect) {
           switch(indexOfItems[item].param) {
             case REGISTER_A: {

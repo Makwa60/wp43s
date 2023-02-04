@@ -299,6 +299,33 @@ static void decodeOp(uint8_t *paramAddress, const char *op, uint16_t paramMode, 
       break;
     }
 
+    case PARAM_NUMBER_8_16: {
+      if(opParam <= 249) { // Value from 0 to 249
+        if(tamMax <= 9) {
+          sprintf(tmpString, "%s %u", op, opParam);
+        }
+        else if(tamMax <= 99) {
+          sprintf(tmpString, "%s %02u", op, opParam);
+        }
+        else {
+          sprintf(tmpString, "%s %03u", op, opParam);
+        }
+      }
+      else if(opParam == CNST_BEYOND_250) { // Value from 250 to 499
+        sprintf(tmpString, "%s %03u", op, 250 + *(paramAddress));
+      }
+      else if(opParam == INDIRECT_REGISTER) {
+        getIndirectRegister(paramAddress, op);
+      }
+      else if(opParam == INDIRECT_VARIABLE) {
+        getIndirectVariable(paramAddress, op);
+      }
+      else {
+        sprintf(tmpString, "\nIn function decodeOp: case PARAM_NUMBER, %s  %u is not a valid parameter!", op, opParam);
+      }
+      break;
+    }
+
     case PARAM_NUMBER_16: {
       sprintf(tmpString, "%s %u", op, opParam + 256 * *(paramAddress));
       break;
