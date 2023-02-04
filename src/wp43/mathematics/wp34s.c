@@ -1427,8 +1427,7 @@ void WP34S_GammaP(const real_t *x, const real_t *a, real_t *res, realContext_t *
   }
   if(realIsNegative(&z)) {
     /* Deal with a difficult case by using the other expansion */
-    int32ToReal(9000, &z);
-    if(realCompareGreaterThan(a, &z)) {
+    if(realCompareGreaterThan(a, const_9000)) {
       realCopy(const_995on1000, &z);
       realMultiply(a, &z, &z, realContext);
       if(realCompareGreaterThan(x, &z)) {
@@ -1467,7 +1466,7 @@ void WP34S_Erf(const real_t *x, real_t *res, realContext_t *realContext) {
   real_t p, q;
 
   if(realIsInfinite(x)) {
-    int32ToReal(realIsNegative(x) ? -1 : 1, res);
+    realCopy(realIsNegative(x) ? const__1 : const_1, res);
     return;
   }
 
@@ -1678,11 +1677,11 @@ void WP34S_Bernoulli(const real_t *x, real_t *res, bool bn_star, realContext_t *
 static void zeta_calc(const real_t *x, real_t *reg1, real_t *reg7, real_t *res, realContext_t *realContext) {
   real_t p, q, r, s, reg0, reg3, reg4, reg5, reg6;
 
-  int32ToReal(60/*44*/, &reg0);
-  int32ToReal(60/*44*/, &reg3);
-  int32ToReal(1, &reg4);
-  int32ToReal(1, &reg5);
-  int32ToReal(-1, &reg6);
+  realCopy(const_60/*44*/, &reg0);
+  realCopy(const_60/*44*/, &reg3);
+  realCopy(const_1, &reg4);
+  realCopy(const_1, &reg5);
+  realCopy(const__1, &reg6);
   realZero(&p);
   do { // zeta_loop
     realMultiply(reg1, const__1, &q, realContext);
@@ -1777,8 +1776,8 @@ void WP34S_LambertW(const real_t *x, real_t *res, bool negativeBranch, realConte
 
   // LamW0_common
   realCopy(x, &reg0);
-  int32ToReal(7, &reg1);
-  int32ToReal(negativeBranch ? 25 : 35, &p), p.exponent -= 2, realChangeSign(&p);
+  realCopy(const_7, &reg1);
+  realCopy(negativeBranch ? const__1on4 : const__7on20, &p);
   if(realCompareLessEqual(&reg0, &p)) {
     realDivide(const_1, const_eE, &q, realContext);
     realAdd(&reg0, &q, &q, realContext);

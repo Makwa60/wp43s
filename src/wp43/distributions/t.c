@@ -234,8 +234,7 @@ void WP34S_Qf_T(const real_t *x, const real_t *nu, real_t *res, realContext_t *r
   realCopy(&p, &reg0);
   realSquareRoot(nu, &p, realContext);
   loops = 7;
-  int32ToReal(7, &q);
-  realAdd(&p, &q, &p, realContext);
+  realAdd(&p, const_7, &p, realContext);
   realMultiply(nu, const__1, &q, realContext);
   realPower(&p, &q, &p, realContext);
   realMultiply(&p, const_1on4, &a, realContext);

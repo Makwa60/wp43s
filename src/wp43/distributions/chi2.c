@@ -240,15 +240,13 @@ void WP34S_Qf_Chi2(const real_t *x, const real_t *k, real_t *res, realContext_t 
 
   realCopy(x, &reg0);
   loops = 6;
-  int32ToReal(19, &p); p.exponent -= 1;
   realCopy(realCompareEqual(k, const_1) ? const_0 : k, &q);
   realChangeSign(&q);
-  realPower(&p, &q, &p, realContext);
+  realPower(const_19on10, &q, &p, realContext);
   realDivide(&p, const_pi, &p, realContext);
   if(realCompareGreaterEqual(&reg0, &p)) {
     WP34S_qf_q_est(&reg0, &q, NULL, realContext);
-    int32ToReal(222, &s); s.exponent -= 3;
-    realDivide(&s, k, &s, realContext);
+    realDivide(const_111on500, k, &s, realContext);
     realSquareRoot(&s, &r, realContext);
     realMultiply(&q, &r, &q, realContext);
     realAdd(&q, const_1, &q, realContext);

@@ -230,9 +230,8 @@ static void Sigma_u_k(const real_t *nu, const real_t *t_r, const real_t *t_i, in
         realCopy(even ? const_1 : const_0, res_r), realCopy(const_0, res_i);
         realCopy(nu, &nu_k);
 
-        int32ToReal(24, &tmp);
-        realDivide(const_3, &tmp, &coeff_current[0], realContext);
-        realDivide(const_5, &tmp, &coeff_current[1], realContext);
+        realCopy(const_1on8, &coeff_current[0]);
+        realCopy(const_5on24, &coeff_current[1]);
         realChangeSign(&coeff_current[1]);
         for(i = 2; i < NUMBER_OF_COEFF; ++i) {
           realZero(&coeff_current[i]);

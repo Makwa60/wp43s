@@ -305,7 +305,7 @@ void WP34S_Cdf_Q(const real_t *x, real_t *res, realContext_t *realContext) {
  * for the Normal quantile.
  */
 void WP34S_qf_q_est(const real_t *x, real_t *res, real_t* resY, realContext_t *realContext) {
-  real_t p, q, r, s;
+  real_t p, q, r;
   bool   isSmall = false;
 
   // qf_q_int_est
@@ -330,9 +330,7 @@ void WP34S_qf_q_est(const real_t *x, real_t *res, real_t* resY, realContext_t *r
     realMultiply(&r, const_2, &r, realContext);
     realChangeSign(&r);
     realSquareRoot(&r, &r, realContext);
-    int32ToReal(264, &s);
-    realDivide(&s, const_1000, &s, realContext);
-    realDivide(&s, &q, &q, realContext);
+    realDivide(const_33on125, &q, &q, realContext);
     realAdd(&q, &r, &q, realContext);
   }
   else { // qf_q_mid
@@ -403,8 +401,7 @@ void WP34S_Qf_Q(const real_t *x, real_t *res, realContext_t *realContext) {
       realMultiply(&s, const_2, &s, realContext);
       realAdd(&s, const_1, &s, realContext);
       realMultiply(&r, &s, &r, realContext);
-      int32ToReal(6, &s);
-      realDivide(&r, &s, &r, realContext);
+      realDivide(&r, const_6, &r, realContext);
       realMultiply(&p, const_1on2, &s, realContext);
       realMultiply(&s, &q, &s, realContext);
       realMultiply(&s, &q, &s, realContext);
