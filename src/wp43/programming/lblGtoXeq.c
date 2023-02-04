@@ -257,7 +257,7 @@ void fnReturn(uint16_t skip) {
       goToGlobalStep(returnGlobalStepNumber);
     }
 
-    if(skip > 0 && (*currentStep.ram != ((ITM_END >> 8) | 0x80) || *(currentStep.ram + 1) != (ITM_END & 0xff)) && (*currentStep.ram != 255 || *(currentStep.ram + 1) != 255)) {
+    if(skip > 0 && !isAtEndOfProgram(currentStep.ram) && !isAtEndOfPrograms(currentStep.ram)) {
       ++currentLocalStepNumber;
       currentStep = findNextStep(currentStep);
     }
@@ -439,6 +439,25 @@ void fnStopProgram(uint16_t unusedButMandatoryParameter) {
       case PARAM_NUMBER_8: {
         if(opParam <= (indexOfItems[op].tamMinMax & TAM_MAX_MASK)) { // Value from 0 to 99
           reallyRunFunction(op, opParam);
+        }
+        else if(opParam == INDIRECT_REGISTER) {
+          _executeWithIndirectRegister(paramAddress, op);
+        }
+        else if(opParam == INDIRECT_VARIABLE) {
+          _executeWithIndirectVariable(paramAddress, op);
+        }
+        else {
+          sprintf(tmpString, "\nIn function _executeOp: case PARAM_NUMBER, %s  %u is not a valid parameter!", indexOfItems[op].itemCatalogName, opParam);
+        }
+        break;
+      }
+
+      case PARAM_NUMBER_8_16: {
+        if(opParam <= 249) { // Value from 0 to 249
+          reallyRunFunction(op, opParam);
+        }
+        else if(opParam == CNST_BEYOND_250) { // Value from 250 to 499
+          reallyRunFunction(op, 250 + *(paramAddress));
         }
         else if(opParam == INDIRECT_REGISTER) {
           _executeWithIndirectRegister(paramAddress, op);

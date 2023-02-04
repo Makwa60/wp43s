@@ -187,6 +187,25 @@
         break;
       }
 
+      case PARAM_NUMBER_8_16: {
+        if(opParam <= 249) { // Value from 0 to 249
+          // nothing to do
+        }
+        else if(opParam == CNST_BEYOND_250) { // Value from 250 to 499
+          // nothing to do
+        }
+        else if(opParam == INDIRECT_REGISTER) {
+          _indirectRegister(paramAddress);
+        }
+        else if(opParam == INDIRECT_VARIABLE) {
+          _indirectVariable(paramAddress);
+        }
+        else {
+          sprintf(tmpString, "\nIn function _processOp: case PARAM_NUMBER, %s  %u is not a valid parameter!", indexOfItems[op].itemCatalogName, opParam);
+        }
+        break;
+      }
+
       case PARAM_NUMBER_16:
       case PARAM_SKIP_BACK:
       case PARAM_SHUFFLE: {

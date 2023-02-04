@@ -11,6 +11,7 @@
 #include "fonts.h"
 #include "items.h"
 #include "programming/flash.h"
+#include "programming/manage.h"
 #include "programming/nextStep.h"
 #include "registers.h"
 #include <stdbool.h>
@@ -49,7 +50,7 @@ TO_QSPI const char baseChars[36] = "??" STD_BASE_1 STD_BASE_2 STD_BASE_3 STD_BAS
             decodeOneStep_ram(step);
             stringToUtf8(tmpString, (uint8_t *)(tmpString + 2000));
 
-            if(*step != ITM_LBL && (*step != ((ITM_END >> 8) | 0x80) || *(step + 1) != (ITM_END & 0xff))) { // Not LBL and not END
+            if(!checkOpCodeOfStep(step, ITM_LBL) && !isAtEndOfProgram(step)) { // Not LBL and not END
               printf("   "); fflush(stdout);
             }
 
@@ -68,7 +69,7 @@ TO_QSPI const char baseChars[36] = "??" STD_BASE_1 STD_BASE_2 STD_BASE_3 STD_BAS
           decodeOneStep_ram(step);
           stringToUtf8(tmpString, (uint8_t *)(tmpString + 2000));
 
-          if(*step != ITM_LBL && (*step != ((ITM_END >> 8) | 0x80) || *(step + 1) != (ITM_END & 0xff))) { // Not LBL and not END
+          if(!checkOpCodeOfStep(step, ITM_LBL) && !isAtEndOfProgram(step)) { // Not LBL and not END
             printf("   "); fflush(stdout);
           }
 
@@ -285,6 +286,33 @@ static void decodeOp(uint8_t *paramAddress, const char *op, uint16_t paramMode, 
         else {
           sprintf(tmpString, "%s %03u", op, opParam);
         }
+      }
+      else if(opParam == INDIRECT_REGISTER) {
+        getIndirectRegister(paramAddress, op);
+      }
+      else if(opParam == INDIRECT_VARIABLE) {
+        getIndirectVariable(paramAddress, op);
+      }
+      else {
+        sprintf(tmpString, "\nIn function decodeOp: case PARAM_NUMBER, %s  %u is not a valid parameter!", op, opParam);
+      }
+      break;
+    }
+
+    case PARAM_NUMBER_8_16: {
+      if(opParam <= 249) { // Value from 0 to 249
+        if(tamMax <= 9) {
+          sprintf(tmpString, "%s %u", op, opParam);
+        }
+        else if(tamMax <= 99) {
+          sprintf(tmpString, "%s %02u", op, opParam);
+        }
+        else {
+          sprintf(tmpString, "%s %03u", op, opParam);
+        }
+      }
+      else if(opParam == CNST_BEYOND_250) { // Value from 250 to 499
+        sprintf(tmpString, "%s %03u", op, 250 + *(paramAddress));
       }
       else if(opParam == INDIRECT_REGISTER) {
         getIndirectRegister(paramAddress, op);
