@@ -189,9 +189,10 @@
   #define PTP_COMPARE                        ( 7 << 9) //   PARAM_*
   #define PTP_KEYG_KEYX                      ( 8 << 9) //   defined
   #define PTP_SKIP_BACK                      ( 9 << 9) //   below.
-  #define PTP_SHUFFLE                        (10 << 9) //
-  #define PTP_LITERAL                        (11 << 9) // Literal
-  #define PTP_DISABLED                       (12 << 9) // Not programmable
+  #define PTP_NUMBER_8_16                    (10 << 9) //   with
+  #define PTP_SHUFFLE                        (11 << 9) //
+  #define PTP_LITERAL                        (12 << 9) // Literal
+  #define PTP_DISABLED                       (13 << 9) // Not programmable
 
 
   #define INC_FLAG                                   0
@@ -601,6 +602,9 @@
   //#define STRING_ANGLE_MULTPI                       22
 
   // OP parameter special values
+  #define CNST_BEYOND_250                          250
+  //#define CNST_BEYOND_500                          251
+  //#define CNST_BEYOND_750                          252
   #define SYSTEM_FLAG_NUMBER                       250
   #define VALUE_0                                  251
   #define VALUE_1                                  252
@@ -618,7 +622,8 @@
   #define PARAM_COMPARE                              7
   #define PARAM_KEYG_KEYX                            8
   #define PARAM_SKIP_BACK                            9
-  #define PARAM_SHUFFLE                             10
+  #define PARAM_NUMBER_8_16                         10
+  #define PARAM_SHUFFLE                             11
 
   #define CHECK_INTEGER                              0
   #define CHECK_INTEGER_EVEN                         1

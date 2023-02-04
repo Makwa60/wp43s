@@ -1206,7 +1206,12 @@ void insertStepInProgram(int16_t func) {
     }
 
     default: {
-      if(tam.mode == tmCmp && tam.value == TEMP_REGISTER_1) {
+      if(tam.mode == tmValue && ((indexOfItems[func].status & PTP_STATUS) == PTP_NUMBER_8_16) && tam.value > 250) {
+        tmpString[opBytes    ] = (char)CNST_BEYOND_250;
+        tmpString[opBytes + 1] = tam.value - 250;
+        _insertInProgram((uint8_t *)tmpString, opBytes + 2);
+      }
+      else if(tam.mode == tmCmp && tam.value == TEMP_REGISTER_1) {
         tmpString[opBytes    ] = (char)(real34IsZero(REGISTER_REAL34_DATA(TEMP_REGISTER_1)) ? VALUE_0 : VALUE_1);
         _insertInProgram((uint8_t *)tmpString, opBytes + 1);
       }
