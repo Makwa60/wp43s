@@ -362,8 +362,7 @@ void lnP1Real(void) {
 
 void lnP1Cplx(void) {
   real34_t r;
-  int32ToReal34(1, &r);
-  real34Add(REGISTER_REAL34_DATA(REGISTER_X),&r,&r);
+  real34Add(REGISTER_REAL34_DATA(REGISTER_X),const34_1,&r);
   if(real34IsZero(&r) && real34IsZero(REGISTER_IMAG34_DATA(REGISTER_X))) {
     if(getSystemFlag(FLAG_SPCRES)) {
       convertRealToReal34ResultRegister(const_minusInfinity, REGISTER_X);
