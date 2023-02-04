@@ -101,7 +101,7 @@ void fnHypergeometricP(uint16_t unusedButMandatoryParameter) {
 
   if(checkParamHyper(&val, &prob, &samp, &batch)) {
     if(realIsAnInteger(&val)) {
-      pdf_Hypergeometric(&val, &prob, &samp, &batch, &ans, &ctxtReal39);
+      pdf_Hypergeometric(&val, &prob, &samp, &batch, &ans, &ctxtReal51);
     }
     else {
       realZero(&ans);

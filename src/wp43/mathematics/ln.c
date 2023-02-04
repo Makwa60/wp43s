@@ -101,10 +101,8 @@ void real34Ln(const real34_t *xin, real34_t *res) {
   }
 
   // 1st term
-  real34Copy(&x, &xm1xp1);
-  real34Copy(&x, &xm1xp1sq);
-  real34Subtract(&xm1xp1, const34_1, &xm1xp1);
-  real34Add(&xm1xp1sq, const34_1, &xm1xp1sq);
+  real34Subtract(&x, const34_1, &xm1xp1);
+  real34Add(&x, const34_1, &xm1xp1sq);
   real34Divide(&xm1xp1, &xm1xp1sq, &xm1xp1);
   real34Multiply(&xm1xp1, &xm1xp1, &xm1xp1sq);
 
@@ -161,18 +159,16 @@ void realLn(const real_t *xin, real_t *res, realContext_t *realContext) {
   realCopy(xin, &x);
 
   // reduce value to make convergence faster
-  exponent = x.exponent + x.digits;
-  x.exponent = -x.digits;
+  exponent = x.exponent + x.digits - 1;
+  x.exponent = -x.digits + 1;
   while(realCompareGreaterEqual(&x, const_2)) {
     realMultiply(&x, const_1on2, &x, realContext);
     ++exponent2;
   }
 
   // 1st term
-  realCopy(&x, &xm1xp1);
-  realCopy(&x, &xm1xp1sq);
-  realSubtract(&xm1xp1, const_1, &xm1xp1, realContext);
-  realAdd(&xm1xp1sq, const_1, &xm1xp1sq, realContext);
+  realSubtract(&x, const_1, &xm1xp1, realContext);
+  realAdd(&x, const_1, &xm1xp1sq, realContext);
   realDivide(&xm1xp1, &xm1xp1sq, &xm1xp1, realContext);
   realMultiply(&xm1xp1, &xm1xp1, &xm1xp1sq, realContext);
 
@@ -189,9 +185,8 @@ void realLn(const real_t *xin, real_t *res, realContext_t *realContext) {
     //}
     //else {
       real_t kx2p1;
-      int32ToReal(k * 2 + 1, &kx2p1); realDivide(&xm1xp1pw, &kx2p1, &kx2p1, realContext);
-      realAdd(res, &kx2p1, res, realContext);
-      realAdd(res, &kx2p1, res, realContext);
+      int32ToReal(k * 2 + 1, &kx2p1); realDivide(const_2, &kx2p1, &kx2p1, realContext);
+      realFMA(&xm1xp1pw, &kx2p1, res, res, realContext);
       ++k;
     //}
   } while(!realCompareEqual(res, &r));

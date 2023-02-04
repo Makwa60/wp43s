@@ -1587,11 +1587,11 @@ void WP34S_betai(const real_t *b, const real_t *a, const real_t *x, real_t *res,
   }
   else {
     LnBeta(a, b, &u, realContext);
-    realLn(x, &v, realContext);              // v = ln(x)
+    WP34S_Ln(x, &v, realContext);              // v = ln(x)
     realMultiply(a, &v, &t, realContext);
     realSubtract(&t, &u, &v, realContext);     // v = lng(...)+a.ln(x)
     realSubtract(const_1, x, &y, realContext); // y = 1-x
-    realLn(&y, &u, realContext);             // u = ln(1-x)
+    WP34S_Ln(&y, &u, realContext);             // u = ln(1-x)
     realMultiply(&u, b, &t, realContext);
     realAdd(&t, &v, &u, realContext);          // u = lng(...)+a.ln(x)+b.ln(1-x)
     realExp(&u, &w, realContext);
