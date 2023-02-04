@@ -168,12 +168,12 @@ void expM1Complex(const real_t *real, const real_t *imag, real_t *resReal, real_
 
 void expM1LonI(void) {
   #if USE_REAL34_FUNCTIONS == 1
-  if(1) {
-    convertLongIntegerRegisterToReal34Register(REGISTER_X, REGISTER_X);
-    real34ExpM1(REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X));
-    setRegisterAngularMode(REGISTER_X, amNone);
-  }
-  else
+    if(getSystemFlag(FLAG_FASTFN)) {
+      convertLongIntegerRegisterToReal34Register(REGISTER_X, REGISTER_X);
+      real34ExpM1(REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X));
+      setRegisterAngularMode(REGISTER_X, amNone);
+    }
+    else
   #endif // USE_REAL34_FUNCTIONS == 1
   {
     real_t a;
@@ -235,11 +235,11 @@ void expM1Real(void) {
     realCopy(const_NaN, &x);
   }
   #if USE_REAL34_FUNCTIONS == 1
-  else if(1) {
-    real34ExpM1(REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X));
-    setRegisterAngularMode(REGISTER_X, amNone);
-    return;
-  }
+    else if(getSystemFlag(FLAG_FASTFN)) {
+      real34ExpM1(REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X));
+      setRegisterAngularMode(REGISTER_X, amNone);
+      return;
+    }
   #endif // USE_REAL34_FUNCTIONS == 1
   else if(realCompareAbsLessThan(&x, const_1)) {
     realExpM1(&x, &x, &ctxtReal51);
