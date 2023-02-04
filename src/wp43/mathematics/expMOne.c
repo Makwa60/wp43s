@@ -10,6 +10,7 @@
 #include "fonts.h"
 #include "items.h"
 #include "mathematics/comparisonReals.h"
+#include "mathematics/exp.h"
 #include "mathematics/matrix.h"
 #include "mathematics/wp34s.h"
 #include "registers.h"
@@ -90,6 +91,39 @@ void realExpM1(const real_t *xin, real_t *res, realContext_t *realContext) {
 
 
 
+void real34ExpM1(const real34_t *xin, real34_t *res) {
+  real34_t x, xx, k, r, r0, r1;
+  bool termOdd = true;
+
+  if(!real34CompareAbsLessThan(xin, const34_1)) {
+    real34Exp(xin, res);
+    real34Subtract(res, const34_1, res);
+    return;
+  }
+
+  real34Copy(xin, &x);
+  real34Copy(const34_0, res);
+  real34Copy(const34_1, &k);
+  real34Copy(const34_1, &xx);
+  real34Copy(const34_0, &r0);
+  real34Copy(const34_0, &r1);
+
+  // Taylor series
+  do {
+    real34Copy(res, &r);
+
+    real34Multiply(&xx, &x, &xx);
+    real34Divide(&xx, &k, &xx);
+    real34Add(res, &xx, res);
+    real34Add(termOdd ? &r1 : &r0, &xx, termOdd ? &r1 : &r0);
+    real34Add(&k, const34_1, &k);
+    termOdd = !termOdd;
+  } while(!real34IsSpecial(res) && !real34CompareEqual(res, &r));
+  real34Add(&r0, &r1, res);
+}
+
+
+
 void expM1Complex(const real_t *real, const real_t *imag, real_t *resReal, real_t *resImag, realContext_t *realContext) {
   real_t expa, sin, cos;
 
@@ -133,13 +167,23 @@ void expM1Complex(const real_t *real, const real_t *imag, real_t *resReal, real_
  ***********************************************************************/
 
 void expM1LonI(void) {
-  real_t a;
+  #if USE_REAL34_FUNCTIONS == 1
+  if(1) {
+    convertLongIntegerRegisterToReal34Register(REGISTER_X, REGISTER_X);
+    real34ExpM1(REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X));
+    setRegisterAngularMode(REGISTER_X, amNone);
+  }
+  else
+  #endif // USE_REAL34_FUNCTIONS == 1
+  {
+    real_t a;
 
-  convertLongIntegerRegisterToReal(REGISTER_X, &a, &ctxtReal39);
-  realExp(&a, &a, &ctxtReal39);
-  realSubtract(&a, const_1, &a, &ctxtReal39);
-  reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
-  convertRealToReal34ResultRegister(&a, REGISTER_X);
+    convertLongIntegerRegisterToReal(REGISTER_X, &a, &ctxtReal39);
+    realExp(&a, &a, &ctxtReal39);
+    realSubtract(&a, const_1, &a, &ctxtReal39);
+    reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
+    convertRealToReal34ResultRegister(&a, REGISTER_X);
+  }
 }
 
 
@@ -190,6 +234,13 @@ void expM1Real(void) {
   else if(realIsSpecial(&x)) {
     realCopy(const_NaN, &x);
   }
+  #if USE_REAL34_FUNCTIONS == 1
+  else if(1) {
+    real34ExpM1(REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X));
+    setRegisterAngularMode(REGISTER_X, amNone);
+    return;
+  }
+  #endif // USE_REAL34_FUNCTIONS == 1
   else if(realCompareAbsLessThan(&x, const_1)) {
     realExpM1(&x, &x, &ctxtReal51);
   }

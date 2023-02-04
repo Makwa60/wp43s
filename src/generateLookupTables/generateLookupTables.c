@@ -168,6 +168,17 @@ void generateLookupTable(void) {
     int32ToReal(c * 2 + 3, &value2);
     realDivide(&value, &value2, &value, &ctxtReal75);
   }
+
+  generateArrayDef("exponent");
+  memset(&value, 0, sizeof(real_t));
+  int32ToReal(1, &value);
+  for(c = 0; c < 42; ++c) {
+    //generateConstantArray("exp ", &value);
+    realToReal34(&value, &value34);
+    generateConstantArray34("exp ", &value34);
+    int32ToReal(((c + 1) % 10) * ((c + 1) >= 40 ? 10000 : (c + 1) >= 30 ? 1000 : (c + 1) >= 20 ? 100 : (c + 1) >= 10 ? 10 : 1), &value);
+    realExp(&value, &value, &ctxtReal75);
+  }
 }
 
 int main(int argc, char* argv[]) {

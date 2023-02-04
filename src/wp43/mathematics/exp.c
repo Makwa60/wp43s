@@ -9,6 +9,7 @@
 #include "flags.h"
 #include "fonts.h"
 #include "items.h"
+#include "lookupTables.h"
 #include "mathematics/comparisonReals.h"
 #include "mathematics/matrix.h"
 #include "mathematics/wp34s.h"
@@ -65,14 +66,28 @@ void real34Exp(const real34_t *xin, real34_t *res) {
   real34_t x, xx, k, r, r0, r1;
   bool neg = real34IsNegative(xin);
   bool termOdd = true;
+  int integerPart = 0;
 
   real34CopyAbs(xin, &x);
   real34Copy(const34_1, res);
   real34Copy(const34_1, &k);
   real34Copy(const34_1, &xx);
-  real34Copy(const34_1, &xx);
   real34Copy(const34_1, &r0);
   real34Copy(const34_0, &r1);
+
+  if(real34CompareGreaterEqual(&x, const34_20000)) {
+    if(neg) {
+      real34Zero(res);
+    }
+    else {
+      realToReal34(const_plusInfinity, res);
+    }
+    return;
+  }
+
+  integerPart = real34ToInt32(&x);
+  int32ToReal34(integerPart, &r);
+  real34Subtract(&x, &r, &x);
 
   // Taylor series
   do {
@@ -86,6 +101,12 @@ void real34Exp(const real34_t *xin, real34_t *res) {
     termOdd = !termOdd;
   } while(!real34IsSpecial(res) && !real34CompareEqual(res, &r));
   real34Add(&r0, &r1, res);
+
+  real34Multiply(res, exponent34 +  0 +  (integerPart %    10),          res);
+  real34Multiply(res, exponent34 + 10 + ((integerPart %   100) /    10), res);
+  real34Multiply(res, exponent34 + 20 + ((integerPart %  1000) /   100), res);
+  real34Multiply(res, exponent34 + 30 + ((integerPart % 10000) /  1000), res);
+  real34Multiply(res, exponent34 + 40 + ((integerPart % 20000) / 10000), res);
 
   if(neg) {
     real34Divide(const34_1, res, res);

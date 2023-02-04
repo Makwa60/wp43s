@@ -19,4 +19,5 @@
   extern const real34_t * const maclaurinCoeffAtan34;
   extern const real34_t * const maclaurinCoeffLn1P34;
   extern const real34_t * const taylorCoeffLn34;
+  extern const real34_t * const exponent34;
 #endif // !LOOKUPTABLES_H
