@@ -108,8 +108,8 @@ void tanhReal(void) {
     real34ToReal(REGISTER_REAL34_DATA(REGISTER_X), &x);
     WP34S_Tanh(&x, &x, &ctxtReal39);
     convertRealToReal34ResultRegister(&x, REGISTER_X);
-    setRegisterAngularMode(REGISTER_X, amNone);
   }
+  setRegisterAngularMode(REGISTER_X, amNone);
 }
 
 
