@@ -7,6 +7,7 @@
 #include "debug.h"
 #include "defines.h"
 #include "error.h"
+#include "flags.h"
 #include "items.h"
 #include "mathematics/ln.h"
 #include "mathematics/matrix.h"
