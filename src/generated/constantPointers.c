@@ -293,6 +293,7 @@ TO_QSPI const uint8_t constants[] = {
   0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xc0,0x00,0x00,0x2a,  // const_28
   0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x08,0x00,0x2e,  // const_31
   0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xc0,0x00,0x00,0x2e,  // const_38
+  0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x38,0x00,0x32,  // const_47
   0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x3a,  // const_60
   0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x40,0x00,0x26,  // const_100
   0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x6b,0x00,0x26,  // const_153
@@ -608,30 +609,31 @@ TO_QSPI const real34_t * const const34_24        = (real34_t *)(constants + 1056
 TO_QSPI const real34_t * const const34_28        = (real34_t *)(constants + 10580);
 TO_QSPI const real34_t * const const34_31        = (real34_t *)(constants + 10596);
 TO_QSPI const real34_t * const const34_38        = (real34_t *)(constants + 10612);
-TO_QSPI const real34_t * const const34_60        = (real34_t *)(constants + 10628);
-TO_QSPI const real34_t * const const34_100       = (real34_t *)(constants + 10644);
-TO_QSPI const real34_t * const const34_153       = (real34_t *)(constants + 10660);
-TO_QSPI const real34_t * const const34_275       = (real34_t *)(constants + 10676);
-TO_QSPI const real34_t * const const34_367       = (real34_t *)(constants + 10692);
-TO_QSPI const real34_t * const const34_400       = (real34_t *)(constants + 10708);
-TO_QSPI const real34_t * const const34_1000      = (real34_t *)(constants + 10724);
-TO_QSPI const real34_t * const const34_1401      = (real34_t *)(constants + 10740);
-TO_QSPI const real34_t * const const34_1461      = (real34_t *)(constants + 10756);
-TO_QSPI const real34_t * const const34_3600      = (real34_t *)(constants + 10772);
-TO_QSPI const real34_t * const const34_4716      = (real34_t *)(constants + 10788);
-TO_QSPI const real34_t * const const34_4800      = (real34_t *)(constants + 10804);
-TO_QSPI const real34_t * const const34_4900      = (real34_t *)(constants + 10820);
-TO_QSPI const real34_t * const const34_5001      = (real34_t *)(constants + 10836);
-TO_QSPI const real34_t * const const34_10000     = (real34_t *)(constants + 10852);
-TO_QSPI const real34_t * const const34_20000     = (real34_t *)(constants + 10868);
-TO_QSPI const real34_t * const const34_32075     = (real34_t *)(constants + 10884);
-TO_QSPI const real34_t * const const34_43200     = (real34_t *)(constants + 10900);
-TO_QSPI const real34_t * const const34_65535     = (real34_t *)(constants + 10916);
-TO_QSPI const real34_t * const const34_86400     = (real34_t *)(constants + 10932);
-TO_QSPI const real34_t * const const34_146097    = (real34_t *)(constants + 10948);
-TO_QSPI const real34_t * const const34_274277    = (real34_t *)(constants + 10964);
-TO_QSPI const real34_t * const const34_1e6       = (real34_t *)(constants + 10980);
-TO_QSPI const real34_t * const const34_1729777   = (real34_t *)(constants + 10996);
-TO_QSPI const real34_t * const const34_2p32      = (real34_t *)(constants + 11012);
-TO_QSPI const real34_t * const const34_maxDate   = (real34_t *)(constants + 11028);
-TO_QSPI const real34_t * const const34_maxTime   = (real34_t *)(constants + 11044);
+TO_QSPI const real34_t * const const34_47        = (real34_t *)(constants + 10628);
+TO_QSPI const real34_t * const const34_60        = (real34_t *)(constants + 10644);
+TO_QSPI const real34_t * const const34_100       = (real34_t *)(constants + 10660);
+TO_QSPI const real34_t * const const34_153       = (real34_t *)(constants + 10676);
+TO_QSPI const real34_t * const const34_275       = (real34_t *)(constants + 10692);
+TO_QSPI const real34_t * const const34_367       = (real34_t *)(constants + 10708);
+TO_QSPI const real34_t * const const34_400       = (real34_t *)(constants + 10724);
+TO_QSPI const real34_t * const const34_1000      = (real34_t *)(constants + 10740);
+TO_QSPI const real34_t * const const34_1401      = (real34_t *)(constants + 10756);
+TO_QSPI const real34_t * const const34_1461      = (real34_t *)(constants + 10772);
+TO_QSPI const real34_t * const const34_3600      = (real34_t *)(constants + 10788);
+TO_QSPI const real34_t * const const34_4716      = (real34_t *)(constants + 10804);
+TO_QSPI const real34_t * const const34_4800      = (real34_t *)(constants + 10820);
+TO_QSPI const real34_t * const const34_4900      = (real34_t *)(constants + 10836);
+TO_QSPI const real34_t * const const34_5001      = (real34_t *)(constants + 10852);
+TO_QSPI const real34_t * const const34_10000     = (real34_t *)(constants + 10868);
+TO_QSPI const real34_t * const const34_20000     = (real34_t *)(constants + 10884);
+TO_QSPI const real34_t * const const34_32075     = (real34_t *)(constants + 10900);
+TO_QSPI const real34_t * const const34_43200     = (real34_t *)(constants + 10916);
+TO_QSPI const real34_t * const const34_65535     = (real34_t *)(constants + 10932);
+TO_QSPI const real34_t * const const34_86400     = (real34_t *)(constants + 10948);
+TO_QSPI const real34_t * const const34_146097    = (real34_t *)(constants + 10964);
+TO_QSPI const real34_t * const const34_274277    = (real34_t *)(constants + 10980);
+TO_QSPI const real34_t * const const34_1e6       = (real34_t *)(constants + 10996);
+TO_QSPI const real34_t * const const34_1729777   = (real34_t *)(constants + 11012);
+TO_QSPI const real34_t * const const34_2p32      = (real34_t *)(constants + 11028);
+TO_QSPI const real34_t * const const34_maxDate   = (real34_t *)(constants + 11044);
+TO_QSPI const real34_t * const const34_maxTime   = (real34_t *)(constants + 11060);

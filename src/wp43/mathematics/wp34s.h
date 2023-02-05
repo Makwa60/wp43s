@@ -58,5 +58,7 @@
   void   WP34S_Atan34          (const real34_t *x, real34_t *angle);
   void   WP34S_Asin34          (const real34_t *x, real34_t *angle);
   void   WP34S_Acos34          (const real34_t *x, real34_t *angle);
+  void   WP34S_SinhCosh34      (const real34_t *x, real34_t *sinOut, real34_t *cosOut);
+  void   WP34S_Tanh34          (const real34_t *x, real34_t *res);
 
 #endif // !WP34S_H

@@ -1087,6 +1087,24 @@ void WP34S_Tanh(const real_t *x, real_t *res, realContext_t *realContext) {
     realDivide(&b, &a, res, realContext);  // res = (exp(2x) - 1) / (exp(2x) + 1)
   }
 }
+#if USE_REAL34_TRIGONOMETRIC == 1
+  void WP34S_Tanh34(const real34_t *x, real34_t *res) {
+    if(real34IsNaN(x)) {
+      realToReal34(const_NaN, res);
+    }
+    else if(real34CompareAbsGreaterThan(x, const34_47)) { // equals 1 to 39 digits
+      real34Copy((real34IsPositive(x) ? const34_1 : const34__1), res);
+    }
+    else {
+      real34_t a, b;
+
+      real34Add(x, x, &a);        // a = 2x
+      real34ExpM1(&a, &b);      // b = exp(2x) - 1
+      real34Add(&b, const34_2, &a); // a = exp(2x) - 1 + 2 = exp(2x) + 1
+      real34Divide(&b, &a, res);  // res = (exp(2x) - 1) / (exp(2x) + 1)
+    }
+  }
+#endif // USE_REAL34_TRIGONOMETRIC == 1
 
 
 
