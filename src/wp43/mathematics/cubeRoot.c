@@ -10,6 +10,7 @@
 #include "fonts.h"
 #include "integers.h"
 #include "items.h"
+#include "mathematics/comparisonReals.h"
 #include "mathematics/matrix.h"
 #include "mathematics/toPolar.h"
 #include "mathematics/toRect.h"
@@ -60,6 +61,13 @@ void curtLonI(void) {
   if(longIntegerRoot(value, 3, value)) {
     convertLongIntegerToLongIntegerRegister(value, REGISTER_X);
   }
+  #if USE_REAL34_FUNCTIONS == 1
+    else if(1) {
+      convertLongIntegerRegisterToReal34Register(REGISTER_X, REGISTER_X);
+      real34CubeRoot(REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X));
+      setRegisterAngularMode(REGISTER_X, amNone);
+    }
+  #endif // USE_REAL34_FUNCTIONS == 1
   else {
     real_t x;
 
@@ -115,13 +123,23 @@ void curtReal(void) {
     return;
   }
 
-  real_t x;
+  #if USE_REAL34_FUNCTIONS == 1
+    if(1) {
+      real34CubeRoot(REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X));
+      setRegisterAngularMode(REGISTER_X, amNone);
+      return;
+    }
+    else
+  #endif // USE_REAL34_FUNCTIONS == 1
+  {
+    real_t x;
 
-  real34ToReal(REGISTER_REAL34_DATA(REGISTER_X), &x);
+    real34ToReal(REGISTER_REAL34_DATA(REGISTER_X), &x);
 
-  realCubeRoot(&x, &x, &ctxtReal39);
-  convertRealToReal34ResultRegister(&x, REGISTER_X);
-  setRegisterAngularMode(REGISTER_X, amNone);
+    realCubeRoot(&x, &x, &ctxtReal39);
+    convertRealToReal34ResultRegister(&x, REGISTER_X);
+    setRegisterAngularMode(REGISTER_X, amNone);
+  }
 }
 
 
@@ -184,5 +202,34 @@ void realCubeRoot(const real_t *x, real_t *res, realContext_t *realContext) {
   } while(!WP34S_RelativeError(res, &r1, &tol, realContext));
   if(neg) {
     realSetNegativeSign(res);
+  }
+}
+
+
+
+void real34CubeRoot(const real34_t *x, real34_t *res) {
+  // f(x)/f'(x) = x - (x^3-a)/(3x^2) = a/3x^2 + 2x/3
+  real34_t x1, r1, r2, delta, tol;
+  bool neg = real34IsNegative(x);
+  if(real34IsSpecial(x)) {
+    real34Copy(x, res);
+    return;
+  }
+  real34Reduce(x, &x1);
+  real34SetPositiveSign(&x1);
+  real34Copy(&x1, res);
+  real34Copy(&x1, &r1);
+  realToReal34(const_plusInfinity, &delta);
+  do {
+    real34Copy(res, &r1);
+    real34Reduce(res, &tol); real34SetExponent(&tol, real34GetExponent(&tol) - 32);
+    real34Multiply(&r1, &r1, &r2);
+    real34Divide(&x1, &r2, res);
+    real34Multiply(res, const34_1on3, res);
+    real34FMA(&r1, const34_2on3, res, res);
+    real34Subtract(res, &r1, &delta); real34SetPositiveSign(&delta);
+  } while(real34CompareGreaterThan(&delta, &tol));
+  if(neg) {
+    real34SetNegativeSign(res);
   }
 }
