@@ -137,7 +137,13 @@ uint8_t ArcsinhReal(const real_t *x, real_t *res, realContext_t *realContext) {
     realCopy(x, res);
   }
   else {
-    WP34S_ArcSinh(x, res, realContext);
+    real_t a;
+
+    realMultiply(x, x, &a, realContext);   // a = x²
+    realAdd(&a, const_1, &a, realContext); // a = x² + 1
+    realSquareRoot(&a, &a, realContext);   // a = sqrt(x²+1)
+    realAdd(&a, x, &a, realContext);       // a = sqrt(x²+1)+x
+    realLn(&a, res, realContext);          // res = ln(x + sqrt(x²+1))
   }
 
   return ERROR_NONE;

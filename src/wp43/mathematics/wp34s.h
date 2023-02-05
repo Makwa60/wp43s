@@ -31,7 +31,7 @@
   void   WP34S_Logxy           (const real_t *yin, const real_t *xin, real_t *res, realContext_t *realContext);
   void   WP34S_SinhCosh        (const real_t *x, real_t *sinOut, real_t *cosOut, realContext_t *realContext);
   void   WP34S_Tanh            (const real_t *x, real_t *res, realContext_t *realContext);
-  void   WP34S_ArcSinh         (const real_t *x, real_t *res, realContext_t *realContext);
+  //void   WP34S_ArcSinh         (const real_t *x, real_t *res, realContext_t *realContext);
   //void   WP34S_ArcCosh         (const real_t *x, real_t *res, realContext_t *realContext); never used
   void   WP34S_ArcTanh         (const real_t *x, real_t *res, realContext_t *realContext);
   void   WP34S_Ln1P            (const real_t *x, real_t *res, realContext_t *realContext);
