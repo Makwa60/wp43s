@@ -58,7 +58,7 @@ void fnArcsinh(uint16_t unusedButMandatoryParameter) {
 
 void arcsinhLonI(void) {
   #if USE_REAL34_FUNCTIONS == 1
-    if(1) {
+    if(getSystemFlag(FLAG_FASTFN)) {
       convertLongIntegerRegisterToReal34Register(REGISTER_X, REGISTER_X);
       WP34S_ArSinh34(REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X));
       setRegisterAngularMode(REGISTER_X, amNone);
@@ -98,7 +98,7 @@ void arcsinhCxma(void) {
 
 void arcsinhReal(void) {
   #if USE_REAL34_FUNCTIONS == 1
-    if(1) {
+    if(getSystemFlag(FLAG_FASTFN)) {
       if(!real34IsSpecial(REGISTER_REAL34_DATA(REGISTER_X))) {
         WP34S_ArSinh34(REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X));
       }
