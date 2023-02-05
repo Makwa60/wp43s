@@ -1028,7 +1028,7 @@ void WP34S_SinhCosh(const real_t *x, real_t *sinhOut, real_t *coshOut, realConte
    realMultiply(coshOut, const_1on2, coshOut, realContext);    // coshOut = (e^x + e^-x)/2
   }
 }
-#if USE_REAL34_TRIGONOMETRIC == 1
+#if USE_REAL34_FUNCTIONS == 1
   void WP34S_SinhCosh34(const real34_t *x, real34_t *sinhOut, real34_t *coshOut) {
     real34_t t, u, v;
 
@@ -1067,7 +1067,7 @@ void WP34S_SinhCosh(const real_t *x, real_t *sinhOut, real_t *coshOut, realConte
      real34Multiply(coshOut, const34_1on2, coshOut);    // coshOut = (e^x + e^-x)/2
     }
   }
-#endif // USE_REAL34_TRIGONOMETRIC == 1
+#endif // USE_REAL34_FUNCTIONS == 1
 
 
 
@@ -1087,7 +1087,7 @@ void WP34S_Tanh(const real_t *x, real_t *res, realContext_t *realContext) {
     realDivide(&b, &a, res, realContext);  // res = (exp(2x) - 1) / (exp(2x) + 1)
   }
 }
-#if USE_REAL34_TRIGONOMETRIC == 1
+#if USE_REAL34_FUNCTIONS == 1
   void WP34S_Tanh34(const real34_t *x, real34_t *res) {
     if(real34IsNaN(x)) {
       realToReal34(const_NaN, res);
@@ -1104,7 +1104,7 @@ void WP34S_Tanh(const real_t *x, real_t *res, realContext_t *realContext) {
       real34Divide(&b, &a, res);  // res = (exp(2x) - 1) / (exp(2x) + 1)
     }
   }
-#endif // USE_REAL34_TRIGONOMETRIC == 1
+#endif // USE_REAL34_FUNCTIONS == 1
 
 
 
@@ -1120,6 +1120,20 @@ void WP34S_ArcSinh(const real_t *x, real_t *res, realContext_t *realContext) {
   realMultiply(x, &a, &a, realContext);  // y = x * (x / (sqrt(x²+1)+1) + 1)
   realLn1P(&a, res, realContext);      // res = ln(1 + (x * (x / (sqrt(x²+1)+1) + 1)))
 }
+#if USE_REAL34_FUNCTIONS == 1
+  void WP34S_ArSinh34(const real34_t *x, real34_t *res) {
+    real34_t a;
+
+    real34Multiply(x, x, &a);   // a = x²
+    real34Add(&a, const34_1, &a); // a = x² + 1
+    real34SquareRoot(&a, &a);   // a = sqrt(x²+1)
+    real34Add(&a, const34_1, &a); // a = sqrt(x²+1)+1
+    real34Divide(x, &a, &a);    // a = x / (sqrt(x²+1)+1)
+    real34Add(&a, const34_1, &a); // a = x / (sqrt(x²+1)+1) + 1
+    real34Multiply(x, &a, &a);  // y = x * (x / (sqrt(x²+1)+1) + 1)
+    real34Ln1P(&a, res);      // res = ln(1 + (x * (x / (sqrt(x²+1)+1) + 1)))
+  }
+#endif // USE_REAL34_FUNCTIONS == 1
 
 
 

@@ -57,19 +57,29 @@ void fnArcsinh(uint16_t unusedButMandatoryParameter) {
 
 
 void arcsinhLonI(void) {
-  real_t x, xSquared;
+  #if USE_REAL34_FUNCTIONS == 1
+    if(1) {
+      convertLongIntegerRegisterToReal34Register(REGISTER_X, REGISTER_X);
+      WP34S_ArSinh34(REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X));
+      setRegisterAngularMode(REGISTER_X, amNone);
+    }
+    else
+  #endif // USE_REAL34_FUNCTIONS == 1
+  {
+    real_t x, xSquared;
 
-  convertLongIntegerRegisterToReal(REGISTER_X, &x, &ctxtReal39);
-  reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
+    convertLongIntegerRegisterToReal(REGISTER_X, &x, &ctxtReal39);
+    reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
 
-  // arcsinh(x) = ln(x + sqrt(x² + 1))
-  realMultiply(&x, &x, &xSquared, &ctxtReal39);
-  realAdd(&xSquared, const_1, &xSquared, &ctxtReal39);
-  realSquareRoot(&xSquared, &xSquared, &ctxtReal39);
-  realAdd(&xSquared, &x, &x, &ctxtReal39);
-  realLn(&x, &x, &ctxtReal39);
+    // arcsinh(x) = ln(x + sqrt(x² + 1))
+    realMultiply(&x, &x, &xSquared, &ctxtReal39);
+    realAdd(&xSquared, const_1, &xSquared, &ctxtReal39);
+    realSquareRoot(&xSquared, &xSquared, &ctxtReal39);
+    realAdd(&xSquared, &x, &x, &ctxtReal39);
+    realLn(&x, &x, &ctxtReal39);
 
-  convertRealToReal34ResultRegister(&x, REGISTER_X);
+    convertRealToReal34ResultRegister(&x, REGISTER_X);
+  }
 }
 
 
@@ -87,11 +97,21 @@ void arcsinhCxma(void) {
 
 
 void arcsinhReal(void) {
-  real_t x;
+  #if USE_REAL34_FUNCTIONS == 1
+    if(1) {
+      if(!real34IsSpecial(REGISTER_REAL34_DATA(REGISTER_X))) {
+        WP34S_ArSinh34(REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X));
+      }
+    }
+    else
+  #endif // USE_REAL34_FUNCTIONS == 1
+  {
+    real_t x;
 
-  real34ToReal(REGISTER_REAL34_DATA(REGISTER_X), &x);
-  ArcsinhReal(&x, &x, &ctxtReal51);
-  convertRealToReal34ResultRegister(&x, REGISTER_X);
+    real34ToReal(REGISTER_REAL34_DATA(REGISTER_X), &x);
+    ArcsinhReal(&x, &x, &ctxtReal51);
+    convertRealToReal34ResultRegister(&x, REGISTER_X);
+  }
   setRegisterAngularMode(REGISTER_X, amNone);
 }
 

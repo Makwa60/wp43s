@@ -50,13 +50,13 @@ void fnCosh(uint16_t unusedButMandatoryParameter) {
 
 
 void coshLonI(void) {
-#if USE_REAL34_TRIGONOMETRIC == 1
+#if USE_REAL34_FUNCTIONS == 1
   if(getSystemFlag(FLAG_FASTFN)) {
     convertLongIntegerRegisterToReal34Register(REGISTER_X, REGISTER_X);
     WP34S_SinhCosh34(REGISTER_REAL34_DATA(REGISTER_X), NULL, REGISTER_REAL34_DATA(REGISTER_X));
   }
   else
-#endif // USE_REAL34_TRIGONOMETRIC == 1
+#endif // USE_REAL34_FUNCTIONS == 1
   {
     real_t cosh;
 
@@ -89,12 +89,12 @@ void coshReal(void) {
     return;
   }
 
-#if USE_REAL34_TRIGONOMETRIC == 1
+#if USE_REAL34_FUNCTIONS == 1
   if(getSystemFlag(FLAG_FASTFN)) {
     WP34S_SinhCosh34(REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X), NULL);
   }
   else
-#endif // USE_REAL34_TRIGONOMETRIC == 1
+#endif // USE_REAL34_FUNCTIONS == 1
   {
     real_t x;
 
