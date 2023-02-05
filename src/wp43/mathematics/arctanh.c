@@ -164,6 +164,11 @@ void arctanhReal(void) {
           errorMoreInfo("|X| > 1\nand CPXRES is not set!");
         }
       }
+      #if USE_REAL34_FUNCTIONS == 1
+        else if(1) {
+          WP34S_ArTanh34(REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X));
+        }
+      #endif // USE_REAL34_FUNCTIONS == 1
       else {
         WP34S_ArcTanh(&x, &x, &ctxtReal39);
         convertRealToReal34ResultRegister(&x, REGISTER_X);

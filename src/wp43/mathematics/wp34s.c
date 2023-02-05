@@ -1166,6 +1166,22 @@ void WP34S_ArcTanh(const real_t *x, real_t *res, realContext_t *realContext) {
   realLn1P(&z, &y, realContext);                // y = ln(1 + 2x / (1-x))
   realMultiply(&y, const_1on2, res, realContext); // res = ln(1 + 2x / (1-x)) / 2
 }
+#if USE_REAL34_FUNCTIONS == 1
+  void WP34S_ArTanh34(const real34_t *x, real34_t *res) {
+    real34_t y, z;
+
+    if(real34IsNaN(x)) {
+      realToReal34(const_NaN, res);
+    }
+
+    // Not the obvious formula but more stable...
+    real34Subtract(const34_1, x, &z);      // z = 1-x
+    real34Divide(x, &z, &y);             // y = x / (1-x)
+    real34Multiply(&y, const34_2, &z);     // z = 2x / (1-x)
+    real34Ln1P(&z, &y);                // y = ln(1 + 2x / (1-x))
+    real34Multiply(&y, const34_1on2, res); // res = ln(1 + 2x / (1-x)) / 2
+  }
+#endif // USE_REAL34_FUNCTIONS == 1
 
 
 
