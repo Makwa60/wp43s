@@ -61,7 +61,7 @@ void fnSinh(uint16_t unusedButMandatoryParameter) {
 
 void sinhLonI(void) {
 #if USE_REAL34_FUNCTIONS == 1
-  if(getSystemFlag(FLAG_FASTFN)) {
+  if(1) {
     convertLongIntegerRegisterToReal34Register(REGISTER_X, REGISTER_X);
     WP34S_SinhCosh34(REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X), NULL);
   }
@@ -102,7 +102,7 @@ void sinhReal(void) {
   }
 
 #if USE_REAL34_FUNCTIONS == 1
-  if(getSystemFlag(FLAG_FASTFN)) {
+  if(1) {
     WP34S_SinhCosh34(REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X), NULL);
   }
   else
