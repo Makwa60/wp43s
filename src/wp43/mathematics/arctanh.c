@@ -165,7 +165,7 @@ void arctanhReal(void) {
         }
       }
       #if USE_REAL34_FUNCTIONS == 1
-        else if(1) {
+        else if(getSystemFlag(FLAG_FASTFN)) {
           WP34S_ArTanh34(REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X));
         }
       #endif // USE_REAL34_FUNCTIONS == 1
