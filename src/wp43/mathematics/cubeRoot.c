@@ -62,7 +62,7 @@ void curtLonI(void) {
     convertLongIntegerToLongIntegerRegister(value, REGISTER_X);
   }
   #if USE_REAL34_FUNCTIONS == 1
-    else if(1) {
+    else if(getSystemFlag(FLAG_FASTFN)) {
       convertLongIntegerRegisterToReal34Register(REGISTER_X, REGISTER_X);
       real34CubeRoot(REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X));
       setRegisterAngularMode(REGISTER_X, amNone);
@@ -124,7 +124,7 @@ void curtReal(void) {
   }
 
   #if USE_REAL34_FUNCTIONS == 1
-    if(1) {
+    if(getSystemFlag(FLAG_FASTFN)) {
       real34CubeRoot(REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X));
       setRegisterAngularMode(REGISTER_X, amNone);
       return;
