@@ -10,7 +10,10 @@
 #include "flags.h"
 #include "items.h"
 #include "mathematics/comparisonReals.h"
+#include "mathematics/ln.h"
+#include "mathematics/lnPOne.h"
 #include "mathematics/matrix.h"
+#include "mathematics/squareRoot.h"
 #include "mathematics/toRect.h"
 #include "mathematics/toPolar.h"
 #include "mathematics/wp34s.h"
@@ -81,11 +84,21 @@ void arccoshLonI(void) {
     return;
   }
 
-  reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
+#if USE_REAL34_FUNCTIONS == 1
+  if(1) {
+    convertLongIntegerRegisterToReal34Register(REGISTER_X, REGISTER_X);
+    real34Arcosh(REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X));
+    setRegisterAngularMode(REGISTER_X, amNone);
+  }
+  else
+#endif // USE_REAL34_FUNCTIONS == 1
+  {
+    reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
 
-  realArcosh(&x, &x, &ctxtReal39);
+    realArcosh(&x, &x, &ctxtReal39);
 
-  convertRealToReal34ResultRegister(&x, REGISTER_X);
+    convertRealToReal34ResultRegister(&x, REGISTER_X);
+  }
 }
 
 
@@ -103,14 +116,12 @@ void arccoshCxma(void) {
 
 
 void arccoshReal(void) {
-  real_t x;
-
-  real34ToReal(REGISTER_REAL34_DATA(REGISTER_X), &x);
-
-  if(realCompareLessThan(&x, const_1)) {
+  if(real34CompareLessThan(REGISTER_REAL34_DATA(REGISTER_X), const34_1)) {
     if(getFlag(FLAG_CPXRES)) {
+      real34_t x;
+      real34Copy(REGISTER_REAL34_DATA(REGISTER_X), &x);
       reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE_IN_BYTES, amNone);
-      convertRealToReal34ResultRegister(&x, REGISTER_X);
+      real34Copy(&x, REGISTER_REAL34_DATA(REGISTER_X));
       real34Zero(REGISTER_IMAG34_DATA(REGISTER_X));
       arccoshCplx();
       setRegisterAngularMode(REGISTER_X, amNone);
@@ -125,9 +136,23 @@ void arccoshReal(void) {
     return;
   }
 
-  realArcosh(&x, &x, &ctxtReal75);
+#if USE_REAL34_FUNCTIONS == 1
+  if(1) {
+    if(!real34IsSpecial(REGISTER_REAL34_DATA(REGISTER_X))) {
+      real34Arcosh(REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X));
+    }
+  }
+  else
+#endif // USE_REAL34_FUNCTIONS == 1
+  {
+    real_t x;
 
-  convertRealToReal34ResultRegister(&x, REGISTER_X);
+    real34ToReal(REGISTER_REAL34_DATA(REGISTER_X), &x);
+
+    realArcosh(&x, &x, &ctxtReal75);
+
+    convertRealToReal34ResultRegister(&x, REGISTER_X);
+  }
   setRegisterAngularMode(REGISTER_X, amNone);
 }
 
@@ -181,4 +206,38 @@ void realArcosh(const real_t *x, real_t *res, realContext_t *realContext) {
   realSquareRoot(&xSquared, &xSquared, realContext);
   realAdd(&xSquared, x, res, realContext);
   WP34S_Ln(res, res, realContext);
+}
+
+
+
+void real34Arcosh(const real34_t *x, real34_t *res) {
+  real34_t xSquared;
+
+  if(real34CompareLessThan(x, const34_1)) {
+    realToReal34(const_NaN, res);
+    return;
+  }
+  else if(real34CompareEqual(x, const34_1)) {
+    real34Zero(res);
+    return;
+  }
+
+  // arccosh(x) = ln(x + sqrt(x² - 1))
+  real34Multiply(x, x, &xSquared);
+  real34Subtract(&xSquared, const34_1, &xSquared);
+  real34SquareRoot(&xSquared, &xSquared);
+  if(real34CompareLessThan(x, const34_2)) {
+    // ln(x + a) = ln((x + a)/(1 + a)) + ln(1 + a) where a = sqrt(x² - 1)
+    real34_t xyx, logSqrtX2m1;
+    real34Ln1P(&xSquared, &logSqrtX2m1);
+    real34Add(x, &xSquared, &xyx);
+    real34Add(&xSquared, const34_1, &xSquared);
+    real34Divide(&xyx, &xSquared, &xyx);
+    real34Ln(&xyx, &xyx);
+    real34Add(&xyx, &logSqrtX2m1, res);
+  }
+  else {
+    real34Add(&xSquared, x, res);
+    real34Ln(res, res);
+  }
 }

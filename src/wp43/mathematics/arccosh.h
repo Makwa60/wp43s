@@ -19,5 +19,6 @@
   void fnArccosh (uint16_t unusedButMandatoryParameter);
 
   void realArcosh(const real_t *x, real_t *res, realContext_t *realContext);
+  void real34Arcosh(const real34_t *x, real34_t *res);
 
 #endif // !ARCCOSH_H
