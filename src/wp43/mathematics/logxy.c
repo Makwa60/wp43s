@@ -146,6 +146,7 @@ static void logxy(const real_t *xReal, const real_t *yReal, realContext_t *realC
   }
 }
 
+#if USE_REAL34_FUNCTIONS == 1
 static void logxy34(void) {
   if(real34IsSpecial(REGISTER_REAL34_DATA(REGISTER_Y)) || real34IsNegative(REGISTER_REAL34_DATA(REGISTER_Y)) || real34IsZero(REGISTER_REAL34_DATA(REGISTER_Y)) ||
      real34IsSpecial(REGISTER_REAL34_DATA(REGISTER_X)) || real34IsNegative(REGISTER_REAL34_DATA(REGISTER_X)) || real34IsZero(REGISTER_REAL34_DATA(REGISTER_X))) {
@@ -162,6 +163,7 @@ static void logxy34(void) {
     real34Divide(REGISTER_REAL34_DATA(REGISTER_Y), REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X));
   }
 }
+#endif // USE_REAL34_FUNCTIONS == 1
 
 
 void logxyLonILonI(void) {
