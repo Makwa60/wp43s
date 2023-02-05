@@ -149,7 +149,7 @@ void arccoshReal(void) {
 
     real34ToReal(REGISTER_REAL34_DATA(REGISTER_X), &x);
 
-    realArcosh(&x, &x, &ctxtReal75);
+    realArcosh(&x, &x, &ctxtReal39);
 
     convertRealToReal34ResultRegister(&x, REGISTER_X);
   }
@@ -200,12 +200,33 @@ void arccoshCplx(void) {
 void realArcosh(const real_t *x, real_t *res, realContext_t *realContext) {
   real_t xSquared;
 
+  if(realCompareLessThan(x, const_1)) {
+    realCopy(const_NaN, res);
+    return;
+  }
+  else if(realCompareEqual(x, const_1)) {
+    realZero(res);
+    return;
+  }
+
   // arccosh(x) = ln(x + sqrt(x² - 1))
   realMultiply(x, x, &xSquared, realContext);
   realSubtract(&xSquared, const_1, &xSquared, realContext);
   realSquareRoot(&xSquared, &xSquared, realContext);
-  realAdd(&xSquared, x, res, realContext);
-  WP34S_Ln(res, res, realContext);
+  if(realCompareLessThan(x, const_2)) {
+    // ln(x + a) = ln((x + a)/(1 + a)) + ln(1 + a) where a = sqrt(x² - 1)
+    real_t xyx, logSqrtX2m1;
+    realLn1P(&xSquared, &logSqrtX2m1, realContext);
+    realAdd(x, &xSquared, &xyx, realContext);
+    realAdd(&xSquared, const_1, &xSquared, realContext);
+    realDivide(&xyx, &xSquared, &xyx, realContext);
+    realLn(&xyx, &xyx, realContext);
+    realAdd(&xyx, &logSqrtX2m1, res, realContext);
+  }
+  else {
+    realAdd(&xSquared, x, res, realContext);
+    realLn(res, res, realContext);
+  }
 }
 
 
