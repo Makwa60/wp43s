@@ -1028,6 +1028,46 @@ void WP34S_SinhCosh(const real_t *x, real_t *sinhOut, real_t *coshOut, realConte
    realMultiply(coshOut, const_1on2, coshOut, realContext);    // coshOut = (e^x + e^-x)/2
   }
 }
+#if USE_REAL34_TRIGONOMETRIC == 1
+  void WP34S_SinhCosh34(const real34_t *x, real34_t *sinhOut, real34_t *coshOut) {
+    real34_t t, u, v;
+
+    if(real34IsNaN(x)) {
+      if(sinhOut != NULL) {
+        realToReal34(const_NaN, sinhOut);
+      }
+      if(coshOut != NULL) {
+        realToReal34(const_NaN, coshOut);
+      }
+      return;
+    }
+
+    if(sinhOut != NULL) {
+      if(real34CompareAbsLessThan(x, const34_1on2)) {
+        real34ExpM1(x, &u);                            // u = e^x - 1
+        real34Multiply(&u, const34_1on2, &t);          // t = (e^x - 1) / 2
+
+        real34Add(&u, const34_1, &u);                  // u = e^x
+        real34Divide(&t, &u, &v);                      // v = (e^x - 1) / 2e^x
+
+        real34Add(&u, const34_1, &u);                  // u = e^x + 1
+        real34Multiply(&u, &v, sinhOut);               // sinhOut = (e^x - 1)(e^x + 1) / 2e^x
+      }
+      else {
+        real34Exp(x, &u);                               // u = e^x
+        real34Divide(const34_1, &u, &v);                // v = e^-x
+        real34Subtract(&u, &v, sinhOut);                // sinhOut = (e^x + e^-x)
+        real34Multiply(sinhOut, const34_1on2, sinhOut); // sinhOut = (e^x + e^-x)/2
+      }
+    }
+    if(coshOut != NULL) {
+     real34Exp(x, &u);                                  // u = e^x
+     real34Divide(const34_1, &u, &v);                   // v = e^-x
+     real34Add(&u, &v, coshOut);                        // coshOut = (e^x + e^-x)
+     real34Multiply(coshOut, const34_1on2, coshOut);    // coshOut = (e^x + e^-x)/2
+    }
+  }
+#endif // USE_REAL34_TRIGONOMETRIC == 1
 
 
 

@@ -60,13 +60,22 @@ void fnSinh(uint16_t unusedButMandatoryParameter) {
 
 
 void sinhLonI(void) {
-  real_t x;
+#if USE_REAL34_TRIGONOMETRIC == 1
+  if(1) {
+    convertLongIntegerRegisterToReal34Register(REGISTER_X, REGISTER_X);
+    WP34S_SinhCosh34(REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X), NULL);
+  }
+  else
+#endif // USE_REAL34_TRIGONOMETRIC == 1
+  {
+    real_t x;
 
-  convertLongIntegerRegisterToReal(REGISTER_X, &x, &ctxtReal39);
-  WP34S_SinhCosh(&x, &x, NULL, &ctxtReal39);
+    convertLongIntegerRegisterToReal(REGISTER_X, &x, &ctxtReal39);
+    WP34S_SinhCosh(&x, &x, NULL, &ctxtReal39);
 
-  reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
-  convertRealToReal34ResultRegister(&x, REGISTER_X);
+    reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
+    convertRealToReal34ResultRegister(&x, REGISTER_X);
+  }
 }
 
 
@@ -92,11 +101,19 @@ void sinhReal(void) {
     return;
   }
 
-  real_t x;
+#if USE_REAL34_TRIGONOMETRIC == 1
+  if(1) {
+    WP34S_SinhCosh34(REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X), NULL);
+  }
+  else
+#endif // USE_REAL34_TRIGONOMETRIC == 1
+  {
+    real_t x;
 
-  real34ToReal(REGISTER_REAL34_DATA(REGISTER_X), &x);
-  WP34S_SinhCosh(&x, &x, NULL, &ctxtReal39);
-  convertRealToReal34ResultRegister(&x, REGISTER_X);
+    real34ToReal(REGISTER_REAL34_DATA(REGISTER_X), &x);
+    WP34S_SinhCosh(&x, &x, NULL, &ctxtReal39);
+    convertRealToReal34ResultRegister(&x, REGISTER_X);
+  }
   setRegisterAngularMode(REGISTER_X, amNone);
 }
 
