@@ -1,0 +1,2 @@
+; FASTFN settings
+In: FL_FASTFN=1  ; Use real34_t
