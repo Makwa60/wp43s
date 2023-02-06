@@ -63,9 +63,9 @@ void solveCubicEquation(const real_t *c2Real, const real_t *c2Imag, const real_t
 
   // q = (c - b^2 / 3) / 3
   mulComplexComplex(c2Real, c2Imag, c2Real, c2Imag, &qr, &qi, realContext);
-  realDivide(&qr, const_3, &qr, realContext), realDivide(&qi, const_3, &qi, realContext);
+  realMultiply(&qr, const_1on3, &qr, realContext), realMultiply(&qi, const_1on3, &qi, realContext);
   realSubtract(c1Real, &qr, &qr, realContext), realSubtract(c1Imag, &qi, &qi, realContext);
-  realDivide(&qr, const_3, &qr, realContext), realDivide(&qi, const_3, &qi, realContext);
+  realMultiply(&qr, const_1on3, &qr, realContext), realMultiply(&qi, const_1on3, &qi, realContext);
 
   // r = (b c - 3 d) / 6 - b^3 / 27
   mulComplexComplex(c2Real, c2Imag, c1Real, c1Imag, &rr, &ri, realContext);
@@ -96,7 +96,7 @@ void solveCubicEquation(const real_t *c2Real, const real_t *c2Imag, const real_t
   mulComplexComplex(&rr, &ri, const_0, const_root3on2, &rr, &ri, realContext);
 
   // roots
-  realDivide(c2Real, const_3, x2Real, realContext), realDivide(c2Imag, const_3, x2Imag, realContext);
+  realMultiply(c2Real, const_1on3, x2Real, realContext), realMultiply(c2Imag, const_1on3, x2Imag, realContext);
   realSubtract(&qr, x2Real, x1Real, realContext), realSubtract(&qi, x2Imag, x1Imag, realContext);
   realMultiply(&qr, const_1on2, x3Real, realContext), realMultiply(&qi, const_1on2, x3Imag, realContext);
   realAdd(x3Real, x2Real, x3Real, realContext), realAdd(x3Imag, x2Imag, x3Imag, realContext);

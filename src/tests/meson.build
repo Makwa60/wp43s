@@ -17,7 +17,7 @@ tests = executable(
   build_by_default    : false,
   sources             : decNumber_src + wp43_src + tests_src +
                         [rasterFontsData_c, softmenuCatalogs_h,
-                          constantPointers_ch, vcs_h, version_h],
+                          constantPointers_ch, lookupTables_ch, vcs_h, version_h],
   c_args              : '-DTESTSUITE_BUILD',
   include_directories : [decNumber_inc, wp43_inc],
   dependencies        : [gtest_main_dep, gmp_dep, m_dep],

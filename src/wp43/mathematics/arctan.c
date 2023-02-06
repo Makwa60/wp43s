@@ -11,8 +11,9 @@
 #include "flags.h"
 #include "fonts.h"
 #include "items.h"
-#include "mathematics/toPolar.h"
+#include "mathematics/ln.h"
 #include "mathematics/matrix.h"
+#include "mathematics/toPolar.h"
 #include "mathematics/wp34s.h"
 #include "registers.h"
 #include "registerValueConversions.h"
@@ -58,13 +59,24 @@ void fnArctan(uint16_t unusedButMandatoryParameter) {
 
 
 void arctanLonI(void) {
-  real_t x;
+  #if USE_REAL34_FUNCTIONS == 1
+    if(getSystemFlag(FLAG_FASTFN)) {
+      convertLongIntegerRegisterToReal34Register(REGISTER_X, REGISTER_X);
+      WP34S_Atan34(REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X));
+      convertAngle34FromTo(REGISTER_REAL34_DATA(REGISTER_X), amRadian, currentAngularMode);
+      setRegisterAngularMode(REGISTER_X, currentAngularMode);
+    }
+    else
+  #endif // USE_REAL34_FUNCTIONS == 1
+  {
+    real_t x;
 
-  convertLongIntegerRegisterToReal(REGISTER_X, &x, &ctxtReal39);
-  WP34S_Atan(&x, &x, &ctxtReal39);
-  convertAngleFromTo(&x, amRadian, currentAngularMode, &ctxtReal39);
-  reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, currentAngularMode);
-  convertRealToReal34ResultRegister(&x, REGISTER_X);
+    convertLongIntegerRegisterToReal(REGISTER_X, &x, &ctxtReal39);
+    WP34S_Atan(&x, &x, &ctxtReal39);
+    convertAngleFromTo(&x, amRadian, currentAngularMode, &ctxtReal39);
+    reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, currentAngularMode);
+    convertRealToReal34ResultRegister(&x, REGISTER_X);
+  }
 }
 
 
@@ -99,6 +111,12 @@ void arctanReal(void) {
       return;
     }
   }
+  #if USE_REAL34_FUNCTIONS == 1
+    else if(getSystemFlag(FLAG_FASTFN)) {
+      WP34S_Atan34(REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X));
+      convertAngle34FromTo(REGISTER_REAL34_DATA(REGISTER_X), amRadian, currentAngularMode);
+    }
+  #endif // USE_REAL34_FUNCTIONS == 1
   else {
     real_t x;
 
@@ -150,7 +168,7 @@ void arctanCplx(void) {
   //
   //// calculate ln((1 - iz) / (1 + iz))
   //realRectangularToPolar(&a, &b, &a, &b, &ctxtReal39);
-  //WP34S_Ln(&a, &a, &ctxtReal39);
+  //realLn(&a, &a, &ctxtReal39);
   //
   //// arctan(z) = i/2 . ln((1 - iz) / (1 + iz))
   //realMultiply(&a, const_1on2, &a, &ctxtReal39);
@@ -190,7 +208,7 @@ uint8_t ArctanComplex(real_t *xReal, real_t *xImag, real_t *rReal, real_t *rImag
 
   // calculate ln((1 - iz) / (1 + iz))
   realRectangularToPolar(&a, &b, &a, &b, realContext);
-  WP34S_Ln(&a, &a, realContext);
+  realLn(&a, &a, realContext);
 
   // arctan(z) = i/2 . ln((1 - iz) / (1 + iz))
   realMultiply(&a, const_1on2, &a, realContext);

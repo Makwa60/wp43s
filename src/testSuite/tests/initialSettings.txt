@@ -1,6 +1,7 @@
 ; Initial default settings
 In: FL_SPCRES=0  ; Special results flag clear
 In: FL_CPXRES=0  ; Complex result flag clear
+In: FL_FASTFN=0  ; Use real_t
 In: SD=0         ; maximum significant digits
 In: RM=0         ; Half even rounding mode
 In: IM=2COMPL    ; 2 complement's

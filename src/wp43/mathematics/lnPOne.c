@@ -9,7 +9,9 @@
 #include "flags.h"
 #include "fonts.h"
 #include "items.h"
+#include "lookupTables.h"
 #include "mathematics/comparisonReals.h"
+#include "mathematics/ln.h"
 #include "mathematics/matrix.h"
 #include "mathematics/toPolar.h"
 #include "mathematics/wp34s.h"
@@ -61,6 +63,81 @@ void fnLnP1(uint16_t unusedButMandatoryParameter) {
 
 
 
+// Abramowitz and Stegun §4.1.24
+void real34Ln1P(const real34_t *xin, real34_t *res) {
+  real34_t x, xx, r;
+  int32_t k = 1;
+
+  if(real34CompareAbsGreaterThan(xin, const34_1on2)) {
+    real34Add(xin, const34_1, &x);
+    real34Ln(&x, res);
+    return;
+  }
+
+  real34Copy(xin, &x);
+
+  // 1st term
+  real34Copy(&x, &xx);
+  real34Copy(&x, res);
+
+  // Taylor series
+  do {
+    real34Copy(res, &r);
+
+    real34Multiply(&xx, &x, &xx);
+    if(k < 100) {
+      real34FMA(&xx, maclaurinCoeffLn1P34 + (k++), res, res);
+    }
+    else { // unlikely
+      real34_t kp1;
+      int32ToReal34(k + 1, &kp1); real34Divide(&xx, &kp1, &kp1);
+      if(k % 2 == 1) {
+        real34SetNegativeSign(&kp1);
+      }
+      real34Add(res, &kp1, res);
+      ++k;
+    }
+  } while(!real34CompareEqual(res, &r));
+}
+
+void realLn1P(const real_t *xin, real_t *res, realContext_t *realContext) {
+  real_t x, xx, r;
+  int32_t k = 1;
+
+  if(realCompareAbsGreaterThan(xin, const_1on2)) {
+    realAdd(xin, const_1, &x, realContext);
+    realLn(&x, res, realContext);
+    return;
+  }
+
+  realCopy(xin, &x);
+
+  // 1st term
+  realCopy(&x, &xx);
+  realCopy(&x, res);
+
+  // Taylor series
+  do {
+    realCopy(res, &r);
+
+    realMultiply(&xx, &x, &xx, realContext);
+    //if(k < 100) {
+    //  real34FMA(&xx, maclaurinCoeffLn1P34 + (k++), res, res);
+    //}
+    //else { // unlikely
+      real_t kp1;
+      int32ToReal(k + 1, &kp1); realDivide(&xx, &kp1, &kp1, realContext);
+      if(k % 2 == 1) {
+        realSetNegativeSign(&kp1);
+      }
+      realAdd(res, &kp1, res, realContext);
+      ++k;
+    //}
+  } while(!realCompareEqual(res, &r));
+}
+
+
+
 void lnP1Complex(const real_t *real, const real_t *imag, real_t *lnReal, real_t *lnImag, realContext_t *realContext) {
   real_t r;
 
@@ -106,6 +183,13 @@ void lnP1LonI(void) {
       #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
     }
   }
+  #if USE_REAL34_FUNCTIONS == 1
+    else if(getSystemFlag(FLAG_FASTFN) && longIntegerIsPositive(lgInt)) {
+      convertLongIntegerRegisterToReal34Register(REGISTER_X, REGISTER_X);
+      real34Ln1P(REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X));
+      setRegisterAngularMode(REGISTER_X, amNone);
+    }
+  #endif // USE_REAL34_FUNCTIONS == 1
   else {
     real_t x;
 
@@ -113,13 +197,13 @@ void lnP1LonI(void) {
     realAdd(&x, const_1, &x, &ctxtReal39);
 
     if(longIntegerIsPositive(lgInt)) {
-      WP34S_Ln(&x, &x, &ctxtReal39);
+      realLn(&x, &x, &ctxtReal39);
       reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
       convertRealToReal34ResultRegister(&x, REGISTER_X);
      }
     else if(getFlag(FLAG_CPXRES)) {
       realSetPositiveSign(&x);
-      WP34S_Ln(&x, &x, &ctxtReal39);
+      realLn(&x, &x, &ctxtReal39);
       reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE_IN_BYTES, amNone);
       convertRealToReal34ResultRegister(&x, REGISTER_X);
       convertRealToImag34ResultRegister(const_pi, REGISTER_X);
@@ -173,12 +257,12 @@ void lnP1ShoI(void) {
   }
   else {
     if(realIsPositive(&x)) {
-      WP34S_Ln(&x, &x, &ctxtReal39);
+      realLn(&x, &x, &ctxtReal39);
       convertRealToReal34ResultRegister(&x, REGISTER_X);
      }
     else if(getFlag(FLAG_CPXRES)) {
       realSetPositiveSign(&x);
-      WP34S_Ln(&x, &x, &ctxtReal39);
+      realLn(&x, &x, &ctxtReal39);
       reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE_IN_BYTES, amNone);
       convertRealToReal34ResultRegister(&x, REGISTER_X);
       convertRealToImag34ResultRegister(const_pi, REGISTER_X);
@@ -198,6 +282,14 @@ void lnP1ShoI(void) {
 
 
 void lnP1Real(void) {
+  #if USE_REAL34_FUNCTIONS == 1
+    if(getSystemFlag(FLAG_FASTFN) && !real34IsSpecial(REGISTER_REAL34_DATA(REGISTER_X)) && real34CompareGreaterThan(REGISTER_REAL34_DATA(REGISTER_X), const34__1)) {
+      real34Ln1P(REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X));
+      setRegisterAngularMode(REGISTER_X, amNone);
+      return;
+    }
+  #endif // USE_REAL34_FUNCTIONS == 1
+
   real_t x;
   real34ToReal(REGISTER_REAL34_DATA(REGISTER_X), &x);
 
@@ -242,13 +334,13 @@ void lnP1Real(void) {
 
   else {
     if(realCompareGreaterThan(&x, const__1)) {
-      WP34S_Ln1P(&x, &x, &ctxtReal39);
+      realLn1P(&x, &x, &ctxtReal39);
       convertRealToReal34ResultRegister(&x, REGISTER_X);
     }
     else if(getFlag(FLAG_CPXRES)) {
       realAdd(&x, const_1, &x, &ctxtReal39);
       realSetPositiveSign(&x);
-      WP34S_Ln(&x, &x, &ctxtReal39);
+      realLn(&x, &x, &ctxtReal39);
       reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE_IN_BYTES, amNone);
       convertRealToReal34ResultRegister(&x, REGISTER_X);
       convertRealToImag34ResultRegister(const_pi, REGISTER_X);
@@ -270,8 +362,7 @@ void lnP1Real(void) {
 
 void lnP1Cplx(void) {
   real34_t r;
-  int32ToReal34(1, &r);
-  real34Add(REGISTER_REAL34_DATA(REGISTER_X),&r,&r);
+  real34Add(REGISTER_REAL34_DATA(REGISTER_X),const34_1,&r);
   if(real34IsZero(&r) && real34IsZero(REGISTER_IMAG34_DATA(REGISTER_X))) {
     if(getSystemFlag(FLAG_SPCRES)) {
       convertRealToReal34ResultRegister(const_minusInfinity, REGISTER_X);

@@ -10,9 +10,11 @@
 #include "fonts.h"
 #include "integers.h"
 #include "items.h"
+#include "mathematics/comparisonReals.h"
 #include "mathematics/matrix.h"
 #include "mathematics/toPolar.h"
 #include "mathematics/toRect.h"
+#include "mathematics/wp34s.h"
 #include "registers.h"
 #include "registerValueConversions.h"
 
@@ -59,19 +61,19 @@ void curtLonI(void) {
   if(longIntegerRoot(value, 3, value)) {
     convertLongIntegerToLongIntegerRegister(value, REGISTER_X);
   }
+  #if USE_REAL34_FUNCTIONS == 1
+    else if(getSystemFlag(FLAG_FASTFN)) {
+      convertLongIntegerRegisterToReal34Register(REGISTER_X, REGISTER_X);
+      real34CubeRoot(REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X));
+      setRegisterAngularMode(REGISTER_X, amNone);
+    }
+  #endif // USE_REAL34_FUNCTIONS == 1
   else {
     real_t x;
 
     convertLongIntegerRegisterToReal(REGISTER_X, &x, &ctxtReal39);
     reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
-    if(realIsPositive(&x)) {
-      realPower(&x, const_1on3, &x, &ctxtReal39);
-    }
-    else {
-      realSetPositiveSign(&x);
-      realPower(&x, const_1on3, &x, &ctxtReal39);
-      realSetNegativeSign(&x);
-    }
+    realCubeRoot(&x, &x, &ctxtReal39);
     convertRealToReal34ResultRegister(&x, REGISTER_X);
   }
 
@@ -98,14 +100,7 @@ void curtShoI(void) {
 
   convertShortIntegerRegisterToReal(REGISTER_X, &x, &ctxtReal39);
 
-  if(realIsPositive(&x)) {
-    realPower(&x, const_1on3, &x, &ctxtReal39);
-  }
-  else {
-    realSetPositiveSign(&x);
-    realPower(&x, const_1on3, &x, &ctxtReal39);
-    realSetNegativeSign(&x);
-  }
+  realCubeRoot(&x, &x, &ctxtReal39);
 
   cubeRoot = realToInt32(&x);
 
@@ -128,20 +123,23 @@ void curtReal(void) {
     return;
   }
 
-  real_t x;
+  #if USE_REAL34_FUNCTIONS == 1
+    if(getSystemFlag(FLAG_FASTFN)) {
+      real34CubeRoot(REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X));
+      setRegisterAngularMode(REGISTER_X, amNone);
+      return;
+    }
+    else
+  #endif // USE_REAL34_FUNCTIONS == 1
+  {
+    real_t x;
 
-  real34ToReal(REGISTER_REAL34_DATA(REGISTER_X), &x);
+    real34ToReal(REGISTER_REAL34_DATA(REGISTER_X), &x);
 
-  if(realIsPositive(&x)) {
-    realPower(&x, const_1on3, &x, &ctxtReal39);
+    realCubeRoot(&x, &x, &ctxtReal39);
+    convertRealToReal34ResultRegister(&x, REGISTER_X);
+    setRegisterAngularMode(REGISTER_X, amNone);
   }
-  else {
-    realSetPositiveSign(&x);
-    realPower(&x, const_1on3, &x, &ctxtReal39);
-    realSetNegativeSign(&x);
-  }
-  convertRealToReal34ResultRegister(&x, REGISTER_X);
-  setRegisterAngularMode(REGISTER_X, amNone);
 }
 
 
@@ -167,20 +165,71 @@ void curtComplex(const real_t *real, const real_t *imag, real_t *resReal, real_t
   realCopy(imag, &b);
 
   if(realIsZero(&b)) {
-    if(realIsPositive(&a)) {
-      realPower(&a, const_1on3, resReal, realContext);
-    }
-    else {
-      realSetPositiveSign(&a);
-      realPower(&a, const_1on3, resReal, realContext);
-      realSetNegativeSign(resReal);
-    }
+    realCubeRoot(&a, resReal, realContext);
     realZero(resImag);
   }
   else {
     realRectangularToPolar(&a, &b, &a, &b, realContext);
-    realPower(&a, const_1on3, &a, realContext);
+    realCubeRoot(&a, &a, realContext);
     realMultiply(&b, const_1on3, &b, realContext);
     realPolarToRectangular(&a, &b, resReal, resImag, realContext);
+  }
+}
+
+
+
+// Newton-Raphson method
+void realCubeRoot(const real_t *x, real_t *res, realContext_t *realContext) {
+  // f(x)/f'(x) = x - (x^3-a)/(3x^2) = a/3x^2 + 2x/3
+  real_t x1, r1, r2, rr1, tol;
+  bool neg = realIsNegative(x);
+  if(realIsSpecial(x)) {
+    realCopy(x, res);
+    return;
+  }
+  realCopy(const_1, &tol); tol.exponent -= realContext->digits - 2;
+  realCopy(x, &x1);
+  realSetPositiveSign(&x1);
+  realCopy(&x1, res);
+  realCopy(&x1, &r1);
+  do {
+    realCopy(&r1, &rr1);
+    realCopy(res, &r1);
+    realMultiply(&r1, &r1, &r2, realContext);
+    realDivide(&x1, &r2, res, realContext);
+    realMultiply(res, const_1on3, res, realContext);
+    realFMA(&r1, const_2on3, res, res, realContext);
+  } while(!WP34S_RelativeError(res, &r1, &tol, realContext));
+  if(neg) {
+    realSetNegativeSign(res);
+  }
+}
+
+
+
+void real34CubeRoot(const real34_t *x, real34_t *res) {
+  // f(x)/f'(x) = x - (x^3-a)/(3x^2) = a/3x^2 + 2x/3
+  real34_t x1, r1, r2, delta, tol;
+  bool neg = real34IsNegative(x);
+  if(real34IsSpecial(x)) {
+    real34Copy(x, res);
+    return;
+  }
+  real34Reduce(x, &x1);
+  real34SetPositiveSign(&x1);
+  real34Copy(&x1, res);
+  real34Copy(&x1, &r1);
+  realToReal34(const_plusInfinity, &delta);
+  do {
+    real34Copy(res, &r1);
+    real34Reduce(res, &tol); real34SetExponent(&tol, real34GetExponent(&tol) - 32);
+    real34Multiply(&r1, &r1, &r2);
+    real34Divide(&x1, &r2, res);
+    real34Multiply(res, const34_1on3, res);
+    real34FMA(&r1, const34_2on3, res, res);
+    real34Subtract(res, &r1, &delta); real34SetPositiveSign(&delta);
+  } while(real34CompareGreaterThan(&delta, &tol));
+  if(neg) {
+    real34SetNegativeSign(res);
   }
 }

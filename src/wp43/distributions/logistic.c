@@ -145,7 +145,7 @@ static void cdf_logit_common(const real_t *x, real_t *res, realContext_t *realCo
 
   WP34S_Tanh(x, &p, realContext);
   realAdd(&p, const_1, &p, realContext);
-  realDivide(&p, const_2, res, realContext);
+  realMultiply(&p, const_1on2, res, realContext);
 }
 
 
@@ -169,7 +169,7 @@ void WP34S_Pdf_Logit(const real_t *x, const real_t *mu, const real_t *s, real_t 
     return;
   }
   WP34S_SinhCosh(&xx, NULL, &p, realContext);
-  realPower(&p, const_2, &p, realContext);
+  realMultiply(&p, &p, &p, realContext);
   realMultiply(&p, s, &p, realContext);
   realMultiply(&p, const_4, &p, realContext);
   realDivide(const_1, &p, res, realContext);

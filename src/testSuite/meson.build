@@ -16,7 +16,7 @@ testSuite = executable(
   build_by_default    : false,
   sources             : decNumber_src + wp43_src + testSuite_src +
                         [rasterFontsData_c, softmenuCatalogs_h,
-                          constantPointers_ch],
+                          constantPointers_ch, lookupTables_ch],
   c_args              : '-DTESTSUITE_BUILD',
   include_directories : [decNumber_inc, wp43_inc],
   dependencies        : [gmp_dep, m_dep],

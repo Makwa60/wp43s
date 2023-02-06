@@ -8,6 +8,8 @@
 #include "flags.h"
 #include "fonts.h"
 #include "mathematics/comparisonReals.h"
+#include "mathematics/expMOne.h"
+#include "mathematics/lnPOne.h"
 #include "mathematics/wp34s.h"
 #include "registers.h"
 #include "registerValueConversions.h"
@@ -195,7 +197,7 @@ void WP34S_Cdf_Expon(const real_t *x, const real_t *lambda, real_t *res, realCon
     return;
   }
   realChangeSign(res);
-  WP34S_ExpM1(res, res, realContext);
+  realExpM1(res, res, realContext);
   realChangeSign(res);
 }
 
@@ -204,7 +206,7 @@ void WP34S_Cdf_Expon(const real_t *x, const real_t *lambda, real_t *res, realCon
 void WP34S_Qf_Expon(const real_t *x, const real_t *lambda, real_t *res, realContext_t *realContext) {
   real_t p;
 
-  realSubtract(const_0, x, &p, realContext), WP34S_Ln1P(&p, res, realContext);
+  realSubtract(const_0, x, &p, realContext), realLn1P(&p, res, realContext);
   realDivide(res, lambda, res, realContext);
   realChangeSign(res);
 }

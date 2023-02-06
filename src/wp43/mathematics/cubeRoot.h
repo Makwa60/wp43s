@@ -27,5 +27,7 @@
   void curtCplx   (void);
 
   void curtComplex(const real_t *real, const real_t *imag, real_t *resReal, real_t *resImag, realContext_t *realContext);
+  void realCubeRoot(const real_t *x, real_t *res, realContext_t *realContext);
+  void real34CubeRoot(const real34_t *x, real34_t *res);
 
 #endif // !CUBEROOT_H

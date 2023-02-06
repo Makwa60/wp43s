@@ -9,6 +9,7 @@
 #include "flags.h"
 #include "fonts.h"
 #include "mathematics/comparisonReals.h"
+#include "mathematics/ln.h"
 #include "mathematics/matrix.h"
 #include "mathematics/wp34s.h"
 #include "registers.h"
@@ -265,7 +266,7 @@ void lnGammaReal(void) {
           reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE_IN_BYTES, amNone);
           WP34S_Gamma(&xReal, &xReal, &ctxtReal39);
           realSetPositiveSign(&xReal);
-          WP34S_Ln(&xReal, &xReal, &ctxtReal39);
+          realLn(&xReal, &xReal, &ctxtReal39);
           convertRealToReal34ResultRegister(&xReal, REGISTER_X);
           realToIntegralValue(&xImag, &xImag, DEC_ROUND_FLOOR, &ctxtReal39);
           realMultiply(&xImag, const_pi, &xImag, &ctxtReal39);

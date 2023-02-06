@@ -8,6 +8,8 @@
 #include "flags.h"
 #include "fonts.h"
 #include "mathematics/comparisonReals.h"
+#include "mathematics/expMOne.h"
+#include "mathematics/lnPOne.h"
 #include "mathematics/wp34s.h"
 #include "registers.h"
 #include "registerValueConversions.h"
@@ -197,7 +199,7 @@ void WP34S_Cdf_Weib(const real_t *x, const real_t *b, const real_t *t, real_t *r
   }
   realPower(&p, t, &p, realContext);
   realChangeSign(&p);
-  WP34S_ExpM1(&p, res, realContext);
+  realExpM1(&p, res, realContext);
   realChangeSign(res);
 }
 
@@ -208,7 +210,7 @@ void WP34S_Qf_Weib(const real_t *x, const real_t *b, const real_t *t, real_t *re
   real_t p, q;
 
   realMultiply(x, const__1, &p, realContext);
-  WP34S_Ln1P(&p, &p, realContext);
+  realLn1P(&p, &p, realContext);
   realChangeSign(&p);
   realDivide(const_1, t, &q, realContext);
   realPower(&p, &q, &p, realContext);

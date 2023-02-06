@@ -11,6 +11,7 @@
 #include "mathematics/arccosh.h"
 #include "mathematics/comparisonReals.h"
 #include "mathematics/division.h"
+#include "mathematics/ln.h"
 #include "mathematics/multiplication.h"
 #include "mathematics/toRect.h"
 #include "mathematics/wp34s.h"
@@ -229,9 +230,8 @@ static void Sigma_u_k(const real_t *nu, const real_t *t_r, const real_t *t_i, in
         realCopy(even ? const_1 : const_0, res_r), realCopy(const_0, res_i);
         realCopy(nu, &nu_k);
 
-        int32ToReal(24, &tmp);
-        realDivide(const_3, &tmp, &coeff_current[0], realContext);
-        realDivide(const_5, &tmp, &coeff_current[1], realContext);
+        realCopy(const_1on8, &coeff_current[0]);
+        realCopy(const_5on24, &coeff_current[1]);
         realChangeSign(&coeff_current[1]);
         for(i = 2; i < NUMBER_OF_COEFF; ++i) {
           realZero(&coeff_current[i]);
@@ -491,8 +491,8 @@ static void bessel(const real_t *alpha, const real_t *x, bool neg, real_t *res, 
   real_t x2on4, term, gfac;
   int16_t n;
 
-  realDivide(x, const_2, &q, realContext);     // q = x/2
-  realPower(&q, const_2, &x2on4, realContext); // factor each time around
+  realMultiply(x, const_1on2, &q, realContext);     // q = x/2
+  realMultiply(&q, &q, &x2on4, realContext); // factor each time around
   realPower(&q, alpha, &r, realContext);       // (x/2)^(2m+alpha)
 
   realAdd(alpha, const_1, &gfac, realContext);
@@ -586,7 +586,7 @@ static void bessel2_int_series(const real_t *n, const real_t *x, real_t *res, re
   }
   in = realToInt32(n);
 
-  realDivide(x, const_2, &xon2, realContext);      // xon2 = x/2
+  realMultiply(x, const_1on2, &xon2, realContext);      // xon2 = x/2
   realPower(&xon2, n, &xon2n, realContext);        // xon2n = (x/2)^n
   realMultiply(&xon2, &xon2, &x2on4, realContext); // x2on4 = +/- x^2/4
 
@@ -616,7 +616,7 @@ static void bessel2_int_series(const real_t *n, const real_t *x, real_t *res, re
   WP34S_BesselJ(n, x, &u, realContext);
   realDivide(&u, const_piOn2, &t, realContext);
 
-  WP34S_Ln(&xon2, &u, realContext);
+  realLn(&xon2, &u, realContext);
   realMultiply(&u, &t, &v, realContext);
   realAdd(res, &v, res, realContext);
 

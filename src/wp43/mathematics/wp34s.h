@@ -31,7 +31,7 @@
   void   WP34S_Logxy           (const real_t *yin, const real_t *xin, real_t *res, realContext_t *realContext);
   void   WP34S_SinhCosh        (const real_t *x, real_t *sinOut, real_t *cosOut, realContext_t *realContext);
   void   WP34S_Tanh            (const real_t *x, real_t *res, realContext_t *realContext);
-  void   WP34S_ArcSinh         (const real_t *x, real_t *res, realContext_t *realContext);
+  //void   WP34S_ArcSinh         (const real_t *x, real_t *res, realContext_t *realContext);
   //void   WP34S_ArcCosh         (const real_t *x, real_t *res, realContext_t *realContext); never used
   void   WP34S_ArcTanh         (const real_t *x, real_t *res, realContext_t *realContext);
   void   WP34S_Ln1P            (const real_t *x, real_t *res, realContext_t *realContext);
@@ -54,5 +54,13 @@
   void   WP34S_InverseW        (const real_t *x, real_t *res, realContext_t *realContext);
   void   WP34S_InverseComplexW (const real_t *xReal, const real_t *xImag, real_t *resReal, real_t *resImag, realContext_t *realContext);
   void   WP34S_OrthoPoly       (uint16_t kind, const real_t *x, const real_t *n, const real_t *param, real_t *res, realContext_t *realContext);
+
+  void   WP34S_Atan34          (const real34_t *x, real34_t *angle);
+  void   WP34S_Asin34          (const real34_t *x, real34_t *angle);
+  void   WP34S_Acos34          (const real34_t *x, real34_t *angle);
+  void   WP34S_SinhCosh34      (const real34_t *x, real34_t *sinOut, real34_t *cosOut);
+  void   WP34S_Tanh34          (const real34_t *x, real34_t *res);
+  void   WP34S_ArSinh34        (const real34_t *x, real34_t *res);
+  void   WP34S_ArTanh34        (const real34_t *x, real34_t *res);
 
 #endif // !WP34S_H

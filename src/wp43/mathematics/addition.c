@@ -155,8 +155,7 @@ void addTimeLonI(void) {
 void addLonIDate(void) {
   real34_t val;
   convertLongIntegerRegisterToReal34Register(REGISTER_Y, REGISTER_Y);
-  int32ToReal34(86400, &val);
-  real34Multiply(REGISTER_REAL34_DATA(REGISTER_Y), &val, &val);
+  real34Multiply(REGISTER_REAL34_DATA(REGISTER_Y), const34_86400, &val);
   real34Add(&val, REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X));
 }
 
@@ -165,8 +164,7 @@ void addLonIDate(void) {
 void addDateLonI(void) {
   real34_t val;
   convertLongIntegerRegisterToReal34Register(REGISTER_X, REGISTER_X);
-  int32ToReal34(86400, &val);
-  real34Multiply(REGISTER_REAL34_DATA(REGISTER_X), &val, &val);
+  real34Multiply(REGISTER_REAL34_DATA(REGISTER_X), const34_86400, &val);
   reallocateRegister(REGISTER_X, dtDate, REAL34_SIZE_IN_BYTES, amNone);
   real34Add(REGISTER_REAL34_DATA(REGISTER_Y), &val, REGISTER_REAL34_DATA(REGISTER_X));
 }
@@ -331,9 +329,8 @@ void addDateReal(void) {
   xAngularMode = getRegisterAngularMode(REGISTER_X);
 
   if(xAngularMode == amNone) {
-    int32ToReal34(86400, &val);
     real34ToIntegralValue(REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X), roundingModeTable[roundingMode]);
-    real34Multiply(REGISTER_REAL34_DATA(REGISTER_X), &val, &val);
+    real34Multiply(REGISTER_REAL34_DATA(REGISTER_X), const34_86400, &val);
     reallocateRegister(REGISTER_X, dtDate, REAL34_SIZE_IN_BYTES, amNone);
     real34Add(REGISTER_REAL34_DATA(REGISTER_Y), &val, REGISTER_REAL34_DATA(REGISTER_X));
   }
@@ -351,9 +348,8 @@ void addRealDate(void) {
   yAngularMode = getRegisterAngularMode(REGISTER_Y);
 
   if(yAngularMode == amNone) {
-    int32ToReal34(86400, &val);
     real34ToIntegralValue(REGISTER_REAL34_DATA(REGISTER_Y), REGISTER_REAL34_DATA(REGISTER_Y), roundingModeTable[roundingMode]);
-    real34Multiply(REGISTER_REAL34_DATA(REGISTER_Y), &val, &val);
+    real34Multiply(REGISTER_REAL34_DATA(REGISTER_Y), const34_86400, &val);
     real34Add(&val, REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X));
   }
   else {

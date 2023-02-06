@@ -11,6 +11,8 @@
 #include "flags.h"
 #include "mathematics/comparisonReals.h"
 #include "mathematics/cpyx.h"
+#include "mathematics/ln.h"
+#include "mathematics/lnPOne.h"
 #include "mathematics/wp34s.h"
 #include "registers.h"
 #include "registerValueConversions.h"
@@ -205,10 +207,10 @@ void pdf_NegBinomial(const real_t *x, const real_t *p0, const real_t *r, real_t 
   }
 
   realMultiply(p0, const__1, &p, realContext);
-  WP34S_Ln1P(&p, &p, realContext);       // ln(1 - p0)
+  realLn1P(&p, &p, realContext);       // ln(1 - p0)
   realMultiply(&p, r, &p, realContext);  // ln((1 - p0) ^ r)
 
-  WP34S_Ln(p0, &q, realContext);
+  realLn(p0, &q, realContext);
   realMultiply(&q, x, &q, realContext);  // ln(p0 ^ x)
   realAdd(&p, &q, &p, realContext);
 

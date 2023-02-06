@@ -10,6 +10,7 @@
 #include "flags.h"
 #include "fonts.h"
 #include "mathematics/comparisonReals.h"
+#include "mathematics/ln.h"
 #include "mathematics/wp34s.h"
 #include "registers.h"
 #include "registerValueConversions.h"
@@ -143,13 +144,12 @@ void fnPoissonI(uint16_t unusedButMandatoryParameter) {
  * Returns a normal approximation in X.
  */
 void WP34S_normal_moment_approx(const real_t *prob, const real_t *var, const real_t *mean, real_t *res, realContext_t *realContext) {
-  real_t p, q, r;
+  real_t p, q;
 
   WP34S_qf_q_est(prob, &p, NULL, realContext);
-  realPower(&p, const_2, &q, realContext);
+  realMultiply(&p, &p, &q, realContext);
   realSubtract(&q, const_1, &q, realContext);
-  int32ToReal(6, &r);
-  realDivide(&q, &r, &q, realContext);
+  realDivide(&q, const_6, &q, realContext);
   realDivide(&q, var, &q, realContext);
   realAdd(&p, &q, &p, realContext);
   realMultiply(&p, var, &p, realContext);
@@ -168,7 +168,7 @@ void WP34S_Pdf_Poisson(const real_t *x, const real_t *lambda, real_t *res, realC
     realZero(res);
     return;
   }
-  WP34S_Ln(lambda, &p, realContext);
+  realLn(lambda, &p, realContext);
   realMultiply(&p, x, &p, realContext);
   realSubtract(&p, lambda, &p, realContext);
   realAdd(x, const_1, &q, realContext);

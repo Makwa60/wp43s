@@ -20,6 +20,7 @@
   #define MAX_LONG_INTEGER_SIZE_IN_BITS 3328 // 1001 decimal digits: 3328 ≃ log2(10^1001)
   #define SHORT_INTEGER_SIZE_IN_BYTES      8 // 8 bytes = 64 bits
   #define CLP_WITH_MENU                    1 // CLP shows menu (more like 42S than WP34S): set to 0 if you want to retain the old behavior like WP34S
+  #define USE_REAL34_FUNCTIONS             1 // Set to 1 to enable faster (but less precise) functions
 
   #define DECNUMDIGITS                    75 // Default number of digits used in the decNumber library
 
@@ -140,7 +141,12 @@
   #define FLAG_USB                              0xc028
   #define FLAG_ENDPMT                           0xc029
   #define FLAG_FRCSRN                           0x802a
-  #define NUMBER_OF_SYSTEM_FLAGS                    43
+  #if USE_REAL34_FUNCTIONS == 1
+    #define FLAG_FASTFN                         0x802b
+    #define NUMBER_OF_SYSTEM_FLAGS                  44
+  #else // USE_REAL34_FUNCTIONS == 1
+    #define NUMBER_OF_SYSTEM_FLAGS                  43
+  #endif // USE_REAL34_FUNCTIONS == 1
 
   #define TAM_MAX_BITS                              14
   #define TAM_MAX_MASK                          0x3fff
@@ -345,10 +351,10 @@
   #define NUMBER_OF_DATA_TYPES_FOR_CALCULATIONS     10
 
   // Number of constants
-  #define NUMBER_OF_CONSTANTS_39                   203
+  #define NUMBER_OF_CONSTANTS_39                   215
   #define NUMBER_OF_CONSTANTS_51                    39
   #define NUMBER_OF_CONSTANTS_1071                   1
-  #define NUMBER_OF_CONSTANTS_34                    44
+  #define NUMBER_OF_CONSTANTS_34                    58
 
   #define MAX_FREE_REGION                           50 // Maximum number of free memory regions
 

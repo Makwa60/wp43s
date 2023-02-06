@@ -24,6 +24,7 @@
   void sinCxma (void);
   void sinReal (void);
   void sinCplx (void);
+  void real34Sin (const real34_t *x, real34_t *res);
   void sinComplex(const real_t *real, const real_t *imag, real_t *resReal, real_t *resImag, realContext_t *realContext);
 
 #endif // !SIN_H

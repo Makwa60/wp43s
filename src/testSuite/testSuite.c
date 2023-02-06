@@ -689,6 +689,16 @@ void setParameter(char *p) {
           setSystemFlag(FLAG_DMY);
         }
       }
+      else if(!strcmp(l+3, "FASTFN")) {
+        #if USE_REAL34_FUNCTIONS == 1
+          if(r[0] == '0') {
+            clearSystemFlag(FLAG_FASTFN);
+          }
+          else {
+            setSystemFlag(FLAG_FASTFN);
+          }
+        #endif // USE_REAL34_FUNCTIONS == 1
+      }
       else {
         processError("missformed numbered flag setting. After FL_ there shall be a number from 0 to 111, a lettered, or a system flag.");
       }

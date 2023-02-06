@@ -8,6 +8,7 @@
 #include "flags.h"
 #include "fonts.h"
 #include "mathematics/comparisonReals.h"
+#include "mathematics/ln.h"
 #include "mathematics/rsd.h"
 #include "mathematics/wp34s.h"
 #include "registers.h"
@@ -77,7 +78,7 @@ static void normalP(bool logNormal) {
     else {
       if(logNormal) {
         realCopy(&val, &alval);
-        WP34S_Ln(&alval, &val, &ctxtReal39);
+        realLn(&alval, &val, &ctxtReal39);
       }
       realSubtract(&val, &mu, &val, &ctxtReal39);
       realDivide(&val, &sigma, &val, &ctxtReal39);
@@ -113,7 +114,7 @@ static void normalL(bool logNormal) {
     }
     else {
       if(logNormal) {
-        WP34S_Ln(&val, &val, &ctxtReal39);
+        realLn(&val, &val, &ctxtReal39);
       }
       realSubtract(&val, &mu, &val, &ctxtReal39);
       realDivide(&val, &sigma, &val, &ctxtReal39);
@@ -145,7 +146,7 @@ static void normalR(bool logNormal) {
     }
     else {
       if(logNormal) {
-        WP34S_Ln(&val, &val, &ctxtReal39);
+        realLn(&val, &val, &ctxtReal39);
       }
       realSubtract(&val, &mu, &val, &ctxtReal39);
       realDivide(&val, &sigma, &val, &ctxtReal39);
@@ -249,10 +250,10 @@ static void cdf_q(const real_t *x, real_t *res, realContext_t *realContext, bool
       goto cdfu_q_flip;
     }
     cdf_q_flip:
-    realPower(x, const_2, res, realContext);
-    realDivide(res, const_2, res, realContext);
+    realMultiply(x, x, res, realContext);
+    realMultiply(res, const_1on2, res, realContext);
     WP34S_GammaP(res, const_1on2, res, realContext, true, false);
-    realDivide(res, const_2, res, realContext);
+    realMultiply(res, const_1on2, res, realContext);
     realSquareRoot(const_pi, &p, realContext);
     realDivide(res, &p, res, realContext);
     return;
@@ -262,13 +263,13 @@ static void cdf_q(const real_t *x, real_t *res, realContext_t *realContext, bool
       goto cdf_q_flip;
     }
     cdfu_q_flip:
-    realPower(x, const_2, res, realContext);
-    realDivide(res, const_2, res, realContext);
+    realMultiply(x, x, res, realContext);
+    realMultiply(res, const_1on2, res, realContext);
     WP34S_GammaP(res, const_1on2, res, realContext, false, false);
     realSquareRoot(const_pi, &p, realContext);
     realDivide(res, &p, res, realContext);
     realAdd(res, const_1, res, realContext);
-    realDivide(res, const_2, res, realContext);
+    realMultiply(res, const_1on2, res, realContext);
     return;
   }
 }
@@ -277,8 +278,8 @@ static void cdf_q(const real_t *x, real_t *res, realContext_t *realContext, bool
 
 void WP34S_Pdf_Q(const real_t *x, real_t *res, realContext_t *realContext) {
   real_t p;
-  realPower(x, const_2, res, realContext);
-  realDivide(res, const_2, res, realContext);
+  realMultiply(x, x, res, realContext);
+  realMultiply(res, const_1on2, res, realContext);
   realChangeSign(res);
   realExp(res, res, realContext);
   realSquareRoot(const_2pi, &p, realContext);
@@ -304,7 +305,7 @@ void WP34S_Cdf_Q(const real_t *x, real_t *res, realContext_t *realContext) {
  * for the Normal quantile.
  */
 void WP34S_qf_q_est(const real_t *x, real_t *res, real_t* resY, realContext_t *realContext) {
-  real_t p, q, r, s;
+  real_t p, q, r;
   bool   isSmall = false;
 
   // qf_q_int_est
@@ -315,23 +316,21 @@ void WP34S_qf_q_est(const real_t *x, real_t *res, real_t* resY, realContext_t *r
     realCopy(x, &p);
   }
 
-  realDivide(const_2, const_10, &q, realContext);
+  realMultiply(const_2, const_1on10, &q, realContext);
 
   if(realCompareLessThan(&p, &q)) {
-    WP34S_Ln(&p, &q, realContext);
+    realLn(&p, &q, realContext);
     realMultiply(&q, const_2, &q, realContext);
     realChangeSign(&q);
     realSubtract(&q, const_1, &r, realContext);
     realMultiply(&r, const_2pi, &r, realContext);
     realSquareRoot(&r, &r, realContext);
     realMultiply(&r, &p, &r, realContext);
-    WP34S_Ln(&r, &r, realContext);
+    realLn(&r, &r, realContext);
     realMultiply(&r, const_2, &r, realContext);
     realChangeSign(&r);
     realSquareRoot(&r, &r, realContext);
-    int32ToReal(264, &s);
-    realDivide(&s, const_1000, &s, realContext);
-    realDivide(&s, &q, &q, realContext);
+    realDivide(const_33on125, &q, &q, realContext);
     realAdd(&q, &r, &q, realContext);
   }
   else { // qf_q_mid
@@ -339,7 +338,8 @@ void WP34S_qf_q_est(const real_t *x, real_t *res, real_t* resY, realContext_t *r
     realAdd(&q, const_1on2, &q, realContext);
     realSquareRoot(const_2pi, &r, realContext);
     realMultiply(&q, &r, &q, realContext);
-    realPower(&q, const_3, &r, realContext);
+    realMultiply(&q, &q, &r, realContext);
+    realMultiply(&r, &q, &r, realContext);
     realDivide(&r, const_5, &r, realContext);
     realAdd(&q, &r, &q, realContext);
   }
@@ -384,10 +384,10 @@ void WP34S_Qf_Q(const real_t *x, real_t *res, realContext_t *realContext) {
         realSubtract(&q, &reg0, &q, realContext);
       }
       else { // qf_q_small
-        realPower(&p, const_2, &q, realContext);
-        realDivide(&q, const_2, &q, realContext);
+        realMultiply(&p, &p, &q, realContext);
+        realMultiply(&q, const_1on2, &q, realContext);
         WP34S_GammaP(&q, const_1on2, &r, realContext, false, true);
-        realDivide(&r, const_2, &q, realContext);
+        realMultiply(&r, const_1on2, &q, realContext);
         realChangeSign(&q);
         realSubtract(const_1on2, &reg0, &r, realContext);
         realAdd(&q, &r, &q, realContext);
@@ -395,14 +395,14 @@ void WP34S_Qf_Q(const real_t *x, real_t *res, realContext_t *realContext) {
       // qf_q_common
       WP34S_Pdf_Q(&p, &r, realContext);
       realDivide(&q, &r, &q, realContext);
-      realPower(&q, const_3, &r, realContext);
-      realPower(&p, const_2, &s, realContext);
+      realMultiply(&q, &q, &r, realContext);
+      realMultiply(&r, &q, &r, realContext);
+      realMultiply(&p, &p, &s, realContext);
       realMultiply(&s, const_2, &s, realContext);
       realAdd(&s, const_1, &s, realContext);
       realMultiply(&r, &s, &r, realContext);
-      int32ToReal(6, &s);
-      realDivide(&r, &s, &r, realContext);
-      realDivide(&p, const_2, &s, realContext);
+      realDivide(&r, const_6, &r, realContext);
+      realMultiply(&p, const_1on2, &s, realContext);
       realMultiply(&s, &q, &s, realContext);
       realMultiply(&s, &q, &s, realContext);
       realAdd(&s, &r, &r, realContext);

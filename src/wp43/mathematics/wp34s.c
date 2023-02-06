@@ -6,13 +6,19 @@
 #include "constantPointers.h"
 #include "conversionAngles.h"
 #include "distributions/normal.h"
+#include "lookupTables.h"
+#include "mathematics/10pow.h"
 #include "mathematics/comparisonReals.h"
+#include "mathematics/cos.h"
 #include "mathematics/division.h"
 #include "mathematics/exp.h"
+#include "mathematics/expMOne.h"
 #include "mathematics/ln.h"
+#include "mathematics/lnPOne.h"
 #include "mathematics/lnbeta.h"
 #include "mathematics/multiplication.h"
 #include "mathematics/sin.h"
+#include "mathematics/squareRoot.h"
 #include "mathematics/toPolar.h"
 #include "realType.h"
 #include "registers.h"
@@ -118,7 +124,28 @@ void WP34S_Cvt2RadSinCosTan(const real_t *an, angularMode_t angularMode, real_t 
     }
 
     convertAngleFromTo(&angle, angularMode, amRadian, realContext);
-    WP34S_SinCosTanTaylor(&angle, swap, swap?cosOut:sinOut, swap?sinOut:cosOut, tanOut, realContext); // angle in radian
+    #if USE_REAL34_FUNCTIONS == 1
+      if(savedContextDigits <= 34) {
+        real34_t angle34, s34, c34, t34;
+        realToReal34(&angle, &angle34);
+        if((swap?cosOut:sinOut) != NULL) {
+          real34Sin(&angle34, &s34);
+          real34ToReal(&s34, (swap?cosOut:sinOut));
+        }
+        if((swap?sinOut:cosOut) != NULL) {
+          real34Cos(&angle34, &c34);
+          real34ToReal(&c34, (swap?sinOut:cosOut));
+        }
+        if(sinOut != NULL && cosOut != NULL && tanOut != NULL) {
+          real34Divide(swap?&c34:&s34, swap?&s34:&c34, &t34);
+          real34ToReal(&t34, tanOut);
+        }
+      }
+      else
+    #endif // USE_REAL34_FUNCTIONS == 1
+    {
+      WP34S_SinCosTanTaylor(&angle, swap, swap?cosOut:sinOut, swap?sinOut:cosOut, tanOut, realContext); // angle in radian
+    }
   }
 
   realContext->digits = savedContextDigits;
@@ -319,6 +346,81 @@ void WP34S_Atan(const real_t *x, real_t *angle, realContext_t *realContext) {
     realChangeSign(angle);
   }
 }
+void WP34S_Atan34(const real34_t *x, real34_t *angle) {
+  real34_t a, b, a2, t, z, last;
+  int doubles = 0;
+  int invert;
+  int n;
+  int j = 1;
+  int neg = real34IsNegative(x);
+
+  real34Copy(x, &a);
+
+  // arrange for a >= 0
+  if(neg) {
+    real34ChangeSign(&a);
+  }
+
+  // reduce range to 0 <= a < 1, using atan(x) = pi/2 - atan(1/x)
+  invert = real34CompareGreaterThan(&a, const34_1);
+  if(invert) {
+    real34Divide(const34_1, &a, &a);
+  }
+
+  // Range reduce to small enough limit to use taylor series using:
+  //  tan(x/2) = tan(x)/(1+sqrt(1+tan(x)²))
+  for(n=0; n<1000; n++) {
+    if(real34CompareLessEqual(&a, const34_1on10)) {
+      break;
+    }
+    doubles++;
+    // a = a/(1+sqrt(1+a²)) -- at most 3 iterations.
+    real34Multiply(&a, &a, &b);
+    real34Add(&b, const34_1, &b);
+    real34SquareRoot(&b, &b);
+    real34Add(&b, const34_1, &b);
+    real34Divide(&a, &b, &a);
+  }
+
+  // Now Taylor series
+  // atan(x) = x(1-x²/3+x⁴/5-x⁶/7...)
+  // We calculate pairs of terms and stop when the estimate doesn't change
+  real34Copy(&a, angle);
+  real34Multiply(&a, &a, &a2); // a²
+  real34Copy(&a, &t);
+
+  do { // Loop until there is no digits changed
+    real34Copy(angle, &last);
+
+    // rewritten with a lookup table
+    real34Multiply(&t, &a2, &t);
+    if(j < 100) {
+      real34Multiply(&t, maclaurinCoeffAtan34 + (j++), &z);
+    }
+    else {
+      real34_t jx2p1;
+      int32ToReal34(j * 2 + 1, &jx2p1); real34Divide(&t, &jx2p1, &z);
+      if(j % 2 == 1) {
+        real34ChangeSign(&z);
+      }
+      ++j;
+    }
+    real34Add(angle, &z, angle);
+  } while(!real34CompareEqual(angle, &last));
+
+  while(doubles) {
+    real34Add(angle, angle, angle);
+    doubles--;
+  }
+
+  if(invert) {
+    real34Subtract(const34_piOn2, angle, angle);
+  }
+
+  if(neg) {
+    real34ChangeSign(angle);
+  }
+}
 
 
 
@@ -459,6 +561,38 @@ void WP34S_Asin(const real_t *x, real_t *angle, realContext_t *realContext) {
   WP34S_Atan(&z, &abx, realContext);
   realAdd(&abx, &abx, angle, realContext);
 }
+void WP34S_Asin34(const real34_t *x, real34_t *angle) {
+  real34_t abx, z;
+
+  if(real34IsNaN(x)) {
+    realToReal34(const_NaN, angle);
+    return;
+  }
+
+  real34CopyAbs(x, &abx);
+  if(real34CompareGreaterThan(&abx, const34_1)) {
+    realToReal34(const_NaN, angle);
+    return;
+  }
+
+  // angle = 2*atan(x/(1+sqrt(1-x*x)))
+  if(real34CompareEqual(x, const34_1)) {
+    real34Copy(const34_piOn2, angle);
+  }
+  else if(real34CompareEqual(x, const34__1)) {
+    real34Copy(const34_piOn2, angle);
+    real34ChangeSign(angle);
+  }
+  else {
+    real34Multiply(x, x, &z);
+    real34Subtract(const34_1, &z, &z);
+    real34SquareRoot(&z, &z);
+    real34Add(&z, const34_1, &z);
+    real34Divide(x, &z, &z);
+    WP34S_Atan34(&z, &abx);
+    real34Add(&abx, &abx, angle);
+  }
+}
 
 
 
@@ -490,6 +624,37 @@ void WP34S_Acos(const real_t *x, real_t *angle, realContext_t *realContext) {
     realAdd(&abx, &abx, angle, realContext);
   }
 }
+void WP34S_Acos34(const real34_t *x, real34_t *angle) {
+  real34_t abx, z;
+
+  if(real34IsNaN(x)) {
+    realToReal34(const_NaN, angle);
+    return;
+  }
+
+  real34CopyAbs(x, &abx);
+  if(real34CompareGreaterThan(&abx, const34_1)) {
+    realToReal34(const_NaN, angle);
+    return;
+  }
+
+  // angle = 2*atan((1-x)/sqrt(1-x*x))
+  if(real34CompareEqual(x, const34_1)) {
+    real34Zero(angle);
+  }
+  else if(real34CompareEqual(x, const34__1)) {
+    real34Copy(const34_pi, angle);
+  }
+  else {
+    real34Multiply(x, x, &z);
+    real34Subtract(const34_1, &z, &z);
+    real34SquareRoot(&z, &z);
+    real34Subtract(const34_1, x, &abx);
+    real34Divide(&abx, &z, &z);
+    WP34S_Atan34(&z, &abx);
+    real34Add(&abx, &abx, angle);
+  }
+}
 
 
 
@@ -512,13 +677,13 @@ static void WP34S_Calc_Gamma_LnGamma_Lanczos(const real_t *xin, real_t *res, boo
   }
 
   realAdd(&s, const_gammaC00, &t, realContext);
-  WP34S_Ln(&t, &s, realContext);
+  realLn(&t, &s, realContext);
 
   //  r = z + g + 0.5;
   realAdd(&x, const_gammaR, &r, realContext); // const_gammaR is g + 0.5
 
   //  r = log(R[0][0]) + (z+0.5) * log(r) - r;
-  WP34S_Ln(&r, &u, realContext);
+  realLn(&r, &u, realContext);
   realAdd(&x, const_1on2, &t, realContext);
   realMultiply(&u, &t, &v, realContext);
 
@@ -564,7 +729,7 @@ static void WP34S_Gamma_LnGamma(const real_t *xin, const bool calculateLnGamma, 
     realDivide(const_1, xin, &x, realContext);
     realSubtract(&x, const_egamma, res, realContext);
     if(calculateLnGamma) {
-      WP34S_Ln(res, res, realContext);
+      realLn(res, res, realContext);
     }
     return;
   }
@@ -589,7 +754,7 @@ static void WP34S_Gamma_LnGamma(const real_t *xin, const bool calculateLnGamma, 
         realSubtract(&x, const_1, &x, realContext);
       }
       if(calculateLnGamma) {
-        WP34S_Ln(res, res, realContext);
+        realLn(res, res, realContext);
       }
       return;
     }
@@ -606,7 +771,7 @@ static void WP34S_Gamma_LnGamma(const real_t *xin, const bool calculateLnGamma, 
 
     if(calculateLnGamma) {
       realDivide(const_pi, &x, &t, realContext);                   // t = pi / sin(pi·xin)
-      WP34S_Ln(&t, &t, realContext);                               // t = ln(pi / sin(pi·xin))
+      realLn(&t, &t, realContext);                               // t = ln(pi / sin(pi·xin))
       realSubtract(&t, res, res, realContext);                     // res = ln(pi / sin(pi·xin)) - lngamma(1-xin)
     }
     else {
@@ -718,7 +883,7 @@ void WP34S_Ln(const real_t *xin, real_t *res, realContext_t *realContext) {
   realCopy(const_3, &i);
 
   int32ToReal(1 - realContext->digits, &t); // t is the exponent
-  realPower(const_10, &t, &z, realContext); // z is the max error
+  realPower10(&t, &z, realContext); // z is the max error
 
   for(;;) {
     realMultiply(&m, &n, &n, realContext);
@@ -840,7 +1005,7 @@ void WP34S_SinhCosh(const real_t *x, real_t *sinhOut, real_t *coshOut, realConte
 
   if(sinhOut != NULL) {
     if(realCompareAbsLessThan(x, const_1on2)) {
-      WP34S_ExpM1(x, &u, realContext);                         // u = e^x - 1
+      realExpM1(x, &u, realContext);                         // u = e^x - 1
       realMultiply(&u, const_1on2, &t, realContext);           // t = (e^x - 1) / 2
 
       realAdd(&u, const_1, &u, realContext);                   // u = e^x
@@ -863,6 +1028,46 @@ void WP34S_SinhCosh(const real_t *x, real_t *sinhOut, real_t *coshOut, realConte
    realMultiply(coshOut, const_1on2, coshOut, realContext);    // coshOut = (e^x + e^-x)/2
   }
 }
+#if USE_REAL34_FUNCTIONS == 1
+  void WP34S_SinhCosh34(const real34_t *x, real34_t *sinhOut, real34_t *coshOut) {
+    real34_t t, u, v;
+
+    if(real34IsNaN(x)) {
+      if(sinhOut != NULL) {
+        realToReal34(const_NaN, sinhOut);
+      }
+      if(coshOut != NULL) {
+        realToReal34(const_NaN, coshOut);
+      }
+      return;
+    }
+
+    if(sinhOut != NULL) {
+      if(real34CompareAbsLessThan(x, const34_1on2)) {
+        real34ExpM1(x, &u);                            // u = e^x - 1
+        real34Multiply(&u, const34_1on2, &t);          // t = (e^x - 1) / 2
+
+        real34Add(&u, const34_1, &u);                  // u = e^x
+        real34Divide(&t, &u, &v);                      // v = (e^x - 1) / 2e^x
+
+        real34Add(&u, const34_1, &u);                  // u = e^x + 1
+        real34Multiply(&u, &v, sinhOut);               // sinhOut = (e^x - 1)(e^x + 1) / 2e^x
+      }
+      else {
+        real34Exp(x, &u);                               // u = e^x
+        real34Divide(const34_1, &u, &v);                // v = e^-x
+        real34Subtract(&u, &v, sinhOut);                // sinhOut = (e^x + e^-x)
+        real34Multiply(sinhOut, const34_1on2, sinhOut); // sinhOut = (e^x + e^-x)/2
+      }
+    }
+    if(coshOut != NULL) {
+     real34Exp(x, &u);                                  // u = e^x
+     real34Divide(const34_1, &u, &v);                   // v = e^-x
+     real34Add(&u, &v, coshOut);                        // coshOut = (e^x + e^-x)
+     real34Multiply(coshOut, const34_1on2, coshOut);    // coshOut = (e^x + e^-x)/2
+    }
+  }
+#endif // USE_REAL34_FUNCTIONS == 1
 
 
 
@@ -877,15 +1082,33 @@ void WP34S_Tanh(const real_t *x, real_t *res, realContext_t *realContext) {
     real_t a, b;
 
     realAdd(x, x, &a, realContext);        // a = 2x
-    WP34S_ExpM1(&a, &b, realContext);      // b = exp(2x) - 1
+    realExpM1(&a, &b, realContext);      // b = exp(2x) - 1
     realAdd(&b, const_2, &a, realContext); // a = exp(2x) - 1 + 2 = exp(2x) + 1
     realDivide(&b, &a, res, realContext);  // res = (exp(2x) - 1) / (exp(2x) + 1)
   }
 }
+#if USE_REAL34_FUNCTIONS == 1
+  void WP34S_Tanh34(const real34_t *x, real34_t *res) {
+    if(real34IsNaN(x)) {
+      realToReal34(const_NaN, res);
+    }
+    else if(real34CompareAbsGreaterThan(x, const34_47)) { // equals 1 to 39 digits
+      real34Copy((real34IsPositive(x) ? const34_1 : const34__1), res);
+    }
+    else {
+      real34_t a, b;
+
+      real34Add(x, x, &a);        // a = 2x
+      real34ExpM1(&a, &b);      // b = exp(2x) - 1
+      real34Add(&b, const34_2, &a); // a = exp(2x) - 1 + 2 = exp(2x) + 1
+      real34Divide(&b, &a, res);  // res = (exp(2x) - 1) / (exp(2x) + 1)
+    }
+  }
+#endif // USE_REAL34_FUNCTIONS == 1
 
 
 
-void WP34S_ArcSinh(const real_t *x, real_t *res, realContext_t *realContext) {
+/*void WP34S_ArcSinh(const real_t *x, real_t *res, realContext_t *realContext) {
   real_t a;
 
   realMultiply(x, x, &a, realContext);   // a = x²
@@ -895,8 +1118,22 @@ void WP34S_ArcSinh(const real_t *x, real_t *res, realContext_t *realContext) {
   realDivide(x, &a, &a, realContext);    // a = x / (sqrt(x²+1)+1)
   realAdd(&a, const_1, &a, realContext); // a = x / (sqrt(x²+1)+1) + 1
   realMultiply(x, &a, &a, realContext);  // y = x * (x / (sqrt(x²+1)+1) + 1)
-  WP34S_Ln1P(&a, res, realContext);      // res = ln(1 + (x * (x / (sqrt(x²+1)+1) + 1)))
-}
+  realLn1P(&a, res, realContext);      // res = ln(1 + (x * (x / (sqrt(x²+1)+1) + 1)))
+}*/
+#if USE_REAL34_FUNCTIONS == 1
+  void WP34S_ArSinh34(const real34_t *x, real34_t *res) {
+    real34_t a;
+
+    real34Multiply(x, x, &a);   // a = x²
+    real34Add(&a, const34_1, &a); // a = x² + 1
+    real34SquareRoot(&a, &a);   // a = sqrt(x²+1)
+    real34Add(&a, const34_1, &a); // a = sqrt(x²+1)+1
+    real34Divide(x, &a, &a);    // a = x / (sqrt(x²+1)+1)
+    real34Add(&a, const34_1, &a); // a = x / (sqrt(x²+1)+1) + 1
+    real34Multiply(x, &a, &a);  // y = x * (x / (sqrt(x²+1)+1) + 1)
+    real34Ln1P(&a, res);      // res = ln(1 + (x * (x / (sqrt(x²+1)+1) + 1)))
+  }
+#endif // USE_REAL34_FUNCTIONS == 1
 
 
 
@@ -909,7 +1146,7 @@ void WP34S_ArcCosh(const real_t *xin, real_t *res, realContext_t *realContext) {
   realSubtract(res, const_1, &z, realContext); // z = x² - 1
   realSquareRoot(&z, res, realContext);        // res = sqrt(x²-1)
   realAdd(res, &x, &z, realContext);           // z = x + sqrt(x²-1)
-  WP34S_Ln(&z, res, realContext);              // res = ln(x + sqrt(x²-1))
+  realLn(&z, res, realContext);              // res = ln(x + sqrt(x²-1))
 }
 */
 
@@ -926,9 +1163,25 @@ void WP34S_ArcTanh(const real_t *x, real_t *res, realContext_t *realContext) {
   realSubtract(const_1, x, &z, realContext);      // z = 1-x
   realDivide(x, &z, &y, realContext);             // y = x / (1-x)
   realMultiply(&y, const_2, &z, realContext);     // z = 2x / (1-x)
-  WP34S_Ln1P(&z, &y, realContext);                // y = ln(1 + 2x / (1-x))
+  realLn1P(&z, &y, realContext);                // y = ln(1 + 2x / (1-x))
   realMultiply(&y, const_1on2, res, realContext); // res = ln(1 + 2x / (1-x)) / 2
 }
+#if USE_REAL34_FUNCTIONS == 1
+  void WP34S_ArTanh34(const real34_t *x, real34_t *res) {
+    real34_t y, z;
+
+    if(real34IsNaN(x)) {
+      realToReal34(const_NaN, res);
+    }
+
+    // Not the obvious formula but more stable...
+    real34Subtract(const34_1, x, &z);      // z = 1-x
+    real34Divide(x, &z, &y);             // y = x / (1-x)
+    real34Multiply(&y, const34_2, &z);     // z = 2x / (1-x)
+    real34Ln1P(&z, &y);                // y = ln(1 + 2x / (1-x))
+    real34Multiply(&y, const34_1on2, res); // res = ln(1 + 2x / (1-x)) / 2
+  }
+#endif // USE_REAL34_FUNCTIONS == 1
 
 
 
@@ -1169,7 +1422,7 @@ static void gser(const real_t *a, const real_t *x, const real_t *gln, real_t *re
     }
     realCopy(&t, &sum);
   }
-  WP34S_Ln(x, &t, realContext);
+  realLn(x, &t, realContext);
   realMultiply(&t, a, &u, realContext);
   realSubtract(&u, x, &t, realContext);
   realSubtract(&t, gln, &u, realContext);
@@ -1218,7 +1471,7 @@ static void gcf(const real_t *a, const real_t *x, const real_t *gln, real_t *res
     }
     realCopy(&u, &h);
   }
-  WP34S_Ln(x, &t, realContext);
+  realLn(x, &t, realContext);
   realMultiply(&t, a, &u, realContext);
   realSubtract(&u, x, &t, realContext);
   realSubtract(&t, gln, &u, realContext);
@@ -1262,8 +1515,7 @@ void WP34S_GammaP(const real_t *x, const real_t *a, real_t *res, realContext_t *
   }
   if(realIsNegative(&z)) {
     /* Deal with a difficult case by using the other expansion */
-    int32ToReal(9000, &z);
-    if(realCompareGreaterThan(a, &z)) {
+    if(realCompareGreaterThan(a, const_9000)) {
       realCopy(const_995on1000, &z);
       realMultiply(a, &z, &z, realContext);
       if(realCompareGreaterThan(x, &z)) {
@@ -1302,11 +1554,11 @@ void WP34S_Erf(const real_t *x, real_t *res, realContext_t *realContext) {
   real_t p, q;
 
   if(realIsInfinite(x)) {
-    int32ToReal(realIsNegative(x) ? -1 : 1, res);
+    realCopy(realIsNegative(x) ? const__1 : const_1, res);
     return;
   }
 
-  realPower(x, const_2, &p, realContext);
+  realMultiply(x, x, &p, realContext);
   WP34S_GammaP(&p, const_1on2, &p, realContext, false, false);
   realSquareRoot(const_pi, &q, realContext);
   realDivide(&p, &q, &p, realContext);
@@ -1478,7 +1730,7 @@ void WP34S_Bernoulli(const real_t *x, real_t *res, bool bn_star, realContext_t *
       realChangeSign(res);
       return;
     }
-    else if(realDivide(x, const_2, &p, realContext), (!realIsAnInteger(&p))) { // Bn_odd
+    else if(realMultiply(x, const_1on2, &p, realContext), (!realIsAnInteger(&p))) { // Bn_odd
       realZero(res);
       return;
     }
@@ -1513,11 +1765,11 @@ void WP34S_Bernoulli(const real_t *x, real_t *res, bool bn_star, realContext_t *
 static void zeta_calc(const real_t *x, real_t *reg1, real_t *reg7, real_t *res, realContext_t *realContext) {
   real_t p, q, r, s, reg0, reg3, reg4, reg5, reg6;
 
-  int32ToReal(60/*44*/, &reg0);
-  int32ToReal(60/*44*/, &reg3);
-  int32ToReal(1, &reg4);
-  int32ToReal(1, &reg5);
-  int32ToReal(-1, &reg6);
+  realCopy(const_60/*44*/, &reg0);
+  realCopy(const_60/*44*/, &reg3);
+  realCopy(const_1, &reg4);
+  realCopy(const_1, &reg5);
+  realCopy(const__1, &reg6);
   realZero(&p);
   do { // zeta_loop
     realMultiply(reg1, const__1, &q, realContext);
@@ -1530,9 +1782,9 @@ static void zeta_calc(const real_t *x, real_t *reg1, real_t *reg7, real_t *res, 
     realMultiply(&q, &reg0, &q, realContext);
     realSubtract(&q, &reg0, &q, realContext);
     realMultiply(&q, &reg4, &q, realContext);
-    realPower(&reg3, const_2, &r, realContext);
+    realMultiply(&reg3, &reg3, &r, realContext);
     realSubtract(&reg0, const_1, &s, realContext);
-    realPower(&s, const_2, &s, realContext);
+    realMultiply(&s, &s, &s, realContext);
     realSubtract(&r, &s, &r, realContext);
     realMultiply(&r, const_2, &r, realContext);
     realDivide(&q, &r, &q, realContext);
@@ -1543,7 +1795,7 @@ static void zeta_calc(const real_t *x, real_t *reg1, real_t *reg7, real_t *res, 
   realDivide(&p, &reg5, &p, realContext);
   realSubtract(const_1, reg1, &r, realContext);
   realMultiply(const_ln2, &r, &r, realContext);
-  WP34S_ExpM1(&r, &q, realContext);
+  realExpM1(&r, &q, realContext);
   realDivide(&p, &q, res, realContext);
 }
 
@@ -1612,8 +1864,8 @@ void WP34S_LambertW(const real_t *x, real_t *res, bool negativeBranch, realConte
 
   // LamW0_common
   realCopy(x, &reg0);
-  int32ToReal(7, &reg1);
-  int32ToReal(negativeBranch ? 25 : 35, &p), p.exponent -= 2, realChangeSign(&p);
+  realCopy(const_7, &reg1);
+  realCopy(negativeBranch ? const__1on4 : const__7on20, &p);
   if(realCompareLessEqual(&reg0, &p)) {
     realDivide(const_1, const_eE, &q, realContext);
     realAdd(&reg0, &q, &q, realContext);
@@ -1624,14 +1876,14 @@ void WP34S_LambertW(const real_t *x, real_t *res, bool negativeBranch, realConte
     if(negativeBranch) {
       realChangeSign(&r);
     }
-    realDivide(&q, const_3, &q, realContext);
+    realMultiply(&q, const_1on3, &q, realContext);
     realSubtract(&r, &q, &q, realContext);
 
     // Newton iteration for W+1
     do { //LamW0_wp1_newton
       // FILL and x close to -1/e
       realMultiply(&q, const__1, &p, realContext);
-      WP34S_ExpM1(&p, &p, realContext);
+      realExpM1(&p, &p, realContext);
       realMultiply(&p, &reg0, &p, realContext);
       realMultiply(&p, const_eE, &p, realContext);
       realSubtract(&p, &q, &p, realContext);
@@ -1653,15 +1905,15 @@ void WP34S_LambertW(const real_t *x, real_t *res, bool negativeBranch, realConte
   else {// LamW0_normal
     if(negativeBranch) {// LamW0_smallx
       realMultiply(&reg0, const__1, &q, realContext);
-      WP34S_Ln(&q, &q, realContext);
+      realLn(&q, &q, realContext);
       realMultiply(&q, const__1, &r, realContext);
-      WP34S_Ln(&r, &r, realContext);
+      realLn(&r, &r, realContext);
       realSubtract(&q, &r, &q, realContext);
     }
     else {
-      WP34S_Ln1P(&reg0, &q, realContext);
+      realLn1P(&reg0, &q, realContext);
       if(realCompareGreaterThan(&q, const_1)) {
-        WP34S_Ln(&q, &r, realContext);
+        realLn(&q, &r, realContext);
         realSubtract(&q, &r, &q, realContext);
       }
     }
@@ -1676,7 +1928,7 @@ void WP34S_LambertW(const real_t *x, real_t *res, bool negativeBranch, realConte
       realDivide(const_1, &p, &p, realContext);
       realAdd(&p, const_1, &p, realContext);
       realMultiply(&p, &r, &p, realContext);
-      realDivide(&p, const_2, &p, realContext);
+      realMultiply(&p, const_1on2, &p, realContext);
       realChangeSign(&p);
       realAdd(&p, const_1, &p, realContext);
       realDivide(&r, &p, &r, realContext);

@@ -16,6 +16,7 @@
 #include "longIntegerType.h"
 #include "mathematics/comparisonReals.h"
 #include "mathematics/division.h"
+#include "mathematics/log10.h"
 #include "mathematics/magnitude.h"
 #include "mathematics/multiplication.h"
 #include "mathematics/slvc.h"
@@ -2769,8 +2770,8 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
               realCopy(&p, &maxVal);
             }
           }
-          WP34S_Log10(&maxVal, &p, realContext);
-          WP34S_Log10(&minVal, &q, realContext);
+          realLog10(&maxVal, &p, realContext);
+          realLog10(&minVal, &q, realContext);
           realSubtract(&p, &q, &p, realContext);
           int32ToReal(33 - displayFormatDigits, &q);
           if(realCompareLessEqual(&q, &p)) {

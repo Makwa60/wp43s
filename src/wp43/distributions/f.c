@@ -15,6 +15,7 @@
 #include "flags.h"
 #include "fonts.h"
 #include "mathematics/comparisonReals.h"
+#include "mathematics/ln.h"
 #include "mathematics/lnbeta.h"
 #include "mathematics/wp34s.h"
 #include "registers.h"
@@ -167,20 +168,20 @@ void fnF_I(uint16_t unusedButMandatoryParameter) {
 void WP34S_Pdf_F(const real_t *x, const real_t *d1, const real_t *d2, real_t *res, realContext_t *realContext) {
   real_t p, q, r;
 
-  WP34S_Ln(d2, &p, realContext);
+  realLn(d2, &p, realContext);
   realMultiply(&p, d2, &p, realContext);
   realMultiply(d1, x, &q, realContext);
-  WP34S_Ln(&q, &r, realContext);
+  realLn(&q, &r, realContext);
   realMultiply(&r, d1, &r, realContext);
   realAdd(&p, &r, &p, realContext);
   realAdd(&q, d2, &q, realContext);
-  WP34S_Ln(&q, &q, realContext);
+  realLn(&q, &q, realContext);
   realAdd(d1, d2, &r, realContext);
   realMultiply(&q, &r, &q, realContext);
   realSubtract(&p, &q, &p, realContext);
-  realDivide(&p, const_2, &p, realContext);
-  realDivide(d1, const_2, &q, realContext);
-  realDivide(d2, const_2, &r, realContext);
+  realMultiply(&p, const_1on2, &p, realContext);
+  realMultiply(d1, const_1on2, &q, realContext);
+  realMultiply(d2, const_1on2, &r, realContext);
   LnBeta(&r, &q, &q, realContext);
   realSubtract(&p, &q, &p, realContext);
   realExp(&p, &p, realContext);
@@ -204,8 +205,8 @@ void WP34S_Cdfu_F(const real_t *x, const real_t *d1, const real_t *d2, real_t *r
   realMultiply(x, d1, &p, realContext);
   realAdd(&p, d2, &p, realContext);
   realDivide(d2, &p, &p, realContext);
-  realDivide(d2, const_2, &q, realContext);
-  realDivide(d1, const_2, &r, realContext);
+  realMultiply(d2, const_1on2, &q, realContext);
+  realMultiply(d1, const_1on2, &r, realContext);
   WP34S_betai(&r, &q, &p, res, realContext);
 }
 
@@ -226,8 +227,8 @@ void WP34S_Cdf_F(const real_t *x, const real_t *d1, const real_t *d2, real_t *re
   realMultiply(x, d1, &p, realContext);
   realAdd(&p, d2, &q, realContext);
   realDivide(&p, &q, &p, realContext);
-  realDivide(d2, const_2, &q, realContext);
-  realDivide(d1, const_2, &r, realContext);
+  realMultiply(d2, const_1on2, &q, realContext);
+  realMultiply(d1, const_1on2, &r, realContext);
   WP34S_betai(&q, &r, &p, res, realContext);
 }
 
@@ -252,16 +253,15 @@ void WP34S_Qf_F(const real_t *x, const real_t *d1, const real_t *d2, real_t *res
   realCopy(&s, &reg1), realCopy(&r, &reg2);
   realAdd(&r, &s, &r, realContext);
   realDivide(const_2, &r, &r, realContext);
-  realPower(&p, const_2, &s, realContext);
+  realMultiply(&p, &p, &s, realContext);
   realSubtract(&s, const_3, &s, realContext);
-  int32ToReal(6, &q);
-  realDivide(&s, &q, &s, realContext);
+  realDivide(&s, const_6, &s, realContext);
   realAdd(&s, &r, &q, realContext);
   realSquareRoot(&q, &q, realContext);
   realMultiply(&q, &p, &q, realContext);
   realDivide(&q, &r, &q, realContext);
   realDivide(const_2, &r, &p, realContext);
-  realDivide(&p, const_3, &p, realContext);
+  realMultiply(&p, const_1on3, &p, realContext);
   realChangeSign(&p);
   realAdd(&p, &s, &p, realContext);
   realDivide(const_5, const_60, &r, realContext), r.exponent += 1;
@@ -298,7 +298,7 @@ void WP34S_Qf_Newton(uint32_t r_dist, const real_t *target, const real_t *estima
   }
 
   // qf_f_flags
-  realDivide(const_3on2, const_2, &p, realContext);
+  realMultiply(const_3on2, const_1on2, &p, realContext);
   realMultiply(&p, &r_r, &p, realContext);
   realCopy(&p, &r_maxstep);
   f_limitjump = true;
@@ -414,7 +414,7 @@ qf_newton_fixed:
     if(!realIsSpecial(&r_high) && !realIsSpecial(&r_low) && WP34S_RelativeError(&r_low, &r_high, const_1e_37, realContext)) {
       // qf_newton_bounds_cnvg
       realAdd(&r_high, &r_low, &p, realContext);
-      realDivide(&p, const_2, &p, realContext);
+      realMultiply(&p, const_1on2, &p, realContext);
       goto qf_newton_done2;
     }
     /* Check for convergence of the estimates */

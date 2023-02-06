@@ -13,7 +13,9 @@
 #include "items.h"
 #include "mathematics/comparisonReals.h"
 #include "mathematics/division.h"
+#include "mathematics/ln.h"
 #include "mathematics/matrix.h"
+#include "mathematics/power.h"
 #include "mathematics/toPolar.h"
 #include "mathematics/toRect.h"
 #include "mathematics/wp34s.h"
@@ -124,7 +126,7 @@ static void _xthRootComplex(const real_t *aa, const real_t *bb, const real_t *cc
 
   //From power.c
   realRectangularToPolar(&a, &b, &a, &theta, realContext);
-  WP34S_Ln(&a, &a, realContext);
+  realLn(&a, &a, realContext);
   realMultiply(&a, &d, &b, realContext);
   realFMA(&theta, &c, &b, &b, realContext);
   realChangeSign(&theta);
@@ -219,7 +221,19 @@ void xthRootReal(real_t *yy, real_t *xx, realContext_t *realContext) {
   if(realIsPositive(&y)) {                                         //positive base, no problem, get the power function y^(1/x)
     realDivide(const_1, &x, &x, realContext);
 
-    realPower(&y, &x, &x, realContext);
+    #if USE_REAL34_FUNCTIONS == 1
+      if(getSystemFlag(FLAG_FASTFN)) {
+        real34_t _x, _y;
+        realToReal34(&y, &_y);
+        realToReal34(&x, &_x);
+        Power34Real(&_y, &_x, &_x);
+        real34ToReal(&_x, &x);
+      }
+      else
+    #endif // USE_REAL34_FUNCTIONS == 1
+    {
+      PowerReal(&y, &x, &x, realContext);
+    }
     reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
     convertRealToReal34ResultRegister(&x, REGISTER_X);
     setRegisterAngularMode(REGISTER_X, amNone);
@@ -245,7 +259,7 @@ void xthRootReal(real_t *yy, real_t *xx, realContext_t *realContext) {
           realDivide(const_1,&x, &x, realContext);
 
           realSetPositiveSign(&y);
-          realPower(&y, &x, &x, realContext);
+          PowerReal(&y, &x, &x, realContext);
           realSetNegativeSign(&x);
 
           reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, amNone);

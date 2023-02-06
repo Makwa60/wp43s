@@ -12,6 +12,8 @@
 #include "fonts.h"
 #include "mathematics/comparisonReals.h"
 #include "mathematics/cpyx.h"
+#include "mathematics/ln.h"
+#include "mathematics/lnPOne.h"
 #include "mathematics/wp34s.h"
 #include "registers.h"
 #include "registerValueConversions.h"
@@ -208,7 +210,7 @@ void WP34S_Pdf_Binomial(const real_t *x, const real_t *p0, const real_t *n, real
     return;
   }
   realMultiply(p0, const__1, &p, realContext);
-  WP34S_Ln1P(&p, &p, realContext);
+  realLn1P(&p, &p, realContext);
   realSubtract(n, x, &q, realContext);
   realMultiply(&p, &q, &p, realContext);
   // Rewrote below with ln(yCx) function
@@ -216,7 +218,7 @@ void WP34S_Pdf_Binomial(const real_t *x, const real_t *p0, const real_t *n, real
   realCopy(x, &xx);
   logCyxReal(&nn, &xx, &q, realContext);
   realAdd(&p, &q, &p, realContext);
-  WP34S_Ln(p0, &q, realContext);
+  realLn(p0, &q, realContext);
   realMultiply(&q, x, &q, realContext);
   realAdd(&p, &q, &p, realContext);
   realExp(&p, res, realContext);

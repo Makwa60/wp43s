@@ -10,6 +10,7 @@
 #include "fonts.h"
 #include "integers.h"
 #include "items.h"
+#include "mathematics/ln.h"
 #include "mathematics/matrix.h"
 #include "mathematics/toPolar.h"
 #include "mathematics/wp34s.h"
@@ -61,6 +62,13 @@ void fnLog10(uint16_t unusedButMandatoryParameter) {
 
 
 
+void realLog10(const real_t *x, real_t *res, realContext_t *realContext) {
+  realLn(x, res, realContext);
+  realDivide(res, const_ln10, res, realContext);
+}
+
+
+
 /**********************************************************************
  * In all the functions below:
  * if X is a number then X = a + ib
@@ -84,20 +92,28 @@ void log10LonI(void) {
       #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
     }
   }
+  #if USE_REAL34_FUNCTIONS == 1
+    else if(getSystemFlag(FLAG_FASTFN) && longIntegerIsPositive(lgInt)) {
+      convertLongIntegerRegisterToReal34Register(REGISTER_X, REGISTER_X);
+      real34Ln(REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X));
+      real34Divide(REGISTER_REAL34_DATA(REGISTER_X), const34_ln10, REGISTER_REAL34_DATA(REGISTER_X));
+      setRegisterAngularMode(REGISTER_X, amNone);
+    }
+  #endif // USE_REAL34_FUNCTIONS == 1
   else {
     real_t x;
 
     convertLongIntegerRegisterToReal(REGISTER_X, &x, &ctxtReal39);
 
     if(longIntegerIsPositive(lgInt)) {
-      WP34S_Ln(&x, &x, &ctxtReal39);
+      realLn(&x, &x, &ctxtReal39);
       realDivide(&x, const_ln10, &x, &ctxtReal39);
       reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
       convertRealToReal34ResultRegister(&x, REGISTER_X);
      }
     else if(getFlag(FLAG_CPXRES)) {
       realSetPositiveSign(&x);
-      WP34S_Ln(&x, &x, &ctxtReal39);
+      realLn(&x, &x, &ctxtReal39);
       realDivide(&x, const_ln10, &x, &ctxtReal39);
       reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE_IN_BYTES, amNone);
       convertRealToReal34ResultRegister(&x, REGISTER_X);
@@ -178,16 +194,23 @@ void log10Real(void) {
     }
   }
 
+  #if USE_REAL34_FUNCTIONS == 1
+    else if(getSystemFlag(FLAG_FASTFN) && real34IsPositive(REGISTER_REAL34_DATA(REGISTER_X))) {
+      real34Ln(REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X));
+      real34Divide(REGISTER_REAL34_DATA(REGISTER_X), const34_ln10, REGISTER_REAL34_DATA(REGISTER_X));
+    }
+  #endif // USE_REAL34_FUNCTIONS == 1
+
   else {
     real34ToReal(REGISTER_REAL34_DATA(REGISTER_X), &x);
     if(real34IsPositive(REGISTER_REAL34_DATA(REGISTER_X))) {
-      WP34S_Ln(&x, &x, &ctxtReal39);
+      realLn(&x, &x, &ctxtReal39);
       realDivide(&x, const_ln10, &x, &ctxtReal39);
       convertRealToReal34ResultRegister(&x, REGISTER_X);
      }
     else if(getFlag(FLAG_CPXRES)) {
       realSetPositiveSign(&x);
-      WP34S_Ln(&x, &x, &ctxtReal39);
+      realLn(&x, &x, &ctxtReal39);
       realDivide(&x, const_ln10, &x, &ctxtReal39);
       reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE_IN_BYTES, amNone);
       convertRealToReal34ResultRegister(&x, REGISTER_X);
@@ -229,7 +252,7 @@ void log10Cplx(void) {
     real34ToReal(REGISTER_IMAG34_DATA(REGISTER_X), &b);
 
     realRectangularToPolar(&a, &b, &a, &b, &ctxtReal39);
-    WP34S_Ln(&a, &a, &ctxtReal39);
+    realLn(&a, &a, &ctxtReal39);
     realDivide(&a, const_ln10, &a, &ctxtReal39);
     reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE_IN_BYTES, amNone);
     convertRealToReal34ResultRegister(&a, REGISTER_X);

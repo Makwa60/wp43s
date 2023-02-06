@@ -1765,7 +1765,7 @@ void timeToDisplayString(calcRegister_t regist, char *displayString, bool ignore
   if(!ignoreTDisp) {
     switch(timeDisplayFormatDigits) {
       case 0: {
-        int32ToReal(86400, &value);
+        realCopy(const_86400, &value);
         if((!sign) && (!getSystemFlag(FLAG_TDM24)) && realCompareLessThan(&real, &value)) {
           isValid12hTime = true;
         }
@@ -1813,18 +1813,16 @@ void timeToDisplayString(calcRegister_t regist, char *displayString, bool ignore
   realDivideRemainder(&m, const_60, &m, &ctxtReal39);
   // 12-hour time
   if((!getSystemFlag(FLAG_TDM24)) && (!sign)) {
-    int32ToReal(24, &value);
-    if(realCompareLessThan(&h, &value)) {
+    if(realCompareLessThan(&h, const_24)) {
       isValid12hTime = true;
-      int32ToReal(12, &value);
-      if(realCompareGreaterEqual(&h, &value)) {
+      if(realCompareGreaterEqual(&h, const_12)) {
         isAfternoon = true;
-        if(!realCompareLessEqual(&h, &value)) {
-          realSubtract(&h, &value, &h, &ctxtReal39);
+        if(!realCompareLessEqual(&h, const_12)) {
+          realSubtract(&h, const_12, &h, &ctxtReal39);
         }
       }
       else if(realIsZero(&h)) {
-        realAdd(&h, &value, &h, &ctxtReal39);
+        realAdd(&h, const_12, &h, &ctxtReal39);
       }
     }
   }

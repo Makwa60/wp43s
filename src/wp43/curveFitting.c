@@ -10,6 +10,7 @@
 #include "items.h"
 #include "longIntegerType.h"
 #include "mathematics/comparisonReals.h"
+#include "mathematics/ln.h"
 #include "mathematics/variance.h"
 #include "mathematics/xthRoot.h"
 #include "mathematics/wp34s.h"
@@ -855,10 +856,10 @@ void processCurvefitSelectionAll(uint16_t selection, real_t *RR_, real_t *MX, re
       realAdd(       &WW,   &VV,     &VV, realContext);
       realSquareRoot(&VV,   &VV,          realContext); // sqrt term
 
-      realDivide(&UU, const_2, &UU, realContext); // term1
+      realMultiply(&UU, const_1on2, &UU, realContext); // term1
       realDivide(&UU, &S_XY,   &UU, realContext);
 
-      realDivide(&VV, const_2, &VV, realContext); // term2
+      realMultiply(&VV, const_1on2, &VV, realContext); // term2
       realDivide(&VV, &S_XY,   &VV, realContext);
 
       realAdd(     &UU,  &VV,  aa1, realContext); // a1
@@ -959,7 +960,7 @@ void yIsFnx(uint8_t USEFLOAT, uint16_t selection, double x, double *y, double a0
         *y = a0 + a1*log(x);
       }
       else {
-        WP34S_Ln    (XX,  &SS,       realContextForecast);
+        realLn      (XX,  &SS,       realContextForecast);
         realMultiply(&SS, aa1, &UU,  realContextForecast);
         realAdd     (&UU, aa0, YY,   realContextForecast);
         realToFloat/*Double*/(YY, &yf); *y = (double)yf;
@@ -1099,7 +1100,7 @@ void xIsFny(uint16_t selection, uint8_t rootNo, real_t *XX, real_t *YY, real_t *
     }
     case CF_EXPONENTIAL_FITTING: {
       realDivide(YY,        aa0,     &UU, realContextForecast);
-      WP34S_Ln(&UU,         &UU,          realContextForecast);
+      realLn(&UU,           &UU,          realContextForecast);
       realDivide(&UU,       aa1,     XX,  realContextForecast);
       temporaryInformation = TI_CALCX;
       break;
@@ -1119,10 +1120,10 @@ void xIsFny(uint16_t selection, uint8_t rootNo, real_t *XX, real_t *YY, real_t *
       break;
     }
     case CF_ROOT_FITTING: {
-      WP34S_Ln(YY,          YY,           realContextForecast);
-      WP34S_Ln(aa0,         &UU,          realContextForecast);
+      realLn(YY,            YY,           realContextForecast);
+      realLn(aa0,           &UU,          realContextForecast);
       realSubtract(YY,      &UU,     YY,  realContextForecast);
-      WP34S_Ln(aa1,         &UU,          realContextForecast);
+      realLn(aa1,           &UU,          realContextForecast);
       realDivide(&UU,       YY,      XX,  realContextForecast);
       temporaryInformation = TI_CALCX;
       break;
@@ -1174,7 +1175,7 @@ void xIsFny(uint16_t selection, uint8_t rootNo, real_t *XX, real_t *YY, real_t *
     }
     case CF_GAUSS_FITTING: {
       realDivide(YY,        aa0,     &UU, realContextForecast);
-      WP34S_Ln(&UU,         &UU,          realContextForecast);
+      realLn(&UU,           &UU,          realContextForecast);
       realMultiply(&UU,     aa2,     &UU, realContextForecast);
       realSquareRoot(&UU,   &UU,          realContextForecast);
       if(rootNo == 1) {
