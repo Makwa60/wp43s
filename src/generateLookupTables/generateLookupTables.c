@@ -105,9 +105,7 @@ void generateLookupTable(void) {
     realDivide(&value, &value2, &value, &ctxtReal75);
     int32ToReal(c * 2 + 3, &value2);
     realDivide(&value, &value2, &value, &ctxtReal75);
-    if((c + 1) % 2 == 1) {
-      realChangeSign(&value);
-    }
+    realSetNegativeSign(&value);
   }
 
   generateArrayDef("maclaurinCoeffCos");
@@ -122,9 +120,7 @@ void generateLookupTable(void) {
     realDivide(&value, &value2, &value, &ctxtReal75);
     int32ToReal(c * 2 + 2, &value2);
     realDivide(&value, &value2, &value, &ctxtReal75);
-    if((c + 1) % 2 == 1) {
-      realChangeSign(&value);
-    }
+    realSetNegativeSign(&value);
   }
 
   generateArrayDef("maclaurinCoeffAtan");
