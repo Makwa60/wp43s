@@ -68,6 +68,15 @@ void real34Exp(const real34_t *xin, real34_t *res) {
   bool termOdd = true;
   int integerPart = 0;
 
+  if(neg && real34IsInfinite(xin)) {
+    real34Zero(res);
+    return;
+  }
+  else if(real34IsSpecial(xin)) {
+    real34Copy(xin, res);
+    return;
+  }
+
   real34CopyAbs(xin, &x);
   real34Copy(const34_1, res);
   real34Copy(const34_1, &k);
