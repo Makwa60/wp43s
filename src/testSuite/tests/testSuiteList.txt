@@ -393,3 +393,9 @@ arctanh
 cosh
 sinh
 tanh
+
+square
+squareRoot
+cube
+cubeRoot
+xthRoot
