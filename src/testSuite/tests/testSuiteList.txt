@@ -370,7 +370,6 @@ exp
 expMOne
 10pow
 2pow
-minusOnePow
 log10
 log2
 ln
@@ -383,8 +382,6 @@ arctan
 cos
 sin
 tan
-sinc
-sincpi
 
 arccosh
 arcsinh
@@ -394,8 +391,8 @@ cosh
 sinh
 tanh
 
-square
 squareRoot
-cube
 cubeRoot
 xthRoot
+
+logxy
