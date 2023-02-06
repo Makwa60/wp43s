@@ -163,6 +163,20 @@ static void logxy34(void) {
     real34Divide(REGISTER_REAL34_DATA(REGISTER_Y), REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X));
   }
 }
+
+
+
+static bool real34IsAlmostAnInteger(const real34_t *x) {
+  real34_t xr;
+  int32_t exponent;
+  real34Add(x, const34_0, &xr); // make sure there are 34 digits
+  exponent = real34GetExponent(&xr);
+  real34SetExponent(&xr, -1);
+  real34ToIntegralValue(&xr, &xr, DEC_ROUND_HALF_EVEN);
+  real34Add(&xr, const34_0, &xr); // make sure there are 34 digits
+  real34SetExponent(&xr, exponent);
+  return real34IsAnInteger(&xr);
+}
 #endif // USE_REAL34_FUNCTIONS == 1
 
 
@@ -189,9 +203,13 @@ void logxyLonILonI(void) {
     logxy(&x, &y, &ctxtReal39);
   }
 
-  if(getRegisterDataType(REGISTER_X) == dtReal34 && real34IsAnInteger(REGISTER_REAL34_DATA(REGISTER_X))) {
+  if(getRegisterDataType(REGISTER_X) == dtReal34 && (real34IsAnInteger(REGISTER_REAL34_DATA(REGISTER_X))
+    #if USE_REAL34_FUNCTIONS == 1
+      || (getSystemFlag(FLAG_FASTFN) && real34IsAlmostAnInteger(REGISTER_REAL34_DATA(REGISTER_X)))
+    #endif // USE_REAL34_FUNCTIONS == 1
+  )) {
     longIntegerInit(rr);
-    convertReal34ToLongInteger(REGISTER_REAL34_DATA(REGISTER_X), rr, DEC_ROUND_DOWN);
+    convertReal34ToLongInteger(REGISTER_REAL34_DATA(REGISTER_X), rr, DEC_ROUND_HALF_EVEN);
     longIntegerPower(xx, rr, yy);
     fflush(stdout);
     if(longIntegerCompare(antilog, yy) == 0) {
