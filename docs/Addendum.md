@@ -39,12 +39,21 @@ _to_ <q>another `.` turns to _named variables_ (including system variables), and
 **Page 283, Section 5, `00` … `99`:**
 _add_ <q>If pressed while _named variables_ are displayed, it jumps to the corresponding _global register_.</q>
 
+**Page 343, Appendix 4: Graphics, AGRAPH:**
+_for_ <q>1 ≤ ***x*** ≤ 400 and 1 ≤ ***y*** ≤ 186</q> _read_ <q>0 ≤ ***x*** &lt; 400 and 0 ≤ ***y*** &lt; 240</q>.
+
 Reference Manual
 ----------------
+
+**Page 17, `AGRAPH`:**
+_for_ <q>0 ≤ ***x*** ≤ 399 and 0 ≤ ***y*** ≤ 175</q> _read_ <q>0 ≤ ***x*** &lt; 400 and 0 ≤ ***y*** &lt; 240</q>.
 
 **Page 24, `CLP`:**
 _for_ <q>`CLR` CLP</q> _read_ <q>`CLR` CLP ***labl***</q>,
 _and for_ <q>the _current <u>program</u>_</q> _read_ <q>specified program</q>.
+
+**Page 89, `|x|`:**
+_delete_ <q>or `PART` \|x\| or `CPX` \|x\|</q>.
 
 **Page 94, Names of System Variables and System Flags:**
 _add:_
@@ -75,6 +84,7 @@ _for_ <q>the _current program_</q> _read_ <q>the program specified</q>.
 Release note addendum
 ---------------------
 
-| Version | Release notes                                                                                                                                                                                                                                             |
-|---------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| 0.23.3  | Implemented `DELITM`, `SAVE`/`LOAD` of _named variables_, confirmation of `CLP`, `RBR` for _named variables_, and `A`…`D` and `I`…`L` keys in `RBR`. Reintroduced error 27. Fixed simulator crash when restarted after closed while a browser was open. |
+| Version | Release notes                                                                                                                                                                                                                                                                     |
+|---------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| 0.23.3  | Implemented `DELITM`, `SAVE`/`LOAD` of _named variables_, confirmation of `CLP`, `RBR` for _named variables_, and `A`…`D` and `I`…`L` keys in `RBR`. Reintroduced error 27. Fixed simulator crash when restarted after closed while a browser was open.                         |
+| 0.23.4  | Implemented `FASTFN`, and `CLP` menu. Fixed issue of `DELITM`, `PIXEL`/`AGRAPH` with 399 &lt; x &lt; 400 or 239 &lt; y &lt; 240, string concatenation, `Σ+` memory leakage, `CNST` indirection, and possible crash of `GTO`/`XEQ` after `LOAD`. Optimized some common functions. |
