@@ -1460,7 +1460,12 @@ static bool restoreOneSection(uint16_t loadMode, uint16_t s, uint16_t n, uint16_
     readLine(tmpString); // Number of local registers
     numberOfRegs = stringToInt16(tmpString);
     if(loadMode == LM_ALL || loadMode == LM_REGISTERS) {
-      allocateLocalRegisters(numberOfRegs);
+      if(numberOfRegs == 0) {
+        popAllLocalRegistersAndFlags(NOPARAM);
+      }
+      else {
+        allocateLocalRegisters(numberOfRegs);
+      }
     }
 
     if((loadMode != LM_ALL && loadMode != LM_REGISTERS) || lastErrorCode == ERROR_NONE) {
@@ -1483,7 +1488,7 @@ static bool restoreOneSection(uint16_t loadMode, uint16_t s, uint16_t n, uint16_
 
   else if(strcmp(tmpString, "LOCAL_FLAGS") == 0) {
     readLine(tmpString); // LOCAL_FLAGS
-    if(loadMode == LM_ALL || loadMode == LM_REGISTERS) {
+    if((loadMode == LM_ALL || loadMode == LM_REGISTERS) && (currentNumberOfLocalFlags > 0)) {
       currentLocalFlags->localFlags = stringToUint32(tmpString);
     }
   }
@@ -1822,6 +1827,12 @@ static bool restoreOneSection(uint16_t loadMode, uint16_t s, uint16_t n, uint16_
     }
 
     scanLabelsAndPrograms();
+
+    if(loadMode == LM_ALL) {
+      currentReturnProgramNumber = currentProgramNumber;
+      currentReturnLocalStep = 1;
+      goToPgmStep(currentProgramNumber, currentLocalStepNumber); // to scroll PGM properly
+    }
   }
 
   else if(strcmp(tmpString, "EQUATIONS") == 0) {
@@ -1941,6 +1952,7 @@ void doLoad(uint16_t loadMode, uint16_t s, uint16_t n, uint16_t d) {
     while(currentSubroutineLevel > 0) {
       fnReturn(0);
     }
+    fnReturn(0); // 1 more time to clean local registers
   }
 
   //Check save file version
