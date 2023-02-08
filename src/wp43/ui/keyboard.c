@@ -1676,7 +1676,7 @@ void fnKeyExit(uint16_t unusedButMandatoryParameter) {
       }
       return;
     }
-    if(lastErrorCode == 0 && softmenu[softmenuStack[0].softmenuId].menuItem == -MNU_MVAR) {
+    if(lastErrorCode == 0 && (calcMode == cmNormal || calcMode == cmAim || calcMode == cmNim) && softmenu[softmenuStack[0].softmenuId].menuItem == -MNU_MVAR) {
       currentSolverStatus &= ~SOLVER_STATUS_INTERACTIVE;
     }
 
@@ -2255,7 +2255,7 @@ void fnKeyUp(uint16_t unusedButMandatoryParameter) {
       return;
     }
 
-    if(softmenu[softmenuStack[0].softmenuId].menuItem == -ITM_MENU) {
+    if((calcMode == cmNormal || calcMode == cmAim || calcMode == cmNim) && softmenu[softmenuStack[0].softmenuId].menuItem == -ITM_MENU) {
       dynamicMenuItem = 18;
       fnProgrammableMenu(NOPARAM);
       return;
@@ -2395,7 +2395,7 @@ void fnKeyDown(uint16_t unusedButMandatoryParameter) {
       return;
     }
 
-    if(softmenu[softmenuStack[0].softmenuId].menuItem == -ITM_MENU) {
+    if((calcMode == cmNormal || calcMode == cmAim || calcMode == cmNim) && softmenu[softmenuStack[0].softmenuId].menuItem == -ITM_MENU) {
       dynamicMenuItem = 19;
       fnProgrammableMenu(NOPARAM);
       return;
