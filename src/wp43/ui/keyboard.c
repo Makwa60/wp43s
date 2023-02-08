@@ -1676,7 +1676,7 @@ void fnKeyExit(uint16_t unusedButMandatoryParameter) {
       }
       return;
     }
-    if(lastErrorCode == 0 && (calcMode == cmNormal || calcMode == cmAim || calcMode == cmNim) && softmenu[softmenuStack[0].softmenuId].menuItem == -MNU_MVAR) {
+    if(lastErrorCode == 0 && softmenu[softmenuStack[0].softmenuId].menuItem == -MNU_MVAR) {
       currentSolverStatus &= ~SOLVER_STATUS_INTERACTIVE;
     }
 
@@ -1728,12 +1728,15 @@ void fnKeyExit(uint16_t unusedButMandatoryParameter) {
         break;
       }
 
-      default: {
+      case cmNormal: {
         if(softmenu[softmenuStack[0].softmenuId].menuItem == -ITM_MENU) {
           dynamicMenuItem = 20;
           fnProgrammableMenu(NOPARAM);
           return;
         }
+      }
+
+      default: {
       }
     }
 
