@@ -294,7 +294,6 @@ void fnClP2(uint16_t label) {
         break;
       }
       case 1: {
-        int32_t globalStepNumber = programList[savedCurrentProgramNumber - 1].step;
         if(savedCurrentProgramNumber <= 1) { // RAM
           fnGotoDot(1);
         }
