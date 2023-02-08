@@ -248,8 +248,8 @@
           tmpString[0] = 0;
         }
 
-        fnDrop(NOPARAM);
       }
+      fnDrop(NOPARAM);
 
       for(int i = 0; i < 7 && *ts != 0; ++i) {
         ts += ((*ts) & 0x80) ? 2 : 1;
