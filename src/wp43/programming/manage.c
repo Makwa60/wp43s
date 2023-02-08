@@ -204,6 +204,7 @@ void fnClPAll(uint16_t confirmation) {
     setConfirmationMode(fnClPAll);
   }
   else {
+    bool wasInRam = (programList[currentProgramNumber - 1].step > 0);
     resizeProgramMemory(TO_BYTES(1)); // 1 block for an empty program
     *(beginOfProgramMemory + 0)   = (ITM_END >> 8) | 0x80;
     *(beginOfProgramMemory + 1)   =  ITM_END       & 0xff;
@@ -211,12 +212,16 @@ void fnClPAll(uint16_t confirmation) {
     *(beginOfProgramMemory + 3)   = 255; // .END.
     firstFreeProgramByte          = beginOfProgramMemory + 2;
     freeProgramBytes              = 0;
-    currentStep.ram               = beginOfProgramMemory;
-    firstDisplayedStep.ram        = beginOfProgramMemory;
-    firstDisplayedLocalStepNumber = 0;
-    currentLocalStepNumber        = 1;
     temporaryInformation          = TI_NO_INFO;
     programRunStop                = PGM_STOPPED;
+    if(wasInRam) {
+      currentStep.ram               = beginOfProgramMemory;
+      firstDisplayedStep.ram        = beginOfProgramMemory;
+      firstDisplayedLocalStepNumber = 0;
+      currentLocalStepNumber        = 1;
+      beginOfCurrentProgram.ram     = beginOfProgramMemory;
+      endOfCurrentProgram.ram       = firstFreeProgramByte;
+    }
     scanLabelsAndPrograms();
   }
 }
@@ -240,7 +245,7 @@ static int _clearProgram(void) {
     }
     return 2;
   }
-  else if(beginOfCurrentProgram.ram == beginOfProgramMemory && *endOfCurrentProgram.ram == 255 && *(endOfCurrentProgram.ram + 1) == 255) { // There is only one program in memory
+  else if(programList[currentProgramNumber - 1].step > 0 && beginOfCurrentProgram.ram == beginOfProgramMemory && (endOfCurrentProgram.ram >= firstFreeProgramByte || (*endOfCurrentProgram.ram == 255 && *(endOfCurrentProgram.ram + 1) == 255))) { // There is only one program in memory
     fnClPAll(CONFIRMED);
     return 1;
   }
@@ -265,7 +270,11 @@ static int _clearProgram(void) {
 
 void fnClP2(uint16_t label) {
   if(label == 0 && !tam.alpha && tam.digitsSoFar == 0) {
-    _clearProgram();
+    uint16_t savedCurrentProgramNumber = currentProgramNumber;
+    const int result = _clearProgram();
+    if(result == 1 && savedCurrentProgramNumber <= 1) {
+      fnGotoDot(1);
+    }
   }
   else if(label >= FIRST_LABEL && label <= LAST_LABEL) {
     const uint16_t savedCurrentLocalStepNumber = currentLocalStepNumber;
@@ -281,6 +290,13 @@ void fnClP2(uint16_t label) {
         }
         else { // RAM
           fnGotoDot(programList[savedCurrentProgramNumber - 1].step + savedCurrentLocalStepNumber - 1);
+        }
+        break;
+      }
+      case 1: {
+        int32_t globalStepNumber = programList[savedCurrentProgramNumber - 1].step;
+        if(savedCurrentProgramNumber <= 1) { // RAM
+          fnGotoDot(1);
         }
         break;
       }
