@@ -1728,12 +1728,15 @@ void fnKeyExit(uint16_t unusedButMandatoryParameter) {
         break;
       }
 
-      default: {
+      case cmNormal: {
         if(softmenu[softmenuStack[0].softmenuId].menuItem == -ITM_MENU) {
           dynamicMenuItem = 20;
           fnProgrammableMenu(NOPARAM);
           return;
         }
+      }
+
+      default: {
       }
     }
 
@@ -2255,7 +2258,7 @@ void fnKeyUp(uint16_t unusedButMandatoryParameter) {
       return;
     }
 
-    if(softmenu[softmenuStack[0].softmenuId].menuItem == -ITM_MENU) {
+    if((calcMode == cmNormal || calcMode == cmAim || calcMode == cmNim) && softmenu[softmenuStack[0].softmenuId].menuItem == -ITM_MENU) {
       dynamicMenuItem = 18;
       fnProgrammableMenu(NOPARAM);
       return;
@@ -2395,7 +2398,7 @@ void fnKeyDown(uint16_t unusedButMandatoryParameter) {
       return;
     }
 
-    if(softmenu[softmenuStack[0].softmenuId].menuItem == -ITM_MENU) {
+    if((calcMode == cmNormal || calcMode == cmAim || calcMode == cmNim) && softmenu[softmenuStack[0].softmenuId].menuItem == -ITM_MENU) {
       dynamicMenuItem = 19;
       fnProgrammableMenu(NOPARAM);
       return;
