@@ -69,6 +69,9 @@ _add:_
 |-----------------|:-----:|:------:|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Faster function |   —   | FASTFN | If set, your _WP43_ calculates faster without using internal float of extended precision. This is a tradeoff between speed and precision. Affects $\sqrt x$, $\sqrt[3]{x}$, ln, $\ln \left( 1 + x \right)$, lg, lb, $\log_x y$, $e^x$, $e^x-1$, $10^x$, $2^x$, $y^x$, $\sqrt[x]{y}$, sin, cos, tan, arcsin, arccos, arctan, sinh, cosh, tanh, arsinh, arcosh, and artanh. |
 
+**Pages 100, Purposes of System Flags:**
+_for_ <q>NUM.IN, ALP.IN</q> _paint the background green_.
+
 **Page 177, Appendix C, error 27:**
 _add_ <q>Cannot delete a predefined item</q> _in the leftmost blank field,
 and change its explanations in the rightmost field to_ <q>Self-explanatory</q>.

@@ -408,8 +408,6 @@ void fnStopProgram(uint16_t unusedButMandatoryParameter) {
             case FLAG_RUNIO:
             case FLAG_PRINTS:
             case FLAG_LOWBAT:
-            case FLAG_NUMIN:
-            case FLAG_ALPIN:
             case FLAG_ASLIFT:
             case FLAG_INTING:
             case FLAG_SOLVING:

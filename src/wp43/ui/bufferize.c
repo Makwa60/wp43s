@@ -54,6 +54,7 @@
     calcModeEnter(cmAim);
     if(programRunStop != PGM_RUNNING) {
       entryStatus |= 0x01;
+      setSystemFlag(FLAG_ALPIN);
     }
   }
 
@@ -954,6 +955,7 @@
 
       if(programRunStop != PGM_RUNNING) {
         entryStatus |= 0x01;
+        setSystemFlag(FLAG_NUMIN);
       }
 
       //debugNIM();

@@ -131,8 +131,8 @@
   #define FLAG_AUTOFF                           0x801e
   #define FLAG_AUTXEQ                           0x801f
   #define FLAG_PRTACT                           0x8020
-  #define FLAG_NUMIN                            0xc021
-  #define FLAG_ALPIN                            0xc022
+  #define FLAG_NUMIN                            0x8021
+  #define FLAG_ALPIN                            0x8022
   #define FLAG_ASLIFT                           0xc023
   #define FLAG_IGN1ER                           0x8024
   #define FLAG_INTING                           0xc025
