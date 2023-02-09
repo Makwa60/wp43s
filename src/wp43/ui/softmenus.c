@@ -1259,6 +1259,13 @@ void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
     }
 
     enterAsmModeIfMenuIsACatalog(softmenu[softmenuStack[0].softmenuId].menuItem);
+
+    if(softmenu[softmenuStack[0].softmenuId].menuItem == -MNU_MVAR) {
+      setSystemFlag(FLAG_VMDISP);
+    }
+    else {
+      clearSystemFlag(FLAG_VMDISP);
+    }
   }
 
 
@@ -1345,6 +1352,12 @@ void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
         numberOfTamMenusToPop++;
       }
       pushSoftmenu(m);
+      if(id == -MNU_MVAR) {
+        setSystemFlag(FLAG_VMDISP);
+      }
+      else {
+        clearSystemFlag(FLAG_VMDISP);
+      }
     }
   }
 
