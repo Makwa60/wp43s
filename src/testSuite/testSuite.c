@@ -28,6 +28,7 @@
 #include "stats.h"
 #include "store.h"
 #include <stdbool.h>
+#include <stdlib.h>
 #include <string.h>
 #include <libgen.h>
 
@@ -1146,6 +1147,177 @@ void setParameter(char *p) {
       stringToReal34(r, REGISTER_REAL34_DATA(regist));
       convertReal34RegisterToDateRegister(regist, regist);
     }
+    else if(strcmp(l, "REMA") == 0) {
+      // remove beginning and ending " and removing leading spaces
+      xcopy(r, r + 1, strlen(r));
+      while(r[0] == ' ') {
+        xcopy(r, r + 1, strlen(r));
+      }
+      r[strlen(r) - 1] = 0;
+
+      // 'M'
+      if(r[0] == 'M') {
+        int rows, cols;
+        xcopy(r, r + 1, strlen(r));
+        while(r[0] == ' ') {
+          xcopy(r, r + 1, strlen(r));
+        }
+        // rows
+        i = 0;
+        while(r[i] != ',' && r[i] != 0) {
+          i++;
+        }
+        if(r[i] == ',') {
+          r[i] = 0;
+          rows = atoi(r);
+          xcopy(r, r + i + 1, strlen(r + i + 1) + 1);
+          while(r[0] == ' ') {
+            xcopy(r, r + 1, strlen(r));
+          }
+          // cols
+          i = 0;
+          while(r[i] != '[' && r[i] != 0) {
+            i++;
+          }
+          if(r[i] == '[') {
+            r[i] = 0;
+            cols = atoi(r);
+            xcopy(r, r + i + 1, strlen(r + i + 1) + 1);
+            while(r[0] == ' ') {
+              xcopy(r, r + 1, strlen(r));
+            }
+            initMatrixRegister(regist, rows, cols, false);
+            // elements
+            for(int element = 0; element < rows * cols; ++element) {
+              i = 0;
+              while(r[i] != ',' && r[i] != ']' && r[i] != 0) {
+                i++;
+              }
+              bool lastElement = (r[i] != ',');
+              r[i] = 0;
+              stringToReal34(r, REGISTER_REAL34_MATRIX_M_ELEMENTS(regist) + element);
+              if(lastElement) {
+                if(element < (rows * cols - 1)) {
+                  processError("missformed register value. Not enough elements");
+                }
+                break;
+              }
+              if(element >= (rows * cols - 1)) {
+                processError("missformed register value. Too many elements");
+                break;
+              }
+              xcopy(r, r + i + 1, strlen(r + i + 1) + 1);
+              while(r[0] == ' ') {
+                xcopy(r, r + 1, strlen(r));
+              }
+            }
+          }
+          else {
+            processError("missformed register value. Missing left bracket after number of columns");
+          }
+        }
+        else {
+          processError("missformed register value. Missing comma between number of rows and of columns");
+        }
+      }
+      else {
+        processError("missformed register value. Value does not begin with 'M'");
+      }
+    }
+    else if(strcmp(l, "CXMA") == 0) {
+      // remove beginning and ending " and removing leading spaces
+      xcopy(r, r + 1, strlen(r));
+      while(r[0] == ' ') {
+        xcopy(r, r + 1, strlen(r));
+      }
+      r[strlen(r) - 1] = 0;
+
+      // 'M'
+      if(r[0] == 'M') {
+        int rows, cols;
+        xcopy(r, r + 1, strlen(r));
+        while(r[0] == ' ') {
+          xcopy(r, r + 1, strlen(r));
+        }
+        // rows
+        i = 0;
+        while(r[i] != ',' && r[i] != 0) {
+          i++;
+        }
+        if(r[i] == ',') {
+          r[i] = 0;
+          rows = atoi(r);
+          xcopy(r, r + i + 1, strlen(r + i + 1) + 1);
+          while(r[0] == ' ') {
+            xcopy(r, r + 1, strlen(r));
+          }
+          // cols
+          i = 0;
+          while(r[i] != '[' && r[i] != 0) {
+            i++;
+          }
+          if(r[i] == '[') {
+            r[i] = 0;
+            cols = atoi(r);
+            xcopy(r, r + i + 1, strlen(r + i + 1) + 1);
+            while(r[0] == ' ') {
+              xcopy(r, r + 1, strlen(r));
+            }
+            initMatrixRegister(regist, rows, cols, true);
+            // elements
+            for(int element = 0; element < rows * cols; ++element) {
+              bool lastElement = false;
+              // real part
+              i = 0;
+              while(r[i] != 'i' && r[i] != ',' && r[i] != ']' && r[i] != 0) {
+                i++;
+              }
+              bool imagFollows = (r[i] == 'i');
+              lastElement = (r[i] != 'i' && r[i] != ',');
+              r[i] = 0;
+              stringToReal34(r, VARIABLE_REAL34_DATA(REGISTER_COMPLEX34_MATRIX_M_ELEMENTS(regist) + element));
+              // imaginary part
+              if(imagFollows) {
+                xcopy(r, r + i + 1, strlen(r + i + 1) + 1);
+                while(r[0] == ' ') {
+                  xcopy(r, r + 1, strlen(r));
+                }
+                i = 0;
+                while(r[i] != ',' && r[i] != ']' && r[i] != 0) {
+                  i++;
+                }
+                lastElement = (r[i] != ',');
+                r[i] = 0;
+                stringToReal34(r, VARIABLE_IMAG34_DATA(REGISTER_COMPLEX34_MATRIX_M_ELEMENTS(regist) + element));
+              }
+              if(lastElement) {
+                if(element < (rows * cols - 1)) {
+                  processError("missformed register value. Not enough elements");
+                }
+                break;
+              }
+              if(element >= (rows * cols - 1)) {
+                processError("missformed register value. Too many elements");
+                break;
+              }
+              xcopy(r, r + i + 1, strlen(r + i + 1) + 1);
+              while(r[0] == ' ') {
+                xcopy(r, r + 1, strlen(r));
+              }
+            }
+          }
+          else {
+            processError("missformed register value. Missing left bracket after number of columns");
+          }
+        }
+        else {
+          processError("missformed register value. Missing comma between number of rows and of columns");
+        }
+      }
+      else {
+        processError("missformed register value. Value does not begin with 'M'");
+      }
+    }
     else {
       sprintf(msgString, "missformed register value. Unknown data type %s for register %s", l, p+1);
       processError(msgString);
@@ -1305,21 +1477,77 @@ int relativeErrorReal34(real34_t *expectedValue34, real34_t *value34, char *numb
 
 
 
-void wrongRegisterValue(calcRegister_t regist, char letter, char *expectedValue) {
+void wrongElementValue(calcRegister_t regist, char letter, int row, int col, char *expectedValue) {
   if(letter == 0) {
     printf("\nRegister %d value should be ", regist);
   }
   else {
     printf("\nRegister %c value should be ", letter);
   }
-  printf("%s\nbut it is ", expectedValue);
-  printRegisterToConsole(regist, "", "\n");
+  if(row > 0 && col > 0) {
+    printf("%s for element (%d, %d)\nbut it is ", expectedValue, row, col);
+  }
+  else {
+    printf("%s\nbut it is ", expectedValue);
+  }
+  switch(getRegisterDataType(regist)) {
+    case dtReal34Matrix: {
+      if(row > 0 && col > 0) {
+        char str[300];
+        int cols = REGISTER_REAL34_MATRIX_DBLOCK(regist)->matrixColumns;
+        real34ToString(REGISTER_REAL34_MATRIX_M_ELEMENTS(regist) + (row - 1) * cols + (col - 1), str);
+        printf("%s\n", str);
+      }
+      else {
+        printf("a real matrix\n");
+      }
+      break;
+    }
+    case dtComplex34Matrix: {
+      if(row > 0 && col > 0) {
+        char str[300];
+        int cols = REGISTER_COMPLEX34_MATRIX_DBLOCK(regist)->matrixColumns;
+        real34ToString(VARIABLE_REAL34_DATA(REGISTER_COMPLEX34_MATRIX_M_ELEMENTS(regist) + (row - 1) * cols + (col - 1)), str);
+        printf("%s + ix ", str);
+        real34ToString(VARIABLE_IMAG34_DATA(REGISTER_COMPLEX34_MATRIX_M_ELEMENTS(regist) + (row - 1) * cols + (col - 1)), str + strlen(str));
+        printf("%s\n", str);
+      }
+      else {
+        printf("a complex matrix\n");
+      }
+      break;
+    }
+    default: {
+      printRegisterToConsole(regist, "", "\n");
+      break;
+    }
+  }
   processError("wrong register value");
 }
 
 
 
-void expectedAndShouldBeValue(calcRegister_t regist, char letter, char *expectedValue, char *expectedAndValue) {
+void wrongRegisterValue(calcRegister_t regist, char letter, char *expectedValue) {
+  wrongElementValue(regist, letter, 0, 0, expectedValue);
+}
+
+
+
+void wrongRegisterMatrixSize(calcRegister_t regist, char letter, int expectedRows, int expectedCols) {
+  if(letter == 0) {
+    printf("\nRegister %d value should be of ", regist);
+  }
+  else {
+    printf("\nRegister %c value should be of ", letter);
+  }
+  printf("%dx%d size\nbut it is of ", expectedRows, expectedCols);
+  printf("%dx%d", REGISTER_REAL34_MATRIX_DBLOCK(regist)->matrixRows, REGISTER_REAL34_MATRIX_DBLOCK(regist)->matrixColumns);
+  processError("wrong size of matrix");
+}
+
+
+
+void expectedAndShouldBeValueForElement(calcRegister_t regist, char letter, int row, int col, char *expectedValue, char *expectedAndValue) {
   char str[300];
 
   if(letter == 0) {
@@ -1329,10 +1557,46 @@ void expectedAndShouldBeValue(calcRegister_t regist, char letter, char *expected
     sprintf(expectedAndValue, "\nRegister %c value should be ", letter);
   }
   strcat(expectedAndValue, expectedValue);
+  if(row > 0 && col > 0) {
+    sprintf(expectedAndValue + strlen(expectedAndValue), " for element (%d, %d)", row, col);
+  }
   strcat(expectedAndValue, "\nbut it is ");
-  printRegisterToString(regist, str);
+  switch(getRegisterDataType(regist)) {
+    case dtReal34Matrix: {
+      if(row > 0 && col > 0) {
+        int cols = REGISTER_REAL34_MATRIX_DBLOCK(regist)->matrixColumns;
+        real34ToString(REGISTER_REAL34_MATRIX_M_ELEMENTS(regist) + (row - 1) * cols + (col - 1), str);
+      }
+      else {
+        strcpy(str, "a real matrix");
+      }
+      break;
+    }
+    case dtComplex34Matrix: {
+      if(row > 0 && col > 0) {
+        int cols = REGISTER_COMPLEX34_MATRIX_DBLOCK(regist)->matrixColumns;
+        real34ToString(VARIABLE_REAL34_DATA(REGISTER_COMPLEX34_MATRIX_M_ELEMENTS(regist) + (row - 1) * cols + (col - 1)), str);
+        strcat(str, " +ix ");
+        real34ToString(VARIABLE_IMAG34_DATA(REGISTER_COMPLEX34_MATRIX_M_ELEMENTS(regist) + (row - 1) * cols + (col - 1)), str + strlen(str));
+      }
+      else {
+        strcpy(str, "a complex matrix");
+      }
+      break;
+    }
+    default: {
+      printRegisterToString(regist, str);
+      break;
+    }
+  }
   strcat(expectedAndValue, str);
   strcat(expectedAndValue, "\n");
+}
+
+
+
+void expectedAndShouldBeValue(calcRegister_t regist, char letter, char *expectedValue, char *expectedAndValue) {
+  expectedAndShouldBeValueForElement(regist, letter, 0, 0, expectedValue, expectedAndValue);
 }
 
 
@@ -2053,6 +2317,223 @@ void checkExpectedOutParameter(char *p) {
         if(relativeErrorReal34(&expectedReal34, REGISTER_REAL34_DATA(regist), "date", regist, letter) == RE_INACCURATE) {
           wrongRegisterValue(regist, letter, r);
         }
+      }
+    }
+    else if(strcmp(l, "REMA") == 0) {
+      // remove beginning and ending " and removing leading spaces
+      xcopy(r, r + 1, strlen(r));
+      while(r[0] == ' ') {
+        xcopy(r, r + 1, strlen(r));
+      }
+      r[strlen(r) - 1] = 0;
+
+      // 'M'
+      if(r[0] == 'M') {
+        int rows, cols;
+        xcopy(r, r + 1, strlen(r));
+        while(r[0] == ' ') {
+          xcopy(r, r + 1, strlen(r));
+        }
+        // rows
+        i = 0;
+        while(r[i] != ',' && r[i] != 0) {
+          i++;
+        }
+        if(r[i] == ',') {
+          r[i] = 0;
+          rows = atoi(r);
+          xcopy(r, r + i + 1, strlen(r + i + 1) + 1);
+          while(r[0] == ' ') {
+            xcopy(r, r + 1, strlen(r));
+          }
+          // cols
+          i = 0;
+          while(r[i] != '[' && r[i] != 0) {
+            i++;
+          }
+          if(r[i] == '[') {
+            r[i] = 0;
+            cols = atoi(r);
+            xcopy(r, r + i + 1, strlen(r + i + 1) + 1);
+            while(r[0] == ' ') {
+              xcopy(r, r + 1, strlen(r));
+            }
+            checkRegisterType(regist, letter, dtReal34Matrix, amNone);
+            if(getRegisterDataType(regist) != dtReal34Matrix) {
+              // nothing to do
+            }
+            else if((REGISTER_REAL34_MATRIX_DBLOCK(regist)->matrixRows != rows) || (REGISTER_REAL34_MATRIX_DBLOCK(regist)->matrixColumns != cols)) {
+              wrongRegisterMatrixSize(regist, letter, rows, cols);
+            }
+            else {
+              // elements
+              for(int element = 0; element < rows * cols; ++element) {
+                i = 0;
+                while(r[i] != ',' && r[i] != ']' && r[i] != 0) {
+                  i++;
+                }
+                bool lastElement = (r[i] != ',');
+                r[i] = 0;
+                stringToReal34(r, &expectedReal34);
+                if(!real34AreEqual(REGISTER_REAL34_MATRIX_M_ELEMENTS(regist) + element, &expectedReal34)) {
+                  expectedAndShouldBeValueForElement(regist, letter, element / cols + 1, element % cols + 1, r, registerExpectedAndValue);
+                  if(relativeErrorReal34(&expectedReal34, REGISTER_REAL34_MATRIX_M_ELEMENTS(regist) + element, "real", regist, letter) == RE_INACCURATE) {
+                    wrongElementValue(regist, letter, element / cols + 1, element % cols + 1, r);
+                  }
+                }
+                if(lastElement) {
+                  if(element < (rows * cols - 1)) {
+                    processError("missformed register value. Not enough elements");
+                  }
+                  break;
+                }
+                if(element >= (rows * cols - 1)) {
+                  processError("missformed register value. Too many elements");
+                  break;
+                }
+                xcopy(r, r + i + 1, strlen(r + i + 1) + 1);
+                while(r[0] == ' ') {
+                  xcopy(r, r + 1, strlen(r));
+                }
+              }
+            }
+          }
+          else {
+            processError("missformed register value. Missing left bracket after number of columns");
+          }
+        }
+        else {
+          processError("missformed register value. Missing comma between number of rows and of columns");
+        }
+      }
+      else {
+        processError("missformed register value. Value does not begin with 'M'");
+      }
+    }
+    else if(strcmp(l, "CXMA") == 0) {
+      // remove beginning and ending " and removing leading spaces
+      xcopy(r, r + 1, strlen(r));
+      while(r[0] == ' ') {
+        xcopy(r, r + 1, strlen(r));
+      }
+      r[strlen(r) - 1] = 0;
+
+      // 'M'
+      if(r[0] == 'M') {
+        int rows, cols;
+        xcopy(r, r + 1, strlen(r));
+        while(r[0] == ' ') {
+          xcopy(r, r + 1, strlen(r));
+        }
+        // rows
+        i = 0;
+        while(r[i] != ',' && r[i] != 0) {
+          i++;
+        }
+        if(r[i] == ',') {
+          r[i] = 0;
+          rows = atoi(r);
+          xcopy(r, r + i + 1, strlen(r + i + 1) + 1);
+          while(r[0] == ' ') {
+            xcopy(r, r + 1, strlen(r));
+          }
+          // cols
+          i = 0;
+          while(r[i] != '[' && r[i] != 0) {
+            i++;
+          }
+          if(r[i] == '[') {
+            r[i] = 0;
+            cols = atoi(r);
+            xcopy(r, r + i + 1, strlen(r + i + 1) + 1);
+            while(r[0] == ' ') {
+              xcopy(r, r + 1, strlen(r));
+            }
+            checkRegisterType(regist, letter, dtComplex34Matrix, amNone);
+            if(getRegisterDataType(regist) != dtComplex34Matrix) {
+              // nothing to do
+            }
+            else if((REGISTER_COMPLEX34_MATRIX_DBLOCK(regist)->matrixRows != rows) || (REGISTER_COMPLEX34_MATRIX_DBLOCK(regist)->matrixColumns != cols)) {
+              wrongRegisterMatrixSize(regist, letter, rows, cols);
+            }
+            else {
+              // elements
+              for(int element = 0; element < rows * cols; ++element) {
+                bool lastElement = false;
+                // real part
+                i = 0;
+                while(r[i] != 'i' && r[i] != ',' && r[i] != ']' && r[i] != 0) {
+                  i++;
+                }
+                bool imagFollows = (r[i] == 'i');
+                lastElement = (r[i] != 'i' && r[i] != ',');
+                r[i] = 0;
+                strcpy(real, r);
+                stringToReal34(r, &expectedReal34);
+                // imaginary part
+                if(imagFollows) {
+                  xcopy(r, r + i + 1, strlen(r + i + 1) + 1);
+                  while(r[0] == ' ') {
+                    xcopy(r, r + 1, strlen(r));
+                  }
+                  i = 0;
+                  while(r[i] != ',' && r[i] != ']' && r[i] != 0) {
+                    i++;
+                  }
+                  lastElement = (r[i] != ',');
+                  r[i] = 0;
+                  strcpy(imag, r);
+                  stringToReal34(r, &expectedImag34);
+                }
+                else {
+                  strcpy(imag, "0");
+                  real34Zero(&expectedImag34);
+                }
+
+                if(!real34AreEqual(VARIABLE_REAL34_DATA(REGISTER_COMPLEX34_MATRIX_M_ELEMENTS(regist) + element), &expectedReal34)) {
+                  char str[404];
+                  sprintf(str, "%s +ix %s", real, imag);
+                  expectedAndShouldBeValueForElement(regist, letter, element / cols + 1, element % cols + 1, str, registerExpectedAndValue);
+                  if(relativeErrorReal34(&expectedReal34, VARIABLE_REAL34_DATA(REGISTER_COMPLEX34_MATRIX_M_ELEMENTS(regist) + element), "real", regist, letter) == RE_INACCURATE) {
+                    wrongElementValue(regist, letter, element / cols + 1, element % cols + 1, str);
+                  }
+                }
+                else if(!real34AreEqual(VARIABLE_IMAG34_DATA(REGISTER_COMPLEX34_MATRIX_M_ELEMENTS(regist) + element), &expectedImag34)) {
+                  char str[404];
+                  sprintf(str, "%s +ix %s", real, imag);
+                  expectedAndShouldBeValueForElement(regist, letter, element / cols + 1, element % cols + 1, str, registerExpectedAndValue);
+                  if(relativeErrorReal34(&expectedImag34, VARIABLE_IMAG34_DATA(REGISTER_COMPLEX34_MATRIX_M_ELEMENTS(regist) + element), "imaginary", regist, letter) == RE_INACCURATE) {
+                    wrongElementValue(regist, letter, element / cols + 1, element % cols + 1, str);
+                  }
+                }
+
+                if(lastElement) {
+                  if(element < (rows * cols - 1)) {
+                    processError("missformed register value. Not enough elements");
+                  }
+                  break;
+                }
+                if(element >= (rows * cols - 1)) {
+                  processError("missformed register value. Too many elements");
+                  break;
+                }
+                xcopy(r, r + i + 1, strlen(r + i + 1) + 1);
+                while(r[0] == ' ') {
+                  xcopy(r, r + 1, strlen(r));
+                }
+              }
+            }
+          }
+          else {
+            processError("missformed register value. Missing left bracket after number of columns");
+          }
+        }
+        else {
+          processError("missformed register value. Missing comma between number of rows and of columns");
+        }
+      }
+      else {
+        processError("missformed register value. Value does not begin with 'M'");
       }
     }
     else {

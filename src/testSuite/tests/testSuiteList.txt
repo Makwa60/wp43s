@@ -25,6 +25,8 @@
 ;                             Time is a  Time, Seconds or H:MM:SS
 ;                             Date is a  Date, Y.MD, M.DY, or D.MY
 ;                                              setting follows the system flags
+;                             ReMa is a  34 digit Real matrix
+;                             CxMa is a  34 digit Complex matrix
 ;      after the colon there is the value of the register between double quotes
 ;      after the Real value there must be a colon followed by the angular mode
 ;      special value infinity for Real is "inf" (lower case inf is mandatory)
@@ -34,6 +36,11 @@
 ;      A short integer is represented as on the calculator: "12345#7"
 ;      to put a \ or a " in a string use: \\ or \" example: "double quote=\" backslash=\\"
 ;      \x followed by 2 hexadecimal digits inserts the hexadecimal char in the string
+;      A matrix is represented like "M2,2[1,2,3,4]" being  [ 1 2 
+;                                                            3 4 ], or
+;                                   "M3,1[1,2,3]" being [ 1
+;                                                         2
+;                                                         3 ]
 ;
 ; ... at the end of a line means the line continues on the following line
 ;

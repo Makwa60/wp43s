@@ -281,18 +281,20 @@
                                              int16_t *rPadWidth_r, int16_t *rPadWidth_i, int16_t *digits, uint16_t maxCols);
 
     void     getMatrixFromRegister          (calcRegister_t regist);
+  #endif // !TESTSUITE_BUILD
 
-    /**
-     * Creates a zero matrix at given register.
-     *
-     * \param[in] regist
-     * \param[in] rows
-     * \param[in] cols
-     * \param[in] complex  true for complex matrix, false for real matrix.
-     * \return true if succeeded, false otherwise
-     */
-    bool     initMatrixRegister             (calcRegister_t regist, uint16_t rows, uint16_t cols, bool complex);
+  /**
+   * Creates a zero matrix at given register.
+   *
+   * \param[in] regist
+   * \param[in] rows
+   * \param[in] cols
+   * \param[in] complex  true for complex matrix, false for real matrix.
+   * \return true if succeeded, false otherwise
+   */
+  bool     initMatrixRegister             (calcRegister_t regist, uint16_t rows, uint16_t cols, bool complex);
 
+  #if !defined(TESTSUITE_BUILD)
     /**
      * Redimentions the matrix at given register.
      * Shrinking the matrix is in situ while enlarging the matrix is not.
