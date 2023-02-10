@@ -593,7 +593,7 @@ void divRemaRema(void) {
         realMatrixFree(&res);
       }
       else {
-        displayCalcErrorMessage(ERROR_MATRIX_MISMATCH, ERR_REGISTER_LINE, REGISTER_X);
+        displayCalcErrorMessage(ERROR_SINGULAR_MATRIX, ERR_REGISTER_LINE, REGISTER_X);
         errorMoreInfo("cannot divide by a singular matrix");
       }
     }
@@ -802,7 +802,7 @@ void divCxmaCxma(void) {
         complexMatrixFree(&res);
       }
       else {
-        displayCalcErrorMessage(ERROR_MATRIX_MISMATCH, ERR_REGISTER_LINE, REGISTER_X);
+        displayCalcErrorMessage(ERROR_SINGULAR_MATRIX, ERR_REGISTER_LINE, REGISTER_X);
         errorMoreInfo("cannot divide by a singular matrix");
       }
     }
