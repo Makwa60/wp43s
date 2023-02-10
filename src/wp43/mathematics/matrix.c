@@ -3011,9 +3011,9 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
             realZero(&xx[i * 2 + 1]);
           }
           if(invCpxMat(xx, size, &ctxtReal39)) {
-            for(int i = 0; i < size * size; ++i) {
+            for(int i = 0; i < sizeY * size; ++i) {
               real34ToReal(&y->matrixElements[i], &yy[i * 2]);
-              realZero(&xx[i * 2 + 1]);
+              realZero(&yy[i * 2 + 1]);
             }
             mulCpxMat(yy, xx, sizeY, size, size, rr, &ctxtReal39);
 
@@ -3145,7 +3145,7 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
             real34ToReal(VARIABLE_IMAG34_DATA(&x->matrixElements[i]), &xx[i * 2 + 1]);
           }
           if(invCpxMat(xx, size, &ctxtReal39)) {
-            for(int i = 0; i < size * size; ++i) {
+            for(int i = 0; i < sizeY * size; ++i) {
               real34ToReal(VARIABLE_REAL34_DATA(&y->matrixElements[i]), &yy[i * 2    ]);
               real34ToReal(VARIABLE_IMAG34_DATA(&y->matrixElements[i]), &yy[i * 2 + 1]);
             }
