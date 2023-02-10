@@ -1186,6 +1186,7 @@ void setParameter(char *p) {
             while(r[0] == ' ') {
               xcopy(r, r + 1, strlen(r));
             }
+            lastErrorCode = 0;
             initMatrixRegister(regist, rows, cols, false);
             // elements
             for(int element = 0; element < rows * cols; ++element) {
@@ -1263,6 +1264,7 @@ void setParameter(char *p) {
             while(r[0] == ' ') {
               xcopy(r, r + 1, strlen(r));
             }
+            lastErrorCode = 0;
             initMatrixRegister(regist, rows, cols, true);
             // elements
             for(int element = 0; element < rows * cols; ++element) {

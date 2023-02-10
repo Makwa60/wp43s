@@ -571,25 +571,23 @@ void addLonIRema(void) {
 
 
 void addRemaRema(void) {
-  #if !defined(TESTSUITE_BUILD)
-    real34Matrix_t y, x;
+  real34Matrix_t y, x;
 
-    linkToRealMatrixRegister(REGISTER_Y, &y);
-    convertReal34MatrixRegisterToReal34Matrix(REGISTER_X, &x);
+  linkToRealMatrixRegister(REGISTER_Y, &y);
+  convertReal34MatrixRegisterToReal34Matrix(REGISTER_X, &x);
 
-    addRealMatrices(&y, &x, &x);
-    if(x.matrixElements) {
-      convertReal34MatrixToReal34MatrixRegister(&x, REGISTER_X);
-    }
-    else {
-      displayCalcErrorMessage(ERROR_MATRIX_MISMATCH, ERR_REGISTER_LINE, REGISTER_X);
-      errorMoreInfo("cannot add %d" STD_CROSS "%d-matrix to %d" STD_CROSS "%d-matrix",
-          x.header.matrixRows, x.header.matrixColumns,
-          y.header.matrixRows, y.header.matrixColumns);
-    }
+  addRealMatrices(&y, &x, &x);
+  if(x.matrixElements) {
+    convertReal34MatrixToReal34MatrixRegister(&x, REGISTER_X);
+  }
+  else {
+    displayCalcErrorMessage(ERROR_MATRIX_MISMATCH, ERR_REGISTER_LINE, REGISTER_X);
+    errorMoreInfo("cannot add %d" STD_CROSS "%d-matrix to %d" STD_CROSS "%d-matrix",
+        x.header.matrixRows, x.header.matrixColumns,
+        y.header.matrixRows, y.header.matrixColumns);
+  }
 
-    realMatrixFree(&x);
-  #endif // !TESTSUITE_BUILD
+  realMatrixFree(&x);
 }
 
 
@@ -776,25 +774,23 @@ void addLonICxma(void) {
 
 
 void addCxmaCxma(void) {
-  #if !defined(TESTSUITE_BUILD)
-    complex34Matrix_t y, x;
+  complex34Matrix_t y, x;
 
-    linkToComplexMatrixRegister(REGISTER_Y, &y);
-    convertComplex34MatrixRegisterToComplex34Matrix(REGISTER_X, &x);
+  linkToComplexMatrixRegister(REGISTER_Y, &y);
+  convertComplex34MatrixRegisterToComplex34Matrix(REGISTER_X, &x);
 
-    addComplexMatrices(&y, &x, &x);
-    if(x.matrixElements) {
-      convertComplex34MatrixToComplex34MatrixRegister(&x, REGISTER_X);
-    }
-    else {
-      displayCalcErrorMessage(ERROR_MATRIX_MISMATCH, ERR_REGISTER_LINE, REGISTER_X);
-      errorMoreInfo("cannot add %d" STD_CROSS "%d-matrix to %d" STD_CROSS "%d-matrix",
-          x.header.matrixRows, x.header.matrixColumns,
-          y.header.matrixRows, y.header.matrixColumns);
-    }
+  addComplexMatrices(&y, &x, &x);
+  if(x.matrixElements) {
+    convertComplex34MatrixToComplex34MatrixRegister(&x, REGISTER_X);
+  }
+  else {
+    displayCalcErrorMessage(ERROR_MATRIX_MISMATCH, ERR_REGISTER_LINE, REGISTER_X);
+    errorMoreInfo("cannot add %d" STD_CROSS "%d-matrix to %d" STD_CROSS "%d-matrix",
+        x.header.matrixRows, x.header.matrixColumns,
+        y.header.matrixRows, y.header.matrixColumns);
+  }
 
-    complexMatrixFree(&x);
-  #endif // !TESTSUITE_BUILD
+  complexMatrixFree(&x);
 }
 
 

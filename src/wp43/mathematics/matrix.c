@@ -1290,38 +1290,38 @@ void fnEigenvectors(uint16_t unusedParamButMandatory) {
 }
 
 
-#if !defined(TESTSUITE_BUILD)
-  bool realMatrixInit(real34Matrix_t *matrix, uint16_t rows, uint16_t cols) {
-    //Allocate Memory for Matrix
-    const size_t neededSizeInBytes = (rows * cols) * REAL34_SIZE_IN_BYTES;
-    if(!isMemoryBlockAvailable(neededSizeInBytes)) {
-      matrix->header.matrixColumns = matrix->header.matrixRows = 0;
-      matrix->matrixElements = NULL;
-      return false;
-    }
-    matrix->matrixElements = allocWp43(neededSizeInBytes);
-
-    matrix->header.matrixColumns = cols;
-    matrix->header.matrixRows = rows;
-
-    //Initialize with 0.
-    for(uint32_t i = 0; i < rows * cols; i++) {
-      real34Copy(const34_0, &matrix->matrixElements[i]);
-    }
-    return true;
-  }
-
-
-  void realMatrixFree(real34Matrix_t *matrix) {
-    uint16_t cols = matrix->header.matrixColumns;
-    uint16_t rows = matrix->header.matrixRows;
-
-    freeWp43(matrix->matrixElements, (rows * cols) * REAL34_SIZE_IN_BYTES);
+bool realMatrixInit(real34Matrix_t *matrix, uint16_t rows, uint16_t cols) {
+  //Allocate Memory for Matrix
+  const size_t neededSizeInBytes = (rows * cols) * REAL34_SIZE_IN_BYTES;
+  if(!isMemoryBlockAvailable(neededSizeInBytes)) {
+    matrix->header.matrixColumns = matrix->header.matrixRows = 0;
     matrix->matrixElements = NULL;
-    matrix->header.matrixRows = matrix->header.matrixColumns = 0;
+    return false;
   }
+  matrix->matrixElements = allocWp43(neededSizeInBytes);
+
+  matrix->header.matrixColumns = cols;
+  matrix->header.matrixRows = rows;
+
+  //Initialize with 0.
+  for(uint32_t i = 0; i < rows * cols; i++) {
+    real34Copy(const34_0, &matrix->matrixElements[i]);
+  }
+  return true;
+}
 
 
+void realMatrixFree(real34Matrix_t *matrix) {
+  uint16_t cols = matrix->header.matrixColumns;
+  uint16_t rows = matrix->header.matrixRows;
+
+  freeWp43(matrix->matrixElements, (rows * cols) * REAL34_SIZE_IN_BYTES);
+  matrix->matrixElements = NULL;
+  matrix->header.matrixRows = matrix->header.matrixColumns = 0;
+}
+
+
+#if !defined(TESTSUITE_BUILD)
   void realMatrixIdentity(real34Matrix_t *matrix, uint16_t size) {
     if(realMatrixInit(matrix, size, size)) {
       for(uint16_t i = 0; i < size; ++i) {
@@ -1355,40 +1355,42 @@ void fnEigenvectors(uint16_t unusedParamButMandatory) {
       displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
     }
   }
+#endif // !TESTSUITE_BUILD
 
 
-  bool complexMatrixInit(complex34Matrix_t *matrix, uint16_t rows, uint16_t cols) {
-    //Allocate Memory for Matrix
-    const size_t neededSizeInBytes = (rows * cols) * COMPLEX34_SIZE_IN_BYTES;
-    if(!isMemoryBlockAvailable(neededSizeInBytes)) {
-      matrix->header.matrixColumns = matrix->header.matrixRows = 0;
-      matrix->matrixElements = NULL;
-      return false;
-    }
-    matrix->matrixElements = allocWp43(neededSizeInBytes);
-
-    matrix->header.matrixColumns = cols;
-    matrix->header.matrixRows = rows;
-
-    //Initialize with 0.
-    for(uint32_t i = 0; i < rows * cols; i++) {
-      real34Copy(const34_0, VARIABLE_REAL34_DATA(&matrix->matrixElements[i]));
-      real34Copy(const34_0, VARIABLE_IMAG34_DATA(&matrix->matrixElements[i]));
-    }
-    return true;
-  }
-
-
-  void complexMatrixFree(complex34Matrix_t *matrix) {
-    uint16_t cols = matrix->header.matrixColumns;
-    uint16_t rows = matrix->header.matrixRows;
-
-    freeWp43(matrix->matrixElements, (rows * cols) * COMPLEX34_SIZE_IN_BYTES);
+bool complexMatrixInit(complex34Matrix_t *matrix, uint16_t rows, uint16_t cols) {
+  //Allocate Memory for Matrix
+  const size_t neededSizeInBytes = (rows * cols) * COMPLEX34_SIZE_IN_BYTES;
+  if(!isMemoryBlockAvailable(neededSizeInBytes)) {
+    matrix->header.matrixColumns = matrix->header.matrixRows = 0;
     matrix->matrixElements = NULL;
-    matrix->header.matrixRows = matrix->header.matrixColumns = 0;
+    return false;
   }
+  matrix->matrixElements = allocWp43(neededSizeInBytes);
+
+  matrix->header.matrixColumns = cols;
+  matrix->header.matrixRows = rows;
+
+  //Initialize with 0.
+  for(uint32_t i = 0; i < rows * cols; i++) {
+    real34Copy(const34_0, VARIABLE_REAL34_DATA(&matrix->matrixElements[i]));
+    real34Copy(const34_0, VARIABLE_IMAG34_DATA(&matrix->matrixElements[i]));
+  }
+  return true;
+}
 
 
+void complexMatrixFree(complex34Matrix_t *matrix) {
+  uint16_t cols = matrix->header.matrixColumns;
+  uint16_t rows = matrix->header.matrixRows;
+
+  freeWp43(matrix->matrixElements, (rows * cols) * COMPLEX34_SIZE_IN_BYTES);
+  matrix->matrixElements = NULL;
+  matrix->header.matrixRows = matrix->header.matrixColumns = 0;
+}
+
+
+#if !defined(TESTSUITE_BUILD)
   void complexMatrixIdentity(complex34Matrix_t *matrix, uint16_t size) {
     if(complexMatrixInit(matrix, size, size)) {
       for(uint16_t i = 0; i < size; ++i) {
@@ -1844,81 +1846,85 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
       }
     }
   }
+#endif // !TESTSUITE_BUILD
 
 
-  /* Addition and subtraction */
-  static void addSubRealMatrices(const real34Matrix_t *y, const real34Matrix_t *x, bool subtraction, real34Matrix_t *res) {
-    const uint16_t rows = y->header.matrixRows;
-    const uint16_t cols = y->header.matrixColumns;
-    int32_t i;
+/* Addition and subtraction */
+static void addSubRealMatrices(const real34Matrix_t *y, const real34Matrix_t *x, bool subtraction, real34Matrix_t *res) {
+  const uint16_t rows = y->header.matrixRows;
+  const uint16_t cols = y->header.matrixColumns;
+  int32_t i;
 
-    if((y->header.matrixColumns != x->header.matrixColumns) || (y->header.matrixRows != x->header.matrixRows)) {
-      res->matrixElements = NULL; // Matrix mismatch
-      res->header.matrixRows = res->header.matrixColumns = 0;
+  if((y->header.matrixColumns != x->header.matrixColumns) || (y->header.matrixRows != x->header.matrixRows)) {
+    res->matrixElements = NULL; // Matrix mismatch
+    res->header.matrixRows = res->header.matrixColumns = 0;
+    return;
+  }
+
+  if((y != res) && (x != res)) {
+    if(!realMatrixInit(res, rows, cols)) {
+      displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
       return;
     }
-
-    if((y != res) && (x != res)) {
-      if(!realMatrixInit(res, rows, cols)) {
-        displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
-        return;
-      }
+  }
+  for(i = 0; i < cols * rows; ++i) {
+    if(subtraction) {
+      real34Subtract(&y->matrixElements[i], &x->matrixElements[i], &res->matrixElements[i]);
     }
-    for(i = 0; i < cols * rows; ++i) {
-      if(subtraction) {
-        real34Subtract(&y->matrixElements[i], &x->matrixElements[i], &res->matrixElements[i]);
-      }
-      else {
-        real34Add(&y->matrixElements[i], &x->matrixElements[i], &res->matrixElements[i]);
-      }
+    else {
+      real34Add(&y->matrixElements[i], &x->matrixElements[i], &res->matrixElements[i]);
     }
   }
+}
 
 
-  void addRealMatrices(const real34Matrix_t *y, const real34Matrix_t *x, real34Matrix_t *res) {
-    addSubRealMatrices(y, x, false, res);
-  }
+void addRealMatrices(const real34Matrix_t *y, const real34Matrix_t *x, real34Matrix_t *res) {
+  addSubRealMatrices(y, x, false, res);
+}
 
 
+#if !defined(TESTSUITE_BUILD)
   void subtractRealMatrices(const real34Matrix_t *y, const real34Matrix_t *x, real34Matrix_t *res) {
     addSubRealMatrices(y, x, true, res);
   }
+#endif // !TESTSUITE_BUILD
 
 
-  static void addSubComplexMatrices(const complex34Matrix_t *y, const complex34Matrix_t *x, bool subtraction, complex34Matrix_t *res) {
-    const uint16_t rows = y->header.matrixRows;
-    const uint16_t cols = y->header.matrixColumns;
-    int32_t i;
+static void addSubComplexMatrices(const complex34Matrix_t *y, const complex34Matrix_t *x, bool subtraction, complex34Matrix_t *res) {
+  const uint16_t rows = y->header.matrixRows;
+  const uint16_t cols = y->header.matrixColumns;
+  int32_t i;
 
-    if((y->header.matrixColumns != x->header.matrixColumns) || (y->header.matrixRows != x->header.matrixRows)) {
-      res->matrixElements = NULL; // Matrix mismatch
-      res->header.matrixRows = res->header.matrixColumns = 0;
-      return;
-    }
+  if((y->header.matrixColumns != x->header.matrixColumns) || (y->header.matrixRows != x->header.matrixRows)) {
+    res->matrixElements = NULL; // Matrix mismatch
+    res->header.matrixRows = res->header.matrixColumns = 0;
+    return;
+  }
 
-    if((y == res) || (x == res) || complexMatrixInit(res, rows, cols)) {
-      for(i = 0; i < cols * rows; ++i) {
-        if(subtraction) {
-          real34Subtract(VARIABLE_REAL34_DATA(&y->matrixElements[i]), VARIABLE_REAL34_DATA(&x->matrixElements[i]), VARIABLE_REAL34_DATA(&res->matrixElements[i]));
-          real34Subtract(VARIABLE_IMAG34_DATA(&y->matrixElements[i]), VARIABLE_IMAG34_DATA(&x->matrixElements[i]), VARIABLE_IMAG34_DATA(&res->matrixElements[i]));
-        }
-        else {
-          real34Add(VARIABLE_REAL34_DATA(&y->matrixElements[i]), VARIABLE_REAL34_DATA(&x->matrixElements[i]), VARIABLE_REAL34_DATA(&res->matrixElements[i]));
-          real34Add(VARIABLE_IMAG34_DATA(&y->matrixElements[i]), VARIABLE_IMAG34_DATA(&x->matrixElements[i]), VARIABLE_IMAG34_DATA(&res->matrixElements[i]));
-        }
+  if((y == res) || (x == res) || complexMatrixInit(res, rows, cols)) {
+    for(i = 0; i < cols * rows; ++i) {
+      if(subtraction) {
+        real34Subtract(VARIABLE_REAL34_DATA(&y->matrixElements[i]), VARIABLE_REAL34_DATA(&x->matrixElements[i]), VARIABLE_REAL34_DATA(&res->matrixElements[i]));
+        real34Subtract(VARIABLE_IMAG34_DATA(&y->matrixElements[i]), VARIABLE_IMAG34_DATA(&x->matrixElements[i]), VARIABLE_IMAG34_DATA(&res->matrixElements[i]));
+      }
+      else {
+        real34Add(VARIABLE_REAL34_DATA(&y->matrixElements[i]), VARIABLE_REAL34_DATA(&x->matrixElements[i]), VARIABLE_REAL34_DATA(&res->matrixElements[i]));
+        real34Add(VARIABLE_IMAG34_DATA(&y->matrixElements[i]), VARIABLE_IMAG34_DATA(&x->matrixElements[i]), VARIABLE_IMAG34_DATA(&res->matrixElements[i]));
       }
     }
-    else {
-      displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
-    }
   }
-
-
-  void addComplexMatrices(const complex34Matrix_t *y, const complex34Matrix_t *x, complex34Matrix_t *res) {
-    addSubComplexMatrices(y, x, false, res);
+  else {
+    displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
   }
+}
 
 
+void addComplexMatrices(const complex34Matrix_t *y, const complex34Matrix_t *x, complex34Matrix_t *res) {
+  addSubComplexMatrices(y, x, false, res);
+}
+
+
+#if !defined(TESTSUITE_BUILD)
   void subtractComplexMatrices(const complex34Matrix_t *y, const complex34Matrix_t *x, complex34Matrix_t *res) {
     addSubComplexMatrices(y, x, true, res);
   }
