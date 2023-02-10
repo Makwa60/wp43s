@@ -561,40 +561,40 @@ void convertComplex34MatrixToComplex34MatrixRegister(const complex34Matrix_t *ma
 
 
 
-#if !defined(TESTSUITE_BUILD)
-  void convertReal34MatrixToComplex34Matrix(const real34Matrix_t *source, complex34Matrix_t *destination) {
-    if(complexMatrixInit(destination, source->header.matrixRows, source->header.matrixColumns)) {
-      if(destination->matrixElements) {
-        for(uint16_t i = 0; i < source->header.matrixRows * source->header.matrixColumns; ++i) {
-          real34Copy(&source->matrixElements[i], VARIABLE_REAL34_DATA(&destination->matrixElements[i]));
-          real34Zero(VARIABLE_IMAG34_DATA(&destination->matrixElements[i]));
-        }
+void convertReal34MatrixToComplex34Matrix(const real34Matrix_t *source, complex34Matrix_t *destination) {
+  if(complexMatrixInit(destination, source->header.matrixRows, source->header.matrixColumns)) {
+    if(destination->matrixElements) {
+      for(uint16_t i = 0; i < source->header.matrixRows * source->header.matrixColumns; ++i) {
+        real34Copy(&source->matrixElements[i], VARIABLE_REAL34_DATA(&destination->matrixElements[i]));
+        real34Zero(VARIABLE_IMAG34_DATA(&destination->matrixElements[i]));
       }
     }
-    else {
-      displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
-    }
   }
-
-
-
-  void convertReal34MatrixRegisterToComplex34Matrix(calcRegister_t source, complex34Matrix_t *destination) {
-    real34Matrix_t matrix;
-    linkToRealMatrixRegister(source, &matrix);
-    convertReal34MatrixToComplex34Matrix(&matrix, destination);
+  else {
+    displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
   }
+}
 
 
 
-  void convertReal34MatrixRegisterToComplex34MatrixRegister(calcRegister_t source, calcRegister_t destination) {
-    complex34Matrix_t matrix;
-    convertReal34MatrixRegisterToComplex34Matrix(source, &matrix);
-    convertComplex34MatrixToComplex34MatrixRegister(&matrix, destination);
-    complexMatrixFree(&matrix);
-  }
+void convertReal34MatrixRegisterToComplex34Matrix(calcRegister_t source, complex34Matrix_t *destination) {
+  real34Matrix_t matrix;
+  linkToRealMatrixRegister(source, &matrix);
+  convertReal34MatrixToComplex34Matrix(&matrix, destination);
+}
 
 
 
+void convertReal34MatrixRegisterToComplex34MatrixRegister(calcRegister_t source, calcRegister_t destination) {
+  complex34Matrix_t matrix;
+  convertReal34MatrixRegisterToComplex34Matrix(source, &matrix);
+  convertComplex34MatrixToComplex34MatrixRegister(&matrix, destination);
+  complexMatrixFree(&matrix);
+}
+
+
+
+#if !defined(TESTSUITE_BUILD)
   void convertDoubleToString(double x, int16_t n, char *buff) { //Reformatting real strings that are formatted according to different locale settings
     uint16_t i = 2;
     uint16_t j = 2;

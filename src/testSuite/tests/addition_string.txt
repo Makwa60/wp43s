@@ -32,20 +32,28 @@ Out: EC=0 FL_CPXRES=0 FL_ASLIFT=1 RL=Stri:"WP43!" RX=Stri:"String test WP43!"
 ;=======================================
 ; String + Real Matrix
 ;=======================================
+In: FL_ASLIFT=0 FL_CPXRES=0 IM=2COMPL RY=Stri:"String test " RX=ReMa:"M2,3[1,2,3,4,5,6]"
+Out: EC=0 FL_CPXRES=0 FL_ASLIFT=1 RL=ReMa:"M2,3[1,2,3,4,5,6]" RX=Stri:"String test [2\x80\xd73 Matrix]"
 
 ;=======================================
 ; Real Matrix + String
 ;=======================================
+In: FL_ASLIFT=0 FL_CPXRES=0 IM=2COMPL RY=ReMa:"M2,3[1,2,3,4,5,6]" RX=Stri:"String test"
+Out: EC=0 FL_CPXRES=0 FL_ASLIFT=1 RL=Stri:"String test" RX=Stri:"[2\x80\xd73 Matrix]String test"
 
 
 
 ;=======================================
 ; String + Complex Matrix
 ;=======================================
+In: FL_ASLIFT=0 FL_CPXRES=0 IM=2COMPL RY=Stri:"String test " RX=CxMa:"M2,3[1i2,3i4,5i6,7i8,9i10,11i12]"
+Out: EC=0 FL_CPXRES=0 FL_ASLIFT=1 RL=CxMa:"M2,3[1i2,3i4,5i6,7i8,9i10,11i12]" RX=Stri:"String test [2\x80\xd73 \xa1\x02 Matrix]"
 
 ;=======================================
 ; Complex Matrix + String
 ;=======================================
+In: FL_ASLIFT=0 FL_CPXRES=0 IM=2COMPL RY=CxMa:"M2,3[1i2,3i4,5i6,7i8,9i10,11i12]" RX=Stri:"String test"
+Out: EC=0 FL_CPXRES=0 FL_ASLIFT=1 RL=Stri:"String test" RX=Stri:"[2\x80\xd73 \xa1\x02 Matrix]String test"
 
 
 
