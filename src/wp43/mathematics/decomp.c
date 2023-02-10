@@ -61,14 +61,16 @@ void decompLonI(void) {
 
 
 void decompReal(void) {
+  real34_t x;
+  real34Copy(REGISTER_REAL34_DATA(REGISTER_X), &x);
   setSystemFlag(FLAG_ASLIFT);
   liftStack();
 
-  if(real34IsNaN(REGISTER_REAL34_DATA(REGISTER_X))) {
+  if(real34IsNaN(&x)) {
     convertRealToReal34ResultRegister(const_NaN, REGISTER_X); // Denominator = NaN
     convertRealToReal34ResultRegister(const_NaN, REGISTER_Y); // Numerator = NaN
   }
-  else if(real34IsInfinite(REGISTER_REAL34_DATA(REGISTER_X))) {
+  else if(real34IsInfinite(&x)) {
     convertRealToReal34ResultRegister(const_0, REGISTER_X); // Denominator = 0
     realToReal34(real34IsNegative(REGISTER_REAL34_DATA(REGISTER_X)) ? const__1 : const_1, REGISTER_REAL34_DATA(REGISTER_Y)); // Numerator = +/- 1
   }
