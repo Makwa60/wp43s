@@ -2522,6 +2522,9 @@ static bool luCpxMat(real_t *tmpMat, uint16_t size, uint16_t *p, realContext_t *
             }
           }
         }
+        else {
+          complexMatrixFree(lu);
+        }
       }
       else {
         displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
