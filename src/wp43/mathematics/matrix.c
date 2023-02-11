@@ -2514,6 +2514,9 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
             }
           }
         }
+        else {
+          complexMatrixFree(lu);
+        }
       }
       else {
         displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
