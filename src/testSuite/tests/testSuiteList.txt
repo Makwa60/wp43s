@@ -238,6 +238,8 @@ decomp
 dot
 cross
 
+matrix
+
 percent
 percentMRR
 percentT

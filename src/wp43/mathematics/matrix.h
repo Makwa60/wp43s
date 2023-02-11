@@ -176,14 +176,14 @@
    */
   void     realMatrixFree                 (real34Matrix_t *matrix);
 
-  #if !defined(TESTSUITE_BUILD)
-    /**
-     * Returns identity matrix of given size.
-     *
-     * \param[in] matrix
-     */
-    void     realMatrixIdentity             (real34Matrix_t *matrix, uint16_t size);
+  /**
+   * Returns identity matrix of given size.
+   *
+   * \param[in] matrix
+   */
+  void     realMatrixIdentity             (real34Matrix_t *matrix, uint16_t size);
 
+  #if !defined(TESTSUITE_BUILD)
     /**
      * Redemention a real matrix.
      *
@@ -332,20 +332,24 @@
      * \return true if succeeded, false otherwise
      */
     bool     appendRowAtMatrixRegister      (calcRegister_t regist);
+  #endif // !TESTSUITE_BUILD
 
 
-    void     copyRealMatrix                 (const real34Matrix_t *matrix, real34Matrix_t *res);
+  void     copyRealMatrix                 (const real34Matrix_t *matrix, real34Matrix_t *res);
 
+  #if !defined(TESTSUITE_BUILD)
     void     insRowRealMatrix               (real34Matrix_t *matrix, uint16_t beforeRowNo);
     void     delRowRealMatrix               (real34Matrix_t *matrix, uint16_t beforeRowNo);
-    void     transposeRealMatrix            (const real34Matrix_t *matrix, real34Matrix_t *res);
+  #endif // !TESTSUITE_BUILD
+  void     transposeRealMatrix            (const real34Matrix_t *matrix, real34Matrix_t *res);
 
-    void     copyComplexMatrix              (const complex34Matrix_t *matrix, complex34Matrix_t *res);
+  void     copyComplexMatrix              (const complex34Matrix_t *matrix, complex34Matrix_t *res);
 
+  #if !defined(TESTSUITE_BUILD)
     void     insRowComplexMatrix            (complex34Matrix_t *matrix, uint16_t beforeRowNo);
     void     delRowComplexMatrix            (complex34Matrix_t *matrix, uint16_t beforeRowNo);
-    void     transposeComplexMatrix         (const complex34Matrix_t *matrix, complex34Matrix_t *res);
   #endif // !TESTSUITE_BUILD
+  void     transposeComplexMatrix         (const complex34Matrix_t *matrix, complex34Matrix_t *res);
 
   void     addRealMatrices                (const real34Matrix_t *y, const real34Matrix_t *x, real34Matrix_t *res);
   void     subtractRealMatrices           (const real34Matrix_t *y, const real34Matrix_t *x, real34Matrix_t *res);
@@ -361,37 +365,37 @@
   void     _multiplyComplexMatrix         (const complex34Matrix_t *matrix, const real_t *xr, const real_t *xi, complex34Matrix_t *res, realContext_t *realContext);
   void     multiplyComplexMatrices        (const complex34Matrix_t *y, const complex34Matrix_t *x, complex34Matrix_t *res);
 
-  #if !defined(TESTSUITE_BUILD)
-    void     euclideanNormRealMatrix        (const real34Matrix_t *matrix, real34_t *res);
-    void     euclideanNormComplexMatrix     (const complex34Matrix_t *matrix, real34_t *res);
+  void     euclideanNormRealMatrix        (const real34Matrix_t *matrix, real34_t *res);
+  void     euclideanNormComplexMatrix     (const complex34Matrix_t *matrix, real34_t *res);
 
-    uint16_t realVectorSize                 (const real34Matrix_t *matrix);
+  uint16_t realVectorSize                 (const real34Matrix_t *matrix);
+  #if !defined(TESTSUITE_BUILD)
     void     dotRealVectors                 (const real34Matrix_t *y, const real34Matrix_t *x, real34_t *res);
     void     crossRealVectors               (const real34Matrix_t *y, const real34Matrix_t *x, real34Matrix_t *res);
 
     uint16_t complexVectorSize              (const complex34Matrix_t *matrix);
     void     dotComplexVectors              (const complex34Matrix_t *y, const complex34Matrix_t *x, real34_t *res_r, real34_t *res_i);
     void     crossComplexVectors            (const complex34Matrix_t *y, const complex34Matrix_t *x, complex34Matrix_t *res);
-
-    void     vectorAngle                    (const real34Matrix_t *y, const real34Matrix_t *x, real34_t *radians);
-
-    void     WP34S_LU_decomposition         (const real34Matrix_t *matrix, real34Matrix_t *lu, uint16_t *p);
-    void     realMatrixSwapRows             (const real34Matrix_t *matrix, real34Matrix_t *res, uint16_t a, uint16_t b);
-    void     detRealMatrix                  (const real34Matrix_t *matrix, real34_t *res);
-    void     invertRealMatrix               (const real34Matrix_t *matrix, real34Matrix_t *res);
   #endif // !TESTSUITE_BUILD
+
+  void     vectorAngle                    (const real34Matrix_t *y, const real34Matrix_t *x, real34_t *radians);
+
+  void     WP34S_LU_decomposition         (const real34Matrix_t *matrix, real34Matrix_t *lu, uint16_t *p);
+  void     realMatrixSwapRows             (const real34Matrix_t *matrix, real34Matrix_t *res, uint16_t a, uint16_t b);
+  void     detRealMatrix                  (const real34Matrix_t *matrix, real34_t *res);
+  void     invertRealMatrix               (const real34Matrix_t *matrix, real34Matrix_t *res);
   void     divideRealMatrix               (const real34Matrix_t *matrix, const real34_t *x, real34Matrix_t *res);
   void     _divideRealMatrix              (const real34Matrix_t *matrix, const real_t *x, real34Matrix_t *res, realContext_t *realContext);
   void     divideByRealMatrix             (const real34_t *y, const real34Matrix_t *matrix, real34Matrix_t *res);
   void     _divideByRealMatrix            (const real_t *y, const real34Matrix_t *matrix, real34Matrix_t *res, realContext_t *realContext);
   void     divideRealMatrices             (const real34Matrix_t *y, const real34Matrix_t *x, real34Matrix_t *res);
 
+  void     complex_LU_decomposition       (const complex34Matrix_t *matrix, complex34Matrix_t *lu, uint16_t *p);
   #if !defined(TESTSUITE_BUILD)
-    void     complex_LU_decomposition       (const complex34Matrix_t *matrix, complex34Matrix_t *lu, uint16_t *p);
     void     complexMatrixSwapRows          (const complex34Matrix_t *matrix, complex34Matrix_t *res, uint16_t a, uint16_t b);
-    void     detComplexMatrix               (const complex34Matrix_t *matrix, real34_t *res_r, real34_t *res_i);
-    void     invertComplexMatrix            (const complex34Matrix_t *matrix, complex34Matrix_t *res);
   #endif // !TESTSUITE_BUILD
+  void     detComplexMatrix               (const complex34Matrix_t *matrix, real34_t *res_r, real34_t *res_i);
+  void     invertComplexMatrix            (const complex34Matrix_t *matrix, complex34Matrix_t *res);
   void     divideComplexMatrix            (const complex34Matrix_t *matrix, const real34_t *xr, const real34_t *xi, complex34Matrix_t *res);
   void     _divideComplexMatrix           (const complex34Matrix_t *matrix, const real_t *xr, const real_t *xi, complex34Matrix_t *res, realContext_t *realContext);
   void     divideByComplexMatrix          (const real34_t *yr, const real34_t *yi, const complex34Matrix_t *matrix, complex34Matrix_t *res);
