@@ -146,6 +146,8 @@ Out: EC=1 FL_CPXRES=0 FL_ASLIFT=0 RY=Time:"0" RX=Real:"0"
 ;=======================================
 ; Real / Time
 ;=======================================
+In:  FL_ASLIFT=0 FL_CPXRES=0 IM=2COMPL RY=Real:"45247.54264" RX=Time:"123456.789"
+Out: EC=0 FL_CPXRES=0 FL_ASLIFT=1 RL=Time:"123456.789" RX=Real:"1319.4183553891070340408740097719534889247767492154684178607626025"
 
 
 
