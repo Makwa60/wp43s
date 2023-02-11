@@ -439,6 +439,7 @@ void divShoITime(void) {
 void divTimeReal(void) {
   if(real34IsZero(REGISTER_REAL34_DATA(REGISTER_Y)) && real34IsZero(REGISTER_REAL34_DATA(REGISTER_X))) {
     if(getSystemFlag(FLAG_SPCRES)) {
+      reallocateRegister(REGISTER_X, dtTime, REAL34_SIZE_IN_BYTES, amNone);
       convertRealToReal34ResultRegister(const_NaN, REGISTER_X);
     }
     else {
@@ -449,6 +450,7 @@ void divTimeReal(void) {
 
   else if(real34IsZero(REGISTER_REAL34_DATA(REGISTER_X))) {
     if(getSystemFlag(FLAG_SPCRES)) {
+      reallocateRegister(REGISTER_X, dtTime, REAL34_SIZE_IN_BYTES, amNone);
       realToReal34((real34IsPositive(REGISTER_REAL34_DATA(REGISTER_Y)) ? const_plusInfinity : const_minusInfinity), REGISTER_REAL34_DATA(REGISTER_X));
     }
     else {

@@ -384,7 +384,7 @@ void subDateReal(void) {
     real34Subtract(REGISTER_REAL34_DATA(REGISTER_Y), &val, REGISTER_REAL34_DATA(REGISTER_X));
   }
   else {
-    addError();
+    subError();
   }
 }
 

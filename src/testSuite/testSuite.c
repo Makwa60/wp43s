@@ -690,6 +690,14 @@ void setParameter(char *p) {
           setSystemFlag(FLAG_DMY);
         }
       }
+      else if(!strcmp(l+3, "TDM24")) {
+        if(r[0] == '0') {
+          clearSystemFlag(FLAG_TDM24);
+        }
+        else {
+          setSystemFlag(FLAG_TDM24);
+        }
+      }
       else if(!strcmp(l+3, "FASTFN")) {
         #if USE_REAL34_FUNCTIONS == 1
           if(r[0] == '0') {
@@ -1974,7 +1982,7 @@ void checkExpectedOutParameter(char *p) {
        || (r[0] >= '0' && r[0] <= '9' && r[1] >= '0' && r[1] <= '9' && r[2] == 0)) {
       uint16_t ec = atoi(r);
 
-      if(ec <= 28) {
+      if(ec <= NUMBER_OF_ERROR_CODES) {
         if(lastErrorCode != ec) {
           sprintf(msgString, "last error code should be %d (%s) but it is %d (%s)!", ec, errorMessages[ec], lastErrorCode, errorMessages[lastErrorCode]);
           processError(msgString);

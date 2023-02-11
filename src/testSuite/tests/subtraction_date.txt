@@ -13,8 +13,6 @@ Func: fnSubtract
 
 ;==================================================================
 ; Date - Long Integer  see in subtraction_longInteger.txt
-; Date - Real          see in subtraction_real.txt
-; Date - Complex       see in subtraction_complex.txt
 ; Date - Time          see in subtraction_time.txt
 ;==================================================================
 
@@ -105,6 +103,9 @@ Out: FL_YMD=0 FL_MDY=1 FL_DMY=0 EC=0 FL_CPXRES=0 FL_ASLIFT=1 RL=Real:"12345.67" 
 
 In:  FL_YMD=0 FL_MDY=0 FL_DMY=1 FL_ASLIFT=0 FL_CPXRES=0 IM=2COMPL RY=Date:"21.102003" RX=Real:"12345.67"
 Out: FL_YMD=0 FL_MDY=0 FL_DMY=1 EC=0 FL_CPXRES=0 FL_ASLIFT=1 RL=Real:"12345.67" RX=Date:"1.011970"
+
+In:  FL_YMD=1 FL_MDY=0 FL_DMY=0 FL_ASLIFT=0 FL_CPXRES=0 IM=2COMPL RY=Date:"2003.1021" RX=Real:"12345.67":Deg
+Out: FL_YMD=1 FL_MDY=0 FL_DMY=0 EC=24 FL_CPXRES=0 FL_ASLIFT=0 RY=Date:"2003.1021" RX=Real:"12345.67":Deg
 
 ;=======================================
 ; Real - Date

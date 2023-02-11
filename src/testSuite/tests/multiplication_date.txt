@@ -13,8 +13,6 @@ Func: fnMultiply
 
 ;==================================================================
 ; Date x Long Integer  see in multiplication_longInteger.txt
-; Date x Real          see in multiplication_real.txt
-; Date x Complex       see in multiplication_complex.txt
 ; Date x Time          see in multiplication_time.txt
 ;==================================================================
 

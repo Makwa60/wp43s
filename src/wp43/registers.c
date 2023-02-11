@@ -1091,11 +1091,13 @@ void adjustResult(calcRegister_t res, bool dropY, bool setCpxRes, calcRegister_t
     }
   }
 
-  if(resultDataType == dtTime) {
-    checkTimeRange(REGISTER_REAL34_DATA(res));
-  }
-  if(resultDataType == dtDate) {
-    checkDateRange(REGISTER_REAL34_DATA(res));
+  if(lastErrorCode == 0) {
+    if(resultDataType == dtTime) {
+      checkTimeRange(REGISTER_REAL34_DATA(res));
+    }
+    if(resultDataType == dtDate) {
+      checkDateRange(REGISTER_REAL34_DATA(res));
+    }
   }
 
   if(lastErrorCode != 0) {
