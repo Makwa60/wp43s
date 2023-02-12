@@ -44,7 +44,6 @@ void fnConjugate(uint16_t unusedButMandatoryParameter) {
 
 
 void conjCxma(void) {
-#if !defined(TESTSUITE_BUILD)
   complex34Matrix_t cMat;
 
   linkToComplexMatrixRegister(REGISTER_X, &cMat);
@@ -55,7 +54,6 @@ void conjCxma(void) {
       real34SetPositiveSign(VARIABLE_IMAG34_DATA(&cMat.matrixElements[i]));
     }
   }
-#endif // !TESTSUITE_BUILD
 }
 
 

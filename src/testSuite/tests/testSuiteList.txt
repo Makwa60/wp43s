@@ -41,6 +41,7 @@
 ;                                   "M3,1[1,2,3]" being [ 1
 ;                                                         2
 ;                                                         3 ]
+;      If any elements are "any" or "?", such elements will not be checked.
 ;
 ; ... at the end of a line means the line continues on the following line
 ;

@@ -5,6 +5,7 @@
 
 #include "charString.h"
 #include "config.h"
+#include "constantPointers.h"
 #include "constants.h"
 #include "conversionAngles.h"
 #include "conversionUnits.h"
@@ -131,6 +132,8 @@ const funcTest_t funcTestNoParam[] = {
   {"fnDot",                  fnDot                 },
   {"fnDrop",                 fnDrop                },
   {"fnDropY",                fnDropY               },
+  {"fnEigenvalues",          fnEigenvalues         },
+  {"fnEigenvectors",         fnEigenvectors        },
   {"fnEllipticE",            fnEllipticE           },
   {"fnEllipticEphi",         fnEllipticEphi        },
   {"fnEllipticFphi",         fnEllipticFphi        },
@@ -259,6 +262,7 @@ const funcTest_t funcTestNoParam[] = {
   {"fnPoissonR",             fnPoissonR            },
   {"fnPower",                fnPower               },
   {"fnPyx",                  fnPyx                 },
+  {"fnQrDecomposition",      fnQrDecomposition     },
   {"fnRealPart",             fnRealPart            },
   {"fnRecallIJ",             fnRecallIJ            },
   {"fnReToCx",               fnReToCx              },
@@ -2370,9 +2374,18 @@ void checkExpectedOutParameter(char *p) {
             i++;
           }
           if(r[i] == '[') {
+            real34_t *x1 = NULL;
+            bool isCheckingEigenvectors;
             r[i] = 0;
             cols = atoi(r);
+            isCheckingEigenvectors = (funcType == FUNC_NOPARAM) && (funcNoParam == fnEigenvectors) && (regist == REGISTER_X) && (rows == cols);
             xcopy(r, r + i + 1, strlen(r + i + 1) + 1);
+            if(isCheckingEigenvectors) {
+              x1 = malloc(sizeof(real34_t) * cols);
+              for(int col = 0; col < cols; ++col) {
+                real34Zero(x1 + col);
+              }
+            }
             while(r[0] == ' ') {
               xcopy(r, r + 1, strlen(r));
             }
@@ -2386,17 +2399,30 @@ void checkExpectedOutParameter(char *p) {
             else {
               // elements
               for(int element = 0; element < rows * cols; ++element) {
+                char valTxt[300];
                 i = 0;
                 while(r[i] != ',' && r[i] != ']' && r[i] != 0) {
                   i++;
                 }
                 bool lastElement = (r[i] != ',');
                 r[i] = 0;
-                stringToReal34(r, &expectedReal34);
-                if(!real34AreEqual(REGISTER_REAL34_MATRIX_M_ELEMENTS(regist) + element, &expectedReal34)) {
-                  expectedAndShouldBeValueForElement(regist, letter, element / cols + 1, element % cols + 1, r, registerExpectedAndValue);
-                  if(relativeErrorReal34(&expectedReal34, REGISTER_REAL34_MATRIX_M_ELEMENTS(regist) + element, "real", regist, letter) == RE_INACCURATE) {
-                    wrongElementValue(regist, letter, element / cols + 1, element % cols + 1, r);
+                if(isCheckingEigenvectors && real34IsZero(x1 + element % cols)) {
+                  stringToReal34(r, &expectedReal34);
+                  if(!real34IsZero(&expectedReal34)) {
+                    real34Divide(&expectedReal34, REGISTER_REAL34_MATRIX_M_ELEMENTS(regist) + element, x1 + element % cols);
+                  }
+                }
+                else if(strcmp(r, "any") != 0 && strcmp(r, "?") != 0) {
+                  stringToReal34(r, &expectedReal34);
+                  if(isCheckingEigenvectors) {
+                    real34Multiply(&expectedReal34, x1 + element % cols, &expectedReal34);
+                    real34ToString(&expectedReal34, valTxt);
+                  }
+                  if(!real34AreEqual(REGISTER_REAL34_MATRIX_M_ELEMENTS(regist) + element, &expectedReal34)) {
+                    expectedAndShouldBeValueForElement(regist, letter, element / cols + 1, element % cols + 1, isCheckingEigenvectors ? valTxt : r, registerExpectedAndValue);
+                    if(relativeErrorReal34(&expectedReal34, REGISTER_REAL34_MATRIX_M_ELEMENTS(regist) + element, "real", regist, letter) == RE_INACCURATE) {
+                      wrongElementValue(regist, letter, element / cols + 1, element % cols + 1, isCheckingEigenvectors ? valTxt : r);
+                    }
                   }
                 }
                 if(lastElement) {
@@ -2414,6 +2440,9 @@ void checkExpectedOutParameter(char *p) {
                   xcopy(r, r + 1, strlen(r));
                 }
               }
+            }
+            if(isCheckingEigenvectors) {
+              free(x1);
             }
           }
           else {
@@ -2461,9 +2490,23 @@ void checkExpectedOutParameter(char *p) {
             i++;
           }
           if(r[i] == '[') {
+            real_t *xr1 = NULL, *xi1 = NULL;
+            bool isCheckingEigenvectors;
+            bool *xf1 = NULL;
             r[i] = 0;
             cols = atoi(r);
+            isCheckingEigenvectors = (funcType == FUNC_NOPARAM) && (funcNoParam == fnEigenvectors) && (regist == REGISTER_X) && (rows == cols);
             xcopy(r, r + i + 1, strlen(r + i + 1) + 1);
+            if(isCheckingEigenvectors) {
+              xr1 = malloc(sizeof(real_t) * cols);
+              xi1 = malloc(sizeof(real_t) * cols);
+              xf1 = malloc(sizeof(bool) * cols);
+              for(int col = 0; col < cols; ++col) {
+                realZero(xr1 + col);
+                realZero(xi1 + col);
+                xf1[col] = false;
+              }
+            }
             while(r[0] == ' ') {
               xcopy(r, r + 1, strlen(r));
             }
@@ -2478,6 +2521,17 @@ void checkExpectedOutParameter(char *p) {
               // elements
               for(int element = 0; element < rows * cols; ++element) {
                 bool lastElement = false;
+                if(isCheckingEigenvectors && element < cols) {
+                  real_t xr, xi;
+                  for(int row = 0; row < rows; ++row) {
+                    real34ToReal(VARIABLE_REAL34_DATA(REGISTER_COMPLEX34_MATRIX_M_ELEMENTS(regist) + element + row * cols), &xr);
+                    real34ToReal(VARIABLE_IMAG34_DATA(REGISTER_COMPLEX34_MATRIX_M_ELEMENTS(regist) + element + row * cols), &xi);
+                    mulComplexComplex(&xr, &xi, &xr, &xi, &xr, &xi, &ctxtReal39);
+                    realAdd(&xr, xr1 + element % cols, xr1 + element % cols, &ctxtReal39);
+                    realAdd(&xi, xi1 + element % cols, xi1 + element % cols, &ctxtReal39);
+                  }
+                  sqrtComplex(xr1 + element % cols, xi1 + element % cols, xr1 + element % cols, xi1 + element % cols, &ctxtReal39);
+                }
                 // real part
                 i = 0;
                 while(r[i] != 'i' && r[i] != ',' && r[i] != ']' && r[i] != 0) {
@@ -2487,41 +2541,112 @@ void checkExpectedOutParameter(char *p) {
                 lastElement = (r[i] != 'i' && r[i] != ',');
                 r[i] = 0;
                 strcpy(real, r);
-                stringToReal34(r, &expectedReal34);
-                // imaginary part
-                if(imagFollows) {
-                  xcopy(r, r + i + 1, strlen(r + i + 1) + 1);
-                  while(r[0] == ' ') {
-                    xcopy(r, r + 1, strlen(r));
+                if((strcmp(real, "any") != 0 && strcmp(real, "?") != 0) || imagFollows) {
+                  real_t expectedReal, expectedImag;
+                  stringToReal34(r, &expectedReal34);
+                  stringToReal(r, &expectedReal, &ctxtReal39);
+                  // imaginary part
+                  if(imagFollows) {
+                    xcopy(r, r + i + 1, strlen(r + i + 1) + 1);
+                    while(r[0] == ' ') {
+                      xcopy(r, r + 1, strlen(r));
+                    }
+                    i = 0;
+                    while(r[i] != ',' && r[i] != ']' && r[i] != 0) {
+                      i++;
+                    }
+                    lastElement = (r[i] != ',');
+                    r[i] = 0;
+                    strcpy(imag, r);
+                    stringToReal34(r, &expectedImag34);
+                    stringToReal(r, &expectedImag, &ctxtReal39);
                   }
-                  i = 0;
-                  while(r[i] != ',' && r[i] != ']' && r[i] != 0) {
-                    i++;
+                  else {
+                    strcpy(imag, "0");
+                    real34Zero(&expectedImag34);
+                    realZero(&expectedImag);
                   }
-                  lastElement = (r[i] != ',');
-                  r[i] = 0;
-                  strcpy(imag, r);
-                  stringToReal34(r, &expectedImag34);
-                }
-                else {
-                  strcpy(imag, "0");
-                  real34Zero(&expectedImag34);
-                }
 
-                if(!real34AreEqual(VARIABLE_REAL34_DATA(REGISTER_COMPLEX34_MATRIX_M_ELEMENTS(regist) + element), &expectedReal34)) {
-                  char str[404];
-                  sprintf(str, "%s +ix %s", real, imag);
-                  expectedAndShouldBeValueForElement(regist, letter, element / cols + 1, element % cols + 1, str, registerExpectedAndValue);
-                  if(relativeErrorReal34(&expectedReal34, VARIABLE_REAL34_DATA(REGISTER_COMPLEX34_MATRIX_M_ELEMENTS(regist) + element), "real", regist, letter) == RE_INACCURATE) {
-                    wrongElementValue(regist, letter, element / cols + 1, element % cols + 1, str);
+                  if(isCheckingEigenvectors && (!realIsZero(xr1 + element % cols) || !realIsZero(xi1 + element % cols))) {
+                    real_t er, ei, tmpe, tol;
+                    real34ToReal(const34_1e_32, &tol);
+
+                    real34ToReal(VARIABLE_REAL34_DATA(REGISTER_COMPLEX34_MATRIX_M_ELEMENTS(regist) + element), &er);
+                    real34ToReal(VARIABLE_IMAG34_DATA(REGISTER_COMPLEX34_MATRIX_M_ELEMENTS(regist) + element), &ei);
+
+                    // check for possible real or pure imaginary
+                    WP34S_Atan2(&ei, &er, &tmpe, &ctxtReal39); // arctangent: check for possible pure imaginary
+                    realSetPositiveSign(&tmpe);
+                    if(WP34S_RelativeError(&tmpe, const_piOn2, &tol, &ctxtReal39)) {
+                      realZero(&er); // possible pure imaginary
+                    }
+                    WP34S_Atan2(&er, &ei, &tmpe, &ctxtReal39); // arccotangent: check for possible real
+                    realSetPositiveSign(&tmpe);
+                    if(WP34S_RelativeError(&tmpe, const_piOn2, &tol, &ctxtReal39)) {
+                      realZero(&ei); // possible real
+                    }
+
+                    realToReal34(&er, VARIABLE_REAL34_DATA(REGISTER_COMPLEX34_MATRIX_M_ELEMENTS(regist) + element));
+                    realToReal34(&ei, VARIABLE_IMAG34_DATA(REGISTER_COMPLEX34_MATRIX_M_ELEMENTS(regist) + element));
+
+                    realCopy(&expectedReal, &er);
+                    realCopy(&expectedImag, &ei);
+                    mulComplexComplex(&er, &ei, xr1 + element % cols, xi1 + element % cols, &er, &ei, &ctxtReal39);
+
+                    // check for possible real or pure imaginary
+                    WP34S_Atan2(&ei, &er, &tmpe, &ctxtReal39); // arctangent: check for possible pure imaginary
+                    realSetPositiveSign(&tmpe);
+                    if(WP34S_RelativeError(&tmpe, const_piOn2, &tol, &ctxtReal39)) {
+                      realZero(&er); // possible pure imaginary
+                    }
+                    WP34S_Atan2(&er, &ei, &tmpe, &ctxtReal39); // arccotangent: check for possible real
+                    realSetPositiveSign(&tmpe);
+                    if(WP34S_RelativeError(&tmpe, const_piOn2, &tol, &ctxtReal39)) {
+                      realZero(&ei); // possible real
+                    }
+
+                    if(!(xf1[element % cols])) {
+                      const real34_t *rr = VARIABLE_REAL34_DATA(REGISTER_COMPLEX34_MATRIX_M_ELEMENTS(regist) + element);
+                      const real34_t *ii = VARIABLE_IMAG34_DATA(REGISTER_COMPLEX34_MATRIX_M_ELEMENTS(regist) + element);
+                      if(!real34IsZero(rr)) {
+                        if((real34IsPositive(rr) && realIsNegative(&er)) || (real34IsNegative(rr) && realIsPositive(&er))) {
+                          realChangeSign(xr1 + element % cols);
+                          realChangeSign(xi1 + element % cols);
+                          realChangeSign(&er);
+                          realChangeSign(&ei);
+                        }
+                        xf1[element % cols] = true;
+                      }
+                      else if(!real34IsZero(ii)) {
+                        if((real34IsPositive(ii) && realIsNegative(&ei)) || (real34IsNegative(ii) && realIsPositive(&ei))) {
+                          realChangeSign(xi1 + element % cols);
+                          realChangeSign(&ei);
+                        }
+                        xf1[element % cols] = true;
+                      }
+                    }
+
+                    realToReal34(&er, &expectedReal34);
+                    realToReal34(&ei, &expectedImag34);
+                    realToString(&er, real);
+                    realToString(&ei, imag);
                   }
-                }
-                else if(!real34AreEqual(VARIABLE_IMAG34_DATA(REGISTER_COMPLEX34_MATRIX_M_ELEMENTS(regist) + element), &expectedImag34)) {
-                  char str[404];
-                  sprintf(str, "%s +ix %s", real, imag);
-                  expectedAndShouldBeValueForElement(regist, letter, element / cols + 1, element % cols + 1, str, registerExpectedAndValue);
-                  if(relativeErrorReal34(&expectedImag34, VARIABLE_IMAG34_DATA(REGISTER_COMPLEX34_MATRIX_M_ELEMENTS(regist) + element), "imaginary", regist, letter) == RE_INACCURATE) {
-                    wrongElementValue(regist, letter, element / cols + 1, element % cols + 1, str);
+
+                  if(!real34AreEqual(VARIABLE_REAL34_DATA(REGISTER_COMPLEX34_MATRIX_M_ELEMENTS(regist) + element), &expectedReal34)) {
+                    char str[404];
+                    sprintf(str, "%s +ix %s", real, imag);
+                    expectedAndShouldBeValueForElement(regist, letter, element / cols + 1, element % cols + 1, str, registerExpectedAndValue);
+                    if(relativeErrorReal34(&expectedReal34, VARIABLE_REAL34_DATA(REGISTER_COMPLEX34_MATRIX_M_ELEMENTS(regist) + element), "real", regist, letter) == RE_INACCURATE) {
+                      wrongElementValue(regist, letter, element / cols + 1, element % cols + 1, str);
+                    }
+                  }
+                  else if(!real34AreEqual(VARIABLE_IMAG34_DATA(REGISTER_COMPLEX34_MATRIX_M_ELEMENTS(regist) + element), &expectedImag34)) {
+                    char str[404];
+                    sprintf(str, "%s +ix %s", real, imag);
+                    expectedAndShouldBeValueForElement(regist, letter, element / cols + 1, element % cols + 1, str, registerExpectedAndValue);
+                    if(relativeErrorReal34(&expectedImag34, VARIABLE_IMAG34_DATA(REGISTER_COMPLEX34_MATRIX_M_ELEMENTS(regist) + element), "imaginary", regist, letter) == RE_INACCURATE) {
+                      wrongElementValue(regist, letter, element / cols + 1, element % cols + 1, str);
+                    }
                   }
                 }
 
@@ -2540,6 +2665,11 @@ void checkExpectedOutParameter(char *p) {
                   xcopy(r, r + 1, strlen(r));
                 }
               }
+            }
+            if(isCheckingEigenvectors) {
+              free(xr1);
+              free(xi1);
+              free(xf1);
             }
           }
           else {
