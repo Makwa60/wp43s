@@ -3441,12 +3441,15 @@ void linkToComplexMatrixRegister(calcRegister_t regist, complex34Matrix_t *linke
 
         // Calculate u = x - alpha e1
         if(realIsZero(v + 1)) {
+          if(realIsNegative(v)) {
+            realChangeSign(&sum);
+          }
           realSubtract(v, &sum, v, realContext);
         }
         else {
           realRectangularToPolar(v, v + 1, &m, &t, realContext);
           realPolarToRectangular(&sum, &t, &m, &t, realContext);
-          realSubtract(v, &m, v, realContext);
+          realAdd(v, &m, v, realContext);
           realAdd(v + 1, &t, v + 1, realContext);
         }
 
