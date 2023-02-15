@@ -3684,6 +3684,8 @@ void complex_QR_decomposition(const complex34Matrix_t *matrix, complex34Matrix_t
     // trace
     realAdd(ar, dr, &trR, realContext);
     realAdd(ai, di, &trI, realContext);
+    realChangeSign(&trR);
+    realChangeSign(&trI);
 
     solveQuadraticEquation(const_1, const_0, &trR, &trI, &detR, &detI, &discrR, &discrI, t1r, t1i, t2r, t2i, realContext);
   }
@@ -4220,7 +4222,6 @@ void complexEigenvectors(const complex34Matrix_t *matrix, complex34Matrix_t *res
         for(i = 0; i < size * size; i++) {
           real34ToReal(VARIABLE_REAL34_DATA(&matrix->matrixElements[i]), a + i * 2    );
           real34ToReal(VARIABLE_IMAG34_DATA(&matrix->matrixElements[i]), a + i * 2 + 1);
-          realZero(a + i * 2 + 1);
         }
 
         // Calculate eigenvalues
