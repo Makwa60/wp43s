@@ -223,6 +223,14 @@ void sqrtComplex(const real_t *real, const real_t *imag, real_t *resReal, real_t
 // Newton-Raphson method
 void real34SquareRoot(const real34_t *x, real34_t *res) {
   real34_t x1, r1;
+  if(real34IsZero(x)) {
+    real34Zero(res);
+    return;
+  }
+  else if(real34IsNegative(x)) {
+    realToReal34(const_NaN, res);
+    return;
+  }
   real34Copy(x, &x1);
   real34Copy(&x1, res);
   do {

@@ -187,6 +187,10 @@ void realCubeRoot(const real_t *x, real_t *res, realContext_t *realContext) {
     realCopy(x, res);
     return;
   }
+  else if(realIsZero(x)) {
+    realZero(res);
+    return;
+  }
   realCopy(const_1, &tol); tol.exponent -= realContext->digits - 2;
   realCopy(x, &x1);
   realSetPositiveSign(&x1);
@@ -213,6 +217,10 @@ void real34CubeRoot(const real34_t *x, real34_t *res) {
   bool neg = real34IsNegative(x);
   if(real34IsSpecial(x)) {
     real34Copy(x, res);
+    return;
+  }
+  else if(real34IsZero(x)) {
+    real34Zero(res);
     return;
   }
   real34Reduce(x, &x1);
