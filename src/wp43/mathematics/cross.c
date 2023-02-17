@@ -196,23 +196,21 @@ void crossCplxShoI(void) {
 
 
 void crossRemaRema(void) {
-  #if !defined(TESTSUITE_BUILD)
-    real34Matrix_t y, x, res;
+  real34Matrix_t y, x, res;
 
-    linkToRealMatrixRegister(REGISTER_Y, &y);
-    linkToRealMatrixRegister(REGISTER_X, &x);
+  linkToRealMatrixRegister(REGISTER_Y, &y);
+  linkToRealMatrixRegister(REGISTER_X, &x);
 
-    if((realVectorSize(&y) == 0) || (realVectorSize(&x) == 0) || (realVectorSize(&y) > 3) || (realVectorSize(&x) > 3)) {
-      displayCalcErrorMessage(ERROR_MATRIX_MISMATCH, ERR_REGISTER_LINE, REGISTER_X);
-      errorMoreInfo("invalid numbers of elements of %d" STD_CROSS "%d-matrix to %d" STD_CROSS "%d-matrix",
-          x.header.matrixRows, x.header.matrixColumns,
-          y.header.matrixRows, y.header.matrixColumns);
-    }
-    else {
-      crossRealVectors(&y, &x, &res);
-      convertReal34MatrixToReal34MatrixRegister(&res, REGISTER_X);
-    }
-  #endif // !TESTSUITE_BUILD
+  if((realVectorSize(&y) == 0) || (realVectorSize(&x) == 0) || (realVectorSize(&y) > 3) || (realVectorSize(&x) > 3)) {
+    displayCalcErrorMessage(ERROR_MATRIX_MISMATCH, ERR_REGISTER_LINE, REGISTER_X);
+    errorMoreInfo("invalid numbers of elements of %d" STD_CROSS "%d-matrix to %d" STD_CROSS "%d-matrix",
+        x.header.matrixRows, x.header.matrixColumns,
+        y.header.matrixRows, y.header.matrixColumns);
+  }
+  else {
+    crossRealVectors(&y, &x, &res);
+    convertReal34MatrixToReal34MatrixRegister(&res, REGISTER_X);
+  }
 }
 
 

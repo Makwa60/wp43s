@@ -2133,53 +2133,53 @@ static void _dotRealVectors(const real34Matrix_t *y, const real34Matrix_t *x, re
 }
 
 
+void dotRealVectors(const real34Matrix_t *y, const real34Matrix_t *x, real34_t *res) {
+  real_t p;
+
+  if((realVectorSize(y) == 0) || (realVectorSize(x) == 0) || (realVectorSize(y) != realVectorSize(x))) {
+    realToReal34(const_NaN, res); // Not a vector or mismatched
+    return;
+  }
+
+  _dotRealVectors(y, x, &p, &ctxtReal39);
+  realToReal34(&p, res);
+}
+
+
+void crossRealVectors(const real34Matrix_t *y, const real34Matrix_t *x, real34Matrix_t *res) {
+  const uint16_t elementsY = realVectorSize(y);
+  const uint16_t elementsX = realVectorSize(x);
+  real_t a1, a2, a3, b1, b2, b3, p, q;
+
+  if((elementsY == 0) || (elementsX == 0) || (elementsY > 3) || (elementsX > 3)) {
+    return; // Not a vector or mismatched
+  }
+
+  real34ToReal(                 &y->matrixElements[0]            , &a1);
+  real34ToReal(elementsY >= 2 ? &y->matrixElements[1] : const34_0, &a2);
+  real34ToReal(elementsY >= 3 ? &y->matrixElements[2] : const34_0, &a3);
+
+  real34ToReal(                 &x->matrixElements[0]            , &b1);
+  real34ToReal(elementsX >= 2 ? &x->matrixElements[1] : const34_0, &b2);
+  real34ToReal(elementsX >= 3 ? &x->matrixElements[2] : const34_0, &b3);
+
+  if(realMatrixInit(res, 1, 3)) {
+    realMultiply(&a2, &b3, &p, &ctxtReal39); realMultiply(&a3, &b2, &q, &ctxtReal39);
+    realSubtract(&p, &q, &p, &ctxtReal39); realToReal34(&p, &res->matrixElements[0]);
+
+    realMultiply(&a3, &b1, &p, &ctxtReal39); realMultiply(&a1, &b3, &q, &ctxtReal39);
+    realSubtract(&p, &q, &p, &ctxtReal39); realToReal34(&p, &res->matrixElements[1]);
+
+    realMultiply(&a1, &b2, &p, &ctxtReal39); realMultiply(&a2, &b1, &q, &ctxtReal39);
+    realSubtract(&p, &q, &p, &ctxtReal39); realToReal34(&p, &res->matrixElements[2]);
+  }
+  else {
+    displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
+  }
+}
+
+
 #if !defined(TESTSUITE_BUILD)
-  void dotRealVectors(const real34Matrix_t *y, const real34Matrix_t *x, real34_t *res) {
-    real_t p;
-
-    if((realVectorSize(y) == 0) || (realVectorSize(x) == 0) || (realVectorSize(y) != realVectorSize(x))) {
-      realToReal34(const_NaN, res); // Not a vector or mismatched
-      return;
-    }
-
-    _dotRealVectors(y, x, &p, &ctxtReal39);
-    realToReal34(&p, res);
-  }
-
-
-  void crossRealVectors(const real34Matrix_t *y, const real34Matrix_t *x, real34Matrix_t *res) {
-    const uint16_t elementsY = realVectorSize(y);
-    const uint16_t elementsX = realVectorSize(x);
-    real_t a1, a2, a3, b1, b2, b3, p, q;
-
-    if((elementsY == 0) || (elementsX == 0) || (elementsY > 3) || (elementsX > 3)) {
-      return; // Not a vector or mismatched
-    }
-
-    real34ToReal(                 &y->matrixElements[0]            , &a1);
-    real34ToReal(elementsY >= 2 ? &y->matrixElements[1] : const34_0, &a2);
-    real34ToReal(elementsY >= 3 ? &y->matrixElements[2] : const34_0, &a3);
-
-    real34ToReal(                 &x->matrixElements[0]            , &b1);
-    real34ToReal(elementsX >= 2 ? &x->matrixElements[1] : const34_0, &b2);
-    real34ToReal(elementsX >= 3 ? &x->matrixElements[2] : const34_0, &b3);
-
-    if(realMatrixInit(res, 1, 3)) {
-      realMultiply(&a2, &b3, &p, &ctxtReal39); realMultiply(&a3, &b2, &q, &ctxtReal39);
-      realSubtract(&p, &q, &p, &ctxtReal39); realToReal34(&p, &res->matrixElements[0]);
-
-      realMultiply(&a3, &b1, &p, &ctxtReal39); realMultiply(&a1, &b3, &q, &ctxtReal39);
-      realSubtract(&p, &q, &p, &ctxtReal39); realToReal34(&p, &res->matrixElements[1]);
-
-      realMultiply(&a1, &b2, &p, &ctxtReal39); realMultiply(&a2, &b1, &q, &ctxtReal39);
-      realSubtract(&p, &q, &p, &ctxtReal39); realToReal34(&p, &res->matrixElements[2]);
-    }
-    else {
-      displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
-    }
-  }
-
-
   uint16_t complexVectorSize(const complex34Matrix_t *matrix) {
     return realVectorSize((const real34Matrix_t *)matrix);
   }
@@ -4257,35 +4257,33 @@ static void elementwiseRemaGetResult(bool *complex, real34Matrix_t *x, complex34
 
 /* Elementwise function call */
 void elementwiseRema(void (*f)(void)) {
-  #if !defined(TESTSUITE_BUILD)
-    real34Matrix_t    x;
-    complex34Matrix_t xc;
-    bool              complex = false;
+  real34Matrix_t    x;
+  complex34Matrix_t xc;
+  bool              complex = false;
 
-    convertReal34MatrixRegisterToReal34Matrix(REGISTER_X, &x);
-    const int numOfElements = x.header.matrixRows * x.header.matrixColumns;
+  convertReal34MatrixRegisterToReal34Matrix(REGISTER_X, &x);
+  const int numOfElements = x.header.matrixRows * x.header.matrixColumns;
 
-    for(int i = 0; i < numOfElements; ++i) {
-      reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
-      if(complex) {
-        real34Copy(VARIABLE_REAL34_DATA(&xc.matrixElements[i]), REGISTER_REAL34_DATA(REGISTER_X));
-      }
-      else {
-        real34Copy(&x.matrixElements[i], REGISTER_REAL34_DATA(REGISTER_X));
-      }
-      f();
-      elementwiseRemaGetResult(&complex, &x, &xc, i);
-    }
-
+  for(int i = 0; i < numOfElements; ++i) {
+    reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
     if(complex) {
-      convertComplex34MatrixToComplex34MatrixRegister(&xc, REGISTER_X);
-      complexMatrixFree(&xc);
+      real34Copy(VARIABLE_REAL34_DATA(&xc.matrixElements[i]), REGISTER_REAL34_DATA(REGISTER_X));
     }
     else {
-      convertReal34MatrixToReal34MatrixRegister(&x, REGISTER_X);
-      realMatrixFree(&x);
+      real34Copy(&x.matrixElements[i], REGISTER_REAL34_DATA(REGISTER_X));
     }
-  #endif // !TESTSUITE_BUILD
+    f();
+    elementwiseRemaGetResult(&complex, &x, &xc, i);
+  }
+
+  if(complex) {
+    convertComplex34MatrixToComplex34MatrixRegister(&xc, REGISTER_X);
+    complexMatrixFree(&xc);
+  }
+  else {
+    convertReal34MatrixToReal34MatrixRegister(&x, REGISTER_X);
+    realMatrixFree(&x);
+  }
 }
 
 
