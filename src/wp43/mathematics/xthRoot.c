@@ -480,10 +480,8 @@ void xthRootRemaReal(void) {
 
 
 void xthRootRemaCplx(void) {
-  #if !defined(TESTSUITE_BUILD)
-    convertReal34MatrixRegisterToComplex34MatrixRegister(REGISTER_Y, REGISTER_Y);
-    xthRootCxmaCplx();
-  #endif // !TESTSUITE_BUILD
+  convertReal34MatrixRegisterToComplex34MatrixRegister(REGISTER_Y, REGISTER_Y);
+  xthRootCxmaCplx();
 }
 
 

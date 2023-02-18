@@ -4317,39 +4317,37 @@ void elementwiseRema_UInt16(void (*f)(uint16_t), uint16_t param) {
 
 
 void elementwiseRemaLonI(void (*f)(void)) {
-  #if !defined(TESTSUITE_BUILD)
-    real34Matrix_t    y;
-    complex34Matrix_t yc;
-    longInteger_t     x;
-    bool              complex = false;
+  real34Matrix_t    y;
+  complex34Matrix_t yc;
+  longInteger_t     x;
+  bool              complex = false;
 
-    convertReal34MatrixRegisterToReal34Matrix(REGISTER_Y, &y);
-    convertLongIntegerRegisterToLongInteger(REGISTER_X, x);
-    const int numOfElements = y.header.matrixRows * y.header.matrixColumns;
+  convertReal34MatrixRegisterToReal34Matrix(REGISTER_Y, &y);
+  convertLongIntegerRegisterToLongInteger(REGISTER_X, x);
+  const int numOfElements = y.header.matrixRows * y.header.matrixColumns;
 
-    for(int i = 0; i < numOfElements; ++i) {
-      reallocateRegister(REGISTER_Y, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
-      if(complex) {
-        real34Copy(VARIABLE_REAL34_DATA(&yc.matrixElements[i]), REGISTER_REAL34_DATA(REGISTER_Y));
-      }
-      else {
-        real34Copy(&y.matrixElements[i], REGISTER_REAL34_DATA(REGISTER_Y));
-      }
-      convertLongIntegerToLongIntegerRegister(x, REGISTER_X);
-      f();
-      elementwiseRemaGetResult(&complex, &y, &yc, i);
-    }
-
+  for(int i = 0; i < numOfElements; ++i) {
+    reallocateRegister(REGISTER_Y, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
     if(complex) {
-      convertComplex34MatrixToComplex34MatrixRegister(&yc, REGISTER_X);
-      complexMatrixFree(&yc);
+      real34Copy(VARIABLE_REAL34_DATA(&yc.matrixElements[i]), REGISTER_REAL34_DATA(REGISTER_Y));
     }
     else {
-      convertReal34MatrixToReal34MatrixRegister(&y, REGISTER_X);
-      realMatrixFree(&y);
+      real34Copy(&y.matrixElements[i], REGISTER_REAL34_DATA(REGISTER_Y));
     }
-    longIntegerFree(x);
-  #endif // !TESTSUITE_BUILD
+    convertLongIntegerToLongIntegerRegister(x, REGISTER_X);
+    f();
+    elementwiseRemaGetResult(&complex, &y, &yc, i);
+  }
+
+  if(complex) {
+    convertComplex34MatrixToComplex34MatrixRegister(&yc, REGISTER_X);
+    complexMatrixFree(&yc);
+  }
+  else {
+    convertReal34MatrixToReal34MatrixRegister(&y, REGISTER_X);
+    realMatrixFree(&y);
+  }
+  longIntegerFree(x);
 }
 
 
@@ -4389,41 +4387,39 @@ void elementwiseRemaReal(void (*f)(void)) {
 
 
 void elementwiseRemaShoI(void (*f)(void)) {
-  #if !defined(TESTSUITE_BUILD)
-    real34Matrix_t    y;
-    complex34Matrix_t yc;
-    uint64_t          x;
-    uint32_t          base;
-    int16_t           sign;
-    bool              complex = false;
+  real34Matrix_t    y;
+  complex34Matrix_t yc;
+  uint64_t          x;
+  uint32_t          base;
+  int16_t           sign;
+  bool              complex = false;
 
-    convertReal34MatrixRegisterToReal34Matrix(REGISTER_Y, &y);
-    convertShortIntegerRegisterToUInt64(REGISTER_X, &sign, &x);
-    base = getRegisterShortIntegerBase(REGISTER_X);
-    const int numOfElements = y.header.matrixRows * y.header.matrixColumns;
+  convertReal34MatrixRegisterToReal34Matrix(REGISTER_Y, &y);
+  convertShortIntegerRegisterToUInt64(REGISTER_X, &sign, &x);
+  base = getRegisterShortIntegerBase(REGISTER_X);
+  const int numOfElements = y.header.matrixRows * y.header.matrixColumns;
 
-    for(int i = 0; i < numOfElements; ++i) {
-      reallocateRegister(REGISTER_Y, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
-      if(complex) {
-        real34Copy(VARIABLE_REAL34_DATA(&yc.matrixElements[i]), REGISTER_REAL34_DATA(REGISTER_Y));
-      }
-      else {
-        real34Copy(&y.matrixElements[i], REGISTER_REAL34_DATA(REGISTER_Y));
-      }
-      convertUInt64ToShortIntegerRegister(sign, x, base, REGISTER_X);
-      f();
-      elementwiseRemaGetResult(&complex, &y, &yc, i);
-    }
-
+  for(int i = 0; i < numOfElements; ++i) {
+    reallocateRegister(REGISTER_Y, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
     if(complex) {
-      convertComplex34MatrixToComplex34MatrixRegister(&yc, REGISTER_X);
-      complexMatrixFree(&yc);
+      real34Copy(VARIABLE_REAL34_DATA(&yc.matrixElements[i]), REGISTER_REAL34_DATA(REGISTER_Y));
     }
     else {
-      convertReal34MatrixToReal34MatrixRegister(&y, REGISTER_X);
-      realMatrixFree(&y);
+      real34Copy(&y.matrixElements[i], REGISTER_REAL34_DATA(REGISTER_Y));
     }
-  #endif // !TESTSUITE_BUILD
+    convertUInt64ToShortIntegerRegister(sign, x, base, REGISTER_X);
+    f();
+    elementwiseRemaGetResult(&complex, &y, &yc, i);
+  }
+
+  if(complex) {
+    convertComplex34MatrixToComplex34MatrixRegister(&yc, REGISTER_X);
+    complexMatrixFree(&yc);
+  }
+  else {
+    convertReal34MatrixToReal34MatrixRegister(&y, REGISTER_X);
+    realMatrixFree(&y);
+  }
 }
 
 
@@ -4515,26 +4511,24 @@ void elementwiseCxma_UInt16(void (*f)(uint16_t), uint16_t param) {
 
 
 void elementwiseCxmaLonI(void (*f)(void)) {
-  #if !defined(TESTSUITE_BUILD)
-    complex34Matrix_t y;
-    longInteger_t x;
+  complex34Matrix_t y;
+  longInteger_t x;
 
-    convertComplex34MatrixRegisterToComplex34Matrix(REGISTER_Y, &y);
-    convertLongIntegerRegisterToLongInteger(REGISTER_X, x);
+  convertComplex34MatrixRegisterToComplex34Matrix(REGISTER_Y, &y);
+  convertLongIntegerRegisterToLongInteger(REGISTER_X, x);
 
-    for(int i = 0; i < y.header.matrixRows * y.header.matrixColumns; ++i) {
-      reallocateRegister(REGISTER_Y, dtComplex34, COMPLEX34_SIZE_IN_BYTES, amNone);
-      complex34Copy(&y.matrixElements[i], REGISTER_COMPLEX34_DATA(REGISTER_Y));
-      convertLongIntegerToLongIntegerRegister(x, REGISTER_X);
-      f();
-      elementwiseCxmaGetResult(&y, i);
-    }
+  for(int i = 0; i < y.header.matrixRows * y.header.matrixColumns; ++i) {
+    reallocateRegister(REGISTER_Y, dtComplex34, COMPLEX34_SIZE_IN_BYTES, amNone);
+    complex34Copy(&y.matrixElements[i], REGISTER_COMPLEX34_DATA(REGISTER_Y));
+    convertLongIntegerToLongIntegerRegister(x, REGISTER_X);
+    f();
+    elementwiseCxmaGetResult(&y, i);
+  }
 
-    convertComplex34MatrixToComplex34MatrixRegister(&y, REGISTER_X);
+  convertComplex34MatrixToComplex34MatrixRegister(&y, REGISTER_X);
 
-    longIntegerFree(x);
-    complexMatrixFree(&y);
-  #endif // !TESTSUITE_BUILD
+  longIntegerFree(x);
+  complexMatrixFree(&y);
 }
 
 
@@ -4561,50 +4555,46 @@ void elementwiseCxmaReal(void (*f)(void)) {
 
 
 void elementwiseCxmaShoI(void (*f)(void)) {
-  #if !defined(TESTSUITE_BUILD)
-    complex34Matrix_t y;
-    uint64_t x; uint32_t base; int16_t sign;
+  complex34Matrix_t y;
+  uint64_t x; uint32_t base; int16_t sign;
 
-    convertComplex34MatrixRegisterToComplex34Matrix(REGISTER_Y, &y);
-    convertShortIntegerRegisterToUInt64(REGISTER_X, &sign, &x);
-    base = getRegisterShortIntegerBase(REGISTER_X);
+  convertComplex34MatrixRegisterToComplex34Matrix(REGISTER_Y, &y);
+  convertShortIntegerRegisterToUInt64(REGISTER_X, &sign, &x);
+  base = getRegisterShortIntegerBase(REGISTER_X);
 
-    for(int i = 0; i < y.header.matrixRows * y.header.matrixColumns; ++i) {
-      reallocateRegister(REGISTER_Y, dtComplex34, COMPLEX34_SIZE_IN_BYTES, amNone);
-      complex34Copy(&y.matrixElements[i], REGISTER_COMPLEX34_DATA(REGISTER_Y));
-      convertUInt64ToShortIntegerRegister(sign, x, base, REGISTER_X);
-      f();
-      elementwiseCxmaGetResult(&y, i);
-    }
+  for(int i = 0; i < y.header.matrixRows * y.header.matrixColumns; ++i) {
+    reallocateRegister(REGISTER_Y, dtComplex34, COMPLEX34_SIZE_IN_BYTES, amNone);
+    complex34Copy(&y.matrixElements[i], REGISTER_COMPLEX34_DATA(REGISTER_Y));
+    convertUInt64ToShortIntegerRegister(sign, x, base, REGISTER_X);
+    f();
+    elementwiseCxmaGetResult(&y, i);
+  }
 
-    convertComplex34MatrixToComplex34MatrixRegister(&y, REGISTER_X);
+  convertComplex34MatrixToComplex34MatrixRegister(&y, REGISTER_X);
 
-    complexMatrixFree(&y);
-  #endif // !TESTSUITE_BUILD
+  complexMatrixFree(&y);
 }
 
 
 void elementwiseCxmaCplx(void (*f)(void)) {
-  #if !defined(TESTSUITE_BUILD)
-    complex34Matrix_t y;
-    complex34_t x;
+  complex34Matrix_t y;
+  complex34_t x;
 
-    convertComplex34MatrixRegisterToComplex34Matrix(REGISTER_Y, &y);
-    complex34Copy(REGISTER_COMPLEX34_DATA(REGISTER_X), &x);
+  convertComplex34MatrixRegisterToComplex34Matrix(REGISTER_Y, &y);
+  complex34Copy(REGISTER_COMPLEX34_DATA(REGISTER_X), &x);
 
-    for(int i = 0; i < y.header.matrixRows * y.header.matrixColumns; ++i) {
-      reallocateRegister(REGISTER_Y, dtComplex34, COMPLEX34_SIZE_IN_BYTES, amNone);
-      reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE_IN_BYTES, amNone);
-      complex34Copy(&y.matrixElements[i], REGISTER_COMPLEX34_DATA(REGISTER_Y));
-      complex34Copy(&x, REGISTER_COMPLEX34_DATA(REGISTER_X));
-      f();
-      elementwiseCxmaGetResult(&y, i);
-    }
+  for(int i = 0; i < y.header.matrixRows * y.header.matrixColumns; ++i) {
+    reallocateRegister(REGISTER_Y, dtComplex34, COMPLEX34_SIZE_IN_BYTES, amNone);
+    reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE_IN_BYTES, amNone);
+    complex34Copy(&y.matrixElements[i], REGISTER_COMPLEX34_DATA(REGISTER_Y));
+    complex34Copy(&x, REGISTER_COMPLEX34_DATA(REGISTER_X));
+    f();
+    elementwiseCxmaGetResult(&y, i);
+  }
 
-    convertComplex34MatrixToComplex34MatrixRegister(&y, REGISTER_X);
+  convertComplex34MatrixToComplex34MatrixRegister(&y, REGISTER_X);
 
-    complexMatrixFree(&y);
-  #endif // !TESTSUITE_BUILD
+  complexMatrixFree(&y);
 }
 
 

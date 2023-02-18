@@ -546,10 +546,8 @@ void logxyCxmaReal(void) {
 
 
 void logxyRemaCplx(void) {
-  #if !defined(TESTSUITE_BUILD)
-    convertReal34MatrixRegisterToComplex34MatrixRegister(REGISTER_Y, REGISTER_Y);
-    logxyCxmaCplx();
-  #endif // !TESTSUITE_BUILD
+  convertReal34MatrixRegisterToComplex34MatrixRegister(REGISTER_Y, REGISTER_Y);
+  logxyCxmaCplx();
 }
 
 
