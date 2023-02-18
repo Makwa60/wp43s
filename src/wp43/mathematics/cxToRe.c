@@ -42,45 +42,43 @@ void fnCxToRe(uint16_t unusedButMandatoryParameter) {
     }
   }
 
-  #if !defined(TESTSUITE_BUILD)
-    else if(dataTypeX == dtComplex34Matrix) {
-      complex34Matrix_t cMat;
-      real34Matrix_t rMat, iMat;
+  else if(dataTypeX == dtComplex34Matrix) {
+    complex34Matrix_t cMat;
+    real34Matrix_t rMat, iMat;
 
-      if(!saveLastX()) {
-      return;
-    }
+    if(!saveLastX()) {
+    return;
+  }
 
-      linkToComplexMatrixRegister(REGISTER_X, &cMat);
-      if(realMatrixInit(&rMat, cMat.header.matrixRows, cMat.header.matrixColumns)) {
-        if(realMatrixInit(&iMat, cMat.header.matrixRows, cMat.header.matrixColumns)) {
-          for(uint16_t i = 0; i < cMat.header.matrixRows * cMat.header.matrixColumns; ++i) {
-            if(getSystemFlag(FLAG_POLAR)) { // polar mode
-              real34RectangularToPolar(VARIABLE_REAL34_DATA(&cMat.matrixElements[i]), VARIABLE_IMAG34_DATA(&cMat.matrixElements[i]), &rMat.matrixElements[i], &iMat.matrixElements[i]);
-              convertAngle34FromTo(&iMat.matrixElements[i], amRadian, currentAngularMode);
-            }
-            else { // rectangular mode
-              real34Copy(VARIABLE_REAL34_DATA(&cMat.matrixElements[i]), &rMat.matrixElements[i]);
-              real34Copy(VARIABLE_IMAG34_DATA(&cMat.matrixElements[i]), &iMat.matrixElements[i]);
-            }
+    linkToComplexMatrixRegister(REGISTER_X, &cMat);
+    if(realMatrixInit(&rMat, cMat.header.matrixRows, cMat.header.matrixColumns)) {
+      if(realMatrixInit(&iMat, cMat.header.matrixRows, cMat.header.matrixColumns)) {
+        for(uint16_t i = 0; i < cMat.header.matrixRows * cMat.header.matrixColumns; ++i) {
+          if(getSystemFlag(FLAG_POLAR)) { // polar mode
+            real34RectangularToPolar(VARIABLE_REAL34_DATA(&cMat.matrixElements[i]), VARIABLE_IMAG34_DATA(&cMat.matrixElements[i]), &rMat.matrixElements[i], &iMat.matrixElements[i]);
+            convertAngle34FromTo(&iMat.matrixElements[i], amRadian, currentAngularMode);
           }
+          else { // rectangular mode
+            real34Copy(VARIABLE_REAL34_DATA(&cMat.matrixElements[i]), &rMat.matrixElements[i]);
+            real34Copy(VARIABLE_IMAG34_DATA(&cMat.matrixElements[i]), &iMat.matrixElements[i]);
+          }
+        }
 
-          setSystemFlag(FLAG_ASLIFT);
-          liftStack();
-          convertReal34MatrixToReal34MatrixRegister(&rMat, REGISTER_Y);
-          convertReal34MatrixToReal34MatrixRegister(&iMat, REGISTER_X);
-          realMatrixFree(&iMat);
-        }
-        else {
-          displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
-        }
-        realMatrixFree(&rMat);
+        setSystemFlag(FLAG_ASLIFT);
+        liftStack();
+        convertReal34MatrixToReal34MatrixRegister(&rMat, REGISTER_Y);
+        convertReal34MatrixToReal34MatrixRegister(&iMat, REGISTER_X);
+        realMatrixFree(&iMat);
       }
       else {
         displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
       }
+      realMatrixFree(&rMat);
     }
-  #endif // !TESTSUITE_BUILD
+    else {
+      displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
+    }
+  }
 
   else {
     displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, REGISTER_X); // Invalid input data type for this operation

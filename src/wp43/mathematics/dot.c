@@ -218,42 +218,36 @@ void dotRemaRema(void) {
 
 
 void dotCpmaRema(void) {
-  #if !defined(TESTSUITE_BUILD)
-    convertReal34MatrixRegisterToComplex34MatrixRegister(REGISTER_X, REGISTER_X);
-    dotCpmaCpma();
-  #endif // !TESTSUITE_BUILD
+  convertReal34MatrixRegisterToComplex34MatrixRegister(REGISTER_X, REGISTER_X);
+  dotCpmaCpma();
 }
 
 
 
 void dotRemaCpma(void) {
-  #if !defined(TESTSUITE_BUILD)
-    convertReal34MatrixRegisterToComplex34MatrixRegister(REGISTER_Y, REGISTER_Y);
-    dotCpmaCpma();
-  #endif // !TESTSUITE_BUILD
+  convertReal34MatrixRegisterToComplex34MatrixRegister(REGISTER_Y, REGISTER_Y);
+  dotCpmaCpma();
 }
 
 
 
 void dotCpmaCpma(void) {
-  #if !defined(TESTSUITE_BUILD)
-    complex34Matrix_t y, x;
-    real34_t res_r, res_i;
+  complex34Matrix_t y, x;
+  real34_t res_r, res_i;
 
-    linkToComplexMatrixRegister(REGISTER_Y, &y);
-    linkToComplexMatrixRegister(REGISTER_X, &x);
+  linkToComplexMatrixRegister(REGISTER_Y, &y);
+  linkToComplexMatrixRegister(REGISTER_X, &x);
 
-    if((complexVectorSize(&y) == 0) || (complexVectorSize(&x) == 0) || (complexVectorSize(&y) != complexVectorSize(&x))) {
-      displayCalcErrorMessage(ERROR_MATRIX_MISMATCH, ERR_REGISTER_LINE, REGISTER_X);
-      errorMoreInfo("numbers of elements of %d" STD_CROSS "%d-matrix to %d" STD_CROSS "%d-matrix mismatch",
-          x.header.matrixRows, x.header.matrixColumns,
-          y.header.matrixRows, y.header.matrixColumns);
-    }
-    else {
-      dotComplexVectors(&y, &x, &res_r, &res_i);
-      reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE_IN_BYTES, amNone);
-      real34Copy(&res_r, REGISTER_REAL34_DATA(REGISTER_X));
-      real34Copy(&res_i, REGISTER_IMAG34_DATA(REGISTER_X));
-    }
-  #endif // !TESTSUITE_BUILD
+  if((complexVectorSize(&y) == 0) || (complexVectorSize(&x) == 0) || (complexVectorSize(&y) != complexVectorSize(&x))) {
+    displayCalcErrorMessage(ERROR_MATRIX_MISMATCH, ERR_REGISTER_LINE, REGISTER_X);
+    errorMoreInfo("numbers of elements of %d" STD_CROSS "%d-matrix to %d" STD_CROSS "%d-matrix mismatch",
+        x.header.matrixRows, x.header.matrixColumns,
+        y.header.matrixRows, y.header.matrixColumns);
+  }
+  else {
+    dotComplexVectors(&y, &x, &res_r, &res_i);
+    reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE_IN_BYTES, amNone);
+    real34Copy(&res_r, REGISTER_REAL34_DATA(REGISTER_X));
+    real34Copy(&res_i, REGISTER_IMAG34_DATA(REGISTER_X));
+  }
 }
