@@ -122,6 +122,13 @@ static void _xthRootComplex(const real_t *aa, const real_t *bb, const real_t *cc
     }
   }
 
+  if(realIsZero(&a) && realIsZero(&b) && !realIsZero(&c)) {
+    reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE_IN_BYTES, amNone);
+    convertRealToReal34ResultRegister(const_0, REGISTER_X);
+    convertRealToImag34ResultRegister(const_0, REGISTER_X);
+    return;
+  }
+
   divRealComplex(const_1, &c, &d, &c, &d, realContext);
 
   //From power.c

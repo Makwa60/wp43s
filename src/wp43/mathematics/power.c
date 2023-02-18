@@ -668,6 +668,16 @@ uint8_t PowerComplex(const real_t *yReal, const real_t *yImag, const real_t *xRe
           realCopy(const_plusInfinity, rImag);
       }
   }
+  else if(realIsZero(yReal) && realIsZero(yImag)) {
+      if(realIsZero(xReal)) {
+          realCopy(const_NaN, rReal);
+          realCopy(const_NaN, rImag);
+      }
+      else {
+          realCopy(const_0, rReal);
+          realCopy(const_0, rImag);
+      }
+  }
   else {
       real_t theta;
       real_t tmp;
