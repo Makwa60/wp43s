@@ -88,3 +88,13 @@ Out: EC=1 FL_CPXRES=1 FL_ASLIFT=1 RZ=LonI:"10" RY=LonI:"0" RX=LonI:"3"
 
 In:  FL_ASLIFT=1 FL_CPXRES=1      RZ=LonI:"10" RY=LonI:"0" RX=LonI:"0"
 Out: EC=1 FL_CPXRES=1 FL_ASLIFT=1 RZ=LonI:"10" RY=LonI:"0" RX=LonI:"0"
+
+In:  FL_SPCRES=1
+
+In:  FL_ASLIFT=0 FL_CPXRES=0      RZ=LonI:"10" RY=LonI:"0" RX=LonI:"3"
+Out: EC=0 FL_CPXRES=0 FL_ASLIFT=1 RL=LonI:"3" RX=Real:"inf"
+
+In:  FL_ASLIFT=0 FL_CPXRES=0      RZ=LonI:"10" RY=LonI:"0" RX=LonI:"0"
+Out: EC=0 FL_CPXRES=0 FL_ASLIFT=1 RL=LonI:"0" RX=Real:"NaN"
+
+In:  FL_SPCRES=0

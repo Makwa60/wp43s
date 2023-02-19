@@ -43,6 +43,9 @@ Out: EC=0 FL_CPXRES=0 FL_ASLIFT=1 RL=LonI:"97" RX=LonI:"1" RY=LonI:"3"
 In:  FL_ASLIFT=0 RY=LonI:"-100" RX=LonI:"25"
 Out: EC=0 FL_CPXRES=0 FL_ASLIFT=1 RL=LonI:"25" RX=LonI:"-4" RY=LonI:"0"
 
+In:  FL_ASLIFT=0 RY=LonI:"1" RX=LonI:"0"
+Out: EC=1 FL_CPXRES=0 FL_ASLIFT=0 RY=LonI:"1" RX=LonI:"0"
+
 
 
 ;=======================================
@@ -66,6 +69,9 @@ Out: EC=0 FL_CPXRES=0 FL_ASLIFT=1 RL=ShoI:"45247#8" RX=LonI:"6" RY=LonI:"8790"
 In:  FL_ASLIFT=0 FL_CPXRES=0 IM=2COMPL RY=LonI:"9" RX=ShoI:"5#7" ;RX=5
 Out: EC=0 FL_CPXRES=0 FL_ASLIFT=1 RL=ShoI:"5#7" RX=LonI:"1" RY=LonI:"4"
 
+In:  FL_ASLIFT=0 RY=LonI:"1" RX=ShoI:"0#3"
+Out: EC=1 FL_CPXRES=0 FL_ASLIFT=0 RY=LonI:"1" RX=ShoI:"0#3"
+
 ;=======================================
 ; Short Integer IDivR Long Integer --> Long Integer, Short Integer
 ;=======================================
@@ -86,6 +92,9 @@ Out: EC=0 FL_CPXRES=0 FL_ASLIFT=1 RL=LonI:"123456" RX=LonI:"0" RY=ShoI:"45247#8"
 
 In:  FL_ASLIFT=0 FL_CPXRES=0 IM=2COMPL RY=ShoI:"9#11" RX=LonI:"5" ;RY=9
 Out: EC=0 FL_CPXRES=0 FL_ASLIFT=1 RL=LonI:"5" RX=LonI:"1" RY=ShoI:"4#11"
+
+In:  FL_ASLIFT=0 RY=ShoI:"1#7" RX=LonI:"0"
+Out: EC=1 FL_CPXRES=0 FL_ASLIFT=0 RY=ShoI:"1#7" RX=LonI:"0"
 
 
 
@@ -182,6 +191,9 @@ Out: EC=0 FL_CPXRES=0 FL_ASLIFT=1 RL=Real:"3.453099789":MULTPI RX=LonI:"0" RY=Re
 In:  AM=MULTPI FL_CPXRES=0 FL_ASLIFT=0 RY=LonI:"2" RX=Real:"3.453099789":MULTPI
 Out: EC=0 FL_CPXRES=0 FL_ASLIFT=1 RL=Real:"3.453099789":MULTPI RX=LonI:"0" RY=Real:"2"
 
+In:  FL_ASLIFT=0 RY=LonI:"1" RX=Real:"0"
+Out: EC=1 FL_CPXRES=0 FL_ASLIFT=0 RY=LonI:"1" RX=Real:"0"
+
 ;=======================================
 ; Real IDivR Long Integer --> Long Integer, Real
 ;=======================================
@@ -275,6 +287,9 @@ Out: EC=0 FL_CPXRES=0 FL_ASLIFT=1 RL=LonI:"2" RX=LonI:"1" RY=Real:"1.453099789"
 In:  AM=MULTPI FL_CPXRES=0 FL_ASLIFT=0 RY=Real:"3.453099789":MULTPI RX=LonI:"2"
 Out: EC=0 FL_CPXRES=0 FL_ASLIFT=1 RL=LonI:"2" RX=LonI:"1" RY=Real:"1.453099789"
 
+In:  FL_ASLIFT=0 RY=Real:"1" RX=LonI:"0"
+Out: EC=1 FL_CPXRES=0 FL_ASLIFT=0 RY=Real:"1" RX=LonI:"0"
+
 
 
 ;=======================================
@@ -294,6 +309,9 @@ Out: EC=0 FL_CPXRES=0 FL_ASLIFT=1 RL=ShoI:"-7#10" RX=ShoI:"3#10" RY=ShoI:"-4#10"
 
 In:  FL_ASLIFT=0 FL_CPXRES=0 RY=ShoI:"12540#10" RX=ShoI:"10000#2"
 Out: EC=0 FL_CPXRES=0 FL_ASLIFT=1 RL=ShoI:"10000#2" RX=ShoI:"783#10" RY=ShoI:"12#10"
+
+In:  FL_ASLIFT=0 RY=ShoI:"1#7" RX=ShoI:"0#3"
+Out: EC=1 FL_CPXRES=0 FL_ASLIFT=0 RY=ShoI:"1#7" RX=ShoI:"0#3"
 
 
 
@@ -390,6 +408,9 @@ Out: EC=0 FL_CPXRES=0 FL_ASLIFT=1 RL=Real:"3.453099789":MULTPI RX=LonI:"0" RY=Re
 In:  AM=MULTPI FL_CPXRES=0 FL_ASLIFT=0 RY=ShoI:"2#13" RX=Real:"3.453099789":MULTPI
 Out: EC=0 FL_CPXRES=0 FL_ASLIFT=1 RL=Real:"3.453099789":MULTPI RX=LonI:"0" RY=Real:"2"
 
+In:  FL_ASLIFT=0 RY=ShoI:"1#7" RX=Real:"0"
+Out: EC=1 FL_CPXRES=0 FL_ASLIFT=0 RY=ShoI:"1#7" RX=Real:"0"
+
 ;=======================================
 ; Real IDivR Short Integer --> Long Integer, Real
 ;=======================================
@@ -482,6 +503,9 @@ Out: EC=0 FL_CPXRES=0 FL_ASLIFT=1 RL=ShoI:"2#12" RX=LonI:"1" RY=Real:"1.45309978
 
 In:  AM=MULTPI FL_CPXRES=0 FL_ASLIFT=0 RY=Real:"3.453099789":MULTPI RX=ShoI:"2#13"
 Out: EC=0 FL_CPXRES=0 FL_ASLIFT=1 RL=ShoI:"2#13" RX=LonI:"1" RY=Real:"1.453099789"
+
+In:  FL_ASLIFT=0 RY=Real:"1" RX=ShoI:"0#3"
+Out: EC=1 FL_CPXRES=0 FL_ASLIFT=0 RY=Real:"1" RX=ShoI:"0#3"
 
 
 
@@ -727,3 +751,6 @@ Out: EC=0 FL_CPXRES=0 FL_ASLIFT=1 RL=Real:"2":RAD RX=LonI:"1" RY=Real:"1.4530997
 
 In:  AM=MULTPI FL_CPXRES=0 FL_ASLIFT=0 RY=Real:"3.453099789":MULTPI RX=Real:"2":MULTPI
 Out: EC=0 FL_CPXRES=0 FL_ASLIFT=1 RL=Real:"2":MULTPI RX=LonI:"1" RY=Real:"1.453099789"
+
+In:  FL_ASLIFT=0 RY=Real:"1" RX=Real:"0"
+Out: EC=1 FL_CPXRES=0 FL_ASLIFT=0 RY=Real:"1" RX=Real:"0"

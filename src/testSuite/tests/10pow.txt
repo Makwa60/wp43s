@@ -16,6 +16,12 @@ Func: fn10Pow
 In:  FL_ASLIFT=0 FL_CPXRES=0 RX=LonI:"5"
 Out: EC=0 FL_CPXRES=0 FL_ASLIFT=1 RL=LonI:"5" RX=LonI:"100000"
 
+In:  FL_ASLIFT=0 FL_CPXRES=0 RX=LonI:"0"
+Out: EC=0 FL_CPXRES=0 FL_ASLIFT=1 RL=LonI:"0" RX=LonI:"1"
+
+In:  FL_ASLIFT=0 FL_CPXRES=0 RX=LonI:"-5"
+Out: EC=0 FL_CPXRES=0 FL_ASLIFT=1 RL=LonI:"-5" RX=LonI:"0"
+
 
 
 ;=======================================

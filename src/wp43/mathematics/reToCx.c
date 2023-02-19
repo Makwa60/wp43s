@@ -153,8 +153,8 @@ void fnReToCx(uint16_t unusedButMandatoryParameter) {
     }
 
     realMatrixFree(&iMat);
-    fnDropY(NOPARAM);
     if(lastErrorCode == ERROR_NONE) {
+      fnDropY(NOPARAM);
       setSystemFlag(FLAG_ASLIFT);
     }
   }
