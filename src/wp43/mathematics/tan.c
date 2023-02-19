@@ -92,14 +92,7 @@ void tanLonI(void) {
   real_t sin, cos, tan;
 
   if(currentAngularMode == amMultPi) {
-    longInteger_t lgInt;
-    convertLongIntegerRegisterToLongInteger(REGISTER_X, lgInt);
-    if(longIntegerIsEven(lgInt)) {
-      realZero(&tan);
-    }
-    else {
-      realPlus(const_pi, &tan, &ctxtReal39);
-    }
+    realZero(&tan);
   }
   else {
     longIntegerAngleReduction(REGISTER_X, currentAngularMode, &tan);
