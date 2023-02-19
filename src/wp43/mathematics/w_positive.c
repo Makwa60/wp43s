@@ -67,13 +67,12 @@ void wPosLonI(void) {
 
 
 void wPosReal(void) {
-  real_t x, res, resi, threshold;
+  real_t x, res, resi;
 
-  realDivide(const__1, const_eE, &threshold, &ctxtReal39);
   real34ToReal(REGISTER_REAL34_DATA(REGISTER_X), &x);
 
   if(getRegisterAngularMode(REGISTER_X) == amNone) {
-    if(realCompareGreaterEqual(&x, &threshold)) {
+    if(realCompareGreaterEqual(&x, const__1oneE)) {
       WP34S_LambertW(&x, &res, false, &ctxtReal39);
       convertRealToReal34ResultRegister(&res, REGISTER_X);
     }
