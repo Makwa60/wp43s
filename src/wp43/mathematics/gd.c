@@ -149,11 +149,14 @@ void gdCplx(uint16_t gdOrInvGd) {
 
 uint8_t GudermannianReal(const real_t *x, real_t *res, realContext_t *realContext) {
   if(realIsInfinite(x)) {
-    realCopy(const_piOn2, res);
-    if(!realIsPositive(x)) {
+    if(realIsPositive(x)) {
+      realCopy(const_piOn2, res);
+    }
+    else {
+      realCopy(const_piOn2, res);
       realChangeSign(res);
     }
-   }
+  }
   else {
     /*
      * Gd(x) = 2 * Arctan(Exp(x)) - PI/2
