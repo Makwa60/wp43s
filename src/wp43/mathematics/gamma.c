@@ -235,7 +235,7 @@ void lnGammaReal(void) {
       #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
     }
     else {
-      realToReal34((real34IsPositive(&xReal) ? const_plusInfinity : const_NaN), REGISTER_REAL34_DATA(REGISTER_X));
+      realToReal34((realIsPositive(&xReal) ? const_plusInfinity : const_NaN), REGISTER_REAL34_DATA(REGISTER_X));
     }
     return;
   }
