@@ -193,8 +193,7 @@ static void pyxLong(longInteger_t y, longInteger_t x, longInteger_t result) {
     realAdd(&yReal, const_1, &yReal, &ctxtReal75);
     WP34S_LnGamma(&yReal, &yReal, &ctxtReal75);                  // y = ln(y!)
 
-    realSubtract(&yReal, &resultReal, &resultReal, &ctxtReal75);
-    realSubtract(&resultReal, &xReal, &resultReal, &ctxtReal75); // r = ln(y!) - ln((y-x)!)
+    realSubtract(&yReal, &resultReal, &resultReal, &ctxtReal75); // r = ln(y!) - ln((y-x)!)
 
     realExp(&resultReal, &resultReal, &ctxtReal75);              // r = y! / (y-x)!
 
@@ -281,7 +280,7 @@ void cpyxLonIReal(uint16_t combOrPerm) {
   real34ToReal(REGISTER_REAL34_DATA(REGISTER_X), &x);
   convertLongIntegerRegisterToReal(REGISTER_Y, &y, &ctxtReal75);
 
-  if(realIsNegative(&x) || realIsNegative(&y)) {
+  if(realIsNegative(&x) || realIsNegative(&y) || realCompareGreaterThan(&x, &y)) {
     displayCalcErrorMessage(ERROR_OUT_OF_RANGE, ERR_REGISTER_LINE, REGISTER_X);
     errorMoreInfo("cannot calculate Cyx/Pyx, conditions: x>=0, y>=0, and x<=y.");
   }
