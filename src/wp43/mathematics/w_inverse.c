@@ -66,9 +66,8 @@ void wInvLonI(void) {
 
 
 void wInvReal(void) {
-  real_t x, res, threshold;
+  real_t x, res;
 
-  realDivide(const__1, const_eE, &threshold, &ctxtReal39);
   real34ToReal(REGISTER_REAL34_DATA(REGISTER_X), &x);
 
   if(getRegisterAngularMode(REGISTER_X) == amNone) {
