@@ -272,7 +272,7 @@ void lnbetaCplxLonI(void) {
   convertLongIntegerRegisterToReal(REGISTER_X, &xReal, &ctxtReal39);
   real34ToReal(const34_0, &xImag);
 
-  _lnBetaComplex(&xReal, &xImag, &yImag, &yImag, &rReal, &rImag, &ctxtReal39);
+  _lnBetaComplex(&xReal, &xImag, &yReal, &yImag, &rReal, &rImag, &ctxtReal39);
 
   reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE_IN_BYTES, amNone);
   convertRealToReal34ResultRegister(&rReal, REGISTER_X);
@@ -312,7 +312,7 @@ void lnbetaCplxReal(void) {
   real34ToReal(REGISTER_REAL34_DATA(REGISTER_X), &xReal);
   real34ToReal(const34_0, &xImag);
 
-  _lnBetaComplex(&xReal, &xImag, &yImag, &yImag, &rReal, &rImag, &ctxtReal39);
+  _lnBetaComplex(&xReal, &xImag, &yReal, &yImag, &rReal, &rImag, &ctxtReal39);
 
   reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE_IN_BYTES, amNone);
   convertRealToReal34ResultRegister(&rReal, REGISTER_X);
