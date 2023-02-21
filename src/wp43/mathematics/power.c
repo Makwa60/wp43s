@@ -577,10 +577,15 @@ void powRealReal(void) {
 
   #if USE_REAL34_FUNCTIONS == 1
     if(getSystemFlag(FLAG_FASTFN)) {
-      Power34Real(REGISTER_REAL34_DATA(REGISTER_Y), REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X));
-      if(!getFlag(FLAG_CPXRES) || !real34IsNaN(REGISTER_REAL34_DATA(REGISTER_X))) {
+      real34_t r;
+      Power34Real(REGISTER_REAL34_DATA(REGISTER_Y), REGISTER_REAL34_DATA(REGISTER_X), &r);
+      if(!getFlag(FLAG_CPXRES) || !real34IsNaN(&r)) {
+        real34Copy(&r, REGISTER_REAL34_DATA(REGISTER_X));
         setRegisterAngularMode(REGISTER_X, amNone);
         return;
+      }
+      else {
+        realCopy(const_NaN, &x);
       }
     }
     else
