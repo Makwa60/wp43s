@@ -58,7 +58,16 @@ Out: EC=24 FL_ASLIFT=0 RY=ShoI:"10#10" RX=Real:"100.0"
 ;=======================================
 ; Error case: ERROR_ARG_EXCEEDS_FUNCTION_DOMAIN
 ;=======================================
-In:  FL_ASLIFT=0  RY=Real:"0.0" RX=Real:"100.0"
+In:  FL_ASLIFT=0 FL_SPCRES=1 RY=Real:"0.0" RX=Real:"100.0"
+Out: EC=0 FL_ASLIFT=1 RL=Real:"100.0" RX=Real:"NaN"
+
+In:  FL_ASLIFT=0  RY=Real:"10.0" RX=Real:"100.0"
+Out: EC=0 FL_ASLIFT=1 RL=Real:"100.0" RX=Real:"inf"
+
+In:  FL_ASLIFT=0  RY=Real:"-10.0" RX=Real:"100.0"
+Out: EC=0 FL_ASLIFT=1 RL=Real:"100.0" RX=Real:"-inf"
+
+In:  FL_ASLIFT=0 FL_SPCRES=0 RY=Real:"0.0" RX=Real:"100.0"
 Out: EC=1 FL_ASLIFT=0 RY=Real:"0.0" RX=Real:"100.0"
 
 In:  FL_ASLIFT=0  RY=LonI:"0" RX=Real:"100.0"

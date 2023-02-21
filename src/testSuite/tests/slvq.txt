@@ -19,6 +19,19 @@ Out: EC=1 FL_CPXRES=0 FL_ASLIFT=1 RL=LonI:"852" RZ=Real:"0.0" RY=Real:"0.0" RX=R
 
 
 ;=======================================================================================================================
+; Error case: invalid type
+;=======================================================================================================================
+In:  FL_ASLIFT=0 FL_CPXRES=0 RZ=LonI:"1" RY=LonI:"1" RX=Stri:"This is a string"
+Out: EC=24 FL_CPXRES=0 FL_ASLIFT=0 RZ=LonI:"1" RY=LonI:"1" RX=Stri:"This is a string"
+
+In:  FL_ASLIFT=0 FL_CPXRES=0 RZ=LonI:"1" RY=Stri:"This is a string" RX=LonI:"1"
+Out: EC=24 FL_CPXRES=0 FL_ASLIFT=0 RZ=LonI:"1" RY=Stri:"This is a string" RX=LonI:"1"
+
+In:  FL_ASLIFT=0 FL_CPXRES=0 RZ=Stri:"This is a string" RY=LonI:"1" RX=LonI:"1"
+Out: EC=24 FL_CPXRES=0 FL_ASLIFT=0 RZ=Stri:"This is a string" RY=LonI:"1" RX=LonI:"1"
+
+
+;=======================================================================================================================
 ; REAL Domain
 ;=======================================================================================================================
 
@@ -134,6 +147,15 @@ Out: EC=0 FL_CPXRES=0 FL_ASLIFT=1 RL=LonI:"1" RZ=Real:"9999999999999999999999999
                                 RY=Real:"-1e-50" ...
                                 RX=Real:"-99999999999999999999999999999999999999999999999999.99999999999999999999999999999999999999999999999999"
 
+; x + 6 = 0
+;-------------------------------------------------
+In:  FL_ASLIFT=0 FL_CPXRES=0 RL=LonI:"0" RZ=LonI:"0" ...
+                                   RY=LonI:"1" ...
+                                   RX=LonI:"6"
+Out: EC=0 FL_CPXRES=0 FL_ASLIFT=1 RL=LonI:"6" RZ=Real:"1" ...
+                                RY=Real:"-6" ...
+                                RX=Real:"-6"
+
 
 
 ;=======================================================================================================================
@@ -165,3 +187,12 @@ Out: EC=0 FL_CPXRES=1 FL_ASLIFT=1    RL=Real:"-5.0" RZ=Cplx:"-1.0 i 20.0" ...
 ;------------------------------------
 In:  FL_ASLIFT=0 FL_CPXRES=0 RL=LonI:"5"   RZ=Cplx:"0.0 i 1.0" RY=Cplx:"0.0 i -1.0" RX=Real:"0.0"
 Out: EC=0 FL_CPXRES=0 FL_ASLIFT=1    RL=Real:"0.0" RZ=Real:"-1.0"      RY=Real:"1.0"        RX=Real:"0.0"
+
+; x + 6 = 0
+;-------------------------------------------------
+In:  FL_ASLIFT=0 FL_CPXRES=0 RL=LonI:"0" RZ=Cplx:"0.0 i 0.0" ...
+                                   RY=Cplx:"1.0 i 0.0" ...
+                                   RX=Cplx:"0.0 i 1.0"
+Out: EC=0 FL_CPXRES=1 FL_ASLIFT=1 RL=Cplx:"0.0 i 1.0" RZ=Real:"1.0" ...
+                                RY=Cplx:"0.0 i -1.0" ...
+                                RX=Cplx:"0.0 i -1.0"

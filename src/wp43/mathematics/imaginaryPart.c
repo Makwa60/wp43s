@@ -54,23 +54,21 @@ void fnImaginaryPart(uint16_t unusedButMandatoryParameter) {
 
 
 void imagPartCxma(void) {
-  #if !defined(TESTSUITE_BUILD)
-    complex34Matrix_t cMat;
-    real34Matrix_t rMat;
+  complex34Matrix_t cMat;
+  real34Matrix_t rMat;
 
-    linkToComplexMatrixRegister(REGISTER_X, &cMat);
-    if(realMatrixInit(&rMat, cMat.header.matrixRows, cMat.header.matrixColumns)) {
-      for(uint16_t i = 0; i < cMat.header.matrixRows * cMat.header.matrixColumns; ++i) {
-        real34Copy(VARIABLE_IMAG34_DATA(&cMat.matrixElements[i]), &rMat.matrixElements[i]);
-      }
+  linkToComplexMatrixRegister(REGISTER_X, &cMat);
+  if(realMatrixInit(&rMat, cMat.header.matrixRows, cMat.header.matrixColumns)) {
+    for(uint16_t i = 0; i < cMat.header.matrixRows * cMat.header.matrixColumns; ++i) {
+      real34Copy(VARIABLE_IMAG34_DATA(&cMat.matrixElements[i]), &rMat.matrixElements[i]);
+    }
 
-      convertReal34MatrixToReal34MatrixRegister(&rMat, REGISTER_X); // cMat invalidates here
-      realMatrixFree(&rMat);
-    }
-    else {
-      displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
-    }
-  #endif // !TESTSUITE_BUILD
+    convertReal34MatrixToReal34MatrixRegister(&rMat, REGISTER_X); // cMat invalidates here
+    realMatrixFree(&rMat);
+  }
+  else {
+    displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
+  }
 }
 
 

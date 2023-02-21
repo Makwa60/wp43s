@@ -22,6 +22,28 @@ Out: EC=0 FL_CPXRES=0 FL_ASLIFT=1 RL=LonI:"1" RX=Real:"0.36787944117144232159552
 
 
 ;=======================================
+; gammaQ(Long Integer, Real) --> Real
+;=======================================
+In:  AM=DEG FL_ASLIFT=0 FL_CPXRES=0 RY=LonI:"1" RX=Real:"0"
+Out: EC=1 FL_CPXRES=0 FL_ASLIFT=0 RY=LonI:"1" RX=Real:"0"
+
+In:  AM=DEG FL_ASLIFT=0 FL_CPXRES=0 RY=LonI:"1" RX=Real:"1"
+Out: EC=0 FL_CPXRES=0 FL_ASLIFT=1 RL=Real:"1" RX=Real:"0.3678794411714423215955237701614609"
+
+
+
+;=======================================
+; gammaQ(Real, Long Integer) --> Real
+;=======================================
+In:  AM=DEG FL_ASLIFT=0 FL_CPXRES=0 RY=Real:"1" RX=LonI:"0"
+Out: EC=1 FL_CPXRES=0 FL_ASLIFT=0 RY=Real:"1" RX=LonI:"0"
+
+In:  AM=DEG FL_ASLIFT=0 FL_CPXRES=0 RY=Real:"1" RX=LonI:"1"
+Out: EC=0 FL_CPXRES=0 FL_ASLIFT=1 RL=LonI:"1" RX=Real:"0.3678794411714423215955237701614609"
+
+
+
+;=======================================
 ; gammaQ(Time)
 ;=======================================
 

@@ -148,35 +148,33 @@ void atan2RealReal(void) {
 
 
 void atan2RemaRema(void) {
-  #if !defined(TESTSUITE_BUILD)
-    real34Matrix_t y, x;
+  real34Matrix_t y, x;
 
-    linkToRealMatrixRegister(REGISTER_Y, &y);
-    linkToRealMatrixRegister(REGISTER_X, &x);
+  linkToRealMatrixRegister(REGISTER_Y, &y);
+  linkToRealMatrixRegister(REGISTER_X, &x);
 
-    if(y.header.matrixRows == x.header.matrixRows && y.header.matrixColumns == x.header.matrixColumns) {
-      for(int i = 0; i < x.header.matrixRows * x.header.matrixColumns; ++i) {
-        real_t yy, xx;
-        real34ToReal(&y.matrixElements[i], &yy);
-        real34ToReal(&x.matrixElements[i], &xx);
-        if(realIsZero(&yy) && realIsZero(&xx) && !getSystemFlag(FLAG_SPCRES)) {
-          displayCalcErrorMessage(ERROR_ARG_EXCEEDS_FUNCTION_DOMAIN, ERR_REGISTER_LINE, REGISTER_X);
-          errorMoreInfo("X = 0 and Y = 0");
-          return;
-        }
-        WP34S_Atan2(&yy, &xx, &xx, &ctxtReal39);
-        convertAngleFromTo(&xx, amRadian, currentAngularMode, &ctxtReal39);
-        roundToSignificantDigits(&xx, &xx, significantDigits == 0 ? 34 : significantDigits, &ctxtReal75);
-        realToReal34(&xx, &x.matrixElements[i]);
+  if(y.header.matrixRows == x.header.matrixRows && y.header.matrixColumns == x.header.matrixColumns) {
+    for(int i = 0; i < x.header.matrixRows * x.header.matrixColumns; ++i) {
+      real_t yy, xx;
+      real34ToReal(&y.matrixElements[i], &yy);
+      real34ToReal(&x.matrixElements[i], &xx);
+      if(realIsZero(&yy) && realIsZero(&xx) && !getSystemFlag(FLAG_SPCRES)) {
+        displayCalcErrorMessage(ERROR_ARG_EXCEEDS_FUNCTION_DOMAIN, ERR_REGISTER_LINE, REGISTER_X);
+        errorMoreInfo("X = 0 and Y = 0");
+        return;
       }
+      WP34S_Atan2(&yy, &xx, &xx, &ctxtReal39);
+      convertAngleFromTo(&xx, amRadian, currentAngularMode, &ctxtReal39);
+      roundToSignificantDigits(&xx, &xx, significantDigits == 0 ? 34 : significantDigits, &ctxtReal75);
+      realToReal34(&xx, &x.matrixElements[i]);
     }
-    else {
-      displayCalcErrorMessage(ERROR_MATRIX_MISMATCH, ERR_REGISTER_LINE, REGISTER_X);
-      errorMoreInfo("cannot calculate atan2 with %d" STD_CROSS "%d-matrix and %d" STD_CROSS "%d-matrix",
-          x.header.matrixRows, x.header.matrixColumns,
-          y.header.matrixRows, y.header.matrixColumns);
-    }
-  #endif // !TESTSUITE_BUILD
+  }
+  else {
+    displayCalcErrorMessage(ERROR_MATRIX_MISMATCH, ERR_REGISTER_LINE, REGISTER_X);
+    errorMoreInfo("cannot calculate atan2 with %d" STD_CROSS "%d-matrix and %d" STD_CROSS "%d-matrix",
+        x.header.matrixRows, x.header.matrixColumns,
+        y.header.matrixRows, y.header.matrixColumns);
+  }
 }
 
 
@@ -194,27 +192,25 @@ void atan2RemaReal(void) {
 
 
 void atan2RealRema(void) {
-  #if !defined(TESTSUITE_BUILD)
-    real_t y;
-    real34Matrix_t x;
+  real_t y;
+  real34Matrix_t x;
 
-    real34ToReal(REGISTER_REAL34_DATA(REGISTER_Y), &y);
-    linkToRealMatrixRegister(REGISTER_X, &x);
+  real34ToReal(REGISTER_REAL34_DATA(REGISTER_Y), &y);
+  linkToRealMatrixRegister(REGISTER_X, &x);
 
-    for(int i = 0; i < x.header.matrixRows * x.header.matrixColumns; ++i) {
-      real_t xx;
-      real34ToReal(&x.matrixElements[i], &xx);
-      if(realIsZero(&y) && realIsZero(&xx) && !getSystemFlag(FLAG_SPCRES)) {
-        displayCalcErrorMessage(ERROR_ARG_EXCEEDS_FUNCTION_DOMAIN, ERR_REGISTER_LINE, REGISTER_X);
-        errorMoreInfo("X = 0 and Y = 0");
-        return;
-      }
-      WP34S_Atan2(&y, &xx, &xx, &ctxtReal39);
-      convertAngleFromTo(&xx, amRadian, currentAngularMode, &ctxtReal39);
-      roundToSignificantDigits(&xx, &xx, significantDigits == 0 ? 34 : significantDigits, &ctxtReal75);
-      realToReal34(&xx, &x.matrixElements[i]);
+  for(int i = 0; i < x.header.matrixRows * x.header.matrixColumns; ++i) {
+    real_t xx;
+    real34ToReal(&x.matrixElements[i], &xx);
+    if(realIsZero(&y) && realIsZero(&xx) && !getSystemFlag(FLAG_SPCRES)) {
+      displayCalcErrorMessage(ERROR_ARG_EXCEEDS_FUNCTION_DOMAIN, ERR_REGISTER_LINE, REGISTER_X);
+      errorMoreInfo("X = 0 and Y = 0");
+      return;
     }
-  #endif // !TESTSUITE_BUILD
+    WP34S_Atan2(&y, &xx, &xx, &ctxtReal39);
+    convertAngleFromTo(&xx, amRadian, currentAngularMode, &ctxtReal39);
+    roundToSignificantDigits(&xx, &xx, significantDigits == 0 ? 34 : significantDigits, &ctxtReal75);
+    realToReal34(&xx, &x.matrixElements[i]);
+  }
 }
 
 

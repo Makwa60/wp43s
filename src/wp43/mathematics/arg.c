@@ -89,23 +89,21 @@ void argCplx(void) {
 
 
 void argCxma(void) {
-  #if !defined(TESTSUITE_BUILD)
-    complex34Matrix_t cMat;
-    real34Matrix_t rMat;
-    real34_t dummy;
+  complex34Matrix_t cMat;
+  real34Matrix_t rMat;
+  real34_t dummy;
 
-    linkToComplexMatrixRegister(REGISTER_X, &cMat);
-    if(realMatrixInit(&rMat, cMat.header.matrixRows, cMat.header.matrixColumns)) {
-      for(uint16_t i = 0; i < cMat.header.matrixRows * cMat.header.matrixColumns; ++i) {
-        real34RectangularToPolar(VARIABLE_REAL34_DATA(&cMat.matrixElements[i]), VARIABLE_IMAG34_DATA(&cMat.matrixElements[i]), &dummy, &rMat.matrixElements[i]);
-        convertAngle34FromTo(&rMat.matrixElements[i], amRadian, currentAngularMode);
-      }
+  linkToComplexMatrixRegister(REGISTER_X, &cMat);
+  if(realMatrixInit(&rMat, cMat.header.matrixRows, cMat.header.matrixColumns)) {
+    for(uint16_t i = 0; i < cMat.header.matrixRows * cMat.header.matrixColumns; ++i) {
+      real34RectangularToPolar(VARIABLE_REAL34_DATA(&cMat.matrixElements[i]), VARIABLE_IMAG34_DATA(&cMat.matrixElements[i]), &dummy, &rMat.matrixElements[i]);
+      convertAngle34FromTo(&rMat.matrixElements[i], amRadian, currentAngularMode);
+    }
 
-      convertReal34MatrixToReal34MatrixRegister(&rMat, REGISTER_X);
-      realMatrixFree(&rMat);
-    }
-    else {
-      displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
-    }
-  #endif // !TESTSUITE_BUILD
+    convertReal34MatrixToReal34MatrixRegister(&rMat, REGISTER_X);
+    realMatrixFree(&rMat);
+  }
+  else {
+    displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
+  }
 }

@@ -13,8 +13,6 @@ Func: fnMultiply
 
 ;==================================================================
 ; Time x Long Integer  see in multiplication_longInteger.txt
-; Time x Real          see in multiplication_real.txt
-; Time x Complex       see in multiplication_complex.txt
 ;==================================================================
 
 
@@ -88,6 +86,9 @@ Out: EC=0 FL_CPXRES=0 FL_ASLIFT=1 RL=Real:"4.524754264" RX=Time:"558611.63244749
 In:  FL_ASLIFT=0 FL_CPXRES=0 IM=2COMPL RY=Time:"12:34:56.789" RX=Real:"4.524754264"
 Out: EC=0 FL_CPXRES=0 FL_ASLIFT=1 RL=Real:"4.524754264" RX=Time:"56:55:56.839173258296"
 
+In:  FL_ASLIFT=0 FL_CPXRES=0 IM=2COMPL RY=Time:"123456.789" RX=Real:"4.524754264":Deg
+Out: EC=24 FL_CPXRES=0 FL_ASLIFT=0 RY=Time:"123456.789" RX=Real:"4.524754264":Deg
+
 ;=======================================
 ; Real x Time
 ;=======================================
@@ -96,6 +97,9 @@ Out: EC=0 FL_CPXRES=0 FL_ASLIFT=1 RL=Time:"45247.54264" RX=Time:"558611.63244749
 
 In:  FL_ASLIFT=0 FL_CPXRES=0 IM=2COMPL RY=Real:"12.3456789" RX=Time:"4:52:47.54264"
 Out: EC=0 FL_CPXRES=0 FL_ASLIFT=1 RL=Time:"4:52:47.54264" RX=Time:"60:14:43.240495498296"
+
+In:  FL_ASLIFT=0 FL_CPXRES=0 IM=2COMPL RY=Real:"12.3456789":Deg RX=Time:"45247.54264"
+Out: EC=24 FL_CPXRES=0 FL_ASLIFT=0 RY=Real:"12.3456789":Deg RX=Time:"45247.54264"
 
 
 

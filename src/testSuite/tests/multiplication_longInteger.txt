@@ -66,20 +66,28 @@ Out: EC=24 FL_ASLIFT=0 RX=LonI:"-1234"
 ;=======================================
 ; Long Integer x Real Matrix
 ;=======================================
+In: FL_ASLIFT=0 FL_CPXRES=0 IM=2COMPL RY=LonI:"7" RX=ReMa:"M3,2[1,2,3,4,5,6]"
+Out: EC=0 FL_CPXRES=0 FL_ASLIFT=1 RL=ReMa:"M3,2[1,2,3,4,5,6]" RX=ReMa:"M3,2[7,14,21,28,35,42]"
 
 ;=======================================
 ; Real Matrix x Long Integer
 ;=======================================
+In: FL_ASLIFT=0 FL_CPXRES=0 IM=2COMPL RY=ReMa:"M3,2[1,2,3,4,5,6]" RX=LonI:"7"
+Out: EC=0 FL_CPXRES=0 FL_ASLIFT=1 RL=LonI:"7" RX=ReMa:"M3,2[7,14,21,28,35,42]"
 
 
 
 ;=======================================
 ; Long Integer x Complex Matrix
 ;=======================================
+In: FL_ASLIFT=0 FL_CPXRES=0 IM=2COMPL RY=LonI:"13" RX=CxMa:"M3,2[1i2,3i4,5i6,7i8,9i10,11i12]"
+Out: EC=0 FL_CPXRES=1 FL_ASLIFT=1 RL=CxMa:"M3,2[1i2,3i4,5i6,7i8,9i10,11i12]" RX=CxMa:"M3,2[13i26,39i52,65i78,91i104,117i130,143i156]"
 
 ;=======================================
 ; Complex Matrix x Long Integer
 ;=======================================
+In: FL_ASLIFT=0 FL_CPXRES=0 IM=2COMPL RY=CxMa:"M3,2[1i2,3i4,5i6,7i8,9i10,11i12]" RX=LonI:"13"
+Out: EC=0 FL_CPXRES=1 FL_ASLIFT=1 RL=LonI:"13" RX=CxMa:"M3,2[13i26,39i52,65i78,91i104,117i130,143i156]"
 
 
 

@@ -41,6 +41,8 @@ Out: EC=24 FL_ASLIFT=0 RX=Stri:"String test"
 ;=======================================
 ; fp(Real Matrix)
 ;=======================================
+In:  AM=RAD FL_ASLIFT=0 FL_CPXRES=0 RX=ReMa:"M2,3[1.1,-2.3,3.5,-5.7,7.8,-8.9]"
+Out: EC=0 FL_CPXRES=0 FL_ASLIFT=1 RL=ReMa:"M2,3[1.1,-2.3,3.5,-5.7,7.8,-8.9]" RX=ReMa:"M2,3[0.1,-0.3,0.5,-0.7,0.8,-0.9]"
 
 
 

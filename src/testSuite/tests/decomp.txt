@@ -29,6 +29,15 @@ Out: EC=0 FL_CPXRES=0 FL_ASLIFT=1 RL=Real:"0.25" RX=LonI:"4" RY=LonI:"1"
 In:  WS=64 FL_ASLIFT=1 RX=Real:"-0.25"
 Out: EC=0 FL_CPXRES=0 FL_ASLIFT=1 RL=Real:"-0.25" RX=LonI:"4" RY=LonI:"-1"
 
+In:  WS=64 FL_ASLIFT=1 RX=Real:"inf"
+Out: EC=0 FL_CPXRES=0 FL_ASLIFT=1 RL=Real:"inf" RX=LonI:"0" RY=LonI:"1"
+
+In:  WS=64 FL_ASLIFT=1 RX=Real:"-inf"
+Out: EC=0 FL_CPXRES=0 FL_ASLIFT=1 RL=Real:"-inf" RX=LonI:"0" RY=LonI:"-1"
+
+In:  WS=64 FL_ASLIFT=1 RX=Real:"NaN"
+Out: EC=0 FL_CPXRES=0 FL_ASLIFT=1 RL=Real:"NaN" RX=LonI:"0" RY=LonI:"0"
+
 ;************************************************************************************************************************************************************
 ; DECOMP(*) -> Error 24
 ;************************************************************************************************************************************************************

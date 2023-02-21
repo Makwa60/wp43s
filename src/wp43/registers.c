@@ -1006,15 +1006,15 @@ void adjustResult(calcRegister_t res, bool dropY, bool setCpxRes, calcRegister_t
   bool     oneArgumentIsComplex = false;
 
   if(op1 >= 0) {
-    oneArgumentIsComplex = oneArgumentIsComplex || getRegisterDataType(op1) == dtComplex34;
+    oneArgumentIsComplex = oneArgumentIsComplex || getRegisterDataType(op1) == dtComplex34 || getRegisterDataType(op1) == dtComplex34Matrix;
   }
 
   if(op2 >= 0) {
-    oneArgumentIsComplex = oneArgumentIsComplex || getRegisterDataType(op2) == dtComplex34;
+    oneArgumentIsComplex = oneArgumentIsComplex || getRegisterDataType(op2) == dtComplex34 || getRegisterDataType(op2) == dtComplex34Matrix;
   }
 
   if(op3 >= 0) {
-    oneArgumentIsComplex = oneArgumentIsComplex || getRegisterDataType(op3) == dtComplex34;
+    oneArgumentIsComplex = oneArgumentIsComplex || getRegisterDataType(op3) == dtComplex34 || getRegisterDataType(op3) == dtComplex34Matrix;
   }
 
   resultDataType = getRegisterDataType(res);
@@ -1050,42 +1050,40 @@ void adjustResult(calcRegister_t res, bool dropY, bool setCpxRes, calcRegister_t
         break;
       }
 
-      #if !defined(TESTSUITE_BUILD)
-        case dtReal34Matrix: {
-          real34Matrix_t matrix;
-          linkToRealMatrixRegister(res, &matrix);
-          for(uint32_t i = 0; i < matrix.header.matrixRows * matrix.header.matrixColumns; i++) {
-            if(real34IsInfinite(VARIABLE_REAL34_DATA(&matrix.matrixElements[i]))) {
-              displayCalcErrorMessage(real34IsPositive(VARIABLE_REAL34_DATA(&matrix.matrixElements[i])) ? ERROR_OVERFLOW_PLUS_INF : ERROR_OVERFLOW_MINUS_INF , ERR_REGISTER_LINE, res);
-            }
-            else if(real34IsZero(VARIABLE_REAL34_DATA(&matrix.matrixElements[i]))) {
-              real34SetPositiveSign(VARIABLE_REAL34_DATA(&matrix.matrixElements[i]));
-            }
+      case dtReal34Matrix: {
+        real34Matrix_t matrix;
+        linkToRealMatrixRegister(res, &matrix);
+        for(uint32_t i = 0; i < matrix.header.matrixRows * matrix.header.matrixColumns; i++) {
+          if(real34IsInfinite(VARIABLE_REAL34_DATA(&matrix.matrixElements[i]))) {
+            displayCalcErrorMessage(real34IsPositive(VARIABLE_REAL34_DATA(&matrix.matrixElements[i])) ? ERROR_OVERFLOW_PLUS_INF : ERROR_OVERFLOW_MINUS_INF , ERR_REGISTER_LINE, res);
           }
-          break;
-        }
-
-        case dtComplex34Matrix: {
-          complex34Matrix_t matrix;
-          linkToComplexMatrixRegister(res, &matrix);
-          for(uint32_t i = 0; i < matrix.header.matrixRows * matrix.header.matrixColumns; i++) {
-            if(real34IsInfinite(VARIABLE_REAL34_DATA(&matrix.matrixElements[i]))) {
-              displayCalcErrorMessage(real34IsPositive(VARIABLE_REAL34_DATA(&matrix.matrixElements[i])) ? ERROR_OVERFLOW_PLUS_INF : ERROR_OVERFLOW_MINUS_INF , ERR_REGISTER_LINE, res);
-            }
-            else if(real34IsZero(VARIABLE_REAL34_DATA(&matrix.matrixElements[i]))) {
-              real34SetPositiveSign(VARIABLE_REAL34_DATA(&matrix.matrixElements[i]));
-            }
-
-            if(real34IsInfinite(VARIABLE_IMAG34_DATA(&matrix.matrixElements[i]))) {
-              displayCalcErrorMessage(real34IsPositive(VARIABLE_IMAG34_DATA(&matrix.matrixElements[i])) ? ERROR_OVERFLOW_PLUS_INF : ERROR_OVERFLOW_MINUS_INF , ERR_REGISTER_LINE, res);
-            }
-            else if(real34IsZero(VARIABLE_IMAG34_DATA(&matrix.matrixElements[i]))) {
-              real34SetPositiveSign(VARIABLE_IMAG34_DATA(&matrix.matrixElements[i]));
-            }
+          else if(real34IsZero(VARIABLE_REAL34_DATA(&matrix.matrixElements[i]))) {
+            real34SetPositiveSign(VARIABLE_REAL34_DATA(&matrix.matrixElements[i]));
           }
-          break;
         }
-      #endif // !TESTSUITE_BUILD
+        break;
+      }
+
+      case dtComplex34Matrix: {
+        complex34Matrix_t matrix;
+        linkToComplexMatrixRegister(res, &matrix);
+        for(uint32_t i = 0; i < matrix.header.matrixRows * matrix.header.matrixColumns; i++) {
+          if(real34IsInfinite(VARIABLE_REAL34_DATA(&matrix.matrixElements[i]))) {
+            displayCalcErrorMessage(real34IsPositive(VARIABLE_REAL34_DATA(&matrix.matrixElements[i])) ? ERROR_OVERFLOW_PLUS_INF : ERROR_OVERFLOW_MINUS_INF , ERR_REGISTER_LINE, res);
+          }
+          else if(real34IsZero(VARIABLE_REAL34_DATA(&matrix.matrixElements[i]))) {
+            real34SetPositiveSign(VARIABLE_REAL34_DATA(&matrix.matrixElements[i]));
+          }
+
+          if(real34IsInfinite(VARIABLE_IMAG34_DATA(&matrix.matrixElements[i]))) {
+            displayCalcErrorMessage(real34IsPositive(VARIABLE_IMAG34_DATA(&matrix.matrixElements[i])) ? ERROR_OVERFLOW_PLUS_INF : ERROR_OVERFLOW_MINUS_INF , ERR_REGISTER_LINE, res);
+          }
+          else if(real34IsZero(VARIABLE_IMAG34_DATA(&matrix.matrixElements[i]))) {
+            real34SetPositiveSign(VARIABLE_IMAG34_DATA(&matrix.matrixElements[i]));
+          }
+        }
+        break;
+      }
 
       default: {
         break;
@@ -1093,11 +1091,13 @@ void adjustResult(calcRegister_t res, bool dropY, bool setCpxRes, calcRegister_t
     }
   }
 
-  if(resultDataType == dtTime) {
-    checkTimeRange(REGISTER_REAL34_DATA(res));
-  }
-  if(resultDataType == dtDate) {
-    checkDateRange(REGISTER_REAL34_DATA(res));
+  if(lastErrorCode == 0) {
+    if(resultDataType == dtTime) {
+      checkTimeRange(REGISTER_REAL34_DATA(res));
+    }
+    if(resultDataType == dtDate) {
+      checkDateRange(REGISTER_REAL34_DATA(res));
+    }
   }
 
   if(lastErrorCode != 0) {
@@ -1140,25 +1140,23 @@ void adjustResult(calcRegister_t res, bool dropY, bool setCpxRes, calcRegister_t
       break;
     }
 
-    #if !defined(TESTSUITE_BUILD)
-      case dtReal34Matrix: {
-        if(significantDigits == 0 || significantDigits >= 34) {
-          break;
-        }
-
-        rsdRema(significantDigits);
+    case dtReal34Matrix: {
+      if(significantDigits == 0 || significantDigits >= 34) {
         break;
       }
 
-      case dtComplex34Matrix: {
-        if(significantDigits == 0 || significantDigits >= 34) {
-          break;
-        }
+      rsdRema(significantDigits);
+      break;
+    }
 
-        rsdCxma(significantDigits);
+    case dtComplex34Matrix: {
+      if(significantDigits == 0 || significantDigits >= 34) {
         break;
       }
-    #endif // !TESTSUITE_BUILD
+
+      rsdCxma(significantDigits);
+      break;
+    }
 
     default: {
       break;

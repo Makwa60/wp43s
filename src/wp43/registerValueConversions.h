@@ -81,18 +81,18 @@
   void convertDateRegisterToReal34Register                   (calcRegister_t source, calcRegister_t destination);
   void convertReal34RegisterToDateRegister                   (calcRegister_t source, calcRegister_t destination);
 
+  void convertReal34MatrixRegisterToReal34Matrix             (calcRegister_t regist, real34Matrix_t *matrix);
+  void convertReal34MatrixToReal34MatrixRegister             (const real34Matrix_t *matrix, calcRegister_t regist);
+
+  void convertComplex34MatrixRegisterToComplex34Matrix       (calcRegister_t regist, complex34Matrix_t *matrix);
+  void convertComplex34MatrixToComplex34MatrixRegister       (const complex34Matrix_t *matrix, calcRegister_t regist);
+
+  void convertReal34MatrixToComplex34Matrix                  (const real34Matrix_t *source, complex34Matrix_t *destination);
+  void convertReal34MatrixRegisterToComplex34Matrix          (calcRegister_t source, complex34Matrix_t *destination);
+  void convertReal34MatrixRegisterToComplex34MatrixRegister  (calcRegister_t source, calcRegister_t destination);
+
+
   #if !defined(TESTSUITE_BUILD)
-    void convertReal34MatrixRegisterToReal34Matrix           (calcRegister_t regist, real34Matrix_t *matrix);
-    void convertReal34MatrixToReal34MatrixRegister           (const real34Matrix_t *matrix, calcRegister_t regist);
-
-    void convertComplex34MatrixRegisterToComplex34Matrix     (calcRegister_t regist, complex34Matrix_t *matrix);
-    void convertComplex34MatrixToComplex34MatrixRegister     (const complex34Matrix_t *matrix, calcRegister_t regist);
-
-    void convertReal34MatrixToComplex34Matrix                (const real34Matrix_t *source, complex34Matrix_t *destination);
-    void convertReal34MatrixRegisterToComplex34Matrix        (calcRegister_t source, complex34Matrix_t *destination);
-    void convertReal34MatrixRegisterToComplex34MatrixRegister(calcRegister_t source, calcRegister_t destination);
-
-
     //Section to convert doubles and floats
     void    convertDoubleToString                            (double x, int16_t n, char *buff);  //Reformatting double/float strings that are formatted according to different locale settings
     void    convertDoubleToReal                              (double x, real_t *destination, realContext_t *ctxt);

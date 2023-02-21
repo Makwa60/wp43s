@@ -435,6 +435,43 @@ In:  AM=DEG FL_ASLIFT=0 FL_CPXRES=0 RY=Real:"2":DEG RX=Real:"3"
 Out: EC=0 FL_CPXRES=0 FL_ASLIFT=1 RL=Real:"3" RX=Real:"2.9981724810572871900187303201317898934857089200099903193117012" RY=Real:"0.1046984901075029149379855448759988120644737281298906142750173"
 
 
+In:  AM=DEG FL_ASLIFT=0 FL_CPXRES=0 FL_SPCRES=1 RY=Real:"0" RX=Real:"inf"
+Out: EC=0 FL_CPXRES=0 FL_ASLIFT=1 RL=Real:"inf" RX=Real:"inf" RY=Real:"0"
+
+In:  AM=DEG FL_ASLIFT=0 FL_CPXRES=0 FL_SPCRES=1 RY=Real:"45" RX=Real:"inf"
+Out: EC=0 FL_CPXRES=0 FL_ASLIFT=1 RL=Real:"inf" RX=Real:"inf" RY=Real:"inf"
+
+In:  AM=DEG FL_ASLIFT=0 FL_CPXRES=0 FL_SPCRES=1 RY=Real:"90" RX=Real:"inf"
+Out: EC=0 FL_CPXRES=0 FL_ASLIFT=1 RL=Real:"inf" RX=Real:"0" RY=Real:"inf"
+
+In:  AM=DEG FL_ASLIFT=0 FL_CPXRES=0 FL_SPCRES=1 RY=Real:"135" RX=Real:"inf"
+Out: EC=0 FL_CPXRES=0 FL_ASLIFT=1 RL=Real:"inf" RX=Real:"-inf" RY=Real:"inf"
+
+In:  AM=DEG FL_ASLIFT=0 FL_CPXRES=0 FL_SPCRES=1 RY=Real:"180" RX=Real:"inf"
+Out: EC=0 FL_CPXRES=0 FL_ASLIFT=1 RL=Real:"inf" RX=Real:"-inf" RY=Real:"0"
+
+In:  AM=DEG FL_ASLIFT=0 FL_CPXRES=0 FL_SPCRES=1 RY=Real:"225" RX=Real:"inf"
+Out: EC=0 FL_CPXRES=0 FL_ASLIFT=1 RL=Real:"inf" RX=Real:"-inf" RY=Real:"-inf"
+
+In:  AM=DEG FL_ASLIFT=0 FL_CPXRES=0 FL_SPCRES=1 RY=Real:"270" RX=Real:"inf"
+Out: EC=0 FL_CPXRES=0 FL_ASLIFT=1 RL=Real:"inf" RX=Real:"0" RY=Real:"-inf"
+
+In:  AM=DEG FL_ASLIFT=0 FL_CPXRES=0 FL_SPCRES=1 RY=Real:"315" RX=Real:"inf"
+Out: EC=0 FL_CPXRES=0 FL_ASLIFT=1 RL=Real:"inf" RX=Real:"inf" RY=Real:"-inf"
+
+In:  AM=DEG FL_ASLIFT=0 FL_CPXRES=0 FL_SPCRES=1 RY=Real:"-135" RX=Real:"inf"
+Out: EC=0 FL_CPXRES=0 FL_ASLIFT=1 RL=Real:"inf" RX=Real:"-inf" RY=Real:"-inf"
+
+In:  AM=DEG FL_ASLIFT=0 FL_CPXRES=0 FL_SPCRES=1 RY=Real:"-90" RX=Real:"inf"
+Out: EC=0 FL_CPXRES=0 FL_ASLIFT=1 RL=Real:"inf" RX=Real:"0" RY=Real:"-inf"
+
+In:  AM=DEG FL_ASLIFT=0 FL_CPXRES=0 FL_SPCRES=1 RY=Real:"-45" RX=Real:"inf"
+Out: EC=0 FL_CPXRES=0 FL_ASLIFT=1 RL=Real:"inf" RX=Real:"inf" RY=Real:"-inf"
+
+In:  AM=DEG FL_ASLIFT=0 FL_CPXRES=0 FL_SPCRES=1 RY=Real:"45" RX=Real:"-inf"
+Out: EC=0 FL_CPXRES=0 FL_ASLIFT=1 RL=Real:"-inf" RX=Real:"-inf" RY=Real:"-inf"
+
+
 
 ;=================================================
 ; Real, Complex --> Error24

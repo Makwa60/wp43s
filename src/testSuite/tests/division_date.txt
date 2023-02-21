@@ -13,8 +13,6 @@ Func: fnDivide
 
 ;==================================================================
 ; Date / Long Integer  see in division_longInteger.txt
-; Date / Real          see in division_real.txt
-; Date / Complex       see in division_complex.txt
 ; Date / Time          see in division_time.txt
 ;==================================================================
 

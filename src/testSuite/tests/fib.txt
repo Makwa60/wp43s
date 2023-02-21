@@ -30,6 +30,21 @@ Out: EC=8 FL_CPXRES=0 FL_ASLIFT=1 RX=LonI:"4792"
 In:  AM=DEG FL_ASLIFT=1 FL_CPXRES=0 RX=LonI:"-10"
 Out: EC=1 FL_CPXRES=0 FL_ASLIFT=1 RX=LonI:"-10"
 
+
+;=======================================
+; fib(Real Matrix)
+;=======================================
+In:  AM=DEG FL_ASLIFT=0 FL_CPXRES=0 RX=ReMa:"M2,3[0,1,2,3,4,5]"
+Out: EC=0 FL_CPXRES=0 FL_ASLIFT=1 RL=ReMa:"M2,3[0,1,2,3,4,5]" RX=ReMa:"M2,3[0,1,1,2,3,5]"
+
+
+;=======================================
+; fib(Complex Matrix)
+;=======================================
+In:  AM=DEG FL_ASLIFT=0 FL_CPXRES=0 RX=CxMa:"M2,3[0,1,2,3,4,5]"
+Out: EC=0 FL_CPXRES=1 FL_ASLIFT=1 RL=CxMa:"M2,3[0,1,2,3,4,5]" RX=CxMa:"M2,3[0,1,1,2,3,5]"
+
+
 ;=======================================
 ; fib(Real) --> Real
 ;=======================================
