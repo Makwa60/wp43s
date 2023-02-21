@@ -377,6 +377,12 @@ jacobi_zeta
 initialSettings
 fastFnSetting
 
+power_longInteger
+power_realMatrix
+power_complexMatrix
+power_real
+power_complex
+
 exp
 expMOne
 10pow

@@ -61,6 +61,10 @@ Out: EC=24 FL_ASLIFT=0 RX=Stri:"String test"
 ; Ln(Real) --> Real
 ;=======================================
 
+; Error case
+In:  AM=DEG FL_ASLIFT=0 FL_CPXRES=0 RZ=Real:"1" RY=Real:"-1" RX=Real:"0"
+Out: EC=1 FL_CPXRES=0 FL_ASLIFT=0 RZ=Real:"1" RY=Real:"-1" RX=Real:"0"
+
 ; Linear
 In:  AM=DEG FL_ASLIFT=0 FL_CPXRES=0 RY=Real:"1" RX=Real:"-10"
 Out: EC=0 FL_CPXRES=0 FL_ASLIFT=1 RL=Real:"-10" RX=Real:"11"

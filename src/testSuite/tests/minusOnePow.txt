@@ -53,8 +53,11 @@ Out: EC=24 FL_ASLIFT=0 RX=Stri:"String test"
 ;=======================================
 ; (-1) ^ Short Integer --> Error24
 ;=======================================
-In:  FL_ASLIFT=0 FL_CPXRES=0 RX=ShoI:"5#7"
-Out: EC=0 FL_CPXRES=0 FL_ASLIFT=1 RL=ShoI:"5#7" RX=ShoI:"-1#7"
+In:  FL_ASLIFT=0 FL_CPXRES=0 FL_OVERFL=0 IM=2COMPL RX=ShoI:"5#7"
+Out: EC=0 FL_CPXRES=0 FL_ASLIFT=1 FL_OVERFL=0 RL=ShoI:"5#7" RX=ShoI:"-1#7"
+
+In:  FL_ASLIFT=0 FL_CPXRES=0 FL_OVERFL=0 IM=UNSIGN RX=ShoI:"5#7"
+Out: EC=0 FL_CPXRES=0 FL_ASLIFT=1 FL_OVERFL=1 RL=ShoI:"5#7" RX=ShoI:"1#7"
 
 
 

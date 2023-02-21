@@ -58,3 +58,30 @@ Out: EC=0 FL_CPXRES=0 FL_ASLIFT=1 RL=LonI:"5" RX=LonI:"1"
 ;=======================================
 In:  FL_ASLIFT=0 RZ=ShoI:"3#10" RY=ShoI:"4#10" RX=ShoI:"5#10"
 Out: EC=0 FL_CPXRES=0 FL_ASLIFT=1 RL=ShoI:"5#10" RX=ShoI:"1#10"
+
+;=======================================
+; Error cases
+;=======================================
+In:  FL_ASLIFT=0 RZ=Real:"3" RY=Real:"4" RX=Real:"5"
+Out: EC=24 FL_CPXRES=0 FL_ASLIFT=0 RZ=Real:"3" RY=Real:"4" RX=Real:"5"
+
+In:  FL_ASLIFT=0 RZ=Real:"3" RY=Real:"4" RX=LonI:"5"
+Out: EC=24 FL_CPXRES=0 FL_ASLIFT=0 RZ=Real:"3" RY=Real:"4" RX=LonI:"5"
+
+In:  FL_ASLIFT=0 RZ=Real:"3" RY=LonI:"4" RX=Real:"5"
+Out: EC=24 FL_CPXRES=0 FL_ASLIFT=0 RZ=Real:"3" RY=LonI:"4" RX=Real:"5"
+
+In:  FL_ASLIFT=0 RZ=Real:"3" RY=LonI:"4" RX=LonI:"5"
+Out: EC=24 FL_CPXRES=0 FL_ASLIFT=0 RZ=Real:"3" RY=LonI:"4" RX=LonI:"5"
+
+In:  FL_ASLIFT=0 RZ=LonI:"3" RY=LonI:"4" RX=Real:"5"
+Out: EC=24 FL_CPXRES=0 FL_ASLIFT=0 RZ=LonI:"3" RY=LonI:"4" RX=Real:"5"
+
+In:  FL_ASLIFT=0 RZ=LonI:"3" RY=Real:"4" RX=LonI:"5"
+Out: EC=24 FL_CPXRES=0 FL_ASLIFT=0 RZ=LonI:"3" RY=Real:"4" RX=LonI:"5"
+
+In:  FL_ASLIFT=0 RZ=LonI:"3" RY=Real:"4" RX=Real:"5"
+Out: EC=24 FL_CPXRES=0 FL_ASLIFT=0 RZ=LonI:"3" RY=Real:"4" RX=Real:"5"
+
+In:  FL_ASLIFT=0 RZ=Stri:"String test" RY=Stri:"String test" RX=Stri:"String test"
+Out: EC=24 FL_CPXRES=0 FL_ASLIFT=0 RZ=Stri:"String test" RY=Stri:"String test" RX=Stri:"String test"
