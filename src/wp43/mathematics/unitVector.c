@@ -69,52 +69,48 @@ void unitVectorCplx(void) {
 
 
 void unitVectorRema(void) {
-  #if !defined(TESTSUITE_BUILD)
-    real34Matrix_t matrix;
-    real_t elem, sum;
+  real34Matrix_t matrix;
+  real_t elem, sum;
 
-    linkToRealMatrixRegister(REGISTER_X, &matrix);
+  linkToRealMatrixRegister(REGISTER_X, &matrix);
 
-    realZero(&sum);
-    for(int i = 0; i < matrix.header.matrixRows * matrix.header.matrixColumns; ++i) {
-      real34ToReal(&matrix.matrixElements[i], &elem);
-      realMultiply(&elem, &elem, &elem, &ctxtReal39);
-      realAdd(&sum, &elem, &sum, &ctxtReal39);
-    }
-    realSquareRoot(&sum, &sum, &ctxtReal39);
-    for(int i = 0; i < matrix.header.matrixRows * matrix.header.matrixColumns; ++i) {
-      real34ToReal(&matrix.matrixElements[i], &elem);
-      realDivide(&elem, &sum, &elem, &ctxtReal39);
-      realToReal34(&elem, &matrix.matrixElements[i]);
-    }
-  #endif // !TESTSUITE_BUILD
+  realZero(&sum);
+  for(int i = 0; i < matrix.header.matrixRows * matrix.header.matrixColumns; ++i) {
+    real34ToReal(&matrix.matrixElements[i], &elem);
+    realMultiply(&elem, &elem, &elem, &ctxtReal39);
+    realAdd(&sum, &elem, &sum, &ctxtReal39);
+  }
+  realSquareRoot(&sum, &sum, &ctxtReal39);
+  for(int i = 0; i < matrix.header.matrixRows * matrix.header.matrixColumns; ++i) {
+    real34ToReal(&matrix.matrixElements[i], &elem);
+    realDivide(&elem, &sum, &elem, &ctxtReal39);
+    realToReal34(&elem, &matrix.matrixElements[i]);
+  }
 }
 
 
 
 void unitVectorCxma(void) {
-  #if !defined(TESTSUITE_BUILD)
-    complex34Matrix_t matrix;
-    real_t real, imag, sum;
+  complex34Matrix_t matrix;
+  real_t real, imag, sum;
 
-    linkToComplexMatrixRegister(REGISTER_X, &matrix);
+  linkToComplexMatrixRegister(REGISTER_X, &matrix);
 
-    realZero(&sum);
-    for(int i = 0; i < matrix.header.matrixRows * matrix.header.matrixColumns; ++i) {
-      real34ToReal(VARIABLE_REAL34_DATA(&matrix.matrixElements[i]), &real);
-      realMultiply(&real, &real, &real, &ctxtReal39);
-      realAdd(&sum, &real, &sum, &ctxtReal39);
-      real34ToReal(VARIABLE_IMAG34_DATA(&matrix.matrixElements[i]), &imag);
-      realMultiply(&imag, &imag, &imag, &ctxtReal39);
-      realAdd(&sum, &imag, &sum, &ctxtReal39);
-    }
-    realSquareRoot(&sum, &sum, &ctxtReal39);
-    for(int i = 0; i < matrix.header.matrixRows * matrix.header.matrixColumns; ++i) {
-      real34ToReal(VARIABLE_REAL34_DATA(&matrix.matrixElements[i]), &real);
-      real34ToReal(VARIABLE_IMAG34_DATA(&matrix.matrixElements[i]), &imag);
-      divComplexComplex(&real, &imag, &sum, const_0, &real, &imag, &ctxtReal39);
-      realToReal34(&real, VARIABLE_REAL34_DATA(&matrix.matrixElements[i]));
-      realToReal34(&imag, VARIABLE_IMAG34_DATA(&matrix.matrixElements[i]));
-    }
-  #endif // !TESTSUITE_BUILD
+  realZero(&sum);
+  for(int i = 0; i < matrix.header.matrixRows * matrix.header.matrixColumns; ++i) {
+    real34ToReal(VARIABLE_REAL34_DATA(&matrix.matrixElements[i]), &real);
+    realMultiply(&real, &real, &real, &ctxtReal39);
+    realAdd(&sum, &real, &sum, &ctxtReal39);
+    real34ToReal(VARIABLE_IMAG34_DATA(&matrix.matrixElements[i]), &imag);
+    realMultiply(&imag, &imag, &imag, &ctxtReal39);
+    realAdd(&sum, &imag, &sum, &ctxtReal39);
+  }
+  realSquareRoot(&sum, &sum, &ctxtReal39);
+  for(int i = 0; i < matrix.header.matrixRows * matrix.header.matrixColumns; ++i) {
+    real34ToReal(VARIABLE_REAL34_DATA(&matrix.matrixElements[i]), &real);
+    real34ToReal(VARIABLE_IMAG34_DATA(&matrix.matrixElements[i]), &imag);
+    divComplexComplex(&real, &imag, &sum, const_0, &real, &imag, &ctxtReal39);
+    realToReal34(&real, VARIABLE_REAL34_DATA(&matrix.matrixElements[i]));
+    realToReal34(&imag, VARIABLE_IMAG34_DATA(&matrix.matrixElements[i]));
+  }
 }

@@ -52,6 +52,27 @@ _for_ <q>0 ≤ ***x*** ≤ 399 and 0 ≤ ***y*** ≤ 175</q> _read_ <q>0 ≤ ***
 _for_ <q>`CLR` CLP</q> _read_ <q>`CLR` CLP ***labl***</q>,
 _and for_ <q>the _current <u>program</u>_</q> _read_ <q>specified program</q>.
 
+**Page 32, `erf` and `erfc`:**
+_for_ <q>\{2\}; \{1\} → \{2\}</q> _read_ <q>\{2, 8*\}; \{1\} → \{2\}</q>.
+
+**Page 33, `EXPT`:**
+_for_ <q>\{1, 2\} → \{1\}</q> _read_ <q>\{1, 8*\}; \{2\} → \{1\}</q>.
+
+**Page 33, `FIB`:**
+_for_ <q>\{2, 3\}</q> _read_ <q>\{2, 3, 8*, 9*\}</q>.
+
+**Page 47, `MANT`:**
+_for_ <q>\{2\}; \{1\} → \{2\}</q> _read_ <q>\{2, 8*\}; \{1\} → \{2\}</q>.
+
+**Page 76, `Wm`, `Wp`, and `W⁻¹`:**
+_for_ <q>\{2, 3\}; \{1\} → \{2\}</q> _read_ <q>\{2, 3, 8*, 9*\}; \{1\} → \{2\}</q>.
+
+**Page 79, `x!`:**
+_for_ <q>\{2, 3\}</q> _read_ <q>\{2, 3, 8*, 9*\}</q>.
+
+**Page 83, `ζ(x)`:**
+_for_ <q>\{2, 3\}</q> _read_ <q>\{2, 3, 8*, 9*\}</q>.
+
 **Page 89, `|x|`:**
 _delete_ <q>or `PART` \|x\| or `CPX` \|x\|</q>.
 
