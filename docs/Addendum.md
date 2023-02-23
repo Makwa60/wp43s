@@ -4,21 +4,13 @@ Addenda and Corrigenda
 Owner's Manual
 --------------
 
-**Page 246, Section 3, To define a _softkey_ in the _programmable menu_:**
-_for_ <q>_register_ **K**</q> _read_ <q>_register_ **X**</q>,
-_for_ <q>the first characters of ***k***</q> _read_ <q>the first characters of ***x***</q>,
-_and change_ <q>**K** is not used</q> _to_ <q>**X** is neither used nor dropped</q>.
-
-**Page 247, Section 3, To define a _softkey_ in the _programmable menu_:**
-_add_ <q>**X** will be dropped unless you have just defined `▲`, `▼`, or `EXIT`.</q>
-_before_ <q>Repeat this procedure</q>.
+n/a
 
 
 Reference Manual
 ----------------
 
-**Pages 100, Purposes of System Flags:**
-_for_ <q>NUM.IN, ALP.IN</q> _paint the background green_.
+n/a
 
 
 Release note addendum
