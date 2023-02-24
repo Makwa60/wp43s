@@ -275,7 +275,6 @@ flagScreen_t flagScreen;
     oneSystemFlag(FLAG_SLOW,    "SLOW",    &line, &firstFlag);
     oneSystemFlag(FLAG_SOLVING, "SOLVING", &line, &firstFlag);
     oneSystemFlag(FLAG_SPCRES,  "SPCRES",  &line, &firstFlag);
-    oneSystemFlag(FLAG_SSIZE8,  "SSIZE8",  &line, &firstFlag);
     oneSystemFlag(FLAG_TRACE,   "TRACE",   &line, &firstFlag);
     oneSystemFlag(FLAG_USB,     "USB",     &line, &firstFlag);
     oneSystemFlag(FLAG_VMDISP,  "VMDISP",  &line, &firstFlag);
