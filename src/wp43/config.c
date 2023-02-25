@@ -876,6 +876,7 @@ void fnReset(uint16_t confirmation) {
     exponentLimit = 6145;
     exponentHideLimit = 0;
     lastIntegerBase = 0;
+    lastDenominator = 4;
     temporaryInformation = TI_RESET;
 
     currentInputVariable = INVALID_VARIABLE;
