@@ -41,8 +41,9 @@
 
 #include "wp43.h"
 
-#define BACKUP_VERSION         87  // save running app
-#define START_REGISTER_VALUE 1000  // was 1522, why?
+#define BACKUP_VERSION                     88  // save lastDenominator
+#define OLDEST_COMPATIBLE_BACKUP_VERSION   87  // save running app
+#define START_REGISTER_VALUE             1000  // was 1522, why?
 
 #define configFileVersion       1
 
@@ -135,6 +136,7 @@ static uint32_t restore(void *buffer, uint32_t size) {
     save(&yCursor,                            sizeof(yCursor));
     save(&firstGregorianDay,                  sizeof(firstGregorianDay));
     save(&denMax,                             sizeof(denMax));
+    save(&lastDenominator,                    sizeof(lastDenominator));
     save(&currentRegisterBrowserScreen,       sizeof(currentRegisterBrowserScreen));
     save(&currentFntScr,                      sizeof(currentFntScr));
     save(&flagScreen,                         sizeof(flagScreen));
@@ -325,11 +327,11 @@ static uint32_t restore(void *buffer, uint32_t size) {
 
     restore(&backupVersion,                      sizeof(backupVersion));
     restore(&ramSize,                            sizeof(ramSize));
-    if(backupVersion != BACKUP_VERSION || ramSize != RAM_SIZE_IN_BLOCKS) {
+    if(backupVersion > BACKUP_VERSION || backupVersion < OLDEST_COMPATIBLE_BACKUP_VERSION || ramSize != RAM_SIZE_IN_BLOCKS) {
       ioFileClose();
       refreshScreen();
 
-      printf("Cannot restore calc's memory from file backup.bin! File backup.bin is from another backup version.\n");
+      printf("Cannot restore calc's memory from file backup.bin! File backup.bin is from incompatible backup version.\n");
       printf("               Backup file      Program\n");
       printf("backupVersion  %6u           %6d\n", backupVersion, BACKUP_VERSION);
       printf("ramSize blocks %6u           %6d\n", ramSize, RAM_SIZE_IN_BLOCKS);
@@ -394,6 +396,9 @@ static uint32_t restore(void *buffer, uint32_t size) {
       restore(&yCursor,                            sizeof(yCursor));
       restore(&firstGregorianDay,                  sizeof(firstGregorianDay));
       restore(&denMax,                             sizeof(denMax));
+      if(backupVersion >= 88) {
+        restore(&lastDenominator,                  sizeof(lastDenominator));
+      }
       restore(&currentRegisterBrowserScreen,       sizeof(currentRegisterBrowserScreen));
       restore(&currentFntScr,                      sizeof(currentFntScr));
       restore(&flagScreen,                         sizeof(flagScreen));
@@ -1003,6 +1008,8 @@ char tmpString[3000];             //The concurrent use of the global tmpString
   sprintf(tmpString, "firstGregorianDay\n%" PRIu32 "\n", firstGregorianDay);
   save(tmpString, strlen(tmpString));
   sprintf(tmpString, "denMax\n%" PRIu32 "\n", denMax);
+  save(tmpString, strlen(tmpString));
+  sprintf(tmpString, "lastDenominator\n%" PRIu32 "\n", lastDenominator);
   save(tmpString, strlen(tmpString));
   sprintf(tmpString, "displayFormat\n%" PRIu8 "\n", (uint8_t)displayFormat);
   save(tmpString, strlen(tmpString));
@@ -1879,6 +1886,12 @@ static bool restoreOneSection(uint16_t loadMode, uint16_t s, uint16_t n, uint16_
           denMax = stringToUint32(tmpString);
           if(denMax < 1 || denMax > MAX_DENMAX) {
             denMax = MAX_DENMAX;
+          }
+        }
+        else if(strcmp(aimBuffer, "lastDenominator") == 0) {
+          lastDenominator = stringToUint32(tmpString);
+          if(lastDenominator < 1 || lastDenominator > MAX_DENMAX) {
+            lastDenominator = 4;
           }
         }
         else if(strcmp(aimBuffer, "displayFormat") == 0) {

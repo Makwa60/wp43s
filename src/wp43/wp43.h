@@ -219,6 +219,7 @@
 
   extern uint32_t               firstGregorianDay;
   extern uint32_t               denMax;
+  extern uint32_t               lastDenominator;
   extern uint32_t               lastIntegerBase;
   extern uint32_t               tamOverPemYPos;
   extern uint32_t               pointerOfFlashPgmLibrary;

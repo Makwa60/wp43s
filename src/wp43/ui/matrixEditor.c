@@ -443,7 +443,29 @@ void fnDelRow(uint16_t unusedParamButMandatory) {
       showString(tmpString, &numericFont, 0, Y_POSITION_OF_NIM_LINE, vmNormal, true, false);
     }
     else {
-      displayNim(tmpString, "", 0, 0);
+      if(aimBuffer[0] != 0 && aimBuffer[strlen(aimBuffer)-1]=='/') {
+        char lastBase[12];
+        char *lb = lastBase;
+        if(lastDenominator >= 1000) {
+          *(lb++) = STD_SUB_0[0];
+          *(lb++) = STD_SUB_0[1] + (lastDenominator / 1000);
+        }
+        if(lastDenominator >= 100) {
+          *(lb++) = STD_SUB_0[0];
+          *(lb++) = STD_SUB_0[1] + (lastDenominator % 1000 / 100);
+        }
+        if(lastDenominator >= 10) {
+          *(lb++) = STD_SUB_0[0];
+          *(lb++) = STD_SUB_0[1] + (lastDenominator % 100 / 10);
+        }
+        *(lb++) = STD_SUB_0[0];
+        *(lb++) = STD_SUB_0[1] + (lastDenominator % 10);
+        *(lb++) = 0;
+        displayNim(tmpString, lastBase, stringWidth(lastBase, &numericFont, true, true), stringWidth(lastBase, &standardFont, true, true));
+      }
+      else {
+        displayNim(tmpString, "", 0, 0);
+      }
     }
 
     if(temporaryInformation == TI_SHOW_REGISTER && calcMode == cmMim) {

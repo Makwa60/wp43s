@@ -480,7 +480,7 @@ void clearScreen(void) {
     bool          prefixPost = true;
     const uint8_t origDisplayStack = displayStack;
 
-    char prefix[200], lastBase[4];
+    char prefix[200], lastBase[12];
 
     if((calcMode != cmPlotStat) && (calcMode != cmGraph)) {
       clearRegisterLine(regist, true, (regist != REGISTER_Y));
@@ -629,6 +629,26 @@ void clearScreen(void) {
               lastBase[1] = '0' + lastIntegerBase;
               lastBase[2] = 0;
             }
+            wLastBaseNumeric  = stringWidth(lastBase, &numericFont,  true, true);
+            wLastBaseStandard = stringWidth(lastBase, &standardFont, true, true);
+          }
+          else if(aimBuffer[0] != 0 && aimBuffer[strlen(aimBuffer)-1]=='/') {
+            char *lb = lastBase;
+            if(lastDenominator >= 1000) {
+              *(lb++) = STD_SUB_0[0];
+              *(lb++) = STD_SUB_0[1] + (lastDenominator / 1000);
+            }
+            if(lastDenominator >= 100) {
+              *(lb++) = STD_SUB_0[0];
+              *(lb++) = STD_SUB_0[1] + (lastDenominator % 1000 / 100);
+            }
+            if(lastDenominator >= 10) {
+              *(lb++) = STD_SUB_0[0];
+              *(lb++) = STD_SUB_0[1] + (lastDenominator % 100 / 10);
+            }
+            *(lb++) = STD_SUB_0[0];
+            *(lb++) = STD_SUB_0[1] + (lastDenominator % 10);
+            *(lb++) = 0;
             wLastBaseNumeric  = stringWidth(lastBase, &numericFont,  true, true);
             wLastBaseStandard = stringWidth(lastBase, &standardFont, true, true);
           }
@@ -1492,7 +1512,7 @@ void clearScreen(void) {
       uint32_t yCursor = Y_POSITION_OF_NIM_LINE;
       cursorShow(false, xCursor, yCursor);
 
-      if(lastIntegerBase != 0) {
+      if(lastIntegerBase != 0 || (aimBuffer[0] != 0 && aimBuffer[strlen(aimBuffer)-1]=='/')) {
         showString(lastBase, &numericFont, xCursor + 16, Y_POSITION_OF_NIM_LINE, vmNormal, true, true);
       }
     }
@@ -1501,7 +1521,7 @@ void clearScreen(void) {
       uint32_t yCursor = Y_POSITION_OF_NIM_LINE + 6;
       cursorShow(true, xCursor, yCursor);
 
-      if(lastIntegerBase != 0) {
+      if(lastIntegerBase != 0 || (aimBuffer[0] != 0 && aimBuffer[strlen(aimBuffer)-1]=='/')) {
         showString(lastBase, &standardFont, xCursor + 8, Y_POSITION_OF_NIM_LINE + 6, vmNormal, true, true);
       }
     }
@@ -1524,7 +1544,7 @@ void clearScreen(void) {
         uint32_t yCursor = Y_POSITION_OF_NIM_LINE + 18;
         cursorShow(true, xCursor, yCursor);
 
-        if(lastIntegerBase != 0) {
+        if(lastIntegerBase != 0 || (aimBuffer[0] != 0 && aimBuffer[strlen(aimBuffer)-1]=='/')) {
           showString(lastBase, &standardFont, xCursor + 8, Y_POSITION_OF_NIM_LINE + 18, vmNormal, true, true);
         }
       }
