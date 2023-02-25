@@ -952,6 +952,21 @@ void backToSystem(uint16_t unusedButMandatoryParameter) {
   #endif // DMCP_BUILD
 }
 
+void runDMCPmenu(uint16_t unusedButMandatoryParameter) {
+  #if defined(PC_BUILD)  //for consistency with backToSystem
+    fnOff(NOPARAM);
+  #endif // PC_BUILD
+
+  #if defined(DMCP_BUILD)
+    run_menu_item_sys(MI_DMCP_MENU);
+  #endif // DMCP_BUILD
+}
+
+void activateUSBdisk(uint16_t unusedButMandatoryParameter) {
+  #if defined(DMCP_BUILD)
+    run_menu_item_sys(MI_MSC);
+  #endif // DMCP_BUILD
+}
 
 
 void configSetUpTimers(void) {
