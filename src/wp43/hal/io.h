@@ -19,7 +19,8 @@
     ioPathSaveFile = 0, ///< save file used in SAVE and LOAD functions
     ioPathPgmFile  = 1, ///< program file
     ioPathTestPgms = 2, ///< test programs
-    ioPathBackup   = 3  ///< backup file for full state used in simulators
+    ioPathBackup   = 3, ///< backup file for full state used in simulators
+    ioPathRegDump  = 4, ///< register dump file which enables to view the full digits of long integers
   } ioFilePath_t;
 
   /**

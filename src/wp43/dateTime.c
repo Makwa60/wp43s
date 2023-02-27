@@ -953,3 +953,16 @@ uint32_t getTimeString(char *timeString) {
   uint32_t timeToNextMinuteMs = (6000 - ((timeInfo.sec * 100) + timeInfo.csec)) * 10;
   return timeToNextMinuteMs;
 }
+
+
+
+void getTimeStampString(char *timeStampString) {
+  dateInfo_t dateInfo;
+  timeInfo_t timeInfo;
+
+  timeGetDateInfo(&dateInfo);
+  timeGetTimeInfo(&timeInfo);
+
+  sprintf(timeStampString, "%04d%02d%02d-%02d%02d%02d%02d", dateInfo.year, dateInfo.month, dateInfo.day,
+                                                            timeInfo.hour, timeInfo.min, timeInfo.sec, timeInfo.csec);
+}

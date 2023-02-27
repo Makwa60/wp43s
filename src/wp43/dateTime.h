@@ -153,4 +153,6 @@
    */
   uint32_t getTimeString           (char *timeString);
 
+  void     getTimeStampString      (char *timeStampString);
+
 #endif // !DATETIME_H

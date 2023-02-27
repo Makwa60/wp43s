@@ -3,6 +3,7 @@
 
 #include "hal/io.h"
 
+#include "dateTime.h"
 #include "typeDefinitions.h"
 
 #include <assert.h>
@@ -15,6 +16,7 @@ static bool _ioWriteEnabled = false;
 static bool _ioReadEnabled  = false;
 
 const char *_ioFileNameFromFilePath(ioFilePath_t path) {
+  static char tmpFileName[40];
   switch(path) {
     case ioPathSaveFile:
       return "SAVFILES\\wp43.sav";
@@ -22,6 +24,11 @@ const char *_ioFileNameFromFilePath(ioFilePath_t path) {
       return "LIBRARY\\wp43.dat";
     case ioPathTestPgms:
       return "testPgms.bin";
+    case ioPathRegDump:
+      strcpy(tmpFileName, "SAVFILES\\reg-");
+      getTimeStampString(tmpFileName + strlen(tmpFileName));
+      strcat(tmpFileName, ".tsv");
+      return tmpFileName;
     default:
       return 0;
   }
