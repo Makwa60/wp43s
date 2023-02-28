@@ -1851,7 +1851,7 @@
   #define ITM_SQRT1PX2                  1794
   
   #define ITM_ACTUSB                    1795
-  #define ITM_DMPREG                    1796
+  #define ITM_DUMP                      1796
 
 
   #define LAST_ITEM                     1797
