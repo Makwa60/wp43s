@@ -13,6 +13,6 @@
   #if !defined(TESTSUITE_BUILD)
     void copyRegisterToClipboardString(calcRegister_t regist, char *clipboardString);
   #endif // !defined(TESTSUITE_BUILD)
-  void fnDumpRegsToFile(uint16_t unusedButMandatoryParameter);
+  void fnDumpRegXToFile(uint16_t unusedButMandatoryParameter);
 
 #endif // !SAVEREGISTERS_H

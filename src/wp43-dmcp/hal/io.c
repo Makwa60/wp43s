@@ -26,7 +26,7 @@ const char *_ioFileNameFromFilePath(ioFilePath_t path) {
     case ioPathTestPgms:
       return "testPgms.bin";
     case ioPathRegDump:
-      strcpy(tmpFileName, "SAVFILES\\reg-");
+      strcpy(tmpFileName, "SAVFILES\\regx-");
       getTimeStampString(tmpFileName + strlen(tmpFileName));
       strcat(tmpFileName, ".tsv");
       return tmpFileName;

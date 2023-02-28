@@ -239,15 +239,24 @@
     int16_t ix = reg_b;
     while (ix <= reg_e) {
       tmpString[0]=0;
-      if((ix>=REGISTER_X)&&(ix<=REGISTER_K)) {
-        sprintf(tmpString, "%s%c%s%s", CSV_STR, "XYZTABCDLIJK"[ix-REGISTER_X], CSV_STR, CSV_TAB);
-      } else
-      if((ix>=0)&&(ix<=99)) {
-        sprintf(tmpString, "%sR%02d%s%s", CSV_STR, ix, CSV_STR, CSV_TAB);
-      } else
-      if((ix>=FIRST_LOCAL_REGISTER)&&(ix<=LAST_LOCAL_REGISTER)) {
-        sprintf(tmpString, "%sU%02d%s%s", CSV_STR, ix-FIRST_LOCAL_REGISTER, CSV_STR, CSV_TAB);
-      }
+      //if((ix>=REGISTER_X)&&(ix<=REGISTER_K)) {
+      //  sprintf(tmpString, "%s%c%s%s", CSV_STR, "XYZTABCDLIJK"[ix-REGISTER_X], CSV_STR, CSV_TAB);
+      //}
+      //else if((ix>=0)&&(ix<=99)) {
+      //  sprintf(tmpString, "%sR%02d%s%s", CSV_STR, ix, CSV_STR, CSV_TAB);
+      //}
+      //else if((ix>=FIRST_LOCAL_REGISTER)&&(ix<=LAST_LOCAL_REGISTER)) {
+      //  sprintf(tmpString, "%sR.%02d%s%s", CSV_STR, ix-FIRST_LOCAL_REGISTER, CSV_STR, CSV_TAB);
+      //}
+      //else if((ix>=FIRST_NAMED_VARIABLE)&&(ix<=LAST_NAMED_VARIABLE)) {
+      //  sprintf(tmpString, "%s%s%s%s", CSV_STR, (char *)allNamedVariables[ix - FIRST_NAMED_VARIABLE].variableName + 1, CSV_STR, CSV_TAB);
+      //}
+      //else if((ix>=FIRST_RESERVED_VARIABLE)&&(ix<=LAST_RESERVED_VARIABLE)) {
+      //  sprintf(tmpString, "%s%s%s%s", CSV_STR, (char *)allReservedVariables[ix - FIRST_RESERVED_VARIABLE].reservedVariableName + 1, CSV_STR, CSV_TAB);
+      //}
+      //else {
+      //  sprintf(tmpString, "%d%s", ix, CSV_TAB);
+      //}
 
       copyRegisterToClipboardString((calcRegister_t)ix, tmpString + strlen(tmpString));
       strcat(tmpString + strlen(tmpString), CSV_NEWLINE);
@@ -261,18 +270,20 @@
 #endif // !defined(TESTSUITE_BUILD)
 
 // Imported from C43
-void fnDumpRegsToFile(uint16_t unusedButMandatoryParameter) {
-#ifndef TESTSUITE_BUILD
-  if(!ioFileOpen(ioPathRegDump, ioModeWrite)) {
-    printf("Cannot save register contents in file!\n");
-    exit(0);
-  }
+//void fnDumpRegsToFile(uint16_t regist) {
+//#ifndef TESTSUITE_BUILD
+  //if(!ioFileOpen(ioPathRegDump, ioModeWrite)) {
+  //  printf("Cannot save register contents in file!\n");
+  //  exit(0);
+  //}
+
+  //stackregister_csv_out(regist, regist);
 
   //switch(option) {
   //case 0: {                   //All registers
-    stackregister_csv_out(REGISTER_X, REGISTER_D);
-    stackregister_csv_out(REGISTER_L, REGISTER_K);
-    stackregister_csv_out(0, 99);
+  //  stackregister_csv_out(REGISTER_X, REGISTER_D);
+  //  stackregister_csv_out(REGISTER_L, REGISTER_K);
+  //  stackregister_csv_out(0, 99);
     //stackregister_csv_out(FIRST_LOCAL_REGISTER, FIRST_LOCAL_REGISTER + currentNumberOfLocalRegisters);
   //}
   //break;
@@ -295,6 +306,22 @@ void fnDumpRegsToFile(uint16_t unusedButMandatoryParameter) {
   //default:
   //  break;
   //}
+
+  //ioFileClose();
+//#endif //TESTSUITE_BUILD
+//}
+
+
+
+void fnDumpRegXToFile(uint16_t unusedButMandatoryParameter) {
+#ifndef TESTSUITE_BUILD
+  if(!ioFileOpen(ioPathRegDump, ioModeWrite)) {
+    displayCalcErrorMessage(ERROR_IO, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
+    errorMoreInfo("cannot save register contents in file!");
+    return;
+  }
+
+  stackregister_csv_out(REGISTER_X, REGISTER_X);
 
   ioFileClose();
 #endif //TESTSUITE_BUILD
