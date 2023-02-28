@@ -15,10 +15,14 @@
 #include "registers.h"
 #include "registerValueConversions.h"
 #include "wp43.h"
+#include <string.h>
 
 #define CSV_STR "\""
 #define CSV_TAB "\t"
 #define CSV_NEWLINE "\n"
+#if !defined(LINEBREAK)
+  #define LINEBREAK "\n"
+#endif // LINEBREAK
 
 // Imported from C43
 #if !defined(TESTSUITE_BUILD)
