@@ -185,6 +185,7 @@ wp43_src = files(
   'recall.c',
   'registerValueConversions.c',
   'registers.c',
+  'saveRegisters.c',
   'saveRestoreCalcState.c',
   'solver/differentiate.c',
   'solver/equation.c',

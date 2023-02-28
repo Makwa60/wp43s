@@ -29,6 +29,7 @@
 #include "programming/programming.h"
 #include "recall.h"
 #include "registers.h"
+#include "saveRegisters.h"
 #include "saveRestoreCalcState.h"
 #include "solver/graph.h"
 #include "solver/solver.h"
@@ -805,6 +806,7 @@ void fnNop(uint16_t unusedButMandatoryParameter) {
   void fnClP2                      (uint16_t unusedButMandatoryParameter) {}
   void fnDeleteMenu                (uint16_t unusedButMandatoryParameter) {}
   void activateUSBdisk             (uint16_t unusedButMandatoryParameter) {}
+  void fnDumpRegsToFile            (uint16_t unusedButMandatoryParameter) {}
 #endif // GENERATE_CATALOGS
 
 
@@ -2666,6 +2668,7 @@ TO_QSPI const item_t indexOfItems[] = {
 /* 1794 */  { fnSqrt1Px2,                   NOPARAM,                     STD_SQUARE_ROOT "(1+x" STD_SUP_2 ")",          STD_SQUARE_ROOT "(1+x" STD_SUP_2 ")",          (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
 
 /* 1795 */  { activateUSBdisk,              NOPARAM,                     "ActUSB",                                      "ActUSB",                                      (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
+/* 1796 */  { fnDumpRegsToFile,             NOPARAM,                     "DMPREG",                                      "DMPREG",                                      (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
 
-/* 1796 */  { itemToBeCoded,                NOPARAM,                     "",                                            "Last item",                                   (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_ENABLED   | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
+/* 1797 */  { itemToBeCoded,                NOPARAM,                     "",                                            "Last item",                                   (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_ENABLED   | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
 };

@@ -3,6 +3,7 @@
 
 #include "hal/system.h"
 
+#include "dateTime.h"
 #include "defines.h"
 #include <gtk/gtk.h>
 
@@ -11,17 +12,13 @@
 void systemScreenshot(void) {
   FILE *bmp;
   char bmpFileName[22];
-  time_t rawTime;
-  struct tm *timeInfo;
   int32_t x, y;
   uint32_t uint32;
   uint16_t uint16;
   uint8_t  uint8;
 
-  time(&rawTime);
-  timeInfo = localtime(&rawTime);
-
-  strftime(bmpFileName, 22, "%Y%m%d-%H%M%S00.bmp", timeInfo);
+  getTimeStampString(bmpFileName);
+  strcat(bmpFileName, ".bmp");
   bmp = fopen(bmpFileName, "wb");
 
   fwrite("BM", 1, 2, bmp);        // Offset 0x00  0  BMP header

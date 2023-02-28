@@ -3,6 +3,7 @@
 
 #include "hal/io.h"
 
+#include "dateTime.h"
 #include "defines.h"
 #include "wp43-gtk.h"
 #include <assert.h>
@@ -14,6 +15,7 @@
 static FILE *_ioFileHandle = NULL;
 
 const char *_ioFileNameFromFilePath(ioFilePath_t path) {
+  static char tmpFileName[40];
   switch(path) {
     case ioPathSaveFile:
       return "wp43.sav";
@@ -23,6 +25,11 @@ const char *_ioFileNameFromFilePath(ioFilePath_t path) {
       return BASEPATH "res/dmcp/testPgms.bin";
     case ioPathBackup:
       return "backup.bin";
+    case ioPathRegDump:
+      strcpy(tmpFileName, "reg-");
+      getTimeStampString(tmpFileName + strlen(tmpFileName));
+      strcat(tmpFileName, ".tsv");
+      return tmpFileName;
     default:
       return 0;
   }

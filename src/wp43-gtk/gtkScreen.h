@@ -26,6 +26,5 @@
   void     copyStackRegistersToClipboardString(char *clipboardString);
   void     copyStackRegistersToClipboard      (void);
   void     copyAllRegistersToClipboard        (void);
-  void     copyRegisterToClipboardString      (calcRegister_t regist, char *clipboardString);
 
 #endif // !GTKSCREEN_H
