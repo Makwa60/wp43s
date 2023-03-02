@@ -65,7 +65,7 @@ bool ioFileOpen(ioFilePath_t path, ioFileMode_t mode) {
     sys_disk_write_enable(1);
   }
   if(mode == ioModeWrite) {
-    if(path == ioPathSaveFile) {
+    if(path == ioPathSaveFile || path == ioPathRegDump) {
       check_create_dir("SAVFILES");
     }
     if(path == ioPathPgmFile) {

@@ -24,6 +24,12 @@
   #define LINEBREAK "\n"
 #endif // LINEBREAK
 
+#if defined(DMCP_BUILD)
+  #define CLIPSTR_BUFSIZE TMP_STR_LENGTH
+#else
+  #define CLIPSTR_BUFSIZE 30000
+#endif
+
 // Imported from C43
 #if !defined(TESTSUITE_BUILD)
   static void angularUnitToString(angularMode_t angularMode, char *string) {
@@ -61,12 +67,12 @@
     longInteger_t lgInt;
     int16_t base, sign, n;
     uint64_t shortInt;
-    char string[30000];
+    char string[CLIPSTR_BUFSIZE];
 
     switch(getRegisterDataType(regist)) {
       case dtLongInteger: {
         convertLongIntegerRegisterToLongInteger(regist, lgInt);
-        longIntegerToAllocatedString(lgInt, string, 30000);
+        longIntegerToAllocatedString(lgInt, string, CLIPSTR_BUFSIZE);
         longIntegerFree(lgInt);
         break;
       }
@@ -258,10 +264,86 @@
       //  sprintf(tmpString, "%d%s", ix, CSV_TAB);
       //}
 
-      copyRegisterToClipboardString((calcRegister_t)ix, tmpString + strlen(tmpString));
-      strcat(tmpString + strlen(tmpString), CSV_NEWLINE);
+      //copyRegisterToClipboardString((calcRegister_t)ix, tmpString + strlen(tmpString));
+      //strcat(tmpString + strlen(tmpString), CSV_NEWLINE);
 
-      ioFileWrite(tmpString, strlen(tmpString));
+      //ioFileWrite(tmpString, strlen(tmpString));
+
+    switch(getRegisterDataType(ix)) {
+      case dtReal34Matrix: {
+        dataBlock_t* dblock = REGISTER_REAL34_MATRIX_DBLOCK(ix);
+        real34_t *real34 = REGISTER_REAL34_MATRIX_M_ELEMENTS(ix);
+        real34_t reduced;
+        int rows, columns;
+
+        rows = dblock->matrixRows;
+        columns = dblock->matrixColumns;
+        sprintf(tmpString, "%dx%d", rows, columns);
+
+        for(int i=0; i<rows*columns; i++) {
+          strcat(tmpString, LINEBREAK);
+          ioFileWrite(tmpString, strlen(tmpString));
+
+          real34Reduce(real34++, &reduced);
+          real34ToString(&reduced, tmpString);
+
+          if(strchr(tmpString, '.') == NULL && strchr(tmpString, 'E') == NULL) {
+            strcat(tmpString, ".");
+          }
+        }
+        ioFileWrite(tmpString, strlen(tmpString));
+        break;
+      }
+
+      case dtComplex34Matrix: {
+        dataBlock_t* dblock = REGISTER_COMPLEX34_MATRIX_DBLOCK(ix);
+        complex34_t *complex34 = REGISTER_COMPLEX34_MATRIX_M_ELEMENTS(ix);
+        real34_t reduced;
+        int rows, columns, len;
+
+        rows = dblock->matrixRows;
+        columns = dblock->matrixColumns;
+        sprintf(tmpString, "%dx%d", rows, columns);
+
+        for(int i=0; i<rows*columns; i++, complex34++) {
+          strcat(tmpString, LINEBREAK);
+          ioFileWrite(tmpString, strlen(tmpString));
+
+          // Real part
+          real34Reduce((real34_t *)complex34, &reduced);
+          real34ToString(&reduced, tmpString);
+          if(strchr(tmpString, '.') == NULL && strchr(tmpString, 'E') == NULL) {
+            strcat(tmpString, ".");
+          }
+          len = strlen(tmpString);
+
+          // Imaginary part
+          real34Reduce(((real34_t *)complex34) + 1, &reduced);
+          if(real34IsNegative(&reduced)) {
+            sprintf(tmpString + len, " - %sx", COMPLEX_UNIT);
+            len += 5;
+            real34SetPositiveSign(&reduced);
+            real34ToString(&reduced, tmpString + len);
+          }
+          else {
+            sprintf(tmpString + len + strlen(tmpString + len), " + %sx", COMPLEX_UNIT);
+            len += 5;
+            real34ToString(&reduced, tmpString + len);
+          }
+          if(strchr(tmpString + len, '.') == NULL && strchr(tmpString + len, 'E') == NULL) {
+            strcat(tmpString + len, ".");
+          }
+        }
+        ioFileWrite(tmpString, strlen(tmpString));
+        break;
+      }
+
+      default: {
+        copyRegisterToClipboardString((calcRegister_t)ix, tmpString);
+        strcat(tmpString + strlen(tmpString), CSV_NEWLINE);
+        ioFileWrite(tmpString, strlen(tmpString));
+      }
+    }
 
       ++ix;
     }
