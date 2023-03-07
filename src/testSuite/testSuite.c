@@ -1531,9 +1531,9 @@ void wrongElementValue(calcRegister_t regist, char letter, int row, int col, cha
         char str[300];
         int cols = REGISTER_COMPLEX34_MATRIX_DBLOCK(regist)->matrixColumns;
         real34ToString(VARIABLE_REAL34_DATA(REGISTER_COMPLEX34_MATRIX_M_ELEMENTS(regist) + (row - 1) * cols + (col - 1)), str);
-        printf("%s + ix ", str);
-        real34ToString(VARIABLE_IMAG34_DATA(REGISTER_COMPLEX34_MATRIX_M_ELEMENTS(regist) + (row - 1) * cols + (col - 1)), str + strlen(str));
-        printf("%s\n", str);
+        printf("%s", str);
+        real34ToString(VARIABLE_IMAG34_DATA(REGISTER_COMPLEX34_MATRIX_M_ELEMENTS(regist) + (row - 1) * cols + (col - 1)), str);
+        printf(" %c ix %s\n", str[0] == '-' ? '-' : '+', str + (str[0] == '-' ? 1 : 0));
       }
       else {
         printf("a complex matrix\n");
@@ -1598,9 +1598,19 @@ void expectedAndShouldBeValueForElement(calcRegister_t regist, char letter, int 
     case dtComplex34Matrix: {
       if(row > 0 && col > 0) {
         int cols = REGISTER_COMPLEX34_MATRIX_DBLOCK(regist)->matrixColumns;
-        real34ToString(VARIABLE_REAL34_DATA(REGISTER_COMPLEX34_MATRIX_M_ELEMENTS(regist) + (row - 1) * cols + (col - 1)), str);
-        strcat(str, " +ix ");
-        real34ToString(VARIABLE_IMAG34_DATA(REGISTER_COMPLEX34_MATRIX_M_ELEMENTS(regist) + (row - 1) * cols + (col - 1)), str + strlen(str));
+        const real34_t *re34 = VARIABLE_REAL34_DATA(REGISTER_COMPLEX34_MATRIX_M_ELEMENTS(regist) + (row - 1) * cols + (col - 1));
+        const real34_t *im34 = VARIABLE_IMAG34_DATA(REGISTER_COMPLEX34_MATRIX_M_ELEMENTS(regist) + (row - 1) * cols + (col - 1));
+        real34ToString(re34, str);
+        strcat(expectedAndValue, str);
+        if(real34IsNegative(im34)) {
+          strcat(expectedAndValue, " -ix");
+          real34ToString(im34, str);
+          str[0] = ' ';
+        }
+        else {
+          strcat(expectedAndValue, " +ix ");
+          real34ToString(im34, str);
+        }
       }
       else {
         strcpy(str, "a complex matrix");
@@ -2251,16 +2261,28 @@ void checkExpectedOutParameter(char *p) {
       stringToReal34(real, &expectedReal34);
       stringToReal34(imag, &expectedImag34);
       if(!real34AreEqual(REGISTER_REAL34_DATA(regist), &expectedReal34)) {
-        strcat(r, " +ix ");
-        strcat(r, imag);
+        if(imag[0] == '-') {
+          strcat(r, " -ix ");
+          strcat(r, imag + 1);
+        }
+        else {
+          strcat(r, " +ix ");
+          strcat(r, imag);
+        }
         expectedAndShouldBeValue(regist, letter, r, registerExpectedAndValue);
         if(relativeErrorReal34(&expectedReal34, REGISTER_REAL34_DATA(regist), "real", regist, letter) == RE_INACCURATE) {
           wrongRegisterValue(regist, letter, r);
         }
       }
       else if(!real34AreEqual(REGISTER_IMAG34_DATA(regist), &expectedImag34)) {
-        strcat(r, " +ix ");
-        strcat(r, imag);
+        if(imag[0] == '-') {
+          strcat(r, " -ix ");
+          strcat(r, imag + 1);
+        }
+        else {
+          strcat(r, " +ix ");
+          strcat(r, imag);
+        }
         expectedAndShouldBeValue(regist, letter, r, registerExpectedAndValue);
         if(relativeErrorReal34(&expectedImag34, REGISTER_IMAG34_DATA(regist), "imaginary", regist, letter) == RE_INACCURATE) {
           wrongRegisterValue(regist, letter, r);
@@ -2542,10 +2564,16 @@ void checkExpectedOutParameter(char *p) {
                 lastElement = (r[i] != 'i' && r[i] != ',');
                 r[i] = 0;
                 strcpy(real, r);
+
+                // removing trailing spaces from real part
+                while(real[strlen(real) - 1] == ' ') {
+                  real[strlen(real) - 1] = 0;
+                }
+
                 if((strcmp(real, "any") != 0 && strcmp(real, "?") != 0) || imagFollows) {
                   real_t expectedReal, expectedImag;
-                  stringToReal34(r, &expectedReal34);
-                  stringToReal(r, &expectedReal, &ctxtReal39);
+                  stringToReal34(real, &expectedReal34);
+                  stringToReal(real, &expectedReal, &ctxtReal39);
                   // imaginary part
                   if(imagFollows) {
                     xcopy(r, r + i + 1, strlen(r + i + 1) + 1);
@@ -2559,8 +2587,14 @@ void checkExpectedOutParameter(char *p) {
                     lastElement = (r[i] != ',');
                     r[i] = 0;
                     strcpy(imag, r);
-                    stringToReal34(r, &expectedImag34);
-                    stringToReal(r, &expectedImag, &ctxtReal39);
+
+                    // removing trailing spaces from imaginary part
+                    while(imag[strlen(imag) - 1] == ' ') {
+                      imag[strlen(imag) - 1] = 0;
+                    }
+
+                    stringToReal34(imag, &expectedImag34);
+                    stringToReal(imag, &expectedImag, &ctxtReal39);
                   }
                   else {
                     strcpy(imag, "0");
@@ -2635,7 +2669,7 @@ void checkExpectedOutParameter(char *p) {
 
                   if(!real34AreEqual(VARIABLE_REAL34_DATA(REGISTER_COMPLEX34_MATRIX_M_ELEMENTS(regist) + element), &expectedReal34)) {
                     char str[404];
-                    sprintf(str, "%s +ix %s", real, imag);
+                    sprintf(str, "%s %cix %s", real, imag[0] == '-' ? '-' : '+', imag + (imag[0] == '-' ? 1 : 0));
                     expectedAndShouldBeValueForElement(regist, letter, element / cols + 1, element % cols + 1, str, registerExpectedAndValue);
                     if(relativeErrorReal34(&expectedReal34, VARIABLE_REAL34_DATA(REGISTER_COMPLEX34_MATRIX_M_ELEMENTS(regist) + element), "real", regist, letter) == RE_INACCURATE) {
                       wrongElementValue(regist, letter, element / cols + 1, element % cols + 1, str);
@@ -2643,7 +2677,7 @@ void checkExpectedOutParameter(char *p) {
                   }
                   else if(!real34AreEqual(VARIABLE_IMAG34_DATA(REGISTER_COMPLEX34_MATRIX_M_ELEMENTS(regist) + element), &expectedImag34)) {
                     char str[404];
-                    sprintf(str, "%s +ix %s", real, imag);
+                    sprintf(str, "%s %cix %s", real, imag[0] == '-' ? '-' : '+', imag + (imag[0] == '-' ? 1 : 0));
                     expectedAndShouldBeValueForElement(regist, letter, element / cols + 1, element % cols + 1, str, registerExpectedAndValue);
                     if(relativeErrorReal34(&expectedImag34, VARIABLE_IMAG34_DATA(REGISTER_COMPLEX34_MATRIX_M_ELEMENTS(regist) + element), "imaginary", regist, letter) == RE_INACCURATE) {
                       wrongElementValue(regist, letter, element / cols + 1, element % cols + 1, str);
