@@ -6,6 +6,7 @@
 #include "charString.h"
 #include "constantPointers.h"
 #include "debug.h"
+#include "display.h"
 #include "error.h"
 #include "flags.h"
 #include "fonts.h"
@@ -81,9 +82,13 @@ void fnAlphaToX(uint16_t regist) {
 
 
 
-void fnXToAlpha(uint16_t unusedButMandatoryParameter) {
+void fnXToAlpha(uint16_t regist) {
   longInteger_t lgInt;
   unsigned char char1, char2;
+
+  if(!saveLastX()) {
+    return;
+  }
 
   longIntegerInit(lgInt);
   switch(getRegisterDataType(REGISTER_X)) {
@@ -122,8 +127,6 @@ void fnXToAlpha(uint16_t unusedButMandatoryParameter) {
     return;
   }
 
-  liftStack();
-
   if(longIntegerIsZero(lgInt)) {
     char1 = 0;
     char2 = 0;
@@ -139,10 +142,79 @@ void fnXToAlpha(uint16_t unusedButMandatoryParameter) {
 
   longIntegerFree(lgInt);
 
-  reallocateRegister(REGISTER_X, dtString, TO_BYTES(1), amNone);
-  *(REGISTER_STRING_DATA(REGISTER_X))     = char1;
-  *(REGISTER_STRING_DATA(REGISTER_X) + 1) = char2;
-  *(REGISTER_STRING_DATA(REGISTER_X) + 2) = 0;
+  switch(getRegisterDataType(regist)) {
+    case dtLongInteger: {
+      longIntegerRegisterToDisplayString(regist, tmpString, TMP_STR_LENGTH, SCREEN_WIDTH, 50, STD_SPACE_PUNCTUATION);
+      break;
+    }
+
+    case dtTime: {
+      timeToDisplayString(regist, tmpString, false);
+      break;
+    }
+
+    case dtDate: {
+      dateToDisplayString(regist, tmpString);
+      break;
+    }
+
+    case dtString: {
+      xcopy(tmpString, REGISTER_STRING_DATA(regist), stringByteLength(regist));
+      break;
+    }
+
+    case dtReal34Matrix: {
+      real34MatrixToDisplayString(regist, tmpString);
+      break;
+    }
+
+    case dtComplex34Matrix: {
+      complex34MatrixToDisplayString(regist, tmpString);
+      break;
+    }
+
+    case dtShortInteger: {
+      shortIntegerToDisplayString(regist, tmpString, false);
+      break;
+    }
+
+    case dtReal34: {
+      real34ToDisplayString(REGISTER_REAL34_DATA(regist), getRegisterAngularMode(regist), tmpString, &standardFont, SCREEN_WIDTH, NUMBER_OF_DISPLAY_DIGITS, false, STD_SPACE_PUNCTUATION, true);
+      break;
+    }
+
+    case dtComplex34: {
+      complex34ToDisplayString(REGISTER_COMPLEX34_DATA(regist), tmpString, &numericFont, SCREEN_WIDTH, NUMBER_OF_DISPLAY_DIGITS, false, STD_SPACE_PUNCTUATION, true);
+      break;
+    }
+
+    default: {
+      tmpString[0] = 0;
+      break;
+    }
+  }
+
+  if(stringGlyphLength(REGISTER_STRING_DATA(regist)) >= MAX_NUMBER_OF_GLYPHS_IN_STRING) {
+    displayCalcErrorMessage(ERROR_STRING_WOULD_BE_TOO_LONG, ERR_REGISTER_LINE, REGISTER_X);
+    errorMoreInfo("the resulting string would be %d characters long. Maximum is %d",
+        stringGlyphLength(REGISTER_STRING_DATA(regist)) + 1, MAX_NUMBER_OF_GLYPHS_IN_STRING);
+  }
+  else {
+    int l = stringByteLength(tmpString);
+    tmpString[l]       = char1;
+    tmpString[l + 1]   = char2;
+    if(char2) {
+      tmpString[l + 2] = 0;
+      ++l;
+    }
+    ++l;
+
+    reallocateRegister(regist, dtString, l + 1, amNone);
+    xcopy(REGISTER_STRING_DATA(regist), tmpString, l + 1);
+
+    fnDrop(0);
+  }
+
 }
 
 

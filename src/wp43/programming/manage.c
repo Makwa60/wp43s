@@ -98,7 +98,7 @@ bool checkOpCodeOfStep(const uint8_t *step, uint16_t op) {
     return step && *step == op;
   }
   else {
-    return step && (*step & 0x7f) == (op >> 8) && *(step + 1) == (op & 0xff);
+    return step && *step == ((op >> 8) | 0x80) && *(step + 1) == (op & 0xff);
   }
 }
 

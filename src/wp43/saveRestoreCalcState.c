@@ -41,7 +41,7 @@
 
 #include "wp43.h"
 
-#define BACKUP_VERSION                     88  // save lastDenominator
+#define BACKUP_VERSION                     89  // x-to-alpha destination
 #define OLDEST_COMPATIBLE_BACKUP_VERSION   87  // save running app
 #define START_REGISTER_VALUE             1000  // was 1522, why?
 
@@ -588,6 +588,25 @@ static uint32_t restore(void *buffer, uint32_t size) {
             bugScreen("In function restoreCalc: unrecognized app ID!");
             break;
           }
+        }
+      }
+
+      if(backupVersion <= 88) { // Program incompatibility
+        int globalStep = 1;
+        uint8_t *step = beginOfProgramMemory;
+        printf("****Program binary incompatibility****\n");
+        printf("x→α now followed by a destination register\n");
+        printf("Loaded x→α in RAM will be replaced by NOP\n");
+        printf("CAVEAT: x→α in Flash will not be replaced so it may cause crash\n");
+        printf("Also SAVE data will not be reinterpreted so LOAD or LOADP may crash\n");
+        while(!isAtEndOfPrograms(step)) { // .END.
+          if(checkOpCodeOfStep(step, ITM_XtoALPHA)) { // x->alpha
+            step[0] = (ITM_NOP >> 8) | 0x80;
+            step[1] =  ITM_NOP       & 0xff;
+            printf("x→α found at global step %d\n", globalStep);
+          }
+          ++globalStep;
+          step = findNextStep_ram(step);
         }
       }
 
