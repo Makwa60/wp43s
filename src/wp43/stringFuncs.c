@@ -82,66 +82,7 @@ void fnAlphaToX(uint16_t regist) {
 
 
 
-void fnXToAlpha(uint16_t regist) {
-  longInteger_t lgInt;
-  unsigned char char1, char2;
-
-  if(!saveLastX()) {
-    return;
-  }
-
-  longIntegerInit(lgInt);
-  switch(getRegisterDataType(REGISTER_X)) {
-    case dtLongInteger: {
-      convertLongIntegerRegisterToLongInteger(REGISTER_X, lgInt);
-      break;
-    }
-
-    case dtReal34: {
-      if(real34CompareAbsGreaterThan(REGISTER_REAL34_DATA(REGISTER_X), const34_1e6)) {
-        uIntToLongInteger(1000000, lgInt);
-      }
-      else {
-        convertReal34ToLongInteger(REGISTER_REAL34_DATA(REGISTER_X), lgInt, DEC_ROUND_DOWN);
-      }
-      break;
-    }
-
-    case dtShortInteger: {
-      convertShortIntegerRegisterToLongInteger(REGISTER_X, lgInt);
-      break;
-    }
-
-    default: {
-      displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, REGISTER_X);
-      errorMoreInfo("cannot x" STD_RIGHT_ARROW STD_alpha " when X is %s", getRegisterDataTypeName(REGISTER_X, true, false));
-      return;
-    }
-  }
-
-  longIntegerSetPositiveSign(lgInt);
-  //if(longIntegerCompareUInt(lgInt, standardFont.glyphs[standardFont.numberOfGlyphs - 1].charCode & 0x7fff) > 0) {
-  if(longIntegerCompareUInt(lgInt, 0x8000) >= 0) {
-    displayCalcErrorMessage(ERROR_OUT_OF_RANGE, ERR_REGISTER_LINE, REGISTER_X);
-    errorMoreInfo("for x" STD_RIGHT_ARROW STD_alpha ", X must be < 32768. Here X = %" PRIu32, (uint32_t)lgInt->_mp_d[0]); // OK for 32 and 64 bit limbs
-    return;
-  }
-
-  if(longIntegerIsZero(lgInt)) {
-    char1 = 0;
-    char2 = 0;
-  }
-  else if(lgInt->_mp_d[0] < 0x0080) {      // OK for 32 and 64 bit limbs
-    char1 = lgInt->_mp_d[0];               // OK for 32 and 64 bit limbs
-    char2 = 0;
-  }
-  else {
-    char1 = (lgInt->_mp_d[0] >> 8) | 0x80; // OK for 32 and 64 bit limbs
-    char2 = lgInt->_mp_d[0] & 0x00ff;      // OK for 32 and 64 bit limbs
-  }
-
-  longIntegerFree(lgInt);
-
+static void _readDestinationRegister(uint16_t regist) {
   switch(getRegisterDataType(regist)) {
     case dtLongInteger: {
       longIntegerRegisterToDisplayString(regist, tmpString, TMP_STR_LENGTH, SCREEN_WIDTH, 50, STD_SPACE_PUNCTUATION);
@@ -159,7 +100,7 @@ void fnXToAlpha(uint16_t regist) {
     }
 
     case dtString: {
-      xcopy(tmpString, REGISTER_STRING_DATA(regist), stringByteLength(regist));
+      xcopy(tmpString, REGISTER_STRING_DATA(regist), stringByteLength(REGISTER_STRING_DATA(regist)) + 1);
       break;
     }
 
@@ -193,11 +134,95 @@ void fnXToAlpha(uint16_t regist) {
       break;
     }
   }
+}
 
-  if(stringGlyphLength(REGISTER_STRING_DATA(regist)) >= MAX_NUMBER_OF_GLYPHS_IN_STRING) {
+void fnXToAlpha(uint16_t regist) {
+  longInteger_t lgInt;
+  unsigned char char1, char2;
+
+  if(!saveLastX()) {
+    return;
+  }
+
+  longIntegerInit(lgInt);
+  switch(getRegisterDataType(REGISTER_X)) {
+    case dtLongInteger: {
+      convertLongIntegerRegisterToLongInteger(REGISTER_X, lgInt);
+      break;
+    }
+
+    case dtReal34: {
+      if(real34CompareAbsGreaterThan(REGISTER_REAL34_DATA(REGISTER_X), const34_1e6)) {
+        uIntToLongInteger(1000000, lgInt);
+      }
+      else {
+        convertReal34ToLongInteger(REGISTER_REAL34_DATA(REGISTER_X), lgInt, DEC_ROUND_DOWN);
+      }
+      break;
+    }
+
+    case dtShortInteger: {
+      convertShortIntegerRegisterToLongInteger(REGISTER_X, lgInt);
+      break;
+    }
+
+    case dtString: {
+      longIntegerFree(lgInt);
+      _readDestinationRegister(regist);
+      if(stringGlyphLength(tmpString) + stringGlyphLength(REGISTER_STRING_DATA(REGISTER_X)) > MAX_NUMBER_OF_GLYPHS_IN_STRING) {
+        displayCalcErrorMessage(ERROR_STRING_WOULD_BE_TOO_LONG, ERR_REGISTER_LINE, REGISTER_X);
+        errorMoreInfo("the resulting string would be %d (%d + %d) characters long. Maximum is %d",
+            stringGlyphLength(tmpString) + stringGlyphLength(REGISTER_STRING_DATA(REGISTER_X)),
+            stringGlyphLength(tmpString),
+            stringGlyphLength(REGISTER_STRING_DATA(REGISTER_X)), MAX_NUMBER_OF_GLYPHS_IN_STRING);
+      }
+      else {
+        int l = stringByteLength(tmpString);
+        xcopy(tmpString + l, REGISTER_STRING_DATA(REGISTER_X), stringByteLength(REGISTER_STRING_DATA(REGISTER_X)) + 1);
+        l = stringByteLength(tmpString);
+        reallocateRegister(regist, dtString, l + 1, amNone);
+        xcopy(REGISTER_STRING_DATA(regist), tmpString, l + 1);
+        fnDrop(0);
+      }
+      return;
+    }
+
+    default: {
+      displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, REGISTER_X);
+      errorMoreInfo("cannot x" STD_RIGHT_ARROW STD_alpha " when X is %s", getRegisterDataTypeName(REGISTER_X, true, false));
+      return;
+    }
+  }
+
+  longIntegerSetPositiveSign(lgInt);
+  //if(longIntegerCompareUInt(lgInt, standardFont.glyphs[standardFont.numberOfGlyphs - 1].charCode & 0x7fff) > 0) {
+  if(longIntegerCompareUInt(lgInt, 0x8000) >= 0) {
+    displayCalcErrorMessage(ERROR_OUT_OF_RANGE, ERR_REGISTER_LINE, REGISTER_X);
+    errorMoreInfo("for x" STD_RIGHT_ARROW STD_alpha ", X must be < 32768. Here X = %" PRIu32, (uint32_t)lgInt->_mp_d[0]); // OK for 32 and 64 bit limbs
+    return;
+  }
+
+  if(longIntegerIsZero(lgInt)) {
+    char1 = 0;
+    char2 = 0;
+  }
+  else if(lgInt->_mp_d[0] < 0x0080) {      // OK for 32 and 64 bit limbs
+    char1 = lgInt->_mp_d[0];               // OK for 32 and 64 bit limbs
+    char2 = 0;
+  }
+  else {
+    char1 = (lgInt->_mp_d[0] >> 8) | 0x80; // OK for 32 and 64 bit limbs
+    char2 = lgInt->_mp_d[0] & 0x00ff;      // OK for 32 and 64 bit limbs
+  }
+
+  longIntegerFree(lgInt);
+
+  _readDestinationRegister(regist);
+
+  if(stringGlyphLength(tmpString) >= MAX_NUMBER_OF_GLYPHS_IN_STRING) {
     displayCalcErrorMessage(ERROR_STRING_WOULD_BE_TOO_LONG, ERR_REGISTER_LINE, REGISTER_X);
     errorMoreInfo("the resulting string would be %d characters long. Maximum is %d",
-        stringGlyphLength(REGISTER_STRING_DATA(regist)) + 1, MAX_NUMBER_OF_GLYPHS_IN_STRING);
+        stringGlyphLength(tmpString) + 1, MAX_NUMBER_OF_GLYPHS_IN_STRING);
   }
   else {
     int l = stringByteLength(tmpString);
