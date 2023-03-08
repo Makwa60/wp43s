@@ -170,7 +170,6 @@ void fnSolve(uint16_t labelOrVariable) {
           break;
         }
       }
-      saveForUndo();
       adjustResult(REGISTER_X, false, false, REGISTER_X, REGISTER_Y, -1);
 
       //manipulate the graph minimuma and maximum points based on the solver result, part 2
@@ -387,6 +386,7 @@ int solver(calcRegister_t variable, const real34_t *y, const real34_t *x, real34
     int      result = SOLVER_RESULT_NORMAL;
     bool     was_inting = getSystemFlag(FLAG_INTING);
 
+    saveForUndo();
     realCopy(const_1, &tol);
     tol.exponent -= (significantDigits == 0 || significantDigits >= 32) ? 32 : significantDigits;
 
