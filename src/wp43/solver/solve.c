@@ -379,7 +379,7 @@ void fnSolveVar(uint16_t unusedButMandatoryParameter) {
 
 int solver(calcRegister_t variable, const real34_t *y, const real34_t *x, real34_t *resZ, real34_t *resY, real34_t *resX) {
   #if !defined(TESTSUITE_BUILD)
-    real34_t a, b, b1, b2, fa, fb, fb1, m, s, *bp1, fbp1, tmp;
+    real34_t a, b, b1, b2, fa, fb, fb1, m, s, *bp1, fbp1, tmp, tol34;
     real_t   aa, bb, bb1, bb2, faa, fbb, fbb1, mm, ss, secantSlopeA, secantSlopeB, delta, deltaB, smb, tol;
     bool     extendRange = false;
     bool     originallyLevel = false;
@@ -389,6 +389,7 @@ int solver(calcRegister_t variable, const real34_t *y, const real34_t *x, real34
 
     realCopy(const_1, &tol);
     tol.exponent -= (significantDigits == 0 || significantDigits >= 32) ? 32 : significantDigits;
+    realToReal34(&tol, &tol34);
 
     ++currentSolverNestingDepth;
     setSystemFlag(FLAG_SOLVING);
@@ -402,8 +403,8 @@ int solver(calcRegister_t variable, const real34_t *y, const real34_t *x, real34
     realToReal34(const_NaN, &b2);
 
     real34Subtract(&b, &a, &s);
-    if(real34CompareAbsLessThan(&s, const34_1e_32)) {
-      real34Copy(const34_1e_32, &s);
+    if(real34CompareAbsLessThan(&s, &tol34)) {
+      real34Copy(&tol34, &s);
       if(real34CompareLessThan(&b, &a)) {
         real34SetNegativeSign(&s);
       }
@@ -483,8 +484,8 @@ int solver(calcRegister_t variable, const real34_t *y, const real34_t *x, real34
       if(extendRange) {
         if(real34CompareEqual(&fb, &fa)) {
           real34Subtract(&b, &a, &s);
-          if(real34CompareAbsLessThan(&s, const34_1e_32)) {
-            real34Copy(const34_1e_32, &s);
+          if(real34CompareAbsLessThan(&s, &tol34)) {
+            real34Copy(&tol34, &s);
             if(real34CompareLessThan(&b, &a)) {
               real34SetNegativeSign(&s);
             }
@@ -501,13 +502,13 @@ int solver(calcRegister_t variable, const real34_t *y, const real34_t *x, real34
           real34Add(&s, &b, &s);
         }
         else if(real34IsNegative(&fb)) {
-          real34Multiply(&b, const34_1e_32, &s);
+          real34Multiply(&b, &tol34, &s);
           real34Subtract(&b, &s, &s);
         }
         else {
-          real34Multiply(&b, const34_1e_32, &s);
-          if(real34CompareAbsLessThan(&s, const34_1e_32)) {
-            real34Copy(const34_1e_32, &s);
+          real34Multiply(&b, &tol34, &s);
+          if(real34CompareAbsLessThan(&s, &tol34)) {
+            real34Copy(&tol34, &s);
             if(real34CompareLessThan(&b, &a)) {
               real34SetNegativeSign(&s);
             }
@@ -603,6 +604,15 @@ int solver(calcRegister_t variable, const real34_t *y, const real34_t *x, real34
       real34ToReal(&b, &bb);
       real34ToReal(&b1, &bb1);
 
+
+      #if defined(DMCP_BUILD)
+        if(key_empty() == 0) { // abort the solver
+          programRunStop = PGM_WAITING;
+          break;
+        }
+      #endif //DMCP_BUILD
+
+
     } while(result == SOLVER_RESULT_NORMAL &&
             (real34IsSpecial(&b2) || !real34CompareEqual(&b1, &b2) || !(extendRange || extremum || WP34S_RelativeError(&bb, &bb1, &tol, &ctxtReal39))) &&
             (originallyLevel || !((!extendRange && WP34S_RelativeError(&bb, &bb1, &tol, &ctxtReal39)) || real34CompareEqual(&b, &b1) || real34CompareEqual(&fb, const34_0)))
@@ -629,7 +639,8 @@ int solver(calcRegister_t variable, const real34_t *y, const real34_t *x, real34
     real34Copy(&b, resX);
 
     if(result == SOLVER_RESULT_EXTREMUM) { // Check if the result is really an extremum
-      real34Copy(const34_1e_32, &tmp);
+      setSystemFlag(FLAG_SOLVING);
+      real34Copy(&tol34, &tmp);
       while(true) {
         real34Add(resX, &tmp, &a);
         real34Subtract(resX, &tmp, &b);
@@ -653,6 +664,7 @@ int solver(calcRegister_t variable, const real34_t *y, const real34_t *x, real34
         }
       }
     }
+    clearSystemFlag(FLAG_SOLVING);
 
     if(result == SOLVER_RESULT_NORMAL && real34IsInfinite(REGISTER_REAL34_DATA(variable)) && extendRange && real34IsZero(resZ)) {
       result = SOLVER_RESULT_CONSTANT;
