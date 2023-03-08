@@ -11,7 +11,7 @@ The *WP43* pocket calculator is a new fast, compact, reliable, and solid problem
 - Read more about how to be involved in development on the [project Wiki](https://gitlab.com/wpcalculators/wp43/-/wikis/home).
 
 ## Status
-- Specifications and manuals are mostly complete.
+- Specifications and manuals are mostly complete (please check the manuals being parts of the Releases).
 - [SwissMicros](https://www.swissmicros.com) are developing the *WP43* hardware.
 - Firmware development takes place using the [SwissMicros *DM42*](https://www.swissmicros.com/product/dm42) calculator as a platform and using a software simulator running under Windows, macOS, and Linux.
 - The aim is to create a serious scientific instrument like we did with the [*WP 34S*](https://sourceforge.net/projects/wp34s/).
