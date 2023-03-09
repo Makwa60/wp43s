@@ -41,6 +41,7 @@
 #include "ui/tam.h"
 #if defined(DMCP_BUILD)
   #include <dmcp.h>
+  #include <wp43-dmcp.h>
 #endif // DMCP_BUILD
 #include <stdbool.h>
 #include <stdlib.h>
@@ -937,6 +938,11 @@ void fnReset(uint16_t confirmation) {
     #if (DEBUG_PANEL == 1)
       debugInit();
     #endif // DEBUG_PANEL == 1
+	
+	#if defined(DMCP_BUILD)
+	  //Check and update current power status (USB / LOWBAT)
+	  dmcpCheckPowerStatus();
+	#endif // DMCP_BUILD
   }
 }
 
