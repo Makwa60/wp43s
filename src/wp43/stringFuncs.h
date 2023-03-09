@@ -16,7 +16,7 @@
   void fnAlphaSR  (uint16_t regist);
   void fnAlphaSL  (uint16_t regist);
   void fnAlphaPos (uint16_t regist);
-  void fnXToAlpha (uint16_t unusedButMandatoryParameter);
+  void fnXToAlpha (uint16_t regist);
   void fnIsString (uint16_t unusedButMandatoryParameter);
 
 #endif // !STRINGFUNCS_H
