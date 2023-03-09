@@ -11,6 +11,7 @@
 #include "flags.h"
 #include "fonts.h"
 #include "mathematics/comparisonReals.h"
+#include "mathematics/matrix.h"
 #include "mathematics/wp34s.h"
 #include "registers.h"
 #include "registerValueConversions.h"
@@ -136,13 +137,9 @@ static void _readDestinationRegister(uint16_t regist) {
   }
 }
 
-void fnXToAlpha(uint16_t regist) {
+static void _doXToAlpha(uint16_t regist) {
   longInteger_t lgInt;
   unsigned char char1, char2;
-
-  if(!saveLastX()) {
-    return;
-  }
 
   longIntegerInit(lgInt);
   switch(getRegisterDataType(REGISTER_X)) {
@@ -166,25 +163,9 @@ void fnXToAlpha(uint16_t regist) {
       break;
     }
 
-    case dtString: {
-      longIntegerFree(lgInt);
-      _readDestinationRegister(regist);
-      if(stringGlyphLength(tmpString) + stringGlyphLength(REGISTER_STRING_DATA(REGISTER_X)) > MAX_NUMBER_OF_GLYPHS_IN_STRING) {
-        displayCalcErrorMessage(ERROR_STRING_WOULD_BE_TOO_LONG, ERR_REGISTER_LINE, REGISTER_X);
-        errorMoreInfo("the resulting string would be %d (%d + %d) characters long. Maximum is %d",
-            stringGlyphLength(tmpString) + stringGlyphLength(REGISTER_STRING_DATA(REGISTER_X)),
-            stringGlyphLength(tmpString),
-            stringGlyphLength(REGISTER_STRING_DATA(REGISTER_X)), MAX_NUMBER_OF_GLYPHS_IN_STRING);
-      }
-      else {
-        int l = stringByteLength(tmpString);
-        xcopy(tmpString + l, REGISTER_STRING_DATA(REGISTER_X), stringByteLength(REGISTER_STRING_DATA(REGISTER_X)) + 1);
-        l = stringByteLength(tmpString);
-        reallocateRegister(regist, dtString, l + 1, amNone);
-        xcopy(REGISTER_STRING_DATA(regist), tmpString, l + 1);
-        fnDrop(0);
-      }
-      return;
+    case dtReal34Matrix: {
+      convertShortIntegerRegisterToLongInteger(REGISTER_X, lgInt);
+      break;
     }
 
     default: {
@@ -236,8 +217,55 @@ void fnXToAlpha(uint16_t regist) {
 
     reallocateRegister(regist, dtString, l + 1, amNone);
     xcopy(REGISTER_STRING_DATA(regist), tmpString, l + 1);
+  }
 
-    fnDrop(0);
+}
+
+void fnXToAlpha(uint16_t regist) {
+  if(!saveLastX()) {
+    return;
+  }
+
+  switch(getRegisterDataType(REGISTER_X)) {
+    case dtLongInteger:
+    case dtReal34:
+    case dtShortInteger: {
+      _doXToAlpha(regist);
+      fnDrop(0);
+      return;
+    }
+
+    case dtString: {
+      _readDestinationRegister(regist);
+      if(stringGlyphLength(tmpString) + stringGlyphLength(REGISTER_STRING_DATA(REGISTER_X)) > MAX_NUMBER_OF_GLYPHS_IN_STRING) {
+        displayCalcErrorMessage(ERROR_STRING_WOULD_BE_TOO_LONG, ERR_REGISTER_LINE, REGISTER_X);
+        errorMoreInfo("the resulting string would be %d (%d + %d) characters long. Maximum is %d",
+            stringGlyphLength(tmpString) + stringGlyphLength(REGISTER_STRING_DATA(REGISTER_X)),
+            stringGlyphLength(tmpString),
+            stringGlyphLength(REGISTER_STRING_DATA(REGISTER_X)), MAX_NUMBER_OF_GLYPHS_IN_STRING);
+      }
+      else {
+        int l = stringByteLength(tmpString);
+        xcopy(tmpString + l, REGISTER_STRING_DATA(REGISTER_X), stringByteLength(REGISTER_STRING_DATA(REGISTER_X)) + 1);
+        l = stringByteLength(tmpString);
+        reallocateRegister(regist, dtString, l + 1, amNone);
+        xcopy(REGISTER_STRING_DATA(regist), tmpString, l + 1);
+        fnDrop(0);
+      }
+      return;
+    }
+
+    case dtReal34Matrix: {
+      elementwiseRema_UInt16(_doXToAlpha, regist);
+      fnDrop(0);
+      return;
+    }
+
+    default: {
+      displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, REGISTER_X);
+      errorMoreInfo("cannot x" STD_RIGHT_ARROW STD_alpha " when X is %s", getRegisterDataTypeName(REGISTER_X, true, false));
+      return;
+    }
   }
 
 }
