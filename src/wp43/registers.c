@@ -19,6 +19,7 @@
 #include "mathematics/comparisonReals.h"
 #include "mathematics/matrix.h"
 #include "mathematics/rsd.h"
+#include "programming/manage.h"
 #include "registerValueConversions.h"
 #include "saveRestoreCalcState.h"
 #include "sort.h"
@@ -1337,6 +1338,10 @@ int16_t indirectAddressing(calcRegister_t regist, uint16_t parameterType, int16_
       maxValue = NUMBER_OF_GLOBAL_FLAGS + currentNumberOfLocalFlags - 1;
       break;
     }
+    case INDPM_LABEL: {
+      maxValue = 104;
+      break;
+    }
   }
 
   if(regist >= FIRST_LOCAL_REGISTER + currentNumberOfLocalRegisters &&
@@ -1429,6 +1434,22 @@ int16_t indirectAddressing(calcRegister_t regist, uint16_t parameterType, int16_
       else {
         displayCalcErrorMessage(ERROR_UNDEF_SOURCE_VAR, ERR_REGISTER_LINE, REGISTER_X);
         errorMoreInfo("string '%s' is not a named variable", REGISTER_STRING_DATA(regist));
+      }
+      clearSystemFlag(FLAG_IGN1ER);
+      return FAILED_INDIRECTION;
+    }
+  }
+
+  else if(getRegisterDataType(regist) == dtString && parameterType == INDPM_LABEL) {
+    value = findNamedLabel(REGISTER_STRING_DATA(regist));
+    isValidAlpha = true;
+    if(value == INVALID_VARIABLE) {
+      if(getSystemFlag(FLAG_IGN1ER)) {
+        errorMoreInfo("string '%s' is not a named label\nignored since IGN1ER was set", REGISTER_STRING_DATA(regist));
+      }
+      else {
+        displayCalcErrorMessage(ERROR_LABEL_NOT_FOUND, ERR_REGISTER_LINE, REGISTER_X);
+        errorMoreInfo("string '%s' is not a named label", REGISTER_STRING_DATA(regist));
       }
       clearSystemFlag(FLAG_IGN1ER);
       return FAILED_INDIRECTION;

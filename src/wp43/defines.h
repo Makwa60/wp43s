@@ -470,6 +470,7 @@
   #define INDPM_PARAM                                0
   #define INDPM_REGISTER                             1
   #define INDPM_FLAG                                 2
+  #define INDPM_LABEL                                3
 
   // Combination / permutation
   #define CP_PERMUTATION                             0
