@@ -486,6 +486,31 @@ void fnStopProgram(uint16_t unusedButMandatoryParameter) {
         break;
       }
 
+      case PARAM_VARIABLE: {
+        if(opParam == STRING_LABEL_VARIABLE) {
+          _getStringLabelOrVariableName(paramAddress);
+          calcRegister_t regist = findNamedVariable(tmpStringLabelOrVariableName);
+          if(tryAllocate) {
+            reallyRunFunction(op, findOrAllocateNamedVariable(tmpStringLabelOrVariableName));
+          }
+          else if(regist != INVALID_VARIABLE) {
+            reallyRunFunction(op, regist);
+          }
+          else if(getSystemFlag(FLAG_IGN1ER)) {
+            clearSystemFlag(FLAG_IGN1ER);
+            errorMoreInfo("string '%s' is not a named variable\nignored since IGN1ER was set", tmpStringLabelOrVariableName);
+          }
+          else {
+            displayCalcErrorMessage(ERROR_UNDEF_SOURCE_VAR, ERR_REGISTER_LINE, REGISTER_X);
+            errorMoreInfo("string '%s' is not a named variable", tmpStringLabelOrVariableName);
+          }
+        }
+        else {
+          sprintf(tmpString, "\nIn function _executeOp: case PARAM_VARIABLE, %s  %u is not a valid parameter!", indexOfItems[op].itemCatalogName, opParam);
+        }
+        break;
+      }
+
       case PARAM_REGISTER:
       case PARAM_COMPARE: {
         if(opParam <= LAST_LOCAL_REGISTER) { // Global register from 00 to 99, Lettered register from X to K, or Local register from .00 to .98

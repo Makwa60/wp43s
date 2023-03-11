@@ -213,6 +213,17 @@
         break;
       }
 
+      case PARAM_VARIABLE: {
+        if(opParam == STRING_LABEL_VARIABLE) {
+          _getStringLabelOrVariableName(paramAddress);
+          _clearVar(findOrAllocateNamedVariable(tmpStringLabelOrVariableName));
+        }
+        else {
+          sprintf(tmpString, "\nIn function _processOp: case PARAM_VARIABLE, %s  %u is not a valid parameter!", indexOfItems[op].itemCatalogName, opParam);
+        }
+        break;
+      }
+
       case PARAM_REGISTER:
       case PARAM_COMPARE: {
         if(opParam <= LAST_LOCAL_REGISTER) { // Global register from 00 to 99, Lettered register from X to K, or Local register from .00 to .98

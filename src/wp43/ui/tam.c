@@ -664,7 +664,7 @@ void tamReset(void) {
         else if(tam.indirect && (currentNumberOfLocalRegisters || calcMode == cmPem)) {
           tam.dot = true;
         }
-        else if(tam.mode != tmValue && tam.mode != tmValueChb) {
+        else if(tam.mode != tmValue && tam.mode != tmValueChb && (indexOfItems[tam.function].status & PTP_STATUS) != PTP_VARIABLE) {
           if(calcMode == cmPem || ((tam.mode == tmFlagR || tam.mode == tmFlagW) && currentLocalFlags != NULL) || ((tam.mode != tmFlagR && tam.mode != tmFlagW) && currentNumberOfLocalRegisters)) {
             tam.dot = true;
           }
@@ -673,7 +673,7 @@ void tamReset(void) {
       return;
     }
     else if(item == ITM_INDIRECTION) {
-      if(!tam.alpha && !tam.digitsSoFar && !tam.dot && !valueParameter && (indexOfItems[tam.function].status & PTP_STATUS) != PTP_SKIP_BACK && (indexOfItems[tam.function].status & PTP_STATUS) != PTP_DECLARE_LABEL) {
+      if(!tam.alpha && !tam.digitsSoFar && !tam.dot && !valueParameter && (indexOfItems[tam.function].status & PTP_STATUS) != PTP_SKIP_BACK && (indexOfItems[tam.function].status & PTP_STATUS) != PTP_DECLARE_LABEL && (indexOfItems[tam.function].status & PTP_STATUS) != PTP_VARIABLE) {
         if(!tam.indirect && (tam.mode == tmFlagR || tam.mode == tmFlagW || tam.mode == tmLabel)) {
           popSoftmenu();
           showSoftmenu(-MNU_TAM);
@@ -733,6 +733,18 @@ void tamReset(void) {
         if(tam.indirect && calcMode != cmPem) {
           value = indirectAddressing(value, _indirectionType(tamOperation()), min, max);
           run = (value != FAILED_INDIRECTION);
+        }
+        if((indexOfItems[tamOperation()].status & PTP_STATUS) == PTP_VARIABLE && (value < FIRST_NAMED_VARIABLE || value > LAST_NAMED_VARIABLE)) {
+          value = INVALID_VARIABLE;
+          run = false;
+          if(getSystemFlag(FLAG_IGN1ER)) {
+            clearSystemFlag(FLAG_IGN1ER);
+            errorMoreInfo("sMVAR only accepts named variables\nignored since IGN1ER was set");
+          }
+          else {
+            displayCalcErrorMessage(ERROR_OUT_OF_RANGE, ERR_REGISTER_LINE, REGISTER_X);
+            errorMoreInfo("MVAR only accepts named variables");
+          }
         }
         if(tam.function == ITM_GTOP) {
           if(tam.digitsSoFar < 3) {
@@ -854,6 +866,19 @@ void tamReset(void) {
         value = indirectAddressing(value, _indirectionType(tam.function), min, max);
         if(value == FAILED_INDIRECTION) {
           value = INVALID_VARIABLE;
+        }
+      }
+      if((indexOfItems[tam.function].status & PTP_STATUS) == PTP_VARIABLE && (value < FIRST_NAMED_VARIABLE || value > LAST_NAMED_VARIABLE)) {
+        value = INVALID_VARIABLE;
+        if(lastErrorCode == 0) {
+          if(getSystemFlag(FLAG_IGN1ER)) {
+            clearSystemFlag(FLAG_IGN1ER);
+            errorMoreInfo("sMVAR only accepts named variables\nignored since IGN1ER was set");
+          }
+          else {
+            displayCalcErrorMessage(ERROR_OUT_OF_RANGE, ERR_REGISTER_LINE, REGISTER_X);
+            errorMoreInfo("MVAR only accepts named variables");
+          }
         }
       }
       if(value != INVALID_VARIABLE || tamOperation() == ITM_LBLQ) {

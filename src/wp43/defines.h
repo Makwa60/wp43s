@@ -196,9 +196,10 @@
   #define PTP_KEYG_KEYX                      ( 8 << 9) //   defined
   #define PTP_SKIP_BACK                      ( 9 << 9) //   below.
   #define PTP_NUMBER_8_16                    (10 << 9) //
-  #define PTP_SHUFFLE                        (11 << 9) //
-  #define PTP_LITERAL                        (12 << 9) // Literal
-  #define PTP_DISABLED                       (13 << 9) // Not programmable
+  #define PTP_VARIABLE                       (11 << 9) //
+  #define PTP_SHUFFLE                        (12 << 9) //
+  #define PTP_LITERAL                        (13 << 9) // Literal
+  #define PTP_DISABLED                       (14 << 9) // Not programmable
 
 
   #define INC_FLAG                                   0
@@ -630,7 +631,8 @@
   #define PARAM_KEYG_KEYX                            8
   #define PARAM_SKIP_BACK                            9
   #define PARAM_NUMBER_8_16                         10
-  #define PARAM_SHUFFLE                             11
+  #define PARAM_VARIABLE                            11
+  #define PARAM_SHUFFLE                             12
 
   #define CHECK_INTEGER                              0
   #define CHECK_INTEGER_EVEN                         1

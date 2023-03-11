@@ -66,7 +66,8 @@ uint8_t *countOpBytes(uint8_t *step, uint16_t paramMode) {
       }
     }
 
-    case PARAM_REGISTER: {
+    case PARAM_REGISTER:
+    case PARAM_VARIABLE: {
       if(opParam <= LAST_LOCAL_REGISTER) { // Global registers from 00 to 99, lettered registers from X to K, and local registers from .00 to .98
         return step;
       }
@@ -78,7 +79,7 @@ uint8_t *countOpBytes(uint8_t *step, uint16_t paramMode) {
       }
       else {
         #if !defined(DMCP_BUILD)
-          printf("\nIn function countOpBytes: case PARAM_REGISTER, %u is not a valid parameter!", opParam);
+          printf("\nIn function countOpBytes: case PARAM_REGISTER / PARAM_VARIABLE, %u is not a valid parameter!", opParam);
         #endif // !DMCP_BUILD
         return NULL;
       }

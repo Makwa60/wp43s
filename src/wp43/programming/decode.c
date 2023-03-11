@@ -221,6 +221,17 @@ static void decodeOp(uint8_t *paramAddress, const char *op, uint16_t paramMode, 
       break;
     }
 
+    case PARAM_VARIABLE: {
+      if(opParam == STRING_LABEL_VARIABLE) {
+        getStringLabelOrVariableName(paramAddress);
+        sprintf(tmpString, "%s " STD_LEFT_SINGLE_QUOTE "%s" STD_RIGHT_SINGLE_QUOTE, op, tmpStringLabelOrVariableName);
+      }
+      else {
+        sprintf(tmpString, "\nIn function decodeOp: case PARAM_VARIABLE, %s  %u is not a valid parameter!", op, opParam);
+      }
+      break;
+    }
+
     case PARAM_REGISTER: {
       if(opParam < REGISTER_X) { // Global register from 00 to 99
         sprintf(tmpString, "%s %02u", op, opParam);
