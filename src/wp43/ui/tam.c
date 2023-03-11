@@ -293,6 +293,17 @@ void tamReset(void) {
   }
 
 
+  static uint16_t _indirectionType(uint16_t func) {
+    if(indexOfItems[func].param == tmFlagR || indexOfItems[func].param == tmFlagW) {
+      return INDPM_FLAG;
+    } else if(tam.mode == tmStoRcl || tam.mode == tmMDim) {
+      return INDPM_REGISTER;
+    } else if(tam.mode == tmLabel) {
+      return INDPM_LABEL;
+    } else {
+      return INDPM_PARAM;
+    }
+  }
 
   static void _tamProcessInput(uint16_t item) {
     int16_t  min, max, min2, max2;
@@ -720,7 +731,7 @@ void tamReset(void) {
           value += FIRST_LOCAL_REGISTER;
         }
         if(tam.indirect && calcMode != cmPem) {
-          value = indirectAddressing(value, (indexOfItems[tamOperation()].param == tmFlagR || indexOfItems[tamOperation()].param == tmFlagW) ? INDPM_FLAG : (tam.mode == tmStoRcl || tam.mode == tmMDim) ? INDPM_REGISTER : INDPM_PARAM, min, max);
+          value = indirectAddressing(value, _indirectionType(tamOperation()), min, max);
           run = (value != FAILED_INDIRECTION);
         }
         if(tam.function == ITM_GTOP) {
@@ -840,7 +851,7 @@ void tamReset(void) {
         aimBuffer[0] = 0;
       }
       if(tam.indirect && value != INVALID_VARIABLE && calcMode != cmPem) {
-        value = indirectAddressing(value, (indexOfItems[tam.function].param == tmFlagR || indexOfItems[tam.function].param == tmFlagW) ? INDPM_FLAG : (tam.mode == tmStoRcl || tam.mode == tmMDim) ? INDPM_REGISTER : INDPM_PARAM, min, max);
+        value = indirectAddressing(value, _indirectionType(tam.function), min, max);
         if(value == FAILED_INDIRECTION) {
           value = INVALID_VARIABLE;
         }
