@@ -279,6 +279,9 @@ char *getRegisterTagName(calcRegister_t regist, bool padWithBlanks) {
         case amDMS: {
           return "dms     ";
         }
+        case amMil: {
+          return "mil     ";
+        }
         case amNone: {
           return "none    ";
         }
@@ -475,6 +478,9 @@ char *getAngularModeName(angularMode_t angularMode) {
     }
     case amDMS: {
       return "d.ms  ";
+    }
+    case amMil: {
+      return "mil   ";
     }
     case amNone: {
       return "none  ";

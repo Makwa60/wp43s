@@ -2670,5 +2670,9 @@ TO_QSPI const item_t indexOfItems[] = {
 /* 1795 */  { activateUSBdisk,              NOPARAM,                     "ActUSB",                                      "ActUSB",                                      (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
 /* 1796 */  { fnDumpRegXToFile,             NOPARAM,                     "DUMP",                                        "DUMP",                                        (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
 
-/* 1797 */  { itemToBeCoded,                NOPARAM,                     "",                                            "Last item",                                   (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_ENABLED   | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
+/* 1797 */  { fnAngularMode,                amMil,                       "MIL",                                         "MIL",                                         (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/* 1798 */  { fnCvtFromCurrentAngularMode,  amMil,                       STD_RIGHT_ARROW "MIL",                         STD_RIGHT_ARROW "MIL",                         (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/* 1799 */  { fnCvtToCurrentAngularMode,    amMil,                       "MIL" STD_RIGHT_ARROW,                         "MIL" STD_RIGHT_ARROW,                         (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+
+/* 1800 */  { itemToBeCoded,                NOPARAM,                     "",                                            "Last item",                                   (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_ENABLED   | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
 };

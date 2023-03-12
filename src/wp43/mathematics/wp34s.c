@@ -87,6 +87,12 @@ void WP34S_Cvt2RadSinCosTan(const real_t *an, angularMode_t angularMode, real_t 
       break;
     }
 
+    case amMil: {
+      WP34S_Mod(&angle, const_6400,    &angle, realContext); // mod(angle, 6400Mil) --> angle
+      angularMode = amMil;
+      break;
+    }
+
     default: {
     }
   }

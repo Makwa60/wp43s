@@ -782,6 +782,10 @@ void setParameter(char *p) {
       currentAngularMode = amMultPi;
       //printf("  Set angular mode to MULTPI\n");
     }
+    else if(strcmp(r, "MIL") == 0) {
+      currentAngularMode = amMil;
+      //printf("  Set angular mode to MIL\n");
+    }
     else if(strcmp(r, "GRAD") == 0) {
       currentAngularMode = amGrad;
       //printf("  Set angular mode to GRAD\n");
@@ -995,6 +999,9 @@ void setParameter(char *p) {
       }
       else if(strcmp(angMod, "GRAD"  ) == 0) {
         am = amGrad;
+      }
+      else if(strcmp(angMod, "MIL"   ) == 0) {
+        am = amMil;
       }
       else if(strcmp(angMod, "NONE"  ) == 0) {
         am = amNone;
@@ -1888,6 +1895,11 @@ void checkExpectedOutParameter(char *p) {
         processError("angular mode should be GRAD but it is not!");
       }
     }
+    else if(strcmp(r, "MIL") == 0) {
+      if(currentAngularMode != amMil) {
+        processError("angular mode should be MIL but it is not!");
+      }
+    }
     else {
       processError("missformed angular mode checking. The rvalue must be DEG, DMS, GRAD, RAD or MULTPI.");
     }
@@ -2108,6 +2120,7 @@ void checkExpectedOutParameter(char *p) {
       else if(strcmp(angMod, "RAD"   ) == 0) am = amRadian;
       else if(strcmp(angMod, "MULTPI") == 0) am = amMultPi;
       else if(strcmp(angMod, "GRAD"  ) == 0) am = amGrad;
+      else if(strcmp(angMod, "MIL"   ) == 0) am = amMil;
       else if(strcmp(angMod, "NONE"  ) == 0) am = amNone;
       else {
         sprintf(msgString, "missformed register real%d angular mode. Unknown angular mode after real value.", strcmp(l, "RE16") == 0 ? 16 : 34);

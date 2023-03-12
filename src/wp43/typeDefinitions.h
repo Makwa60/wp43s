@@ -115,10 +115,11 @@
     amRadian =  0, // radian must be 0  | This is because of the tables angle45,
     amGrad   =  1, // grad   must be 1  | angle90, and angle180 for angle reduction
     amDegree =  2, // degree must be 2  | before Taylor trig computation.
-    amDMS    =  3,
-    amMultPi =  4,
-    amNone   =  5,
-    amSecond =  6  // not an angular but a time unit: for the routine unified with the real type
+    amMil    =  3, // mil    must be 3
+    amDMS    =  4,
+    amMultPi =  5,
+    amNone   =  6,
+    amSecond =  7  // not an angular but a time unit: for the routine unified with the real type
   } angularMode_t;
 
 

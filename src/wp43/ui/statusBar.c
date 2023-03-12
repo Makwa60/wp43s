@@ -91,6 +91,11 @@
         break;
       }
 
+      case amMil: {
+        showGlyph(STD_SUP_MINUS,          &standardFont, x, 0, vmNormal, true, false); // -  is 0+8 pixel wide
+        break;
+      }
+
       default: {
         showGlyph(STD_QUESTION_MARK,      &standardFont, x, 0, vmNormal, true, false); // ?
       }

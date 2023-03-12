@@ -1187,6 +1187,9 @@ void angle34ToDisplayString2(const real34_t *angle34, uint8_t mode, char *displa
     else if(mode == amDegree) {
       strcat(displayString, STD_DEGREE);
     }
+    else if(mode == amMil) {
+      strcat(displayString, STD_SUP_MINUS);
+    }
     else if(mode == amSecond) {
       strcat(displayString, "s");
     }

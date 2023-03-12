@@ -1853,8 +1853,12 @@
   #define ITM_ACTUSB                    1795
   #define ITM_DUMP                      1796
 
+  #define ITM_MIL                       1797
+  #define ITM_toMIL                     1798
+  #define ITM_MILto                     1799
 
-  #define LAST_ITEM                     1797
+
+  #define LAST_ITEM                     1800
 
 
   #define NOPARAM                       9876 // Item for function who don't need an item

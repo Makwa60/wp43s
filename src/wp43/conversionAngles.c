@@ -362,12 +362,16 @@ void convertAngleFromTo(real_t *angle, angularMode_t fromAngularMode, angularMod
     case amMultPi: {
       switch(toAngularMode) {
         case amGrad: {
-          realMultiply(angle, const_200onPi, angle, realContext);
+          realMultiply(angle, const_200onPi,  angle, realContext);
           break;
         }
         case amDegree:
         case amDMS: {
-          realMultiply(angle, const_180onPi, angle, realContext);
+          realMultiply(angle, const_180onPi,  angle, realContext);
+          break;
+        }
+        case amMil: {
+          realMultiply(angle, const_3200onPi, angle, realContext);
           break;
         }
         default: {
@@ -388,6 +392,10 @@ void convertAngleFromTo(real_t *angle, angularMode_t fromAngularMode, angularMod
           realMultiply(angle, const_9on10,   angle, realContext);
           break;
         }
+        case amMil: {
+          realMultiply(angle, const_16,      angle, realContext);
+          break;
+        }
         default: {
         }
       }
@@ -404,6 +412,32 @@ void convertAngleFromTo(real_t *angle, angularMode_t fromAngularMode, angularMod
         }
         case amGrad: {
           realDivide(  angle, const_9on10,   angle, realContext);
+          break;
+        }
+        case amMil: {
+          realDivide(  angle, const_9on160,  angle, realContext);
+          break;
+        }
+        default: {
+        }
+      }
+      break;
+    }
+
+    case amMil: {
+      switch(toAngularMode) {
+        case amRadian:
+        case amMultPi: {
+          realDivide(  angle, const_3200onPi, angle, realContext);
+          break;
+        }
+        case amGrad: {
+          realDivide(  angle, const_16,       angle, realContext);
+          break;
+        }
+        case amDegree:
+        case amDMS: {
+          realMultiply(angle, const_9on160,   angle, realContext);
           break;
         }
         default: {
