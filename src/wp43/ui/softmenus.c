@@ -129,8 +129,8 @@ TO_QSPI const int16_t menu_M_SIM_Q[]     = { VAR_MATA,                      VAR_
 TO_QSPI const int16_t menu_M_EDIT[]      = { ITM_LEFT_ARROW,                ITM_UP_ARROW,               ITM_M_OLD,                ITM_M_GOTO,            ITM_DOWN_ARROW,              ITM_RIGHT_ARROW,
                                              ITM_M_INSR,                    ITM_NULL,                   ITM_M_DELR,               ITM_NULL,              ITM_M_WRAP,                  ITM_M_GROW                    };
 
-TO_QSPI const int16_t menu_MODE[]        = { ITM_SF,                        ITM_DEG,                    ITM_RAD,                  ITM_GRAD,              ITM_MULPI,                   ITM_CF,
-                                             ITM_NULL,                      ITM_NULL,                   ITM_RM,                   ITM_MIL,               ITM_SETSIG,                  ITM_DENMAX,
+TO_QSPI const int16_t menu_MODE[]        = { ITM_SF,                        ITM_DEG,                    ITM_RAD,                  ITM_MIL,               ITM_MULPI,                   ITM_CF,
+                                             ITM_NULL,                      ITM_GRAD,                   ITM_RM,                   ITM_NULL,              ITM_SETSIG,                  ITM_DENMAX,
 #if DMCP_BUILD
                                              ITM_SYSTEM,                    ITM_NULL,                   ITM_NULL,                 ITM_NULL,              ITM_NULL,                    ITM_NULL,
 #endif // DMCP_BUILD
@@ -270,7 +270,8 @@ TO_QSPI const int16_t menu_alpha_omega[] = { ITM_alpha,                     ITM_
 
 TO_QSPI const int16_t menu_AngleConv[]   = { ITM_toDEG,                     ITM_toRAD,                  ITM_toMULpi,              ITM_toMIL,             ITM_toGRAD,                  ITM_toDMS,
                                              ITM_DEGto,                     ITM_RADto,                  ITM_MULPIto,              ITM_MILto,             ITM_GRADto,                  ITM_DMSto,
-                                             ITM_DtoR,                      ITM_RtoD,                   ITM_MPItoR,               ITM_RtoMPI,            ITM_DtoDMS,                  ITM_DMStoD                    };
+                                             ITM_DtoR,                      ITM_RtoD,                   ITM_MPItoR,               ITM_RtoMPI,            ITM_DtoDMS,                  ITM_DMStoD,
+                                             ITM_DtoMIL,                    ITM_MILtoD,                 ITM_MILtoR,               ITM_RtoMIL,            ITM_NULL,                    ITM_NULL                      };
 
 /*      Menu name                           <----------------------------------------------------------------------------- 6 functions ---------------------------------------------------------------------------->  */
 /*                                          <---------------------------------------------------------------------- 6 f shifted functions ------------------------------------------------------------------------->  */

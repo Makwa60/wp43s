@@ -307,6 +307,150 @@ void fnCvtDmsToDeg(uint16_t unusedButMandatoryParameter) {
 
 
 
+void fnCvtDegToMil(uint16_t unusedButMandatoryParameter) {
+  if(!saveLastX()) {
+    return;
+  }
+
+  switch(getRegisterDataType(REGISTER_X)) {
+    case dtLongInteger: {
+      convertLongIntegerRegisterToReal34Register(REGISTER_X, REGISTER_X);
+      convertAngle34FromTo(REGISTER_REAL34_DATA(REGISTER_X), amDegree, amMil);
+      setRegisterAngularMode(REGISTER_X, amMil);
+      break;
+    }
+
+    case dtReal34: {
+      if(getRegisterAngularMode(REGISTER_X) == amDegree || getRegisterAngularMode(REGISTER_X) == amNone) {
+        convertAngle34FromTo(REGISTER_REAL34_DATA(REGISTER_X), amDegree, amMil);
+        setRegisterAngularMode(REGISTER_X, amMil);
+      }
+      else {
+        displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, REGISTER_X);
+        errorMoreInfo("cannot use an angle34 not tagged degree as an input of fnCvtDegToMil");
+        return;
+      }
+      break;
+    }
+
+    default: {
+      displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, REGISTER_X);
+      errorMoreInfo("the input value must be a real34 or a long integer\n%s cannot be converted to an angle!", getRegisterDataTypeName(REGISTER_X, true, false));
+      return;
+    }
+  }
+}
+
+
+
+void fnCvtMilToDeg(uint16_t unusedButMandatoryParameter) {
+  if(!saveLastX()) {
+    return;
+  }
+
+  switch(getRegisterDataType(REGISTER_X)) {
+    case dtLongInteger: {
+      convertLongIntegerRegisterToReal34Register(REGISTER_X, REGISTER_X);
+      convertAngle34FromTo(REGISTER_REAL34_DATA(REGISTER_X), amMil, amDegree);
+      setRegisterAngularMode(REGISTER_X, amDegree);
+      break;
+    }
+
+    case dtReal34: {
+      if(getRegisterAngularMode(REGISTER_X) == amMil || getRegisterAngularMode(REGISTER_X) == amNone) {
+        convertAngle34FromTo(REGISTER_REAL34_DATA(REGISTER_X), amMil, amDegree);
+        setRegisterAngularMode(REGISTER_X, amDegree);
+      }
+      else {
+        displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, REGISTER_X);
+        errorMoreInfo("cannot use an angle34 not tagged mil as an input of fnCvtMilToDeg");
+        return;
+      }
+      break;
+    }
+
+    default: {
+      displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, REGISTER_X);
+      errorMoreInfo("the input value must be a real34 or a long integer\n%s cannot be converted to an angle!", getRegisterDataTypeName(REGISTER_X, true, false));
+      return;
+    }
+  }
+}
+
+
+
+void fnCvtMilToRad(uint16_t unusedButMandatoryParameter){
+  if(!saveLastX()) {
+    return;
+  }
+
+  switch(getRegisterDataType(REGISTER_X)) {
+    case dtLongInteger: {
+      convertLongIntegerRegisterToReal34Register(REGISTER_X, REGISTER_X);
+      convertAngle34FromTo(REGISTER_REAL34_DATA(REGISTER_X), amMil, amRadian);
+      setRegisterAngularMode(REGISTER_X, amRadian);
+      break;
+    }
+
+    case dtReal34: {
+      if(getRegisterAngularMode(REGISTER_X) == amMil || getRegisterAngularMode(REGISTER_X) == amNone) {
+        convertAngle34FromTo(REGISTER_REAL34_DATA(REGISTER_X), amMil, amRadian);
+        setRegisterAngularMode(REGISTER_X, amRadian);
+      }
+      else {
+        displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, REGISTER_X);
+        errorMoreInfo("cannot use an angle34 not tagged mil as an input of fnCvtMilToRad");
+        return;
+      }
+      break;
+    }
+
+    default: {
+      displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, REGISTER_X);
+      errorMoreInfo("the input value must be a real34 or a long integer\n%s cannot be converted to an angle!", getRegisterDataTypeName(REGISTER_X, true, false));
+      return;
+    }
+  }
+}
+
+
+
+void fnCvtRadToMil(uint16_t unusedButMandatoryParameter) {
+  if(!saveLastX()) {
+    return;
+  }
+
+  switch(getRegisterDataType(REGISTER_X)) {
+    case dtLongInteger: {
+      convertLongIntegerRegisterToReal34Register(REGISTER_X, REGISTER_X);
+      convertAngle34FromTo(REGISTER_REAL34_DATA(REGISTER_X), amRadian, amMil);
+      setRegisterAngularMode(REGISTER_X, amMil);
+      break;
+    }
+
+    case dtReal34: {
+      if(getRegisterAngularMode(REGISTER_X) == amRadian || getRegisterAngularMode(REGISTER_X) == amNone) {
+        convertAngle34FromTo(REGISTER_REAL34_DATA(REGISTER_X), amRadian, amMil);
+        setRegisterAngularMode(REGISTER_X, amMil);
+      }
+      else {
+        displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, REGISTER_X);
+        errorMoreInfo("cannot use an angle34 not tagged radian as an input of fnCvtRadToMil");
+        return;
+      }
+      break;
+    }
+
+    default: {
+      displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, REGISTER_X);
+      errorMoreInfo("the input value must be a real34 or a long integer\n%s cannot be converted to an angle!", getRegisterDataTypeName(REGISTER_X, true, false));
+      return;
+    }
+  }
+}
+
+
+
 void fnCvtDmsToCurrentAngularMode(uint16_t unusedButMandatoryParameter) {
   if(!saveLastX()) {
     return;
