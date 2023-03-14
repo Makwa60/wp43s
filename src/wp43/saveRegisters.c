@@ -54,6 +54,10 @@
         strcpy(string, "d.ms");
         break;
       }
+      case amMil: {
+        strcpy(string, "MIL");
+        break;
+      }
       case amNone: {
         break;
       }

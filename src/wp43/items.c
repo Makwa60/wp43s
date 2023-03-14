@@ -807,6 +807,10 @@ void fnNop(uint16_t unusedButMandatoryParameter) {
   void fnDeleteMenu                (uint16_t unusedButMandatoryParameter) {}
   void activateUSBdisk             (uint16_t unusedButMandatoryParameter) {}
   void fnDumpRegXToFile            (uint16_t unusedButMandatoryParameter) {}
+  void fnCvtDegToMil               (uint16_t unusedButMandatoryParameter) {}
+  void fnCvtMilToDeg               (uint16_t unusedButMandatoryParameter) {}
+  void fnCvtMilToRad               (uint16_t unusedButMandatoryParameter) {}
+  void fnCvtRadToMil               (uint16_t unusedButMandatoryParameter) {}
 #endif // GENERATE_CATALOGS
 
 
@@ -2670,5 +2674,13 @@ TO_QSPI const item_t indexOfItems[] = {
 /* 1795 */  { activateUSBdisk,              NOPARAM,                     "ActUSB",                                      "ActUSB",                                      (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
 /* 1796 */  { fnDumpRegXToFile,             NOPARAM,                     "DUMP",                                        "DUMP",                                        (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
 
-/* 1797 */  { itemToBeCoded,                NOPARAM,                     "",                                            "Last item",                                   (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_ENABLED   | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
+/* 1797 */  { fnAngularMode,                amMil,                       "MIL",                                         "MIL",                                         (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/* 1798 */  { fnCvtFromCurrentAngularMode,  amMil,                       STD_RIGHT_ARROW "MIL",                         STD_RIGHT_ARROW "MIL",                         (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/* 1799 */  { fnCvtToCurrentAngularMode,    amMil,                       "MIL" STD_RIGHT_ARROW,                         "MIL" STD_RIGHT_ARROW,                         (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/* 1800 */  { fnCvtDegToMil,                NOPARAM,                     "D" STD_RIGHT_ARROW "MIL",                     "D" STD_RIGHT_ARROW "MIL",                     (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/* 1801 */  { fnCvtMilToDeg,                NOPARAM,                     "MIL" STD_RIGHT_ARROW "D",                     "MIL" STD_RIGHT_ARROW "D",                     (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/* 1802 */  { fnCvtMilToRad,                NOPARAM,                     "MIL" STD_RIGHT_ARROW "R",                     "MIL" STD_RIGHT_ARROW "R",                     (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/* 1803 */  { fnCvtRadToMil,                NOPARAM,                     "R" STD_RIGHT_ARROW "MIL",                     "R" STD_RIGHT_ARROW "MIL",                     (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+
+/* 1804 */  { itemToBeCoded,                NOPARAM,                     "",                                            "Last item",                                   (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_ENABLED   | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
 };

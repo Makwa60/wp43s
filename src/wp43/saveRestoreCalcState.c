@@ -41,7 +41,7 @@
 
 #include "wp43.h"
 
-#define BACKUP_VERSION                     89  // x-to-alpha destination
+#define BACKUP_VERSION                     90  // add Mil angle
 #define OLDEST_COMPATIBLE_BACKUP_VERSION   87  // save running app
 #define START_REGISTER_VALUE             1000  // was 1522, why?
 
@@ -610,6 +610,36 @@ static uint32_t restore(void *buffer, uint32_t size) {
         }
       }
 
+      if(backupVersion <= 89) { // Angle incompatibility
+        printf("****Angle code incompatibility****\n");
+        printf("Angle code has been changed since Mil has been introduced\n");
+        printf("real34 values now will be converted\n");
+        printf("CAVEAT: local registers which are out of scope will not be converted\n");
+        if(currentAngularMode >= 3) {
+          ++currentAngularMode;
+        }
+        for(int16_t regist = 0; regist <= LAST_GLOBAL_REGISTER; ++regist) {
+          if(getRegisterDataType(regist) == dtReal34 && getRegisterAngularMode(regist) >= 3) {
+            setRegisterAngularMode(regist, getRegisterAngularMode(regist) + 1);
+          }
+        }
+        for(int16_t regist = FIRST_LOCAL_REGISTER; regist < FIRST_LOCAL_REGISTER + currentNumberOfLocalRegisters; ++regist) {
+          if(getRegisterDataType(regist) == dtReal34 && getRegisterAngularMode(regist) >= 3) {
+            setRegisterAngularMode(regist, getRegisterAngularMode(regist) + 1);
+          }
+        }
+        for(int16_t regist = FIRST_NAMED_VARIABLE; regist < FIRST_NAMED_VARIABLE + numberOfNamedVariables; ++regist) {
+          if(getRegisterDataType(regist) == dtReal34 && getRegisterAngularMode(regist) >= 3) {
+            setRegisterAngularMode(regist, getRegisterAngularMode(regist) + 1);
+          }
+        }
+        for(int16_t regist = FIRST_RESERVED_VARIABLE + 12; regist <= LAST_RESERVED_VARIABLE; ++regist) {
+          if(getRegisterDataType(regist) == dtReal34 && getRegisterAngularMode(regist) >= 3) {
+            setRegisterAngularMode(regist, getRegisterAngularMode(regist) + 1);
+          }
+        }
+      }
+
       if(currentProgramNumber >= (numberOfPrograms - numberOfProgramsInFlash)) {
         currentStep.flash = 1;
       }
@@ -732,6 +762,11 @@ char aimBuffer1[400];             //The concurrent use of the global aimBuffer
 
           case amGrad: {
             strcpy(aimBuffer1, "Real:GRAD");
+            break;
+          }
+
+          case amMil: {
+            strcpy(aimBuffer1, "Real:MIL");
             break;
           }
 
@@ -1207,7 +1242,7 @@ static void restoreRegister(calcRegister_t regist, char *type, char *value) {
     if(type[5] == 'R') {
       tag = amRadian;
     }
-    else if(type[5] == 'M') {
+    else if(type[5] == 'M' && type[6] == 'U') {
       tag = amMultPi;
     }
     else if(type[5] == 'G') {
@@ -1218,6 +1253,9 @@ static void restoreRegister(calcRegister_t regist, char *type, char *value) {
     }
     else if(type[5] == 'D' && type[6] == 'M') {
       tag = amDMS;
+    }
+    else if(type[5] == 'M' && type[6] == 'I') {
+      tag = amMil;
     }
     else {
       tag = amNone;
