@@ -43,34 +43,41 @@ void fnAlphaLeng(uint16_t regist) {
 void fnAlphaToX(uint16_t regist) {
   unsigned char char1, char2;
   longInteger_t lgInt;
-
+  liftStack();
+ 
   if(getRegisterDataType(regist) != dtString) {
     displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, REGISTER_X);
     errorMoreInfo("cannot use " STD_alpha STD_RIGHT_ARROW "x on %s", getRegisterDataTypeName(regist, true, false));
     return;
   }
 
-  if(stringByteLength(REGISTER_STRING_DATA(regist)) == 0) {
-    displayCalcErrorMessage(ERROR_EMPTY_STRING, ERR_REGISTER_LINE, REGISTER_X);
-    errorMoreInfo("cannot use " STD_alpha STD_RIGHT_ARROW "x on an empty string");
-    return;
-  }
-
-  char1 = *(REGISTER_STRING_DATA(regist));
-  if(char1 & 0x80) {
-    char2 = *(REGISTER_STRING_DATA(regist) + 1);
-  }
+//  if(stringByteLength(REGISTER_STRING_DATA(regist)) == 0) {  ***DL***
+//    displayCalcErrorMessage(ERROR_EMPTY_STRING, ERR_REGISTER_LINE, REGISTER_X);  ***DL***
+//    errorMoreInfo("cannot use " STD_alpha STD_RIGHT_ARROW "x on an empty string");  ***DL***
+//    return;  ***DL***
+//  }  ***DL*** 
 
   liftStack();
 
   longIntegerInit(lgInt);
-  intToLongInteger(char1 & 0x7f, lgInt);
-  if(char1 & 0x80) {
-    longIntegerMultiplyUInt(lgInt, 256, lgInt);
-    longIntegerAddUInt(lgInt, char2, lgInt);
+  intToLongInteger(0, lgInt);
+
+  if(stringByteLength(REGISTER_STRING_DATA(regist)) != 0) {
+    char1 = *(REGISTER_STRING_DATA(regist));
+    if(char1 & 0x80) {
+      char2 = *(REGISTER_STRING_DATA(regist) + 1);
+    }
+    intToLongInteger(char1 & 0x7f, lgInt);
+    if(char1 & 0x80) {
+      longIntegerMultiplyUInt(lgInt, 256, lgInt);
+      longIntegerAddUInt(lgInt, char2, lgInt);
+    }
+	convertLongIntegerToShortIntegerRegister(lgInt, 16, REGISTER_X);
+  } 
+  else {
+    convertLongIntegerToLongIntegerRegister(lgInt, REGISTER_X);
   }
 
-  convertLongIntegerToShortIntegerRegister(lgInt, 16, REGISTER_X);
   longIntegerFree(lgInt);
 
   if(!getSystemFlag(FLAG_ASLIFT) || regist != getStackTop()) {
@@ -290,35 +297,38 @@ void fnAlphaPos(uint16_t regist) {
     return;
   }
 
-  if(stringGlyphLength(REGISTER_STRING_DATA(regist)) == 0 || stringGlyphLength(REGISTER_STRING_DATA(REGISTER_X)) == 0) {
-    displayCalcErrorMessage(ERROR_EMPTY_STRING, ERR_REGISTER_LINE, REGISTER_X);
-    errorMoreInfo("cannot use " STD_alpha "POS? on or with an empty string");
-    return;
-  }
+//  if(stringGlyphLength(REGISTER_STRING_DATA(regist)) == 0 || stringGlyphLength(REGISTER_STRING_DATA(REGISTER_X)) == 0) {  ***DL***
+//    displayCalcErrorMessage(ERROR_EMPTY_STRING, ERR_REGISTER_LINE, REGISTER_X);  ***DL***
+//    errorMoreInfo("cannot use " STD_alpha "POS? on or with an empty string");  ***DL***
+//    return;  ***DL***
+//  }  ***DL***
 
   if(!saveLastX()) {
     return;
   }
 
   longIntegerInit(lgInt);
-  ptrTarget = REGISTER_STRING_DATA(REGISTER_X);
-  ptrRegist = REGISTER_STRING_DATA(regist);
-  lgTarget = stringByteLength(ptrTarget);
-  lgRegist = stringByteLength(ptrRegist);
-
   intToLongInteger(-1, lgInt);
-  for(i=0; i<=lgRegist-lgTarget; i++) {
-    found = true;
-    for(j=0; j<lgTarget; j++) {
-      if(*(ptrRegist+i+j) != *(ptrTarget+j)) {
-        found = false;
+  
+  if(stringGlyphLength(REGISTER_STRING_DATA(regist)) != 0 && stringGlyphLength(REGISTER_STRING_DATA(REGISTER_X)) != 0) {
+    ptrTarget = REGISTER_STRING_DATA(REGISTER_X);
+    ptrRegist = REGISTER_STRING_DATA(regist);
+    lgTarget = stringByteLength(ptrTarget);
+    lgRegist = stringByteLength(ptrRegist);
+
+    for(i=0; i<=lgRegist-lgTarget; i++) {
+      found = true;
+      for(j=0; j<lgTarget; j++) {
+        if(*(ptrRegist+i+j) != *(ptrTarget+j)) {
+          found = false;
+          break;
+        }
+      }
+      if(found) {
+        intToLongInteger(i, lgInt);
         break;
       }
-    }
-    if(found) {
-      intToLongInteger(i, lgInt);
-      break;
-    }
+	}
   }
 
   liftStack();
@@ -342,8 +352,8 @@ void fnAlphaRR(uint16_t regist) {
 
   stringGlyphLen = stringGlyphLength(REGISTER_STRING_DATA(regist));
   if(stringGlyphLen == 0) {
-    displayCalcErrorMessage(ERROR_EMPTY_STRING, ERR_REGISTER_LINE, REGISTER_X);
-    errorMoreInfo("cannot use " STD_alpha "RR on an empty string");
+    //displayCalcErrorMessage(ERROR_EMPTY_STRING, ERR_REGISTER_LINE, REGISTER_X);  ***DL***
+    //errorMoreInfo("cannot use " STD_alpha "RR on an empty string");  ***DL***
     return;
   }
 
@@ -418,8 +428,8 @@ void fnAlphaRL(uint16_t regist) {
 
   stringGlyphLen = stringGlyphLength(REGISTER_STRING_DATA(regist));
   if(stringGlyphLen == 0) {
-    displayCalcErrorMessage(ERROR_EMPTY_STRING, ERR_REGISTER_LINE, REGISTER_X);
-    errorMoreInfo("cannot use " STD_alpha "RL on an empty string");
+    //displayCalcErrorMessage(ERROR_EMPTY_STRING, ERR_REGISTER_LINE, REGISTER_X);  ***DL***
+    //errorMoreInfo("cannot use " STD_alpha "RL on an empty string");  ***DL***
     return;
   }
 
@@ -492,8 +502,8 @@ void fnAlphaSR(uint16_t regist) {
 
   stringGlyphLen = stringGlyphLength(REGISTER_STRING_DATA(regist));
   if(stringGlyphLen == 0) {
-    displayCalcErrorMessage(ERROR_EMPTY_STRING, ERR_REGISTER_LINE, REGISTER_X);
-    errorMoreInfo("cannot use " STD_alpha "SR on an empty string");
+    //displayCalcErrorMessage(ERROR_EMPTY_STRING, ERR_REGISTER_LINE, REGISTER_X);  ***DL***
+    //errorMoreInfo("cannot use " STD_alpha "SR on an empty string");  ***DL***
     return;
   }
 
@@ -563,8 +573,8 @@ void fnAlphaSL(uint16_t regist) {
   ptr = REGISTER_STRING_DATA(regist);
   stringGlyphLen = stringGlyphLength(ptr);
   if(stringGlyphLen == 0) {
-    displayCalcErrorMessage(ERROR_EMPTY_STRING, ERR_REGISTER_LINE, REGISTER_X);
-    errorMoreInfo("cannot use " STD_alpha "SL on an empty string");
+    //displayCalcErrorMessage(ERROR_EMPTY_STRING, ERR_REGISTER_LINE, REGISTER_X);  ***DL***
+    //errorMoreInfo("cannot use " STD_alpha "SL on an empty string");  ***DL***
     return;
   }
 
