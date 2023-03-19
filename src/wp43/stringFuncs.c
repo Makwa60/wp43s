@@ -43,7 +43,6 @@ void fnAlphaLeng(uint16_t regist) {
 void fnAlphaToX(uint16_t regist) {
   unsigned char char1, char2;
   longInteger_t lgInt;
-  liftStack();
  
   if(getRegisterDataType(regist) != dtString) {
     displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, REGISTER_X);
@@ -51,33 +50,30 @@ void fnAlphaToX(uint16_t regist) {
     return;
   }
 
-//  if(stringByteLength(REGISTER_STRING_DATA(regist)) == 0) {  ***DL***
-//    displayCalcErrorMessage(ERROR_EMPTY_STRING, ERR_REGISTER_LINE, REGISTER_X);  ***DL***
-//    errorMoreInfo("cannot use " STD_alpha STD_RIGHT_ARROW "x on an empty string");  ***DL***
-//    return;  ***DL***
-//  }  ***DL*** 
+  if(stringByteLength(REGISTER_STRING_DATA(regist)) == 0) {
+   liftStack();
+   longIntegerInit(lgInt);
+   intToLongInteger(0, lgInt);
+   convertLongIntegerToLongIntegerRegister(lgInt, REGISTER_X);
+   longIntegerFree(lgInt);
+   return;
+  }
+  
+  char1 = *(REGISTER_STRING_DATA(regist));
+  if(char1 & 0x80) {
+    char2 = *(REGISTER_STRING_DATA(regist) + 1);
+  }
 
   liftStack();
 
   longIntegerInit(lgInt);
-  intToLongInteger(0, lgInt);
-
-  if(stringByteLength(REGISTER_STRING_DATA(regist)) != 0) {
-    char1 = *(REGISTER_STRING_DATA(regist));
-    if(char1 & 0x80) {
-      char2 = *(REGISTER_STRING_DATA(regist) + 1);
-    }
-    intToLongInteger(char1 & 0x7f, lgInt);
-    if(char1 & 0x80) {
-      longIntegerMultiplyUInt(lgInt, 256, lgInt);
-      longIntegerAddUInt(lgInt, char2, lgInt);
-    }
-	convertLongIntegerToShortIntegerRegister(lgInt, 16, REGISTER_X);
-  } 
-  else {
-    convertLongIntegerToLongIntegerRegister(lgInt, REGISTER_X);
+  intToLongInteger(char1 & 0x7f, lgInt);
+  if(char1 & 0x80) {
+    longIntegerMultiplyUInt(lgInt, 256, lgInt);
+    longIntegerAddUInt(lgInt, char2, lgInt);
   }
 
+  convertLongIntegerToShortIntegerRegister(lgInt, 16, REGISTER_X);
   longIntegerFree(lgInt);
 
   if(!getSystemFlag(FLAG_ASLIFT) || regist != getStackTop()) {
@@ -296,12 +292,6 @@ void fnAlphaPos(uint16_t regist) {
     errorMoreInfo("cannot use " STD_alpha "POS? on %s (reg X)", getRegisterDataTypeName(regist, true, false));
     return;
   }
-
-//  if(stringGlyphLength(REGISTER_STRING_DATA(regist)) == 0 || stringGlyphLength(REGISTER_STRING_DATA(REGISTER_X)) == 0) {  ***DL***
-//    displayCalcErrorMessage(ERROR_EMPTY_STRING, ERR_REGISTER_LINE, REGISTER_X);  ***DL***
-//    errorMoreInfo("cannot use " STD_alpha "POS? on or with an empty string");  ***DL***
-//    return;  ***DL***
-//  }  ***DL***
 
   if(!saveLastX()) {
     return;
