@@ -10,8 +10,10 @@
 #include "fonts.h"
 #include "integers.h"
 #include "items.h"
+#include "mathematics/comparisonReals.h"
 #include "mathematics/cos.h"
 #include "mathematics/matrix.h"
+#include "mathematics/sin.h"
 #include "mathematics/wp34s.h"
 #include "registers.h"
 #include "registerValueConversions.h"
@@ -126,8 +128,33 @@ void m1PowReal(void) {
 
   real34ToReal(REGISTER_REAL34_DATA(REGISTER_X), &x);
 
-  realMultiply(const_pi, &x, &x, &ctxtReal39);
-  WP34S_Cvt2RadSinCosTan(&x, amRadian, NULL, &x, NULL, &ctxtReal39);
+  if(realIsAnInteger(&x)) {
+    realDivideRemainder(&x, const_2, &x, &ctxtReal39);
+    realCopy(realIsZero(&x) ? const_1 : const__1, &x);
+  }
+  else if(getSystemFlag(FLAG_CPXRES)) {
+    real_t xi;
+    realMultiply(const_pi, &x, &xi, &ctxtReal39);
+    if(realIsAHalfInteger(&x)) {
+      realDivideRemainder(&x, const_2, &x, &ctxtReal39);
+      realCopy((realCompareAbsLessThan(&x, const_1) ^ realIsPositive(&x)) ? const__1 : const_1, &xi);
+      realZero(&x);
+    }
+    else {
+      WP34S_Cvt2RadSinCosTan(&xi, amRadian, &xi, &x, NULL, &ctxtReal39);
+    }
+    reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE_IN_BYTES, amNone);
+    convertRealToReal34ResultRegister(&x, REGISTER_X);
+    convertRealToImag34ResultRegister(&xi, REGISTER_X);
+    return;
+  }
+  else if(realIsAHalfInteger(&x)) {
+    realCopy(const_0, &x);
+  }
+  else {
+    realMultiply(const_pi, &x, &x, &ctxtReal39);
+    WP34S_Cvt2RadSinCosTan(&x, amRadian, NULL, &x, NULL, &ctxtReal39);
+  }
 
   convertRealToReal34ResultRegister(&x, REGISTER_X);
   setRegisterAngularMode(REGISTER_X, amNone);
@@ -139,6 +166,11 @@ void m1PowCplx(void) {
   real_t real, imag;
 
   real34ToReal(REGISTER_REAL34_DATA(REGISTER_X), &real);
+  realDivideRemainder(&real, const_2, &imag, &ctxtReal39);
+  bool realIsInt = realIsAnInteger(&real);
+  bool realIsHalfInt = realIsAHalfInteger(&real);
+  bool realIsOdd = realIsInt && (!realIsZero(&imag));
+  bool realIs2np3on2 = realIsHalfInt && (realCompareAbsLessThan(&imag, const_1) ^ realIsPositive(&imag));
   realMultiply(const_pi, &real, &real, &ctxtReal39);
 
   real34ToReal(REGISTER_IMAG34_DATA(REGISTER_X), &imag);
@@ -147,7 +179,40 @@ void m1PowCplx(void) {
   angularMode_t savedAngularMode = currentAngularMode;
   currentAngularMode = amRadian;
 
-  cosComplex(&real, &imag, &real, &imag, &ctxtReal39);
+  if(realIsInt) {
+    realDivideRemainder(&real, const_2, &real, &ctxtReal39);
+    if(realIsZero(&imag)) {
+      realCopy(realIsOdd ? const__1 : const_1, &real);
+    }
+    else {
+      realChangeSign(&imag);
+      realExp(&imag, &real, &ctxtReal39);
+      if(realIsOdd) {
+        realChangeSign(&real);
+      }
+      realZero(&imag);
+    }
+  }
+  else if(realIsHalfInt) {
+    if(realIsZero(&imag)) {
+      realCopy(realIs2np3on2 ? const__1 : const_1, &imag);
+    }
+    else {
+      realChangeSign(&imag);
+      realExp(&imag, &imag, &ctxtReal39);
+      if(realIs2np3on2) {
+        realChangeSign(&imag);
+      }
+    }
+    realZero(&real);
+  }
+  else {
+    real_t sr, si;
+    sinComplex(&real, &imag, &sr, &si, &ctxtReal39);
+    cosComplex(&real, &imag, &real, &imag, &ctxtReal39);
+    realSubtract(&real, &si, &real, &ctxtReal39);
+    realAdd(&imag, &sr, &imag, &ctxtReal39);
+  }
   convertRealToReal34ResultRegister(&real, REGISTER_X);
   convertRealToImag34ResultRegister(&imag, REGISTER_X);
 

@@ -215,6 +215,26 @@ bool realIsAnInteger(const real_t *x) {
 
 
 
+bool realIsAHalfInteger(const real_t *x) {
+  real_t y;
+
+  if(realIsNaN(x)) {
+    return false;
+  }
+
+  if(realIsInfinite(x)) {
+    return true;
+  }
+
+  realToIntegralValue(x, &y, DEC_ROUND_DOWN, &ctxtReal75);
+  realSubtract(x, &y, &y, &ctxtReal75);
+  realSetPositiveSign(&y);
+
+  return realCompareEqual(&y, const_1on2);
+}
+
+
+
 /*
 int16_t realIdenticalDigits(real_t *a, real_t *b) {
   int16_t counter, smallest;

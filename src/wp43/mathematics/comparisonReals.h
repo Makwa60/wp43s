@@ -31,6 +31,7 @@
 
   bool    real34IsAnInteger           (const real34_t *x);
   bool    realIsAnInteger             (const real_t *x);
+  bool    realIsAHalfInteger          (const real_t *x);
   //int16_t realIdenticalDigits         (real_t *a, real_t *b);
 
 #endif // !COMPARISONREALS_H
