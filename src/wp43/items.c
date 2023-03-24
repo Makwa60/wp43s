@@ -2682,5 +2682,10 @@ TO_QSPI const item_t indexOfItems[] = {
 /* 1802 */  { fnCvtMilToRad,                NOPARAM,                     "MIL" STD_RIGHT_ARROW "R",                     "MIL" STD_RIGHT_ARROW "R",                     (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
 /* 1803 */  { fnCvtRadToMil,                NOPARAM,                     "R" STD_RIGHT_ARROW "MIL",                     "R" STD_RIGHT_ARROW "MIL",                     (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
 
-/* 1804 */  { itemToBeCoded,                NOPARAM,                     "",                                            "Last item",                                   (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_ENABLED   | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
+/* 1804 */  { fnChangeBase,                 2,                           STD_RIGHT_ARROW "BIN",                         STD_RIGHT_ARROW "BIN",                         (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/* 1805 */  { fnChangeBase,                 8,                           STD_RIGHT_ARROW "OCT",                         STD_RIGHT_ARROW "OCT",                         (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/* 1806 */  { fnChangeBase,                 10,                          STD_RIGHT_ARROW "DEC",                         STD_RIGHT_ARROW "DEC",                         (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/* 1807 */  { fnChangeBase,                 16,                          STD_RIGHT_ARROW "HEX",                         STD_RIGHT_ARROW "HEX",                         (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+
+/* 1808 */  { itemToBeCoded,                NOPARAM,                     "",                                            "Last item",                                   (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_ENABLED   | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
 };

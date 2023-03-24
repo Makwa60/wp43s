@@ -1246,6 +1246,29 @@
         break;
       }
 
+      case ITM_toBIN:
+      case ITM_toOCT:
+      case ITM_toDEC:
+      case ITM_toHEX: {
+        done = true;
+
+        switch(nimNumberPart) {
+          case NP_INT_10:
+          case NP_INT_16: {
+            lastIntegerBase = indexOfItems[item].param;
+            sprintf(aimBuffer + strlen(aimBuffer), "#%" PRIu16, indexOfItems[item].param);
+            nimNumberPart = NP_INT_BASE;
+            goto addItemToNimBuffer_exit;
+          }
+          case NP_INT_BASE: {
+            lastIntegerBase = indexOfItems[item].param;
+            sprintf(strchr(aimBuffer, '#'), "#%" PRIu16, indexOfItems[item].param);
+            goto addItemToNimBuffer_exit;
+          }
+        }
+        break;
+      }
+
       case ITM_CHS: { // +/-
         done = true;
 
