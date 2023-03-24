@@ -1861,8 +1861,13 @@
   #define ITM_MILtoR                    1802
   #define ITM_RtoMIL                    1803
 
+  #define ITM_toBIN                     1804
+  #define ITM_toOCT                     1805
+  #define ITM_toDEC                     1806
+  #define ITM_toHEX                     1807
 
-  #define LAST_ITEM                     1804
+
+  #define LAST_ITEM                     1808
 
 
   #define NOPARAM                       9876 // Item for function who don't need an item
