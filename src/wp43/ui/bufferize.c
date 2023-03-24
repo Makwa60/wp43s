@@ -1874,11 +1874,33 @@
 
   void nimBufferToDisplayBuffer(const char *buffer, char *displayBuffer) {
     int16_t numDigits, source, dest;
+    uint8_t tmpGroupingGap = groupingGap;
 
     if(*buffer == '-') {
       *(displayBuffer++) = '-';
     }
     buffer++;
+
+    switch(lastIntegerBase) {
+      case 2: {
+        groupingGap = 4;
+        break;
+      }
+      case 4:
+      case 8:
+      case 16: {
+        groupingGap = 2;
+        break;
+      }
+      case 0: { // lastIntegerBase is not set
+        // do nothing
+        break;
+      }
+      default: {
+        groupingGap = 3;
+        break;
+      }
+    }
 
     for(numDigits=0; buffer[numDigits]!=0 && buffer[numDigits]!='e' && buffer[numDigits]!='.' && buffer[numDigits]!=' ' && buffer[numDigits]!='#' && buffer[numDigits]!='+' && buffer[numDigits]!='-'; numDigits++) {
     }
@@ -1909,6 +1931,8 @@
     else if(nimNumberPart == NP_INT_BASE) {
       strcpy(displayBuffer + dest, buffer + numDigits);
     }
+
+    groupingGap = tmpGroupingGap;
   }
 
 
