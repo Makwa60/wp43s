@@ -684,7 +684,7 @@ bool      _kbSeenInterrupt     = false;
           else if((calcMode == cmNormal || calcMode == cmNim) && (ITM_0<=item && item<=ITM_F) && (!catalog || catalog == CATALOG_MVAR)) {
             addItemToNimBuffer(item);
           }
-          else if(calcMode == cmNim && (ITM_toHEX<=item && item<=ITM_toBIN) && (!catalog || catalog == CATALOG_MVAR)) {
+          else if(calcMode == cmNim && (ITM_toBIN<=item && item<=ITM_toHEX) && (!catalog || catalog == CATALOG_MVAR)) {
             addItemToNimBuffer(item);
           }
           else if(calcMode == cmMim && softmenu[softmenuStack[0].softmenuId].menuItem != -MNU_M_EDIT) {
