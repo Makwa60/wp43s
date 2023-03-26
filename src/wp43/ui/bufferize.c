@@ -1809,10 +1809,8 @@
     }
 
     else {
-      if(item != -MNU_INTS && item != -MNU_BITS) {
-        screenUpdatingMode &= ~SCRUPD_SKIP_STACK_ONE_TIME;
-        closeNim();
-      }
+      screenUpdatingMode &= ~SCRUPD_SKIP_STACK_ONE_TIME;
+      closeNim();
       if(calcMode != cmNim) {
         if(item == ITM_CONSTpi || (item >= 0 && indexOfItems[item].func == fnConstant)) {
           setSystemFlag(FLAG_ASLIFT);
