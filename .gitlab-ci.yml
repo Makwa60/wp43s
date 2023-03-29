@@ -42,7 +42,7 @@ linux:
 windows:
   stage: build
   script:
-    - C:\Apps\msys64\msys2_shell.cmd -defterm -mingw64 -no-start -here -c "make dist_windows"
+    - C:\msys64\msys2_shell.cmd -defterm -mingw64 -no-start -here -c "make dist_windows"
   artifacts:
     expire_in: 1 day
     paths:
