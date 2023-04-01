@@ -107,7 +107,10 @@ bool      _kbSeenInterrupt     = false;
 
       case MNU_MVAR: {
         dynamicMenuItem = firstItem + itemShift + fn;
-        if(currentMvarLabel != INVALID_VARIABLE) {
+        if(tamIsActive()) {
+          item = (dynamicMenuItem >= dynamicSoftmenu[menuId].numItems ? ITM_NOP : MNU_DYNAMIC);
+        }
+        else if(currentMvarLabel != INVALID_VARIABLE) {
           item = (dynamicMenuItem >= dynamicSoftmenu[menuId].numItems ? ITM_NOP : ITM_SOLVE_VAR);
         }
         else if((currentSolverStatus & SOLVER_STATUS_USES_FORMULA) && (currentSolverStatus & SOLVER_STATUS_INTERACTIVE) && ((currentSolverStatus & SOLVER_STATUS_EQUATION_MODE) == SOLVER_STATUS_EQUATION_SOLVER) && dynamicMenuItem == 5) {
@@ -1691,7 +1694,7 @@ void fnKeyExit(uint16_t unusedButMandatoryParameter) {
       }
 
       default: {
-        if(catalog) {
+        if(catalog && (catalog != CATALOG_MVAR || !tamIsActive())) {
           if(lastErrorCode != 0) {
             lastErrorCode = 0;
           }
