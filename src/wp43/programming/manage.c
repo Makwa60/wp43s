@@ -206,12 +206,10 @@ void fnClPAll(uint16_t confirmation) {
   else {
     bool wasInRam = (programList[currentProgramNumber - 1].step > 0);
     resizeProgramMemory(TO_BYTES(1)); // 1 block for an empty program
-    *(beginOfProgramMemory + 0)   = (ITM_END >> 8) | 0x80;
-    *(beginOfProgramMemory + 1)   =  ITM_END       & 0xff;
-    *(beginOfProgramMemory + 2)   = 255; // .END.
-    *(beginOfProgramMemory + 3)   = 255; // .END.
-    firstFreeProgramByte          = beginOfProgramMemory + 2;
-    freeProgramBytes              = 0;
+    *(beginOfProgramMemory + 0)   = 255; // .END.
+    *(beginOfProgramMemory + 1)   = 255; // .END.
+    firstFreeProgramByte          = beginOfProgramMemory;
+    freeProgramBytes              = 2;
     temporaryInformation          = TI_NO_INFO;
     programRunStop                = PGM_STOPPED;
     if(wasInRam) {

@@ -629,18 +629,16 @@ void fnReset(uint16_t confirmation) {
     // Empty program initialization
     beginOfProgramMemory          = (uint8_t *)(ram + freeMemoryRegions[0].sizeInBlocks);
     currentStep.ram               = beginOfProgramMemory;
-    firstFreeProgramByte          = beginOfProgramMemory + 2;
+    firstFreeProgramByte          = beginOfProgramMemory;
     firstDisplayedStep.ram        = beginOfProgramMemory;
     firstDisplayedLocalStepNumber = 0;
     labelList                     = NULL;
     programList                   = NULL;
     flashLabelList                = NULL;
     flashProgramList              = NULL;
-    *(beginOfProgramMemory + 0) = (ITM_END >> 8) | 0x80;
-    *(beginOfProgramMemory + 1) =  ITM_END       & 0xff;
-    *(beginOfProgramMemory + 2) = 255; // .END.
-    *(beginOfProgramMemory + 3) = 255; // .END.
-    freeProgramBytes            = 0;
+    *(beginOfProgramMemory + 0) = 255; // .END.
+    *(beginOfProgramMemory + 1) = 255; // .END.
+    freeProgramBytes            = 2;
 
     scanFlashPgmLibrary();
     scanLabelsAndPrograms();
