@@ -971,7 +971,9 @@ void tamReset(void) {
       case tmRegister:
       case tmMDim:
       case tmKey: {
-        showSoftmenu(-MNU_TAM);
+        if(func != ITM_VIEW || !catalog || catalog != CATALOG_MVAR) {
+          showSoftmenu(-MNU_TAM);
+        }
         break;
       }
 
@@ -987,7 +989,9 @@ void tamReset(void) {
       }
 
       case tmStoRcl: {
-        showSoftmenu(-MNU_TAMSTORCL);
+        if(!catalog || catalog != CATALOG_MVAR) {
+          showSoftmenu(-MNU_TAMSTORCL);
+        }
         break;
       }
 
@@ -1027,7 +1031,7 @@ void tamReset(void) {
       }
     }
 
-    numberOfTamMenusToPop = func == ITM_ASSIGN ? 0 : 1;
+    numberOfTamMenusToPop = (func == ITM_ASSIGN) || (catalog && catalog == CATALOG_MVAR && (tam.mode == tmStoRcl || func == ITM_VIEW)) ? 0 : 1;
 
     _tamUpdateBuffer();
 
@@ -1059,6 +1063,10 @@ void tamReset(void) {
 
     while(numberOfTamMenusToPop--) {
       popSoftmenu();
+    }
+
+    if(softmenu[softmenuStack[0].softmenuId].menuItem == -MNU_MVAR) {
+      catalog = CATALOG_MVAR;
     }
 
     calcModeUpdateGui();

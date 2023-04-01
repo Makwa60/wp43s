@@ -1298,6 +1298,7 @@ void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
     else if(id == -MNU_Solver || id == -MNU_Sf || id == -MNU_1STDERIV || id == -MNU_2NDDERIV) {
       int32_t numberOfVars = -1;
       currentSolverStatus = SOLVER_STATUS_USES_FORMULA | SOLVER_STATUS_INTERACTIVE;
+      currentMvarLabel = INVALID_VARIABLE;
       switch(-id) {
         case MNU_Solver: {
           currentSolverStatus |= SOLVER_STATUS_EQUATION_SOLVER;
