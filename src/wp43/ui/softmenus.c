@@ -555,7 +555,72 @@ void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
 
 
 
-  static void _dynmenuConstructVars(int16_t menu, bool applyFilter, dataType_t typeFilter, bool isAngular) {
+  static bool _registerIsWritable(calcRegister_t regist) {
+    if(regist < FIRST_RESERVED_VARIABLE) {
+      return true;
+    }
+    else if(regist <= LAST_RESERVED_VARIABLE) {
+      return !(allReservedVariables[regist - FIRST_RESERVED_VARIABLE].header.readOnly);
+    }
+    else {
+      return false;
+    }
+  }
+
+
+
+  static bool _isWritingTam() {
+    if(!tamIsActive()) {
+      return false;
+    }
+    else {
+      switch(tam.function) {
+        case ITM_ISE:
+        case ITM_ISG:
+        case ITM_ISZ:
+        case ITM_DSE:
+        case ITM_DSL:
+        case ITM_DSZ:
+        case ITM_INPUT:
+        case ITM_STO:
+        case ITM_STOADD:
+        case ITM_STOSUB:
+        case ITM_STOMULT:
+        case ITM_STODIV:
+        case ITM_KEYQ:
+        case ITM_DEC:
+        case ITM_INC:
+        case ITM_Xex:
+
+        case ITM_STOMAX:
+        case ITM_MVAR:
+        case ITM_M_EDIN:
+        case ITM_STOMIN:
+        case ITM_STOCFG:
+        case ITM_STOEL:
+        case ITM_STOIJ:
+        case ITM_STOS:
+        case ITM_Tex:
+        case ITM_XtoALPHA:
+        case ITM_Yex:
+        case ITM_Zex:
+        case ITM_ALPHARL:
+        case ITM_ALPHARR:
+        case ITM_ALPHASL:
+        case ITM_ALPHASR:
+        case ITM_INTEGRAL: {
+          return true;
+        }
+        default: {
+          return false;
+        }
+      }
+    }
+  }
+
+
+
+  static void _dynmenuConstructVars(int16_t menu, bool applyFilter, dataType_t typeFilter, bool isAngular, bool onlyWritable) {
     uint16_t numberOfBytes, numberOfVars;
     uint8_t *ptr;
     numberOfBytes = 1;
@@ -571,7 +636,7 @@ void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
     }
     for(int i=12; i<NUMBER_OF_RESERVED_VARIABLES; i++) {
       calcRegister_t regist = i+FIRST_RESERVED_VARIABLE;
-      if((!applyFilter || _filterDataType(regist, typeFilter, isAngular))) {
+      if((!applyFilter || _filterDataType(regist, typeFilter, isAngular)) && (!onlyWritable || _registerIsWritable(regist))) {
         xcopy(tmpString + 15 * numberOfVars, allReservedVariables[i].reservedVariableName + 1, allReservedVariables[i].reservedVariableName[0]);
         numberOfVars++;
         numberOfBytes += 1 + allReservedVariables[i].reservedVariableName[0];
@@ -783,7 +848,7 @@ void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
       }
 
       case MNU_VAR: {
-        _dynmenuConstructVars(menu, false, 0, false);
+        _dynmenuConstructVars(menu, false, 0, false, _isWritingTam());
         break;
       }
 
@@ -823,47 +888,47 @@ void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
       }
 
       case MNU_MATRS: {
-        _dynmenuConstructVars(menu, true, dtReal34Matrix, false);
+        _dynmenuConstructVars(menu, true, dtReal34Matrix, false, false);
         break;
       }
 
       case MNU_STRINGS: {
-        _dynmenuConstructVars(menu, true, dtString, false);
+        _dynmenuConstructVars(menu, true, dtString, false, false);
         break;
       }
 
       case MNU_DATES: {
-        _dynmenuConstructVars(menu, true, dtDate, false);
+        _dynmenuConstructVars(menu, true, dtDate, false, false);
         break;
       }
 
       case MNU_TIMES: {
-        _dynmenuConstructVars(menu, true, dtTime, false);
+        _dynmenuConstructVars(menu, true, dtTime, false, false);
         break;
       }
 
       case MNU_ANGLES: {
-        _dynmenuConstructVars(menu, true, dtReal34, true);
+        _dynmenuConstructVars(menu, true, dtReal34, true, false);
         break;
       }
 
       case MNU_SINTS: {
-        _dynmenuConstructVars(menu, true, dtShortInteger, false);
+        _dynmenuConstructVars(menu, true, dtShortInteger, false, false);
         break;
       }
 
       case MNU_LINTS: {
-        _dynmenuConstructVars(menu, true, dtLongInteger, false);
+        _dynmenuConstructVars(menu, true, dtLongInteger, false, false);
         break;
       }
 
       case MNU_REALS: {
-        _dynmenuConstructVars(menu, true, dtReal34, false);
+        _dynmenuConstructVars(menu, true, dtReal34, false, false);
         break;
       }
 
       case MNU_CPXS: {
-        _dynmenuConstructVars(menu, true, dtComplex34, false);
+        _dynmenuConstructVars(menu, true, dtComplex34, false, false);
         break;
       }
 
