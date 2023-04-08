@@ -52,10 +52,8 @@ void fnPause(uint16_t duration) {
       tamLeaveMode();
     }
     programRunStop = PGM_PAUSED;
-    if(previousProgramRunStop != PGM_RUNNING) {
-      refreshScreen();
-      lcd_refresh();
-    }
+    refreshScreen();
+    lcd_refresh();
     for(uint16_t i = 0; i < duration && (programRunStop == PGM_PAUSED || programRunStop == PGM_KEY_PRESSED_WHILE_PAUSED); ++i) {
       if(previousProgramRunStop != PGM_RUNNING) {
         refreshScreen();
