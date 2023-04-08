@@ -1128,6 +1128,9 @@ void insertStepInProgram(int16_t func) {
     pemAddNumber(func);
     return;
   }
+  else if(nimNumberPart == NP_INT_BASE) {
+    return;
+  }
   else if(func == ITM_CONSTpi && aimBuffer[0] != 0 && !getSystemFlag(FLAG_ALPHA) && nimNumberPart == NP_COMPLEX_INT_PART && aimBuffer[strlen(aimBuffer) - 1] == 'i') {
     strcat(aimBuffer, "3.141592653589793238462643383279503");
     pemCloseNumberInput();

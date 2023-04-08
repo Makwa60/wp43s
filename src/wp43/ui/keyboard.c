@@ -1830,6 +1830,9 @@ void fnKeyExit(uint16_t unusedButMandatoryParameter) {
           if(getSystemFlag(FLAG_ALPHA)) {
             pemCloseAlphaInput();
           }
+          else if(nimNumberPart == NP_INT_BASE) {
+            break;
+          }
           else {
             pemCloseNumberInput();
           }
