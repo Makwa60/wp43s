@@ -177,7 +177,7 @@ void fnNop(uint16_t unusedButMandatoryParameter) {
         }
         return;
       }
-      else if(!tamIsActive() && tmValue <= indexOfItems[func].param && indexOfItems[func].param <= tmCmp) {
+      else if(!tamIsActive() && tmValue <= indexOfItems[func].param && indexOfItems[func].param <= tmCmp && (calcMode != cmPem || aimBuffer[0] == 0 || nimNumberPart != NP_INT_BASE)) {
         tamEnterMode(func);
         return;
       }

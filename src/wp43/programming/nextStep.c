@@ -466,6 +466,9 @@ void fnBst(uint16_t unusedButMandatoryParameter) {
       if(getSystemFlag(FLAG_ALPHA)) {
         pemCloseAlphaInput();
       }
+      else if(nimNumberPart == NP_INT_BASE) {
+        return;
+      }
       else {
         pemCloseNumberInput();
       }
@@ -528,6 +531,9 @@ void fnSst(uint16_t unusedButMandatoryParameter) {
     if(aimBuffer[0] != 0) {
       if(getSystemFlag(FLAG_ALPHA)) {
         pemCloseAlphaInput();
+      }
+      else if(nimNumberPart == NP_INT_BASE) {
+        return;
       }
       else {
         pemCloseNumberInput();

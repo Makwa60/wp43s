@@ -907,31 +907,105 @@ void pemCloseNumberInput(void) {
     deleteStepsFromTo(currentStep.ram, findNextStep_ram(currentStep.ram));
     if(aimBuffer[0] != 0) {
       char *numBuffer = aimBuffer[0] == '+' ? aimBuffer + 1 : aimBuffer;
-      char *basePtr = numBuffer;
       char *tmpPtr = tmpString;
+      uint32_t inputLength = stringByteLength(numBuffer);
+      bool doneWithBinaryLiteral = false;
       *(tmpPtr++) = ITM_LITERAL;
       switch(nimNumberPart) {
         //case NP_INT_16:
         case NP_INT_BASE: {
-          *(tmpPtr++) = STRING_SHORT_INTEGER;
+          char *basePtr = numBuffer;
           while(*basePtr != '#') {
             ++basePtr;
           }
           *(basePtr++) = 0;
-          *(tmpPtr++) = (char)atoi(basePtr);
-          fflush(stdout);
+          inputLength = stringByteLength(numBuffer); // we must update here since the content of numBuffer has been truncated
+          if(inputLength >= sizeof(uint64_t) && numBuffer[0] != '-') {
+            uint8_t base = (uint8_t)atoi(basePtr);
+            uint64_t val = 0;
+            *(tmpPtr++) = BINARY_SHORT_INTEGER;
+            *(tmpPtr++) = (char)atoi(basePtr);
+            for(unsigned int i = 0; i < inputLength; ++i) {
+              if('0' <= numBuffer[i] && numBuffer[i] <= '9') {
+                val *= base;
+                val += numBuffer[i] - '0';
+              }
+              else if('A' <= numBuffer[i] && numBuffer[i] <= 'F') {
+                val *= base;
+                val += numBuffer[i] - 'A' + 10;
+              }
+              else if('a' <= numBuffer[i] && numBuffer[i] <= 'f') {
+                val *= base;
+                val += numBuffer[i] - 'a' + 10;
+              }
+            }
+            for(unsigned int i = 0; i < sizeof(uint64_t); ++i) {
+              *(tmpPtr++) = ((uint8_t *)(&val))[i];
+            }
+            _insertInProgram((uint8_t *)tmpString, (int32_t)(tmpPtr - tmpString));
+            doneWithBinaryLiteral = true;
+          }
+          else {
+            *(tmpPtr++) = STRING_SHORT_INTEGER;
+            *(tmpPtr++) = (char)atoi(basePtr);
+          }
           break;
         }
         case NP_REAL_FLOAT_PART:
         case NP_REAL_EXPONENT:
         case NP_FRACTION_DENOMINATOR: {
-          *(tmpPtr++) = STRING_REAL34;
+          if(inputLength >= REAL34_SIZE_IN_BYTES) {
+            real34_t val;
+            *(tmpPtr++) = BINARY_REAL34;
+            stringToReal34(numBuffer, &val);
+            for(unsigned int i = 0; i < REAL34_SIZE_IN_BYTES; ++i) {
+              *(tmpPtr++) = ((uint8_t *)(&val))[i];
+            }
+            _insertInProgram((uint8_t *)tmpString, (int32_t)(tmpPtr - tmpString));
+            doneWithBinaryLiteral = true;
+          }
+          else {
+            *(tmpPtr++) = STRING_REAL34;
+          }
           break;
         }
         case NP_COMPLEX_INT_PART:
         case NP_COMPLEX_FLOAT_PART:
         case NP_COMPLEX_EXPONENT: {
-          *(tmpPtr++) = STRING_COMPLEX34;
+          if(inputLength >= COMPLEX34_SIZE_IN_BYTES) {
+            real34_t re, im;
+            char *imag = numBuffer;
+            while(*imag != 'i' && *imag != 0) {
+              ++imag;
+            }
+            if(*imag == 'i') {
+              if(imag > numBuffer && *(imag - 1) == '-') {
+                *imag = '-'; *(imag - 1) = 0;
+              }
+              else if(imag > numBuffer && *(imag - 1) == '+') {
+                *imag = 0; *(imag - 1) = 0;
+                ++imag;
+              }
+              else {
+                *imag = 0;
+              }
+            }
+
+            *(tmpPtr++) = BINARY_COMPLEX34;
+            stringToReal34(numBuffer, &re);
+            stringToReal34(imag, &im);
+            for(unsigned int i = 0; i < REAL34_SIZE_IN_BYTES; ++i) {
+              *(tmpPtr++) = ((uint8_t *)(&re))[i];
+            }
+            for(unsigned int i = 0; i < REAL34_SIZE_IN_BYTES; ++i) {
+              *(tmpPtr++) = ((uint8_t *)(&im))[i];
+            }
+            _insertInProgram((uint8_t *)tmpString, (int32_t)(tmpPtr - tmpString));
+            doneWithBinaryLiteral = true;
+          }
+          else {
+            *(tmpPtr++) = STRING_COMPLEX34;
+          }
           break;
         }
         default: {
@@ -939,10 +1013,12 @@ void pemCloseNumberInput(void) {
           break;
         }
       }
-      *(tmpPtr++) = stringByteLength(numBuffer);
-      xcopy(tmpPtr, numBuffer, stringByteLength(numBuffer));
-      _insertInProgram((uint8_t *)tmpString, stringByteLength(numBuffer) + (int32_t)(tmpPtr - tmpString));
-      pemCursorIsZerothStep = false;
+      if(!doneWithBinaryLiteral) {
+        *(tmpPtr++) = inputLength;
+        xcopy(tmpPtr, numBuffer, inputLength);
+        _insertInProgram((uint8_t *)tmpString, inputLength + (int32_t)(tmpPtr - tmpString));
+        pemCursorIsZerothStep = false;
+      }
     }
 
     aimBuffer[0] = '!';
@@ -1050,6 +1126,9 @@ void insertStepInProgram(int16_t func) {
   }
   if(indexOfItems[func].func == addItemToBuffer || (!tamIsActive() && aimBuffer[0] != 0 && (func == ITM_CHS || func == ITM_CC || func == ITM_toINT || (nimNumberPart == NP_INT_BASE && (func == ITM_YX || func == ITM_LN || func == ITM_RCL))))) {
     pemAddNumber(func);
+    return;
+  }
+  else if(nimNumberPart == NP_INT_BASE) {
     return;
   }
   else if(func == ITM_CONSTpi && aimBuffer[0] != 0 && !getSystemFlag(FLAG_ALPHA) && nimNumberPart == NP_COMPLEX_INT_PART && aimBuffer[strlen(aimBuffer) - 1] == 'i') {
