@@ -8,6 +8,10 @@
   #define SAVERESTORECALCSTATE_H
 
   #include <stdint.h>
+  
+  #define manualLoad 1
+  #define stateLoad  2
+
 
   #if defined(PC_BUILD) || defined(DMCP_BUILD)
     void   saveCalc      (void);
@@ -23,7 +27,7 @@
   int16_t  stringToInt16 (const char *str);
   int32_t  stringToInt32 (const char *str);
 
-  void     doLoad        (uint16_t loadMode, uint16_t s, uint16_t n, uint16_t d);
+  void     doLoad        (uint16_t loadMode, uint16_t s, uint16_t n, uint16_t d, uint16_t loadType);
 
   void     fnDeleteBackup(uint16_t confirmation);
 

@@ -1471,7 +1471,7 @@ static bool restoreOneSection(uint16_t loadMode, uint16_t s, uint16_t n, uint16_
       readLine(aimBuffer); // Register data type
       readLine(tmpString); // Register value
 
-      if(loadMode == LM_ALL || loadMode == LM_STATE_FILE || (loadMode == LM_REGISTERS && regist < REGISTER_X) || (loadMode == LM_REGISTERS_PARTIAL && regist >= s && regist < (s + n))) {
+      if(loadMode == LM_ALL || (loadMode == LM_REGISTERS && regist < REGISTER_X) || (loadMode == LM_REGISTERS_PARTIAL && regist >= s && regist < (s + n))) {
         restoreRegister(loadMode == LM_REGISTERS_PARTIAL ? (regist - s + d) : regist, aimBuffer, tmpString);
         restoreMatrixData(loadMode == LM_REGISTERS_PARTIAL ? (regist - s + d) : regist);
       }
@@ -1483,7 +1483,7 @@ static bool restoreOneSection(uint16_t loadMode, uint16_t s, uint16_t n, uint16_
 
   else if(strcmp(tmpString, "GLOBAL_FLAGS") == 0) {
     readLine(tmpString); // Global flags
-    if(loadMode == LM_ALL || loadMode == LM_SYSTEM_STATE || loadMode == LM_STATE_FILE) {
+    if(loadMode == LM_ALL || loadMode == LM_SYSTEM_STATE) {
       str = tmpString;
       globalFlags[0] = stringToInt16(str);
 
@@ -1540,7 +1540,7 @@ static bool restoreOneSection(uint16_t loadMode, uint16_t s, uint16_t n, uint16_
   else if(strcmp(tmpString, "LOCAL_REGISTERS") == 0) {
     readLine(tmpString); // Number of local registers
     numberOfRegs = stringToInt16(tmpString);
-    if(loadMode == LM_ALL || loadMode == LM_REGISTERS || loadMode == LM_STATE_FILE) {
+    if(loadMode == LM_ALL || loadMode == LM_REGISTERS) {
       if(numberOfRegs == 0) {
         popAllLocalRegistersAndFlags(NOPARAM);
       }
@@ -1549,14 +1549,14 @@ static bool restoreOneSection(uint16_t loadMode, uint16_t s, uint16_t n, uint16_
       }
     }
 
-    if((loadMode != LM_ALL && loadMode != LM_REGISTERS && loadMode != LM_STATE_FILE) || lastErrorCode == ERROR_NONE) {
+    if((loadMode != LM_ALL && loadMode != LM_REGISTERS) || lastErrorCode == ERROR_NONE) {
       for(int16_t i=0; i<numberOfRegs; i++) {
         readLine(tmpString); // Register number
         regist = stringToInt16(tmpString + 2) + FIRST_LOCAL_REGISTER;
         readLine(aimBuffer); // Register data type
         readLine(tmpString); // Register value
 
-        if(loadMode == LM_ALL || loadMode == LM_REGISTERS || loadMode == LM_STATE_FILE) {
+        if(loadMode == LM_ALL || loadMode == LM_REGISTERS) {
           restoreRegister(regist, aimBuffer, tmpString);
           restoreMatrixData(regist);
         }
@@ -1569,7 +1569,7 @@ static bool restoreOneSection(uint16_t loadMode, uint16_t s, uint16_t n, uint16_
 
   else if(strcmp(tmpString, "LOCAL_FLAGS") == 0) {
     readLine(tmpString); // LOCAL_FLAGS
-    if((loadMode == LM_ALL || loadMode == LM_REGISTERS || loadMode == LM_STATE_FILE) && (currentNumberOfLocalFlags > 0)) {
+    if((loadMode == LM_ALL || loadMode == LM_REGISTERS) && (currentNumberOfLocalFlags > 0)) {
       currentLocalFlags->localFlags = stringToUint32(tmpString);
     }
   }
@@ -1582,7 +1582,7 @@ static bool restoreOneSection(uint16_t loadMode, uint16_t s, uint16_t n, uint16_
       readLine(aimBuffer); // Variable data type
       readLine(tmpString); // Variable value
 
-      if(loadMode == LM_ALL || loadMode == LM_NAMED_VARIABLES || loadMode == LM_STATE_FILE) {
+      if(loadMode == LM_ALL || loadMode == LM_NAMED_VARIABLES) {
         char *varName = errorMessage + strlen(errorMessage) + 1;
         utf8ToString((uint8_t *)errorMessage, varName);
         regist = findOrAllocateNamedVariable(varName);
@@ -1603,13 +1603,13 @@ static bool restoreOneSection(uint16_t loadMode, uint16_t s, uint16_t n, uint16_
   else if(strcmp(tmpString, "STATISTICAL_SUMS") == 0) {
     readLine(tmpString); // Number of statistical sums
     numberOfRegs = stringToInt16(tmpString);
-    if(numberOfRegs > 0 && (loadMode == LM_ALL || loadMode == LM_SUMS || loadMode == LM_STATE_FILE)) {
+    if(numberOfRegs > 0 && (loadMode == LM_ALL || loadMode == LM_SUMS)) {
       initStatisticalSums();
 
       for(int16_t i=0; i<numberOfRegs; i++) {
         readLine(tmpString); // statistical sum
         if(statisticalSumsPointer) { // likely
-          if(loadMode == LM_ALL || loadMode == LM_SUMS || loadMode == LM_STATE_FILE) {
+          if(loadMode == LM_ALL || loadMode == LM_SUMS) {
             stringToReal(tmpString, (real_t *)(statisticalSumsPointer + TO_BLOCKS(REAL_SIZE_IN_BYTES) * i), &ctxtReal75);
           }
         }
@@ -1619,7 +1619,7 @@ static bool restoreOneSection(uint16_t loadMode, uint16_t s, uint16_t n, uint16_
 
   else if(strcmp(tmpString, "SYSTEM_FLAGS") == 0) {
     readLine(tmpString); // Global flags
-    if(loadMode == LM_ALL || loadMode == LM_SYSTEM_STATE || loadMode == LM_STATE_FILE) {
+    if(loadMode == LM_ALL || loadMode == LM_SYSTEM_STATE) {
       systemFlags = stringToUint64(tmpString);
     }
   }
@@ -1629,7 +1629,7 @@ static bool restoreOneSection(uint16_t loadMode, uint16_t s, uint16_t n, uint16_
     numberOfRegs = stringToInt16(tmpString);
     for(int16_t i=0; i<numberOfRegs; i++) {
       readLine(tmpString); // key
-      if(loadMode == LM_ALL || loadMode == LM_SYSTEM_STATE || loadMode == LM_STATE_FILE) {
+      if(loadMode == LM_ALL || loadMode == LM_SYSTEM_STATE) {
         str = tmpString;
         kbd_usr[i].keyId = stringToInt16(str);
 
@@ -1703,7 +1703,7 @@ static bool restoreOneSection(uint16_t loadMode, uint16_t s, uint16_t n, uint16_
   else if(strcmp(tmpString, "KEYBOARD_ARGUMENTS") == 0) {
     readLine(tmpString); // Number of keys
     numberOfRegs = stringToInt16(tmpString);
-    if(loadMode == LM_ALL || loadMode == LM_SYSTEM_STATE || loadMode == LM_STATE_FILE) {
+    if(loadMode == LM_ALL || loadMode == LM_SYSTEM_STATE) {
       freeWp43(userKeyLabel, userKeyLabelSize);
       userKeyLabelSize = 37/*keys*/ * 6/*states*/ * 1/*byte terminator*/ + 1/*byte sentinel*/;
       userKeyLabel = allocWp43(userKeyLabelSize);
@@ -1711,7 +1711,7 @@ static bool restoreOneSection(uint16_t loadMode, uint16_t s, uint16_t n, uint16_
     }
     for(int16_t i=0; i<numberOfRegs; i++) {
       readLine(tmpString); // key
-      if(loadMode == LM_ALL || loadMode == LM_SYSTEM_STATE || loadMode == LM_STATE_FILE) {
+      if(loadMode == LM_ALL || loadMode == LM_SYSTEM_STATE) {
         str = tmpString;
         uint16_t key = stringToUint16(str);
         userMenuItems[i].argumentName[0] = 0;
@@ -1737,7 +1737,7 @@ static bool restoreOneSection(uint16_t loadMode, uint16_t s, uint16_t n, uint16_
     numberOfRegs = stringToInt16(tmpString);
     for(int16_t i=0; i<numberOfRegs; i++) {
       readLine(tmpString); // key
-      if(loadMode == LM_ALL || loadMode == LM_SYSTEM_STATE || loadMode == LM_STATE_FILE) {
+      if(loadMode == LM_ALL || loadMode == LM_SYSTEM_STATE) {
         str = tmpString;
         userMenuItems[i].item            = stringToInt16(str);
         userMenuItems[i].argumentName[0] = 0;
@@ -1762,7 +1762,7 @@ static bool restoreOneSection(uint16_t loadMode, uint16_t s, uint16_t n, uint16_
     numberOfRegs = stringToInt16(tmpString);
     for(int16_t i=0; i<numberOfRegs; i++) {
       readLine(tmpString); // key
-      if(loadMode == LM_ALL || loadMode == LM_SYSTEM_STATE || loadMode == LM_STATE_FILE) {
+      if(loadMode == LM_ALL || loadMode == LM_SYSTEM_STATE) {
         str = tmpString;
         userAlphaItems[i].item            = stringToInt16(str);
         userAlphaItems[i].argumentName[0] = 0;
@@ -1788,7 +1788,7 @@ static bool restoreOneSection(uint16_t loadMode, uint16_t s, uint16_t n, uint16_
     for(int32_t j=0; j<numberOfMenus; j++) {
       readLine(tmpString);
       int16_t target = -1;
-      if(loadMode == LM_ALL || loadMode == LM_SYSTEM_STATE || loadMode == LM_STATE_FILE) {
+      if(loadMode == LM_ALL || loadMode == LM_SYSTEM_STATE) {
         utf8ToString((uint8_t *)tmpString, tmpString + TMP_STR_LENGTH / 2);
         for(int16_t i = 0; i < numberOfUserMenus; ++i) {
           if(compareString(tmpString + TMP_STR_LENGTH / 2, userMenus[i].menuName, CMP_NAME) == 0) {
@@ -1805,7 +1805,7 @@ static bool restoreOneSection(uint16_t loadMode, uint16_t s, uint16_t n, uint16_
       numberOfRegs = stringToInt16(tmpString);
       for(int16_t i=0; i<numberOfRegs; i++) {
         readLine(tmpString); // key
-        if(loadMode == LM_ALL || loadMode == LM_SYSTEM_STATE || loadMode == LM_STATE_FILE) {
+        if(loadMode == LM_ALL || loadMode == LM_SYSTEM_STATE) {
           str = tmpString;
           userMenus[target].menuItem[i].item            = stringToInt16(str);
           userMenus[target].menuItem[i].argumentName[0] = 0;
@@ -1834,7 +1834,7 @@ static bool restoreOneSection(uint16_t loadMode, uint16_t s, uint16_t n, uint16_
 
     readLine(tmpString); // Number of bytes
     numberOfBytes = stringToUint16(tmpString);
-    if(loadMode == LM_ALL || loadMode == LM_STATE_FILE) {
+    if(loadMode == LM_ALL) {
       resizeProgramMemory(numberOfBytes);
     }
     else if(loadMode == LM_PROGRAMS) {
@@ -1843,11 +1843,11 @@ static bool restoreOneSection(uint16_t loadMode, uint16_t s, uint16_t n, uint16_
     }
 
     readLine(tmpString); // currentStep (pointer to block)
-    if(loadMode == LM_ALL || loadMode == LM_STATE_FILE) {
+    if(loadMode == LM_ALL) {
       currentStep.ram = TO_PCMEMPTR(stringToUint32(tmpString));
     }
     readLine(tmpString); // currentStep (offset in bytes within block)
-    if(loadMode == LM_ALL || loadMode == LM_STATE_FILE) {
+    if(loadMode == LM_ALL) {
       currentStep.ram += stringToUint32(tmpString);
     }
     else if(loadMode == LM_PROGRAMS) {
@@ -1860,16 +1860,16 @@ static bool restoreOneSection(uint16_t loadMode, uint16_t s, uint16_t n, uint16_
     }
 
     readLine(tmpString); // firstFreeProgramByte (pointer to block)
-    if(loadMode == LM_ALL || loadMode == LM_PROGRAMS || loadMode == LM_STATE_FILE) {
+    if(loadMode == LM_ALL || loadMode == LM_PROGRAMS) {
       firstFreeProgramByte = TO_PCMEMPTR(stringToUint32(tmpString));
     }
     readLine(tmpString); // firstFreeProgramByte (offset in bytes within block)
-    if(loadMode == LM_ALL || loadMode == LM_PROGRAMS || loadMode == LM_STATE_FILE) {
+    if(loadMode == LM_ALL || loadMode == LM_PROGRAMS) {
       firstFreeProgramByte += stringToUint32(tmpString);
     }
 
     readLine(tmpString); // freeProgramBytes
-    if(loadMode == LM_ALL || loadMode == LM_PROGRAMS || loadMode == LM_STATE_FILE) {
+    if(loadMode == LM_ALL || loadMode == LM_PROGRAMS) {
       freeProgramBytes = stringToUint16(tmpString);
     }
 
@@ -1899,7 +1899,7 @@ static bool restoreOneSection(uint16_t loadMode, uint16_t s, uint16_t n, uint16_
 
     for(size_t i=0; i<numberOfBytes; i++) {
       readLine(tmpString); // One byte
-      if(loadMode == LM_ALL || loadMode == LM_STATE_FILE) {
+      if(loadMode == LM_ALL) {
         beginOfProgramMemory[i] = stringToUint8(tmpString);
       }
       else if(loadMode == LM_PROGRAMS) {
@@ -1909,7 +1909,7 @@ static bool restoreOneSection(uint16_t loadMode, uint16_t s, uint16_t n, uint16_
 
     scanLabelsAndPrograms();
 
-    if(loadMode == LM_ALL || loadMode == LM_STATE_FILE) {
+    if(loadMode == LM_ALL) {
       currentReturnProgramNumber = currentProgramNumber;
       currentReturnLocalStep = 1;
       goToPgmStep(currentProgramNumber, currentLocalStepNumber); // to scroll PGM properly
@@ -1919,7 +1919,7 @@ static bool restoreOneSection(uint16_t loadMode, uint16_t s, uint16_t n, uint16_
   else if(strcmp(tmpString, "EQUATIONS") == 0) {
     uint16_t formulae;
 
-    if(loadMode == LM_ALL || loadMode == LM_PROGRAMS || loadMode == LM_STATE_FILE) {
+    if(loadMode == LM_ALL || loadMode == LM_PROGRAMS) {
       for(int16_t i = numberOfFormulae; i > 0; --i) {
         deleteEquation(i - 1);
       }
@@ -1927,7 +1927,7 @@ static bool restoreOneSection(uint16_t loadMode, uint16_t s, uint16_t n, uint16_
 
     readLine(tmpString); // Number of formulae
     formulae = stringToUint16(tmpString);
-    if(loadMode == LM_ALL || loadMode == LM_PROGRAMS || loadMode == LM_STATE_FILE) {
+    if(loadMode == LM_ALL || loadMode == LM_PROGRAMS) {
       allFormulae = allocWp43(sizeof(formulaHeader_t) * formulae);
       numberOfFormulae = formulae;
       currentFormula = 0;
@@ -1939,7 +1939,7 @@ static bool restoreOneSection(uint16_t loadMode, uint16_t s, uint16_t n, uint16_
 
     for(int16_t i = 0; i < formulae; i++) {
       readLine(tmpString); // One formula
-      if(loadMode == LM_ALL || loadMode == LM_PROGRAMS || loadMode == LM_STATE_FILE) {
+      if(loadMode == LM_ALL || loadMode == LM_PROGRAMS) {
         utf8ToString((uint8_t *)tmpString, tmpString + TMP_STR_LENGTH / 2);
         setEquation(i, tmpString + TMP_STR_LENGTH / 2);
       }
@@ -1952,7 +1952,7 @@ static bool restoreOneSection(uint16_t loadMode, uint16_t s, uint16_t n, uint16_
     for(int16_t i=0; i<numberOfRegs; i++) {
       readLine(aimBuffer); // param
       readLine(tmpString); // value
-      if(loadMode == LM_ALL || loadMode == LM_SYSTEM_STATE || loadMode == LM_STATE_FILE) {
+      if(loadMode == LM_ALL || loadMode == LM_SYSTEM_STATE) {
         if(strcmp(aimBuffer, "firstGregorianDay") == 0) {
           firstGregorianDay = stringToUint32(tmpString);
         }
@@ -2028,10 +2028,10 @@ static bool restoreOneSection(uint16_t loadMode, uint16_t s, uint16_t n, uint16_
 
 
 
-void doLoad(uint16_t loadMode, uint16_t s, uint16_t n, uint16_t d) {
+void doLoad(uint16_t loadMode, uint16_t s, uint16_t n, uint16_t d, uint16_t loadType) {
 ioFilePath_t path;
 
-  if (loadMode == LM_STATE_FILE) {
+  if (loadType == stateLoad) {
     path = ioPathLoadStateFile;
   }
   else {
@@ -2039,14 +2039,14 @@ ioFilePath_t path;
   }
 
   if(!ioFileOpen(path, ioModeRead)) {
-	if(loadMode!= LM_STATE_FILE) {
+	if(loadType!= stateLoad) {
       displayCalcErrorMessage(ERROR_NO_BACKUP_DATA, ERR_REGISTER_LINE, REGISTER_X);
       errorMoreInfo("cannot find or read backup data file wp43.sav");
 	}
     return;
   }
 
-  if(loadMode == LM_ALL || loadMode == LM_STATE_FILE) {
+  if(loadMode == LM_ALL) {
     while(currentSubroutineLevel > 0) {
       fnReturn(0);
     }
@@ -2055,7 +2055,7 @@ ioFilePath_t path;
 
   //Check save file version
   uint32_t loadedVersion = 0;
-  if(loadMode == LM_ALL || loadMode == LM_STATE_FILE) {
+  if(loadMode == LM_ALL) {
     readLine(tmpString);
     if(strcmp(tmpString, "SAVE_FILE_REVISION") == 0) {
       readLine(aimBuffer); // internal rev number (ignore now)
@@ -2078,10 +2078,11 @@ ioFilePath_t path;
 
   #if !defined(TESTSUITE_BUILD)
     if(loadMode == LM_ALL) {
-      temporaryInformation = TI_BACKUP_RESTORED;
-    }
-    if(loadMode == LM_STATE_FILE) {
-      temporaryInformation = TI_STATEFILE_RESTORED;
+      if(loadType == manualLoad) {
+        temporaryInformation = TI_BACKUP_RESTORED;
+      } else if(loadType == stateLoad) {
+        temporaryInformation = TI_STATEFILE_RESTORED;
+      }
     }
     #if defined(DMCP_BUILD)
 	  //Check and update current power status (USB / LOWBAT)
@@ -2094,7 +2095,11 @@ ioFilePath_t path;
 
 
 void fnLoad(uint16_t loadMode) {
-  doLoad(loadMode, 0, 0, 0);
+  if (loadMode == LM_STATE_FILE) {
+    doLoad(LM_ALL, 0, 0, 0, stateLoad);
+  } else {
+    doLoad(loadMode, 0, 0, 0, manualLoad);
+  }
 }
 
 #undef BACKUP

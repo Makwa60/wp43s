@@ -1,5 +1,4 @@
 // SPDX-License-Identifier: GPL-3.0-only
-// SPDX-License-Identifier: GPL-3.0-only
 // SPDX-FileCopyrightText: Copyright The WP43 Authors
 
 #include "hal/io.h"
@@ -43,7 +42,7 @@ int file_selection_screen(const char * title, const char * base_dir, const char 
 	  }
 	  
       gtk_file_chooser_set_current_folder(chooser,base_dir);
-	  gtk_file_chooser_set_current_name (chooser,"new_state.s43");
+	  gtk_file_chooser_set_current_name (chooser,"untitled"STATE_EXT);
 	  GtkFileFilter *filter = gtk_file_filter_new ();
       gtk_file_filter_add_pattern (filter, ext);
 	  gtk_file_chooser_add_filter(chooser, filter);
@@ -57,7 +56,8 @@ int file_selection_screen(const char * title, const char * base_dir, const char 
 		  char * fe = data+strlen(filename)-4;
 		  const char * ee = ext+1;
 		  if (strcmp(fe,ee) != 0) strcat(data,ee);     //filename doesn't have the expected extension 
-        }		  
+        }		
+        g_free(filename);	
         g_object_unref (native);
         return 1;
       } else { 
@@ -69,6 +69,7 @@ int file_selection_screen(const char * title, const char * base_dir, const char 
 
 const char *_ioFileNameFromFilePath(ioFilePath_t path) {
   static char tmpFileName[40];
+  char * base_dir;
   int ret = 0;
   switch(path) {
     case ioPathSaveFile:
@@ -85,16 +86,14 @@ const char *_ioFileNameFromFilePath(ioFilePath_t path) {
       strcat(tmpFileName, ".tsv");
       return tmpFileName;
     case ioPathSaveStateFile:
-	  //path = g_get_current_dir ();
-	  ret = file_selection_screen("Save State File", g_get_current_dir (), "*.s43", 1, 1, tmpFileName);
-	  if (ret == 0) {
-		return 0;
-	  } else { 
-        return tmpFileName;
-	  }
     case ioPathLoadStateFile:
-	  //path = g_get_current_dir ();
-	  ret = file_selection_screen("Load State File", g_get_current_dir (), "*.s43", 0, 0, tmpFileName);
+	  base_dir = g_get_current_dir();
+	  if (path == ioPathSaveStateFile) {
+	    ret = file_selection_screen("Save State File", base_dir, "*"STATE_EXT, 1, 1, tmpFileName);
+      } else if (path == ioPathLoadStateFile) {
+	    ret = file_selection_screen("Load State File", base_dir, "*"STATE_EXT, 0, 0, tmpFileName);
+      }
+	  g_free(base_dir);
 	  if (ret == 0) {
 		return 0;
 	  } else { 
@@ -111,7 +110,6 @@ bool ioFileOpen(ioFilePath_t path, ioFileMode_t mode) {
   assert(_ioFileHandle == NULL);
   const char *filemode;
   const char *filename = _ioFileNameFromFilePath(path);
-  printf("File name : %s",filename);
   if(!filename) {
     return false;
   }
