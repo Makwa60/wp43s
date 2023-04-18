@@ -32,19 +32,19 @@ const char *_ioFileNameFromFilePath(ioFilePath_t path) {
       strcat(tmpFileName, ".tsv");
       return tmpFileName;
     case ioPathSaveStateFile:
-	  ret = file_selection_screen("Save Calculator State", STATE_DIR, STATE_EXT, save_statefile, 1, 1, tmpFileName);
-	  if (ret == MRET_EXIT) {
-		return 0;
-	  } else { 
+      ret = file_selection_screen("Save Calculator State", STATE_DIR, STATE_EXT, save_statefile, 1, 1, tmpFileName);
+      if (ret == MRET_EXIT) {
+        return 0;
+      } else { 
         return tmpFileName;
-	  }
+      }
    case ioPathLoadStateFile:
-	  ret = file_selection_screen("Load Calculator State", STATE_DIR, STATE_EXT, load_statefile, 0, 0, tmpFileName);
-	  if (ret == MRET_EXIT) {
-		return 0;
-	  } else { 
+      ret = file_selection_screen("Load Calculator State", STATE_DIR, STATE_EXT, load_statefile, 0, 0, tmpFileName);
+      if (ret == MRET_EXIT) {
+        return 0;
+      } else { 
         return tmpFileName;
-	  }
+      }
    default:
       return 0;
   }

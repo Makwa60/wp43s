@@ -2039,10 +2039,10 @@ ioFilePath_t path;
   }
 
   if(!ioFileOpen(path, ioModeRead)) {
-	if(loadType!= stateLoad) {
+    if(loadType!= stateLoad) {
       displayCalcErrorMessage(ERROR_NO_BACKUP_DATA, ERR_REGISTER_LINE, REGISTER_X);
       errorMoreInfo("cannot find or read backup data file wp43.sav");
-	}
+    }
     return;
   }
 
@@ -2085,10 +2085,10 @@ ioFilePath_t path;
       }
     }
     #if defined(DMCP_BUILD)
-	  //Check and update current power status (USB / LOWBAT)
-	  dmcpCheckPowerStatus();
-	#endif // DMCP_BUILD
-	
+      //Check and update current power status (USB / LOWBAT)
+      dmcpCheckPowerStatus();
+    #endif // DMCP_BUILD
+    
   #endif // !TESTSUITE_BUILD
 }
 
