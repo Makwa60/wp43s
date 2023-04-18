@@ -487,7 +487,8 @@
     TI_LLIM                = 51,
     TI_INTEGRAL            = 52,
     TI_1ST_DERIVATIVE      = 53,
-    TI_2ND_DERIVATIVE      = 54
+    TI_2ND_DERIVATIVE      = 54,
+    TI_STATEFILE_RESTORED  = 55
   } temporaryInformation_t;
 
 

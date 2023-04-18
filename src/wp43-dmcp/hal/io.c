@@ -18,6 +18,7 @@ static bool _ioReadEnabled  = false;
 
 const char *_ioFileNameFromFilePath(ioFilePath_t path) {
   static char tmpFileName[40];
+  int ret = 0;
   switch(path) {
     case ioPathSaveFile:
       return "SAVFILES\\wp43.sav";
@@ -30,7 +31,21 @@ const char *_ioFileNameFromFilePath(ioFilePath_t path) {
       getTimeStampString(tmpFileName + strlen(tmpFileName));
       strcat(tmpFileName, ".tsv");
       return tmpFileName;
-    default:
+    case ioPathSaveStateFile:
+	  ret = file_selection_screen("Save Calculator State", STATE_DIR, STATE_EXT, save_statefile, 1, 1, tmpFileName);
+	  if (ret == MRET_EXIT) {
+		return 0;
+	  } else { 
+        return tmpFileName;
+	  }
+   case ioPathLoadStateFile:
+	  ret = file_selection_screen("Load Calculator State", STATE_DIR, STATE_EXT, load_statefile, 0, 0, tmpFileName);
+	  if (ret == MRET_EXIT) {
+		return 0;
+	  } else { 
+        return tmpFileName;
+	  }
+   default:
       return 0;
   }
 }
@@ -131,4 +146,53 @@ bool ioFileRemove(ioFilePath_t path, uint32_t *errorNumber) {
   }
   sys_disk_write_enable(0);
   return result == FR_OK;
+}
+
+//
+int save_statefile(const char * fpath, const char * fname, void * data) {
+
+  lcd_puts(t24,"Saving state ...");
+  lcd_puts(t24, fname);  lcd_refresh();
+
+  // Store the state file name
+  strcpy(data, fpath);
+  set_reset_state_file(fpath);
+
+  // Exit with appropriate code to save state file save
+  return MRET_SAVESTATE;
+}
+
+int load_statefile(const char * fpath, const char * fname, void * data) {
+
+  // 'Sure' dialog
+  lcd_puts(t24, "");
+  lcd_puts(t24, "WARNING: Current calculator state");
+  lcd_puts(t24, "will be lost.");
+  lcd_puts(t24, "");
+  lcd_puts(t24, "");
+  //lcd_puts(t24, "Are you sure to load this file?");
+  lcd_puts(t24, "Press [ENTER] to confirm.");
+  lcd_refresh();
+  
+  wait_for_key_release(-1);
+
+  for(;;) {
+    int k1 = runner_get_key(NULL);
+    if ( IS_EXIT_KEY(k1) )
+      return 0; // Continue the selection screen
+    if ( is_menu_auto_off() )
+      return MRET_EXIT; // Leave selection screen
+    if ( k1 == KEY_ENTER )
+      break; // Proceed with load
+  }
+
+  lcd_putsRAt(t24, 6, "  Loading ...");
+  lcd_refresh_wait();
+
+  // Store the state file name
+  strcpy(data, fpath);
+  set_reset_state_file(fpath);
+
+  // Exit with appropriate code to load state file
+  return MRET_LOADSTATE;
 }
