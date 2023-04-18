@@ -36,6 +36,10 @@
 #include "ui/screen.h"
 #include "ui/softmenus.h"
 #include "ui/tam.h"
+#if defined(DMCP_BUILD)
+  #include <dmcp.h>
+  #include <wp43-dmcp.h>
+#endif // DMCP_BUILD
 #include <stdbool.h>
 #include <string.h>
 
@@ -854,18 +858,31 @@ static void saveMatrixElements(calcRegister_t regist) {
 
 
 
-void fnSave(uint16_t unusedButMandatoryParameter) {
+void fnSave(uint16_t saveMode) {
 #if !defined(TESTSUITE_BUILD)
+ioFilePath_t path;
 char tmpString[3000];             //The concurrent use of the global tmpString 
                                   //as target does not work while the source is at
                                   //tmpRegisterString = tmpString + START_REGISTER_VALUE;
                                   //Temporary solution is to use a local variable of sufficient length for the target.
 
+#if defined(DMCP_BUILD)
+  // Don't pass through if the power is insufficient  
+  if ( power_check_screen() ) return;
+#endif
+
   calcRegister_t regist;
   uint32_t i;
   char yy1[35], yy2[35];
+  
+  if (saveMode == SM_BACKUP) {
+    path = ioPathSaveFile;
+  }
+  else {
+    path = ioPathSaveStateFile;
+  }
 
-  if(!ioFileOpen(ioPathSaveFile, ioModeWrite)) {
+  if(!ioFileOpen(path, ioModeWrite)) {
     #if !defined(DMCP_BUILD)
       printf("Cannot SAVE in file wp43.sav!\n");
     #endif
@@ -2011,10 +2028,21 @@ static bool restoreOneSection(uint16_t loadMode, uint16_t s, uint16_t n, uint16_
 
 
 
-void doLoad(uint16_t loadMode, uint16_t s, uint16_t n, uint16_t d) {
-  if(!ioFileOpen(ioPathSaveFile, ioModeRead)) {
-    displayCalcErrorMessage(ERROR_NO_BACKUP_DATA, ERR_REGISTER_LINE, REGISTER_X);
-    errorMoreInfo("cannot find or read backup data file wp43.sav");
+void doLoad(uint16_t loadMode, uint16_t s, uint16_t n, uint16_t d, uint16_t loadType) {
+ioFilePath_t path;
+
+  if (loadType == stateLoad) {
+    path = ioPathLoadStateFile;
+  }
+  else {
+    path = ioPathSaveFile;
+  }
+
+  if(!ioFileOpen(path, ioModeRead)) {
+    if(loadType!= stateLoad) {
+      displayCalcErrorMessage(ERROR_NO_BACKUP_DATA, ERR_REGISTER_LINE, REGISTER_X);
+      errorMoreInfo("cannot find or read backup data file wp43.sav");
+    }
     return;
   }
 
@@ -2050,15 +2078,28 @@ void doLoad(uint16_t loadMode, uint16_t s, uint16_t n, uint16_t d) {
 
   #if !defined(TESTSUITE_BUILD)
     if(loadMode == LM_ALL) {
-      temporaryInformation = TI_BACKUP_RESTORED;
+      if(loadType == manualLoad) {
+        temporaryInformation = TI_BACKUP_RESTORED;
+      } else if(loadType == stateLoad) {
+        temporaryInformation = TI_STATEFILE_RESTORED;
+      }
     }
+    #if defined(DMCP_BUILD)
+      //Check and update current power status (USB / LOWBAT)
+      dmcpCheckPowerStatus();
+    #endif // DMCP_BUILD
+    
   #endif // !TESTSUITE_BUILD
 }
 
 
 
 void fnLoad(uint16_t loadMode) {
-  doLoad(loadMode, 0, 0, 0);
+  if (loadMode == LM_STATE_FILE) {
+    doLoad(LM_ALL, 0, 0, 0, stateLoad);
+  } else {
+    doLoad(loadMode, 0, 0, 0, manualLoad);
+  }
 }
 
 #undef BACKUP

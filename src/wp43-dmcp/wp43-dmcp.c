@@ -136,7 +136,36 @@ int convertKeyCode(int key) {
   }
 }
 
-
+//Alpha keyboard mapping for DMCP based on the DM41X example from David
+// includes keycodes remapping for the WP43
+// 
+const char alpha_upper_transl[] = "_" // code 0 unused
+//        +-------+-------+-------+-------+-------+-------+
+//  1- 6  |  EXP  |  1/x  |  SQRT |  e^x  |  LN   |  XEQ  |
+             "B"     "A"     "F"     "E"     "D"     "@"  
+//        +-------+-------+-------+-------+-------+-------+
+//  7-12  |  STO  |  RCL  |  R↓   |  TRI  |  CC   |   f   |
+             "G"     "H"     "I"     "C"     "J"     "@"  
+//        +-------+-------+-------+-------+-------+
+// 13-17  | ENTER | x<>y  |  +/-  |   E   |  <--  |
+             "@"     "K"     "L"     "M"     "@"  
+//        +-------+-------+-------+-------+-------+
+// 18-22  |  UP   |   7   |   8   |   9   |  DIV  |
+             "@"     "O"     "P"     "Q"     "N"  
+//        +-------+-------+-------+-------+-------+
+// 23-27  | DOWN  |   4   |   5   |   6   |  MUL  |
+             "@"     "S"     "T"     "U"     "R"  
+//        +-------+-------+-------+-------+-------+
+// 28-32  |   g   |   1   |   2   |   3   |  SUB  |
+             "@"     "W"     "X"     "Y"     "V"  
+//        +-------+-------+-------+-------+-------+
+// 33-37  |  ON   |   0   |  DOT  |  R/S  |  ADD  |
+             "@"     "?"     ","     " "     "Z"  ;
+//The following lines from the DM41X are not included for the WP43 as 
+// there is no alpha character assigned to the function keys
+//        +-------+-------+-------+-------+-------+-------+
+// 38-43  |  Σ+   |  1/x  | SQRT  |  LOG  |  LN   |  PRG  |
+//           "A"     "B"     "C"     "D"     "E"     "@"  ;
 
 void dmcpResetAutoOff(void) {
   // Key is ready -> clear auto off timer
@@ -221,6 +250,9 @@ void program_main(void) {
   wp43MemInBlocks = 0;
   gmpMemInBytes = 0;
   mp_set_memory_functions(allocGmp, reallocGmp, freeGmp);
+
+  key_to_alpha_table = alpha_upper_transl; //Remap the alpha keyboard layout for DMCP dialogs
+  //SET_ST(STAT_ALPHA_TAB_Fn); // Alpha key table includes F keys - This doesn't apply to the WP43
 
   lcd_clear_buf();
   lcd_putsAt(t24, 4, "Press the bottom left key."); lcd_refresh();
@@ -421,3 +453,4 @@ void program_main(void) {
     lcd_refresh_dma();
   }
 }
+

@@ -9,13 +9,68 @@
 #include <assert.h>
 #include <errno.h>
 #include <stdio.h>
+#include <string.h>
 
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 
 static FILE *_ioFileHandle = NULL;
 
+int file_selection_screen(const char * title, const char * base_dir, const char * ext, int disp_save, int overwrite_check, void * data) {
+      GtkFileChooserNative *native;
+      gint res;
+
+      if (disp_save) {
+        GtkFileChooserAction action = GTK_FILE_CHOOSER_ACTION_SAVE;
+        native = gtk_file_chooser_native_new (title,
+                                              GTK_WINDOW(frmCalc),
+                                              action,
+                                              "_Save",
+                                              "_Cancel");
+      } else{
+        GtkFileChooserAction action = GTK_FILE_CHOOSER_ACTION_OPEN;
+        native = gtk_file_chooser_native_new (title,
+                                              GTK_WINDOW(frmCalc),
+                                              action,
+                                              "_Load",
+                                              "_Cancel");
+      }
+          
+      GtkFileChooser *chooser = GTK_FILE_CHOOSER (native);
+
+      if (overwrite_check) {
+          gtk_file_chooser_set_do_overwrite_confirmation (chooser, TRUE);
+      }
+      
+      gtk_file_chooser_set_current_folder(chooser,base_dir);
+      gtk_file_chooser_set_current_name (chooser,"untitled"STATE_EXT);
+      GtkFileFilter *filter = gtk_file_filter_new ();
+      gtk_file_filter_add_pattern (filter, ext);
+      gtk_file_chooser_add_filter(chooser, filter);
+      res = gtk_native_dialog_run (GTK_NATIVE_DIALOG (native));
+      if (res == GTK_RESPONSE_ACCEPT)
+      {
+        char *filename;
+        filename = gtk_file_chooser_get_filename (chooser);
+        strcpy(data, filename);
+        if (disp_save) {
+          char * fe = data+strlen(filename)-4;
+          const char * ee = ext+1;
+          if (strcmp(fe,ee) != 0) strcat(data,ee);     //filename doesn't have the expected extension 
+        }       
+        g_free(filename);   
+        g_object_unref (native);
+        return 1;
+      } else { 
+        g_object_unref (native);
+        return 0;
+      } 
+}
+                          
+
 const char *_ioFileNameFromFilePath(ioFilePath_t path) {
   static char tmpFileName[40];
+  char * base_dir;
+  int ret = 0;
   switch(path) {
     case ioPathSaveFile:
       return "wp43.sav";
@@ -30,6 +85,20 @@ const char *_ioFileNameFromFilePath(ioFilePath_t path) {
       getTimeStampString(tmpFileName + strlen(tmpFileName));
       strcat(tmpFileName, ".tsv");
       return tmpFileName;
+    case ioPathSaveStateFile:
+    case ioPathLoadStateFile:
+      base_dir = g_get_current_dir();
+      if (path == ioPathSaveStateFile) {
+        ret = file_selection_screen("Save State File", base_dir, "*"STATE_EXT, 1, 1, tmpFileName);
+      } else if (path == ioPathLoadStateFile) {
+        ret = file_selection_screen("Load State File", base_dir, "*"STATE_EXT, 0, 0, tmpFileName);
+      }
+      g_free(base_dir);
+      if (ret == 0) {
+        return 0;
+      } else { 
+        return tmpFileName;
+      }
     default:
       return 0;
   }

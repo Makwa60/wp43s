@@ -489,6 +489,10 @@
   #define PGM_KEY_PRESSED_WHILE_PAUSED               4
   #define PGM_RESUMING                               5
 
+  // Save mode
+  #define SM_BACKUP                                  0
+  #define SM_STATE_FILE                              1
+
   // Load mode
   #define LM_ALL                                     0
   #define LM_PROGRAMS                                1
@@ -497,6 +501,7 @@
   #define LM_SUMS                                    4
   #define LM_SYSTEM_STATE                            5
   #define LM_REGISTERS_PARTIAL                       6
+  #define LM_STATE_FILE                              7
 
   // Screen updating mode
   #define SCRUPD_AUTO                             0x00

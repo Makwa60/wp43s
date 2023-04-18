@@ -10,17 +10,29 @@
   #include <stdbool.h>
   #include <stdint.h>
 
+// State files dir
+#define STATE_DIR      "/STATE"
+#define STATE_EXT      ".s43"
+// --------------------------------
+
+#define MRET_SAVESTATE   777
+#define MRET_LOADSTATE   888
+
+// --------------------------------
+
   /**
    * Abstracted file path.
    * All file operations use an abstracted path so they can be stored in the
    * appropriate location dependent on the platform.
    */
   typedef enum {
-    ioPathSaveFile = 0, ///< save file used in SAVE and LOAD functions
-    ioPathPgmFile  = 1, ///< program file
-    ioPathTestPgms = 2, ///< test programs
-    ioPathBackup   = 3, ///< backup file for full state used in simulators
-    ioPathRegDump  = 4, ///< register dump file which enables to view the full digits of long integers
+    ioPathSaveFile      = 0, ///< save file used in SAVE and LOAD functions
+    ioPathPgmFile       = 1, ///< program file
+    ioPathTestPgms      = 2, ///< test programs
+    ioPathBackup        = 3, ///< backup file for full state used in simulators
+    ioPathRegDump       = 4, ///< register dump file which enables to view the full digits of long integers
+    ioPathSaveStateFile = 6, ///< state file used in SAVEST function
+    ioPathLoadStateFile = 7, ///< state file used in LOADST function
   } ioFilePath_t;
 
   /**
@@ -90,5 +102,29 @@
    * \return true if delete succeeded
    */
   bool ioFileRemove(ioFilePath_t path, uint32_t *errorNumber);
+  
+   /**
+   * Callback function for Save State File selected file.
+   * Called from the DMCP file_selection_screen() dialog.
+   *
+   * \param[in] path file selected
+   * \param[in] file name selected
+   * \param[in] data - unsused 
+   * \param[out] set tmpFileName with the path file selected
+   * \return MRET_SAVESTATE
+   */
+  int save_statefile(const char * fpath, const char * fname, void * data);
+  
+   /**
+   * Callback function for Load State File selected file.
+   * Called from the DMCP file_selection_screen() dialog.
+   *
+   * \param[in] path file selected
+   * \param[in] file name selected
+   * \param[in] data - unsused 
+   * \param[out] set tmpFileName with the path file selected
+   * \return MRET_LOADSTATE
+   */
+  int load_statefile(const char * fpath, const char * fname, void * data);
 
 #endif // IO_H
