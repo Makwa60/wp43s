@@ -493,6 +493,7 @@
   #define STD_SUB_mu                    "\xa2\x98"
   #define STD_SUN                       "\xa2\x99"
   #define STD_SUB_SUN                   "\xa2\x9a"
+  #define STD_PROGRAM_RUNNING           "\xa2\x9b"
   #define STD_DOWN_TACK                 "\xa2\xa4"
   #define STD_PERPENDICULAR             "\xa2\xa5"
   #define STD_XOR                       "\xa2\xbb"
