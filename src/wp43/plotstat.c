@@ -1079,10 +1079,12 @@ void graphPlotstat(uint16_t selection) {
       ( (int8_t)(PLOT_ZOOM & 0x03) == 0 ? 1.0f : (int8_t)(PLOT_ZOOM & 0x03) == 1 ? 4.5f : (int8_t)(PLOT_ZOOM & 0x03) == 2 ? 20.25f : 91.125f )
       */
       float histofactor = drawHistogram == 0 ? 1 : 1/zoomfactor * (((float)statnum + 2.0f)  /  ((float)(statnum) - 1.0f) - 1)/2;     //Create space on the sides of the graph for the wider histogram columns
-      x_min = x_min - dx * histofactor * zoomfactor * (pow(4.5f, (int8_t)(PLOT_ZOOM & 0x03)));
-      y_min = y_min - dy * histofactor * zoomfactor * (pow(4.5f, (int8_t)(PLOT_ZOOM & 0x03)));
-      x_max = x_max + dx * histofactor * zoomfactor * (pow(4.5f, (int8_t)(PLOT_ZOOM & 0x03)));
-      y_max = y_max + dy * histofactor * zoomfactor * (pow(4.5f, (int8_t)(PLOT_ZOOM & 0x03)));
+      float plotzoomx = pow(4.5f, (int8_t)(PLOT_ZOOM & 0x03));
+      float plotzoomy = drawHistogram == 1 ? 1 : plotzoomx;      
+      x_min = x_min - dx * histofactor * zoomfactor * plotzoomx;
+      y_min = y_min - dy * histofactor * zoomfactor * plotzoomy;
+      x_max = x_max + dx * histofactor * zoomfactor * plotzoomx;
+      y_max = y_max + dy * histofactor * zoomfactor * plotzoomy;
       if(drawHistogram == 1) {
         y_min = 0;
       }
