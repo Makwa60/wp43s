@@ -321,16 +321,16 @@
 
   // Horizontal offsets in the status bar
   #define X_DATE                                     1
-  #define X_REAL_COMPLEX                           133
-  #define X_COMPLEX_MODE                           143
-  #define X_ANGULAR_MODE                           157
-  #define X_FRAC_MODE                              185
-  #define X_INTEGER_MODE                           260
-  #define X_OVERFLOW_CARRY                         292
-  #define X_ALPHA_MODE                             300
-  #define X_HOURGLASS                              311
-  #define X_SSIZE_BEGIN                            325
-  #define X_WATCH                                  336
+  #define X_REAL_COMPLEX                           136
+  #define X_COMPLEX_MODE                           146
+  #define X_ANGULAR_MODE                           160
+  #define X_FRAC_MODE                              187
+  #define X_INTEGER_MODE                           244
+  #define X_OVERFLOW_CARRY                         274
+  #define X_ALPHA_MODE                             290
+  #define X_SSIZE_BEGIN                            309
+  #define X_HOURGLASS                              319
+  #define X_WATCH                                  335
   #define X_SERIAL_IO                              351
   #define X_PRINTER                                361
   #define X_USER_MODE                              375
