@@ -31,6 +31,8 @@ void fnInput(uint16_t regist) {
     programRunStop = PGM_WAITING;
     currentInputVariable = regist;
     fnRecall(regist);
+    refreshScreen();
+    lcd_refresh();
   }
 }
 

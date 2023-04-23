@@ -245,6 +245,13 @@ void fnExecute(uint16_t label) {
 void fnReturn(uint16_t skip) {
   dataBlock_t *_currentSubroutineLevelData = currentSubroutineLevelData;
 
+  /* Cancel INPUT */
+  if(currentInputVariable != INVALID_VARIABLE) {
+    currentInputVariable = INVALID_VARIABLE;
+    refreshScreen();
+    lcd_refresh();
+  }
+
   /* A subroutine is running */
   if(currentSubroutineLevel > 0) {
     if(programRunStop == PGM_RUNNING) {
