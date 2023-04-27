@@ -486,7 +486,7 @@ bool      _kbSeenInterrupt     = false;
         return true;
       }
       case MNU_DYNAMIC: {
-        if(itemToBeAssigned < 0) {
+        if(itemToBeAssigned != ASSIGN_CLEAR && itemToBeAssigned < 0) {
           displayCalcErrorMessage(ERROR_CANNOT_ASSIGN_HERE, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
           errorMoreInfo("cannot assign submenu '%s' in user-created menu", indexOfItems[-itemToBeAssigned].itemCatalogName);
         }
