@@ -787,7 +787,7 @@ void tamReset(void) {
     }
     else {
       char    *buffer = (forcedVar ? forcedVar : aimBuffer);
-      bool     tryAllocate = ((tam.function == ITM_STO || tam.function == ITM_M_DIM || tam.function == ITM_MVAR || tam.function == ITM_INPUT) && !tam.indirect);
+      bool     tryAllocate = (isFunctionAllowingNewVariable(tam.function) && !tam.indirect);
       int16_t  value;
       if(tam.mode == tmNewMenu) {
         value = 1;

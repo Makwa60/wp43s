@@ -371,7 +371,7 @@ void fnStopProgram(uint16_t unusedButMandatoryParameter) {
 
   static void _executeOp(uint8_t *paramAddress, uint16_t op, uint16_t paramMode) {
     uint8_t opParam = *(uint8_t *)(paramAddress++);
-    bool    tryAllocate = (op == ITM_STO || op == ITM_M_DIM || op == ITM_MVAR || op == ITM_INPUT);
+    bool    tryAllocate = isFunctionAllowingNewVariable(op);
 
     switch(paramMode) {
       case PARAM_DECLARE_LABEL: {

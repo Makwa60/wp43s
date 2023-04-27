@@ -278,4 +278,6 @@
   void      fnRegSort                       (uint16_t unusedButMandatoryParameter);
   void      fnRegSwap                       (uint16_t unusedButMandatoryParameter);
 
+  bool      isFunctionAllowingNewVariable   (uint16_t op);
+
 #endif // !REGISTERS_H
