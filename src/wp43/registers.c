@@ -2165,6 +2165,10 @@ bool isFunctionAllowingNewVariable(uint16_t op) {
     case ITM_STOMAX:
     case ITM_STOMIN:
     case ITM_XtoALPHA:
+    case ITM_Xex:
+    case ITM_Yex:
+    case ITM_Zex:
+    case ITM_Tex:
     case ITM_INTEGRAL:
       return true;
 
