@@ -841,8 +841,8 @@ void tamReset(void) {
       }
       else {
         value = findNamedVariable(buffer);
-        if(value == INVALID_VARIABLE) {
-          if(calcMode != cmPem && getSystemFlag(FLAG_IGN1ER)) {
+        if(value == INVALID_VARIABLE && calcMode != cmPem) {
+          if(getSystemFlag(FLAG_IGN1ER)) {
             clearSystemFlag(FLAG_IGN1ER);
             errorMoreInfo("string '%s' is not a named variable\nignored since IGN1ER was set", buffer);
           }
