@@ -472,7 +472,59 @@ void clearScreen(void) {
     }
   }
 
-
+  void displayTemporaryInformationOnX(char *prefix) {
+    int16_t       w, prefixWidth;
+    temporaryInformation_t savedTempInformation;
+    
+    prefixWidth = stringWidth(prefix, &standardFont, true, true) + 1;
+    savedTempInformation = temporaryInformation;
+    temporaryInformation = TI_NO_INFO;
+    refreshRegisterLine(REGISTER_T);
+    refreshRegisterLine(REGISTER_Z);
+    refreshRegisterLine(REGISTER_Y);
+    refreshRegisterLine(REGISTER_X);
+    temporaryInformation = savedTempInformation;
+ 
+    if (getRegisterDataType(REGISTER_X) == dtReal34) {
+        clearRegisterLine(REGISTER_X, true, true);
+        if (getSystemFlag(FLAG_FRACT)) {
+          fractionToDisplayString(REGISTER_X, tmpString);
+        } else {
+          real34ToDisplayString(REGISTER_REAL34_DATA(REGISTER_X), getRegisterAngularMode(REGISTER_X), tmpString, &numericFont, SCREEN_WIDTH - prefixWidth, NUMBER_OF_DISPLAY_DIGITS, true, STD_SPACE_PUNCTUATION, true);
+        } 
+        w = stringWidth(tmpString, &numericFont, false, true);
+        showString(prefix, &standardFont, 1, Y_POSITION_OF_REGISTER_X_LINE + 6, vmNormal, true, true);
+        showString(tmpString, &numericFont, SCREEN_WIDTH - w, Y_POSITION_OF_REGISTER_X_LINE, vmNormal, false, true);
+    } 
+    else if(getRegisterDataType(REGISTER_X) == dtComplex34) {
+        clearRegisterLine(REGISTER_X, true, true);
+        complex34ToDisplayString(REGISTER_COMPLEX34_DATA(REGISTER_X), tmpString, &numericFont, SCREEN_WIDTH - prefixWidth, NUMBER_OF_DISPLAY_DIGITS, true, STD_SPACE_PUNCTUATION, true);
+        w = stringWidth(tmpString, &numericFont, false, true);
+        showString(prefix, &standardFont, 1, Y_POSITION_OF_REGISTER_X_LINE + 6, vmNormal, true, true);
+        showString(tmpString, &numericFont, SCREEN_WIDTH - w, Y_POSITION_OF_REGISTER_X_LINE, vmNormal, false, true);
+    } 
+    else if(getRegisterDataType(REGISTER_X) == dtLongInteger) {
+        clearRegisterLine(REGISTER_X, true, true);
+        longIntegerRegisterToDisplayString(REGISTER_X, tmpString, TMP_STR_LENGTH, SCREEN_WIDTH - prefixWidth, 50, STD_SPACE_PUNCTUATION);
+        w = stringWidth(tmpString, &numericFont, false, true);
+        showString(prefix, &standardFont, 1, Y_POSITION_OF_REGISTER_X_LINE + 6, vmNormal, true, true);
+        if(w <= SCREEN_WIDTH-prefixWidth) {
+          showString(tmpString, &numericFont, SCREEN_WIDTH - w, Y_POSITION_OF_REGISTER_X_LINE, vmNormal, false, true);
+        }
+        else {
+          w = stringWidth(tmpString, &standardFont, false, true);
+          if(w > SCREEN_WIDTH-prefixWidth) {
+            errorMoreInfo("Long integer representation too wide!\n%s", tmpString);
+            strcpy(tmpString, "Long integer representation too wide!");
+          }
+          w = stringWidth(tmpString, &standardFont, false, true);
+          showString(tmpString, &standardFont, SCREEN_WIDTH - w, Y_POSITION_OF_REGISTER_X_LINE + 6, vmNormal, false, true);
+        }
+    } 
+    else {
+        showString(prefix, &standardFont, 1, Y_POSITION_OF_REGISTER_X_LINE + 6, vmNormal, true, true);
+    }
+  }
 
   void refreshRegisterLine(calcRegister_t regist) {
     int16_t       w, wLastBaseNumeric, wLastBaseStandard, prefixWidth, lineWidth = 0;
@@ -541,15 +593,18 @@ void clearScreen(void) {
       }
 
       else if(temporaryInformation == TI_SAVED && regist == REGISTER_X) {
-        showString("Saved", &standardFont, 1, Y_POSITION_OF_REGISTER_X_LINE - REGISTER_LINE_HEIGHT*(regist - REGISTER_X) + 6, vmNormal, true, true);
+        sprintf(prefix, "Saved");
+        displayTemporaryInformationOnX(prefix);
       }
 
       else if(temporaryInformation == TI_BACKUP_RESTORED && regist == REGISTER_X) {
-        showString("Backup restored", &standardFont, 1, Y_POSITION_OF_REGISTER_X_LINE - REGISTER_LINE_HEIGHT*(regist - REGISTER_X) + 6, vmNormal, true, true);
+        sprintf(prefix, "Backup restored");
+        displayTemporaryInformationOnX(prefix);
       }
 
       else if(temporaryInformation == TI_STATEFILE_RESTORED && regist == REGISTER_X) {
-        showString("State file restored", &standardFont, 1, Y_POSITION_OF_REGISTER_X_LINE - REGISTER_LINE_HEIGHT*(regist - REGISTER_X) + 6, vmNormal, true, true);
+        sprintf(prefix, "State file restored");
+        displayTemporaryInformationOnX(prefix);
       }
 
       else if(temporaryInformation == TI_UNDO_DISABLED && regist == REGISTER_X) {
