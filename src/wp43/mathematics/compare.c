@@ -623,8 +623,34 @@ void fnXAlmostEqual(uint16_t regist) {
 
 
 
-void fnIsConverged(uint16_t mode) {
+void fnIsConverged(uint16_t regist) {
   real_t x, y, tol;
+  uint32_t mode;
+
+  {
+    real34_t var;
+    switch(getRegisterDataType(regist)) {
+      case dtReal34: {
+        real34Copy(REGISTER_REAL34_DATA(regist), &var);
+        break;
+      }
+      case dtLongInteger: {
+        convertLongIntegerRegisterToReal34(regist, &var);
+        break;
+      }
+      case dtShortInteger: {
+        convertShortIntegerRegisterToReal(regist, &x, &ctxtReal39);
+        realToReal34(&x, &var);
+        break;
+      }
+      default: {
+        displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
+        return;
+      }
+    }
+    mode = real34ToUInt32(&var);
+  }
+
   if(getRegisterDataType(REGISTER_X) == dtReal34 && getRegisterDataType(REGISTER_Y) == dtReal34) {
     real34ToReal(REGISTER_REAL34_DATA(REGISTER_X), &x);
     real34ToReal(REGISTER_REAL34_DATA(REGISTER_Y), &y);
