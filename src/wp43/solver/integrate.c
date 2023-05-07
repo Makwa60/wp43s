@@ -143,8 +143,10 @@ static void _integratorIteration(void) {
     parseEquation(currentFormula, EQUATION_PARSER_XEQ, tmpString, tmpString + AIM_BUFFER_LENGTH);
   }
   else {
+    uint16_t savedCurrentSolverProgram = currentSolverProgram;
     dynamicMenuItem = -1;
     execProgram(currentSolverProgram + FIRST_LABEL);
+    currentSolverProgram = savedCurrentSolverProgram;
   }
 }
 

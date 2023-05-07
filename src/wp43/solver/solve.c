@@ -246,8 +246,10 @@ void fnSolveVar(uint16_t unusedButMandatoryParameter) {
       parseEquation(currentFormula, EQUATION_PARSER_XEQ, tmpString, tmpString + AIM_BUFFER_LENGTH);
     }
     else {
+      uint16_t savedCurrentSolverProgram = currentSolverProgram;
       dynamicMenuItem = -1;
       execProgram(currentSolverProgram + FIRST_LABEL);
+      currentSolverProgram = savedCurrentSolverProgram;
     }
     if(lastErrorCode == ERROR_OVERFLOW_PLUS_INF) {
       realToReal34(const_plusInfinity, res);
