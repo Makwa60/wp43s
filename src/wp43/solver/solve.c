@@ -6,8 +6,11 @@
 #include "charString.h"
 #include "constantPointers.h"
 #include "defines.h"
+#include "display.h"
 #include "error.h"
 #include "flags.h"
+#include "fonts.h"
+#include "hal/lcd.h"
 #include "items.h"
 #include "longIntegerType.h"
 #include "mathematics/comparisonReals.h"
@@ -22,6 +25,7 @@
 #include "solver/graph.h"
 #include "solver/tvm.h"
 #include "stack.h"
+#include "ui/screen.h"
 #include "ui/softmenus.h"
 #include <stdbool.h>
 #include <math.h>
@@ -332,6 +336,38 @@ void fnSolveVar(uint16_t unusedButMandatoryParameter) {
     realDivide(const_1, &den, &den, realContext);
     realFMA(&num, &den, &val, res, realContext);
   }
+
+
+
+  static void _showProgress(const real34_t *a, const real34_t *b, const real34_t *fa, const real34_t *fb) {
+    #if ENABLE_SOLVER_PROGRESS == 1
+      const real34_t *c;
+      if((currentSolverStatus & (SOLVER_STATUS_TVM_APPLICATION)) == 0 && currentSolverNestingDepth == 1 && programRunStop != PGM_RUNNING) {
+        uint8_t savedDisplayFormatDigits = displayFormatDigits;
+
+        if(real34CompareGreaterThan(a, b)) {
+          c = a;  a  = b;  b  = c;
+          c = fa; fa = fb; fb = c;
+        }
+
+        clearRegisterLine(REGISTER_T, true, true);
+        clearRegisterLine(REGISTER_Z, true, true);
+        clearRegisterLine(REGISTER_Y, true, true);
+        clearRegisterLine(REGISTER_X, true, true);
+
+        displayFormatDigits = displayFormat == dfAll ? 0 : 33;
+        real34ToDisplayString(a, amNone, tmpString, &standardFont, 9999, 34, false, STD_SPACE_4_PER_EM, true);
+        showString(tmpString, &standardFont, 1, Y_POSITION_OF_REGISTER_Y_LINE + 6, vmNormal, true, true);
+        showString(real34IsSpecial(fa) ? "?" : real34IsZero(fa) ? "" : real34IsPositive(fa) ? "+" : "-", &standardFont, SCREEN_WIDTH - 10 /* width of '+' */, Y_POSITION_OF_REGISTER_Y_LINE + 6, vmNormal, true, true);
+        real34ToDisplayString(b, amNone, tmpString, &standardFont, 9999, 34, false, STD_SPACE_4_PER_EM, true);
+        showString(tmpString, &standardFont, 1, Y_POSITION_OF_REGISTER_X_LINE + 6, vmNormal, true, true);
+        showString(real34IsSpecial(fb) ? "?" : real34IsZero(fb) ? "" : real34IsPositive(fb) ? "+" : "-", &standardFont, SCREEN_WIDTH - 10 /* width of '+' */, Y_POSITION_OF_REGISTER_X_LINE + 6, vmNormal, true, true);
+        displayFormatDigits = savedDisplayFormatDigits;
+
+        lcd_refresh();
+      }
+    #endif // ENABLE_SOLVER_PROGRESS == 1
+  }
 #endif // !TESTSUITE_BUILD
 
 
@@ -405,6 +441,8 @@ int solver(calcRegister_t variable, const real34_t *y, const real34_t *x, real34
       real34ToReal(&fa, &faa);
       real34ToReal(&fb, &fbb);
       real34ToReal(&fb1, &fbb1);
+
+      _showProgress(&a, &b, &fa, &fb);
 
       // pre-calculation
       if(realIsSpecial(&bb2)) {
