@@ -51,5 +51,5 @@ Furthermore, the *WP43* features lots of space for your data, programs, and idea
 - 32 local *user flags* and up to 100 local *registers* per program, allowing e.g. for recursive programming.
 - Up to 10 000 program steps per program, a total of some 20 000 in *RAM*, about 15 000 in *flash memory*.
 
-##Donations
+## Donations
 If you want to support our work by donating some money to this project, please use this [link](https://www.paypal.com/cgi-bin/webscr?item_name=Donation+to+WP+34s&cmd=_donations&business=walter.bonin%40web.de&lc=us).
