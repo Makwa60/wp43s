@@ -90,6 +90,7 @@ dist_windows: testPgms build.rel/wiki
 	cp res/wp43_pre.css $(WIN_DIST_DIR)/res/
 	cp res/fonts/WP43_StandardFont.ttf $(WIN_DIST_DIR)/
 	cp build.rel/wiki/Installation-on-Windows.md $(WIN_DIST_DIR)/readme.txt
+	rm -f wp43-windows.zip
 	zip -r wp43-windows.zip $(WIN_DIST_DIR)
 	rm -rf $(WIN_DIST_DIR)
 
@@ -102,6 +103,7 @@ dist_macos: testPgms build.rel
 	cp res/dmcp/testPgms.bin $(MAC_DIST_DIR)/res/dmcp/
 	cp res/wp43_pre.css $(MAC_DIST_DIR)/res/
 	cp res/fonts/WP43_StandardFont.ttf $(MAC_DIST_DIR)/
+	rm -f wp43-macos.zip
 	zip -r wp43-macos.zip $(MAC_DIST_DIR)
 	rm -rf $(MAC_DIST_DIR)
 
@@ -114,5 +116,6 @@ dist_dmcp: dmcp testPgms build.dmcp/keymap build.rel/wiki
 	cp dep/DMCP_SDK/keymap_utils/keymaps/empty/keymap.bin $(DM_DIST_DIR)/original_DM42_keymap.bin
 	cp res/artwork/WP43_layout.svg $(DM_DIST_DIR)/WP43_layout.svg
 	cp build.rel/wiki/Installation-on-a-DM42.md $(DM_DIST_DIR)/readme.txt
+	rm -f wp43-dmcp.zip
 	zip -r wp43-dmcp.zip $(DM_DIST_DIR)
 	rm -rf $(DM_DIST_DIR)
