@@ -17,7 +17,13 @@
 static FILE *_ioFileHandle = NULL;
 
 static int create_dir(char * dir) {
-  if (( mkdir( dir) != 0) && (errno != EEXIST)) {
+  int ret;
+  #if defined(WIN32)
+	ret = mkdir( dir );
+  #else
+	ret = mkdir( dir, 0775);
+  #endif // WIN3
+  if (( ret != 0) && (errno != EEXIST)) {
     return -1;
   } else { 
     return 0;
