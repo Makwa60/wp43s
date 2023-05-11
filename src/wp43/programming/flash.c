@@ -30,7 +30,7 @@ static uint32_t load(void *buffer, uint32_t size) {
 
 
 
-static void _addSpaceAfterPrograms(uint16_t sizeInBytes) {
+void _addSpaceAfterPrograms(uint16_t sizeInBytes) {
   if(freeProgramBytes < sizeInBytes) {
     uint8_t *oldBeginOfProgramMemory = beginOfProgramMemory;
     uint32_t programSizeInBytes = TO_BYTES(RAM_SIZE_IN_BLOCKS - freeMemoryRegions[numberOfFreeMemoryRegions - 1].address - freeMemoryRegions[numberOfFreeMemoryRegions - 1].sizeInBlocks);
@@ -51,7 +51,7 @@ static void _addSpaceAfterPrograms(uint16_t sizeInBytes) {
 
 
 
-static bool _addEndNeeded(void) {
+bool _addEndNeeded(void) {
   if(firstFreeProgramByte <= beginOfProgramMemory) {
     return false;
   }

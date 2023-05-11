@@ -8,6 +8,7 @@
   #define FLASH_H
 
   #include <stdint.h>
+  #include <stdbool.h>
 
   void fnPSto                      (uint16_t unusedButMandatoryParameter);
   void fnPRcl                      (uint16_t unusedButMandatoryParameter);
@@ -18,5 +19,8 @@
   void deleteFromFlashPgmLibrary   (uint32_t fromAddr, uint32_t toAddr);
   void readStepInFlashPgmLibrary   (uint8_t *buffer, uint16_t bufferSize, uint32_t pointer);
   void executeStepInFlashPgmLibrary(void);
-
+  
+  void _addSpaceAfterPrograms      (uint16_t sizeInBytes);
+  bool _addEndNeeded               (void);
+  
 #endif // !FLASH_H

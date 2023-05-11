@@ -45,7 +45,21 @@ const char *_ioFileNameFromFilePath(ioFilePath_t path) {
       } else { 
         return tmpFileName;
       }
-   default:
+   case ioPathSaveProgram:
+      ret = file_selection_screen("Save Program", PROGRAMS_DIR, PRGM_EXT, save_programfile, 1, 1, tmpFileName);
+      if (ret == MRET_EXIT) {
+        return 0;
+      } else { 
+        return tmpFileName;
+      }
+   case ioPathLoadProgram:
+      ret = file_selection_screen("Load Program", PROGRAMS_DIR, PRGM_EXT, load_programfile, 0, 0, tmpFileName);
+      if (ret == MRET_EXIT) {
+        return 0;
+      } else { 
+        return tmpFileName;
+      }
+  default:
       return 0;
   }
 }
@@ -192,6 +206,30 @@ int load_statefile(const char * fpath, const char * fname, void * data) {
   // Store the state file name
   strcpy(data, fpath);
   set_reset_state_file(fpath);
+
+  // Exit with appropriate code to load state file
+  return MRET_LOADSTATE;
+}
+
+int save_programfile(const char * fpath, const char * fname, void * data) {
+
+  lcd_puts(t24,"Saving program ...");
+  lcd_puts(t24, fname);  lcd_refresh();
+
+  // Store the program file name
+  strcpy(data, fpath);
+
+  // Exit with appropriate code to save state file save
+  return MRET_SAVESTATE;
+}
+
+int load_programfile(const char * fpath, const char * fname, void * data) {
+
+  lcd_putsRAt(t24, 6, "  Loading ...");
+  lcd_refresh_wait();
+
+  // Store the program file name
+  strcpy(data, fpath);
 
   // Exit with appropriate code to load state file
   return MRET_LOADSTATE;

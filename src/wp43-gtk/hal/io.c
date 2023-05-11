@@ -10,10 +10,19 @@
 #include <errno.h>
 #include <stdio.h>
 #include <string.h>
+#include <sys/stat.h>
 
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 
 static FILE *_ioFileHandle = NULL;
+
+static int create_dir(char * dir) {
+  if (( mkdir( dir) != 0) && (errno != EEXIST)) {
+    return -1;
+  } else { 
+    return 0;
+  }
+}
 
 int file_selection_screen(const char * title, const char * base_dir, const char * ext, int disp_save, int overwrite_check, void * data) {
       GtkFileChooserNative *native;
@@ -69,31 +78,56 @@ int file_selection_screen(const char * title, const char * base_dir, const char 
 
 const char *_ioFileNameFromFilePath(ioFilePath_t path) {
   static char tmpFileName[40];
-  char * base_dir;
+  static char base_dir[200];
+  char * current_dir;
   int ret = 0;
+  
   switch(path) {
     case ioPathSaveFile:
-      return "wp43.sav";
+	  if (create_dir("SAVFILES") != 0) return 0;
+      return "SAVFILES/wp43.sav";
     case ioPathPgmFile:
-      return "wp43.dat";
+	  if (create_dir("LIBRARY") != 0) return 0;
+      return "LIBRARY/wp43.dat";
     case ioPathTestPgms:
       return BASEPATH "res/dmcp/testPgms.bin";
     case ioPathBackup:
       return "backup.bin";
     case ioPathRegDump:
-      strcpy(tmpFileName, "regx-");
+	  if (create_dir("SAVFILES") != 0) return 0;
+      strcpy(tmpFileName, "SAVFILES/regx-");
       getTimeStampString(tmpFileName + strlen(tmpFileName));
       strcat(tmpFileName, ".tsv");
       return tmpFileName;
     case ioPathSaveStateFile:
     case ioPathLoadStateFile:
-      base_dir = g_get_current_dir();
+      current_dir = g_get_current_dir();
+	  strcpy(base_dir,current_dir);
+	  if (create_dir("." STATE_DIR) != 0) return 0;
+	  strcat(base_dir, STATE_DIR);
       if (path == ioPathSaveStateFile) {
         ret = file_selection_screen("Save State File", base_dir, "*"STATE_EXT, 1, 1, tmpFileName);
       } else if (path == ioPathLoadStateFile) {
         ret = file_selection_screen("Load State File", base_dir, "*"STATE_EXT, 0, 0, tmpFileName);
+      } 
+      g_free(current_dir);
+      if (ret == 0) {
+        return 0;
+      } else { 
+        return tmpFileName;
       }
-      g_free(base_dir);
+	case ioPathSaveProgram:
+	case ioPathLoadProgram:
+      current_dir = g_get_current_dir();
+	  strcpy(base_dir,current_dir);
+	  if (create_dir("." PROGRAMS_DIR) != 0) return 0;
+	  strcat(base_dir, PROGRAMS_DIR);
+      if (path == ioPathSaveProgram) {
+        ret = file_selection_screen("Save Program File", base_dir, "*"PRGM_EXT, 1, 1, tmpFileName);
+      } else if (path == ioPathLoadProgram) {
+        ret = file_selection_screen("Load Program File", base_dir, "*"PRGM_EXT, 0, 0, tmpFileName);
+      }
+      g_free(current_dir);
       if (ret == 0) {
         return 0;
       } else { 
