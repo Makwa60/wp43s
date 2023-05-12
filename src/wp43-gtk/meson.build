@@ -17,6 +17,7 @@ wp43_gtk_src = files(
 override_opts = ['b_coverage=false']
 cflags        = []
 linkargs      = []
+wp43_gtk_rc   = []
 if get_option('buildtype').startswith('release')
   override_opts += ['b_lto=true']
 else
@@ -28,9 +29,14 @@ else
   endif
 endif
 
+if (target_machine.system() == 'windows')
+  windows = import('windows')
+  wp43_gtk_rc += windows.compile_resources('wp43-gtk.rc', include_directories: [wp43_inc])
+endif
+
 sim = executable(
   'wp43',
-  sources             : decNumber_src + wp43_src + wp43_gtk_src +
+  sources             : decNumber_src + wp43_src + wp43_gtk_src + wp43_gtk_rc +
                         [rasterFontsData_c, softmenuCatalogs_h,
                           constantPointers_ch, lookupTables_ch, vcs_h, version_h],
   c_args              : cflags,
