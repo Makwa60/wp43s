@@ -5,11 +5,11 @@
 #include "version.h"
 
 #define STD_SPACE_3_PER_EM " "
-#if CUSTOM_BUILD == 1
+#if CUSTOM_BUILD == 1 || VERSION_MODDED == 1
   #define FF_CUSTOM VS_FF_PRIVATEBUILD
-#else // CUSTOM_BUILD == 1
+#else // CUSTOM_BUILD == 1 || VERSION_MODDED == 1
   #define FF_CUSTOM 0
-#endif // CUSTOM_BUILD == 1
+#endif // CUSTOM_BUILD == 1 || VERSION_MODDED == 1
 #if defined(NDEBUG)
   #define FF_DEBUG 0
 #else // defined(NDEBUG)
