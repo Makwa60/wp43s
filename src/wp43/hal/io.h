@@ -15,6 +15,11 @@
 #define STATE_EXT      ".s43"
 // --------------------------------
 
+// Program files dir
+#define PROGRAMS_DIR   "/PROGRAMS"
+#define PRGM_EXT       ".p43"
+// --------------------------------
+
 #define MRET_SAVESTATE   777
 #define MRET_LOADSTATE   888
 
@@ -33,6 +38,8 @@
     ioPathRegDump       = 4, ///< register dump file which enables to view the full digits of long integers
     ioPathSaveStateFile = 6, ///< state file used in SAVEST function
     ioPathLoadStateFile = 7, ///< state file used in LOADST function
+    ioPathSaveProgram   = 8, ///< program file used in WRITEP function
+    ioPathLoadProgram   = 9, ///< program file used in READP function
   } ioFilePath_t;
 
   /**
@@ -126,5 +133,30 @@
    * \return MRET_LOADSTATE
    */
   int load_statefile(const char * fpath, const char * fname, void * data);
+  
+   /**
+   * Callback function for Save Program File selected file.
+   * Called from the DMCP file_selection_screen() dialog.
+   *
+   * \param[in] path file selected
+   * \param[in] file name selected
+   * \param[in] data - unsused 
+   * \param[out] set tmpFileName with the path file selected
+   * \return MRET_SAVESTATE
+   */
+  int save_programfile(const char * fpath, const char * fname, void * data);
+  
+   /**
+   * Callback function for Load Program File selected file.
+   * Called from the DMCP file_selection_screen() dialog.
+   *
+   * \param[in] path file selected
+   * \param[in] file name selected
+   * \param[in] data - unsused 
+   * \param[out] set tmpFileName with the path file selected
+   * \return MRET_LOADSTATE
+   */
+  int load_programfile(const char * fpath, const char * fname, void * data);
+
 
 #endif // IO_H

@@ -12,7 +12,6 @@
   #define manualLoad 1
   #define stateLoad  2
 
-
   #if defined(PC_BUILD) || defined(DMCP_BUILD)
     void   saveCalc      (void);
     void   restoreCalc   (void);
@@ -26,6 +25,8 @@
   uint64_t stringToUint64(const char *str);
   int16_t  stringToInt16 (const char *str);
   int32_t  stringToInt32 (const char *str);
+  
+  void     readLine      (char *line);
 
   void     doLoad        (uint16_t loadMode, uint16_t s, uint16_t n, uint16_t d, uint16_t loadType);
 
