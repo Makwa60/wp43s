@@ -21,6 +21,7 @@
   #define SHORT_INTEGER_SIZE_IN_BYTES      8 // 8 bytes = 64 bits
   #define CLP_WITH_MENU                    1 // CLP shows menu (more like 42S than WP34S): set to 0 if you want to retain the old behavior like WP34S
   #define USE_REAL34_FUNCTIONS             1 // Set to 1 to enable faster (but less precise) functions
+  #define ENABLE_SOLVER_PROGRESS           1 // Set to 1 to enable solver progress display (only if called in run mode)
 
   #define DECNUMDIGITS                    75 // Default number of digits used in the decNumber library
 
