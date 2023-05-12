@@ -31,7 +31,7 @@ endif
 
 if (target_machine.system() == 'windows')
   windows = import('windows')
-  wp43_gtk_rc += windows.compile_resources('wp43-gtk.rc', include_directories: [wp43_inc])
+  wp43_gtk_rc += windows.compile_resources('wp43-gtk.rc', depend_files: [version_h], depends: [vcs_h], include_directories: [wp43_inc])
 endif
 
 sim = executable(
