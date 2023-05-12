@@ -70,6 +70,18 @@ else
   conf_data.set('CI_COMMIT_TAG', '')
 endif
 
+cvs_version_info = run_command('git', 'describe', '--tags', '--dirty=-mod')
+if cvs_version_info.returncode() == 0
+  basever = cvs_version_info.stdout().strip().split('-')[0].split('.') + ['0','0','0']
+  patchver = cvs_version_info.stdout().strip().split('-')[1]
+  modded = cvs_version_info.stdout().strip().endswith('-mod')
+  conf_data.set('VERSION_WINRS', basever[0] + ',' + basever[1] + ',' + basever[2] + ',' + patchver)
+  conf_data.set('VERSION_MODDED', modded.to_int())
+else
+  conf_data.set('VERSION_WINRS', '0,0,0,0')
+  conf_data.set('VERSION_MODDED', 0)
+endif
+
 if not meson.is_cross_build()
   gtest_proj     = subproject('gtest')
   gtest_main_dep = gtest_proj.get_variable('gtest_main_dep')
