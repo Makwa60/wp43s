@@ -70,7 +70,7 @@ else
   conf_data.set('CI_COMMIT_TAG', '')
 endif
 
-cvs_version_info = run_command('git', 'describe', '--tags', '--dirty=-mod')
+cvs_version_info = run_command('git', 'describe', '--tags', '--long', '--dirty=-mod')
 if cvs_version_info.returncode() == 0
   basever = cvs_version_info.stdout().strip().split('-')[0].split('.') + ['0','0','0']
   patchver = cvs_version_info.stdout().strip().split('-')[1]
