@@ -2100,7 +2100,9 @@ ioFilePath_t path;
                       "CAVEAT: x->a in Flash will not be\n"
                       "replaced so it may cause crash\n");
   #endif // DMCP_BUILD
+  #if !defined(TESTSUITE_BUILD)
     show_warning(tmpString);
+  #endif // TESTSUITE_BUILD
     
     int globalStep = 1;
     uint8_t *step = beginOfProgramMemory;

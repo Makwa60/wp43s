@@ -220,7 +220,9 @@ void fnLoadProgram(uint16_t unusedButMandatoryParameter) {
                       "Not compatible with current version\n"
                       " \n"
                       "It will not be loaded.");
-    show_warning(tmpString);
+    #if !defined(TESTSUITE_BUILD)
+      show_warning(tmpString);
+    #endif // TESTSUITE_BUILD
 	return;
   }
 
