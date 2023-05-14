@@ -234,3 +234,28 @@ int load_programfile(const char * fpath, const char * fname, void * data) {
   // Exit with appropriate code to load state file
   return MRET_LOADSTATE;
 }
+
+void show_warning(char *str)
+{
+  char delim[] = "\n";
+  char *ptr = strtok(str, delim);
+
+  lcd_clear_buf();
+  lcd_putsRAt(t24,0,"                   WARNING");
+  lcd_setLine(t24, 1);
+
+  while(ptr != NULL)
+  {
+    lcd_puts(t24, ptr);
+    ptr = strtok(NULL, delim);
+  }
+
+  lcd_putsRAt(t24,8,"Press [ENTER] to continue.");
+  lcd_refresh();
+  wait_for_key_release(-1);
+  for(;;) {
+    int k1 = runner_get_key(NULL);
+    if (( k1 == KEY_ENTER ) ||( IS_EXIT_KEY(k1) ) || ( is_menu_auto_off() ))
+       break;
+  }
+}

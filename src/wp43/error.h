@@ -64,9 +64,10 @@
     ERROR_TOO_MANY_VARIABLES               = 49, // unlikely
     ERROR_NON_PROGRAMMABLE_COMMAND         = 50,
     ERROR_NO_GLOBAL_LABEL                  = 51,
-    ERROR_BAD_INPUT                        = 52  // This error is not in ReM and cannot occur (theoretically).
+    ERROR_BAD_INPUT                        = 52,  // This error is not in ReM and cannot occur (theoretically).
+    ERROR_CANNOT_ACCESS_FILE               = 53
   } errorCode_t;
-  #define NUMBER_OF_ERROR_CODES              53
+  #define NUMBER_OF_ERROR_CODES              54
 
   #define ERROR_MESSAGE_LENGTH 512
 

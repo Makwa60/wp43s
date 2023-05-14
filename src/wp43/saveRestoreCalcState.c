@@ -825,6 +825,7 @@ char aimBuffer1[400];             //The concurrent use of the global aimBuffer
         }
         strcpy(aimBuffer1, "Conf");
         break;
+        break;
       }
 
       default: {
@@ -1964,7 +1965,7 @@ static bool restoreOneSection(uint16_t loadMode, uint16_t s, uint16_t n, uint16_
           }
         }
         else if(strcmp(aimBuffer, "lastDenominator") == 0) {
-          lastDenominator = stringToUint32(tmpString);
+          /* lastDenominator = stringToUint32(tmpString); */
           if(lastDenominator < 1 || lastDenominator > MAX_DENMAX) {
             lastDenominator = 4;
           }
@@ -2079,51 +2080,41 @@ ioFilePath_t path;
   ioFileClose();
   
   //-------------------------------------------------------------------------------------------------
-  // Test for backup version changes
   // This is where user is informed about versions incompatibilities and changes to loaded data occur
-  // The code commented below is an example of a version mismatch handling
+  // The code  below is an example of a version mismatch handling
+  // The string passed to show_warning() can be the same if it fits on the HW display (7 lines of ~32
+  // characters and standard ASCII characters), or two differents strings can used as shown below
   //-------------------------------------------------------------------------------------------------
   //
-  //if(loadedVersion <= 88) { // Program incompatibility
-  //    int globalStep = 1;
-  //    uint8_t *step = beginOfProgramMemory;
-  //#if defined(PC_BUILD)
-  //  printf("****Program binary incompatibility****\n");
-  //  printf("x→α now followed by a destination register\n");
-  //  printf("Loaded x→α in RAM will be replaced by NOP\n");
-  //  printf("CAVEAT: x→α in Flash will not be replaced so it may cause crash\n");
-  //  printf("Also SAVE data will not be reinterpreted so LOAD or LOADP may crash\n");
-  //#endif // PC_BUILD
-  //#if defined(DMCP_BUILD)                
-  //  lcd_clear_buf();
-  //  lcd_setLine(t24, 1);
-  //  lcd_puts(t24, "**Program binary incompatibility**");
-  //  lcd_puts(t24, "x->a uses a destination register");
-  //  lcd_puts(t24, "x->a will be replaced by NOP");
-  //  lcd_puts(t24, "CAVEAT: x->a in Flash will not be");
-  //  lcd_puts(t24, "replaced");
-  //  lcd_puts(t24, "Also LOAD, LOADP or LOADST may crash");
-  //  lcd_puts(t24, "");
-  //  lcd_puts(t24, "Press [ENTER] to continue.");
-  //  lcd_refresh();
-  //  wait_for_key_release(-1);
-  //  for(;;) {
-  //    int k1 = runner_get_key(NULL);
-  //    if (( k1 == KEY_ENTER ) ||( IS_EXIT_KEY(k1) ) || ( is_menu_auto_off() ))
-  //       break;
-  //  }
-  //#endif // DMCP_BUILD
-  //  
-  //    while(!isAtEndOfPrograms(step)) { // .END.
-  //      if(checkOpCodeOfStep(step, ITM_XtoALPHA)) { // x->alpha
-  //        step[0] = (ITM_NOP >> 8) | 0x80;
-  //        step[1] =  ITM_NOP       & 0xff;
-  //        printf("x→α found at global step %d\n", globalStep);
-  //      }
-  //      ++globalStep;
-  //      step = findNextStep_ram(step);
-  //  }
-  //}
+  if(loadedVersion <= 88) { // Program incompatibility
+  #if defined(PC_BUILD)
+    sprintf(tmpString,"****Program binary incompatibility****\n"
+                      "x→α now followed by a destination register\n"
+                      "Loaded x→α in RAM will be replaced by NOP\n"
+                      "CAVEAT: x→α in Flash will not be replaced so it may cause crash\n");
+  #endif // PC_BUILD
+  #if defined(DMCP_BUILD)                
+    sprintf(tmpString,"**Program binary incompatibility**\n"
+                      "x->a now uses a destination register\n"
+                      "x->a in RAM will be replaced by NOP\n"
+                      "CAVEAT: x->a in Flash will not be\n"
+                      "replaced so it may cause crash\n");
+  #endif // DMCP_BUILD
+    show_warning(tmpString);
+    
+    int globalStep = 1;
+    uint8_t *step = beginOfProgramMemory;
+    
+    while(!isAtEndOfPrograms(step)) { // .END.
+      if(checkOpCodeOfStep(step, ITM_XtoALPHA)) { // x->alpha
+        step[0] = (ITM_NOP >> 8) | 0x80;
+        step[1] =  ITM_NOP       & 0xff;
+        printf("x→α found at global step %d\n", globalStep);
+      }
+      ++globalStep;
+      step = findNextStep_ram(step);
+    }
+  }
 
 
   #if !defined(TESTSUITE_BUILD)

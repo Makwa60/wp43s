@@ -119,6 +119,7 @@ void fnSaveProgram(uint16_t label) {
     #if !defined(DMCP_BUILD)
       printf("Cannot save program!\n");
     #endif
+	displayCalcErrorMessage(ERROR_CANNOT_ACCESS_FILE, ERR_REGISTER_LINE, REGISTER_X);
     return;
   }
 
@@ -133,11 +134,12 @@ void fnSaveProgram(uint16_t label) {
   sprintf(tmpString, "PROGRAM\n%" PRIu32 "\n", (uint32_t)currentSizeInBytes);
   ioFileWrite(tmpString, strlen(tmpString));
 
+  // Save program bytes
   for(i=0; i<currentSizeInBytes; i++) {
     sprintf(tmpString, "%" PRIu8 "\n", beginOfCurrentProgram.ram[i]);
     ioFileWrite(tmpString, strlen(tmpString));
   }
-  //If last program in memory then add .END. statement
+  // If last program in memory then add .END. statement
   if (currentProgramNumber == (numberOfPrograms - numberOfProgramsInFlash)) {
     sprintf(tmpString, "255\n255\n");
     ioFileWrite(tmpString, strlen(tmpString));
@@ -162,7 +164,7 @@ void fnLoadProgram(uint16_t unusedButMandatoryParameter) {
   path = ioPathLoadProgram;
 
   if(!ioFileOpen(path, ioModeRead)) {
-    displayCalcErrorMessage(ERROR_NO_BACKUP_DATA, ERR_REGISTER_LINE, REGISTER_X);
+    displayCalcErrorMessage(ERROR_CANNOT_ACCESS_FILE, ERR_REGISTER_LINE, REGISTER_X);
     errorMoreInfo("cannot find or read backup data file wp43.sav");
     return;
   }
@@ -211,6 +213,16 @@ void fnLoadProgram(uint16_t unusedButMandatoryParameter) {
   scanLabelsAndPrograms();
   
   ioFileClose();
+  
+  if(loadedVersion < OLDEST_COMPATIBLE_PROGRAM_VERSION) { // Program incompatibility
+    sprintf(tmpString," \n"
+                      "   !!! Program version is too old !!!\n"
+                      "Not compatible with current version\n"
+                      " \n"
+                      "It will not be loaded.");
+    show_warning(tmpString);
+	return;
+  }
 
   temporaryInformation = TI_PROGRAM_LOADED;
 }
