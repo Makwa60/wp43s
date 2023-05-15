@@ -79,6 +79,7 @@ TO_QSPI const char *errorMessages[NUMBER_OF_ERROR_CODES] = {
 /* 50 */  "Non-programmable command, please remove",
 /* 51 */  "No global label in this program",
 /* 52 */  "Bad input", // This error is not in ReM and cannot occur (theoretically).
+/* 53 */  "Cannot access file ", 
 };
 
 

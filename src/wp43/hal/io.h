@@ -158,5 +158,12 @@
    */
   int load_programfile(const char * fpath, const char * fname, void * data);
 
+   /**
+   * Warning dialog.
+   * Called to display a warning dialog, for ex. for version check differences.
+   *
+   * \param[in] string to display in the dialog
+   */
+  void show_warning(char *string);
 
 #endif // IO_H
