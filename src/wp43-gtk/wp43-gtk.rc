@@ -16,6 +16,8 @@
   #define FF_DEBUG VS_FF_DEBUG
 #endif // defined(NDEBUG)
 
+1 ICON "../../res/artwork/WP43.ico"
+
 1 VERSIONINFO
 
 FILEVERSION     VERSION_WINRS
