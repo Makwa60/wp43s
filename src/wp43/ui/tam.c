@@ -16,6 +16,7 @@
 #include "mathematics/fractionalPart.h"
 #include "mathematics/integerPart.h"
 #include "mathematics/matrix.h"
+#include "programming/flash.h"
 #include "programming/lblGtoXeq.h"
 #include "programming/manage.h"
 #include "programming/nextStep.h"
@@ -473,7 +474,7 @@ void tamReset(void) {
             return;
           }
         }
-        else if(tam.mode == tmStoRcl && tam.currentOperation != ITM_Config && tam.currentOperation != ITM_Stack) {
+        else if(tam.mode == tmStoRcl && tam.currentOperation != ITM_Config && tam.currentOperation != ITM_Stack && tam.currentOperation != ITM_Progr) {
           if(item == tam.currentOperation) {
             tam.currentOperation = tam.function;
           }
@@ -502,6 +503,16 @@ void tamReset(void) {
           }
         }
       }
+      return;
+    }
+    else if(tam.function == ITM_STO && item == ITM_Progr) {
+      fnPSto(NOPARAM);
+      tamLeaveMode();
+      return;
+    }
+    else if(tam.function == ITM_RCL && item == ITM_Progr) {
+      fnPRcl(NOPARAM);
+      tamLeaveMode();
       return;
     }
     else if(tam.function == ITM_toINT && item == ITM_REG_I) {
