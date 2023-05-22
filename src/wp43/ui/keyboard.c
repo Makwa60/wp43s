@@ -806,7 +806,14 @@ bool      _kbSeenInterrupt     = false;
       result = shiftF ? key->fShiftedAim :
                shiftG ? key->gShiftedAim :
                         key->primaryAim;
-
+      if (calcMode == cmPem && getSystemFlag(FLAG_ALPHA)) {
+        if(result == ITM_DOWN_ARROW) {
+          nextChar = NC_SUBSCRIPT;
+        }
+        else if(result == ITM_UP_ARROW) {
+          nextChar = NC_SUPERSCRIPT;
+        }
+      }
     }
     else if(tamIsActive()) {
       result = key->primaryTam; // No shifted function in TAM
