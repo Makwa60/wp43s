@@ -10,18 +10,25 @@
   #include <stdbool.h>
   #include <stdint.h>
 
-// State files dir
-#define STATE_DIR      "/STATE"
+// Directories and files
+#define STATE_DIR      "STATE"
 #define STATE_EXT      ".s43"
-// --------------------------------
 
-// Program files dir
-#define PROGRAMS_DIR   "/PROGRAMS"
+#define PROGRAMS_DIR   "PROGRAMS"
 #define PRGM_EXT       ".p43"
-// --------------------------------
+
+#define SAVE_DIR       "SAVFILES"
+#define SAVE_FILE      "wp43.sav"
+
+#define LIB_DIR        "LIBRARY"
+#define LIB_FILE       "wp43.dat"
 
 #define MRET_SAVESTATE   777
 #define MRET_LOADSTATE   888
+
+#define FILE_ERROR      00
+#define FILE_OK         01
+#define FILE_CANCEL     02
 
 // --------------------------------
 
@@ -63,9 +70,9 @@
    *
    * \param[in] path the enumeration value for the particular file to open
    * \param[in] mode the mode to open the file (read, write, update)
-   * \return true if file opened successfully
+   * \return FILE_OK if file opened successfully, FILE_CANCEL if file selcetion cancelled or FILE_ERROR
    */
-  bool ioFileOpen(ioFilePath_t path, ioFileMode_t mode);
+  int ioFileOpen(ioFilePath_t path, ioFileMode_t mode);
 
   /**
    * Write to the open file.
@@ -106,9 +113,9 @@
    *
    * \param[in] path file to delete
    * \param[out] errorNumber error code given by the platform if there's an error
-   * \return true if delete succeeded
+   * \return FILE_OK if delete succeeded, or FILE_ERROR if not
    */
-  bool ioFileRemove(ioFilePath_t path, uint32_t *errorNumber);
+  int ioFileRemove(ioFilePath_t path, uint32_t *errorNumber);
   
    /**
    * Callback function for Save State File selected file.

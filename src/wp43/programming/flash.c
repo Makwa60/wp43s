@@ -153,7 +153,7 @@ void fnPSto(uint16_t unusedButMandatoryParameter) {
 
     // Append to Flash
     if(!ioFileOpen(ioPathPgmFile, ioModeUpdate)) {
-      displayCalcErrorMessage(ERROR_NO_BACKUP_DATA, ERR_REGISTER_LINE, REGISTER_X);
+      displayCalcErrorMessage(ERROR_CANNOT_WRITE_FILE, ERR_REGISTER_LINE, REGISTER_X);
       errorMoreInfo("cannot find or read backup data file wp43.sav");
       return;
     }
@@ -177,7 +177,7 @@ void fnPSto(uint16_t unusedButMandatoryParameter) {
 
 void deleteFromFlashPgmLibrary(uint32_t fromAddr, uint32_t toAddr) {
   if(!ioFileOpen(ioPathPgmFile, ioModeUpdate)) {
-    displayCalcErrorMessage(ERROR_NO_BACKUP_DATA, ERR_REGISTER_LINE, REGISTER_X);
+    displayCalcErrorMessage(ERROR_CANNOT_WRITE_FILE, ERR_REGISTER_LINE, REGISTER_X);
     errorMoreInfo("cannot find or read backup data file wp43.sav");
     return;
   }
@@ -200,7 +200,7 @@ void deleteFromFlashPgmLibrary(uint32_t fromAddr, uint32_t toAddr) {
 
 void readStepInFlashPgmLibrary(uint8_t *buffer, uint16_t bufferSize, uint32_t pointer) {
   if(!ioFileOpen(ioPathPgmFile, ioModeRead)) {
-    displayCalcErrorMessage(ERROR_NO_BACKUP_DATA, ERR_REGISTER_LINE, REGISTER_X);
+    displayCalcErrorMessage(ERROR_CANNOT_READ_FILE, ERR_REGISTER_LINE, REGISTER_X);
     errorMoreInfo("cannot find or read backup data file wp43.sav");
     return;
   }
@@ -217,7 +217,7 @@ void scanFlashPgmLibrary(void) {
   if(!ioFileOpen(ioPathPgmFile, ioModeRead)) {
     initFlashPgmLibrary();
     if(!ioFileOpen(ioPathPgmFile, ioModeRead)) {
-      displayCalcErrorMessage(ERROR_NO_BACKUP_DATA, ERR_REGISTER_LINE, REGISTER_X);
+      displayCalcErrorMessage(ERROR_CANNOT_READ_FILE, ERR_REGISTER_LINE, REGISTER_X);
       errorMoreInfo("cannot find or read backup data file wp43.sav");
       return;
     }

@@ -28,12 +28,12 @@ const char *_ioFileNameFromFilePath(ioFilePath_t path) {
 
 
 
-bool ioFileOpen(ioFilePath_t path, ioFileMode_t mode) {
+int ioFileOpen(ioFilePath_t path, ioFileMode_t mode) {
   assert(_ioFileHandle == NULL);
   const char *filemode;
   const char *filename = _ioFileNameFromFilePath(path);
   if(!filename) {
-    return false;
+    return FILE_ERROR;
   }
   switch(mode) {
     case ioModeRead:
@@ -46,10 +46,10 @@ bool ioFileOpen(ioFilePath_t path, ioFileMode_t mode) {
       filemode = "r+b";
       break;
     default:
-      return false;
+      return FILE_ERROR;
   }
   _ioFileHandle = fopen(filename, filemode);
-  return (_ioFileHandle != NULL);
+  return (_ioFileHandle != NULL? FILE_OK : FILE_ERROR);
 }
 
 
@@ -83,15 +83,15 @@ void ioFileClose(void) {
 
 
 
-bool ioFileRemove(ioFilePath_t path, uint32_t *errorNumber) {
+int ioFileRemove(ioFilePath_t path, uint32_t *errorNumber) {
   assert(_ioFileHandle == NULL);
   const char *filename = _ioFileNameFromFilePath(path);
   if(!filename) {
-    return false;
+    return FILE_ERROR;
   }
   int result = remove(filename);
   if(result == -1 && errorNumber != NULL) {
     *errorNumber = errno;
   }
-  return result != -1;
+  return (result != -1? FILE_OK : FILE_ERROR);
 }

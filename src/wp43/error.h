@@ -47,7 +47,7 @@
     ERROR_WRITE_PROTECTED_SYSTEM_FLAG      = 32,
     ERROR_STRING_WOULD_BE_TOO_LONG         = 33,
     ERROR_EMPTY_STRING                     = 34,
-    ERROR_NO_BACKUP_DATA                   = 35,
+    ERROR_CANNOT_READ_FILE                 = 35,
     ERROR_UNDEF_SOURCE_VAR                 = 36,
     ERROR_WRITE_PROTECTED_VAR              = 37,
     ERROR_NO_MATRIX_INDEXED                = 38,
@@ -65,7 +65,7 @@
     ERROR_NON_PROGRAMMABLE_COMMAND         = 50,
     ERROR_NO_GLOBAL_LABEL                  = 51,
     ERROR_BAD_INPUT                        = 52,  // This error is not in ReM and cannot occur (theoretically).
-    ERROR_CANNOT_ACCESS_FILE               = 53
+    ERROR_CANNOT_WRITE_FILE                = 53
   } errorCode_t;
   #define NUMBER_OF_ERROR_CODES              54
 

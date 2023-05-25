@@ -19,9 +19,9 @@ static FILE *_ioFileHandle = NULL;
 static int create_dir(char * dir) {
   int ret;
   #if defined(WIN32)
-	ret = mkdir( dir );
+    ret = mkdir( dir );
   #else
-	ret = mkdir( dir, 0775);
+    ret = mkdir( dir, 0775);
   #endif // WIN3
   if (( ret != 0) && (errno != EEXIST)) {
     return -1;
@@ -74,84 +74,80 @@ int file_selection_screen(const char * title, const char * base_dir, const char 
         }       
         g_free(filename);   
         g_object_unref (native);
-        return 1;
+        return FILE_OK;
       } else { 
         g_object_unref (native);
-        return 0;
+        return FILE_CANCEL;
       } 
 }
                           
 
-const char *_ioFileNameFromFilePath(ioFilePath_t path) {
-  static char tmpFileName[40];
+int _ioFileNameFromFilePath(ioFilePath_t path, char * filename) {
   static char base_dir[200];
   char * current_dir;
   int ret = 0;
   
   switch(path) {
     case ioPathSaveFile:
-	  if (create_dir("SAVFILES") != 0) return 0;
-      return "SAVFILES/wp43.sav";
+      if (create_dir("./" SAVE_DIR) != 0) return FILE_ERROR;
+      strcpy(filename, SAVE_DIR "/" SAVE_FILE);
+      return FILE_OK;
     case ioPathPgmFile:
-	  if (create_dir("LIBRARY") != 0) return 0;
-      return "LIBRARY/wp43.dat";
+      if (create_dir("./" LIB_DIR) != 0) return FILE_ERROR;
+      strcpy(filename, LIB_DIR "/" LIB_FILE);
+      return FILE_OK;
     case ioPathTestPgms:
-      return BASEPATH "res/dmcp/testPgms.bin";
+      strcpy(filename, BASEPATH "res/dmcp/testPgms.bin");
+      return FILE_OK;
     case ioPathBackup:
-      return "backup.bin";
+      strcpy(filename, "backup.bin");
+      return FILE_OK;
     case ioPathRegDump:
-	  if (create_dir("SAVFILES") != 0) return 0;
-      strcpy(tmpFileName, "SAVFILES/regx-");
-      getTimeStampString(tmpFileName + strlen(tmpFileName));
-      strcat(tmpFileName, ".tsv");
-      return tmpFileName;
+      if (create_dir("./" SAVE_DIR) != 0) return FILE_ERROR;
+      strcpy(filename, SAVE_DIR "/regx-");
+      getTimeStampString(filename + strlen(filename));
+      strcat(filename, ".tsv");
+      return FILE_OK;
     case ioPathSaveStateFile:
     case ioPathLoadStateFile:
       current_dir = g_get_current_dir();
-	  strcpy(base_dir,current_dir);
-	  if (create_dir("." STATE_DIR) != 0) return 0;
-	  strcat(base_dir, STATE_DIR);
+      strcpy(base_dir,current_dir);
+      if (create_dir("./" STATE_DIR) != 0) return FILE_ERROR;
+      strcat(base_dir, "/" STATE_DIR);
       if (path == ioPathSaveStateFile) {
-        ret = file_selection_screen("Save State File", base_dir, "*"STATE_EXT, 1, 1, tmpFileName);
+        ret = file_selection_screen("Save State File", base_dir, "*"STATE_EXT, 1, 1, filename);
       } else if (path == ioPathLoadStateFile) {
-        ret = file_selection_screen("Load State File", base_dir, "*"STATE_EXT, 0, 0, tmpFileName);
-      } 
-      g_free(current_dir);
-      if (ret == 0) {
-        return 0;
-      } else { 
-        return tmpFileName;
+        ret = file_selection_screen("Load State File", base_dir, "*"STATE_EXT, 0, 0, filename);
       }
-	case ioPathSaveProgram:
-	case ioPathLoadProgram:
+      g_free(current_dir);
+      return ret;
+    case ioPathSaveProgram:
+    case ioPathLoadProgram:
       current_dir = g_get_current_dir();
-	  strcpy(base_dir,current_dir);
-	  if (create_dir("." PROGRAMS_DIR) != 0) return 0;
-	  strcat(base_dir, PROGRAMS_DIR);
+      strcpy(base_dir,current_dir);
+      if (create_dir("./" PROGRAMS_DIR) != 0) return 0;
+      strcat(base_dir, "/" PROGRAMS_DIR);
       if (path == ioPathSaveProgram) {
-        ret = file_selection_screen("Save Program File", base_dir, "*"PRGM_EXT, 1, 1, tmpFileName);
+        ret = file_selection_screen("Save Program File", base_dir, "*"PRGM_EXT, 1, 1, filename);
       } else if (path == ioPathLoadProgram) {
-        ret = file_selection_screen("Load Program File", base_dir, "*"PRGM_EXT, 0, 0, tmpFileName);
+        ret = file_selection_screen("Load Program File", base_dir, "*"PRGM_EXT, 0, 0, filename);
       }
       g_free(current_dir);
-      if (ret == 0) {
-        return 0;
-      } else { 
-        return tmpFileName;
-      }
+      return ret;
     default:
-      return 0;
+      return FILE_ERROR;
   }
 }
 
 
 
-bool ioFileOpen(ioFilePath_t path, ioFileMode_t mode) {
+int ioFileOpen(ioFilePath_t path, ioFileMode_t mode) {
   assert(_ioFileHandle == NULL);
   const char *filemode;
-  const char *filename = _ioFileNameFromFilePath(path);
-  if(!filename) {
-    return false;
+  static char filename[40];
+  int ret = _ioFileNameFromFilePath(path, filename);
+  if(ret != FILE_OK) {
+    return ret;
   }
   switch(mode) {
     case ioModeRead:
@@ -167,7 +163,7 @@ bool ioFileOpen(ioFilePath_t path, ioFileMode_t mode) {
       return false;
   }
   _ioFileHandle = fopen(filename, filemode);
-  return (_ioFileHandle != NULL);
+  return (_ioFileHandle != NULL ? FILE_OK : FILE_ERROR);
 }
 
 
@@ -201,17 +197,18 @@ void ioFileClose(void) {
 
 
 
-bool ioFileRemove(ioFilePath_t path, uint32_t *errorNumber) {
+int ioFileRemove(ioFilePath_t path, uint32_t *errorNumber) {
   assert(_ioFileHandle == NULL);
-  const char *filename = _ioFileNameFromFilePath(path);
-  if(!filename) {
-    return false;
+  static char filename[40];
+  int ret = _ioFileNameFromFilePath(path, filename);
+  if(ret != FILE_OK) {
+    return ret;
   }
   int result = remove(filename);
   if(result == -1 && errorNumber != NULL) {
     *errorNumber = errno;
   }
-  return result != -1;
+  return (result != -1? FILE_OK : FILE_ERROR);
 }
 
 void show_warning(char *string)

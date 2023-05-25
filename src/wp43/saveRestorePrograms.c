@@ -81,6 +81,7 @@ void fnSaveProgram(uint16_t label) {
 //                                  //tmpRegisterString = tmpString + START_REGISTER_VALUE;
 //                                  //Temporary solution is to use a local variable of sufficient length for the target.
   uint32_t i;
+  int ret;
  
 #if defined(DMCP_BUILD)
   // Don't pass through if the power is insufficient  
@@ -114,13 +115,18 @@ void fnSaveProgram(uint16_t label) {
   }
 
   path = ioPathSaveProgram;
+  ret = ioFileOpen(path, ioModeWrite);
 
-  if(!ioFileOpen(path, ioModeWrite)) {
-    #if !defined(DMCP_BUILD)
-      printf("Cannot save program!\n");
-    #endif
-	displayCalcErrorMessage(ERROR_CANNOT_ACCESS_FILE, ERR_REGISTER_LINE, REGISTER_X);
-    return;
+  if(ret != FILE_OK ) {
+    if(ret == FILE_CANCEL ) {
+      return;
+    } else { 
+      #if !defined(DMCP_BUILD)
+       printf("Cannot save program!\n");
+      #endif
+      displayCalcErrorMessage(ERROR_CANNOT_WRITE_FILE, ERR_REGISTER_LINE, REGISTER_X);
+      return;
+    }
   }
 
   // PROGRAM file version
@@ -160,13 +166,19 @@ void fnLoadProgram(uint16_t unusedButMandatoryParameter) {
   uint32_t pgmSizeInByte;
   uint32_t i;
   uint8_t *startOfProgram;
+  int ret;
 
   path = ioPathLoadProgram;
+  ret = ioFileOpen(path, ioModeRead);
 
-  if(!ioFileOpen(path, ioModeRead)) {
-    displayCalcErrorMessage(ERROR_CANNOT_ACCESS_FILE, ERR_REGISTER_LINE, REGISTER_X);
-    errorMoreInfo("cannot find or read backup data file wp43.sav");
-    return;
+  if(ret != FILE_OK ) {
+    if(ret == FILE_CANCEL ) {
+      return;
+    } else {
+      displayCalcErrorMessage(ERROR_CANNOT_READ_FILE, ERR_REGISTER_LINE, REGISTER_X);
+      errorMoreInfo("cannot find or read backup data file wp43.sav");
+      return;
+    }
   }
   
   //Check save file version
@@ -175,20 +187,63 @@ void fnLoadProgram(uint16_t unusedButMandatoryParameter) {
   if(strcmp(tmpString, "PROGRAM_FILE_FORMAT") == 0) {
     readLine(aimBuffer); // Format of program instructions (ignore now, there is only one format)
   } else {
+      #if !defined(TESTSUITE_BUILD)
+        sprintf(tmpString," \n"
+                          "This is not a WP43 program\n"
+                          " \n"
+                          "It will not be loaded.");
+        show_warning(tmpString);
+      #endif // TESTSUITE_BUILD
+    ioFileClose();
     return;
   } 
   readLine(aimBuffer); // param
   readLine(tmpString); // value
   if(strcmp(aimBuffer, "WP43_program_file_version") == 0) {
     loadedVersion = stringToUint32(tmpString);
+    if(loadedVersion < OLDEST_COMPATIBLE_PROGRAM_VERSION) { // Program incompatibility
+      #if !defined(TESTSUITE_BUILD)
+      sprintf(tmpString," \n"
+                        "   !!! Program version is too old !!!\n"
+                        "Not compatible with current version\n"
+                        " \n"
+                        "It will not be loaded.");
+        show_warning(tmpString);
+      #endif // TESTSUITE_BUILD
+      ioFileClose();
+      return;
+    }
   } else {
-    return;
+    if(strcmp(aimBuffer, "C47_program_file_version") == 0) {
+      loadedVersion = stringToUint32(tmpString);
+      #if !defined(TESTSUITE_BUILD)
+        sprintf(tmpString," \n"
+                          "This program was written for the C47\n"
+                          "C47 programs support is experimental\n"
+                          "Some instructions may not be \n"
+                          "compatible with the WP43 and may\n"
+                          "crash the calculator."
+                           );
+        show_warning(tmpString);
+      #endif // TESTSUITE_BUILD
+    } else {
+      #if !defined(TESTSUITE_BUILD)
+        sprintf(tmpString," \n"
+                          "This is not a WP43 program\n"
+                          " \n"
+                          "It will not be loaded.");
+        show_warning(tmpString);
+      #endif // TESTSUITE_BUILD
+      ioFileClose();
+      return;
+    }  
   } 
   readLine(aimBuffer); // param
   readLine(tmpString); // value
   if(strcmp(aimBuffer, "PROGRAM") == 0) {
     pgmSizeInByte = stringToUint32(tmpString);
   } else {
+    ioFileClose();
     return;
   } 
 
@@ -213,18 +268,6 @@ void fnLoadProgram(uint16_t unusedButMandatoryParameter) {
   scanLabelsAndPrograms();
   
   ioFileClose();
-  
-  if(loadedVersion < OLDEST_COMPATIBLE_PROGRAM_VERSION) { // Program incompatibility
-    sprintf(tmpString," \n"
-                      "   !!! Program version is too old !!!\n"
-                      "Not compatible with current version\n"
-                      " \n"
-                      "It will not be loaded.");
-    #if !defined(TESTSUITE_BUILD)
-      show_warning(tmpString);
-    #endif // TESTSUITE_BUILD
-	return;
-  }
 
   temporaryInformation = TI_PROGRAM_LOADED;
 }
