@@ -1405,6 +1405,16 @@ void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
         }
       }
     }
+    else if(id == -MNU_ADV || id == -MNU_EQN) {
+      currentSolverStatus &= ~SOLVER_STATUS_INTERACTIVE;
+      for(int i=0; i<SOFTMENU_STACK_SIZE; i++) { // Searching the stack for MNU_MVAR
+        if(softmenu[softmenuStack[i].softmenuId].menuItem == -MNU_MVAR) { // if found, remove it
+          xcopy(softmenuStack + i, softmenuStack + i + 1, (SOFTMENU_STACK_SIZE - i - 1) * sizeof(softmenuStack_t));
+          memset(softmenuStack + SOFTMENU_STACK_SIZE - 1, 0, sizeof(softmenuStack_t)); // Put MyMenu in the last stack element
+          --i; // redo
+        }
+      }
+    }
 
     m = 0;
     while(softmenu[m].menuItem != 0) {
