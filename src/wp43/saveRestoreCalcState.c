@@ -70,10 +70,17 @@ static uint32_t restore(void *buffer, uint32_t size) {
     uint32_t backupVersion = BACKUP_VERSION;
     uint32_t ramSize       = RAM_SIZE_IN_BLOCKS;
     uint32_t ramPtr;
+    int ret;
 
-    if(!ioFileOpen(ioPathBackup, ioModeWrite)) {
-      printf("Cannot save calc's memory in file backup.bin!\n");
-      exit(0);
+    ret = ioFileOpen(ioPathBackup, ioModeWrite);
+
+    if(ret != FILE_OK ) {
+      if(ret == FILE_CANCEL ) {
+        return;
+      } else {
+        printf("Cannot save calc's memory in file backup.bin!\n");
+        exit(0);
+      }
     }
 
     if(calcMode == cmConfirmation) {
@@ -321,12 +328,19 @@ static uint32_t restore(void *buffer, uint32_t size) {
   void restoreCalc(void) {
     uint32_t backupVersion, ramSize, ramPtr;
     uint8_t *loadedScreen = malloc(SCREEN_WIDTH * SCREEN_HEIGHT / 8);
+    int ret;
 
     fnReset(CONFIRMED);
-    if(!ioFileOpen(ioPathBackup, ioModeRead)) {
-      printf("Cannot restore calc's memory from file backup.bin! Performing RESET\n");
-      refreshScreen();
-      return;
+    ret = ioFileOpen(ioPathBackup, ioModeRead);
+
+    if(ret != FILE_OK ) {
+      if(ret == FILE_CANCEL ) {
+        return;
+      } else {
+        printf("Cannot restore calc's memory from file backup.bin! Performing RESET\n");
+        refreshScreen();
+        return;
+      }
     }
 
     restore(&backupVersion,                      sizeof(backupVersion));
@@ -861,13 +875,14 @@ static void saveMatrixElements(calcRegister_t regist) {
 
 void fnSave(uint16_t saveMode) {
 #if !defined(TESTSUITE_BUILD)
-uint32_t backupVersion = BACKUP_VERSION;
-ioFilePath_t path;
-char tmpString[3000];             //The concurrent use of the global tmpString 
+  uint32_t backupVersion = BACKUP_VERSION;
+  ioFilePath_t path;
+  char tmpString[3000];           //The concurrent use of the global tmpString 
                                   //as target does not work while the source is at
                                   //tmpRegisterString = tmpString + START_REGISTER_VALUE;
                                   //Temporary solution is to use a local variable of sufficient length for the target.
-
+  int ret;
+  
 #if defined(DMCP_BUILD)
   // Don't pass through if the power is insufficient  
   if ( power_check_screen() ) return;
@@ -883,12 +898,19 @@ char tmpString[3000];             //The concurrent use of the global tmpString
   else {
     path = ioPathSaveStateFile;
   }
+  
+  ret = ioFileOpen(path, ioModeWrite);
 
-  if(!ioFileOpen(path, ioModeWrite)) {
-    #if !defined(DMCP_BUILD)
-      printf("Cannot SAVE in file wp43.sav!\n");
-    #endif
-    return;
+  if(ret != FILE_OK ) {
+    if(ret == FILE_CANCEL ) {
+      return;
+    } else {
+      #if !defined(DMCP_BUILD)
+        printf("Cannot SAVE in file wp43.sav!\n");
+      #endif
+      displayCalcErrorMessage(ERROR_CANNOT_WRITE_FILE, ERR_REGISTER_LINE, REGISTER_X);
+      return;
+    }
   }
 
   // SAVE file version
@@ -2031,7 +2053,8 @@ static bool restoreOneSection(uint16_t loadMode, uint16_t s, uint16_t n, uint16_
 
 
 void doLoad(uint16_t loadMode, uint16_t s, uint16_t n, uint16_t d, uint16_t loadType) {
-ioFilePath_t path;
+  ioFilePath_t path;
+  int ret;
 
   if (loadType == stateLoad) {
     path = ioPathLoadStateFile;
@@ -2040,12 +2063,16 @@ ioFilePath_t path;
     path = ioPathSaveFile;
   }
 
-  if(!ioFileOpen(path, ioModeRead)) {
-    if(loadType!= stateLoad) {
-      displayCalcErrorMessage(ERROR_NO_BACKUP_DATA, ERR_REGISTER_LINE, REGISTER_X);
+  ret = ioFileOpen(path, ioModeRead);
+
+  if(ret != FILE_OK ) {
+    if(ret == FILE_CANCEL ) {
+      return;
+    } else {
+      displayCalcErrorMessage(ERROR_CANNOT_READ_FILE, ERR_REGISTER_LINE, REGISTER_X);
       errorMoreInfo("cannot find or read backup data file wp43.sav");
+      return;
     }
-    return;
   }
 
   if(loadMode == LM_ALL) {
@@ -2155,7 +2182,9 @@ void fnDeleteBackup(uint16_t confirmation) {
   }
   else {
     uint32_t errorNumber;
-    if(!ioFileRemove(ioPathSaveFile, &errorNumber)) {
+    int ret;
+    ret = ioFileRemove(ioPathSaveFile, &errorNumber);
+    if(ret != FILE_OK ) {
       displayCalcErrorMessage(ERROR_IO, ERR_REGISTER_LINE, REGISTER_X);
       errorMoreInfo("removing the backup failed with error code %d", errorNumber);
     }

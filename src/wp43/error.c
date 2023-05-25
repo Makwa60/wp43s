@@ -61,7 +61,7 @@ TO_QSPI const char *errorMessages[NUMBER_OF_ERROR_CODES] = {
 /* 32 */  "This system flag is write protected",
 /* 33 */  "Output would exceed 196 characters",
 /* 34 */  "This does not work with an empty string",
-/* 35 */  "No backup data found",
+/* 35 */  "Cannot read file",
 /* 36 */  "Undefined source variable",
 /* 37 */  "This variable is write protected",
 /* 38 */  "No matrix indexed",
@@ -79,7 +79,7 @@ TO_QSPI const char *errorMessages[NUMBER_OF_ERROR_CODES] = {
 /* 50 */  "Non-programmable command, please remove",
 /* 51 */  "No global label in this program",
 /* 52 */  "Bad input", // This error is not in ReM and cannot occur (theoretically).
-/* 53 */  "Cannot access file ", 
+/* 53 */  "Cannot write file ", 
 };
 
 

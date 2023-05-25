@@ -16,61 +16,55 @@
 static bool _ioWriteEnabled = false;
 static bool _ioReadEnabled  = false;
 
-const char *_ioFileNameFromFilePath(ioFilePath_t path) {
-  static char tmpFileName[40];
+int _ioFileNameFromFilePath(ioFilePath_t path, char * filename) {
   int ret = 0;
   switch(path) {
     case ioPathSaveFile:
-      return "SAVFILES\\wp43.sav";
+      check_create_dir(SAVE_DIR);
+      strcpy(filename, SAVE_DIR "\\" SAVE_FILE);
+      return FILE_OK;
     case ioPathPgmFile:
-      return "LIBRARY\\wp43.dat";
+      check_create_dir(LIB_DIR);
+      strcpy(filename, LIB_DIR "\\" LIB_FILE);
+      return FILE_OK;
     case ioPathTestPgms:
-      return "testPgms.bin";
+      strcpy(filename, "testPgms.bin");
+      return FILE_OK;
     case ioPathRegDump:
-      strcpy(tmpFileName, "SAVFILES\\regx-");
-      getTimeStampString(tmpFileName + strlen(tmpFileName));
-      strcat(tmpFileName, ".tsv");
-      return tmpFileName;
+      check_create_dir(SAVE_DIR);
+      strcpy(filename, SAVE_DIR "\\regx-");
+      getTimeStampString(filename + strlen(filename));
+      strcat(filename, ".tsv");
+      return FILE_OK;
     case ioPathSaveStateFile:
-      ret = file_selection_screen("Save Calculator State", STATE_DIR, STATE_EXT, save_statefile, 1, 1, tmpFileName);
-      if (ret == MRET_EXIT) {
-        return 0;
-      } else { 
-        return tmpFileName;
-      }
+      check_create_dir(STATE_DIR);
+      ret = file_selection_screen("Save Calculator State", STATE_DIR, STATE_EXT, save_statefile, 1, 1, filename);
+      return (ret == MRET_EXIT? FILE_CANCEL : FILE_OK);
    case ioPathLoadStateFile:
-      ret = file_selection_screen("Load Calculator State", STATE_DIR, STATE_EXT, load_statefile, 0, 0, tmpFileName);
-      if (ret == MRET_EXIT) {
-        return 0;
-      } else { 
-        return tmpFileName;
-      }
+      check_create_dir(STATE_DIR);
+      ret = file_selection_screen("Load Calculator State", STATE_DIR, STATE_EXT, load_statefile, 0, 0, filename);
+      return (ret == MRET_EXIT? FILE_CANCEL : FILE_OK);
    case ioPathSaveProgram:
-      ret = file_selection_screen("Save Program", PROGRAMS_DIR, PRGM_EXT, save_programfile, 1, 1, tmpFileName);
-      if (ret == MRET_EXIT) {
-        return 0;
-      } else { 
-        return tmpFileName;
-      }
+      check_create_dir(PROGRAMS_DIR);
+      ret = file_selection_screen("Save Program", PROGRAMS_DIR, PRGM_EXT, save_programfile, 1, 1, filename);
+      return (ret == MRET_EXIT? FILE_CANCEL : FILE_OK);
    case ioPathLoadProgram:
-      ret = file_selection_screen("Load Program", PROGRAMS_DIR, PRGM_EXT, load_programfile, 0, 0, tmpFileName);
-      if (ret == MRET_EXIT) {
-        return 0;
-      } else { 
-        return tmpFileName;
-      }
+      check_create_dir(PROGRAMS_DIR);
+      ret = file_selection_screen("Load Program", PROGRAMS_DIR, PRGM_EXT, load_programfile, 0, 0, filename);
+      return (ret == MRET_EXIT? FILE_CANCEL : FILE_OK);
   default:
-      return 0;
+      return FILE_ERROR;
   }
 }
 
 
 
-bool ioFileOpen(ioFilePath_t path, ioFileMode_t mode) {
+int ioFileOpen(ioFilePath_t path, ioFileMode_t mode) {
   assert(!_ioWriteEnabled && !_ioReadEnabled);
-  const TCHAR *filename = _ioFileNameFromFilePath(path);
-  if(!filename) {
-    return false;
+  static char filename[40];
+  uint8_t ret = _ioFileNameFromFilePath(path, filename);
+  if(ret != FILE_OK) {
+    return ret;
   }
   BYTE filemode;
   switch(mode) {
@@ -88,19 +82,12 @@ bool ioFileOpen(ioFilePath_t path, ioFileMode_t mode) {
       _ioReadEnabled = true;
       break;
     default:
-      return false;
+      return FILE_ERROR;
   }
   if(mode != ioModeRead) {
     sys_disk_write_enable(1);
   }
-  if(mode == ioModeWrite) {
-    if(path == ioPathSaveFile || path == ioPathRegDump) {
-      check_create_dir("SAVFILES");
-    }
-    if(path == ioPathPgmFile) {
-      check_create_dir("LIBRARY");
-    }
-  }
+
   FRESULT result = f_open(ppgm_fp, filename, filemode);
   if(result != FR_OK) {
     if(mode != ioModeRead) {
@@ -109,7 +96,7 @@ bool ioFileOpen(ioFilePath_t path, ioFileMode_t mode) {
     _ioWriteEnabled = false;
     _ioReadEnabled  = false;
   }
-  return (result == FR_OK);
+  return (result == FR_OK? FILE_OK : FILE_ERROR);
 }
 
 
@@ -150,16 +137,22 @@ void ioFileClose(void) {
 
 
 
-bool ioFileRemove(ioFilePath_t path, uint32_t *errorNumber) {
+int ioFileRemove(ioFilePath_t path, uint32_t *errorNumber) {
+  static char filename[40];
+  uint8_t ret;
   assert(!_ioWriteEnabled && !_ioReadEnabled);
   FRESULT result;
   sys_disk_write_enable(1);
-  result = f_unlink(_ioFileNameFromFilePath(path));
+  ret = _ioFileNameFromFilePath(path, filename);
+  if(ret != FILE_OK) {
+    return ret;
+  }
+  result = f_unlink(filename);
   if(result != FR_OK && errorNumber != NULL) {
     *errorNumber = result;
   }
   sys_disk_write_enable(0);
-  return result == FR_OK;
+  return (result == FR_OK? FILE_OK : FILE_ERROR);
 }
 
 //
