@@ -32,7 +32,11 @@ static int create_dir(char * dir) {
 
 int file_selection_screen(const char * title, const char * base_dir, const char * ext, int disp_save, int overwrite_check, void * data) {
       GtkFileChooserNative *native;
+      static char untitled[16];
       gint res;
+      
+      strcpy(untitled, "untitled");
+      strcat(untitled, ext+1);
 
       if (disp_save) {
         GtkFileChooserAction action = GTK_FILE_CHOOSER_ACTION_SAVE;
@@ -57,7 +61,7 @@ int file_selection_screen(const char * title, const char * base_dir, const char 
       }
       
       gtk_file_chooser_set_current_folder(chooser,base_dir);
-      gtk_file_chooser_set_current_name (chooser,"untitled"STATE_EXT);
+      gtk_file_chooser_set_current_name (chooser,untitled);
       GtkFileFilter *filter = gtk_file_filter_new ();
       gtk_file_filter_add_pattern (filter, ext);
       gtk_file_chooser_add_filter(chooser, filter);
