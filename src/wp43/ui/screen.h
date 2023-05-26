@@ -100,7 +100,7 @@
     void     updateMatrixHeightCache            (void);
 
     /**
-     * Display te,porary information message on register X line.
+     * Display temporary information message on register X line.
      *
      * \param[in] *prefix Temporary Information message string
      */    

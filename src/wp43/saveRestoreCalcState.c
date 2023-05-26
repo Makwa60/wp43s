@@ -51,13 +51,13 @@
 
 #define configFileVersion       1
 
-static char *tmpRegisterString = NULL;
+#if !defined(TESTSUITE_BUILD)
+  static char *tmpRegisterString = NULL;
 
-static void save(const void *buffer, uint32_t size) {
-  ioFileWrite(buffer, size);
-}
-
-
+  static void save(const void *buffer, uint32_t size) {
+    ioFileWrite(buffer, size);
+  }
+#endif //TESTSUITE_BUILD
 
 static uint32_t restore(void *buffer, uint32_t size) {
   return ioFileRead(buffer, size);
