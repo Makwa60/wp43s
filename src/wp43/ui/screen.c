@@ -51,7 +51,8 @@
 #include "wp43.h"
 
 #if !defined(TESTSUITE_BUILD)
-  static const char *whoStr1 = "WP43" STD_SPACE_3_PER_EM "by" STD_SPACE_3_PER_EM "Pauli," STD_SPACE_3_PER_EM "Walter," STD_SPACE_3_PER_EM "Mihail," STD_SPACE_3_PER_EM "Jaco," STD_SPACE_3_PER_EM "and" STD_SPACE_3_PER_EM "Martin";
+  static const char *whoStr1 = "WP43" STD_SPACE_3_PER_EM "by" STD_SPACE_3_PER_EM "Mihail," STD_SPACE_3_PER_EM "Martin," STD_SPACE_3_PER_EM "Ben," STD_SPACE_3_PER_EM "Walter," STD_SPACE_3_PER_EM "Jaco," STD_SPACE_3_PER_EM "Didier," ;
+  static const char *whoStr2 = "and" STD_SPACE_3_PER_EM "Pauli";
   static const char *versionStr = "WP43" STD_SPACE_3_PER_EM VERSION_STRING;
 
   /* Names of day of week */
@@ -563,12 +564,21 @@ void clearScreen(void) {
       }
 
       else if(temporaryInformation == TI_WHO && regist == REGISTER_X) {
-        const char *whoStr2 = systemMaker();
-        if(whoStr2 != NULL) {
+        const char *whoStr3 = systemMaker();
+        if(whoStr3 != NULL) {
+          showString(whoStr2, &standardFont, 1, Y_POSITION_OF_REGISTER_X_LINE - REGISTER_LINE_HEIGHT*(regist - REGISTER_X) - 3, vmNormal, true, true);
+          showString(whoStr3, &standardFont, 1, Y_POSITION_OF_REGISTER_X_LINE - REGISTER_LINE_HEIGHT*(regist - REGISTER_X) + 17, vmNormal, true, true);
+        } else {
           showString(whoStr1, &standardFont, 1, Y_POSITION_OF_REGISTER_X_LINE - REGISTER_LINE_HEIGHT*(regist - REGISTER_X) - 3, vmNormal, true, true);
           showString(whoStr2, &standardFont, 1, Y_POSITION_OF_REGISTER_X_LINE - REGISTER_LINE_HEIGHT*(regist - REGISTER_X) + 17, vmNormal, true, true);
-        } else {
-          showString(whoStr1, &standardFont, 1, Y_POSITION_OF_REGISTER_X_LINE - REGISTER_LINE_HEIGHT*(regist - REGISTER_X) + 6, vmNormal, true, true);
+        }
+      }
+
+      else if(temporaryInformation == TI_WHO && regist == REGISTER_Y) {
+        const char *whoStr3 = systemMaker();
+        clearRegisterLine(REGISTER_Y, true, true);
+        if(whoStr3 != NULL) {
+          showString(whoStr1, &standardFont, 1, Y_POSITION_OF_REGISTER_X_LINE - REGISTER_LINE_HEIGHT*(regist - REGISTER_X) + 12, vmNormal, true, true);
         }
       }
 
