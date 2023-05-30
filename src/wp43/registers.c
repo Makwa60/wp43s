@@ -961,7 +961,7 @@ void clearRegister(calcRegister_t regist) {
 
 
 void fnClearRegisters(uint16_t confirmation) {
-  if(confirmation == NOT_CONFIRMED) {
+  if((confirmation == NOT_CONFIRMED) && (programRunStop != PGM_RUNNING)) {
     setConfirmationMode(fnClearRegisters);
   }
   else {
