@@ -1606,7 +1606,7 @@ static bool restoreOneSection(uint16_t loadMode, uint16_t s, uint16_t n, uint16_
       readLine(aimBuffer); // Variable data type
       readLine(tmpString); // Variable value
 
-      if(loadMode == LM_ALL || loadMode == LM_NAMED_VARIABLES) {
+      if(loadMode == LM_ALL || loadMode == LM_NAMED_VARIABLES || ((loadMode == LM_SUMS) && (strcmp(errorMessage, "STATS") == 0))) {
         char *varName = errorMessage + strlen(errorMessage) + 1;
         utf8ToString((uint8_t *)errorMessage, varName);
         regist = findOrAllocateNamedVariable(varName);
