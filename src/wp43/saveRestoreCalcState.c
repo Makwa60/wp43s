@@ -2113,35 +2113,37 @@ void doLoad(uint16_t loadMode, uint16_t s, uint16_t n, uint16_t d, uint16_t load
   // characters and standard ASCII characters), or two differents strings can used as shown below
   //-------------------------------------------------------------------------------------------------
   //
-  if(loadedVersion <= 88) { // Program incompatibility
-  #if defined(PC_BUILD)
-    sprintf(tmpString,"****Program binary incompatibility****\n"
-                      "x→α now followed by a destination register\n"
-                      "Loaded x→α in RAM will be replaced by NOP\n"
-                      "CAVEAT: x→α in Flash will not be replaced so it may cause crash\n");
-  #endif // PC_BUILD
-  #if defined(DMCP_BUILD)                
-    sprintf(tmpString,"**Program binary incompatibility**\n"
-                      "x->a now uses a destination register\n"
-                      "x->a in RAM will be replaced by NOP\n"
-                      "CAVEAT: x->a in Flash will not be\n"
-                      "replaced so it may cause crash\n");
-  #endif // DMCP_BUILD
-  #if !defined(TESTSUITE_BUILD)
-    show_warning(tmpString);
-  #endif // TESTSUITE_BUILD
+  if (loadMode == LM_ALL) {
+    if(loadedVersion <= 88) { // Program incompatibility
+    #if defined(PC_BUILD)
+      sprintf(tmpString,"****Program binary incompatibility****\n"
+                        "x→α now followed by a destination register\n"
+                        "Loaded x→α in RAM will be replaced by NOP\n"
+                        "CAVEAT: x→α in Flash will not be replaced so it may cause crash\n");
+    #endif // PC_BUILD
+    #if defined(DMCP_BUILD)                
+      sprintf(tmpString,"**Program binary incompatibility**\n"
+                        "x->a now uses a destination register\n"
+                        "x->a in RAM will be replaced by NOP\n"
+                        "CAVEAT: x->a in Flash will not be\n"
+                        "replaced so it may cause crash\n");
+    #endif // DMCP_BUILD
+    #if !defined(TESTSUITE_BUILD)
+      show_warning(tmpString);
+    #endif // TESTSUITE_BUILD
     
-    int globalStep = 1;
-    uint8_t *step = beginOfProgramMemory;
+      int globalStep = 1;
+      uint8_t *step = beginOfProgramMemory;
     
-    while(!isAtEndOfPrograms(step)) { // .END.
-      if(checkOpCodeOfStep(step, ITM_XtoALPHA)) { // x->alpha
-        step[0] = (ITM_NOP >> 8) | 0x80;
-        step[1] =  ITM_NOP       & 0xff;
-        printf("x→α found at global step %d\n", globalStep);
+      while(!isAtEndOfPrograms(step)) { // .END.
+        if(checkOpCodeOfStep(step, ITM_XtoALPHA)) { // x->alpha
+          step[0] = (ITM_NOP >> 8) | 0x80;
+          step[1] =  ITM_NOP       & 0xff;
+          printf("x→α found at global step %d\n", globalStep);
+        }
+        ++globalStep;
+        step = findNextStep_ram(step);
       }
-      ++globalStep;
-      step = findNextStep_ram(step);
     }
   }
 
