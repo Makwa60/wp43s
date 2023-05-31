@@ -169,8 +169,7 @@ bool      _kbSeenInterrupt     = false;
         break;
       }
 
-      case MNU_RAM:
-      case MNU_FLASH: {
+      case MNU_PROGS: {
         dynamicMenuItem = firstItem + itemShift + fn;
         item = (dynamicMenuItem >= dynamicSoftmenu[menuId].numItems ? ITM_NOP : (tamIsActive() && tam.mode == tmDelItem) ? MNU_DYNAMIC : ITM_XEQ);
         break;
@@ -237,8 +236,7 @@ bool      _kbSeenInterrupt     = false;
     if(calcMode == cmAssign && item != ITM_NOP && item != ITM_NULL) {
       switch(-softmenu[menuId].menuItem) {
         case MNU_PROG:
-        case MNU_RAM:
-        case MNU_FLASH: {
+        case MNU_PROGS: {
           return findNamedLabel((char *)getNthString(dynamicSoftmenu[menuId].menuContent, dynamicMenuItem)) - FIRST_LABEL + ASSIGN_LABELS;
         }
         case MNU_VAR:

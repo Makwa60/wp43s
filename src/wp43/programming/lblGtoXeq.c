@@ -108,12 +108,6 @@ void goToGlobalStep(int32_t step) {
     for(uint16_t lbl=0; lbl<numberOfLabels; lbl++) {
       uint8_t tmpLabel[16];
       uint8_t *lblPtr;
-      if(softmenu[softmenuStack[0].softmenuId].menuItem == -MNU_RAM   && labelList[lbl].program < 0) {
-        continue;
-      }
-      if(softmenu[softmenuStack[0].softmenuId].menuItem == -MNU_FLASH && labelList[lbl].program > 0) {
-        continue;
-      }
       if(labelList[lbl].program < 0) {
         readStepInFlashPgmLibrary(tmpLabel, 16, labelList[lbl].labelPointer.flash);
         lblPtr = tmpLabel;

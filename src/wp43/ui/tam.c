@@ -117,8 +117,7 @@ void tamReset(void) {
 
       case ITM_DELITM: {
         switch(-softmenu[softmenuStack[0].softmenuId].menuItem) {
-          case MNU_RAM:
-          case MNU_FLASH: {
+          case MNU_PROGS: {
             return ITM_DELITM_PROG;
           }
           case MNU_MENUS: {
@@ -822,7 +821,7 @@ void tamReset(void) {
           }
         }
       }
-      else if(tam.mode == tmLabel || tam.mode == tmSolve || (tam.mode == tmKey && tam.keyInputFinished) || (tam.mode == tmDelItem && (softmenu[softmenuStack[0].softmenuId].menuItem == -MNU_RAM || softmenu[softmenuStack[0].softmenuId].menuItem == -MNU_FLASH))) {
+      else if(tam.mode == tmLabel || tam.mode == tmSolve || (tam.mode == tmKey && tam.keyInputFinished) || (tam.mode == tmDelItem && softmenu[softmenuStack[0].softmenuId].menuItem == -MNU_PROGS)) {
         value = findNamedLabel(buffer);
         if(value == INVALID_VARIABLE && tam.function != ITM_LBL && tam.function != ITM_LBLQ && (calcMode != cmPem || tam.mode != tmSolve)) {
           if(calcMode != cmPem && getSystemFlag(FLAG_IGN1ER)) {
