@@ -609,6 +609,39 @@ void clearScreen(void) {
         displayTemporaryInformationOnX(prefix);
       }
 
+      else if(temporaryInformation == TI_PROGRAMS_RESTORED && regist == REGISTER_X) {
+        sprintf(prefix, "                                ");
+        displayTemporaryInformationOnX(prefix);
+        sprintf(prefix, "Saved programs and equations");
+        showString(prefix, &standardFont, 1, Y_POSITION_OF_REGISTER_X_LINE - REGISTER_LINE_HEIGHT*(regist - REGISTER_X) - 3, vmNormal, true, true);
+        sprintf(prefix, "appended");
+        showString(prefix, &standardFont, 1, Y_POSITION_OF_REGISTER_X_LINE - REGISTER_LINE_HEIGHT*(regist - REGISTER_X) + 17, vmNormal, true, true);
+     }
+
+      else if(temporaryInformation == TI_REGISTERS_RESTORED && regist == REGISTER_X) {
+        sprintf(prefix, "                                  ");
+        displayTemporaryInformationOnX(prefix);
+        sprintf(prefix, "Saved global and local registers");
+        showString(prefix, &standardFont, 1, Y_POSITION_OF_REGISTER_X_LINE - REGISTER_LINE_HEIGHT*(regist - REGISTER_X) - 3, vmNormal, true, true);
+        sprintf(prefix, "(w/ local flags) restored");
+        showString(prefix, &standardFont, 1, Y_POSITION_OF_REGISTER_X_LINE - REGISTER_LINE_HEIGHT*(regist - REGISTER_X) + 17, vmNormal, true, true);
+      }
+
+      else if(temporaryInformation == TI_SETTINGS_RESTORED && regist == REGISTER_X) {
+        sprintf(prefix, "Saved system settings restored");
+        displayTemporaryInformationOnX(prefix);
+      }
+
+      else if(temporaryInformation == TI_SUMS_RESTORED && regist == REGISTER_X) {
+        sprintf(prefix, "Saved statistic data restored");
+        displayTemporaryInformationOnX(prefix);
+      }
+
+      else if(temporaryInformation == TI_VARIABLES_RESTORED && regist == REGISTER_X) {
+        sprintf(prefix, "Saved user variables restored");
+        displayTemporaryInformationOnX(prefix);
+      }
+
       else if(temporaryInformation == TI_PROGRAM_LOADED && regist == REGISTER_X) {
         sprintf(prefix, "Program file loaded");
         displayTemporaryInformationOnX(prefix);

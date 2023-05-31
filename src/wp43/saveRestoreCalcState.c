@@ -1597,7 +1597,8 @@ static bool restoreOneSection(uint16_t loadMode, uint16_t s, uint16_t n, uint16_
       readLine(aimBuffer); // Variable data type
       readLine(tmpString); // Variable value
 
-      if(loadMode == LM_ALL || loadMode == LM_NAMED_VARIABLES || ((loadMode == LM_SUMS) && (strcmp(errorMessage, "STATS") == 0))) {
+      if(loadMode == LM_ALL || loadMode == LM_NAMED_VARIABLES || 
+        (loadMode == LM_SUMS && ((strcmp(errorMessage, "STATS") == 0) || (strcmp(errorMessage, "HISTO") == 0)))) {
         char *varName = errorMessage + strlen(errorMessage) + 1;
         utf8ToString((uint8_t *)errorMessage, varName);
         regist = findOrAllocateNamedVariable(varName);
@@ -2104,39 +2105,41 @@ void doLoad(uint16_t loadMode, uint16_t s, uint16_t n, uint16_t d, uint16_t load
   // characters and standard ASCII characters), or two differents strings can used as shown below
   //-------------------------------------------------------------------------------------------------
   //
-  if (loadMode == LM_ALL) {
-    if(loadedVersion <= 88) { // Program incompatibility
-    #if defined(PC_BUILD)
-      sprintf(tmpString,"****Program binary incompatibility****\n"
-                        "x→α now followed by a destination register\n"
-                        "Loaded x→α in RAM will be replaced by NOP\n"
-                        "CAVEAT: x→α in Flash will not be replaced so it may cause crash\n");
-    #endif // PC_BUILD
-    #if defined(DMCP_BUILD)                
-      sprintf(tmpString,"**Program binary incompatibility**\n"
-                        "x->a now uses a destination register\n"
-                        "x->a in RAM will be replaced by NOP\n"
-                        "CAVEAT: x->a in Flash will not be\n"
-                        "replaced so it may cause crash\n");
-    #endif // DMCP_BUILD
-    #if !defined(TESTSUITE_BUILD)
-      show_warning(tmpString);
-    #endif // TESTSUITE_BUILD
-    
-      int globalStep = 1;
-      uint8_t *step = beginOfProgramMemory;
-    
-      while(!isAtEndOfPrograms(step)) { // .END.
-        if(checkOpCodeOfStep(step, ITM_XtoALPHA)) { // x->alpha
-          step[0] = (ITM_NOP >> 8) | 0x80;
-          step[1] =  ITM_NOP       & 0xff;
-          printf("x→α found at global step %d\n", globalStep);
-        }
-        ++globalStep;
-        step = findNextStep(step);
-      }
-    }
-  }
+  //Code example:
+  //
+  //if (loadMode == LM_ALL) {
+  //  if(loadedVersion <= 88) { // Program incompatibility
+  //  #if defined(PC_BUILD)
+  //    sprintf(tmpString,"****Program binary incompatibility****\n"
+  //                      "x→α now followed by a destination register\n"
+  //                      "Loaded x→α in RAM will be replaced by NOP\n"
+  //                      "CAVEAT: x→α in Flash will not be replaced so it may cause crash\n");
+  //  #endif // PC_BUILD
+  //  #if defined(DMCP_BUILD)                
+  //    sprintf(tmpString,"**Program binary incompatibility**\n"
+  //                      "x->a now uses a destination register\n"
+  //                      "x->a in RAM will be replaced by NOP\n"
+  //                      "CAVEAT: x->a in Flash will not be\n"
+  //                      "replaced so it may cause crash\n");
+  //  #endif // DMCP_BUILD
+  //  #if !defined(TESTSUITE_BUILD)
+  //    show_warning(tmpString);
+  //  #endif // TESTSUITE_BUILD
+  //  
+  //    int globalStep = 1;
+  //    uint8_t *step = beginOfProgramMemory;
+  //  
+  //    while(!isAtEndOfPrograms(step)) { // .END.
+  //      if(checkOpCodeOfStep(step, ITM_XtoALPHA)) { // x->alpha
+  //        step[0] = (ITM_NOP >> 8) | 0x80;
+  //        step[1] =  ITM_NOP       & 0xff;
+  //        printf("x→α found at global step %d\n", globalStep);
+  //      }
+  //      ++globalStep;
+  //      step = findNextStep(step);
+  //    }
+  //  }
+  //}
 
 
   #if !defined(TESTSUITE_BUILD)
@@ -2146,6 +2149,18 @@ void doLoad(uint16_t loadMode, uint16_t s, uint16_t n, uint16_t d, uint16_t load
       } else if(loadType == stateLoad) {
         temporaryInformation = TI_STATEFILE_RESTORED;
       }
+    } else if (loadMode == LM_PROGRAMS) {
+      temporaryInformation = TI_PROGRAMS_RESTORED;
+    } else if (loadMode == LM_REGISTERS) {
+       temporaryInformation = TI_REGISTERS_RESTORED;
+    } else if (loadMode == LM_REGISTERS) {
+       temporaryInformation = TI_REGISTERS_RESTORED;
+    } else if (loadMode == LM_SYSTEM_STATE) {
+       temporaryInformation = TI_SETTINGS_RESTORED;
+    } else if (loadMode == LM_SUMS) {
+       temporaryInformation = TI_SUMS_RESTORED;
+    } else if (loadMode == LM_NAMED_VARIABLES) {
+       temporaryInformation = TI_VARIABLES_RESTORED;
     }
     #if defined(DMCP_BUILD)
       //Check and update current power status (USB / LOWBAT)
