@@ -262,7 +262,7 @@ void fnBatteryVoltage(uint16_t unusedButMandatoryParameter) {
 
 
 uint32_t getFreeFlash(void) {
-  return FLASH_PGM_PAGE_SIZE * FLASH_PGM_NUMBER_OF_PAGES - sizeOfFlashPgmLibrary - 2;
+  return 0;
 }
 
 

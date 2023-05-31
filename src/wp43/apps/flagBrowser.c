@@ -74,7 +74,8 @@ flagScreen_t flagScreen;
     char flagNumber[4];
 
     // Free memory
-    sprintf(tmpString + CHARS_PER_LINE * line++, "%" PRIu32 " bytes free in RAM, %" PRIu32 " in flash.", getFreeRamMemory(), getFreeFlash());
+    //sprintf(tmpString + CHARS_PER_LINE * line++, "%" PRIu32 " bytes free in RAM, %" PRIu32 " in flash.", getFreeRamMemory(), getFreeFlash());
+    sprintf(tmpString + CHARS_PER_LINE * line++, "%" PRIu32 " bytes free in RAM.", getFreeRamMemory());
 
     // Global flags
     sprintf(tmpString + CHARS_PER_LINE * line++, "Global user flags set:");
