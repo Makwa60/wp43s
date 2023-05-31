@@ -1175,7 +1175,7 @@
   #define ITM_SUB_z                     1141
   #define ITM_DELITM_PROG               1142
   #define ITM_DELITM_MENU               1143
-  #define ITM_Progr                     1144
+  #define ITM_1144                      1144
   #define ITM_1145                      1145
   #define ITM_1146                      1146
   #define ITM_1147                      1147
@@ -1377,7 +1377,7 @@
   #define MNU_FIN                       1331
   #define MNU_SINTS                     1332
   #define MNU_FLAGS                     1333
-  #define MNU_FLASH                     1334
+  #define MNU_1334                      1334
   #define MNU_1STDERIV                  1335
   #define MNU_2NDDERIV                  1336
   #define MNU_CONVFP                    1337
@@ -1402,7 +1402,7 @@
   #define MNU_PFN                       1356
   #define MNU_PFN2                      1357
   #define MNU_CONVP                     1358
-  #define MNU_RAM                       1359
+  #define MNU_1359                      1359
   #define MNU_REALS                     1360
   #define MNU_Solver                    1361
   #define MNU_STAT                      1362
@@ -1599,8 +1599,8 @@
   #define ITM_POINT                     1551
   #define ITM_LOADV                     1552
   #define ITM_POPLR                     1553
-  #define ITM_PRCL                      1554
-  #define ITM_PSTO                      1555
+  #define ITM_1554                      1554
+  #define ITM_1555                      1555
   #define ITM_PUTK                      1556
   #define ITM_RAD                       1557
   #define ITM_RADto                     1558

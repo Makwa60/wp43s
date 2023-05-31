@@ -24,7 +24,6 @@
 #include "items.h"
 #include "mathematics/matrix.h"
 #include "plotstat.h"
-#include "programming/flash.h"
 #include "programming/manage.h"
 #include "programming/programmableMenu.h"
 #include "recall.h"
@@ -263,7 +262,7 @@ void fnBatteryVoltage(uint16_t unusedButMandatoryParameter) {
 
 
 uint32_t getFreeFlash(void) {
-  return FLASH_PGM_PAGE_SIZE * FLASH_PGM_NUMBER_OF_PAGES - sizeOfFlashPgmLibrary - 2;
+  return 0;
 }
 
 
@@ -525,8 +524,8 @@ void addTestPrograms(void) {
   uint32_t numberOfBytesUsed, numberOfBytesForTheTestPrograms = TO_BYTES(TO_BLOCKS(15222));
 
   resizeProgramMemory(numberOfBytesForTheTestPrograms);
-  firstDisplayedStep.ram        = beginOfProgramMemory;
-  currentStep.ram               = beginOfProgramMemory;
+  firstDisplayedStep            = beginOfProgramMemory;
+  currentStep                   = beginOfProgramMemory;
   currentLocalStepNumber        = 1;
   firstDisplayedLocalStepNumber = 0;
 
@@ -628,19 +627,16 @@ void fnReset(uint16_t confirmation) {
 
     // Empty program initialization
     beginOfProgramMemory          = (uint8_t *)(ram + freeMemoryRegions[0].sizeInBlocks);
-    currentStep.ram               = beginOfProgramMemory;
+    currentStep                   = beginOfProgramMemory;
     firstFreeProgramByte          = beginOfProgramMemory;
-    firstDisplayedStep.ram        = beginOfProgramMemory;
+    firstDisplayedStep            = beginOfProgramMemory;
     firstDisplayedLocalStepNumber = 0;
     labelList                     = NULL;
     programList                   = NULL;
-    flashLabelList                = NULL;
-    flashProgramList              = NULL;
     *(beginOfProgramMemory + 0) = 255; // .END.
     *(beginOfProgramMemory + 1) = 255; // .END.
     freeProgramBytes            = 2;
 
-    scanFlashPgmLibrary();
     scanLabelsAndPrograms();
 
     // "Not found glyph" initialization

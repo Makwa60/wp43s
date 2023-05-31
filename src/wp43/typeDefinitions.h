@@ -396,26 +396,14 @@
 
 
   /**
-   * \union pgmPtr_t
-   * Stores a pointer to program step in RAM or flash
-   */
-  typedef union {
-    uint8_t  *any;
-    uint8_t  *ram;
-    uintptr_t flash;
-  } pgmPtr_t;
-
-
-
-  /**
    * \struct labelList_t
    * Structure keeping the information for a program label.
    */
   typedef struct {
     int16_t  program;             ///< Program id: <0 for FLASH and >0 for RAM
     int32_t  step;                ///< Step number of the label: <0 for a local label and >0 for a global label
-    pgmPtr_t labelPointer;        ///< Pointer to the byte after the 0x01 op code (LBL)
-    pgmPtr_t instructionPointer;  ///< Pointer to the instruction following the label
+    uint8_t *labelPointer;        ///< Pointer to the byte after the 0x01 op code (LBL)
+    uint8_t *instructionPointer;  ///< Pointer to the instruction following the label
   } labelList_t;
 
 
@@ -426,7 +414,7 @@
    */
   typedef struct {
     int32_t  step;                ///< (Step number + 1) of the program begin: <0 for a FLASH program and >0 for a RAM program
-    pgmPtr_t instructionPointer;  ///< Pointer to the program begin
+    uint8_t *instructionPointer;  ///< Pointer to the program begin
   } programList_t;
 
 

@@ -16,7 +16,6 @@
 #include "mathematics/fractionalPart.h"
 #include "mathematics/integerPart.h"
 #include "mathematics/matrix.h"
-#include "programming/flash.h"
 #include "programming/lblGtoXeq.h"
 #include "programming/manage.h"
 #include "programming/nextStep.h"
@@ -117,8 +116,7 @@ void tamReset(void) {
 
       case ITM_DELITM: {
         switch(-softmenu[softmenuStack[0].softmenuId].menuItem) {
-          case MNU_RAM:
-          case MNU_FLASH: {
+          case MNU_PROGS: {
             return ITM_DELITM_PROG;
           }
           case MNU_MENUS: {
@@ -462,7 +460,7 @@ void tamReset(void) {
           }
 
           if(item == ITM_Min) { // DOWN
-            if(currentProgramNumber == numberOfPrograms - 1) { // We are in the last program in memory
+            if(currentProgramNumber == numberOfPrograms) { // We are in the last program in memory
               return;
             }
 
@@ -474,7 +472,7 @@ void tamReset(void) {
             return;
           }
         }
-        else if(tam.mode == tmStoRcl && tam.currentOperation != ITM_Config && tam.currentOperation != ITM_Stack && tam.currentOperation != ITM_Progr) {
+        else if(tam.mode == tmStoRcl && tam.currentOperation != ITM_Config && tam.currentOperation != ITM_Stack) {
           if(item == tam.currentOperation) {
             tam.currentOperation = tam.function;
           }
@@ -503,16 +501,6 @@ void tamReset(void) {
           }
         }
       }
-      return;
-    }
-    else if(tam.function == ITM_STO && item == ITM_Progr) {
-      fnPSto(NOPARAM);
-      tamLeaveMode();
-      return;
-    }
-    else if(tam.function == ITM_RCL && item == ITM_Progr) {
-      fnPRcl(NOPARAM);
-      tamLeaveMode();
       return;
     }
     else if(tam.function == ITM_toINT && item == ITM_REG_I) {
@@ -653,14 +641,14 @@ void tamReset(void) {
         return;
       }
       else if(tam.function == ITM_GTOP) {
-        tam.value = programList[numberOfPrograms - numberOfProgramsInFlash - 1].step;
+        tam.value = programList[numberOfPrograms - 1].step;
         pemCursorIsZerothStep = true;
         reallyRunFunction(ITM_GTOP, tam.value);
-        if((*currentStep.ram != 0xff) || (*(currentStep.ram + 1) != 0xff)) {
-          currentStep.ram = firstFreeProgramByte;
+        if((*currentStep != 0xff) || (*(currentStep + 1) != 0xff)) {
+          currentStep = firstFreeProgramByte;
           insertStepInProgram(ITM_END);
           scanLabelsAndPrograms();
-          tam.value = programList[numberOfPrograms - numberOfProgramsInFlash - 1].step;
+          tam.value = programList[numberOfPrograms - 1].step;
           reallyRunFunction(ITM_GTOP, tam.value);
         }
         tamLeaveMode();
@@ -832,7 +820,7 @@ void tamReset(void) {
           }
         }
       }
-      else if(tam.mode == tmLabel || tam.mode == tmSolve || (tam.mode == tmKey && tam.keyInputFinished) || (tam.mode == tmDelItem && (softmenu[softmenuStack[0].softmenuId].menuItem == -MNU_RAM || softmenu[softmenuStack[0].softmenuId].menuItem == -MNU_FLASH))) {
+      else if(tam.mode == tmLabel || tam.mode == tmSolve || (tam.mode == tmKey && tam.keyInputFinished) || (tam.mode == tmDelItem && softmenu[softmenuStack[0].softmenuId].menuItem == -MNU_PROGS)) {
         value = findNamedLabel(buffer);
         if(value == INVALID_VARIABLE && tam.function != ITM_LBL && tam.function != ITM_LBLQ && (calcMode != cmPem || tam.mode != tmSolve)) {
           if(calcMode != cmPem && getSystemFlag(FLAG_IGN1ER)) {

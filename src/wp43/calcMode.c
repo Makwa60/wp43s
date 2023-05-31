@@ -222,8 +222,7 @@ calcMode_t calcMode;
         break;
       }
       case MNU_PROG:
-      case MNU_RAM:
-      case MNU_FLASH: {
+      case MNU_PROGS: {
         catalog = CATALOG_PROG;
         break;
       }

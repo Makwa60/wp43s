@@ -176,7 +176,6 @@ wp43_src = files(
   'plotstat.c',
   'programming/clcvar.c',
   'programming/decode.c',
-  'programming/flash.c',
   'programming/input.c',
   'programming/lblGtoXeq.c',
   'programming/manage.c',

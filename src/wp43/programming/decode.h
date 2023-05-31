@@ -10,8 +10,7 @@
   #include "typeDefinitions.h"
   #include <stdint.h>
 
-  void decodeOneStep          (pgmPtr_t step);
-  void decodeOneStep_ram      (uint8_t *step);
+  void decodeOneStep          (uint8_t *step);
   #if !defined(DMCP_BUILD)
     void listPrograms         (void);
     void listLabelsAndPrograms(void);
