@@ -24,7 +24,6 @@
 #include "items.h"
 #include "mathematics/matrix.h"
 #include "plotstat.h"
-#include "programming/flash.h"
 #include "programming/manage.h"
 #include "programming/programmableMenu.h"
 #include "recall.h"
@@ -634,13 +633,10 @@ void fnReset(uint16_t confirmation) {
     firstDisplayedLocalStepNumber = 0;
     labelList                     = NULL;
     programList                   = NULL;
-    flashLabelList                = NULL;
-    flashProgramList              = NULL;
     *(beginOfProgramMemory + 0) = 255; // .END.
     *(beginOfProgramMemory + 1) = 255; // .END.
     freeProgramBytes            = 2;
 
-    scanFlashPgmLibrary();
     scanLabelsAndPrograms();
 
     // "Not found glyph" initialization

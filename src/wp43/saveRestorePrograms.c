@@ -24,7 +24,6 @@
 #include "items.h"
 #include "mathematics/matrix.h"
 #include "plotstat.h"
-#include "programming/flash.h"
 #include "programming/lblGtoXeq.h"
 #include "programming/manage.h"
 #include "programming/nextStep.h"
@@ -70,6 +69,41 @@
 //  |  n  |    <last program byte>    |
 //  +-----+---------------------------+
 //
+
+
+
+static void _addSpaceAfterPrograms(uint16_t sizeInBytes) {
+  if(freeProgramBytes < sizeInBytes) {
+    uint8_t *oldBeginOfProgramMemory = beginOfProgramMemory;
+    uint32_t programSizeInBytes = TO_BYTES(RAM_SIZE_IN_BLOCKS - freeMemoryRegions[numberOfFreeMemoryRegions - 1].address - freeMemoryRegions[numberOfFreeMemoryRegions - 1].sizeInBlocks);
+    uint32_t newProgramSizeInBytes = TO_BYTES(TO_BLOCKS(programSizeInBytes - freeProgramBytes + sizeInBytes));
+    freeProgramBytes      += newProgramSizeInBytes - programSizeInBytes;
+    resizeProgramMemory(newProgramSizeInBytes);
+    currentStep.ram           = currentStep.ram           - oldBeginOfProgramMemory + beginOfProgramMemory;
+    firstDisplayedStep.ram    = firstDisplayedStep.ram    - oldBeginOfProgramMemory + beginOfProgramMemory;
+    beginOfCurrentProgram.ram = beginOfCurrentProgram.ram - oldBeginOfProgramMemory + beginOfProgramMemory;
+    endOfCurrentProgram.ram   = endOfCurrentProgram.ram   - oldBeginOfProgramMemory + beginOfProgramMemory;
+  }
+
+  firstFreeProgramByte   += sizeInBytes;
+  freeProgramBytes       -= sizeInBytes;
+}
+
+
+
+static bool _addEndNeeded(void) {
+  if(firstFreeProgramByte <= beginOfProgramMemory) {
+    return false;
+  }
+  if(firstFreeProgramByte == beginOfProgramMemory + 1) {
+    return true;
+  }
+  if(isAtEndOfProgram(firstFreeProgramByte - 2)) {
+    return false;
+  }
+  return true;
+}
+
 
 
 void fnSaveProgram(uint16_t label) {
@@ -136,7 +170,7 @@ void fnSaveProgram(uint16_t label) {
   ioFileWrite(tmpString, strlen(tmpString));
 
   // Program
-  size_t currentSizeInBytes = endOfCurrentProgram.ram - ((currentProgramNumber == (numberOfPrograms - numberOfProgramsInFlash)) ? 2 : 0) - beginOfCurrentProgram.ram;
+  size_t currentSizeInBytes = endOfCurrentProgram.ram - ((currentProgramNumber == numberOfPrograms) ? 2 : 0) - beginOfCurrentProgram.ram;
   sprintf(tmpString, "PROGRAM\n%" PRIu32 "\n", (uint32_t)currentSizeInBytes);
   ioFileWrite(tmpString, strlen(tmpString));
 
@@ -146,7 +180,7 @@ void fnSaveProgram(uint16_t label) {
     ioFileWrite(tmpString, strlen(tmpString));
   }
   // If last program in memory then add .END. statement
-  if (currentProgramNumber == (numberOfPrograms - numberOfProgramsInFlash)) {
+  if (currentProgramNumber == numberOfPrograms) {
     sprintf(tmpString, "255\n255\n");
     ioFileWrite(tmpString, strlen(tmpString));
   } 

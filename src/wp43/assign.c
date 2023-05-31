@@ -12,7 +12,6 @@
 #include "fonts.h"
 #include "hal/gui.h"
 #include "items.h"
-#include "programming/flash.h"
 #include "programming/manage.h"
 #include "registers.h"
 #include "sort.h"
@@ -148,20 +147,10 @@ void updateAssignTamBuffer(void) {
     tbPtr = stpcpy(tbPtr, "NULL");
   }
   else if(itemToBeAssigned >= ASSIGN_LABELS) {
-    if(labelList[itemToBeAssigned - ASSIGN_LABELS].program > 0) { // RAM
-      uint8_t *lblPtr = labelList[itemToBeAssigned - ASSIGN_LABELS].labelPointer.ram;
-      uint32_t count = *(lblPtr++);
-      for(uint32_t i = 0; i < count; ++i) {
-        *(tbPtr++) = *(lblPtr++);
-      }
-    }
-    else { // Flash
-      uint8_t *lblPtr = (uint8_t *)(tmpString + TMP_STR_LENGTH - 16);
-      readStepInFlashPgmLibrary(lblPtr, 16, labelList[itemToBeAssigned - ASSIGN_LABELS].labelPointer.flash);
-      uint32_t count = *(lblPtr++);
-      for(uint32_t i = 0; i < count; ++i) {
-        *(tbPtr++) = *(lblPtr++);
-      }
+    uint8_t *lblPtr = labelList[itemToBeAssigned - ASSIGN_LABELS].labelPointer.ram;
+    uint32_t count = *(lblPtr++);
+    for(uint32_t i = 0; i < count; ++i) {
+      *(tbPtr++) = *(lblPtr++);
     }
   }
   else if(itemToBeAssigned >= ASSIGN_RESERVED_VARIABLES) {
@@ -216,15 +205,8 @@ static void _assignItem(userMenuItem_t *menuItem) {
     menuItem->argumentName[0] = 0;
   }
   else if(itemToBeAssigned >= ASSIGN_LABELS) {
-    if(labelList[itemToBeAssigned - ASSIGN_LABELS].program > 0) {
-      lblPtr                  = labelList[itemToBeAssigned - ASSIGN_LABELS].labelPointer.ram;
-      menuItem->item          = ITM_XEQ;
-    }
-    else {
-      readStepInFlashPgmLibrary((uint8_t *)(tmpString + 200), 32, labelList[itemToBeAssigned - ASSIGN_LABELS].labelPointer.flash);
-      lblPtr                  = (uint8_t *)(tmpString + 200);
-      menuItem->item          = ITM_XEQ;
-    }
+    lblPtr                    = labelList[itemToBeAssigned - ASSIGN_LABELS].labelPointer.ram;
+    menuItem->item            = ITM_XEQ;
   }
   else if(itemToBeAssigned >= ASSIGN_RESERVED_VARIABLES) {
     lblPtr                    = allReservedVariables[itemToBeAssigned - ASSIGN_RESERVED_VARIABLES].reservedVariableName;

@@ -183,9 +183,7 @@
   extern uint16_t               freeProgramBytes;
   extern uint16_t               firstDisplayedLocalStepNumber;
   extern uint16_t               numberOfLabels;
-  extern uint16_t               numberOfLabelsInFlash;
   extern uint16_t               numberOfPrograms;
-  extern uint16_t               numberOfProgramsInFlash;
   extern uint16_t               numberOfNamedVariables;
   extern uint16_t               currentLocalStepNumber;
   extern uint16_t               currentProgramNumber;

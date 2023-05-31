@@ -12,7 +12,6 @@
 #include "items.h"
 #include "longIntegerType.h"
 #include "mathematics/matrix.h"
-#include "programming/flash.h"
 #include "programming/nextStep.h"
 #include "realType.h"
 #include "registers.h"
@@ -258,10 +257,6 @@
 
   static bool _processOneStep(pgmPtr_t step) {
     uint16_t op;
-    if(programList[currentProgramNumber - 1].step < 0) {
-      readStepInFlashPgmLibrary((uint8_t *)(tmpString + 1600), 400, step.flash);
-      step.ram = (uint8_t *)(tmpString + 1600);
-    }
 
     op = *(step.ram++);
     if(op & 0x80) {

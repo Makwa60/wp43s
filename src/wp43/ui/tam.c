@@ -16,7 +16,6 @@
 #include "mathematics/fractionalPart.h"
 #include "mathematics/integerPart.h"
 #include "mathematics/matrix.h"
-#include "programming/flash.h"
 #include "programming/lblGtoXeq.h"
 #include "programming/manage.h"
 #include "programming/nextStep.h"
@@ -461,7 +460,7 @@ void tamReset(void) {
           }
 
           if(item == ITM_Min) { // DOWN
-            if(currentProgramNumber == numberOfPrograms - 1) { // We are in the last program in memory
+            if(currentProgramNumber == numberOfPrograms) { // We are in the last program in memory
               return;
             }
 
@@ -642,14 +641,14 @@ void tamReset(void) {
         return;
       }
       else if(tam.function == ITM_GTOP) {
-        tam.value = programList[numberOfPrograms - numberOfProgramsInFlash - 1].step;
+        tam.value = programList[numberOfPrograms - 1].step;
         pemCursorIsZerothStep = true;
         reallyRunFunction(ITM_GTOP, tam.value);
         if((*currentStep.ram != 0xff) || (*(currentStep.ram + 1) != 0xff)) {
           currentStep.ram = firstFreeProgramByte;
           insertStepInProgram(ITM_END);
           scanLabelsAndPrograms();
-          tam.value = programList[numberOfPrograms - numberOfProgramsInFlash - 1].step;
+          tam.value = programList[numberOfPrograms - 1].step;
           reallyRunFunction(ITM_GTOP, tam.value);
         }
         tamLeaveMode();
