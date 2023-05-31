@@ -230,26 +230,18 @@ uint8_t *countLiteralBytes(uint8_t *step) {
 
 
 
-uint8_t *findNextStep_ram(uint8_t *step) {
+uint8_t *findNextStep(uint8_t *step) {
   if(checkOpCodeOfStep(step, ITM_KEY)) {
-    return findKey2ndParam_ram(findKey2ndParam_ram(step));
+    return findKey2ndParam(findKey2ndParam(step));
   }
   else {
-    return findKey2ndParam_ram(step);
+    return findKey2ndParam(step);
   }
 }
 
 
 
-pgmPtr_t findNextStep(pgmPtr_t step) {
-  pgmPtr_t ptr;
-  ptr.ram = findNextStep_ram(step.ram);
-  return ptr;
-}
-
-
-
-uint8_t *findKey2ndParam_ram(uint8_t *step) {
+uint8_t *findKey2ndParam(uint8_t *step) {
   uint16_t op = *(step++);
   if(op & 0x80) {
     op &= 0x7f;
@@ -284,37 +276,29 @@ uint8_t *findKey2ndParam_ram(uint8_t *step) {
 
 
 
-pgmPtr_t findKey2ndParam(pgmPtr_t step) {
-  pgmPtr_t ptr;
-  ptr.ram = findKey2ndParam_ram(step.ram);
-  return ptr;
-}
+uint8_t *findPreviousStep(uint8_t *step) {
+  uint8_t *searchFromStep, *nextStep;
+  searchFromStep = NULL;
 
-
-
-pgmPtr_t findPreviousStep(pgmPtr_t step) {
-  pgmPtr_t searchFromStep, nextStep;
-  searchFromStep.ram = NULL;
-
-  if(step.ram == beginOfProgramMemory) {
+  if(step == beginOfProgramMemory) {
     return step;
   }
 
-  if(numberOfLabels == 0 || step.ram <= labelList[0].instructionPointer.ram || labelList[0].program < 0) {
-    searchFromStep.ram = beginOfProgramMemory;
+  if(numberOfLabels == 0 || step <= labelList[0].instructionPointer) {
+    searchFromStep = beginOfProgramMemory;
   }
   else {
     for(int16_t label=numberOfLabels - 1; label >= 0; label--) {
-      if(labelList[label].instructionPointer.ram < step.ram) {
-        searchFromStep.ram = labelList[label].instructionPointer.ram;
+      if(labelList[label].instructionPointer < step) {
+        searchFromStep = labelList[label].instructionPointer;
         break;
       }
     }
   }
 
   nextStep = findNextStep(searchFromStep);
-  while(nextStep.any != step.any) {
-    searchFromStep.any = nextStep.any;
+  while(nextStep != step) {
+    searchFromStep = nextStep;
     nextStep = findNextStep(searchFromStep);
   }
 
@@ -328,7 +312,7 @@ static void _showStep(void) {
     bool     lblOrEnd;
     uint8_t *tmpStep;
 
-    tmpStep = currentStep.ram;
+    tmpStep = currentStep;
     lblOrEnd = checkOpCodeOfStep(tmpStep, ITM_LBL) || isAtEndOfProgram(tmpStep) || isAtEndOfPrograms(tmpStep);
     int16_t xPos = (lblOrEnd ? 42 : 62);
     int16_t maxWidth = SCREEN_WIDTH - xPos;
@@ -336,7 +320,7 @@ static void _showStep(void) {
     sprintf(tmpString, "%04" PRIu16 ":" STD_SPACE_4_PER_EM, currentLocalStepNumber);
     showString(tmpString, &standardFont, 1, Y_POSITION_OF_REGISTER_T_LINE + 6, vmNormal, true, true);
 
-    decodeOneStep_ram(tmpStep);
+    decodeOneStep(tmpStep);
     if(stringWidth(tmpString, &standardFont, true, true) >= maxWidth) {
       char *xstr = tmpString;
       char *xstrOrig = tmpString;
@@ -517,7 +501,7 @@ void fnBack(uint16_t numberOfSteps) {
 void fnSkip(uint16_t numberOfSteps) {
   for(uint16_t i = 0; i <= numberOfSteps; ++i) { // '<=' is intended here because the pointer must be moved at least by 1 step
     uint8_t *tmpStep;
-    tmpStep = currentStep.ram;
+    tmpStep = currentStep;
     if(!isAtEndOfProgram(tmpStep) && !isAtEndOfPrograms(tmpStep)) {
       ++currentLocalStepNumber;
       currentStep = findNextStep(currentStep);

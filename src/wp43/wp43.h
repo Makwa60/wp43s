@@ -116,10 +116,10 @@
   extern angularMode_t          currentAngularMode;
   extern formulaHeader_t       *allFormulae;
 
-  extern pgmPtr_t               beginOfCurrentProgram;
-  extern pgmPtr_t               endOfCurrentProgram;
-  extern pgmPtr_t               firstDisplayedStep;
-  extern pgmPtr_t               currentStep;
+  extern uint8_t               *beginOfCurrentProgram;
+  extern uint8_t               *endOfCurrentProgram;
+  extern uint8_t               *firstDisplayedStep;
+  extern uint8_t               *currentStep;
 
   extern char                  *tmpString;
   extern char                  *tmpStringLabelOrVariableName;

@@ -524,8 +524,8 @@ void addTestPrograms(void) {
   uint32_t numberOfBytesUsed, numberOfBytesForTheTestPrograms = TO_BYTES(TO_BLOCKS(15222));
 
   resizeProgramMemory(numberOfBytesForTheTestPrograms);
-  firstDisplayedStep.ram        = beginOfProgramMemory;
-  currentStep.ram               = beginOfProgramMemory;
+  firstDisplayedStep            = beginOfProgramMemory;
+  currentStep                   = beginOfProgramMemory;
   currentLocalStepNumber        = 1;
   firstDisplayedLocalStepNumber = 0;
 
@@ -627,9 +627,9 @@ void fnReset(uint16_t confirmation) {
 
     // Empty program initialization
     beginOfProgramMemory          = (uint8_t *)(ram + freeMemoryRegions[0].sizeInBlocks);
-    currentStep.ram               = beginOfProgramMemory;
+    currentStep                   = beginOfProgramMemory;
     firstFreeProgramByte          = beginOfProgramMemory;
-    firstDisplayedStep.ram        = beginOfProgramMemory;
+    firstDisplayedStep            = beginOfProgramMemory;
     firstDisplayedLocalStepNumber = 0;
     labelList                     = NULL;
     programList                   = NULL;

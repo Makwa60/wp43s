@@ -46,10 +46,10 @@ void fnGoto(uint16_t label) {
     if(label <= 104) {
       // Search for local label
       for(uint16_t lbl=0; lbl<numberOfLabels; lbl++) {
-        if(labelList[lbl].program == currentProgramNumber && labelList[lbl].step < 0 && *(labelList[lbl].labelPointer.ram) == label) { // Is in the current program and is a local label and is the searched label
+        if(labelList[lbl].program == currentProgramNumber && labelList[lbl].step < 0 && *(labelList[lbl].labelPointer) == label) { // Is in the current program and is a local label and is the searched label
           if(programRunStop == PGM_RUNNING) {
             currentLocalStepNumber = (-labelList[lbl].step) - programList[currentProgramNumber - 1].step + 1;
-            currentStep.any = labelList[lbl].labelPointer.any - 1;
+            currentStep = labelList[lbl].labelPointer - 1;
           }
           else {
             goToGlobalStep(-labelList[lbl].step);
@@ -99,7 +99,7 @@ void goToGlobalStep(int32_t step) {
     int16_t c, len = stringByteLength((char *)labelName);
     for(uint16_t lbl=0; lbl<numberOfLabels; lbl++) {
       uint8_t *lblPtr;
-      lblPtr = labelList[lbl].labelPointer.ram;
+      lblPtr = labelList[lbl].labelPointer;
       if(labelList[lbl].step > 0 && *lblPtr == len) { // It's a global label and the length is OK
         for(c=0; c<len; c++) {
           if(labelName[c] != lblPtr[c + 1]) {
@@ -122,11 +122,11 @@ void goToGlobalStep(int32_t step) {
   defineCurrentProgramFromGlobalStepNumber(step);
   currentLocalStepNumber = abs(step) - abs(programList[currentProgramNumber - 1].step) + 1;
 
-  pgmPtr_t stepPointer = beginOfCurrentProgram;
+  uint8_t *stepPointer = beginOfCurrentProgram;
   step = 1;
   while(true) {
     if(step == currentLocalStepNumber) {
-      currentStep.any = stepPointer.any;
+      currentStep = stepPointer;
       break;
     }
 
@@ -148,7 +148,7 @@ void goToGlobalStep(int32_t step) {
   }
   else {
     firstDisplayedLocalStepNumber = 0;
-    firstDisplayedStep.any = beginOfCurrentProgram.any;
+    firstDisplayedStep = beginOfCurrentProgram;
   }
 }
 
@@ -243,7 +243,7 @@ void fnReturn(uint16_t skip) {
       goToGlobalStep(returnGlobalStepNumber);
     }
 
-    if(skip > 0 && !isAtEndOfProgram(currentStep.ram) && !isAtEndOfPrograms(currentStep.ram)) {
+    if(skip > 0 && !isAtEndOfProgram(currentStep) && !isAtEndOfPrograms(currentStep)) {
       ++currentLocalStepNumber;
       currentStep = findNextStep(currentStep);
     }
@@ -711,17 +711,17 @@ void fnStopProgram(uint16_t unusedButMandatoryParameter) {
 
 
 
-int16_t executeOneStep(pgmPtr_t step) {
+int16_t executeOneStep(uint8_t *step) {
   #if defined(TESTSUITE_BUILD)
     return 0;
   #else // TESTSUITE_BUILD
     uint16_t op;
 
-    op = *(step.ram++);
+    op = *(step++);
     if(op & 0x80) {
       op &= 0x7f;
       op <<= 8;
-      op |= *(step.ram++);
+      op |= *(step++);
     }
 
     switch(op) {
@@ -730,7 +730,7 @@ int16_t executeOneStep(pgmPtr_t step) {
       case ITM_BACK:        //  1412
       case ITM_CASE:        //  1418
       case ITM_SKIP: {      //  1603
-        _executeOp(step.ram, op, (indexOfItems[op].status & PTP_STATUS) >> 9);
+        _executeOp(step, op, (indexOfItems[op].status & PTP_STATUS) >> 9);
         return -1;
       }
 
@@ -747,7 +747,7 @@ int16_t executeOneStep(pgmPtr_t step) {
       }
 
       case ITM_SOLVE: {     //  1608
-        _executeOp(step.ram, op, PARAM_REGISTER);
+        _executeOp(step, op, PARAM_REGISTER);
         if(temporaryInformation == TI_SOLVER_FAILED) {
           lastErrorCode = ERROR_NONE;
           return 2;
@@ -775,17 +775,17 @@ int16_t executeOneStep(pgmPtr_t step) {
           }
 
           case PTP_LITERAL: {
-            _putLiteral(step.ram);
+            _putLiteral(step);
             return 1;
           }
 
           case PTP_KEYG_KEYX: {
-            _executeOp(step.ram, op, PARAM_NUMBER_8);
+            _executeOp(step, op, PARAM_NUMBER_8);
             break;
           }
 
           default: {
-            _executeOp(step.ram, op, (indexOfItems[op].status & PTP_STATUS) >> 9);
+            _executeOp(step, op, (indexOfItems[op].status & PTP_STATUS) >> 9);
           }
         }
         return temporaryInformation == TI_FALSE ? 2 : 1;
@@ -820,10 +820,10 @@ void runProgram(bool singleStep, uint16_t menuLabel) {
     while(1) {
       int16_t stepsToBeAdvanced;
       uint16_t subLevel = currentSubroutineLevel;
-      uint16_t opCode = *currentStep.ram;
+      uint16_t opCode = *currentStep;
       currentInputVariable = INVALID_VARIABLE; // INPUT is already executed
       if(opCode & 0x80) {
-        opCode = ((uint16_t)(opCode & 0x7F) << 8) | *(currentStep.ram + 1);
+        opCode = ((uint16_t)(opCode & 0x7F) << 8) | *(currentStep + 1);
       }
       if(temporaryInformation == TI_TRUE || temporaryInformation == TI_FALSE || temporaryInformation == TI_SOLVER_FAILED || (opCode != ITM_RTN && opCode != ITM_STOP && opCode != ITM_END && opCode != 0x7fff)) {
         temporaryInformation = TI_NO_INFO;
@@ -880,13 +880,12 @@ stopProgram:
 
 void execProgram(uint16_t label) {
   uint16_t origLocalStepNumber = currentLocalStepNumber;
-  pgmPtr_t origStep;
-  origStep.any = currentStep.any;
+  uint8_t *origStep = currentStep;
   fnExecute(label);
   if(programRunStop == PGM_RUNNING && (getSystemFlag(FLAG_INTING) || getSystemFlag(FLAG_SOLVING))) {
     runProgram(false, INVALID_VARIABLE);
     currentLocalStepNumber = origLocalStepNumber;
-    currentStep.any = origStep.any;
+    currentStep = origStep;
   }
 }
 
@@ -901,7 +900,7 @@ void fnCheckLabel(uint16_t label) {
   if(label <= 104) {
     // Search for local label
     for(uint16_t lbl=0; lbl<numberOfLabels; lbl++) {
-      if(labelList[lbl].program == currentProgramNumber && labelList[lbl].step < 0 && *(labelList[lbl].labelPointer.ram) == label) { // Is in the current program and is a local label and is the searched label
+      if(labelList[lbl].program == currentProgramNumber && labelList[lbl].step < 0 && *(labelList[lbl].labelPointer) == label) { // Is in the current program and is a local label and is the searched label
         temporaryInformation = TI_TRUE;
         return;
       }

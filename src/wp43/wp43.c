@@ -69,10 +69,10 @@ programList_t         *programList = NULL;
 angularMode_t          currentAngularMode;
 formulaHeader_t       *allFormulae;
 
-pgmPtr_t               beginOfCurrentProgram;
-pgmPtr_t               endOfCurrentProgram;
-pgmPtr_t               firstDisplayedStep;
-pgmPtr_t               currentStep;
+uint8_t               *beginOfCurrentProgram;
+uint8_t               *endOfCurrentProgram;
+uint8_t               *firstDisplayedStep;
+uint8_t               *currentStep;
 
 char                  *tmpString = NULL;
 char                  *tmpStringLabelOrVariableName = NULL;

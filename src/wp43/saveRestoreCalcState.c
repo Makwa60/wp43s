@@ -213,13 +213,13 @@ static uint32_t restore(void *buffer, uint32_t size) {
     save(&ramPtr,                             sizeof(ramPtr)); // firstFreeProgramByte pointer to block
     ramPtr = (uint32_t)((void *)firstFreeProgramByte - TO_PCMEMPTR(TO_WP43MEMPTR(firstFreeProgramByte)));
     save(&ramPtr,                             sizeof(ramPtr)); // firstFreeProgramByte offset within block
-    ramPtr = TO_WP43MEMPTR(firstDisplayedStep.ram);
+    ramPtr = TO_WP43MEMPTR(firstDisplayedStep);
     save(&ramPtr,                             sizeof(ramPtr)); // firstDisplayedStep pointer to block
-    ramPtr = (uint32_t)((void *)firstDisplayedStep.ram - TO_PCMEMPTR(TO_WP43MEMPTR(firstDisplayedStep.ram)));
+    ramPtr = (uint32_t)((void *)firstDisplayedStep - TO_PCMEMPTR(TO_WP43MEMPTR(firstDisplayedStep)));
     save(&ramPtr,                             sizeof(ramPtr)); // firstDisplayedStep offset within block
-    ramPtr = TO_WP43MEMPTR(currentStep.ram);
+    ramPtr = TO_WP43MEMPTR(currentStep);
     save(&ramPtr,                             sizeof(ramPtr)); // currentStep pointer to block
-    ramPtr = (uint32_t)((void *)currentStep.ram - TO_PCMEMPTR(TO_WP43MEMPTR(currentStep.ram)));
+    ramPtr = (uint32_t)((void *)currentStep - TO_PCMEMPTR(TO_WP43MEMPTR(currentStep)));
     save(&ramPtr,                             sizeof(ramPtr)); // currentStep offset within block
     save(&freeProgramBytes,                   sizeof(freeProgramBytes));
     save(&firstDisplayedLocalStepNumber,      sizeof(firstDisplayedLocalStepNumber));
@@ -487,13 +487,13 @@ static uint32_t restore(void *buffer, uint32_t size) {
       restore(&ramPtr,                             sizeof(ramPtr)); // firstFreeProgramByte offset within block
       firstFreeProgramByte += ramPtr;
       restore(&ramPtr,                             sizeof(ramPtr)); // firstDisplayedStep pointer to block
-      firstDisplayedStep.ram = TO_PCMEMPTR(ramPtr);
+      firstDisplayedStep = TO_PCMEMPTR(ramPtr);
       restore(&ramPtr,                             sizeof(ramPtr)); // firstDisplayedStep offset within block
-      firstDisplayedStep.ram += ramPtr;
+      firstDisplayedStep += ramPtr;
       restore(&ramPtr,                             sizeof(ramPtr)); // currentStep pointer to block
-      currentStep.ram = TO_PCMEMPTR(ramPtr);
+      currentStep = TO_PCMEMPTR(ramPtr);
       restore(&ramPtr,                             sizeof(ramPtr)); // currentStep offset within block
-      currentStep.ram += ramPtr;
+      currentStep += ramPtr;
       restore(&freeProgramBytes,                   sizeof(freeProgramBytes));
       restore(&firstDisplayedLocalStepNumber,      sizeof(firstDisplayedLocalStepNumber));
       restore(&numberOfLabels,                     sizeof(numberOfLabels));
@@ -623,7 +623,7 @@ static uint32_t restore(void *buffer, uint32_t size) {
             printf("x→α found at global step %d\n", globalStep);
           }
           ++globalStep;
-          step = findNextStep_ram(step);
+          step = findNextStep(step);
         }
       }
 
@@ -1064,7 +1064,7 @@ void fnSave(uint16_t saveMode) {
   sprintf(tmpString, "PROGRAMS\n%" PRIu32 "\n", (uint32_t)currentSizeInBytes);
   save(tmpString, strlen(tmpString));
 
-  sprintf(tmpString, "%" PRIu32 "\n%" PRIu32 "\n", (uint32_t)TO_WP43MEMPTR(currentStep.ram), (uint32_t)((void *)currentStep.ram - TO_PCMEMPTR(TO_WP43MEMPTR(currentStep.ram)))); // currentStep block pointer + offset within block
+  sprintf(tmpString, "%" PRIu32 "\n%" PRIu32 "\n", (uint32_t)TO_WP43MEMPTR(currentStep), (uint32_t)((void *)currentStep - TO_PCMEMPTR(TO_WP43MEMPTR(currentStep)))); // currentStep block pointer + offset within block
   save(tmpString, strlen(tmpString));
 
   sprintf(tmpString, "%" PRIu32 "\n%" PRIu32 "\n", (uint32_t)TO_WP43MEMPTR(firstFreeProgramByte), (uint32_t)((void *)firstFreeProgramByte - TO_PCMEMPTR(TO_WP43MEMPTR(firstFreeProgramByte)))); // firstFreeProgramByte block pointer + offset within block
@@ -1859,18 +1859,18 @@ static bool restoreOneSection(uint16_t loadMode, uint16_t s, uint16_t n, uint16_
 
     readLine(tmpString); // currentStep (pointer to block)
     if(loadMode == LM_ALL) {
-      currentStep.ram = TO_PCMEMPTR(stringToUint32(tmpString));
+      currentStep = TO_PCMEMPTR(stringToUint32(tmpString));
     }
     readLine(tmpString); // currentStep (offset in bytes within block)
     if(loadMode == LM_ALL) {
-      currentStep.ram += stringToUint32(tmpString);
+      currentStep += stringToUint32(tmpString);
     }
     else if(loadMode == LM_PROGRAMS) {
       if(programList[currentProgramNumber - 1].step > 0) {
-        currentStep.ram           -= numberOfBytes;
-        firstDisplayedStep.ram    -= numberOfBytes;
-        beginOfCurrentProgram.ram -= numberOfBytes;
-        endOfCurrentProgram.ram   -= numberOfBytes;
+        currentStep           -= numberOfBytes;
+        firstDisplayedStep    -= numberOfBytes;
+        beginOfCurrentProgram -= numberOfBytes;
+        endOfCurrentProgram   -= numberOfBytes;
       }
     }
 
@@ -1899,10 +1899,10 @@ static bool restoreOneSection(uint16_t loadMode, uint16_t s, uint16_t n, uint16_
           oldFirstFreeProgramByte -= 4;
           freeProgramBytes = tmpFreeProgramBytes + 4;
           if(programList[currentProgramNumber - 1].step > 0) {
-            currentStep.ram           -= 4;
-            firstDisplayedStep.ram    -= 4;
-            beginOfCurrentProgram.ram -= 4;
-            endOfCurrentProgram.ram   -= 4;
+            currentStep           -= 4;
+            firstDisplayedStep    -= 4;
+            beginOfCurrentProgram -= 4;
+            endOfCurrentProgram   -= 4;
           }
         }
         *(oldFirstFreeProgramByte    ) = (ITM_END >> 8) | 0x80;
@@ -2133,7 +2133,7 @@ void doLoad(uint16_t loadMode, uint16_t s, uint16_t n, uint16_t d, uint16_t load
           printf("x→α found at global step %d\n", globalStep);
         }
         ++globalStep;
-        step = findNextStep_ram(step);
+        step = findNextStep(step);
       }
     }
   }

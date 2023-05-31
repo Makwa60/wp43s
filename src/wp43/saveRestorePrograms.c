@@ -79,10 +79,10 @@ static void _addSpaceAfterPrograms(uint16_t sizeInBytes) {
     uint32_t newProgramSizeInBytes = TO_BYTES(TO_BLOCKS(programSizeInBytes - freeProgramBytes + sizeInBytes));
     freeProgramBytes      += newProgramSizeInBytes - programSizeInBytes;
     resizeProgramMemory(newProgramSizeInBytes);
-    currentStep.ram           = currentStep.ram           - oldBeginOfProgramMemory + beginOfProgramMemory;
-    firstDisplayedStep.ram    = firstDisplayedStep.ram    - oldBeginOfProgramMemory + beginOfProgramMemory;
-    beginOfCurrentProgram.ram = beginOfCurrentProgram.ram - oldBeginOfProgramMemory + beginOfProgramMemory;
-    endOfCurrentProgram.ram   = endOfCurrentProgram.ram   - oldBeginOfProgramMemory + beginOfProgramMemory;
+    currentStep           = currentStep           - oldBeginOfProgramMemory + beginOfProgramMemory;
+    firstDisplayedStep    = firstDisplayedStep    - oldBeginOfProgramMemory + beginOfProgramMemory;
+    beginOfCurrentProgram = beginOfCurrentProgram - oldBeginOfProgramMemory + beginOfProgramMemory;
+    endOfCurrentProgram   = endOfCurrentProgram   - oldBeginOfProgramMemory + beginOfProgramMemory;
   }
 
   firstFreeProgramByte   += sizeInBytes;
@@ -170,13 +170,13 @@ void fnSaveProgram(uint16_t label) {
   ioFileWrite(tmpString, strlen(tmpString));
 
   // Program
-  size_t currentSizeInBytes = endOfCurrentProgram.ram - ((currentProgramNumber == numberOfPrograms) ? 2 : 0) - beginOfCurrentProgram.ram;
+  size_t currentSizeInBytes = endOfCurrentProgram - ((currentProgramNumber == numberOfPrograms) ? 2 : 0) - beginOfCurrentProgram;
   sprintf(tmpString, "PROGRAM\n%" PRIu32 "\n", (uint32_t)currentSizeInBytes);
   ioFileWrite(tmpString, strlen(tmpString));
 
   // Save program bytes
   for(i=0; i<currentSizeInBytes; i++) {
-    sprintf(tmpString, "%" PRIu8 "\n", beginOfCurrentProgram.ram[i]);
+    sprintf(tmpString, "%" PRIu8 "\n", beginOfCurrentProgram[i]);
     ioFileWrite(tmpString, strlen(tmpString));
   }
   // If last program in memory then add .END. statement

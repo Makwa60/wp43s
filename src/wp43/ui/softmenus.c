@@ -657,13 +657,13 @@ void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
 
   static void _dynmenuConstructMVarsFromPgm(uint16_t label, uint16_t *numberOfBytes, uint16_t *numberOfVars) {
     uint8_t  *step;
-    step = labelList[label].instructionPointer.ram;
+    step = labelList[label].instructionPointer;
     while((*numberOfVars < 18) && checkOpCodeOfStep(step, ITM_MVAR) && *(step + 2) == STRING_LABEL_VARIABLE) {
       xcopy(tmpString + *numberOfBytes, step + 4, *(step + 3));
       (void)findOrAllocateNamedVariable(tmpString + *numberOfBytes);
       *numberOfBytes += *(step + 3) + 1;
       (*numberOfVars)++;
-      step = findNextStep_ram(step);
+      step = findNextStep(step);
     }
   }
 
@@ -773,9 +773,9 @@ void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
         memset(tmpString, 0, TMP_STR_LENGTH);
         for(i=0; i<numberOfLabels; i++) {
           if(labelList[i].step > 0) { // Global label
-            xcopy(tmpString + 15 * numberOfGlobalLabels, labelList[i].labelPointer.ram + 1, labelList[i].labelPointer.ram[0]);
+            xcopy(tmpString + 15 * numberOfGlobalLabels, labelList[i].labelPointer + 1, labelList[i].labelPointer[0]);
             numberOfGlobalLabels++;
-            numberOfBytes += 1 + labelList[i].labelPointer.ram[0];
+            numberOfBytes += 1 + labelList[i].labelPointer[0];
           }
         }
 

@@ -104,18 +104,18 @@
 
 
   void fnKeyGtoXeq(uint16_t keyNum) {
-    pgmPtr_t secondParam = findKey2ndParam(currentStep);
-    pgmPtr_t opParam;
+    uint8_t *secondParam = findKey2ndParam(currentStep);
+    uint8_t *opParam;
     uint16_t label;
 
-    opParam.any = secondParam.any + 1;
-    label = _get2ndParamOfKey(opParam.ram);
+    opParam = secondParam + 1;
+    label = _get2ndParamOfKey(opParam);
 
     if(lastErrorCode != ERROR_NONE && getSystemFlag(FLAG_IGN1ER)) {
       lastErrorCode = ERROR_NONE;
       clearSystemFlag(FLAG_IGN1ER);
     }
-    else if(*secondParam.ram == ITM_XEQ) {
+    else if(*secondParam == ITM_XEQ) {
       keyXeq(keyNum, label);
     }
     else {

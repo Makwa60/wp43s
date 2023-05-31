@@ -644,8 +644,8 @@ void tamReset(void) {
         tam.value = programList[numberOfPrograms - 1].step;
         pemCursorIsZerothStep = true;
         reallyRunFunction(ITM_GTOP, tam.value);
-        if((*currentStep.ram != 0xff) || (*(currentStep.ram + 1) != 0xff)) {
-          currentStep.ram = firstFreeProgramByte;
+        if((*currentStep != 0xff) || (*(currentStep + 1) != 0xff)) {
+          currentStep = firstFreeProgramByte;
           insertStepInProgram(ITM_END);
           scanLabelsAndPrograms();
           tam.value = programList[numberOfPrograms - 1].step;
