@@ -474,7 +474,7 @@ void tamReset(void) {
             return;
           }
         }
-        else if(tam.mode == tmStoRcl && tam.currentOperation != ITM_Config && tam.currentOperation != ITM_Stack && tam.currentOperation != ITM_Progr) {
+        else if(tam.mode == tmStoRcl && tam.currentOperation != ITM_Config && tam.currentOperation != ITM_Stack) {
           if(item == tam.currentOperation) {
             tam.currentOperation = tam.function;
           }
@@ -503,16 +503,6 @@ void tamReset(void) {
           }
         }
       }
-      return;
-    }
-    else if(tam.function == ITM_STO && item == ITM_Progr) {
-      fnPSto(NOPARAM);
-      tamLeaveMode();
-      return;
-    }
-    else if(tam.function == ITM_RCL && item == ITM_Progr) {
-      fnPRcl(NOPARAM);
-      tamLeaveMode();
       return;
     }
     else if(tam.function == ITM_toINT && item == ITM_REG_I) {

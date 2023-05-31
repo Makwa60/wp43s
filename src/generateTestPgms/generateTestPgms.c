@@ -13041,9 +13041,6 @@ int main(int argc, char* argv[]) {
     *(currentStep++) = (ITM_POPLR >> 8) | 0x80;
     *(currentStep++) =  ITM_POPLR       & 0xff;
 
-    *(currentStep++) = (ITM_PRCL >> 8) | 0x80;
-    *(currentStep++) =  ITM_PRCL       & 0xff;
-
     *(currentStep++) = (ITM_PUTK >> 8) | 0x80;
     *(currentStep++) =  ITM_PUTK       & 0xff;
     *(currentStep++) = 0;

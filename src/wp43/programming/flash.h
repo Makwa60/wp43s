@@ -10,9 +10,6 @@
   #include <stdint.h>
   #include <stdbool.h>
 
-  void fnPSto                      (uint16_t unusedButMandatoryParameter);
-  void fnPRcl                      (uint16_t unusedButMandatoryParameter);
-
   void initFlashPgmLibrary         (void);
   void scanFlashPgmLibrary         (void);
   void addToFlashPgmLibrary        (void);
