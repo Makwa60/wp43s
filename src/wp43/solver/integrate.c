@@ -97,6 +97,11 @@ void fnIntegrate(uint16_t labelOrVariable) {
       }
     }
   }
+  else if(labelOrVariable >= FIRST_NAMED_VARIABLE && labelOrVariable <= LAST_NAMED_VARIABLE && currentSolverProgram >= numberOfLabels) {
+    displayCalcErrorMessage(ERROR_NO_PROGRAM_SPECIFIED, ERR_REGISTER_LINE, REGISTER_X);
+    errorMoreInfo("label %u not found", labelOrVariable);
+    adjustResult(REGISTER_X, false, false, REGISTER_X, -1, -1);
+  }
   else if(labelOrVariable >= FIRST_NAMED_VARIABLE && labelOrVariable <= LAST_NAMED_VARIABLE) {
     real_t acc, ulim, llim, res;
     real34ToReal(REGISTER_REAL34_DATA(RESERVED_VARIABLE_ACC),  &acc);
