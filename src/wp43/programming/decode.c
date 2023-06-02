@@ -566,7 +566,9 @@ static void decodeLiteral(uint8_t *literalAddress) {
 
     case STRING_LABEL_VARIABLE: {
       getStringLabelOrVariableName(literalAddress);
-      sprintf(tmpString, STD_LEFT_SINGLE_QUOTE "%s" STD_RIGHT_SINGLE_QUOTE, tmpStringLabelOrVariableName);
+      strcpy(tmpString, STD_LEFT_SINGLE_QUOTE);
+      xcopy(tmpString + 2, tmpStringLabelOrVariableName, stringByteLength(tmpStringLabelOrVariableName) + 1);
+      strcpy(tmpString + stringByteLength(tmpString), STD_RIGHT_SINGLE_QUOTE);
       break;
     }
 
