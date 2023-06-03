@@ -925,6 +925,11 @@ void fnReset(uint16_t confirmation) {
     numberOfFormulae = 0;
     currentFormula = 0;
 
+    currentSolverStatus = 0;
+    currentSolverProgram = 0xffffu;
+    currentSolverVariable = INVALID_VARIABLE;
+    currentSolverNestingDepth = 0;
+
     graphVariable = 0;
 
     timerAppResetState();

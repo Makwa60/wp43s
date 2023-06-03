@@ -101,6 +101,11 @@ void fnSolve(uint16_t labelOrVariable) {
     }
     adjustResult(REGISTER_X, false, false, REGISTER_X, -1, -1);
   }
+  else if(labelOrVariable >= FIRST_NAMED_VARIABLE && labelOrVariable <= LAST_NAMED_VARIABLE && currentSolverProgram >= numberOfLabels) {
+    displayCalcErrorMessage(ERROR_NO_PROGRAM_SPECIFIED, ERR_REGISTER_LINE, REGISTER_X);
+    errorMoreInfo("label %u not found", labelOrVariable);
+    adjustResult(REGISTER_X, false, false, REGISTER_X, -1, -1);
+  }
   else if(labelOrVariable >= FIRST_NAMED_VARIABLE && labelOrVariable <= LAST_NAMED_VARIABLE) {
     // Execute
     real34_t z, y, x;
