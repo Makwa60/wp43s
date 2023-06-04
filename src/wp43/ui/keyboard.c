@@ -2123,11 +2123,6 @@ void fnKeyBackspace(uint16_t unusedButMandatoryParameter) {
           lastErrorCode = 0;
           return;
         }
-        if(programList[currentProgramNumber - 1].step < 0) {
-          // attempt to modify a program in the flash memory
-          displayCalcErrorMessage(ERROR_FLASH_MEMORY_WRITE_PROTECTED, ERR_REGISTER_LINE, REGISTER_X);
-          return;
-        }
         if(getSystemFlag(FLAG_ALPHA)) {
           pemAlpha(ITM_BACKSPACE);
           if(aimBuffer[0] == 0 && getSystemFlag(FLAG_ALPHA)) {

@@ -68,7 +68,7 @@ void fnGoto(uint16_t label) {
     }
     else if(label >= FIRST_LABEL && label <= LAST_LABEL) { // Global named label
       if((label - FIRST_LABEL) < numberOfLabels) {
-        goToGlobalStep((int16_t)labelList[label - FIRST_LABEL].step * (labelList[label - FIRST_LABEL].program < 0 ? -1 : 1));
+        goToGlobalStep((int16_t)labelList[label - FIRST_LABEL].step);
         return;
       }
       else {
@@ -107,12 +107,7 @@ void goToGlobalStep(int32_t step) {
           }
         }
         if(c == len) {
-          if(labelList[lbl].program < 0) {
-            step = -labelList[lbl].step;
-          }
-          else {
-            step = labelList[lbl].step;
-          }
+          step = labelList[lbl].step;
           break;
         }
       }
@@ -156,12 +151,7 @@ void goToGlobalStep(int32_t step) {
 
 void goToPgmStep(uint16_t program, uint16_t step) {
   int32_t globalStepNumber = programList[program - 1].step;
-  if(globalStepNumber < 0) { // flash memory
-    goToGlobalStep(globalStepNumber - step + 1);
-  }
-  else { // RAM
-    goToGlobalStep(globalStepNumber + step - 1);
-  }
+  goToGlobalStep(globalStepNumber + step - 1);
 }
 
 

@@ -253,12 +253,7 @@ void fnClP2(uint16_t label) {
     switch(result) {
       case 2: {
         int32_t globalStepNumber = programList[savedCurrentProgramNumber - 1].step;
-        if(globalStepNumber < 0) { // flash memory
-          fnGotoDot(programList[savedCurrentProgramNumber - 1].step - savedCurrentLocalStepNumber + 1);
-        }
-        else { // RAM
-          fnGotoDot(programList[savedCurrentProgramNumber - 1].step + savedCurrentLocalStepNumber - 1);
-        }
+        fnGotoDot(programList[savedCurrentProgramNumber - 1].step + savedCurrentLocalStepNumber - 1);
         break;
       }
       case 1: {
@@ -273,12 +268,7 @@ void fnClP2(uint16_t label) {
             --savedCurrentProgramNumber;
           }
           int32_t globalStepNumber = programList[savedCurrentProgramNumber - 1].step;
-          if(globalStepNumber < 0) { // flash memory
-            fnGotoDot(programList[savedCurrentProgramNumber - 1].step - savedCurrentLocalStepNumber + 1);
-          }
-          else { // RAM
-            fnGotoDot(programList[savedCurrentProgramNumber - 1].step + savedCurrentLocalStepNumber - 1);
-          }
+          fnGotoDot(programList[savedCurrentProgramNumber - 1].step + savedCurrentLocalStepNumber - 1);
           break;
         }
         break;
@@ -578,10 +568,6 @@ void fnPem(uint16_t unusedButMandatoryParameter) {
 
     if(lastErrorCode != ERROR_NONE) {
       refreshRegisterLine(errorMessageRegisterLine);
-    }
-
-    if(programList[currentProgramNumber - 1].step < 0) { // Flash
-      freeWp43(tmpSteps, 400 * 7);
     }
 
     if(aimBuffer[0] != 0 && linesOfCurrentStep > 4) { // Limited to 4 lines so as not to cause crash or freeze
@@ -1049,12 +1035,6 @@ static void _pemCloseDmsInput(void) {
 void insertStepInProgram(int16_t func) {
   uint32_t opBytes = (func >= 128) ? 2 : 1;
 
-  if(programList[currentProgramNumber - 1].step < 0) {
-    // attempt to modify a program in the flash memory
-    displayCalcErrorMessage(ERROR_FLASH_MEMORY_WRITE_PROTECTED, ERR_REGISTER_LINE, REGISTER_X);
-    return;
-  }
-
   if(func == ITM_AIM || (!tamIsActive() && getSystemFlag(FLAG_ALPHA))) {
     if(aimBuffer[0] != 0 && !getSystemFlag(FLAG_ALPHA)) {
       pemCloseNumberInput();
@@ -1281,19 +1261,6 @@ void insertStepInProgram(int16_t func) {
 
 
 void addStepInProgram(int16_t func) {
-  if(programList[currentProgramNumber - 1].step < 0) { // attempt to modify a program in the flash memory
-    #if CLP_WITH_MENU == 0
-      if(func == ITM_CLP) {
-        fnClP(NOT_CONFIRMED);
-      }
-      else
-    #endif /* CLP_WITH_MENU == 0 */
-    {
-      displayCalcErrorMessage(ERROR_FLASH_MEMORY_WRITE_PROTECTED, ERR_REGISTER_LINE, REGISTER_X);
-    }
-    aimBuffer[0] = 0;
-    return;
-  }
   if((!pemCursorIsZerothStep) && ((aimBuffer[0] == 0 && !getSystemFlag(FLAG_ALPHA)) || tamIsActive()) && !isAtEndOfProgram(currentStep) && !isAtEndOfPrograms(currentStep)) {
     currentStep = findNextStep(currentStep);
     ++currentLocalStepNumber;
