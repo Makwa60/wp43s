@@ -398,6 +398,9 @@ static void _integrate(calcRegister_t regist, const real_t *a, const real_t *b, 
   realAdd(&x, &x, &x, realContext); // 4*ln(...) for all cases except TS (2*LN(...))
   realDivide(&x, const_pi, &x, realContext);
   realLn(&x, &tm, realContext); // tm done
+  if(realIsNaN(&tm)) {
+    realCopy(const_minusInfinity, &tm);
+  }
   // maximum t (tm) ready ********************************
   // level loop ******************************************
   realZero(&ss); realZero(&ss1);
