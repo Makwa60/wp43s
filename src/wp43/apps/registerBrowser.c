@@ -424,7 +424,8 @@ int16_t currentRegisterBrowserScreen;
       for(int16_t row=0; row<10; row++) {
         calcRegister_t regist = currentRegisterBrowserScreen + row;
         if(regist < FIRST_NAMED_VARIABLE + numberOfNamedVariables) { // Named variables
-          sprintf(tmpString, "%s:", (char *)allNamedVariables[regist - FIRST_NAMED_VARIABLE].variableName + 1);
+          stringAppend(tmpString, (char *)allNamedVariables[regist - FIRST_NAMED_VARIABLE].variableName + 1);
+          stringAppend(tmpString + stringByteLength(tmpString), ":");
 
           // variable name
           registerNameWidth = showString(tmpString, &standardFont, 1, 219 - 22 * row, vmNormal, true, true);
