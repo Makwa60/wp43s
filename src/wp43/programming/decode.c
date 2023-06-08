@@ -143,8 +143,12 @@ static void getIndirectRegister(uint8_t *paramAddress, const char *op) {
 
 
 static void getIndirectVariable(uint8_t *stringAddress, const char *op) {
+  char *str = tmpString;
   getStringLabelOrVariableName(stringAddress);
-  sprintf(tmpString, "%s " STD_RIGHT_ARROW STD_LEFT_SINGLE_QUOTE "%s" STD_RIGHT_SINGLE_QUOTE, op, tmpStringLabelOrVariableName);
+  str = stringAppend(str, op);
+  str = stringAppend(str, " " STD_RIGHT_ARROW STD_LEFT_SINGLE_QUOTE);
+  str = stringAppend(str, tmpStringLabelOrVariableName);
+  str = stringAppend(str, STD_RIGHT_SINGLE_QUOTE);
 }
 
 
@@ -161,8 +165,12 @@ static void decodeOp(uint8_t *paramAddress, const char *op, uint16_t paramMode, 
         sprintf(tmpString, "%s %c", op, 'A' + (opParam - 100));
       }
       else if(opParam == STRING_LABEL_VARIABLE) {
+        char *str = tmpString;
         getStringLabelOrVariableName(paramAddress);
-        sprintf(tmpString, "%s " STD_LEFT_SINGLE_QUOTE "%s" STD_RIGHT_SINGLE_QUOTE, op, tmpStringLabelOrVariableName);
+        str = stringAppend(str, op);
+        str = stringAppend(str, " " STD_LEFT_SINGLE_QUOTE);
+        str = stringAppend(str, tmpStringLabelOrVariableName);
+        str = stringAppend(str, STD_RIGHT_SINGLE_QUOTE);
       }
       else {
         sprintf(tmpString, "\nIn function decodeOp case PARAM_DECLARE_LABEL: opParam %u is not a valid label!\n", opParam);
@@ -178,8 +186,12 @@ static void decodeOp(uint8_t *paramAddress, const char *op, uint16_t paramMode, 
         sprintf(tmpString, "%s %c", op, 'A' + (opParam - 100));
       }
       else if(opParam == STRING_LABEL_VARIABLE) {
+        char *str = tmpString;
         getStringLabelOrVariableName(paramAddress);
-        sprintf(tmpString, "%s " STD_LEFT_SINGLE_QUOTE "%s" STD_RIGHT_SINGLE_QUOTE, op, tmpStringLabelOrVariableName);
+        str = stringAppend(str, op);
+        str = stringAppend(str, " " STD_LEFT_SINGLE_QUOTE);
+        str = stringAppend(str, tmpStringLabelOrVariableName);
+        str = stringAppend(str, STD_RIGHT_SINGLE_QUOTE);
       }
       else if(opParam == INDIRECT_REGISTER) {
         getIndirectRegister(paramAddress, op);
@@ -195,8 +207,12 @@ static void decodeOp(uint8_t *paramAddress, const char *op, uint16_t paramMode, 
 
     case PARAM_VARIABLE: {
       if(opParam == STRING_LABEL_VARIABLE) {
+        char *str = tmpString;
         getStringLabelOrVariableName(paramAddress);
-        sprintf(tmpString, "%s " STD_LEFT_SINGLE_QUOTE "%s" STD_RIGHT_SINGLE_QUOTE, op, tmpStringLabelOrVariableName);
+        str = stringAppend(str, op);
+        str = stringAppend(str, " " STD_LEFT_SINGLE_QUOTE);
+        str = stringAppend(str, tmpStringLabelOrVariableName);
+        str = stringAppend(str, STD_RIGHT_SINGLE_QUOTE);
       }
       else {
         sprintf(tmpString, "\nIn function decodeOp: case PARAM_VARIABLE, %s  %u is not a valid parameter!", op, opParam);
@@ -215,8 +231,12 @@ static void decodeOp(uint8_t *paramAddress, const char *op, uint16_t paramMode, 
         sprintf(tmpString, "%s .%02d", op, opParam - FIRST_LOCAL_REGISTER);
       }
       else if(opParam == STRING_LABEL_VARIABLE) {
+        char *str = tmpString;
         getStringLabelOrVariableName(paramAddress);
-        sprintf(tmpString, "%s " STD_LEFT_SINGLE_QUOTE "%s" STD_RIGHT_SINGLE_QUOTE, op, tmpStringLabelOrVariableName);
+        str = stringAppend(str, op);
+        str = stringAppend(str, " " STD_LEFT_SINGLE_QUOTE);
+        str = stringAppend(str, tmpStringLabelOrVariableName);
+        str = stringAppend(str, STD_RIGHT_SINGLE_QUOTE);
       }
       else if(opParam == INDIRECT_REGISTER) {
         getIndirectRegister(paramAddress, op);
@@ -325,8 +345,12 @@ static void decodeOp(uint8_t *paramAddress, const char *op, uint16_t paramMode, 
         sprintf(tmpString, "%s .%02d", op, opParam - FIRST_LOCAL_REGISTER);
       }
       else if(opParam == STRING_LABEL_VARIABLE) {
+        char *str = tmpString;
         getStringLabelOrVariableName(paramAddress);
-        sprintf(tmpString, "%s " STD_LEFT_SINGLE_QUOTE "%s" STD_RIGHT_SINGLE_QUOTE, op, tmpStringLabelOrVariableName);
+        str = stringAppend(str, op);
+        str = stringAppend(str, " " STD_LEFT_SINGLE_QUOTE);
+        str = stringAppend(str, tmpStringLabelOrVariableName);
+        str = stringAppend(str, STD_RIGHT_SINGLE_QUOTE);
       }
       else if(opParam == VALUE_0) {
         sprintf(tmpString, "%s", op);
@@ -565,10 +589,11 @@ static void decodeLiteral(uint8_t *literalAddress) {
     }
 
     case STRING_LABEL_VARIABLE: {
+      char *str = tmpString;
       getStringLabelOrVariableName(literalAddress);
-      strcpy(tmpString, STD_LEFT_SINGLE_QUOTE);
-      xcopy(tmpString + 2, tmpStringLabelOrVariableName, stringByteLength(tmpStringLabelOrVariableName) + 1);
-      strcpy(tmpString + stringByteLength(tmpString), STD_RIGHT_SINGLE_QUOTE);
+      str = stringAppend(str, STD_LEFT_SINGLE_QUOTE);
+      str = stringAppend(str, tmpStringLabelOrVariableName);
+      str = stringAppend(str, STD_RIGHT_SINGLE_QUOTE);
       break;
     }
 

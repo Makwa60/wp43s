@@ -126,25 +126,25 @@ void fnDeleteMenu(uint16_t id) {
 
 void updateAssignTamBuffer(void) {
   char *tbPtr = tamBuffer;
-  tbPtr = stpcpy(tbPtr, "ASSIGN ");
+  tbPtr = stringAppend(tbPtr, "ASSIGN ");
 
   if(itemToBeAssigned == 0) {
     if(tam.alpha) {
-      tbPtr = stpcpy(tbPtr, STD_LEFT_SINGLE_QUOTE);
+      tbPtr = stringAppend(tbPtr, STD_LEFT_SINGLE_QUOTE);
       if(aimBuffer[0] == 0) {
-        tbPtr = stpcpy(tbPtr, "_");
+        tbPtr = stringAppend(tbPtr, "_");
       }
       else {
-        tbPtr = stpcpy(tbPtr, aimBuffer);
-        tbPtr = stpcpy(tbPtr, STD_RIGHT_SINGLE_QUOTE);
+        tbPtr = stringAppend(tbPtr, aimBuffer);
+        tbPtr = stringAppend(tbPtr, STD_RIGHT_SINGLE_QUOTE);
       }
     }
     else {
-      tbPtr = stpcpy(tbPtr, "_");
+      tbPtr = stringAppend(tbPtr, "_");
     }
   }
   else if(itemToBeAssigned == ASSIGN_CLEAR) {
-    tbPtr = stpcpy(tbPtr, "NULL");
+    tbPtr = stringAppend(tbPtr, "NULL");
   }
   else if(itemToBeAssigned >= ASSIGN_LABELS) {
     uint8_t *lblPtr = labelList[itemToBeAssigned - ASSIGN_LABELS].labelPointer;
@@ -154,44 +154,44 @@ void updateAssignTamBuffer(void) {
     }
   }
   else if(itemToBeAssigned >= ASSIGN_RESERVED_VARIABLES) {
-    tbPtr = stpcpy(tbPtr, (char *)allReservedVariables[itemToBeAssigned - ASSIGN_RESERVED_VARIABLES].reservedVariableName + 1);
+    tbPtr = stringAppend(tbPtr, (char *)allReservedVariables[itemToBeAssigned - ASSIGN_RESERVED_VARIABLES].reservedVariableName + 1);
   }
   else if(itemToBeAssigned >= ASSIGN_NAMED_VARIABLES) {
-    tbPtr = stpcpy(tbPtr, (char *)allNamedVariables[itemToBeAssigned - ASSIGN_NAMED_VARIABLES].variableName + 1);
+    tbPtr = stringAppend(tbPtr, (char *)allNamedVariables[itemToBeAssigned - ASSIGN_NAMED_VARIABLES].variableName + 1);
   }
   else if(itemToBeAssigned <= ASSIGN_USER_MENU) {
-    tbPtr = stpcpy(tbPtr, userMenus[-(itemToBeAssigned - ASSIGN_USER_MENU)].menuName);
+    tbPtr = stringAppend(tbPtr, userMenus[-(itemToBeAssigned - ASSIGN_USER_MENU)].menuName);
   }
   else if(itemToBeAssigned < 0) {
-    tbPtr = stpcpy(tbPtr, indexOfItems[-itemToBeAssigned].itemCatalogName);
+    tbPtr = stringAppend(tbPtr, indexOfItems[-itemToBeAssigned].itemCatalogName);
   }
   else if(indexOfItems[itemToBeAssigned].itemCatalogName[0] == 0) {
-    tbPtr = stpcpy(tbPtr, indexOfItems[itemToBeAssigned].itemSoftmenuName);
+    tbPtr = stringAppend(tbPtr, indexOfItems[itemToBeAssigned].itemSoftmenuName);
   }
   else {
-    tbPtr = stpcpy(tbPtr, indexOfItems[itemToBeAssigned].itemCatalogName);
+    tbPtr = stringAppend(tbPtr, indexOfItems[itemToBeAssigned].itemCatalogName);
   }
 
-  tbPtr = stpcpy(tbPtr, " ");
+  tbPtr = stringAppend(tbPtr, " ");
   if(itemToBeAssigned != 0 && tam.alpha) {
-    tbPtr = stpcpy(tbPtr, STD_LEFT_SINGLE_QUOTE);
+    tbPtr = stringAppend(tbPtr, STD_LEFT_SINGLE_QUOTE);
     if(aimBuffer[0] == 0) {
-      tbPtr = stpcpy(tbPtr, "_");
+      tbPtr = stringAppend(tbPtr, "_");
     }
     else {
-      tbPtr = stpcpy(tbPtr, aimBuffer);
-      tbPtr = stpcpy(tbPtr, STD_RIGHT_SINGLE_QUOTE);
+      tbPtr = stringAppend(tbPtr, aimBuffer);
+      tbPtr = stringAppend(tbPtr, STD_RIGHT_SINGLE_QUOTE);
     }
 
   }
   else if(itemToBeAssigned != 0 && shiftF) {
-    tbPtr = stpcpy(tbPtr, STD_SUP_f STD_CURSOR);
+    tbPtr = stringAppend(tbPtr, STD_SUP_f STD_CURSOR);
   }
   else if(itemToBeAssigned != 0 && shiftG) {
-    tbPtr = stpcpy(tbPtr, STD_SUP_g STD_CURSOR);
+    tbPtr = stringAppend(tbPtr, STD_SUP_g STD_CURSOR);
   }
   else {
-    tbPtr = stpcpy(tbPtr, "_");
+    tbPtr = stringAppend(tbPtr, "_");
   }
 }
 

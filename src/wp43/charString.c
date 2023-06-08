@@ -366,12 +366,10 @@ void *xcopy(void *dest, const void *source, int n) {
 }
 
 
-#if defined(WIN32)
-  char *stpcpy(char *dest, const char *source) {
-    const size_t l = strlen(source);
-    return (char *)memcpy(dest, source, l + 1) + l;
-  }
-#endif // WIN32
+char *stringAppend(char *dest, const char *source) {
+  const size_t l = stringByteLength(source);
+  return (char *)memcpy(dest, source, l + 1) + l;
+}
 
 
 #if !defined(DMCP_BUILD)
