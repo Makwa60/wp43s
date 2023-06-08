@@ -27,7 +27,7 @@ macOS:
     paths:
       - wp43-macos.zip
   tags:
-    - shared-macos-amd64
+    - saas-macos-medium-m1
 
 linux:
   stage: build
