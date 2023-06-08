@@ -252,7 +252,6 @@ void fnClP2(uint16_t label) {
     const int result = _clearProgram();
     switch(result) {
       case 2: {
-        int32_t globalStepNumber = programList[savedCurrentProgramNumber - 1].step;
         fnGotoDot(programList[savedCurrentProgramNumber - 1].step + savedCurrentLocalStepNumber - 1);
         break;
       }
@@ -267,7 +266,6 @@ void fnClP2(uint16_t label) {
           if(programNumberToDelete < savedCurrentProgramNumber) {
             --savedCurrentProgramNumber;
           }
-          int32_t globalStepNumber = programList[savedCurrentProgramNumber - 1].step;
           fnGotoDot(programList[savedCurrentProgramNumber - 1].step + savedCurrentLocalStepNumber - 1);
           break;
         }
@@ -400,7 +398,6 @@ void fnPem(uint16_t unusedButMandatoryParameter) {
     uint16_t line, firstLine;
     uint16_t stepsThatWouldBeDisplayed = 7;
     uint8_t *step, *nextStep;
-    uint8_t *tmpSteps = NULL;
     bool     lblOrEnd;
     bool     inTamMode = tamIsActive() && programList[currentProgramNumber - 1].step > 0;
     uint16_t numberOfSteps = getNumberOfSteps();
