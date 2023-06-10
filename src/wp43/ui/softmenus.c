@@ -1395,13 +1395,32 @@ void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
 
 
 char *dynmenuGetLabel(int16_t menuitem) {
+  return dynmenuGetLabelWithDup(menuitem, NULL);
+}
+
+
+
+char *dynmenuGetLabelWithDup(int16_t menuitem, int16_t *dupNum) {
+  if(dupNum) {
+    *dupNum = 0;
+  }
   if(menuitem < 0 || menuitem >= dynamicSoftmenu[softmenuStack[0].softmenuId].numItems) {
     return "";
   }
   char *labelName = (char *)dynamicSoftmenu[softmenuStack[0].softmenuId].menuContent;
+  char *prevLabelName = labelName;
   while(menuitem > 0) {
     labelName += stringByteLength(labelName) + 1;
     menuitem--;
+    if(dupNum) {
+      if(compareString(labelName, prevLabelName, CMP_BINARY) == 0) {
+        ++(*dupNum);
+      }
+      else {
+        prevLabelName = labelName;
+        *dupNum = 0;
+      }
+    }
   }
   return labelName;
 }
