@@ -112,13 +112,24 @@ void factLonI(void) {
 
 uint64_t fact_uint64(uint64_t value)
 {
-  uint64_t result = value;
+  uint64_t result;
 
   if(value <= 1) {
     result = 1;
   }
   else {
-    for(uint64_t i=value-1 ; i > 1 ; result *= i--) {
+    uint64_t m = value;
+
+    if((value & 1) != 0) {
+      m += value;
+      value -= 1;
+    }
+    result = m;
+    value -= 2;
+    while(value > 0) {
+      m += value;
+      result *= m;
+      value -= 2;
     }
   }
 
