@@ -29,6 +29,7 @@
   void addStepInProgram                        (int16_t func);
 
   calcRegister_t findNamedLabel                (const char *labelName);
+  calcRegister_t findNamedLabelWithDuplicate   (const char *labelName, int16_t dupNum);
   uint16_t       getNumberOfSteps              (void);
 
   bool           isAtEndOfPrograms             (const uint8_t *step); // check for .END.

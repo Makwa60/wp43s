@@ -53,5 +53,6 @@
   #endif // !TESTSUITE_BUILD
 
   char    *dynmenuGetLabel        (int16_t menuitem);
+  char    *dynmenuGetLabelWithDup (int16_t menuitem, int16_t *dupNum);
 
 #endif // !SOFTMENUS_H
