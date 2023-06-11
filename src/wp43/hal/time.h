@@ -9,6 +9,10 @@
 
   #include <stdint.h>
 
+  #define SYS_MDY 0
+  #define SYS_DMY 1
+  #define SYS_YMD 2
+  
   /**
    * Structure for the time in a day.
    */
@@ -83,5 +87,18 @@
    * \param[in] timeInMs amount of time to sleep
    */
   void timeSleep(uint32_t timeInMs);
-
+ 
+  /**
+   * Set DMCP date format
+   *
+   * \param[in] dateFmt 0 -> MDY, 1 -> DMY, 2 -> YMD 
+   */
+  void timeSetSystemDateFormat(int dateFmt);
+ 
+  /**
+   * Set DMCP clk24 time format
+   *
+   * \param[in] action 0 -> Clear clk24 , 1 -> Set clk24, 2 -> Flip clk24 
+   */
+  void timeSetSystemTimeFormat(uint16_t action);  
 #endif // !TIME_H

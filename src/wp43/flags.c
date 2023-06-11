@@ -7,6 +7,7 @@
 #include "calcMode.h"
 #include "config.h"
 #include "error.h"
+#include "hal/time.h"
 #include "items.h"
 #include "solver/equation.h"
 #include "ui/softmenus.h"
@@ -160,23 +161,8 @@ void systemFlagAction(uint16_t systemFlag, uint16_t action) {
       break;
     }
 
-    case FLAG_POLAR: {
-      switch(action) {
-        case 0: {
-          globalFlags[FLAG_X/16] &= ~(1u << (FLAG_X%16));
-          break;
-        }
-        case 1: {
-          globalFlags[FLAG_X/16] |=   1u << (FLAG_X%16);
-          break;
-        }
-        case 2: {
-          globalFlags[FLAG_X/16] ^=   1u << (FLAG_X%16);
-          break;
-        }
-        default: {
-        }
-      }
+    case FLAG_TDM24: {
+      timeSetSystemTimeFormat(action);
       break;
     }
 

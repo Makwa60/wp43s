@@ -45,3 +45,12 @@ uint32_t timeUptimeMs(void) {
 
 void timeSleep(uint32_t param) {
 }
+
+#define UNUSED(x) (void)(x)
+void timeSetSystemDateFormat(int dateFmt) {
+  UNUSED(dateFmt);
+}
+
+void timeSetSystemTimeFormat(uint16_t action) {
+  UNUSED(action);
+}

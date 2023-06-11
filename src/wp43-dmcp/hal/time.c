@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // SPDX-FileCopyrightText: Copyright The WP43 Authors
 
+#include "flags.h"
 #include "hal/time.h"
 
 #include "wp43-dmcp.h"
@@ -82,4 +83,31 @@ void timeCapture(void) {
                 (uint32_t)_timeInfo.min * 60000u +
                 (uint32_t)_timeInfo.sec * 1000u +
                 (uint32_t)_timeInfo.csec * 10u;
+}
+
+void timeSetSystemDateFormat(int dateFmt) {
+  set_flag_dmy(dateFmt);
+}
+
+void timeSetSystemTimeFormat(uint16_t action) {
+    switch(action) {
+      case FLAG_ACTION_CLEAR: {
+        set_flag_clk24(0);      // Clear DMCP clk24 flag
+        break;
+      }
+      case FLAG_ACTION_SET: {
+        set_flag_clk24(1);      // Clear DMCP clk24 flag
+        break;
+      }
+      case FLAG_ACTION_FLIP: {  // Flip DMCP clk24 flag   
+        if (is_flag_clk24()) {
+          set_flag_clk24(0);
+        } else {
+          set_flag_clk24(1);  
+        }
+        break;
+      }
+      default: {
+      }
+    }
 }

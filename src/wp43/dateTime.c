@@ -39,6 +39,7 @@ void fnSetDateFormat(uint16_t dateFormat) {
       clearSystemFlag(FLAG_MDY);
       clearSystemFlag(FLAG_YMD);
       setSystemFlag(FLAG_DMY);
+      timeSetSystemDateFormat(SYS_DMY);
       break;
     }
 
@@ -46,6 +47,7 @@ void fnSetDateFormat(uint16_t dateFormat) {
       clearSystemFlag(FLAG_DMY);
       clearSystemFlag(FLAG_YMD);
       setSystemFlag(FLAG_MDY);
+      timeSetSystemDateFormat(SYS_MDY);
       break;
     }
 
@@ -53,6 +55,7 @@ void fnSetDateFormat(uint16_t dateFormat) {
       clearSystemFlag(FLAG_MDY);
       clearSystemFlag(FLAG_DMY);
       setSystemFlag(FLAG_YMD);
+      timeSetSystemDateFormat(SYS_YMD);
       break;
     }
 

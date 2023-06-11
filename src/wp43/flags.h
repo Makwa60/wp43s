@@ -10,6 +10,10 @@
   #include <stdbool.h>
   #include <stdint.h>
 
+  #define FLAG_ACTION_CLEAR 0
+  #define FLAG_ACTION_SET   1
+  #define FLAG_ACTION_FLIP  2
+  
   extern uint64_t systemFlags;
 
   void systemFlagAction        (uint16_t systemFlag, uint16_t action);
@@ -69,8 +73,8 @@
 
   static inline bool isSystemFlagWriteProtected(uint16_t sf) {return (sf & 0x4000) != 0;}
   static inline bool getSystemFlag             (uint16_t sf) {return (systemFlags & ((uint64_t)1 << (sf & 0x3fff))) != 0;}
-  static inline void setSystemFlag             (uint16_t sf) {systemFlags |=  ((uint64_t)1 << (sf & 0x3fff)); systemFlagAction(sf, 1);}
-  static inline void clearSystemFlag           (uint16_t sf) {systemFlags &= ~((uint64_t)1 << (sf & 0x3fff)); systemFlagAction(sf, 0);}
-  static inline void flipSystemFlag            (uint16_t sf) {systemFlags ^=  ((uint64_t)1 << (sf & 0x3fff)); systemFlagAction(sf, 2);}
+  static inline void setSystemFlag             (uint16_t sf) {systemFlags |=  ((uint64_t)1 << (sf & 0x3fff)); systemFlagAction(sf, FLAG_ACTION_SET);}
+  static inline void clearSystemFlag           (uint16_t sf) {systemFlags &= ~((uint64_t)1 << (sf & 0x3fff)); systemFlagAction(sf, FLAG_ACTION_CLEAR);}
+  static inline void flipSystemFlag            (uint16_t sf) {systemFlags ^=  ((uint64_t)1 << (sf & 0x3fff)); systemFlagAction(sf, FLAG_ACTION_FLIP);}
 
 #endif // !FLAGS_H

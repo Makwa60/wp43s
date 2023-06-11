@@ -20,6 +20,7 @@
 #include "hal/debug.h"
 #include "hal/io.h"
 #include "hal/system.h"
+#include "hal/time.h"
 #include "hal/timer.h"
 #include "items.h"
 #include "mathematics/matrix.h"
@@ -55,6 +56,7 @@ void fnConfigChina(uint16_t unusedButMandatoryParameter) {
   clearSystemFlag(FLAG_DMY); // date format
   clearSystemFlag(FLAG_MDY); // date format
   setSystemFlag(FLAG_YMD);   // date format
+  timeSetSystemDateFormat(SYS_YMD);
   firstGregorianDay = 2433191 /* 1 Oct 1949 */;  // JDN of the first day in the Gregorian calendar
 }
 
@@ -67,6 +69,7 @@ void fnConfigEurope(uint16_t unusedButMandatoryParameter) {
   clearSystemFlag(FLAG_MDY); // date format
   clearSystemFlag(FLAG_YMD); // date format
   setSystemFlag(FLAG_DMY);   // date format
+  timeSetSystemDateFormat(SYS_DMY);
   firstGregorianDay = 2299161 /* 15 Oct 1582 */; // JDN of the first day in the Gregorian calendar
 }
 
@@ -79,6 +82,7 @@ void fnConfigIndia(uint16_t unusedButMandatoryParameter) {
   clearSystemFlag(FLAG_MDY); // date format
   clearSystemFlag(FLAG_YMD); // date format
   setSystemFlag(FLAG_DMY);   // date format
+  timeSetSystemDateFormat(SYS_DMY);
   firstGregorianDay = 2361222 /* 14 Sept 1752 */; // JDN of the first day in the Gregorian calendar
 }
 
@@ -91,6 +95,7 @@ void fnConfigJapan(uint16_t unusedButMandatoryParameter) {
   clearSystemFlag(FLAG_MDY); // date format
   clearSystemFlag(FLAG_DMY); // date format
   setSystemFlag(FLAG_YMD);   // date format
+  timeSetSystemDateFormat(SYS_YMD);
   firstGregorianDay = 2405160 /* 1 Jan 1873 */; // JDN of the first day in the Gregorian calendar
 }
 
@@ -103,6 +108,7 @@ void fnConfigUk(uint16_t unusedButMandatoryParameter) {
   clearSystemFlag(FLAG_MDY);   // date format
   clearSystemFlag(FLAG_YMD);   // date format
   setSystemFlag(FLAG_DMY);     // date format
+  timeSetSystemDateFormat(SYS_DMY);
   firstGregorianDay = 2361222 /* 14 Sept 1752 */; // JDN of the first day in the Gregorian calendar
 }
 
@@ -115,6 +121,7 @@ void fnConfigUsa(uint16_t unusedButMandatoryParameter) {
   clearSystemFlag(FLAG_YMD);   // date format
   clearSystemFlag(FLAG_DMY);   // date format
   setSystemFlag(FLAG_MDY);     // date format
+  timeSetSystemDateFormat(SYS_MDY);
   firstGregorianDay = 2361222 /* 14 Sept 1752 */; // JDN of the first day in the Gregorian calendar
 }
 
@@ -811,6 +818,7 @@ void fnReset(uint16_t confirmation) {
     setSystemFlag(FLAG_AUTOFF);
     setSystemFlag(FLAG_TDM24); // time format = 24H
     setSystemFlag(FLAG_YMD);   // date format = yyyy-mm-dd
+    timeSetSystemDateFormat(SYS_YMD);
     setSystemFlag(FLAG_ASLIFT);
     setSystemFlag(FLAG_PROPFR);
     setSystemFlag(FLAG_ENDPMT);// TVM application = END mode
@@ -964,6 +972,37 @@ void runDMCPmenu(uint16_t unusedButMandatoryParameter) {
 
   #if defined(DMCP_BUILD)
     run_menu_item_sys(MI_DMCP_MENU);
+    
+    // Sync TDM24 flag with DMCP clk24
+    if (is_flag_clk24()) {
+        setSystemFlag(FLAG_TDM24);
+    } else {
+        clearSystemFlag(FLAG_TDM24); 
+    }
+    
+    // Sync DMY/YMD/MDY flag with DMCP dmy
+    clearSystemFlag(FLAG_DMY);
+    clearSystemFlag(FLAG_MDY);
+    clearSystemFlag(FLAG_YMD);
+    
+    int dmcp_dmy = get_flag_dmy();
+    
+    switch(dmcp_dmy) {
+        case SYS_MDY: {
+          setSystemFlag(FLAG_MDY);
+          break;
+        }
+        case SYS_DMY: {
+          setSystemFlag(FLAG_DMY);
+          break;
+        }
+        case SYS_YMD: {
+          setSystemFlag(FLAG_YMD);
+          break;
+        }
+        default: {
+        }
+    }
   #endif // DMCP_BUILD
 }
 
