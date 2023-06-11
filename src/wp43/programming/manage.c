@@ -624,7 +624,42 @@ static void _insertInProgram(const uint8_t *dat, uint16_t sizeInBytes) {
   dynamicMenuItem = _dynamicMenuItem;
 }
 
+#if !defined(TESTSUITE_BUILD)
+static void _closeAlphaMenus(void) {
+  for(int i = 0; i < SOFTMENU_STACK_SIZE; ++i) {
+    switch(-softmenu[softmenuStack[0].softmenuId].menuItem) {
+      case MNU_ALPHAINTL:
+      case MNU_ALPHAintl:
+      case MNU_ALPHAMATH:
+      case MNU_ALPHA_OMEGA:
+      case MNU_alpha_omega:
+        popSoftmenu();
+        break;
 
+      case MNU_MyAlpha:
+        switch(-softmenu[softmenuStack[1].softmenuId].menuItem) {
+          case MNU_ALPHAINTL:
+          case MNU_ALPHAintl:
+          case MNU_ALPHAMATH:
+          case MNU_ALPHA_OMEGA:
+          case MNU_alpha_omega:
+            popSoftmenu();
+            break;
+          default:
+            softmenuStack[0].softmenuId = 0; // MyMenu
+            return;
+        }
+
+      default:
+        return;
+    }
+  }
+  // Just in case softmenuStack was filled with AIM-related menus
+  for(int i = 0; i < SOFTMENU_STACK_SIZE; ++i) {
+    softmenuStack[i].softmenuId = 0; // MyMenu
+  }
+}
+#endif // !TESTSUITE_BUILD
 
 void pemAlpha(int16_t item) {
   #if !defined(TESTSUITE_BUILD)
@@ -672,9 +707,7 @@ void pemAlpha(int16_t item) {
         deleteStepsFromTo(currentStep, findNextStep(currentStep));
         clearSystemFlag(FLAG_ALPHA);
         calcModeUpdateGui();
-        if(softmenuStack[0].softmenuId == 1) { // MyAlpha
-          softmenuStack[0].softmenuId = 0; // MyMenu
-        }
+        _closeAlphaMenus();
         return;
       }
       else {
@@ -685,9 +718,11 @@ void pemAlpha(int16_t item) {
       pemCloseAlphaInput();
       --firstDisplayedLocalStepNumber;
       defineFirstDisplayedStep();
-      if(softmenuStack[0].softmenuId == 1) { // MyAlpha
-        softmenuStack[0].softmenuId = 0; // MyMenu
-      }
+      _closeAlphaMenus();
+      return;
+    }
+    else if(item == ITM_USERMODE) {
+      fnFlipFlag(FLAG_USER);
       return;
     }
 
@@ -716,9 +751,7 @@ void pemCloseAlphaInput(void) {
     currentStep = findNextStep(currentStep);
     ++firstDisplayedLocalStepNumber;
     firstDisplayedStep = findNextStep(firstDisplayedStep);
-    if(softmenuStack[0].softmenuId == 1) { // MyAlpha
-      softmenuStack[0].softmenuId = 0; // MyMenu
-    }
+    _closeAlphaMenus();
   #endif // !TESTSUITE_BUILD
 }
 
@@ -1191,6 +1224,11 @@ void insertStepInProgram(int16_t func) {
           tmpString[6] = 'i';
           tmpString[7] = 'm';
           _insertInProgram((uint8_t *)tmpString, 8);
+          break;
+        }
+
+        case ITM_USERMODE: {         // 1729
+          fnFlipFlag(FLAG_USER);
           break;
         }
       }
