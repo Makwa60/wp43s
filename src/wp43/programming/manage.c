@@ -624,6 +624,7 @@ static void _insertInProgram(const uint8_t *dat, uint16_t sizeInBytes) {
   dynamicMenuItem = _dynamicMenuItem;
 }
 
+#if !defined(TESTSUITE_BUILD)
 static void _closeAlphaMenus(void) {
   for(int i = 0; i < SOFTMENU_STACK_SIZE; ++i) {
     switch(-softmenu[softmenuStack[0].softmenuId].menuItem) {
@@ -658,6 +659,7 @@ static void _closeAlphaMenus(void) {
     softmenuStack[i].softmenuId = 0; // MyMenu
   }
 }
+#endif // !TESTSUITE_BUILD
 
 void pemAlpha(int16_t item) {
   #if !defined(TESTSUITE_BUILD)
