@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // SPDX-FileCopyrightText: Copyright The WP43 Authors
 
+#include "defines.h"
 #include "hal/time.h"
 
 #include <assert.h>
@@ -45,4 +46,13 @@ uint32_t timeUptimeMs(void) {
 
 void timeSleep(uint32_t timeInMs) {
   usleep(timeInMs * 1000);
+}
+
+#define UNUSED(x) (void)(x)
+void timeSetSystemDateFormat(int dateFmt) {
+  UNUSED(dateFmt);
+}
+
+void timeSetSystemTimeFormat(uint16_t action) {
+  UNUSED(action);
 }

@@ -7,6 +7,7 @@
 #include "calcMode.h"
 #include "config.h"
 #include "error.h"
+#include "hal/time.h"
 #include "items.h"
 #include "solver/equation.h"
 #include "ui/softmenus.h"
@@ -22,15 +23,15 @@ void systemFlagAction(uint16_t systemFlag, uint16_t action) {
   switch(systemFlag) {
     case FLAG_ALLENG: {
       switch(action) {
-        case 0: {
+        case FLAG_ACTION_CLEAR: {
           globalFlags[FLAG_A/16] &= ~(1u << (FLAG_A%16));
           break;
         }
-        case 1: {
+        case FLAG_ACTION_SET: {
           globalFlags[FLAG_A/16] |=   1u << (FLAG_A%16);
           break;
         }
-        case 2: {
+        case FLAG_ACTION_FLIP: {
           globalFlags[FLAG_A/16] ^=   1u << (FLAG_A%16);
           break;
         }
@@ -42,15 +43,15 @@ void systemFlagAction(uint16_t systemFlag, uint16_t action) {
 
     case FLAG_OVERFLOW: {
       switch(action) {
-        case 0: {
+        case FLAG_ACTION_CLEAR: {
           globalFlags[FLAG_B/16] &= ~(1u << (FLAG_B%16));
           break;
         }
-        case 1: {
+        case FLAG_ACTION_SET: {
           globalFlags[FLAG_B/16] |=   1u << (FLAG_B%16);
           break;
         }
-        case 2: {
+        case FLAG_ACTION_FLIP: {
           globalFlags[FLAG_B/16] ^=   1u << (FLAG_B%16);
           break;
         }
@@ -62,15 +63,15 @@ void systemFlagAction(uint16_t systemFlag, uint16_t action) {
 
     case FLAG_CARRY: {
       switch(action) {
-        case 0: {
+        case FLAG_ACTION_CLEAR: {
           globalFlags[FLAG_C/16] &= ~(1u << (FLAG_C%16));
           break;
         }
-        case 1: {
+        case FLAG_ACTION_SET: {
           globalFlags[FLAG_C/16] |=   1u << (FLAG_C%16);
           break;
         }
-        case 2: {
+        case FLAG_ACTION_FLIP: {
           globalFlags[FLAG_C/16] ^=   1u << (FLAG_C%16);
           break;
         }
@@ -82,15 +83,15 @@ void systemFlagAction(uint16_t systemFlag, uint16_t action) {
 
     case FLAG_SPCRES: {
       switch(action) {
-        case 0: {
+        case FLAG_ACTION_CLEAR: {
           globalFlags[FLAG_D/16] &= ~(1u << (FLAG_D%16));
           break;
         }
-        case 1: {
+        case FLAG_ACTION_SET: {
           globalFlags[FLAG_D/16] |=   1u << (FLAG_D%16);
           break;
         }
-        case 2: {
+        case FLAG_ACTION_FLIP: {
           globalFlags[FLAG_D/16] ^=   1u << (FLAG_D%16);
           break;
         }
@@ -102,15 +103,15 @@ void systemFlagAction(uint16_t systemFlag, uint16_t action) {
 
     case FLAG_CPXRES: {
       switch(action) {
-        case 0: {
+        case FLAG_ACTION_CLEAR: {
           globalFlags[FLAG_I/16] &= ~(1u << (FLAG_I%16));
           break;
         }
-        case 1: {
+        case FLAG_ACTION_SET: {
           globalFlags[FLAG_I/16] |=   1u << (FLAG_I%16);
           break;
         }
-        case 2: {
+        case FLAG_ACTION_FLIP: {
           globalFlags[FLAG_I/16] ^=   1u << (FLAG_I%16);
           break;
         }
@@ -122,15 +123,15 @@ void systemFlagAction(uint16_t systemFlag, uint16_t action) {
 
     case FLAG_LEAD0: {
       switch(action) {
-        case 0: {
+        case FLAG_ACTION_CLEAR: {
           globalFlags[FLAG_L/16] &= ~(1u << (FLAG_L%16));
           break;
         }
-        case 1: {
+        case FLAG_ACTION_SET: {
           globalFlags[FLAG_L/16] |=   1u << (FLAG_L%16);
           break;
         }
-        case 2: {
+        case FLAG_ACTION_FLIP: {
           globalFlags[FLAG_L/16] ^=   1u << (FLAG_L%16);
           break;
         }
@@ -142,15 +143,15 @@ void systemFlagAction(uint16_t systemFlag, uint16_t action) {
 
     case FLAG_TRACE: {
       switch(action) {
-        case 0: {
+        case FLAG_ACTION_CLEAR: {
           globalFlags[FLAG_T/16] &= ~(1u << (FLAG_T%16));
           break;
         }
-        case 1: {
+        case FLAG_ACTION_SET: {
           globalFlags[FLAG_T/16] |=   1u << (FLAG_T%16);
           break;
         }
-        case 2: {
+        case FLAG_ACTION_FLIP: {
           globalFlags[FLAG_T/16] ^=   1u << (FLAG_T%16);
           break;
         }
@@ -162,15 +163,15 @@ void systemFlagAction(uint16_t systemFlag, uint16_t action) {
 
     case FLAG_POLAR: {
       switch(action) {
-        case 0: {
+        case FLAG_ACTION_CLEAR: {
           globalFlags[FLAG_X/16] &= ~(1u << (FLAG_X%16));
           break;
         }
-        case 1: {
+        case FLAG_ACTION_SET: {
           globalFlags[FLAG_X/16] |=   1u << (FLAG_X%16);
           break;
         }
-        case 2: {
+        case FLAG_ACTION_FLIP: {
           globalFlags[FLAG_X/16] ^=   1u << (FLAG_X%16);
           break;
         }
@@ -179,7 +180,12 @@ void systemFlagAction(uint16_t systemFlag, uint16_t action) {
       }
       break;
     }
-
+    
+    case FLAG_TDM24: {
+      timeSetSystemTimeFormat(action);
+      break;
+    }
+    
     default: {
     }
   }
