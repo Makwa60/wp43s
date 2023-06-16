@@ -443,6 +443,10 @@ void program_main(void) {
       btnPressed(key);
       lastKey = key;
     }
+    else if(key == KEY_SCREENSHOT) { // Virtual DMCP key code for screen-shot - simultaneous press of SHIFT+DISP (g+DISP on the WP43).
+      fnScreenDump(NOPARAM); // Create screenshot 
+      shiftG = false;        // Reset g Shift State (previously set when the g key was pressed before DISP)
+    }
     else if(key == 0) { // Key released
       powerDebugMark(M2);
       btnReleased(lastKey);
