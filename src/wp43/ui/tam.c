@@ -665,7 +665,7 @@ void tamReset(void) {
         else if(tam.indirect && (currentNumberOfLocalRegisters || calcMode == cmPem)) {
           tam.dot = true;
         }
-        else if(tam.mode != tmValue && tam.mode != tmValueChb && (indexOfItems[tam.function].status & PTP_STATUS) != PTP_VARIABLE) {
+        else if(tam.mode != tmValue && tam.mode != tmValueChb && (indexOfItems[tam.function].status & PTP_STATUS) != PTP_VARIABLE && tam.mode != tmLabel) {
           if(calcMode == cmPem || ((tam.mode == tmFlagR || tam.mode == tmFlagW) && currentLocalFlags != NULL) || ((tam.mode != tmFlagR && tam.mode != tmFlagW) && currentNumberOfLocalRegisters)) {
             tam.dot = true;
           }
