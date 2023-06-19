@@ -57,11 +57,13 @@ int file_selection_screen(const char * title, const char * base_dir, const char 
       GtkFileChooser *chooser = GTK_FILE_CHOOSER (native);
 
       if (overwrite_check) {
-          gtk_file_chooser_set_do_overwrite_confirmation (chooser, TRUE);
+        gtk_file_chooser_set_do_overwrite_confirmation (chooser, TRUE);
       }
       
       gtk_file_chooser_set_current_folder(chooser,base_dir);
-      gtk_file_chooser_set_current_name (chooser,untitled);
+      if (disp_save) {     
+        gtk_file_chooser_set_current_name (chooser,untitled);
+      }
       GtkFileFilter *filter = gtk_file_filter_new ();
       gtk_file_filter_add_pattern (filter, ext);
       gtk_file_chooser_add_filter(chooser, filter);
