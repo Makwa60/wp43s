@@ -861,6 +861,7 @@ void pemAddNumber(int16_t item) {
     }
     else {
       aimBuffer[0] = 0;
+      nimNumberPart = NP_EMPTY;
     }
   #endif // !TESTSUITE_BUILD
 }
@@ -987,6 +988,7 @@ void pemCloseNumberInput(void) {
     }
 
     aimBuffer[0] = '!';
+    nimNumberPart = NP_EMPTY;
   #endif // TESTSUITE_BUILD
 }
 
