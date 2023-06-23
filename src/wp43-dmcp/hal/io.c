@@ -228,8 +228,7 @@ int load_programfile(const char * fpath, const char * fname, void * data) {
   return MRET_LOADSTATE;
 }
 
-void show_warning(char *str)
-{
+void show_warning(char *str) {
   char delim[] = "\n";
   char *ptr = strtok(str, delim);
 
@@ -251,4 +250,9 @@ void show_warning(char *str)
     if (( k1 == KEY_ENTER ) ||( IS_EXIT_KEY(k1) ) || ( is_menu_auto_off() ))
        break;
   }
+}
+
+void fnDiskInfo(uint16_t unusedButMandatoryParameter) {
+  disp_disk_info("Disk Info");
+  wait_for_key_press();
 }

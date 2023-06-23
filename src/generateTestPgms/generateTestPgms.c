@@ -10503,8 +10503,8 @@ int main(int argc, char* argv[]) {
     *(currentStep++) = 'a';
     *(currentStep++) = 'r';
 
-    *(currentStep++) = (ITM_FLASH >> 8) | 0x80;
-    *(currentStep++) =  ITM_FLASH       & 0xff;
+    *(currentStep++) = (ITM_DISK >> 8) | 0x80;
+    *(currentStep++) =  ITM_DISK       & 0xff;
 
     *(currentStep++) = (ITM_FQX >> 8) | 0x80;
     *(currentStep++) =  ITM_FQX       & 0xff;

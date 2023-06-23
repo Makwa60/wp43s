@@ -809,7 +809,7 @@
           case ITM_ERFC:
           case ITM_EXPT:
           case ITM_FIB:
-          case ITM_FLASH:
+          case ITM_DISK:
           case ITM_GD:
           case ITM_GDM1:
           case ITM_GRADto:

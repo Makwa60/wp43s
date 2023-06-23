@@ -1519,7 +1519,7 @@
   #define ITM_GET_JUL_GREG              1471
   #define ITM_FIB                       1472
   #define ITM_FIX                       1473
-  #define ITM_FLASH                     1474
+  #define ITM_DISK                      1474
   #define ITM_FQX                       1475
   #define ITM_FDQX                      1476
   #define ITM_GAP                       1477
