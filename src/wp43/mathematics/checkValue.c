@@ -54,18 +54,27 @@ void fnCheckValue(uint16_t mode) {
 void checkValueLonI(uint16_t mode) {
   longInteger_t val;
 
-  if(mode == CHECK_VALUE_POSITIVE_ZERO || mode == CHECK_VALUE_NEGATIVE_ZERO) { // unlikely true
-    convertLongIntegerRegisterToLongInteger(REGISTER_X, val);
-    if(mode == CHECK_VALUE_POSITIVE_ZERO) {
-      temporaryInformation = (getSystemFlag(FLAG_SPCRES) && longIntegerIsZero(val) && longIntegerIsPositive(val)) ? TI_TRUE : TI_FALSE;
+  switch(mode) {
+    case CHECK_VALUE_REAL: {
+      temporaryInformation = TI_FALSE;
+      return;
     }
-    else { // mode == CHECK_VALUE_NEGATIVE_ZERO
-      temporaryInformation = (getSystemFlag(FLAG_SPCRES) && longIntegerIsZero(val) && longIntegerIsNegative(val)) ? TI_TRUE : TI_FALSE;
+    case CHECK_VALUE_POSITIVE_ZERO:
+    case CHECK_VALUE_NEGATIVE_ZERO: { // unlikely true
+      convertLongIntegerRegisterToLongInteger(REGISTER_X, val);
+      if(mode == CHECK_VALUE_POSITIVE_ZERO) {
+        temporaryInformation = (getSystemFlag(FLAG_SPCRES) && longIntegerIsZero(val) && longIntegerIsPositive(val)) ? TI_TRUE : TI_FALSE;
+      }
+      else { // mode == CHECK_VALUE_NEGATIVE_ZERO
+        temporaryInformation = (getSystemFlag(FLAG_SPCRES) && longIntegerIsZero(val) && longIntegerIsNegative(val)) ? TI_TRUE : TI_FALSE;
+      }
+      longIntegerFree(val);
+      return;
     }
-    longIntegerFree(val);
-    return;
+    default: {
+      checkReal(mode);
+    }
   }
-  checkReal(mode);
 }
 
 
@@ -73,10 +82,6 @@ void checkValueLonI(uint16_t mode) {
 void checkValueRema(uint16_t mode) {
   const int32_t elements = (int32_t)REGISTER_REAL34_MATRIX_DBLOCK(REGISTER_X)->matrixRows * (int32_t)REGISTER_REAL34_MATRIX_DBLOCK(REGISTER_X)->matrixColumns;
   switch(mode) {
-    case CHECK_VALUE_MATRIX: {
-      temporaryInformation = TI_TRUE;
-      return;
-    }
     case CHECK_VALUE_MATRIX_SQUARE: {
       temporaryInformation = (REGISTER_REAL34_MATRIX_DBLOCK(REGISTER_X)->matrixRows == REGISTER_REAL34_MATRIX_DBLOCK(REGISTER_X)->matrixColumns) ? TI_TRUE : TI_FALSE;
       return;
@@ -85,6 +90,7 @@ void checkValueRema(uint16_t mode) {
       temporaryInformation = TI_FALSE;
       return;
     }
+    case CHECK_VALUE_MATRIX:
     case CHECK_VALUE_REAL: {
       temporaryInformation = TI_TRUE;
       return;
@@ -141,15 +147,8 @@ void checkValueCxma(uint16_t mode) {
       }
       return;
     }
-    case CHECK_VALUE_REAL: { // true if all elements are real
-      temporaryInformation = TI_TRUE;
-      if(getSystemFlag(FLAG_SPCRES)) {
-        for(int i = 0; i < elements; ++i) {
-          if(!real34IsZero(VARIABLE_IMAG34_DATA(REGISTER_COMPLEX34_MATRIX_M_ELEMENTS(REGISTER_X) + i))) {
-            temporaryInformation = TI_FALSE;
-          }
-        }
-      }
+    case CHECK_VALUE_REAL: {
+      temporaryInformation = TI_FALSE;
       return;
     }
     case CHECK_VALUE_SPECIAL: { // true if any elements is special
@@ -183,21 +182,30 @@ void checkValueCxma(uint16_t mode) {
 
 
 void checkValueShoI(uint16_t mode) {
-  if(mode == CHECK_VALUE_POSITIVE_ZERO || mode == CHECK_VALUE_NEGATIVE_ZERO) {
-    if(shortIntegerMode == SIM_1COMPL || shortIntegerMode == SIM_SIGNMT) {
-      if(mode == CHECK_VALUE_POSITIVE_ZERO && (*(REGISTER_SHORT_INTEGER_DATA(REGISTER_X)) & shortIntegerMask) == 0) {
-          temporaryInformation = TI_TRUE;
-          return;
-      }
-      if(mode == CHECK_VALUE_NEGATIVE_ZERO && (*(REGISTER_SHORT_INTEGER_DATA(REGISTER_X)) & shortIntegerMask) == (shortIntegerMode == SIM_1COMPL ? shortIntegerMask : shortIntegerSignBit)) {
-          temporaryInformation = TI_TRUE;
-          return;
-      }
+  switch(mode) {
+    case CHECK_VALUE_REAL: {
+      temporaryInformation = TI_FALSE;
+      return;
     }
-    temporaryInformation = TI_FALSE;
-    return;
+    case CHECK_VALUE_POSITIVE_ZERO:
+    case CHECK_VALUE_NEGATIVE_ZERO: {
+      if(shortIntegerMode == SIM_1COMPL || shortIntegerMode == SIM_SIGNMT) {
+        if(mode == CHECK_VALUE_POSITIVE_ZERO && (*(REGISTER_SHORT_INTEGER_DATA(REGISTER_X)) & shortIntegerMask) == 0) {
+            temporaryInformation = TI_TRUE;
+            return;
+        }
+        if(mode == CHECK_VALUE_NEGATIVE_ZERO && (*(REGISTER_SHORT_INTEGER_DATA(REGISTER_X)) & shortIntegerMask) == (shortIntegerMode == SIM_1COMPL ? shortIntegerMask : shortIntegerSignBit)) {
+            temporaryInformation = TI_TRUE;
+            return;
+        }
+      }
+      temporaryInformation = TI_FALSE;
+      return;
+    }
+    default: {
+      checkReal(mode);
+    }
   }
-  checkReal(mode);
 }
 
 
@@ -255,10 +263,6 @@ void checkValueCplx(uint16_t mode) {
       temporaryInformation = real34IsZero(REGISTER_IMAG34_DATA(REGISTER_X)) ? TI_FALSE : TI_TRUE;
       return;
     }
-    case CHECK_VALUE_REAL: {
-      temporaryInformation = real34IsZero(REGISTER_IMAG34_DATA(REGISTER_X)) ? TI_TRUE : TI_FALSE;
-      return;
-    }
     case CHECK_VALUE_SPECIAL: {
       temporaryInformation = (getSystemFlag(FLAG_SPCRES) && (real34IsSpecial(REGISTER_REAL34_DATA(REGISTER_X)) || real34IsSpecial(REGISTER_IMAG34_DATA(REGISTER_X)))) ? TI_TRUE : TI_FALSE;
       return;
@@ -267,6 +271,7 @@ void checkValueCplx(uint16_t mode) {
       temporaryInformation = (getSystemFlag(FLAG_SPCRES) && (real34IsNaN(REGISTER_REAL34_DATA(REGISTER_X)) || real34IsNaN(REGISTER_IMAG34_DATA(REGISTER_X)))) ? TI_TRUE : TI_FALSE;
       return;
     }
+    case CHECK_VALUE_REAL:
     case CHECK_VALUE_MATRIX: {
       temporaryInformation = TI_FALSE;
       return;
