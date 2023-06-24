@@ -10,8 +10,10 @@
 #include "fonts.h"
 #include "integers.h"
 #include "items.h"
+#include "mathematics/integerPart.h"
 #include "mathematics/ln.h"
 #include "mathematics/matrix.h"
+#include "mathematics/power.h"
 #include "mathematics/toPolar.h"
 #include "mathematics/wp34s.h"
 #include "registers.h"
@@ -110,7 +112,23 @@ void log10LonI(void) {
       realDivide(&x, const_ln10, &x, &ctxtReal39);
       reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
       convertRealToReal34ResultRegister(&x, REGISTER_X);
-     }
+
+      {
+        longInteger_t xx, rr, yy;
+        longIntegerInit(xx);
+        longIntegerInit(rr);
+        longIntegerInit(yy);
+        intToLongInteger(10, xx);
+        convertReal34ToLongInteger(REGISTER_REAL34_DATA(REGISTER_X), rr, DEC_ROUND_HALF_EVEN);
+        longIntegerPower(xx, rr, yy);
+        if(longIntegerCompare(lgInt, yy) == 0) {
+          ipReal();
+        }
+        longIntegerFree(yy);
+        longIntegerFree(rr);
+        longIntegerFree(xx);
+      }
+    }
     else if(getFlag(FLAG_CPXRES)) {
       realSetPositiveSign(&x);
       realLn(&x, &x, &ctxtReal39);
