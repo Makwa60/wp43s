@@ -213,7 +213,6 @@ void logxyLonILonI(void) {
     longIntegerInit(rr);
     convertReal34ToLongInteger(REGISTER_REAL34_DATA(REGISTER_X), rr, DEC_ROUND_HALF_EVEN);
     longIntegerPower(xx, rr, yy);
-    fflush(stdout);
     if(longIntegerCompare(antilog, yy) == 0) {
       ipReal();
     }
