@@ -79,12 +79,9 @@ void factLonI(void) {
   }
 
   if(longIntegerCompareUInt(x, 450) > 0) {
-    displayCalcErrorMessage(ERROR_OUT_OF_RANGE, ERR_REGISTER_LINE, REGISTER_X);
-    #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-      longIntegerRegisterToDisplayString(REGISTER_X, errorMessage, ERROR_MESSAGE_LENGTH, SCREEN_WIDTH, 50, STD_SPACE_PUNCTUATION);
-      sprintf(tmpString, "cannot calculate factorial(%s), the limit is 450, it's to ensure that the 3328 bits limit is not exceeded", errorMessage);
-      moreInfoOnError("In function factLonI:", tmpString, NULL, NULL);
-    #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+    // convert long integers above 450 to reals and return a real factorial result
+    convertLongIntegerRegisterToReal34Register(REGISTER_X, REGISTER_X);
+    factReal();
     longIntegerFree(x);
     return;
   }
