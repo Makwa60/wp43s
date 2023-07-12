@@ -1112,12 +1112,17 @@ bool      _kbSeenInterrupt     = false;
       }
 
       case ITM_EXIT: {
-        fnKeyExit(NOPARAM);
-        if(temporaryInformation != TI_NO_INFO) {
-          refreshScreen();
+        if(!tamIsActive() && (calcMode == cmNormal || calcMode == cmAim || calcMode == cmNim || calcMode == cmPem || calcMode == cmMim || calcMode == cmEim)) {
+          keyActionProcessed = false; // Long press to EXITALL
         }
-        temporaryInformation = TI_NO_INFO;
-        keyActionProcessed = true;
+        else {
+          fnKeyExit(NOPARAM);
+          if(temporaryInformation != TI_NO_INFO) {
+            refreshScreen();
+          }
+          temporaryInformation = TI_NO_INFO;
+          keyActionProcessed = true;
+        }
         break;
       }
 
