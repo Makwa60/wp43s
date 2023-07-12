@@ -824,7 +824,10 @@ void tamReset(void) {
       else if(tam.mode == tmLabel || tam.mode == tmSolve || (tam.mode == tmKey && tam.keyInputFinished) || (tam.mode == tmDelItem && softmenu[softmenuStack[0].softmenuId].menuItem == -MNU_PROGS)) {
         value = findNamedLabelWithDuplicate(buffer, dupNum);
         if(value == INVALID_VARIABLE && tam.function != ITM_LBL && tam.function != ITM_LBLQ && (calcMode != cmPem || tam.mode != tmSolve)) {
-          if(calcMode != cmPem && getSystemFlag(FLAG_IGN1ER)) {
+          if(calcMode == cmPem) {
+            /* nothing to do */
+          }
+          else if(calcMode != cmPem && getSystemFlag(FLAG_IGN1ER)) {
             clearSystemFlag(FLAG_IGN1ER);
             errorMoreInfo("string '%s' is not a named label\nignored since IGN1ER was set", buffer);
           }
