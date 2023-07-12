@@ -254,9 +254,16 @@ void clearScreen(void) {
 
 
   void cbShowNop(uint16_t param) {
-    hideFunctionName();
-    tmpString[0] = 0;
-    showFunctionName(ITM_NOP, 0);
+    if(showFunctionNameItem == ITM_EXIT) {
+      hideFunctionName();
+      tmpString[0] = 0;
+      showFunctionName(ITM_EXITALL, 1000);
+    }
+    else {
+      hideFunctionName();
+      tmpString[0] = 0;
+      showFunctionName(ITM_NOP, 0);
+    }
   }
 
 

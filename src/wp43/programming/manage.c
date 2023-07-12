@@ -23,6 +23,7 @@
 #include "sort.h"
 #include "ui/bufferize.h"
 #include "ui/cursor.h"
+#include "ui/keyboard.h"
 #include "ui/screen.h"
 #include "ui/softmenus.h"
 #include "ui/tam.h"
@@ -1231,6 +1232,11 @@ void insertStepInProgram(int16_t func) {
 
         case ITM_USERMODE: {         // 1729
           fnFlipFlag(FLAG_USER);
+          break;
+        }
+
+        case ITM_EXIT: {         // 1737
+          fnKeyExit(NOPARAM);
           break;
         }
       }
