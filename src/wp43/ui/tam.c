@@ -422,9 +422,9 @@ void tamReset(void) {
       bool allowAlphaMode = false, beginWithLowercase = false;
       allowAlphaMode = allowAlphaMode || (!tam.digitsSoFar && !tam.dot && !valueParameter && (tam.mode == tmStoRcl || tam.mode == tmMDim || tam.mode == tmRegister || tam.mode == tmCmp || tam.function == ITM_MVAR));
       allowAlphaMode = allowAlphaMode || (!tam.digitsSoFar && !tam.dot && tam.indirect);
-      allowAlphaMode = allowAlphaMode || (!tam.digitsSoFar && !tam.dot && tam.mode == tmSolve && calcMode == cmPem);
+      allowAlphaMode = allowAlphaMode || (!tam.digitsSoFar && !tam.dot && tam.function == ITM_SOLVE && calcMode == cmPem);
       beginWithLowercase = allowAlphaMode;
-      allowAlphaMode = allowAlphaMode || (!tam.digitsSoFar && !tam.dot && tam.mode == tmLabel);
+      allowAlphaMode = allowAlphaMode || (!tam.digitsSoFar && !tam.dot && (tam.mode == tmLabel || tam.mode == tmSolve));
       allowAlphaMode = allowAlphaMode || (!tam.digitsSoFar && !tam.dot && tam.keyInputFinished && tam.mode == tmKey);
       allowAlphaMode = allowAlphaMode || (!tam.digitsSoFar && (tam.function == ITM_LBL || tam.function == ITM_GTOP));
       if(allowAlphaMode) {
@@ -823,7 +823,7 @@ void tamReset(void) {
       }
       else if(tam.mode == tmLabel || tam.mode == tmSolve || (tam.mode == tmKey && tam.keyInputFinished) || (tam.mode == tmDelItem && softmenu[softmenuStack[0].softmenuId].menuItem == -MNU_PROGS)) {
         value = findNamedLabelWithDuplicate(buffer, dupNum);
-        if(value == INVALID_VARIABLE && tam.function != ITM_LBL && tam.function != ITM_LBLQ && (calcMode != cmPem || tam.mode != tmSolve)) {
+        if(value == INVALID_VARIABLE && tam.function != ITM_LBL && tam.function != ITM_LBLQ && (calcMode != cmPem || tam.mode != tmSolve || tam.function == ITM_PGMSLV)) {
           if(calcMode == cmPem) {
             /* nothing to do */
           }
