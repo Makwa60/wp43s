@@ -44,7 +44,7 @@
 
 #include "wp43.h"
 
-#define BACKUP_VERSION                     91  // remove FM program support
+#define BACKUP_VERSION                     92  // Add CONFIG and ALLVAR catalogs
 #define OLDEST_COMPATIBLE_BACKUP_VERSION   87  // save running app
 #define START_REGISTER_VALUE             1000  // was 1522, why?
 
@@ -468,7 +468,16 @@ static uint32_t restore(void *buffer, uint32_t size) {
       restore(&wp43MemInBlocks,                    sizeof(wp43MemInBlocks));
       restore(&gmpMemInBytes,                      sizeof(gmpMemInBytes));
       restore(&catalog,                            sizeof(catalog));
-      restore(&lastCatalogPosition,                sizeof(lastCatalogPosition));
+      if(backupVersion < 92) { // add catalogs
+        restore(&lastCatalogPosition,              38);
+        for(int i = 19 /* ITM_MENU */; i >= 16 /* MNU_MVAR */; --i) {
+          lastCatalogPosition[i] = lastCatalogPosition[i - 2];
+        }
+        lastCatalogPosition[15 /* MNU_ALLVAR */] = lastCatalogPosition[14 /* MNU_MVAR */] = 0;
+      }
+      else {
+        restore(&lastCatalogPosition,              sizeof(lastCatalogPosition));
+      }
       restore(&lgCatalogSelection,                 sizeof(lgCatalogSelection));
       restore(displayValueX,                       sizeof(displayValueX));
       restore(&pcg32_global,                       sizeof(pcg32_global));

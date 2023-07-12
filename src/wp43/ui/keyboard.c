@@ -163,7 +163,9 @@ bool      _kbSeenInterrupt     = false;
       case MNU_SINTS:
       case MNU_LINTS:
       case MNU_REALS:
-      case MNU_CPXS: {
+      case MNU_CPXS:
+      case MNU_CONFIG:
+      case MNU_ALLVAR: {
         dynamicMenuItem = firstItem + itemShift + fn;
         item = (dynamicMenuItem >= dynamicSoftmenu[menuId].numItems ? ITM_NOP : (tamIsActive() && tam.mode == tmDelItem) ? MNU_DYNAMIC : ITM_RCL);
         break;
@@ -248,7 +250,9 @@ bool      _kbSeenInterrupt     = false;
         case MNU_SINTS:
         case MNU_LINTS:
         case MNU_REALS:
-        case MNU_CPXS: {
+        case MNU_CPXS:
+        case MNU_CONFIG:
+        case MNU_ALLVAR: {
           return findNamedVariable((char *)getNthString(dynamicSoftmenu[menuId].menuContent, dynamicMenuItem)) - FIRST_NAMED_VARIABLE + ASSIGN_NAMED_VARIABLES;
         }
         case MNU_MENUS: {
