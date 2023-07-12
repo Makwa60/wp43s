@@ -464,6 +464,12 @@
       case CATALOG_CPXS: {
         return "CATALOG_CPXS";
       }
+      case CATALOG_CONFIG: {
+        return "CATALOG_CONFIG";
+      }
+      case CATALOG_ALLVAR: {
+        return "CATALOG_ALLVAR";
+      }
       case CATALOG_MVAR: {
         return "CATALOG_MVAR";
       }

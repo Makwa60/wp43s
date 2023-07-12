@@ -317,7 +317,7 @@
   #define Y_POSITION_OF_REGISTER_Y_LINE             96
   #define Y_POSITION_OF_REGISTER_X_LINE            132
 
-  #define NUMBER_OF_DYNAMIC_SOFTMENUS               18
+  #define NUMBER_OF_DYNAMIC_SOFTMENUS               20
   #define SOFTMENU_HEIGHT                           23
 
   // Horizontal offsets in the status bar
@@ -459,8 +459,10 @@
   #define CATALOG_LINTS                             15
   #define CATALOG_REALS                             16
   #define CATALOG_CPXS                              17
-  #define CATALOG_MVAR                              18
-  #define NUMBER_OF_CATALOGS                        19
+  #define CATALOG_CONFIG                            18
+  #define CATALOG_ALLVAR                            19
+  #define CATALOG_MVAR                              20
+  #define NUMBER_OF_CATALOGS                        21
 
   // String comparison type
   #define CMP_BINARY                                 0

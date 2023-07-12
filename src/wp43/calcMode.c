@@ -266,6 +266,14 @@ calcMode_t calcMode;
         catalog = CATALOG_CPXS;
         break;
       }
+      case MNU_CONFIG: {
+        catalog = CATALOG_CONFIG;
+        break;
+      }
+      case MNU_ALLVAR: {
+        catalog = CATALOG_ALLVAR;
+        break;
+      }
       case MNU_Solver:
       case MNU_Sf:
       case MNU_1STDERIV:
