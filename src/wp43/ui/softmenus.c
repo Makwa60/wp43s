@@ -245,8 +245,8 @@ TO_QSPI const int16_t menu_CATALOG[]     = { -MNU_FCNS,                     ITM_
 
 TO_QSPI const int16_t menu_CHARS[]       = { -MNU_ALPHAINTL,               -MNU_ALPHA_OMEGA,            ITM_NULL,                -MNU_ALPHAMATH,        -MNU_MyAlpha,                -MNU_ALPHADOT                  };
 
-TO_QSPI const int16_t menu_VARS[]        = { -MNU_LINTS,                    -MNU_SINTS,                 -MNU_REALS,               -MNU_CPXS,             -MNU_STRINGS,                -MNU_MATRS,
-                                             -MNU_DATES,                    -MNU_TIMES,                 -MNU_ANGLES,              -MNU_CONFIG,           ITM_NULL,                    -MNU_ALLVAR                   };
+TO_QSPI const int16_t menu_VARS[]        = { -MNU_LINTS,                    -MNU_SINTS,                 -MNU_REALS,               -MNU_CPXS,             -MNU_ALLVAR,                 -MNU_MATRS,
+                                             -MNU_DATES,                    -MNU_TIMES,                 -MNU_ANGLES,              -MNU_CONFIG,           ITM_NULL,                    -MNU_STRINGS                  };
 
 TO_QSPI const int16_t menu_DELITM[]      = { ITM_NULL,                      ITM_NULL,                   ITM_NULL,                 -MNU_PROGS,            -MNU_VARS,                   -MNU_MENUS                    };
 
