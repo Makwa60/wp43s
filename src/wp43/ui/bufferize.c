@@ -1555,7 +1555,7 @@
         break;
       }
 
-      case ITM_YX: { // B for binary base
+      case -MNU_EXP: { // B for binary base
         if(nimNumberPart == NP_INT_BASE && aimBuffer[strlen(aimBuffer) - 1] == '#') {
           strcat(aimBuffer, "2");
           goto addItemToNimBuffer_exit;
@@ -1563,7 +1563,7 @@
         break;
       }
 
-      case ITM_LN: { // D for decimal base
+      case ITM_LN: {     // D for decimal base
         if(nimNumberPart == NP_INT_BASE && aimBuffer[strlen(aimBuffer) - 1] == '#') {
           strcat(aimBuffer, "10");
           goto addItemToNimBuffer_exit;
