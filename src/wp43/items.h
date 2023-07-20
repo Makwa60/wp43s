@@ -1869,7 +1869,9 @@
   #define ITM_SAVEST                    1808
   #define ITM_LOADST                    1809
 
-  #define LAST_ITEM                     1810
+  #define ITM_EXITALLNP                 1810
+
+  #define LAST_ITEM                     1811
 
   #define NOPARAM                       9876 // Item for function who don't need an item
   #define CONFIRMED                     9877 // Confirmation for RESET, CLPALL, CLALL
