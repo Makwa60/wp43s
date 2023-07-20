@@ -634,6 +634,7 @@ static void _closeAlphaMenus(void) {
       case MNU_ALPHAMATH:
       case MNU_ALPHA_OMEGA:
       case MNU_alpha_omega:
+      case MNU_ALPHADOT:
         popSoftmenu();
         break;
 
@@ -644,6 +645,7 @@ static void _closeAlphaMenus(void) {
           case MNU_ALPHAMATH:
           case MNU_ALPHA_OMEGA:
           case MNU_alpha_omega:
+          case MNU_ALPHADOT:
             popSoftmenu();
             break;
           default:
@@ -715,7 +717,7 @@ void pemAlpha(int16_t item) {
         aimBuffer[stringLastGlyph(aimBuffer)] = 0;
       }
     }
-    else if(item == ITM_ENTER) {
+    else if((item == ITM_ENTER) || (item == ITM_EXIT) || (item == ITM_EXITALLNP)) {
       pemCloseAlphaInput();
       --firstDisplayedLocalStepNumber;
       defineFirstDisplayedStep();
@@ -1239,6 +1241,12 @@ void insertStepInProgram(int16_t func) {
           fnKeyExit(NOPARAM);
           break;
         }
+        
+        case ITM_EXITALLNP: {    // 1810
+          fnExitAllMenus(NOPARAM);
+          break;
+        }
+
       }
       break;
     }
@@ -1333,7 +1341,8 @@ void addStepInProgram(int16_t func) {
         case ITM_KEYG:           // 1498
         case ITM_KEYX:           // 1499
         case ITM_BST:            // 1734
-        case ITM_SST: {          // 1736
+        case ITM_SST:            // 1736
+        case ITM_EXITALLNP: {    // 1810
           break;
         }
         default: {

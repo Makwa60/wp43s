@@ -257,7 +257,11 @@ void clearScreen(void) {
     if(showFunctionNameItem == ITM_EXIT) {
       hideFunctionName();
       tmpString[0] = 0;
-      showFunctionName(ITM_EXITALL, 1000);
+      if(calcMode == cmPem) {
+        showFunctionName(ITM_EXITALLNP, 1000);
+      } else {
+        showFunctionName(ITM_EXITALL, 1000);
+      }
     }
     else {
       hideFunctionName();
