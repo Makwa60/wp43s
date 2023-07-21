@@ -418,7 +418,7 @@ void tamReset(void) {
       // Do nothing if it wasn't enter or backspace as the text input is handled elsewhere
       return;
     }
-    else if(item == ITM_alpha) {
+    else if(!(tam.function == ITM_toINT) && item == ITM_alpha) {
       bool allowAlphaMode = false, beginWithLowercase = false;
       allowAlphaMode = allowAlphaMode || (!tam.digitsSoFar && !tam.dot && !valueParameter && (tam.mode == tmStoRcl || tam.mode == tmMDim || tam.mode == tmRegister || tam.mode == tmCmp || tam.function == ITM_MVAR));
       allowAlphaMode = allowAlphaMode || (!tam.digitsSoFar && !tam.dot && tam.indirect);
@@ -524,7 +524,7 @@ void tamReset(void) {
       tamLeaveMode();
       return;
     }
-    else if(tam.function == ITM_toINT && item == ITM_REG_D) {
+    else if(tam.function == ITM_toINT && item == ITM_REG_D ) {
       tam.value = 10;
       forceTry = true;
     }
