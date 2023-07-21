@@ -308,7 +308,7 @@
   #define SCREEN_HEIGHT                            240 // Height of the screen
   #define ON_PIXEL                            0x303030 // blue red green
   #define OFF_PIXEL                           0xe0e0e0 // blue red green
-  #define SOFTMENU_STACK_SIZE                        8
+  #define SOFTMENU_STACK_SIZE                        4
   #define TEMPORARY_INFO_OFFSET                     10 // Vertical offset for temporary informations. I find 4 looks better
   #define REGISTER_LINE_HEIGHT                      36
 
