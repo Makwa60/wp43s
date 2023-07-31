@@ -82,23 +82,7 @@ void fnVolumeDown(uint16_t unusedButMandatoryParameter) {
 }
 
 void fnBuzz(uint16_t unusedButMandatoryParameter) {
-#if defined(WITH_PULSEAUDIO)
-  uint32_t frequency;
-  uint32_t ms_delay;
-  if(!getSystemFlag(FLAG_QUIET)) {
-    frequency = _getValueFromRegister(REGISTER_Y);
-    ms_delay  = _getValueFromRegister(REGISTER_X);
-    if (ms_delay > 2000) ms_delay = 2000;  // max duration value : 2s
-    if (frequency != 0) { 
-      if (frequency > 20000) frequency = 20000;  // max  audible frequency:  20 kHz
-      _audioPulse(frequency, ms_delay);
-    } else {
-      timeSleep(ms_delay);
-    }
-  }
-#else
   temporaryInformation = TI_DMCP_ONLY;
-#endif // WITH_PULSEAUDIO
 }
 
 void fnPlay (uint16_t unusedButMandatoryParameter) {
