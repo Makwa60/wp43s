@@ -28,4 +28,41 @@
    */
   void audioShutter(void);
 
+  /**
+   * Set Buzzer volume on the calculator.
+   * Only relevant for the DMCP version, not used for the simulator
+   * Input : volume level from 0 to 9
+   */
+  void fnVolume(uint16_t volume);
+
+  /**
+   * Increase Buzzer volume on the calculator.
+   * Only relevant for the DMCP version, not used for the simulator
+   */
+  void fnVolumeUp(uint16_t unusedButMandatoryParameter);
+
+  /**
+   * Decrease Buzzer volume on the calculator.
+   * Only relevant for the DMCP version, not used for the simulator
+   */
+  void fnVolumeDown(uint16_t unusedButMandatoryParameter);
+  
+  /**
+   * DM42 squeak sound
+   * Only relevant for the DMCP version, not used for the simulator
+   */
+  void squeak();
+
+  /**
+   * Play a sound on the buzzer whose frequency is in Y and duration in X.
+   * Only relevant for the DMCP version, not used for the simulator
+   */
+  void fnBuzz(uint16_t unusedButMandatoryParameter);
+
+  /**
+   * Play a melody on the buzzer whose notes frequency and durations are in a Nx2 matrix.
+   * Only relevant for the DMCP version, not used for the simulator
+   */
+  void fnPlay(uint16_t regist);
+  
 #endif // !AUDIO_H

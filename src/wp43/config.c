@@ -1007,6 +1007,10 @@ void runDMCPmenu(uint16_t unusedButMandatoryParameter) {
 }
 
 void activateUSBdisk(uint16_t unusedButMandatoryParameter) {
+  #if defined(PC_BUILD)
+    temporaryInformation = TI_DMCP_ONLY;
+  #endif // PC_BUILD
+  
   #if defined(DMCP_BUILD)
     run_menu_item_sys(MI_MSC);
   #endif // DMCP_BUILD

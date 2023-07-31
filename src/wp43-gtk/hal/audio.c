@@ -3,6 +3,8 @@
 
 #include "hal/audio.h"
 
+#include "error.h"
+#include "flags.h"
 #include "hal/time.h"
 #include <stdio.h>
 #if defined(__MINGW64__)
@@ -11,6 +13,8 @@
 #elif defined(WITH_PULSEAUDIO)
   #include <pulse/simple.h>
 #endif
+
+#include "wp43.h"
 
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 
@@ -64,3 +68,40 @@ void audioShutter(void) {
     _audioPulse(400000, 5);
   #endif // WITH_PULSEAUDIO
 }
+
+void fnVolume(uint16_t volume) {
+  temporaryInformation = TI_DMCP_ONLY;
+}
+
+void fnVolumeUp(uint16_t unusedButMandatoryParameter) {
+  temporaryInformation = TI_DMCP_ONLY;
+}
+
+void fnVolumeDown(uint16_t unusedButMandatoryParameter) {
+  temporaryInformation = TI_DMCP_ONLY;
+}
+
+void fnBuzz(uint16_t unusedButMandatoryParameter) {
+#if defined(WITH_PULSEAUDIO)
+  uint32_t frequency;
+  uint32_t ms_delay;
+  if(!getSystemFlag(FLAG_QUIET)) {
+    frequency = _getValueFromRegister(REGISTER_Y);
+    ms_delay  = _getValueFromRegister(REGISTER_X);
+    if (ms_delay > 2000) ms_delay = 2000;  // max duration value : 2s
+    if (frequency != 0) { 
+      if (frequency > 20000) frequency = 20000;  // max  audible frequency:  20 kHz
+      _audioPulse(frequency, ms_delay);
+    } else {
+      timeSleep(ms_delay);
+    }
+  }
+#else
+  temporaryInformation = TI_DMCP_ONLY;
+#endif // WITH_PULSEAUDIO
+}
+
+void fnPlay (uint16_t unusedButMandatoryParameter) {
+  temporaryInformation = TI_DMCP_ONLY;
+}
+

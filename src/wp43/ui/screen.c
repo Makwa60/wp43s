@@ -605,11 +605,18 @@ void clearScreen(void) {
         showString(tmpString, &standardFont, SCREEN_WIDTH - w, Y_POSITION_OF_REGISTER_X_LINE - REGISTER_LINE_HEIGHT*(regist - REGISTER_X) + 6, vmNormal, true, true);
       }
 
+      #if defined(PC_BUILD)
+      else if(temporaryInformation == TI_DMCP_ONLY && regist == REGISTER_X) {
+        sprintf(prefix, "Not available on the simulator");
+        displayTemporaryInformationOnX(prefix);
+      }
+      #endif // PC_BUILD
+      
       else if(temporaryInformation == TI_SAVED && regist == REGISTER_X) {
         sprintf(prefix, "Saved");
         displayTemporaryInformationOnX(prefix);
       }
-
+      
       else if(temporaryInformation == TI_BACKUP_RESTORED && regist == REGISTER_X) {
         sprintf(prefix, "Backup restored");
         displayTemporaryInformationOnX(prefix);

@@ -101,7 +101,11 @@ TO_QSPI const int16_t menu_FLAGS[]       = { ITM_SF,                        ITM_
                                              ITM_NULL,                      ITM_NULL,                   ITM_NULL,                 ITM_NULL,              ITM_NULL,                    ITM_CLFALL                    };
 
 TO_QSPI const int16_t menu_INFO[]        = { ITM_SSIZE,                     ITM_MEM,                    ITM_RMQ,                  ITM_ISM,               ITM_WSIZEQ,                  ITM_KTYP,
+#if DMCP_BUILD
                                              ITM_LocRQ,                     ITM_DISK,                   ITM_ULP,                  ITM_NEIGHB,            ITM_SDIGS,                   ITM_BATT,
+#else // !DMCP_BUILD
+                                             ITM_LocRQ,                     ITM_NULL,                   ITM_ULP,                  ITM_NEIGHB,            ITM_SDIGS,                   ITM_BATT,
+#endif // DMCP_BUILD
                                              ITM_WHO,                       ITM_VERS,                   ITM_M_DIMQ,               ITM_PMINFINITY,        ITM_ALPHAPOS,                ITM_ALPHALENG,
                                              ITM_GETRANGE,                  ITM_GETHIDE,                ITM_GET_JUL_GREG,         ITM_NULL,              ITM_NULL,                    ITM_BESTFQ                    };
 
@@ -355,7 +359,11 @@ TO_QSPI const int16_t menu_Sf[]          = { ITM_NULL,                      ITM_
 TO_QSPI const int16_t menu_Solver[]      = { ITM_NULL,                      ITM_NULL,                   ITM_NULL,                 ITM_NULL,              ITM_NULL,                    ITM_NULL                      };
 TO_QSPI const int16_t menu_IO[]          = { ITM_LOAD,                      ITM_LOADP,                  ITM_LOADR,                ITM_DUMP,              ITM_SAVEST,                  ITM_LOADST,
                                              ITM_LOADSS,                    ITM_LOADV,                  ITM_LOADSIGMA,            ITM_NULL,              ITM_WRITEP,                  ITM_READP,
+#if DMCP_BUILD
+                                             ITM_BEEP,                      ITM_TONE,                   ITM_BUZZ,                 ITM_PLAY,              ITM_VOLMINUS,                ITM_VOLPLUS                   };
+#else // !DMCP_BUILD
                                              ITM_BEEP,                      ITM_TONE,                   ITM_NULL,                 ITM_NULL,              ITM_NULL,                    ITM_NULL                      };
+#endif // DMCP_BUILD
 TO_QSPI const int16_t menu_PRINT[]       = { ITM_PRINTERX,                  ITM_PRINTERR,               ITM_PRINTERSIGMA,         ITM_PRINTERADV,        ITM_PRINTERLCD,              ITM_PRINTERPROG,
                                              ITM_PRINTERSTK,                ITM_PRINTERREGS,            ITM_PRINTERUSER,          ITM_PRINTERTAB,        ITM_PRINTERHASH,             ITM_PRINTERCHAR,
                                              ITM_NULL,                      ITM_NULL,                   ITM_NULL,                 ITM_PRINTERWIDTH,      ITM_PRINTERDLAY,             ITM_PRINTERMODE               };

@@ -49,7 +49,7 @@ TO_QSPI const calcKey_t kbd_std[37] = {
 
  {51,   ITM_DIV,         ITM_PARALLEL,    ITM_MOD,         ITM_SLASH,       ITM_N,             ITM_SLASH,             ITM_NU,        ITM_DIV      },
 #if DMCP_BUILD
- {52,   ITM_7,           ITM_ACTUSB,      ITM_NULL,        ITM_7,           ITM_O,             ITM_7,                 ITM_OMEGA,     ITM_7        },
+ {52,   ITM_7,           ITM_ACTUSB,      ITM_SYSTEM,      ITM_7,           ITM_O,             ITM_7,                 ITM_OMEGA,     ITM_7        },
 #else // !DMCP_BUILD
  {52,   ITM_7,           ITM_NULL,        ITM_NULL,        ITM_7,           ITM_O,             ITM_7,                 ITM_OMEGA,     ITM_7        },
  #endif // DMCP_BUILD
