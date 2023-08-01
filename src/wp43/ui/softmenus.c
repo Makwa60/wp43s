@@ -107,7 +107,7 @@ TO_QSPI const int16_t menu_INFO[]        = { ITM_SSIZE,                     ITM_
                                              ITM_LocRQ,                     ITM_NULL,                   ITM_ULP,                  ITM_NEIGHB,            ITM_SDIGS,                   ITM_BATT,
 #endif // DMCP_BUILD
                                              ITM_WHO,                       ITM_VERS,                   ITM_M_DIMQ,               ITM_PMINFINITY,        ITM_ALPHAPOS,                ITM_ALPHALENG,
-                                             ITM_GETRANGE,                  ITM_GETHIDE,                ITM_GET_JUL_GREG,         ITM_NULL,              ITM_NULL,                    ITM_BESTFQ                    };
+                                             ITM_GETRANGE,                  ITM_GETHIDE,                ITM_GET_JUL_GREG,         ITM_VOLQ,              ITM_NULL,                    ITM_BESTFQ                    };
 
 TO_QSPI const int16_t menu_INTS[]        = { ITM_A,                         ITM_B,                      ITM_C,                    ITM_D,                 ITM_E,                       ITM_F,
                                              ITM_IDIV,                      ITM_RMD,                    ITM_MOD,                  ITM_XMOD,              ITM_FLOOR,                   ITM_LCM,

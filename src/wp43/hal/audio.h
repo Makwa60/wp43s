@@ -31,9 +31,16 @@
   /**
    * Set Buzzer volume on the calculator.
    * Only relevant for the DMCP version, not used for the simulator
-   * Input : volume level from 0 to 9
+   * Input : volume level from 0 to 11
    */
-  void fnVolume(uint16_t volume);
+  void fnSetVolume(uint16_t volume);
+  
+  /**
+   * Get Buzzer volume on the calculator.
+   * Only relevant for the DMCP version, not used for the simulator
+   * Output : volume level from 0 to 11
+   */
+  void fnGetVolume(uint16_t volume);
 
   /**
    * Increase Buzzer volume on the calculator.

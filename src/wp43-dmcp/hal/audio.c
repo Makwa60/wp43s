@@ -8,6 +8,7 @@
 #include "mathematics/matrix.h"
 #include "registers.h"
 #include "registerValueConversions.h"
+#include "stack.h"
 #include "typeDefinitions.h"
 #include "ui/keyboard.h"
 
@@ -41,7 +42,7 @@ void dm42_squeak() {
   }
 }
 
-void fnVolume(uint16_t volume) {
+void fnSetVolume(uint16_t volume) {
   uint16_t i;
   uint16_t current_volume;
   current_volume = get_beep_volume();
@@ -55,6 +56,17 @@ void fnVolume(uint16_t volume) {
       beep_volume_down();
     }
   }  
+}
+
+void fnGetVolume(uint16_t unusedButMandatoryParameter) {
+  longInteger_t volume;
+
+  liftStack();
+
+  longIntegerInit(volume);
+  uIntToLongInteger(get_beep_volume(), volume);
+  convertLongIntegerToLongIntegerRegister(volume, REGISTER_X);
+  longIntegerFree(volume);
 }
 
 void fnVolumeUp(uint16_t unusedButMandatoryParameter) {
@@ -133,7 +145,7 @@ void fnPlay(uint16_t regist) {
         frequency = real34ToUInt32(&m.matrixElements[i * cols]);
         ms_delay  = real34ToUInt32(&m.matrixElements[i * cols + 1]);
         volume    = real34ToUInt32(&m.matrixElements[i * cols + 2]);
-        if (cols == 3) fnVolume(volume);
+        if (cols == 3) fnSetVolume(volume);
         _Buzz(frequency, ms_delay);
         if (ms_delay > 0) sys_delay(ms_delay/8);  // delay between two notes: note duration/8
         while(!key_empty()) {
