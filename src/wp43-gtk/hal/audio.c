@@ -69,7 +69,11 @@ void audioShutter(void) {
   #endif // WITH_PULSEAUDIO
 }
 
-void fnVolume(uint16_t volume) {
+void fnSetVolume(uint16_t volume) {
+  temporaryInformation = TI_DMCP_ONLY;
+}
+
+void fnGetVolume(uint16_t unusedButMandatoryParameter) {
   temporaryInformation = TI_DMCP_ONLY;
 }
 
