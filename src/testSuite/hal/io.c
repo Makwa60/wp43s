@@ -95,3 +95,7 @@ int ioFileRemove(ioFilePath_t path, uint32_t *errorNumber) {
   }
   return (result != -1? FILE_OK : FILE_ERROR);
 }
+
+void fnDiskInfo(uint16_t unusedButMandatoryParameter) {
+
+}

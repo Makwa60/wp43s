@@ -12,6 +12,8 @@
 #include <string.h>
 #include <sys/stat.h>
 
+#include "wp43.h"
+
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 
 static FILE *_ioFileHandle = NULL;
@@ -228,4 +230,8 @@ void show_warning(char *string)
   gtk_window_set_title(GTK_WINDOW(dialog), "Warning");
   gtk_dialog_run(GTK_DIALOG(dialog));
   gtk_widget_destroy(dialog);
+}
+
+void fnDiskInfo(uint16_t unusedButMandatoryParameter) {
+  temporaryInformation = TI_DMCP_ONLY;
 }

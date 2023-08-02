@@ -8,7 +8,23 @@
 void audioTone(uint32_t frequency) {
 }
 
-
-
 void audioShutter(void) {
+}
+
+void fnSetVolume(uint16_t volume) {
+}
+
+void fnGetVolume(uint16_t unusedButMandatoryParameter) {
+}
+
+void fnVolumeUp(uint16_t unusedButMandatoryParameter) {
+}
+
+void fnVolumeDown(uint16_t unusedButMandatoryParameter) {
+}
+
+void fnBuzz(uint16_t unusedButMandatoryParameter) {
+}
+
+void fnPlay(uint16_t unusedButMandatoryParameter) {
 }

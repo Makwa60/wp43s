@@ -482,7 +482,8 @@
     TI_REGISTERS_RESTORED  = 58,
     TI_SETTINGS_RESTORED   = 59,
     TI_SUMS_RESTORED       = 60,
-    TI_VARIABLES_RESTORED  = 61
+    TI_VARIABLES_RESTORED  = 61,
+    TI_DMCP_ONLY           = 62
   } temporaryInformation_t;
 
 

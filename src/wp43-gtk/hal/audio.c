@@ -3,6 +3,8 @@
 
 #include "hal/audio.h"
 
+#include "error.h"
+#include "flags.h"
 #include "hal/time.h"
 #include <stdio.h>
 #if defined(__MINGW64__)
@@ -11,6 +13,8 @@
 #elif defined(WITH_PULSEAUDIO)
   #include <pulse/simple.h>
 #endif
+
+#include "wp43.h"
 
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 
@@ -64,3 +68,28 @@ void audioShutter(void) {
     _audioPulse(400000, 5);
   #endif // WITH_PULSEAUDIO
 }
+
+void fnSetVolume(uint16_t volume) {
+  temporaryInformation = TI_DMCP_ONLY;
+}
+
+void fnGetVolume(uint16_t unusedButMandatoryParameter) {
+  temporaryInformation = TI_DMCP_ONLY;
+}
+
+void fnVolumeUp(uint16_t unusedButMandatoryParameter) {
+  temporaryInformation = TI_DMCP_ONLY;
+}
+
+void fnVolumeDown(uint16_t unusedButMandatoryParameter) {
+  temporaryInformation = TI_DMCP_ONLY;
+}
+
+void fnBuzz(uint16_t unusedButMandatoryParameter) {
+  temporaryInformation = TI_DMCP_ONLY;
+}
+
+void fnPlay (uint16_t unusedButMandatoryParameter) {
+  temporaryInformation = TI_DMCP_ONLY;
+}
+

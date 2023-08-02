@@ -21,6 +21,7 @@
 #include "flags.h"
 #include "fonts.h"
 #include "fractions.h"
+#include "hal/audio.h"
 #include "hal/io.h"
 #include "hal/lcd.h"
 #include "integers.h"
@@ -814,6 +815,12 @@ void fnNop(uint16_t unusedButMandatoryParameter) {
   void fnSaveProgram               (uint16_t unusedButMandatoryParameter) {}
   void fnLoadProgram               (uint16_t unusedButMandatoryParameter) {}
   void fnDiskInfo                  (uint16_t unusedButMandatoryParameter) {}
+  void fnSetVolume                 (uint16_t unusedButMandatoryParameter) {}
+  void fnGetVolume                 (uint16_t unusedButMandatoryParameter) {}
+  void fnVolumeUp                  (uint16_t unusedButMandatoryParameter) {}
+  void fnVolumeDown                (uint16_t unusedButMandatoryParameter) {}
+  void fnBuzz                      (uint16_t unusedButMandatoryParameter) {}
+  void fnPlay                      (uint16_t unusedButMandatoryParameter) {}
 #endif // GENERATE_CATALOGS
 
 
@@ -2343,11 +2350,7 @@ TO_QSPI const item_t indexOfItems[] = {
 /* 1471 */  { fnGetFirstGregorianDay,       NOPARAM,                     "J/G?",                                        "J/G?",                                        (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
 /* 1472 */  { fnFib,                        NOPARAM,                     "FIB",                                         "FIB",                                         (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_ENABLED  | PTP_NONE         },
 /* 1473 */  { fnDisplayFormatFix,           tmValue,                     "FIX",                                         "FIX",                                         (0 << TAM_MAX_BITS) |    15, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NUMBER_8     },
-#if defined(DMCP_BUILD)
 /* 1474 */  { fnDiskInfo,                   NOPARAM,                     "DISK?",                                       "DISK?",                                       (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
-#else
-/* 1474 */  { itemToBeCoded,                NOPARAM,                     "DISK?",                                       "DISK?",                                       (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
-#endif
 /* 1475 */  { fn1stDeriv,                   tmLabel,                     "f'(x)",                                       "f'(x)",                                       (0 << TAM_MAX_BITS) |    99, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_LABEL        },
 /* 1476 */  { fn2ndDeriv,                   tmLabel,                     "f\"(x)",                                      "f\"(x)",                                      (0 << TAM_MAX_BITS) |    99, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_LABEL        },
 /* 1477 */  { fnDisplayFormatGap,           tmValue,                     "GAP",                                         "GAP",                                         (0 << TAM_MAX_BITS) |    15, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NUMBER_8     },
@@ -2699,5 +2702,12 @@ TO_QSPI const item_t indexOfItems[] = {
 
 /* 1810 */  { itemToBeCoded,                NOPARAM,                     "EXITALL",                                     "EXITall",                                     (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
 
-/* 1811 */  { itemToBeCoded,                NOPARAM,                     "",                                            "Last item",                                   (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_ENABLED   | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
+/* 1811 */  { fnSetVolume,                  tmValue,                     "VOL",                                         "VOL",                                         (0 << TAM_MAX_BITS) |    11, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NUMBER_8     },
+/* 1812 */  { fnGetVolume,                  NOPARAM,                     "VOL?",                                        "VOL?",                                        (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/* 1813 */  { fnVolumeUp,                   NOPARAM,                     "VOL+",                                        "VOL+",                                        (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
+/* 1814 */  { fnVolumeDown,                 NOPARAM,                     "VOL-",                                        "VOL-",                                        (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
+/* 1815 */  { fnBuzz,                       NOPARAM,                     "BUZZ",                                        "BUZZ",                                        (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_NONE         },
+/* 1816 */  { fnPlay,                       tmRegister,                  "PLAY",                                        "PLAY",                                        (0 << TAM_MAX_BITS) |    99, CAT_FNCT | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_REGISTER     },
+
+/* 1817 */  { itemToBeCoded,                NOPARAM,                     "",                                            "Last item",                                   (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_ENABLED   | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
 };

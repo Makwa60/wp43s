@@ -1871,7 +1871,14 @@
 
   #define ITM_EXITALLNP                 1810
 
-  #define LAST_ITEM                     1811
+  #define ITM_VOL                       1811
+  #define ITM_VOLQ                      1812
+  #define ITM_VOLPLUS                   1813
+  #define ITM_VOLMINUS                  1814
+  #define ITM_BUZZ                      1815
+  #define ITM_PLAY                      1816
+
+  #define LAST_ITEM                     1817
 
   #define NOPARAM                       9876 // Item for function who don't need an item
   #define CONFIRMED                     9877 // Confirmation for RESET, CLPALL, CLALL
