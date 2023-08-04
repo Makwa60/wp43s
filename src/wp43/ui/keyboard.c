@@ -633,12 +633,12 @@ bool      _kbSeenInterrupt     = false;
             && (!tam.mode || tam.function != ITM_CLP)
           #endif /* CLP_WITH_MENU != 0 */
           ) { // TODO: is that correct
+            fnKeyInCatalog = 1;
             if(indexOfItems[item].func == fnGetSystemFlag && (tam.mode == tmFlagR || tam.mode == tmFlagW) && !tam.indirect) {
               tam.value = (indexOfItems[item].param & 0xff);
               tam.alpha = true;
               addStepInProgram(tamOperation());
               tamLeaveMode();
-              hourGlassIconEnabled = false;
             }
             else if(tamIsActive()) {
               const char *itmLabel = dynmenuGetLabel(dynamicMenuItem);
@@ -647,12 +647,13 @@ bool      _kbSeenInterrupt     = false;
               tam.alpha = true;
               addStepInProgram(tamOperation());
               tamLeaveMode();
-              hourGlassIconEnabled = false;
             }
             else {
               runFunction(item);
             }
+            hourGlassIconEnabled = false;
             _closeCatalog();
+            fnKeyInCatalog = 0;
             refreshScreen();
             screenUpdatingMode &= ~SCRUPD_ONE_TIME_FLAGS;
             return;
@@ -668,7 +669,7 @@ bool      _kbSeenInterrupt     = false;
           else if(tamIsActive() && (!tam.alpha || isAlphabeticSoftmenu())) {
             addItemToBuffer(item);
           }
-          else if((calcMode == cmNormal || calcMode == cmAim) && isAlphabeticSoftmenu()) {
+          else if((calcMode == cmNormal || calcMode == cmAim ) && isAlphabeticSoftmenu()) {
             if(calcMode == cmNormal) {
               fnAim(NOPARAM);
             }

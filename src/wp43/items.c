@@ -185,7 +185,7 @@ void fnNop(uint16_t unusedButMandatoryParameter) {
         return;
       }
 
-      if(calcMode == cmPem && !tamIsActive()) {
+      if(calcMode == cmPem && !tamIsActive() && (!(catalog && catalog != CATALOG_MVAR && !fnKeyInCatalog) || func == ITM_EXIT || func == ITM_EXITALLNP)) {
         addStepInProgram(func);
         return;
       }
