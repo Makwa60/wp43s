@@ -30,6 +30,7 @@
 #include "softmenus.h"
 #include "sort.h"
 #include "stack.h"
+#include "statusBar.h"
 #include "ui/cursor.h"
 #include "ui/matrixEditor.h"
 #include "ui/tam.h"
@@ -381,6 +382,7 @@
           setCatalogLastPos();
           timerStart(tidAsmActive, NOPARAM, 3000);
         }
+        if (calcMode == cmPem) hourGlassIconEnabled = false;
       }
 
       else if(tamIsActive()) {
