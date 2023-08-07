@@ -127,7 +127,7 @@ void fnIntegrate(uint16_t labelOrVariable) {
 
 void fnIntVar(uint16_t unusedButMandatoryParameter) {
   #if !defined(TESTSUITE_BUILD)
-    const char *var = (char *)getNthString(dynamicSoftmenu[softmenuStack[0].softmenuId].menuContent, dynamicMenuItem);
+    const char *var = (char *)getNthString(dynamicSoftmenu[getSoftmenuId(0)].menuContent, dynamicMenuItem);
     const uint16_t regist = findOrAllocateNamedVariable(var);
     currentSolverVariable = regist;
     if(currentSolverStatus & SOLVER_STATUS_READY_TO_EXECUTE) {

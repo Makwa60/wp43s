@@ -371,7 +371,7 @@ void fnDelRow(uint16_t unusedParamButMandatory) {
     int16_t width = 0;
 
     for(int i = 0; i < SOFTMENU_STACK_SIZE; i++) {
-      if(softmenu[softmenuStack[i].softmenuId].menuItem == -MNU_M_EDIT) {
+      if(softmenu[getSoftmenuId(i)].menuItem == -MNU_M_EDIT) {
         width = 1;
         break;
       }
@@ -379,7 +379,7 @@ void fnDelRow(uint16_t unusedParamButMandatory) {
     if(width == 0) {
       showSoftmenu(-MNU_M_EDIT);
     }
-    if(softmenu[softmenuStack[0].softmenuId].menuItem == -MNU_M_EDIT) {
+    if(softmenu[getSoftmenuId(0)].menuItem == -MNU_M_EDIT) {
       calcModeUpdateGui();
     }
 

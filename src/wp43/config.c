@@ -37,6 +37,7 @@
 #include "ui/cursor.h"
 #include "ui/keyboard.h"
 #include "ui/screen.h"
+#include "ui/softmenus.h"
 #include "ui/statusBar.h"
 #include "ui/tam.h"
 #if defined(DMCP_BUILD)
@@ -842,7 +843,7 @@ void fnReset(uint16_t confirmation) {
     flagBrowserInit();
     registerBrowserInit();
 
-    memset(softmenuStack, 0, sizeof(softmenuStack)); // This works because the ID of MyMenu is 0
+    softmenuStacksInit();
 
     aimBuffer[0] = 0;
     lastErrorCode = 0;

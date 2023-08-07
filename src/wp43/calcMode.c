@@ -19,6 +19,7 @@
 #include "ui/cursor.h"
 #include "ui/keyboard.h"
 #include "ui/screen.h"
+#include "ui/softmenus.h"
 #include "ui/tam.h"
 #include <string.h>
 #include <unistd.h>
@@ -94,8 +95,8 @@ calcMode_t calcMode;
   void calcModeNormal(void) {
     calcMode = cmNormal;
 
-    if(softmenuStack[0].softmenuId == 1) { // MyAlpha
-      softmenuStack[0].softmenuId = 0; // MyMenu
+    if(getSoftmenuId(0) == 1) { // MyAlpha
+      setSoftmenuId(0,0); // MyMenu
     }
 
     clearSystemFlag(FLAG_ALPHA);
@@ -115,8 +116,8 @@ calcMode_t calcMode;
       cursorShow(true, 1, Y_POSITION_OF_AIM_LINE + 6);
     }
 
-    if(softmenuStack[0].softmenuId == 0) { // MyMenu
-      softmenuStack[0].softmenuId = 1; // MyAlpha
+    if(getSoftmenuId(0) == 0) { // MyMenu
+      setSoftmenuId(0,1); // MyAlpha
     }
 
     setSystemFlag(FLAG_ALPHA);

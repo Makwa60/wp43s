@@ -1511,7 +1511,7 @@ static  void drawline(uint16_t selection, real_t *RR, real_t *SMI, real_t *aa0, 
     }
 
     if(isValidDraw) {
-      if(softmenu[softmenuStack[0].softmenuId].menuItem != -MNU_PLOT_STAT) {
+      if(softmenu[getSoftmenuId(0)].menuItem != -MNU_PLOT_STAT) {
         sprintf(ss, "%u",NN);
         showString(padEquals(ss), &standardFont, horOffsetR - stringWidth(ss, &standardFont, false, false), Y_POSITION_OF_REGISTER_Z_LINE + autoinc*index  -2 +autoshift, vmNormal, false, false);
         sprintf(ss, STD_SPACE_PUNCTUATION STD_SPACE_PUNCTUATION "n=");
@@ -1574,7 +1574,7 @@ static  void drawline(uint16_t selection, real_t *RR, real_t *SMI, real_t *aa0, 
         strcpy(ss, "    " STD_PLUS_MINUS);
         showString(padEquals(ss), &standardFont, horOffset, Y_POSITION_OF_REGISTER_Z_LINE + autoinc*index++   -1 +autoshift, vmNormal, false, false);
 
-        if(softmenu[softmenuStack[0].softmenuId].menuItem == -MNU_PLOT_STAT) {
+        if(softmenu[getSoftmenuId(0)].menuItem == -MNU_PLOT_STAT) {
           if(n>=30) {
             eformat_eng2(ss, "", smi, 3, "");
             showString(padEquals(ss), &standardFont, horOffsetR - stringWidth(ss, &standardFont, false, false), Y_POSITION_OF_REGISTER_Z_LINE + autoinc*index  +1 +autoshift, vmNormal, false, false);

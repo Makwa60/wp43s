@@ -13,6 +13,7 @@
 #include "hal/timer.h"
 #include "items.h"
 #include "screen.h"
+#include "ui/softmenus.h"
 #include "ui/tam.h"
 
 #include "wp43.h"
@@ -349,7 +350,7 @@
       }
     }
     #if (DEBUG_INSTEAD_STATUS_BAR == 1)
-      sprintf(tmpString, "%s%d %s/%s  mnu:%s fi:%d", catalog ? "asm:" : "", catalog, tamIsActive() ? "/tam" : "", getCalcModeName(calcMode),indexOfItems[-softmenu[softmenuStack[0].softmenuId].menuItem].itemCatalogName, softmenuStack[0].firstItem);
+      sprintf(tmpString, "%s%d %s/%s  mnu:%s fi:%d", catalog ? "asm:" : "", catalog, tamIsActive() ? "/tam" : "", getCalcModeName(calcMode),indexOfItems[-softmenu[getSoftmenuId(0)].menuItem].itemCatalogName, getSoftmenuFirstItem());
       showString(tmpString, &standardFont, X_DATE, 0, vmNormal, true, true);
     #else // DEBUG_INSTEAD_STATUS_BAR != 1
       showDateTime();
@@ -363,7 +364,7 @@
       if(calcMode == cmMim) {
         showMatrixMode();
       }
-      else if(softmenu[softmenuStack[0].softmenuId].menuItem == -MNU_TVM) {
+      else if(softmenu[getSoftmenuId(0)].menuItem == -MNU_TVM) {
         showTvmMode();
       }
       else {
