@@ -843,8 +843,10 @@ void fnReset(uint16_t confirmation) {
     flagBrowserInit();
     registerBrowserInit();
 
-    softmenuStacksInit();
-
+    #if !defined(TESTSUITE_BUILD)
+      softmenuStacksInit();
+    #endif // !TESTSUITE_BUILD
+    
     aimBuffer[0] = 0;
     lastErrorCode = 0;
 
