@@ -46,7 +46,11 @@
 
 #include "wp43.h"
 
-#define PROGRAM_VERSION                     01  // Original version
+// Program versions:
+// 01 Original version
+// 02 Audio extensions (VOL, VOL?, BUZZ, PLAY)
+//
+#define PROGRAM_VERSION                     02  // Audio extensions (VOL, VOL?, BUZZ, PLAY)
 #define OLDEST_COMPATIBLE_PROGRAM_VERSION   01  // Original version
 #define BACKUP_FORMAT                       00  // Same program format as in backup file
 #define TEXT_FORMAT                         01  // Text program format - for future use 

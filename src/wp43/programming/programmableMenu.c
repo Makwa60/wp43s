@@ -139,7 +139,7 @@
 
   void fnProgrammableMenu(uint16_t unusedButMandatoryParameter) {
     /* Show the programmable menu */
-    if(dynamicMenuItem == -1 || softmenu[softmenuStack[0].softmenuId].menuItem != -ITM_MENU) {
+    if(dynamicMenuItem == -1 || softmenu[getSoftmenuId(0)].menuItem != -ITM_MENU) {
       showSoftmenu(-ITM_MENU);
     }
 

@@ -205,7 +205,7 @@ void fnSolve(uint16_t labelOrVariable) {
 
 void fnSolveVar(uint16_t unusedButMandatoryParameter) {
   #if !defined(TESTSUITE_BUILD)
-  const char *var = (char *)getNthString(dynamicSoftmenu[softmenuStack[0].softmenuId].menuContent, dynamicMenuItem);
+  const char *var = (char *)getNthString(dynamicSoftmenu[getSoftmenuId(0)].menuContent, dynamicMenuItem);
   const uint16_t regist = findOrAllocateNamedVariable(var);
   const uint16_t nameLength = stringByteLength(var) + 1;
   if(currentMvarLabel != INVALID_VARIABLE) {

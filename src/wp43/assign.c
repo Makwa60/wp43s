@@ -638,8 +638,8 @@ void assignLeaveAlpha(void) {
   while(numberOfTamMenusToPop--) {
     popSoftmenu();
   }
-  if(softmenuStack[0].softmenuId == 1) { // MyAlpha
-    softmenuStack[0].softmenuId = 0; // MyMenu
+  if(getSoftmenuId(0) == 1) { // MyAlpha
+    setSoftmenuId(0,0); // MyMenu
   }
   calcModeUpdateGui();
 #endif // !TESTSUITE_BUILD

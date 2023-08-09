@@ -1213,7 +1213,32 @@ void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
     }
   }
 
+  /* Softmenu Stack management
+   *
+   * All functions for soft,enus stacks management are here
+   *
+   */
+   
 
+  void softmenuStacksInit(void) {
+    memset(softmenuStack, 0, sizeof(softmenuStack)); // This works because the ID of MyMenu is 0
+  }
+  
+  int16_t getSoftmenuId(int index) {
+    return softmenuStack[index].softmenuId;
+  }
+
+  void setSoftmenuId(int index, int16_t menuId) {
+    softmenuStack[index].softmenuId = menuId;
+  }
+
+  int16_t getSoftmenuFirstItem(void) {
+    return softmenuStack[0].firstItem;
+  }
+
+  void setSoftmenuFirstItem(int16_t item) {
+    softmenuStack[0].firstItem = item;
+  }
 
   /* Pushes a new softmenu on the softmenu stack.
    *

@@ -64,8 +64,8 @@ bool      _kbSeenInterrupt     = false;
     int16_t itemShift = (shiftF ? 6 : (shiftG ? 12 : 0));
     int16_t fn = keyCode - kcF1;
     const softmenu_t *sm;
-    int16_t row, menuId = softmenuStack[0].softmenuId;
-    int16_t firstItem = softmenuStack[0].firstItem;
+    int16_t row, menuId = getSoftmenuId(0);
+    int16_t firstItem = getSoftmenuFirstItem();
 
     #pragma GCC diagnostic push
     #pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
@@ -122,7 +122,7 @@ bool      _kbSeenInterrupt     = false;
         else if((currentSolverStatus & SOLVER_STATUS_USES_FORMULA) && (currentSolverStatus & SOLVER_STATUS_INTERACTIVE) && ((currentSolverStatus & SOLVER_STATUS_EQUATION_MODE) == SOLVER_STATUS_EQUATION_SOLVER) && dynamicMenuItem == 3) {
           item = ITM_CPXSLV;
         }
-        else if((currentSolverStatus & SOLVER_STATUS_USES_FORMULA) && (currentSolverStatus & SOLVER_STATUS_INTERACTIVE) && *getNthString(dynamicSoftmenu[softmenuStack[0].softmenuId].menuContent, dynamicMenuItem) == 0) {
+        else if((currentSolverStatus & SOLVER_STATUS_USES_FORMULA) && (currentSolverStatus & SOLVER_STATUS_INTERACTIVE) && *getNthString(dynamicSoftmenu[getSoftmenuId(0)].menuContent, dynamicMenuItem) == 0) {
           item = ITM_NOP;
         }
         else if((currentSolverStatus & SOLVER_STATUS_USES_FORMULA) && (currentSolverStatus & SOLVER_STATUS_INTERACTIVE) && ((currentSolverStatus & SOLVER_STATUS_EQUATION_MODE) == SOLVER_STATUS_EQUATION_1ST_DERIVATIVE) && dynamicMenuItem == 5) {
@@ -297,16 +297,16 @@ bool      _kbSeenInterrupt     = false;
   static void _closeCatalog(void) {
     bool inCatalog = false;
     for(int i = 0; i < SOFTMENU_STACK_SIZE; ++i) {
-      if(softmenu[softmenuStack[i].softmenuId].menuItem == -MNU_CATALOG) {
+      if(softmenu[getSoftmenuId(i)].menuItem == -MNU_CATALOG) {
         inCatalog = true;
         break;
       }
-      else if(softmenu[softmenuStack[i].softmenuId].menuItem == -MNU_MENUS) {
+      else if(softmenu[getSoftmenuId(i)].menuItem == -MNU_MENUS) {
         break;
       }
     }
-    if(inCatalog || softmenu[softmenuStack[0].softmenuId].menuItem == -MNU_CONST) {
-      switch(-softmenu[softmenuStack[0].softmenuId].menuItem) {
+    if(inCatalog || softmenu[getSoftmenuId(0)].menuItem == -MNU_CONST) {
+      switch(-softmenu[getSoftmenuId(0)].menuItem) {
         case MNU_TAM:
         case MNU_TAMCMP:
         case MNU_TAMSTORCL:
@@ -385,7 +385,7 @@ bool      _kbSeenInterrupt     = false;
 
       #pragma GCC diagnostic push
       #pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
-      switch(-softmenu[softmenuStack[0].softmenuId].menuItem) {
+      switch(-softmenu[getSoftmenuId(0)].menuItem) {
         case MNU_MENUS: {
           if(item <= ASSIGN_USER_MENU) {
             currentUserMenu = ASSIGN_USER_MENU - item;
@@ -443,7 +443,7 @@ bool      _kbSeenInterrupt     = false;
             fnKeyInCatalog = 0;
           }
           if(calcMode == cmEim && !tamIsActive()) {
-            while(softmenu[softmenuStack[0].softmenuId].menuItem != -MNU_EQ_EDIT) {
+            while(softmenu[getSoftmenuId(0)].menuItem != -MNU_EQ_EDIT) {
               popSoftmenu();
             }
           }
@@ -468,7 +468,7 @@ bool      _kbSeenInterrupt     = false;
 
 
   static bool _assignToMenu(keyCode_t keyCode) {
-    switch(-softmenu[softmenuStack[0].softmenuId].menuItem) {
+    switch(-softmenu[getSoftmenuId(0)].menuItem) {
       case MNU_MyMenu: {
         assignToMyMenu((keyCode - kcF1) + (shiftG ? 12 : shiftF ? 6 : 0));
         calcMode = previousCalcMode;
@@ -506,7 +506,7 @@ bool      _kbSeenInterrupt     = false;
       }
       default: {
         displayCalcErrorMessage(ERROR_CANNOT_ASSIGN_HERE, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
-        errorMoreInfo("the menu '%s' is write-protected", indexOfItems[-softmenu[softmenuStack[0].softmenuId].menuItem].itemCatalogName);
+        errorMoreInfo("the menu '%s' is write-protected", indexOfItems[-softmenu[getSoftmenuId(0)].menuItem].itemCatalogName);
         calcMode = previousCalcMode;
         shiftF = shiftG = false;
         _closeCatalog();
@@ -601,7 +601,7 @@ bool      _kbSeenInterrupt     = false;
             return;
           }
           else if(item < 0) { // softmenu
-            if(calcMode == cmAssign && itemToBeAssigned == 0 && softmenu[softmenuStack[0].softmenuId].menuItem == -MNU_MENUS) {
+            if(calcMode == cmAssign && itemToBeAssigned == 0 && softmenu[getSoftmenuId(0)].menuItem == -MNU_MENUS) {
               itemToBeAssigned = item;
             }
             else {
@@ -677,7 +677,7 @@ bool      _kbSeenInterrupt     = false;
           }
           else if(calcMode == cmEim && catalog && catalog != CATALOG_MVAR) {
             addItemToBuffer(item);
-            while(softmenu[softmenuStack[0].softmenuId].menuItem != -MNU_EQ_EDIT) {
+            while(softmenu[getSoftmenuId(0)].menuItem != -MNU_EQ_EDIT) {
               popSoftmenu();
             }
           }
@@ -687,7 +687,7 @@ bool      _kbSeenInterrupt     = false;
           else if(calcMode == cmNim && (ITM_toBIN<=item && item<=ITM_toHEX) && (!catalog || catalog == CATALOG_MVAR)) {
             addItemToNimBuffer(item);
           }
-          else if(calcMode == cmMim && softmenu[softmenuStack[0].softmenuId].menuItem != -MNU_M_EDIT) {
+          else if(calcMode == cmMim && softmenu[getSoftmenuId(0)].menuItem != -MNU_M_EDIT) {
             addItemToBuffer(item);
           }
           else if(item > 0) { // function
@@ -1179,11 +1179,11 @@ bool      _kbSeenInterrupt     = false;
 
       default: {
         if(calcMode == cmAssign && itemToBeAssigned != 0 && item == ITM_USERMODE) {
-          while(softmenuStack[0].softmenuId > 1) {
+          while(getSoftmenuId(0) > 1) {
             popSoftmenu();
           }
           if(previousCalcMode == cmAim) {
-            softmenuStack[0].softmenuId = 1;
+            setSoftmenuId(0,1);
             calcModeUpdateGui();
           }
           else {
@@ -1460,7 +1460,7 @@ bool      _kbSeenInterrupt     = false;
 
 
   static void menuUp(void) {
-    int16_t menuId = softmenuStack[0].softmenuId;
+    int16_t menuId = getSoftmenuId(0);
     int16_t sm = softmenu[menuId].menuItem;
 
     screenUpdatingMode &= ~SCRUPD_MANUAL_MENU;
@@ -1470,19 +1470,20 @@ bool      _kbSeenInterrupt     = false;
 
     if((sm == -MNU_alpha_omega || sm == -MNU_ALPHAintl) && alphaCase == AC_LOWER) {
       alphaCase = AC_UPPER;
-      softmenuStack[0].softmenuId--; // Switch to the upper case menu
+      setSoftmenuId(0,getSoftmenuId(0) -1); // Switch to the upper case menu
     }
     else if((sm == -MNU_ALPHADOT || sm == -MNU_ALPHAMATH) && alphaCase == AC_LOWER) {
       alphaCase = AC_UPPER;
     }
     else {
       int16_t itemShift = (catalog == CATALOG_NONE ? 18 : 6);
+      int16_t firstItem = getSoftmenuFirstItem();
 
-      if((softmenuStack[0].firstItem + itemShift) < (menuId < NUMBER_OF_DYNAMIC_SOFTMENUS ? dynamicSoftmenu[menuId].numItems : softmenu[menuId].numItems)) {
-        softmenuStack[0].firstItem += itemShift;
+      if((firstItem + itemShift) < (menuId < NUMBER_OF_DYNAMIC_SOFTMENUS ? dynamicSoftmenu[menuId].numItems : softmenu[menuId].numItems)) {
+        setSoftmenuFirstItem(firstItem + itemShift);
       }
       else {
-        softmenuStack[0].firstItem = 0;
+        setSoftmenuFirstItem(0);
       }
 
       setCatalogLastPos();
@@ -1492,7 +1493,7 @@ bool      _kbSeenInterrupt     = false;
 
 
   static void menuDown(void) {
-    int16_t menuId = softmenuStack[0].softmenuId;
+    int16_t menuId = getSoftmenuId(0);
     int16_t sm = softmenu[menuId].menuItem;
 
     screenUpdatingMode &= ~SCRUPD_MANUAL_MENU;
@@ -1502,26 +1503,27 @@ bool      _kbSeenInterrupt     = false;
 
     if((sm == -MNU_ALPHA_OMEGA || sm == -MNU_ALPHAINTL) && alphaCase == AC_UPPER) {
       alphaCase = AC_LOWER;
-      softmenuStack[0].softmenuId++; // Switch to the lower case menu
+      setSoftmenuId(0,getSoftmenuId(0) + 1); // Switch to the lower case menu
     }
     else if((sm == -MNU_ALPHADOT || sm == -MNU_ALPHAMATH) && alphaCase == AC_UPPER) {
       alphaCase = AC_LOWER;
     }
     else {
       int16_t itemShift = (catalog == CATALOG_NONE ? 18 : 6);
+      int16_t firstItem = getSoftmenuFirstItem();
 
-      if((softmenuStack[0].firstItem - itemShift) >= 0) {
-        softmenuStack[0].firstItem -= itemShift;
+      if((firstItem - itemShift) >= 0) {
+        setSoftmenuFirstItem(firstItem - itemShift);
       }
-      else if((softmenuStack[0].firstItem - itemShift) >= -5) {
-        softmenuStack[0].firstItem = 0;
+      else if((firstItem - itemShift) >= -5) {
+        setSoftmenuFirstItem(0);
       }
       else {
         if(menuId < NUMBER_OF_DYNAMIC_SOFTMENUS) {
-          softmenuStack[0].firstItem = ((dynamicSoftmenu[menuId].numItems - 1)/6) / (itemShift/6) * itemShift;
+          setSoftmenuFirstItem(((dynamicSoftmenu[menuId].numItems - 1)/6) / (itemShift/6) * itemShift);
         }
         else {
-          softmenuStack[0].firstItem = ((       softmenu[menuId].numItems - 1)/6) / (itemShift/6) * itemShift;
+          setSoftmenuFirstItem(((       softmenu[menuId].numItems - 1)/6) / (itemShift/6) * itemShift);
         }
       }
       setCatalogLastPos();
@@ -1630,7 +1632,7 @@ void fnKeyEnter(uint16_t unusedButMandatoryParameter) {
         if(aimBuffer[0] != 0) {
           setEquation(currentFormula, aimBuffer);
         }
-        if(softmenu[softmenuStack[0].softmenuId].menuItem == -MNU_EQ_EDIT) {
+        if(softmenu[getSoftmenuId(0)].menuItem == -MNU_EQ_EDIT) {
           calcModeEnter(cmNormal);
           if(allFormulae[currentFormula].pointerToFormulaData == WP43_NULL) {
             deleteEquation(currentFormula);
@@ -1691,7 +1693,7 @@ void fnKeyExit(uint16_t unusedButMandatoryParameter) {
       }
       return;
     }
-    if(lastErrorCode == 0 && softmenu[softmenuStack[0].softmenuId].menuItem == -MNU_MVAR) {
+    if(lastErrorCode == 0 && softmenu[getSoftmenuId(0)].menuItem == -MNU_MVAR) {
       currentSolverStatus &= ~SOLVER_STATUS_INTERACTIVE;
     }
 
@@ -1744,7 +1746,7 @@ void fnKeyExit(uint16_t unusedButMandatoryParameter) {
       }
 
       case cmNormal: {
-        if(softmenu[softmenuStack[0].softmenuId].menuItem == -ITM_MENU) {
+        if(softmenu[getSoftmenuId(0)].menuItem == -ITM_MENU) {
           dynamicMenuItem = 20;
           fnProgrammableMenu(NOPARAM);
           return;
@@ -1764,7 +1766,7 @@ void fnKeyExit(uint16_t unusedButMandatoryParameter) {
           lastErrorCode = 0;
         }
         else {
-          if(softmenuStack[0].softmenuId <= 1) { // MyMenu or MyAlpha is displayed
+          if(getSoftmenuId(0) <= 1) { // MyMenu or MyAlpha is displayed
             currentInputVariable = INVALID_VARIABLE;
           }
           else {
@@ -1779,7 +1781,7 @@ void fnKeyExit(uint16_t unusedButMandatoryParameter) {
       }
 
       case cmAim: {
-        if(softmenuStack[0].softmenuId <= 1) { // MyMenu or MyAlpha is displayed
+        if(getSoftmenuId(0) <= 1) { // MyMenu or MyAlpha is displayed
           closeAim();
           #if defined(DEBUGUNDO)
             printf(">>> saveForUndo from fnKeyExitA\n");
@@ -1810,7 +1812,7 @@ void fnKeyExit(uint16_t unusedButMandatoryParameter) {
           temporaryInformation = TI_NO_INFO;
         }
         else {
-          if(softmenu[softmenuStack[0].softmenuId].menuItem == -MNU_M_EDIT) {
+          if(softmenu[getSoftmenuId(0)].menuItem == -MNU_M_EDIT) {
             mimEnter(true);
             if(matrixIndex == findNamedVariable(statMx)) {
               calcSigma(0);
@@ -1849,7 +1851,7 @@ void fnKeyExit(uint16_t unusedButMandatoryParameter) {
           fnBst(NOPARAM); // Set the PGM pointer to the original position
           break;
         }
-        if(softmenuStack[0].softmenuId > 1) { // not MyMenu and not MyAlpha
+        if(getSoftmenuId(0) > 1) { // not MyMenu and not MyAlpha
           popSoftmenu();
           break;
         }
@@ -1872,7 +1874,7 @@ void fnKeyExit(uint16_t unusedButMandatoryParameter) {
           lastErrorCode = 0;
         }
         else {
-          if(softmenu[softmenuStack[0].softmenuId].menuItem == -MNU_EQ_EDIT) {
+          if(softmenu[getSoftmenuId(0)].menuItem == -MNU_EQ_EDIT) {
             calcModeEnter(cmNormal);
             if(allFormulae[currentFormula].pointerToFormulaData == WP43_NULL) {
               deleteEquation(currentFormula);
@@ -1898,7 +1900,7 @@ void fnKeyExit(uint16_t unusedButMandatoryParameter) {
       case cmPlotStat: {
         if(calcMode == cmPlotStat) {
           for(int16_t ii = 0; ii < 3; ii++) {
-            if( (softmenuStack[0].softmenuId > 1) && !((-softmenu[softmenuStack[0].softmenuId].menuItem == MNU_HIST) || (-softmenu[softmenuStack[0].softmenuId].menuItem == MNU_STAT))) {
+            if( (getSoftmenuId(0) > 1) && !((-softmenu[getSoftmenuId(0)].menuItem == MNU_HIST) || (-softmenu[getSoftmenuId(0)].menuItem == MNU_STAT))) {
               popSoftmenu();
             }
           }
@@ -1927,7 +1929,7 @@ void fnKeyExit(uint16_t unusedButMandatoryParameter) {
       }
 
       case cmAssign: {
-        if((softmenuStack[0].softmenuId <= 1 && softmenuStack[1].softmenuId <= 1) || (previousCalcMode == cmEim && softmenu[softmenuStack[0].softmenuId].menuItem == -MNU_EQ_EDIT)) { // MyMenu or MyAlpha is displayed
+        if((getSoftmenuId(0) <= 1 && getSoftmenuId(1) <= 1) || (previousCalcMode == cmEim && softmenu[getSoftmenuId(0)].menuItem == -MNU_EQ_EDIT)) { // MyMenu or MyAlpha is displayed
           calcMode = previousCalcMode;
           if(tam.alpha) {
             assignLeaveAlpha();
@@ -2100,7 +2102,7 @@ void fnKeyBackspace(uint16_t unusedButMandatoryParameter) {
       case cmGraph: {
         if(calcMode == cmPlotStat) {
           for(int16_t ii = 0; ii < 3; ii++) {
-            if( (softmenuStack[0].softmenuId > 1) && !((-softmenu[softmenuStack[0].softmenuId].menuItem == MNU_HIST) || (-softmenu[softmenuStack[0].softmenuId].menuItem == MNU_STAT))) {
+            if( (getSoftmenuId(0) > 1) && !((-softmenu[getSoftmenuId(0)].menuItem == MNU_HIST) || (-softmenu[getSoftmenuId(0)].menuItem == MNU_STAT))) {
               popSoftmenu();
             }
           }
@@ -2271,7 +2273,7 @@ void fnKeyUp(uint16_t unusedButMandatoryParameter) {
       return;
     }
 
-    if((calcMode == cmNormal || calcMode == cmAim || calcMode == cmNim) && softmenu[softmenuStack[0].softmenuId].menuItem == -ITM_MENU) {
+    if((calcMode == cmNormal || calcMode == cmAim || calcMode == cmNim) && softmenu[getSoftmenuId(0)].menuItem == -ITM_MENU) {
       dynamicMenuItem = 18;
       fnProgrammableMenu(NOPARAM);
       return;
@@ -2288,7 +2290,7 @@ void fnKeyUp(uint16_t unusedButMandatoryParameter) {
         if(currentSoftmenuScrolls()) {
           menuUp();
         }
-        else if((calcMode == cmNormal || calcMode == cmNim) && (numberOfFormulae < 2 || softmenu[softmenuStack[0].softmenuId].menuItem != -MNU_EQN)) {
+        else if((calcMode == cmNormal || calcMode == cmNim) && (numberOfFormulae < 2 || softmenu[getSoftmenuId(0)].menuItem != -MNU_EQN)) {
           screenUpdatingMode = SCRUPD_AUTO;
           if(calcMode == cmNim) {
             closeNim();
@@ -2296,11 +2298,11 @@ void fnKeyUp(uint16_t unusedButMandatoryParameter) {
           fnBst(NOPARAM);
           lcd_refresh();
         }
-        if(softmenu[softmenuStack[0].softmenuId].menuItem == -MNU_PLOT_LR){
+        if(softmenu[getSoftmenuId(0)].menuItem == -MNU_PLOT_LR){
           strcpy(plotStatMx, "STATS");
           fnPlotStat(PLOT_NXT);
         }
-        else if(softmenu[softmenuStack[0].softmenuId].menuItem == -MNU_EQN) {
+        else if(softmenu[getSoftmenuId(0)].menuItem == -MNU_EQN) {
           if(currentFormula == 0) {
             currentFormula = numberOfFormulae;
           }
@@ -2317,8 +2319,8 @@ void fnKeyUp(uint16_t unusedButMandatoryParameter) {
         resetAlphaSelectionBuffer();
         if(getSystemFlag(FLAG_ALPHA) && alphaCase == AC_LOWER) {
           alphaCase = AC_UPPER;
-          if(softmenu[softmenuStack[0].softmenuId].menuItem == -MNU_alpha_omega || softmenu[softmenuStack[0].softmenuId].menuItem == -MNU_ALPHAintl) {
-            softmenuStack[0].softmenuId--; // Switch to the upper case menu
+          if(softmenu[getSoftmenuId(0)].menuItem == -MNU_alpha_omega || softmenu[getSoftmenuId(0)].menuItem == -MNU_ALPHAintl) {
+            setSoftmenuId(0,getSoftmenuId(0) -1); // Switch to the upper case menu
           }
         }
         else if(currentSoftmenuScrolls()) {
@@ -2411,7 +2413,7 @@ void fnKeyDown(uint16_t unusedButMandatoryParameter) {
       return;
     }
 
-    if((calcMode == cmNormal || calcMode == cmAim || calcMode == cmNim) && softmenu[softmenuStack[0].softmenuId].menuItem == -ITM_MENU) {
+    if((calcMode == cmNormal || calcMode == cmAim || calcMode == cmNim) && softmenu[getSoftmenuId(0)].menuItem == -ITM_MENU) {
       dynamicMenuItem = 19;
       fnProgrammableMenu(NOPARAM);
       return;
@@ -2428,18 +2430,18 @@ void fnKeyDown(uint16_t unusedButMandatoryParameter) {
         if(currentSoftmenuScrolls()) {
           menuDown();
         }
-        else if((calcMode == cmNormal || calcMode == cmNim) && (numberOfFormulae < 2 || softmenu[softmenuStack[0].softmenuId].menuItem != -MNU_EQN)) {
+        else if((calcMode == cmNormal || calcMode == cmNim) && (numberOfFormulae < 2 || softmenu[getSoftmenuId(0)].menuItem != -MNU_EQN)) {
           screenUpdatingMode = SCRUPD_AUTO;
           if(calcMode == cmNim) {
             closeNim();
           }
           fnSst(NOPARAM);
         }
-        if(softmenu[softmenuStack[0].softmenuId].menuItem == -MNU_PLOT_LR) {
+        if(softmenu[getSoftmenuId(0)].menuItem == -MNU_PLOT_LR) {
           strcpy(plotStatMx, "STATS");
           fnPlotStat(PLOT_REV); //REVERSE
         }
-        else if(softmenu[softmenuStack[0].softmenuId].menuItem == -MNU_EQN) {
+        else if(softmenu[getSoftmenuId(0)].menuItem == -MNU_EQN) {
           ++currentFormula;
           if(currentFormula == numberOfFormulae) {
             currentFormula = 0;
@@ -2456,8 +2458,8 @@ void fnKeyDown(uint16_t unusedButMandatoryParameter) {
         resetAlphaSelectionBuffer();
         if(getSystemFlag(FLAG_ALPHA) && alphaCase == AC_UPPER) {
           alphaCase = AC_LOWER;
-          if(softmenu[softmenuStack[0].softmenuId].menuItem == -MNU_ALPHA_OMEGA || softmenu[softmenuStack[0].softmenuId].menuItem == -MNU_ALPHAINTL) {
-            softmenuStack[0].softmenuId++; // Switch to the lower case menu
+          if(softmenu[getSoftmenuId(0)].menuItem == -MNU_ALPHA_OMEGA || softmenu[getSoftmenuId(0)].menuItem == -MNU_ALPHAINTL) {
+            setSoftmenuId(0,getSoftmenuId(0) + 1); // Switch to the lower case menu
           }
         }
         else if(currentSoftmenuScrolls()) {

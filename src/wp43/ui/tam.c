@@ -115,7 +115,7 @@ void tamReset(void) {
       }
 
       case ITM_DELITM: {
-        switch(-softmenu[softmenuStack[0].softmenuId].menuItem) {
+        switch(-softmenu[getSoftmenuId(0)].menuItem) {
           case MNU_PROGS: {
             return ITM_DELITM_PROG;
           }
@@ -821,7 +821,7 @@ void tamReset(void) {
           }
         }
       }
-      else if(tam.mode == tmLabel || tam.mode == tmSolve || (tam.mode == tmKey && tam.keyInputFinished) || (tam.mode == tmDelItem && softmenu[softmenuStack[0].softmenuId].menuItem == -MNU_PROGS)) {
+      else if(tam.mode == tmLabel || tam.mode == tmSolve || (tam.mode == tmKey && tam.keyInputFinished) || (tam.mode == tmDelItem && softmenu[getSoftmenuId(0)].menuItem == -MNU_PROGS)) {
         value = findNamedLabelWithDuplicate(buffer, dupNum);
         if(value == INVALID_VARIABLE && tam.function != ITM_LBL && tam.function != ITM_LBLQ && (calcMode != cmPem || tam.mode != tmSolve || tam.function == ITM_PGMSLV)) {
           if(calcMode == cmPem) {
@@ -837,7 +837,7 @@ void tamReset(void) {
           }
         }
       }
-      else if(tam.mode == tmDelItem && softmenu[softmenuStack[0].softmenuId].menuItem == -MNU_MENUS) {
+      else if(tam.mode == tmDelItem && softmenu[getSoftmenuId(0)].menuItem == -MNU_MENUS) {
         value = tam.value;
       }
       else if(tryAllocate) {
@@ -1069,7 +1069,7 @@ void tamReset(void) {
       popSoftmenu();
     }
 
-    if(softmenu[softmenuStack[0].softmenuId].menuItem == -MNU_MVAR) {
+    if(softmenu[getSoftmenuId(0)].menuItem == -MNU_MVAR) {
       catalog = CATALOG_MVAR;
     }
 

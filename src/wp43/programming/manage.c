@@ -628,7 +628,7 @@ static void _insertInProgram(const uint8_t *dat, uint16_t sizeInBytes) {
 #if !defined(TESTSUITE_BUILD)
 static void _closeAlphaMenus(void) {
   for(int i = 0; i < SOFTMENU_STACK_SIZE; ++i) {
-    switch(-softmenu[softmenuStack[0].softmenuId].menuItem) {
+    switch(-softmenu[getSoftmenuId(0)].menuItem) {
       case MNU_ALPHAINTL:
       case MNU_ALPHAintl:
       case MNU_ALPHAMATH:
@@ -639,7 +639,7 @@ static void _closeAlphaMenus(void) {
         break;
 
       case MNU_MyAlpha:
-        switch(-softmenu[softmenuStack[1].softmenuId].menuItem) {
+        switch(-softmenu[getSoftmenuId(1)].menuItem) {
           case MNU_ALPHAINTL:
           case MNU_ALPHAintl:
           case MNU_ALPHAMATH:
@@ -649,7 +649,7 @@ static void _closeAlphaMenus(void) {
             popSoftmenu();
             break;
           default:
-            softmenuStack[0].softmenuId = 0; // MyMenu
+            setSoftmenuId(0,0); // MyMenu
             return;
         }
 
@@ -659,7 +659,7 @@ static void _closeAlphaMenus(void) {
   }
   // Just in case softmenuStack was filled with AIM-related menus
   for(int i = 0; i < SOFTMENU_STACK_SIZE; ++i) {
-    softmenuStack[i].softmenuId = 0; // MyMenu
+    setSoftmenuId(i,0); // MyMenu
   }
 }
 #endif // !TESTSUITE_BUILD
@@ -673,8 +673,8 @@ void pemAlpha(int16_t item) {
       alphaCase = AC_UPPER;
       nextChar = NC_NORMAL;
 
-      if(softmenuStack[0].softmenuId == 0) { // MyMenu
-        softmenuStack[0].softmenuId = 1; // MyAlpha
+      if(getSoftmenuId(0) == 0) { // MyMenu
+        setSoftmenuId(0,1); // MyAlpha
       }
 
       setSystemFlag(FLAG_ALPHA);

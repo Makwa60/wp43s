@@ -1786,7 +1786,7 @@ void clearScreen(void) {
     if(currentSolverStatus & SOLVER_STATUS_INTERACTIVE) {
       bool mvarMenu = false;
       for(int i = 0; i < SOFTMENU_STACK_SIZE; i++) {
-        if(softmenu[softmenuStack[i].softmenuId].menuItem == -MNU_MVAR) {
+        if(softmenu[getSoftmenuId(i)].menuItem == -MNU_MVAR) {
           mvarMenu = true;
           break;
         }
@@ -1809,7 +1809,7 @@ void clearScreen(void) {
     if(calcMode == cmEim) {
       bool mvarMenu = false;
       for(int i = 0; i < SOFTMENU_STACK_SIZE; i++) {
-        if(softmenu[softmenuStack[i].softmenuId].menuItem == -MNU_EQ_EDIT) {
+        if(softmenu[getSoftmenuId(i)].menuItem == -MNU_EQ_EDIT) {
           mvarMenu = true;
           break;
         }
@@ -1889,7 +1889,7 @@ void clearScreen(void) {
         refreshStatusBar();
         graphPlotstat(plotSelection);
         if(lastErrorCode != ERROR_NONE) {
-          if(softmenu[softmenuStack[0].softmenuId].menuItem == -MNU_GRAPH) {
+          if(softmenu[getSoftmenuId(0)].menuItem == -MNU_GRAPH) {
             popSoftmenu();
             calcMode = cmNormal;
             refreshScreen();
@@ -1910,7 +1910,7 @@ void clearScreen(void) {
         graphPlotstat(plotSelection);
         graphDrawLRline(plotSelection);
         if(lastErrorCode != ERROR_NONE) {
-          if(softmenu[softmenuStack[0].softmenuId].menuItem == -MNU_HPLOT || softmenu[softmenuStack[0].softmenuId].menuItem == -MNU_PLOT_LR || softmenu[softmenuStack[0].softmenuId].menuItem == -MNU_HPLOT || softmenu[softmenuStack[0].softmenuId].menuItem == -MNU_PLOT_STAT) {
+          if(softmenu[getSoftmenuId(0)].menuItem == -MNU_HPLOT || softmenu[getSoftmenuId(0)].menuItem == -MNU_PLOT_LR || softmenu[getSoftmenuId(0)].menuItem == -MNU_HPLOT || softmenu[getSoftmenuId(0)].menuItem == -MNU_PLOT_STAT) {
             popSoftmenu();
             calcMode = cmNormal;
             refreshScreen();

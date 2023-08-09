@@ -44,7 +44,11 @@
 
 #include "wp43.h"
 
-#define BACKUP_VERSION                     92  // Add CONFIG and ALLVAR catalogs
+// Backup versions:
+// 92 Add CONFIG and ALLVAR catalogs
+// 93 Change softmenu stack depth from 8 to 4
+//
+#define BACKUP_VERSION                     93  // Change softmenu stack depth from 8 to 4
 #define OLDEST_COMPATIBLE_BACKUP_VERSION   87  // save running app
 #define START_REGISTER_VALUE             1000  // was 1522, why?
 
@@ -364,6 +368,10 @@ static uint32_t restore(void *buffer, uint32_t size) {
       restore(oldTime,                             sizeof(oldTime));
       restore(dateTimeString,                      sizeof(dateTimeString));
       restore(softmenuStack,                       sizeof(softmenuStack));
+      if (backupVersion < 93) {                                             // only half of the saved softmenuStack has been  restored, 
+          restore(globalRegister,                  sizeof(softmenuStack));  // need to read and discard the second part
+          softmenuStacksInit();                                             // reinitialize the softmenuSTack to a clean state
+      }
       restore(globalRegister,                      sizeof(globalRegister));
       restore(savedStackRegister,                  sizeof(savedStackRegister));
       restore(kbd_usr,                             sizeof(kbd_usr));

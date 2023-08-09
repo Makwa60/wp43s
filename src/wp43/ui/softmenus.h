@@ -41,18 +41,43 @@
      * \param[in] id ID of softmenu
      */
     void   showSoftmenu           (int16_t id);
+    
+    /**
+     * Softmenus Stacks initialization
+     */
+    void    softmenuStacksInit     (void);
+
+    /**
+     * Returns softmenu ID
+     */
+    int16_t getSoftmenuId          (int index);
+
+    /**
+     * Sets softmenu ID
+     */
+    void    setSoftmenuId          (int index, int16_t menuId);
+
+    /**
+     * Returns softmenu first item
+     */
+    int16_t getSoftmenuFirstItem   (void);
+
+    /**
+     * Sets softmenu  first item
+     */
+    void    setSoftmenuFirstItem   (int16_t item);
 
     /**
      * Pops a softmenu from the softmenu stack.
      */
-    void   popSoftmenu            (void);
+    void    popSoftmenu            (void);
 
-    void   setCatalogLastPos      (void);
-    bool   currentSoftmenuScrolls (void);
-    bool   isAlphabeticSoftmenu   (void);
+    void    setCatalogLastPos      (void);
+    bool    currentSoftmenuScrolls (void);
+    bool    isAlphabeticSoftmenu   (void);
   #endif // !TESTSUITE_BUILD
 
-  char    *dynmenuGetLabel        (int16_t menuitem);
-  char    *dynmenuGetLabelWithDup (int16_t menuitem, int16_t *dupNum);
+  char     *dynmenuGetLabel        (int16_t menuitem);
+  char     *dynmenuGetLabelWithDup (int16_t menuitem, int16_t *dupNum);
 
 #endif // !SOFTMENUS_H

@@ -215,7 +215,7 @@
 
 
   int32_t findFirstItem(const char *twoLetters) {
-    int16_t menuId = softmenuStack[0].softmenuId;
+    int16_t menuId = getSoftmenuId(0);
 
     if(menuId < NUMBER_OF_DYNAMIC_SOFTMENUS) { // Dynamic softmenu
       uint8_t *firstString, *middleString;
@@ -378,7 +378,7 @@
           }
           asmBuffer[pos] = 0;
 
-          softmenuStack[0].firstItem = findFirstItem(asmBuffer);
+          setSoftmenuFirstItem(findFirstItem(asmBuffer));
           setCatalogLastPos();
           timerStart(tidAsmActive, NOPARAM, 3000);
         }

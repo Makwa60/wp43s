@@ -257,7 +257,7 @@ static void _setAlpha(void) {
 
 static void _clearAlpha(void) {
   if(calcMode == cmEim) {
-    if(softmenu[softmenuStack[0].softmenuId].menuItem == -MNU_EQ_EDIT) {
+    if(softmenu[getSoftmenuId(0)].menuItem == -MNU_EQ_EDIT) {
       calcModeEnter(cmNormal);
       if(allFormulae[currentFormula].pointerToFormulaData == WP43_NULL) {
         deleteEquation(currentFormula);
