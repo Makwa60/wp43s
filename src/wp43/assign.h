@@ -18,6 +18,7 @@
 
   void assignToMyMenu       (uint16_t position);
   void assignToMyAlpha      (uint16_t position);
+  void assignToMyPFN        (uint16_t position);
   void assignToUserMenu     (uint16_t position);
   void assignToKey          (keyCode_t keyCode);
 

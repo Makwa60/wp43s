@@ -254,7 +254,7 @@ void clearScreen(void) {
 
 
   void cbShowNop(uint16_t param) {
-    if(showFunctionNameItem == ITM_EXIT) {
+    if((showFunctionNameItem == ITM_EXIT) || (showFunctionNameItem == ITM_EXITALL) || (showFunctionNameItem == ITM_EXITALLNP)) {
       hideFunctionName();
       tmpString[0] = 0;
       if(calcMode == cmPem) {
@@ -777,7 +777,7 @@ void clearScreen(void) {
           displayNim(nimBufferDisplay, lastBase, wLastBaseNumeric, wLastBaseStandard);
         }
 
-        else if(regist == AIM_REGISTER_LINE && calcMode == cmAim && !tamIsActive()) {
+        else if(regist == AIM_REGISTER_LINE && ((calcMode == cmAim && !tamIsActive()) || (calcMode == cmAssign && previousCalcMode == cmAim))) {
           if(stringWidth(aimBuffer, &standardFont, true, true) < SCREEN_WIDTH - 8) { // 8 is the standard font cursor width
             uint32_t xCursor = showString(aimBuffer, &standardFont, 1, Y_POSITION_OF_NIM_LINE + 6, vmNormal, true, true);
             uint32_t yCursor = Y_POSITION_OF_NIM_LINE + 6;
@@ -1756,22 +1756,25 @@ void clearScreen(void) {
         lcd_fill_rect(0, 240 - SOFTMENU_HEIGHT * 3, SCREEN_WIDTH, SOFTMENU_HEIGHT * 3, LCD_SET_VALUE);
       }
     }
-
-    // The ordering of the 4 lines below is important for SHOW (temporaryInformation == TI_SHOW_REGISTER)
-    if(!(screenUpdatingMode & (SCRUPD_MANUAL_STACK | SCRUPD_SKIP_STACK_ONE_TIME))) {
-      if(calcMode != cmTimerApp && temporaryInformation != TI_VIEW_REGISTER) {
-        refreshRegisterLine(REGISTER_T);
+    if(!(calcMode == cmAssign && previousCalcMode == cmPem)) {
+      // The ordering of the 4 lines below is important for SHOW (temporaryInformation == TI_SHOW_REGISTER)
+      if(!(screenUpdatingMode & (SCRUPD_MANUAL_STACK | SCRUPD_SKIP_STACK_ONE_TIME))) {
+        if(calcMode != cmTimerApp && temporaryInformation != TI_VIEW_REGISTER) {
+          refreshRegisterLine(REGISTER_T);
+        }
+        refreshRegisterLine(REGISTER_Z);
+        refreshRegisterLine(REGISTER_Y);
+        refreshRegisterLine(REGISTER_X);
+        if(temporaryInformation == TI_VIEW_REGISTER) {
+          clearRegisterLine(REGISTER_T, true, true);
+          refreshRegisterLine(REGISTER_T);
+        }
       }
-      refreshRegisterLine(REGISTER_Z);
-      refreshRegisterLine(REGISTER_Y);
-      refreshRegisterLine(REGISTER_X);
-      if(temporaryInformation == TI_VIEW_REGISTER) {
-        clearRegisterLine(REGISTER_T, true, true);
-        refreshRegisterLine(REGISTER_T);
+      else if(calcMode == cmNim) {
+        refreshRegisterLine(NIM_REGISTER_LINE);
       }
-    }
-    else if(calcMode == cmNim) {
-      refreshRegisterLine(NIM_REGISTER_LINE);
+    } else {
+      displayShiftAndTamBuffer();
     }
 
 
@@ -1869,12 +1872,12 @@ void clearScreen(void) {
         break;
       }
 
+      case cmAssign:
       case cmNormal:
       case cmAim:
       case cmNim:
       case cmMim:
       case cmEim:
-      case cmAssign:
       case cmErrorMessage:
       case cmTimerApp: {
         _refreshNormalScreen();

@@ -94,9 +94,9 @@ calcMode_t calcMode;
 
   void calcModeNormal(void) {
     calcMode = cmNormal;
-
-    if(getSoftmenuId(0) == 1) { // MyAlpha
-      setSoftmenuId(0,0); // MyMenu
+    
+    if(getSmStackMode() != smNormal) {
+        popSmStackMode();  // Return to previous softmenu stack which should be smNormal
     }
 
     clearSystemFlag(FLAG_ALPHA);
@@ -116,9 +116,7 @@ calcMode_t calcMode;
       cursorShow(true, 1, Y_POSITION_OF_AIM_LINE + 6);
     }
 
-    if(getSoftmenuId(0) == 0) { // MyMenu
-      setSoftmenuId(0,1); // MyAlpha
-    }
+    pushSmStackMode(smAim);  // Select AIM softmenu stack with MyAlpha default menu
 
     setSystemFlag(FLAG_ALPHA);
   }
@@ -156,6 +154,7 @@ calcMode_t calcMode;
 
 
   void calcModeEnter(calcMode_t newMode) {
+    printf("calcModeEnter newMode %d\n", newMode);
     cursorHide();
     switch(newMode) {
       case cmNormal:
@@ -182,6 +181,7 @@ calcMode_t calcMode;
 
 
   void calcModeLeave(void) {
+    printf("*** calcModeLeave calcMode %d - stack %d\n", calcMode, getSmStackMode());
     switch(calcMode) {
       case cmAssign:
       case cmTimerApp:

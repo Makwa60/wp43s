@@ -2281,7 +2281,6 @@
 
   void closeAim(void) {
     calcModeEnter(cmNormal);
-    popSoftmenu();
 
     if(aimBuffer[0] == 0) {
       #if defined(DEBUGUNDO)

@@ -3,6 +3,7 @@
 
 #include "programming/manage.h"
 
+#include "assign.h"
 #include "calcMode.h"
 #include "charString.h"
 #include "config.h"
@@ -407,6 +408,8 @@ void fnPem(uint16_t unusedButMandatoryParameter) {
 
     if(calcMode != cmPem && !(calcMode == cmConfirmation && previousCalcMode == cmPem)) {
       calcMode = cmPem;
+      pushSmStackMode(smPem);  // Select PEM softmenu stack with MyPFN default menu
+
       hourGlassIconEnabled = false;
       aimBuffer[0] = 0;
       currentInputVariable = INVALID_VARIABLE;
@@ -649,7 +652,7 @@ static void _closeAlphaMenus(void) {
             popSoftmenu();
             break;
           default:
-            setSoftmenuId(0,0); // MyMenu
+            popSmStackMode();  // Return to previous softmenu stack which should be smPem
             return;
         }
 
@@ -657,6 +660,7 @@ static void _closeAlphaMenus(void) {
         return;
     }
   }
+  printf("*** SoftmenuId %d - Stack %d\n", getSoftmenuId(0), getSmStackMode());
   // Just in case softmenuStack was filled with AIM-related menus
   for(int i = 0; i < SOFTMENU_STACK_SIZE; ++i) {
     setSoftmenuId(i,0); // MyMenu
@@ -673,9 +677,7 @@ void pemAlpha(int16_t item) {
       alphaCase = AC_UPPER;
       nextChar = NC_NORMAL;
 
-      if(getSoftmenuId(0) == 0) { // MyMenu
-        setSoftmenuId(0,1); // MyAlpha
-      }
+      pushSmStackMode(smAim);  // Select AIM softmenu stack with MyAlpha default menu
 
       setSystemFlag(FLAG_ALPHA);
 
@@ -1232,18 +1234,23 @@ void insertStepInProgram(int16_t func) {
           break;
         }
 
-        case ITM_USERMODE: {         // 1729
+        case ITM_USERMODE: {       // 1729
           fnFlipFlag(FLAG_USER);
           break;
         }
 
-        case ITM_EXIT: {         // 1737
+        case ITM_EXIT: {           // 1737
           fnKeyExit(NOPARAM);
           break;
         }
         
-        case ITM_EXITALLNP: {    // 1810
+        case ITM_EXITALLNP: {      // 1810
           fnExitAllMenus(NOPARAM);
+          break;
+        }
+
+        case ITM_ASSIGN: {         // 1411
+          fnAssign(0);
           break;
         }
 

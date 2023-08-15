@@ -249,6 +249,14 @@ void assignToMyAlpha(uint16_t position) {
   refreshScreen();
 }
 
+void assignToMyPFN(uint16_t position) {
+  if(position < 18) {
+    _assignItem(&userPfnItems[position]);
+  }
+  cachedDynamicMenu = 0;
+  refreshScreen();
+}
+
 void assignToUserMenu(uint16_t position) {
   if(position < 18) {
     _assignItem(&userMenus[currentUserMenu].menuItem[position]);
@@ -639,7 +647,8 @@ void assignLeaveAlpha(void) {
     popSoftmenu();
   }
   if(getSoftmenuId(0) == 1) { // MyAlpha
-    setSoftmenuId(0,0); // MyMenu
+    //setSoftmenuId(0,0); // MyMenu
+    popSmStackMode();
   }
   calcModeUpdateGui();
 #endif // !TESTSUITE_BUILD

@@ -82,6 +82,12 @@ bool      _kbSeenInterrupt     = false;
         break;
       }
 
+      case MNU_MyPFN: {
+        dynamicMenuItem = firstItem + itemShift + fn;
+        item = userPfnItems[dynamicMenuItem].item;
+        break;
+      }
+      
       case MNU_DYNAMIC: {
         dynamicMenuItem = firstItem + itemShift + fn;
         item = userMenus[currentUserMenu].menuItem[dynamicMenuItem].item;
@@ -487,7 +493,16 @@ bool      _kbSeenInterrupt     = false;
         screenUpdatingMode &= ~SCRUPD_ONE_TIME_FLAGS;
         return true;
       }
-      case MNU_DYNAMIC: {
+      case MNU_MyPFN: {
+        assignToMyPFN((keyCode - kcF1) + (shiftG ? 12 : shiftF ? 6 : 0));
+        calcMode = previousCalcMode;
+        shiftF = shiftG = false;
+        _closeCatalog();
+        refreshScreen();
+        screenUpdatingMode &= ~SCRUPD_ONE_TIME_FLAGS;
+        return true;
+      }
+       case MNU_DYNAMIC: {
         assignToUserMenu((keyCode - kcF1) + (shiftG ? 12 : shiftF ? 6 : 0));
         calcMode = previousCalcMode;
         shiftF = shiftG = false;
@@ -1179,7 +1194,7 @@ bool      _kbSeenInterrupt     = false;
 
       default: {
         if(calcMode == cmAssign && itemToBeAssigned != 0 && item == ITM_USERMODE) {
-          while(getSoftmenuId(0) > 1) {
+          while(getSoftmenuId(0) > 2) {     // Not MyMemu, MyAlpha or MyPFN
             popSoftmenu();
           }
           if(previousCalcMode == cmAim) {
@@ -1561,7 +1576,6 @@ void fnKeyEnter(uint16_t unusedButMandatoryParameter) {
 
       case cmAim: {
         calcModeEnter(cmNormal);
-        popSoftmenu();
 
         if(aimBuffer[0] == 0) {
           #if defined(DEBUGUNDO)
@@ -1793,6 +1807,7 @@ void fnKeyExit(uint16_t unusedButMandatoryParameter) {
           }
         }
         else {
+          printf("*** cmAim popSoftMenu\n");
           popSoftmenu();
         }
         break;
@@ -1851,7 +1866,7 @@ void fnKeyExit(uint16_t unusedButMandatoryParameter) {
           fnBst(NOPARAM); // Set the PGM pointer to the original position
           break;
         }
-        if(getSoftmenuId(0) > 1) { // not MyMenu and not MyAlpha
+        if(getSoftmenuId(0) != 2 ) { // not MyPFN
           popSoftmenu();
           break;
         }
@@ -1929,7 +1944,8 @@ void fnKeyExit(uint16_t unusedButMandatoryParameter) {
       }
 
       case cmAssign: {
-        if((getSoftmenuId(0) <= 1 && getSoftmenuId(1) <= 1) || (previousCalcMode == cmEim && softmenu[getSoftmenuId(0)].menuItem == -MNU_EQ_EDIT)) { // MyMenu or MyAlpha is displayed
+        if((getSoftmenuId(0) <= 2 && getSoftmenuId(1) <= 2) || (previousCalcMode == cmEim && softmenu[getSoftmenuId(0)].menuItem == -MNU_EQ_EDIT)) { // MyMenu or MyAlpha is displayed
+          printf("calcMode %d - previousCalcMode %d\n", calcMode, previousCalcMode);
           calcMode = previousCalcMode;
           if(tam.alpha) {
             assignLeaveAlpha();

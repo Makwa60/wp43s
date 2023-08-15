@@ -309,6 +309,7 @@
   #define ON_PIXEL                            0x303030 // blue red green
   #define OFF_PIXEL                           0xe0e0e0 // blue red green
   #define SOFTMENU_STACK_SIZE                        4
+  #define SOFTMENU_STACKMODE_SIZE                    4
   #define TEMPORARY_INFO_OFFSET                     10 // Vertical offset for temporary informations. I find 4 looks better
   #define REGISTER_LINE_HEIGHT                      36
 
@@ -317,7 +318,7 @@
   #define Y_POSITION_OF_REGISTER_Y_LINE             96
   #define Y_POSITION_OF_REGISTER_X_LINE            132
 
-  #define NUMBER_OF_DYNAMIC_SOFTMENUS               20
+  #define NUMBER_OF_DYNAMIC_SOFTMENUS               21
   #define SOFTMENU_HEIGHT                           23
 
   // Horizontal offsets in the status bar
