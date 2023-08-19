@@ -337,6 +337,9 @@ void tamReset(void) {
         }
         else {
           // backspaces within AIM are handled by addItemToBuffer, so this is if the aimBuffer is already empty
+          if (getSmStackMode() == smAim) {
+            popSmStackMode();  // Get out of aim stack
+          }
           tam.alpha = false;
           clearSystemFlag(FLAG_ALPHA);
           calcModeUpdateGui();
@@ -1056,18 +1059,23 @@ void tamReset(void) {
 
 
   void tamLeaveMode(void) {
+    printf("*** tamModeLeave calcMode %d - stack %d - tam.alpha %d\n", calcMode, getSmStackMode(),tam.alpha);
     if(screenUpdatingMode & (SCRUPD_MANUAL_STACK | SCRUPD_SKIP_STACK_ONE_TIME)) {
       clearTamBuffer();
     }
 
-    tam.alpha = false;
-    tam.mode = 0;
-    catalog = CATALOG_NONE;
-    clearSystemFlag(FLAG_ALPHA);
+    if ((tam.alpha) && (getSmStackMode() == smAim)) {
+      popSmStackMode();  // Get out of aim stack
+    }
 
     while(numberOfTamMenusToPop--) {
       popSoftmenu();
     }
+    
+    tam.alpha = false;
+    tam.mode = 0;
+    catalog = CATALOG_NONE;
+    clearSystemFlag(FLAG_ALPHA);
 
     if(softmenu[getSoftmenuId(0)].menuItem == -MNU_MVAR) {
       catalog = CATALOG_MVAR;

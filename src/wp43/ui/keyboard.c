@@ -1194,9 +1194,7 @@ bool      _kbSeenInterrupt     = false;
 
       default: {
         if(calcMode == cmAssign && itemToBeAssigned != 0 && item == ITM_USERMODE) {
-          while(getSoftmenuId(0) > 2) {     // Not MyMemu, MyAlpha or MyPFN
-            popSoftmenu();
-          }
+          fnExitAllMenus(NOPARAM);
           if(previousCalcMode == cmAim) {
             setSoftmenuId(0,1);
             calcModeUpdateGui();
@@ -1651,8 +1649,9 @@ void fnKeyEnter(uint16_t unusedButMandatoryParameter) {
           if(allFormulae[currentFormula].pointerToFormulaData == WP43_NULL) {
             deleteEquation(currentFormula);
           }
+        } else {
+          popSoftmenu();
         }
-        popSoftmenu();
         break;
       }
 
@@ -1807,7 +1806,9 @@ void fnKeyExit(uint16_t unusedButMandatoryParameter) {
           }
         }
         else {
-          printf("*** cmAim popSoftMenu\n");
+          #if defined(PC_BUILD)
+            printf("*** cmAim popSoftMenu\n");
+          #endif // PC_BUILD
           popSoftmenu();
         }
         break;
@@ -1894,8 +1895,9 @@ void fnKeyExit(uint16_t unusedButMandatoryParameter) {
             if(allFormulae[currentFormula].pointerToFormulaData == WP43_NULL) {
               deleteEquation(currentFormula);
             }
+          } else {
+            popSoftmenu();
           }
-          popSoftmenu();
         }
         break;
       }

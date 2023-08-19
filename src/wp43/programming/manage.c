@@ -660,11 +660,15 @@ static void _closeAlphaMenus(void) {
         return;
     }
   }
-  printf("*** SoftmenuId %d - Stack %d\n", getSoftmenuId(0), getSmStackMode());
+  
+  #if defined(PC_BUILD)
+    printf("*** SoftmenuId %d - Stack %d\n", getSoftmenuId(0), getSmStackMode());
+  #endif // PC_BUILD
+  
   // Just in case softmenuStack was filled with AIM-related menus
-  for(int i = 0; i < SOFTMENU_STACK_SIZE; ++i) {
-    setSoftmenuId(i,0); // MyMenu
-  }
+  //for(int i = 0; i < SOFTMENU_STACK_SIZE; ++i) {
+  //  setSoftmenuId(i,0); // MyMenu
+  //}
 }
 #endif // !TESTSUITE_BUILD
 

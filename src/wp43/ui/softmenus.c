@@ -387,6 +387,7 @@ TO_QSPI const int16_t baseMenu[]         = { smMyMenu, smMyAlpha, smMyPFN, smEqE
 
 #include "softmenuCatalogs.h"
 
+#if defined(PC_BUILD)
 TO_QSPI const softmenu_t softmenu[] = {
 /*   0 */  {.menuItem = -MNU_MyMenu,      .numItems = 0,                                        .softkeyItem = NULL             }, // MyMenu must be the 1st
 /*   1 */  {.menuItem = -MNU_MyAlpha,     .numItems = 0,                                        .softkeyItem = NULL             }, // MyAlpha must be the 2nd
@@ -523,7 +524,119 @@ dynamicSoftmenu_t dynamicSoftmenu[NUMBER_OF_DYNAMIC_SOFTMENUS] = {
 /*  20 */  {.menuItem = -ITM_MENU   , .numItems = 0, .menuContent = NULL},
 };
 
-uint8_t *getNthString(uint8_t *ptr, int16_t n) { // Starting with string 0 (the 1st string is returned for n=0)
+TO_QSPI const char *softMenuNames[] = {
+/*   0 */    "MyMenu",
+/*   1 */    "MyAlpha",
+/*   2 */    "MyPFN",
+/*   3 */    "PROGS",
+/*   4 */    "VAR",
+/*   5 */    "PROG",
+/*   6 */    "MATRS",
+/*   7 */    "STRINGS",
+/*   8 */    "DATES",
+/*   9 */    "TIMES",
+/*  10 */    "ANGLES",
+/*  11 */    "SINTS",
+/*  12 */    "LINTS",
+  /*  13 */    "REALS",
+  /*  14 */    "CPXS",
+  /*  15 */    "CONFIG",
+  /*  16 */    "ALLVAR",
+  /*  17 */    "MVAR",
+  /*  18 */    "MENUS",
+  /*  19 */    "DYNAMIC",
+  /*  20 */    "ITM_MENU",
+  /*  21 */    "TAMFLAG",
+  /*  22 */    "SYSFL",
+  /*  23 */    "ALPHAINTL",
+  /*  24 */    "ALPHAintl",
+  /*  25 */    "ADV",
+  /*  26 */    "Sfdx",
+  /*  27 */    "BITS",
+  /*  28 */    "CLK",
+  /*  29 */    "CLR",
+  /*  30 */    "CPX",
+  /*  31 */    "DISP",
+  /*  32 */    "EQN",
+  /*  33 */    "1STDERIV",
+  /*  34 */    "2NDDERIV",
+  /*  35 */    "Sf",
+  /*  36 */    "Solver",
+  /*  37 */    "EXP",
+  /*  38 */    "TRI",
+  /*  39 */    "FIN",
+  /*  40 */    "TVM",
+  /*  41 */    "FLAGS",
+  /*  42 */    "INFO",
+  /*  43 */    "INTS",
+  /*  44 */    "LOOP",
+  /*  45 */    "MATX",
+  /*  46 */    "SIMQ",
+  /*  47 */    "M_EDIT",
+  /*  48 */    "MODE",
+  /*  49 */    "PARTS",
+  /*  50 */    "PROB",
+  /*  51 */    "T",
+  /*  52 */    "F",
+  /*  53 */    "CHI2",
+  /*  54 */    "NORML",
+  /*  55 */    "LGNRM",
+  /*  56 */    "CAUCH",
+  /*  57 */    "EXPON",
+  /*  58 */    "LOGIS",
+  /*  59 */    "WEIBL",
+  /*  60 */    "BINOM",
+  /*  61 */    "GEOM",
+  /*  62 */    "HYPER",
+  /*  63 */    "NBIN",
+  /*  64 */    "POISS",
+  /*  65 */    "PFN",
+  /*  66 */    "PFN2",
+  /*  67 */    "STAT",
+  /*  68 */    "SUMS",
+  /*  69 */    "GRAPH",
+  /*  70 */    "PLOT_STAT",
+  /*  71 */    "PLOT_LR",
+  /*  72 */    "HPLOT",
+  /*  73 */    "HIST",
+  /*  74 */    "STK",
+  /*  75 */    "TEST",
+  /*  76 */    "XFN",
+  /*  77 */    "ORTHOG",
+  /*  78 */    "ELLIPT",
+  /*  79 */    "CATALOG",
+  /*  80 */    "CHARS",
+  /*  81 */    "VARS",
+  /*  82 */    "ALPHA_OMEGA",
+  /*  83 */    "alpha_omega",
+  /*  84 */    "FCNS",
+  /*  85 */    "ALPHAMATH",
+  /*  86 */    "ALPHADOT",
+  /*  87 */    "ALPHAFN",
+  /*  88 */    "ANGLECONV",
+  /*  89 */    "UNITCONV",
+  /*  90 */    "CONVE",
+  /*  91 */    "CONVP",
+  /*  92 */    "CONVFP",
+  /*  93 */    "CONVM",
+  /*  94 */    "CONVX",
+  /*  95 */    "CONVV",
+  /*  96 */    "CONVA",
+  /*  97 */    "CONST",
+  /*  98 */    "IO",
+  /*  99 */    "PRINT",
+  /* 100 */    "TAM",
+  /* 101 */    "TAMCMP",
+  /* 102 */    "TAMSTORCL",
+  /* 103 */    "TAMSHUFFLE",
+  /* 104 */    "TAMLABEL",
+  /* 105 */    "EQ_EDIT",
+  /* 106 */    "TIMERF",
+  /* 107 */    "ITM_DELITM"
+  };
+#endif // PC_BUILD
+
+uint8_t *getNthString(uint8_t *ptr, int16_t n) { // Starting with string 0 (the 1ast string is returned for n=0)
   while(n) {
     ptr += stringByteLength((char *)ptr) + 1;
     n--;
@@ -1259,8 +1372,10 @@ void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
   void setSoftmenuId(int index, int16_t menuId) {
     smStackMode_t sm = smStackMode[0];
     
+    #if defined(PC_BUILD)
+      printf("*** Set softmenu ID %3d %s\n",menuId, softMenuNames[baseMenu[sm]]);
+    #endif // PC_BUILD
     
-    printf("*** Set softmenu ID %d\n",menuId);
     softmenuStacks[sm].item[index].softmenuId = menuId;
   }
 
@@ -1288,13 +1403,19 @@ void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
     }    
     smStackMode[0] = stackMode;
     fillSoftmenuStack(stackMode, baseMenu[stackMode]);  // Reset content of the new softmenu stack
-    printf("*** Push stack mode %d\n",stackMode);
+
+    #if defined(PC_BUILD)
+      printf("*** Push stack mode %d - baseMenu %s\n",stackMode,softMenuNames[baseMenu[stackMode]]);
+    #endif // PC_BUILD
   }
   
   void popSmStackMode(void) {
     int i;
     
-    printf("*** Pop stack mode %d\n",smStackMode[0]); 
+    #if defined(PC_BUILD)
+      printf("*** Pop  stack mode %d - baseMenu %s\n",smStackMode[0],softMenuNames[baseMenu[smStackMode[0]]]);
+    #endif // PC_BUILD
+    
     for(i=0; i<SOFTMENU_STACKMODE_SIZE-1; i++) {
       smStackMode[i] = smStackMode[i+1];  
     }    
@@ -1324,7 +1445,10 @@ void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
       xcopy(softmenuStacks[sm].item + 1, softmenuStacks[sm].item, (SOFTMENU_STACK_SIZE - 1) * sizeof(softmenuStackItem_t)); // shifting the entire stack
     }
 
-    printf("*** Push softmenuId %d - stack %d\n",softmenuId,sm);
+    #if defined(PC_BUILD)
+      printf("*** Push softmenuId %16s - stack %d - calcMode %d\n", softMenuNames[softmenuId], sm, calcMode);
+    #endif // PC_BUILD
+    
     softmenuStacks[sm].item[0].softmenuId = softmenuId;
     softmenuStacks[sm].item[0].firstItem = lastCatalogPosition[catalog];
   }
@@ -1334,8 +1458,9 @@ void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
   void popSoftmenu(void) {
     smStackMode_t sm = smStackMode[0];
     
-    
-    printf("*** Pop softmenuId %d - stack %d\n",softmenuStacks[sm].item[0].softmenuId,sm);
+    #if defined(PC_BUILD)
+      printf("*** Pop  softmenuId %16s - stack %d - calcMode %d\n",softMenuNames[softmenuStacks[sm].item[0].softmenuId],sm,calcMode);
+    #endif // PC_BUILD
     
     screenUpdatingMode &= ~SCRUPD_MANUAL_MENU;
 
@@ -1540,12 +1665,16 @@ char *dynmenuGetLabelWithDup(int16_t menuitem, int16_t *dupNum) {
 }
 
 
-
 void fnExitAllMenus(uint16_t unusedButMandatoryParameter) {
   #if !defined(TESTSUITE_BUILD)
     smStackMode_t sm = smStackMode[0];
-    while((softmenuStacks[sm].item[0].softmenuId != baseMenu[sm] ) || (softmenuStacks[sm].item[1].softmenuId != baseMenu[sm])) {
-      popSoftmenu();
-    }
+    fillSoftmenuStack(sm, baseMenu[sm]);                // Initialize current softmenu stack with the related base menu
+    catalog = CATALOG_NONE;
+    clearSystemFlag(FLAG_ALPHA);
+
+    #if defined(PC_BUILD)
+      printf("*** Exit all - stack %d\n",sm);
+    #endif // PC_BUILD
+
   #endif // !TESTSUITE_BUILD
 }

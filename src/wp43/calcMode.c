@@ -154,7 +154,6 @@ calcMode_t calcMode;
 
 
   void calcModeEnter(calcMode_t newMode) {
-    printf("calcModeEnter newMode %d\n", newMode);
     cursorHide();
     switch(newMode) {
       case cmNormal:
@@ -294,7 +293,9 @@ calcMode_t calcMode;
       }
 
       if(calcMode != cmPem || !getSystemFlag(FLAG_ALPHA)) {
-        alphaCase = AC_UPPER;
+        if (!getSystemFlag(FLAG_ALPHA)) {
+          alphaCase = AC_UPPER;              // If Alphamode (Aim or Eim) keep alphaCase value
+        }
         nextChar = NC_NORMAL;
 
         clearSystemFlag(FLAG_ALPHA);

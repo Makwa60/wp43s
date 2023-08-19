@@ -20,6 +20,7 @@
 #include "sort.h"
 #include "ui/cursor.h"
 #include "ui/screen.h"
+#include "ui/softmenus.h"
 #include <stdbool.h>
 #include <string.h>
 
@@ -122,6 +123,7 @@ void fnEqEdit(uint16_t unusedButMandatoryParameter) {
       aimBuffer[0] = 0;
     }
     calcMode = cmEim;
+    pushSmStackMode(smEim);
     alphaCase = AC_LOWER;
     setSystemFlag(FLAG_ALPHA);
     equationEditorScrollPosition = 0;
