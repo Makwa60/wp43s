@@ -57,9 +57,23 @@ TO_QSPI void (* const power[NUMBER_OF_DATA_TYPES_FOR_CALCULATIONS][NUMBER_OF_DAT
 
 void PowerReal(const real_t *y, const real_t *x, real_t *res, realContext_t *realContext) {
   real_t lny;
-  realLn(y, &lny, realContext);
-  realMultiply(x, &lny, res, realContext);
-  realExp(res, res, realContext);
+  if(realIsNegative(y) && realIsAnInteger(x) && realIsPositive(x)) {
+    realDivideRemainder(x, const_2, &lny, realContext);
+    bool isOdd = !realIsZero(&lny);
+    realCopyAbs(y, &lny);
+    realLn(&lny, &lny, realContext);
+    realMultiply(x, &lny, res, realContext);
+    realExp(res, res, realContext);
+    fflush(stdout);
+    if(isOdd) {
+      realChangeSign(res);
+    }
+  }
+  else {
+    realLn(y, &lny, realContext);
+    realMultiply(x, &lny, res, realContext);
+    realExp(res, res, realContext);
+  }
 }
 
 
@@ -68,6 +82,7 @@ void Power34Real(const real34_t *y, const real34_t *x, real34_t *res) {
   real34_t lny, yy, xx, x1;
   uint32_t exponent = 0;
   bool inv = real34IsNegative(x);
+  bool neg = real34IsNegative(y) && real34IsAnInteger(x) && real34IsPositive(x);
   if(real34IsZero(y)) {
     if(real34IsZero(x)) {
       realToReal34(const_NaN, res);
@@ -90,6 +105,9 @@ void Power34Real(const real34_t *y, const real34_t *x, real34_t *res) {
     return;
   }
   real34Copy(y, &yy);
+  if(neg) {
+    real34ChangeSign(&yy);
+  }
   real34CopyAbs(x, &x1);
   real34Ln(&yy, &lny);
   if(real34CompareLessThan(&x1, const34_2p32)) {
@@ -108,6 +126,12 @@ void Power34Real(const real34_t *y, const real34_t *x, real34_t *res) {
   }
   if(inv) {
     real34Divide(const34_1, res, res);
+  }
+  if(neg) {
+    real34DivideRemainder(x, const34_2, &lny);
+    if(!real34IsZero(&lny)) {
+      real34ChangeSign(res);
+    }
   }
 }
 
