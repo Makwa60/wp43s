@@ -154,6 +154,9 @@ calcMode_t calcMode;
 
 
   void calcModeEnter(calcMode_t newMode) {
+    #if defined PC_BUILD
+      printf("*** calcModeEnter - calcMode %d - newMode %d\n", calcMode, newMode); 
+    #endif
     cursorHide();
     switch(newMode) {
       case cmNormal:

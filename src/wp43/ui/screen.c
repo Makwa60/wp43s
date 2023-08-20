@@ -1905,6 +1905,9 @@ void clearScreen(void) {
       }
 
       case cmPlotStat: {
+        #if defined PC_BUILD
+          printf("*** calcMode %d\n",calcMode);
+        #endif
         clearScreen();
         displayShiftAndTamBuffer();
         showSoftmenuCurrentPart();

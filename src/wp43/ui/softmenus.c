@@ -387,7 +387,6 @@ TO_QSPI const int16_t baseMenu[]         = { smMyMenu, smMyAlpha, smMyPFN, smEqE
 
 #include "softmenuCatalogs.h"
 
-#if defined(PC_BUILD)
 TO_QSPI const softmenu_t softmenu[] = {
 /*   0 */  {.menuItem = -MNU_MyMenu,      .numItems = 0,                                        .softkeyItem = NULL             }, // MyMenu must be the 1st
 /*   1 */  {.menuItem = -MNU_MyAlpha,     .numItems = 0,                                        .softkeyItem = NULL             }, // MyAlpha must be the 2nd
@@ -524,20 +523,21 @@ dynamicSoftmenu_t dynamicSoftmenu[NUMBER_OF_DYNAMIC_SOFTMENUS] = {
 /*  20 */  {.menuItem = -ITM_MENU   , .numItems = 0, .menuContent = NULL},
 };
 
-TO_QSPI const char *softMenuNames[] = {
-/*   0 */    "MyMenu",
-/*   1 */    "MyAlpha",
-/*   2 */    "MyPFN",
-/*   3 */    "PROGS",
-/*   4 */    "VAR",
-/*   5 */    "PROG",
-/*   6 */    "MATRS",
-/*   7 */    "STRINGS",
-/*   8 */    "DATES",
-/*   9 */    "TIMES",
-/*  10 */    "ANGLES",
-/*  11 */    "SINTS",
-/*  12 */    "LINTS",
+#if defined(PC_BUILD)
+  TO_QSPI const char *softMenuNames[] = {
+  /*   0 */    "MyMenu",
+  /*   1 */    "MyAlpha",
+  /*   2 */    "MyPFN",
+  /*   3 */    "PROGS",
+  /*   4 */    "VAR",
+  /*   5 */    "PROG",
+  /*   6 */    "MATRS",
+  /*   7 */    "STRINGS",
+  /*   8 */    "DATES",
+  /*   9 */    "TIMES",
+  /*  10 */    "ANGLES",
+  /*  11 */    "SINTS",
+  /*  12 */    "LINTS",
   /*  13 */    "REALS",
   /*  14 */    "CPXS",
   /*  15 */    "CONFIG",
@@ -1465,7 +1465,7 @@ void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
     screenUpdatingMode &= ~SCRUPD_MANUAL_MENU;
 
     xcopy(softmenuStacks[sm].item, softmenuStacks[sm].item + 1, (SOFTMENU_STACK_SIZE - 1) * sizeof(softmenuStackItem_t)); // shifting the entire stack
-    softmenuStacks[sm].item[3].softmenuId = sm;  // Put default menu in the last stack element
+    softmenuStacks[sm].item[3].softmenuId = baseMenu[sm];  // Put default menu in the last stack element
     softmenuStacks[sm].item[0].firstItem = 0;
 
     enterAsmModeIfMenuIsACatalog(softmenu[softmenuStacks[sm].item[0].softmenuId].menuItem);

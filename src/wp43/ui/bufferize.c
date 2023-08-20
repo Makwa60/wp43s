@@ -2280,6 +2280,9 @@
 
 
   void closeAim(void) {
+    #if defined PC_BUILD
+      printf("*** closeAim\n"); 
+    #endif
     calcModeEnter(cmNormal);
 
     if(aimBuffer[0] == 0) {

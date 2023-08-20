@@ -715,6 +715,9 @@ bool      _kbSeenInterrupt     = false;
               }
             }
             if(calcMode == cmAim && !isAlphabeticSoftmenu()) {
+              #if defined PC_BUILD
+                printf("*** btnFnReleased - item %d\n", item); 
+              #endif
               closeAim();
             }
             if(tam.alpha && calcMode != cmAssign && tam.mode != tmNewMenu) {
@@ -1795,6 +1798,9 @@ void fnKeyExit(uint16_t unusedButMandatoryParameter) {
 
       case cmAim: {
         if(getSoftmenuId(0) <= 1) { // MyMenu or MyAlpha is displayed
+          #if defined PC_BUILD
+            printf("*** fnKeyExit\n"); 
+          #endif
           closeAim();
           #if defined(DEBUGUNDO)
             printf(">>> saveForUndo from fnKeyExitA\n");
@@ -2073,6 +2079,9 @@ void fnKeyBackspace(uint16_t unusedButMandatoryParameter) {
           aimBuffer[lg] = 0;
         }
         if(aimBuffer[0] == 0) {
+          #if defined PC_BUILD
+            printf("*** fnKeyBackspace\n"); 
+          #endif
           closeAim();
           updateMatrixHeightCache();
         }
