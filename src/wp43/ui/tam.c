@@ -922,6 +922,9 @@ void tamReset(void) {
 
 
   void tamEnterMode(int16_t func) {
+    #if defined PC_BUILD
+      printf("*** tamEnterMode func %d - calcMode %d - stack %d - tam.alpha %d\n", func, calcMode, getSmStackMode(),tam.alpha);
+    #endif
     tam.mode = func == ITM_ASSIGN ? tmNewMenu : indexOfItems[func].param;
     tam.function = func;
     tam.min = indexOfItems[func].tamMinMax >> TAM_MAX_BITS;
@@ -1059,7 +1062,9 @@ void tamReset(void) {
 
 
   void tamLeaveMode(void) {
-    printf("*** tamModeLeave calcMode %d - stack %d - tam.alpha %d\n", calcMode, getSmStackMode(),tam.alpha);
+    #if defined PC_BUILD
+      printf("*** tamModeLeave calcMode %d - stack %d - tam.alpha %d\n", calcMode, getSmStackMode(),tam.alpha);
+    #endif
     if(screenUpdatingMode & (SCRUPD_MANUAL_STACK | SCRUPD_SKIP_STACK_ONE_TIME)) {
       clearTamBuffer();
     }

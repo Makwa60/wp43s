@@ -716,13 +716,22 @@ bool      _kbSeenInterrupt     = false;
             }
             if(calcMode == cmAim && !isAlphabeticSoftmenu()) {
               #if defined PC_BUILD
-                printf("*** btnFnReleased - item %d\n", item); 
+                printf("*** btnFnReleased Aim - item %d\n", item); 
               #endif
               closeAim();
             }
             if(tam.alpha && calcMode != cmAssign && tam.mode != tmNewMenu) {
               tamLeaveMode();
             }
+            if(calcMode == cmPem && getSystemFlag(FLAG_ALPHA)) {
+              #if defined PC_BUILD
+                printf("*** btnFnReleased Pem - item %d\n", item); 
+              #endif
+              //pemCloseAlphaInput();
+              _closeCatalog();
+              fnKeyInCatalog = 0;
+            }
+
 
             if(lastErrorCode == 0) {
               if(temporaryInformation == TI_VIEW_REGISTER) {
@@ -1873,7 +1882,11 @@ void fnKeyExit(uint16_t unusedButMandatoryParameter) {
           fnBst(NOPARAM); // Set the PGM pointer to the original position
           break;
         }
-        if(getSoftmenuId(0) != 2 ) { // not MyPFN
+        if(getSoftmenuId(0) == smMyAlpha ) { // MyAlpha displayed in PEM ->
+          popSmStackMode();  // Return to previous softmenu stack which should be smPem
+          break;
+        }
+        if(getSoftmenuId(0) != smMyPFN ) { // not MyPFN
           popSoftmenu();
           break;
         }

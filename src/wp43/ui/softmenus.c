@@ -1468,6 +1468,21 @@ void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
     softmenuStacks[sm].item[3].softmenuId = baseMenu[sm];  // Put default menu in the last stack element
     softmenuStacks[sm].item[0].firstItem = 0;
 
+    // failsafe return to Pem stack
+    if (calcMode == cmPem) {
+      if ((sm != smPem) && (!getSystemFlag(FLAG_ALPHA))) {
+        popSmStackMode();
+        sm = smStackMode[0];
+      }
+    }
+    // failsafe return to Normal stack
+    if (calcMode == cmNormal) {
+      while (sm != smNormal) {
+        popSmStackMode();
+        sm = smStackMode[0];
+      }
+    }
+
     enterAsmModeIfMenuIsACatalog(softmenu[softmenuStacks[sm].item[0].softmenuId].menuItem);
 
     if(softmenu[softmenuStacks[sm].item[0].softmenuId].menuItem == -MNU_MVAR) {
