@@ -34,6 +34,7 @@ bool                   lastProgramListEnd;
 bool                   programListEnd;
 bool                   serialIOIconEnabled;
 bool                   pemCursorIsZerothStep;
+bool                   pendingScreenRefresh;
 
 realContext_t          ctxtReal4;    //   limited digits: used for higher speed internal real calcs
 realContext_t          ctxtReal34;   //   34 digits

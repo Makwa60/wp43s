@@ -2182,6 +2182,7 @@ TO_QSPI const item_t indexOfItems[] = {
 
 
 // Menus
+
 /* 1313 */  { itemToBeCoded,                NOPARAM,                     "ADV",                                         "ADV",                                         (0 << TAM_MAX_BITS) |     0, CAT_MENU | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
 /* 1314 */  { itemToBeCoded,                NOPARAM,                     "ANGLES",                                      "ANGLES",                                      (0 << TAM_MAX_BITS) |     0, CAT_MENU | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
 /* 1315 */  { itemToBeCoded,                NOPARAM,                     "PRINT",                                       "PRINT",                                       (0 << TAM_MAX_BITS) |     0, CAT_MENU | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
@@ -2709,5 +2710,8 @@ TO_QSPI const item_t indexOfItems[] = {
 /* 1815 */  { fnBuzz,                       NOPARAM,                     "BUZZ",                                        "BUZZ",                                        (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_NONE         },
 /* 1816 */  { fnPlay,                       tmRegister,                  "PLAY",                                        "PLAY",                                        (0 << TAM_MAX_BITS) |    99, CAT_FNCT | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_REGISTER     },
 
-/* 1817 */  { itemToBeCoded,                NOPARAM,                     "",                                            "Last item",                                   (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_ENABLED   | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
+/* 1817 */  { itemToBeCoded,                NOPARAM,                     "CAT_AIM",                                     "CAT_AIM",                                     (0 << TAM_MAX_BITS) |     0, CAT_MENU | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
+/* 1817 */  { itemToBeCoded,                NOPARAM,                     "MENUS",                                       "MENUS",                                       (0 << TAM_MAX_BITS) |     0, CAT_MENU | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
+
+/* 1818 */  { itemToBeCoded,                NOPARAM,                     "",                                            "Last item",                                   (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_ENABLED   | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     }
 };

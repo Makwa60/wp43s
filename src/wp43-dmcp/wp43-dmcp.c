@@ -451,6 +451,10 @@ void program_main(void) {
       powerDebugMark(M2);
       btnReleased(lastKey);
     }
+    else if (pendingScreenRefresh) {
+        pendingScreenRefresh = false;
+        refreshScreen();
+    }
 
     // Execute pending timer jobs
     nextTimerRefresh = timerRun();

@@ -628,49 +628,14 @@ static void _insertInProgram(const uint8_t *dat, uint16_t sizeInBytes) {
   dynamicMenuItem = _dynamicMenuItem;
 }
 
+
 #if !defined(TESTSUITE_BUILD)
 static void _closeAlphaMenus(void) {
-  for(int i = 0; i < SOFTMENU_STACK_SIZE; ++i) {
-    switch(-softmenu[getSoftmenuId(0)].menuItem) {
-      case MNU_ALPHAINTL:
-      case MNU_ALPHAintl:
-      case MNU_ALPHAMATH:
-      case MNU_ALPHA_OMEGA:
-      case MNU_alpha_omega:
-      case MNU_ALPHADOT:
-        popSoftmenu();
-        break;
-
-      case MNU_MyAlpha:
-        switch(-softmenu[getSoftmenuId(1)].menuItem) {
-          case MNU_ALPHAINTL:
-          case MNU_ALPHAintl:
-          case MNU_ALPHAMATH:
-          case MNU_ALPHA_OMEGA:
-          case MNU_alpha_omega:
-          case MNU_ALPHADOT:
-            popSoftmenu();
-            break;
-          default:
-            popSmStackMode();  // Return to previous softmenu stack which should be smPem
-            return;
-        }
-
-      default:
-        return;
-    }
-  }
-  
-  #if defined(PC_BUILD)
-    printf("*** SoftmenuId %d - Stack %d\n", getSoftmenuId(0), getSmStackMode());
-  #endif // PC_BUILD
-  
-  // Just in case softmenuStack was filled with AIM-related menus
-  //for(int i = 0; i < SOFTMENU_STACK_SIZE; ++i) {
-  //  setSoftmenuId(i,0); // MyMenu
-  //}
+  popSmStackMode();  // Return to previous softmenu stack which should be smPem
+  return;
 }
 #endif // !TESTSUITE_BUILD
+
 
 void pemAlpha(int16_t item) {
   #if !defined(TESTSUITE_BUILD)
@@ -723,11 +688,20 @@ void pemAlpha(int16_t item) {
         aimBuffer[stringLastGlyph(aimBuffer)] = 0;
       }
     }
-    else if((item == ITM_ENTER) || (item == ITM_EXIT) || (item == ITM_EXITALLNP)) {
-      pemCloseAlphaInput();
-      --firstDisplayedLocalStepNumber;
-      defineFirstDisplayedStep();
-      _closeAlphaMenus();
+    else if(item == ITM_EXITALLNP) {
+      fnExitAllMenus(NOPARAM);
+      setSystemFlag(FLAG_ALPHA);
+      return;
+    }
+    else if((item == ITM_ENTER) || (item == ITM_EXIT)) {
+      if ((item == ITM_EXIT) && ((softmenu[getSoftmenuId(0)].menuItem != -MNU_MyAlpha) || (softmenu[getSoftmenuId(1)].menuItem != -MNU_MyAlpha))) {         
+        popSoftmenu();
+      } else {
+        pemCloseAlphaInput();
+        --firstDisplayedLocalStepNumber;
+        defineFirstDisplayedStep();
+        //_closeAlphaMenus();             => Not needed, already done in pemCloseAlphaInput()
+      }
       return;
     }
     else if(item == ITM_USERMODE) {
@@ -753,6 +727,10 @@ void pemAlpha(int16_t item) {
 
 void pemCloseAlphaInput(void) {
   #if !defined(TESTSUITE_BUILD)
+    #if defined PC_BUILD
+      printf("*** pemCloseAlphaInput\n"); 
+    #endif
+
     aimBuffer[0] = 0;
     clearSystemFlag(FLAG_ALPHA);
     calcModeUpdateGui();

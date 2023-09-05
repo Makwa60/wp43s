@@ -242,19 +242,23 @@ TO_QSPI const int16_t menu_Orthog[]      = { ITM_HN,                        ITM_
                                              ITM_HNP,                       ITM_NULL,                   ITM_NULL,                 ITM_NULL,              ITM_NULL,                    ITM_NULL                      };
 
 TO_QSPI const int16_t menu_Ellipt[]      = { ITM_sn,                        ITM_cn,                     ITM_dn,                   ITM_Kk,                ITM_Ek,                      ITM_PInk,
-                                             ITM_am,                        ITM_NULL,                   ITM_NULL,                 ITM_Fphik,             ITM_Ephik,                   ITM_ZETAphik                                        };
+                                             ITM_am,                        ITM_NULL,                   ITM_NULL,                 ITM_Fphik,             ITM_Ephik,                   ITM_ZETAphik                  };
 
 /*      Menu name                           <----------------------------------------------------------------------------- 6 functions ---------------------------------------------------------------------------->  */
 /*                                          <---------------------------------------------------------------------- 6 f shifted functions ------------------------------------------------------------------------->  */
 /*                                          <---------------------------------------------------------------------- 6 g shifted functions ------------------------------------------------------------------------->  */
-TO_QSPI const int16_t menu_CATALOG[]     = { -MNU_FCNS,                     ITM_NULL,                   -MNU_CHARS,               -MNU_PROGS,            -MNU_VARS,                   -MNU_MENUS                    };
+TO_QSPI const int16_t menu_CATALOG[]     = { -MNU_FCNS,                     ITM_NULL,                  -MNU_CHARS,               -MNU_PROGS,            -MNU_VARS,                   -MNU_MENUS                    };
 
-TO_QSPI const int16_t menu_CHARS[]       = { -MNU_ALPHAINTL,               -MNU_ALPHA_OMEGA,            ITM_NULL,                -MNU_ALPHAMATH,        -MNU_MyAlpha,                -MNU_ALPHADOT                  };
+TO_QSPI const int16_t menu_CHARS[]       = { -MNU_ALPHAINTL,               -MNU_ALPHA_OMEGA,            ITM_NULL,                -MNU_ALPHAMATH,        -MNU_MyAlpha,                -MNU_ALPHADOT                 };
 
-TO_QSPI const int16_t menu_VARS[]        = { -MNU_LINTS,                    -MNU_SINTS,                 -MNU_REALS,               -MNU_CPXS,             -MNU_ALLVAR,                 -MNU_MATRS,
-                                             -MNU_DATES,                    -MNU_TIMES,                 -MNU_ANGLES,              -MNU_CONFIG,           ITM_NULL,                    -MNU_STRINGS                  };
+TO_QSPI const int16_t menu_VARS[]        = { -MNU_LINTS,                   -MNU_SINTS,                 -MNU_REALS,               -MNU_CPXS,             -MNU_ALLVAR,                 -MNU_MATRS,
+                                             -MNU_DATES,                   -MNU_TIMES,                 -MNU_ANGLES,              -MNU_CONFIG,            ITM_NULL,                   -MNU_STRINGS                  };
 
-TO_QSPI const int16_t menu_DELITM[]      = { ITM_NULL,                      ITM_NULL,                   ITM_NULL,                 -MNU_PROGS,            -MNU_VARS,                   -MNU_MENUS                    };
+TO_QSPI const int16_t menu_DELITM[]      = {  ITM_NULL,                     ITM_NULL,                   ITM_NULL,                -MNU_PROGS,            -MNU_VARS,                   -MNU_MENUS                    };
+
+TO_QSPI const int16_t menu_CAT_AIM[]     = {  ITM_NULL,                     ITM_NULL,                  -MNU_CHARS,                ITM_NULL,              ITM_NULL,                   -MNU_MENUS_AIM                };
+
+TO_QSPI const int16_t menu_MENUS_AIM[]   = { -MNU_ALPHAINTL,               -MNU_ALPHAintl,             -MNU_ALPHAMATH,           -MNU_ALPHADOT,         -MNU_ALPHA_OMEGA,            -MNU_alpha_omega              };
 
 /*      Menu name                           <----------------------------------------------------------------------------- 6 functions ---------------------------------------------------------------------------->  */
 /*                                          <---------------------------------------------------------------------- 6 f shifted functions ------------------------------------------------------------------------->  */
@@ -496,7 +500,9 @@ TO_QSPI const softmenu_t softmenu[] = {
 /* 105 */  {.menuItem = -MNU_EQ_EDIT,     .numItems = sizeof(menu_Eim        )/sizeof(int16_t), .softkeyItem = menu_Eim         },
 /* 106 */  {.menuItem = -MNU_TIMERF,      .numItems = sizeof(menu_Timer      )/sizeof(int16_t), .softkeyItem = menu_Timer       },
 /* 107 */  {.menuItem = -ITM_DELITM,      .numItems = sizeof(menu_DELITM     )/sizeof(int16_t), .softkeyItem = menu_DELITM      },
-/* 108 */  {.menuItem =  0,               .numItems = 0,                                        .softkeyItem = NULL             }
+/* 108 */  {.menuItem = -MNU_CAT_AIM,     .numItems = sizeof(menu_CAT_AIM    )/sizeof(int16_t), .softkeyItem = menu_CAT_AIM     },
+/* 109 */  {.menuItem = -MNU_MENUS_AIM,   .numItems = sizeof(menu_MENUS_AIM  )/sizeof(int16_t), .softkeyItem = menu_MENUS_AIM   },
+/* 110 */  {.menuItem =  0,               .numItems = 0,                                        .softkeyItem = NULL             }
 };
 
 dynamicSoftmenu_t dynamicSoftmenu[NUMBER_OF_DYNAMIC_SOFTMENUS] = {
@@ -632,7 +638,9 @@ dynamicSoftmenu_t dynamicSoftmenu[NUMBER_OF_DYNAMIC_SOFTMENUS] = {
   /* 104 */    "TAMLABEL",
   /* 105 */    "EQ_EDIT",
   /* 106 */    "TIMERF",
-  /* 107 */    "ITM_DELITM"
+  /* 107 */    "ITM_DELITM",
+  /* 108 */    "CAT_AIM",
+  /* 109 */    "MENUS_AIM"
   };
 #endif // PC_BUILD
 
@@ -1343,31 +1351,35 @@ void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
     }
   }
 
+
   /* Softmenu Stack management
    *
    * All functions for soft,enus stacks management are here
    *
    */
-  
+
  static void fillSoftmenuStack(smStackMode_t stackMode, int16_t softmenuId) {  
     for(int i=0; i<SOFTMENU_STACK_SIZE; i++) {
       softmenuStacks[stackMode].item[i].softmenuId = softmenuId;
       softmenuStacks[stackMode].item[i].firstItem  = 0;
     }
   }
-  
+
+
   void softmenuStacksInit(void) {
     fillSoftmenuStack(smNormal, smMyMenu);                // Initialize RUM softmenu stack  (Normal mode)
     fillSoftmenuStack(smAim,    smMyAlpha);               // Initialize AIM softmenu stack
     fillSoftmenuStack(smPem,    smMyPFN);                 // Initialize PEM softmenu stack
     memset(&smStackMode, smNormal, sizeof(smStackMode));  // Initialize stack mode   stack
   }
-  
+
+
   int16_t getSoftmenuId(int index) {
     smStackMode_t sm = smStackMode[0];
     
     return softmenuStacks[sm].item[index].softmenuId;
   }
+
 
   void setSoftmenuId(int index, int16_t menuId) {
     smStackMode_t sm = smStackMode[0];
@@ -1379,11 +1391,13 @@ void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
     softmenuStacks[sm].item[index].softmenuId = menuId;
   }
 
+
   int16_t getSoftmenuFirstItem(void) {
     smStackMode_t sm = smStackMode[0];
     
     return softmenuStacks[sm].item[0].firstItem;
   }
+
 
   void setSoftmenuFirstItem(int16_t item) {
     smStackMode_t sm = smStackMode[0];
@@ -1391,10 +1405,12 @@ void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
     softmenuStacks[sm].item[0].firstItem = item;
   }
 
+
   smStackMode_t getSmStackMode(void) {
       return smStackMode[0];
   }
-  
+
+
   void pushSmStackMode(smStackMode_t stackMode) {
     int i;
     
@@ -1408,7 +1424,8 @@ void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
       printf("*** Push stack mode %d - baseMenu %s\n",stackMode,softMenuNames[baseMenu[stackMode]]);
     #endif // PC_BUILD
   }
-  
+
+
   void popSmStackMode(void) {
     int i;
     
@@ -1421,7 +1438,8 @@ void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
     }    
     smStackMode[SOFTMENU_STACKMODE_SIZE-1] = smNormal;    
   }
-  
+
+
   /* Pushes a new softmenu on the softmenu stack.
    *
    * \param[in] softmenuId Softmenu ID
@@ -1467,14 +1485,7 @@ void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
     xcopy(softmenuStacks[sm].item, softmenuStacks[sm].item + 1, (SOFTMENU_STACK_SIZE - 1) * sizeof(softmenuStackItem_t)); // shifting the entire stack
     softmenuStacks[sm].item[3].softmenuId = baseMenu[sm];  // Put default menu in the last stack element
     softmenuStacks[sm].item[0].firstItem = 0;
-
-    // failsafe return to Pem stack
-    if (calcMode == cmPem) {
-      if ((sm != smPem) && (!getSystemFlag(FLAG_ALPHA))) {
-        popSmStackMode();
-        sm = smStackMode[0];
-      }
-    }
+   
     // failsafe return to Normal stack
     if (calcMode == cmNormal) {
       while (sm != smNormal) {
@@ -1585,8 +1596,9 @@ void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
       bugScreen(errorMessage);
     }
     else {
-      if(tamIsActive() || (calcMode == cmAssign && tam.alpha)) {
-        numberOfTamMenusToPop++;
+      //if(tamIsActive() || (calcMode == cmAssign && tam.alpha)) {
+      if(tamIsActive() && !tam.alpha) {           // Don't count menus in aim as they will be trashed with the aim menu stack
+         numberOfTamMenusToPop++;
       }
       pushSoftmenu(m);
       if(id == -MNU_MVAR) {
@@ -1685,7 +1697,12 @@ void fnExitAllMenus(uint16_t unusedButMandatoryParameter) {
     smStackMode_t sm = smStackMode[0];
     fillSoftmenuStack(sm, baseMenu[sm]);                // Initialize current softmenu stack with the related base menu
     catalog = CATALOG_NONE;
-    clearSystemFlag(FLAG_ALPHA);
+    if (sm == smAim) {
+      setSystemFlag(FLAG_ALPHA);
+    }
+    else {
+      clearSystemFlag(FLAG_ALPHA);
+    }
 
     #if defined(PC_BUILD)
       printf("*** Exit all - stack %d\n",sm);

@@ -303,7 +303,7 @@ bool      _kbSeenInterrupt     = false;
   static void _closeCatalog(void) {
     bool inCatalog = false;
     for(int i = 0; i < SOFTMENU_STACK_SIZE; ++i) {
-      if(softmenu[getSoftmenuId(i)].menuItem == -MNU_CATALOG) {
+      if((softmenu[getSoftmenuId(i)].menuItem == -MNU_CATALOG) || (softmenu[getSoftmenuId(i)].menuItem == -MNU_CAT_AIM)) {
         inCatalog = true;
         break;
       }
@@ -392,7 +392,8 @@ bool      _kbSeenInterrupt     = false;
       #pragma GCC diagnostic push
       #pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
       switch(-softmenu[getSoftmenuId(0)].menuItem) {
-        case MNU_MENUS: {
+        case MNU_MENUS:
+        case MNU_MENUS_AIM: {
           if(item <= ASSIGN_USER_MENU) {
             currentUserMenu = ASSIGN_USER_MENU - item;
             item = -MNU_DYNAMIC;
@@ -400,6 +401,7 @@ bool      _kbSeenInterrupt     = false;
           /* fallthrough */
         }
         case MNU_CATALOG:
+        case MNU_CAT_AIM:
         case MNU_CHARS:
         case MNU_PROGS:
         case MNU_VARS: {
@@ -512,10 +514,12 @@ bool      _kbSeenInterrupt     = false;
         return true;
       }
       case MNU_CATALOG:
+      //case MNU_CAT_AIM:
       case MNU_CHARS:
       case MNU_PROGS:
       case MNU_VARS:
-      case MNU_MENUS: {
+      case MNU_MENUS:
+      case MNU_MENUS_AIM: {
         screenUpdatingMode &= ~SCRUPD_ONE_TIME_FLAGS;
         return false;
       }
@@ -616,7 +620,7 @@ bool      _kbSeenInterrupt     = false;
             return;
           }
           else if(item < 0) { // softmenu
-            if(calcMode == cmAssign && itemToBeAssigned == 0 && softmenu[getSoftmenuId(0)].menuItem == -MNU_MENUS) {
+            if(calcMode == cmAssign && itemToBeAssigned == 0 && ((softmenu[getSoftmenuId(0)].menuItem == -MNU_MENUS) || (softmenu[getSoftmenuId(0)].menuItem == -MNU_MENUS_AIM))) {
               itemToBeAssigned = item;
             }
             else {
@@ -715,21 +719,16 @@ bool      _kbSeenInterrupt     = false;
               }
             }
             if(calcMode == cmAim && !isAlphabeticSoftmenu()) {
-              #if defined PC_BUILD
-                printf("*** btnFnReleased Aim - item %d\n", item); 
-              #endif
               closeAim();
             }
             if(tam.alpha && calcMode != cmAssign && tam.mode != tmNewMenu) {
               tamLeaveMode();
             }
             if(calcMode == cmPem && getSystemFlag(FLAG_ALPHA)) {
-              #if defined PC_BUILD
-                printf("*** btnFnReleased Pem - item %d\n", item); 
-              #endif
-              //pemCloseAlphaInput();
-              _closeCatalog();
-              fnKeyInCatalog = 0;
+              if(getSmStackMode() != smPem) {
+                popSmStackMode();  // Return to previous softmenu stack which should be smNormal
+              }
+              clearSystemFlag(FLAG_ALPHA);
             }
 
 
@@ -1807,9 +1806,6 @@ void fnKeyExit(uint16_t unusedButMandatoryParameter) {
 
       case cmAim: {
         if(getSoftmenuId(0) <= 1) { // MyMenu or MyAlpha is displayed
-          #if defined PC_BUILD
-            printf("*** fnKeyExit\n"); 
-          #endif
           closeAim();
           #if defined(DEBUGUNDO)
             printf(">>> saveForUndo from fnKeyExitA\n");
@@ -1821,9 +1817,6 @@ void fnKeyExit(uint16_t unusedButMandatoryParameter) {
           }
         }
         else {
-          #if defined(PC_BUILD)
-            printf("*** cmAim popSoftMenu\n");
-          #endif // PC_BUILD
           popSoftmenu();
         }
         break;
@@ -2092,9 +2085,6 @@ void fnKeyBackspace(uint16_t unusedButMandatoryParameter) {
           aimBuffer[lg] = 0;
         }
         if(aimBuffer[0] == 0) {
-          #if defined PC_BUILD
-            printf("*** fnKeyBackspace\n"); 
-          #endif
           closeAim();
           updateMatrixHeightCache();
         }

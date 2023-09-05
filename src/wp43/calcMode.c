@@ -116,11 +116,11 @@ calcMode_t calcMode;
       cursorShow(true, 1, Y_POSITION_OF_AIM_LINE + 6);
     }
 
+    setSystemFlag(FLAG_ALPHA);
+
     if(getSmStackMode() != smAim) {
       pushSmStackMode(smAim);  // Select AIM softmenu stack with MyAlpha default menu
     }
- 
-    setSystemFlag(FLAG_ALPHA);
   }
 
 

@@ -49,6 +49,7 @@
     extern uint32_t            *screenData;
     extern bool                 screenChange;
   #endif //PC_BUILD
+    extern bool                 pendingScreenRefresh;
 
   // Variables stored in FLASH
   extern const item_t                    indexOfItems[];

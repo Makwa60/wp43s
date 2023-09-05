@@ -255,12 +255,27 @@ void clearScreen(void) {
 
   void cbShowNop(uint16_t param) {
     if((showFunctionNameItem == ITM_EXIT) || (showFunctionNameItem == ITM_EXITALL) || (showFunctionNameItem == ITM_EXITALLNP)) {
-      hideFunctionName();
-      tmpString[0] = 0;
-      if(calcMode == cmPem) {
-        showFunctionName(ITM_EXITALLNP, 1000);
-      } else {
-        showFunctionName(ITM_EXITALL, 1000);
+      if((showFunctionNameItem == ITM_EXIT)) {
+        fnExitAllMenus(NOPARAM);                 // Exit all menu and update display when entering EXITALL
+        #if defined PC_BUILD
+          refreshScreen();
+        #else
+          pendingScreenRefresh = true;
+        #endif
+        hideFunctionName();
+        tmpString[0] = 0;
+        if(calcMode == cmPem) {
+          showFunctionName(ITM_EXITALLNP, 1000);
+        } else {
+          showFunctionName(ITM_EXITALL, 1000);
+        }
+      }
+      else {
+        #if defined PC_BUILD
+          hideFunctionName();
+        #endif
+        tmpString[0] = 0;
+        showFunctionNameItem = ITM_NOP;
       }
     }
     else {
@@ -1905,9 +1920,6 @@ void clearScreen(void) {
       }
 
       case cmPlotStat: {
-        #if defined PC_BUILD
-          printf("*** calcMode %d\n",calcMode);
-        #endif
         clearScreen();
         displayShiftAndTamBuffer();
         showSoftmenuCurrentPart();
