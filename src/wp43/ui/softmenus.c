@@ -258,7 +258,7 @@ TO_QSPI const int16_t menu_DELITM[]      = {  ITM_NULL,                     ITM_
 
 TO_QSPI const int16_t menu_CAT_AIM[]     = {  ITM_NULL,                     ITM_NULL,                  -MNU_CHARS,                ITM_NULL,              ITM_NULL,                   -MNU_MENUS_AIM                };
 
-TO_QSPI const int16_t menu_MENUS_AIM[]   = { -MNU_ALPHAINTL,               -MNU_ALPHAintl,             -MNU_ALPHAMATH,           -MNU_ALPHADOT,         -MNU_ALPHA_OMEGA,            -MNU_alpha_omega              };
+TO_QSPI const int16_t menu_MENUS_AIM[]   = { -MNU_ALPHAINTL,               -MNU_ALPHAMATH,             -MNU_ALPHADOT,            -MNU_ALPHA_OMEGA,       ITM_NULL,                    ITM_NULL                     };
 
 /*      Menu name                           <----------------------------------------------------------------------------- 6 functions ---------------------------------------------------------------------------->  */
 /*                                          <---------------------------------------------------------------------- 6 f shifted functions ------------------------------------------------------------------------->  */
