@@ -26,6 +26,8 @@
 
 #include "wp43.h"
 
+smStackMode_t smStackMode[SOFTMENU_STACKMODE_SIZE];  // Softmenu stack mode stack - depth should be minimum 3 (normal -> pem -> aim)
+
 /* The numbers refer to the index of items in items.c
  *         item <     0  ==>  sub menu
  *     0 < item <  9999  ==>  item with top and bottom line
@@ -240,19 +242,23 @@ TO_QSPI const int16_t menu_Orthog[]      = { ITM_HN,                        ITM_
                                              ITM_HNP,                       ITM_NULL,                   ITM_NULL,                 ITM_NULL,              ITM_NULL,                    ITM_NULL                      };
 
 TO_QSPI const int16_t menu_Ellipt[]      = { ITM_sn,                        ITM_cn,                     ITM_dn,                   ITM_Kk,                ITM_Ek,                      ITM_PInk,
-                                             ITM_am,                        ITM_NULL,                   ITM_NULL,                 ITM_Fphik,             ITM_Ephik,                   ITM_ZETAphik                                        };
+                                             ITM_am,                        ITM_NULL,                   ITM_NULL,                 ITM_Fphik,             ITM_Ephik,                   ITM_ZETAphik                  };
 
 /*      Menu name                           <----------------------------------------------------------------------------- 6 functions ---------------------------------------------------------------------------->  */
 /*                                          <---------------------------------------------------------------------- 6 f shifted functions ------------------------------------------------------------------------->  */
 /*                                          <---------------------------------------------------------------------- 6 g shifted functions ------------------------------------------------------------------------->  */
-TO_QSPI const int16_t menu_CATALOG[]     = { -MNU_FCNS,                     ITM_NULL,                   -MNU_CHARS,               -MNU_PROGS,            -MNU_VARS,                   -MNU_MENUS                    };
+TO_QSPI const int16_t menu_CATALOG[]     = { -MNU_FCNS,                     ITM_NULL,                  -MNU_CHARS,               -MNU_PROGS,            -MNU_VARS,                   -MNU_MENUS                    };
 
-TO_QSPI const int16_t menu_CHARS[]       = { -MNU_ALPHAINTL,               -MNU_ALPHA_OMEGA,            ITM_NULL,                -MNU_ALPHAMATH,        -MNU_MyAlpha,                -MNU_ALPHADOT                  };
+TO_QSPI const int16_t menu_CHARS[]       = { -MNU_ALPHAINTL,               -MNU_ALPHA_OMEGA,            ITM_NULL,                -MNU_ALPHAMATH,        -MNU_MyAlpha,                -MNU_ALPHADOT                 };
 
-TO_QSPI const int16_t menu_VARS[]        = { -MNU_LINTS,                    -MNU_SINTS,                 -MNU_REALS,               -MNU_CPXS,             -MNU_ALLVAR,                 -MNU_MATRS,
-                                             -MNU_DATES,                    -MNU_TIMES,                 -MNU_ANGLES,              -MNU_CONFIG,           ITM_NULL,                    -MNU_STRINGS                  };
+TO_QSPI const int16_t menu_VARS[]        = { -MNU_LINTS,                   -MNU_SINTS,                 -MNU_REALS,               -MNU_CPXS,             -MNU_ALLVAR,                 -MNU_MATRS,
+                                             -MNU_DATES,                   -MNU_TIMES,                 -MNU_ANGLES,              -MNU_CONFIG,            ITM_NULL,                   -MNU_STRINGS                  };
 
-TO_QSPI const int16_t menu_DELITM[]      = { ITM_NULL,                      ITM_NULL,                   ITM_NULL,                 -MNU_PROGS,            -MNU_VARS,                   -MNU_MENUS                    };
+TO_QSPI const int16_t menu_DELITM[]      = {  ITM_NULL,                     ITM_NULL,                   ITM_NULL,                -MNU_PROGS,            -MNU_VARS,                   -MNU_MENUS                    };
+
+TO_QSPI const int16_t menu_CAT_AIM[]     = {  ITM_NULL,                     ITM_NULL,                  -MNU_CHARS,                ITM_NULL,              ITM_NULL,                   -MNU_MENUS_AIM                };
+
+TO_QSPI const int16_t menu_MENUS_AIM[]   = { -MNU_ALPHAINTL,               -MNU_ALPHAMATH,             -MNU_ALPHADOT,            -MNU_ALPHA_OMEGA,       ITM_NULL,                    ITM_NULL                     };
 
 /*      Menu name                           <----------------------------------------------------------------------------- 6 functions ---------------------------------------------------------------------------->  */
 /*                                          <---------------------------------------------------------------------- 6 f shifted functions ------------------------------------------------------------------------->  */
@@ -381,143 +387,264 @@ TO_QSPI const int16_t menu_Eim[]         = { ITM_EQ_LEFT,                   ITM_
 
 TO_QSPI const int16_t menu_Timer[]       = { ITM_TIMER_ADD,                 ITM_NULL,                   ITM_NULL,                 ITM_TIMER_0_1S,        ITM_NULL,                    ITM_TIMER_RESET               };
 
+TO_QSPI const int16_t baseMenu[]         = { smMyMenu, smMyAlpha, smMyPFN, smEqEdit };
+
 #include "softmenuCatalogs.h"
 
 TO_QSPI const softmenu_t softmenu[] = {
 /*   0 */  {.menuItem = -MNU_MyMenu,      .numItems = 0,                                        .softkeyItem = NULL             }, // MyMenu must be the 1st
-/*   1 */  {.menuItem = -MNU_MyAlpha,     .numItems = 0,                                        .softkeyItem = NULL             }, // Myalpha must be the 2nd
-/*   2 */  {.menuItem = -MNU_PROGS,       .numItems = 0,                                        .softkeyItem = NULL             },
-/*   3 */  {.menuItem = -MNU_VAR,         .numItems = 0,                                        .softkeyItem = NULL             }, // The 16 first menus are
-/*   4 */  {.menuItem = -MNU_PROG,        .numItems = 0,                                        .softkeyItem = NULL             }, // variable softmenus and
-/*   5 */  {.menuItem = -MNU_MATRS,       .numItems = 0,                                        .softkeyItem = NULL             }, // MUST be in the same
-/*   6 */  {.menuItem = -MNU_STRINGS,     .numItems = 0,                                        .softkeyItem = NULL             }, // order as the
-/*   7 */  {.menuItem = -MNU_DATES,       .numItems = 0,                                        .softkeyItem = NULL             }, // dynamicSoftmenu area.
-/*   8 */  {.menuItem = -MNU_TIMES,       .numItems = 0,                                        .softkeyItem = NULL             }, //
-/*   9 */  {.menuItem = -MNU_ANGLES,      .numItems = 0,                                        .softkeyItem = NULL             }, // If you add or remove one:
-/*  10 */  {.menuItem = -MNU_SINTS,       .numItems = 0,                                        .softkeyItem = NULL             }, // don't forget to adjust
-/*  11 */  {.menuItem = -MNU_LINTS,       .numItems = 0,                                        .softkeyItem = NULL             }, // NUMBER_OF_DYNAMIC_SOFTMENUS
-/*  12 */  {.menuItem = -MNU_REALS,       .numItems = 0,                                        .softkeyItem = NULL             }, // in defines.h
-/*  13 */  {.menuItem = -MNU_CPXS,        .numItems = 0,                                        .softkeyItem = NULL             },
-/*  14 */  {.menuItem = -MNU_CONFIG,      .numItems = 0,                                        .softkeyItem = NULL             },
-/*  15 */  {.menuItem = -MNU_ALLVAR,      .numItems = 0,                                        .softkeyItem = NULL             },
-/*  16 */  {.menuItem = -MNU_MVAR,        .numItems = 0,                                        .softkeyItem = NULL             },
-/*  17 */  {.menuItem = -MNU_MENUS,       .numItems = 0,                                        .softkeyItem = NULL             },
-/*  18 */  {.menuItem = -MNU_DYNAMIC,     .numItems = 0,                                        .softkeyItem = NULL             },
-/*  19 */  {.menuItem = -ITM_MENU,        .numItems = 0,                                        .softkeyItem = NULL             },
-/*  20 */  {.menuItem = -MNU_TAMFLAG,     .numItems = sizeof(menu_TamFlag    )/sizeof(int16_t), .softkeyItem = menu_TamFlag     },
-/*  21 */  {.menuItem = -MNU_SYSFL,       .numItems = sizeof(menu_SYSFL      )/sizeof(int16_t), .softkeyItem = menu_SYSFL       },
-/*  22 */  {.menuItem = -MNU_ALPHAINTL,   .numItems = sizeof(menu_alpha_INTL )/sizeof(int16_t), .softkeyItem = menu_alpha_INTL  },
-/*  23 */  {.menuItem = -MNU_ALPHAintl,   .numItems = sizeof(menu_alpha_intl )/sizeof(int16_t), .softkeyItem = menu_alpha_intl  },
-/*  24 */  {.menuItem = -MNU_ADV,         .numItems = sizeof(menu_ADV        )/sizeof(int16_t), .softkeyItem = menu_ADV         },
-/*  25 */  {.menuItem = -MNU_Sfdx,        .numItems = sizeof(menu_Sfdx       )/sizeof(int16_t), .softkeyItem = menu_Sfdx        },
-/*  26 */  {.menuItem = -MNU_BITS,        .numItems = sizeof(menu_BITS       )/sizeof(int16_t), .softkeyItem = menu_BITS        },
-/*  27 */  {.menuItem = -MNU_CLK,         .numItems = sizeof(menu_CLK        )/sizeof(int16_t), .softkeyItem = menu_CLK         },
-/*  28 */  {.menuItem = -MNU_CLR,         .numItems = sizeof(menu_CLR        )/sizeof(int16_t), .softkeyItem = menu_CLR         },
-/*  29 */  {.menuItem = -MNU_CPX,         .numItems = sizeof(menu_CPX        )/sizeof(int16_t), .softkeyItem = menu_CPX         },
-/*  30 */  {.menuItem = -MNU_DISP,        .numItems = sizeof(menu_DISP       )/sizeof(int16_t), .softkeyItem = menu_DISP        },
-/*  31 */  {.menuItem = -MNU_EQN,         .numItems = sizeof(menu_EQN        )/sizeof(int16_t), .softkeyItem = menu_EQN         },
-/*  32 */  {.menuItem = -MNU_1STDERIV,    .numItems = sizeof(menu_1stDeriv   )/sizeof(int16_t), .softkeyItem = menu_1stDeriv    },
-/*  33 */  {.menuItem = -MNU_2NDDERIV,    .numItems = sizeof(menu_2ndDeriv   )/sizeof(int16_t), .softkeyItem = menu_2ndDeriv    },
-/*  34 */  {.menuItem = -MNU_Sf,          .numItems = sizeof(menu_Sf         )/sizeof(int16_t), .softkeyItem = menu_Sf          },
-/*  35 */  {.menuItem = -MNU_Solver,      .numItems = sizeof(menu_Solver     )/sizeof(int16_t), .softkeyItem = menu_Solver      },
-/*  36 */  {.menuItem = -MNU_EXP,         .numItems = sizeof(menu_EXP        )/sizeof(int16_t), .softkeyItem = menu_EXP         },
-/*  37 */  {.menuItem = -MNU_TRI,         .numItems = sizeof(menu_TRI        )/sizeof(int16_t), .softkeyItem = menu_TRI         },
-/*  38 */  {.menuItem = -MNU_FIN,         .numItems = sizeof(menu_FIN        )/sizeof(int16_t), .softkeyItem = menu_FIN         },
-/*  39 */  {.menuItem = -MNU_TVM,         .numItems = sizeof(menu_TVM        )/sizeof(int16_t), .softkeyItem = menu_TVM         },
-/*  40 */  {.menuItem = -MNU_FLAGS,       .numItems = sizeof(menu_FLAGS      )/sizeof(int16_t), .softkeyItem = menu_FLAGS       },
-/*  41 */  {.menuItem = -MNU_INFO,        .numItems = sizeof(menu_INFO       )/sizeof(int16_t), .softkeyItem = menu_INFO        },
-/*  42 */  {.menuItem = -MNU_INTS,        .numItems = sizeof(menu_INTS       )/sizeof(int16_t), .softkeyItem = menu_INTS        },
-/*  43 */  {.menuItem = -MNU_LOOP,        .numItems = sizeof(menu_LOOP       )/sizeof(int16_t), .softkeyItem = menu_LOOP        },
-/*  44 */  {.menuItem = -MNU_MATX,        .numItems = sizeof(menu_MATX       )/sizeof(int16_t), .softkeyItem = menu_MATX        },
-/*  45 */  {.menuItem = -MNU_SIMQ,        .numItems = sizeof(menu_M_SIM_Q    )/sizeof(int16_t), .softkeyItem = menu_M_SIM_Q     },
-/*  46 */  {.menuItem = -MNU_M_EDIT,      .numItems = sizeof(menu_M_EDIT     )/sizeof(int16_t), .softkeyItem = menu_M_EDIT      },
-/*  47 */  {.menuItem = -MNU_MODE,        .numItems = sizeof(menu_MODE       )/sizeof(int16_t), .softkeyItem = menu_MODE        },
-/*  48 */  {.menuItem = -MNU_PARTS,       .numItems = sizeof(menu_PARTS      )/sizeof(int16_t), .softkeyItem = menu_PARTS       },
-/*  49 */  {.menuItem = -MNU_PROB,        .numItems = sizeof(menu_PROB       )/sizeof(int16_t), .softkeyItem = menu_PROB        },
-/*  50 */  {.menuItem = -MNU_T,           .numItems = sizeof(menu_t          )/sizeof(int16_t), .softkeyItem = menu_t           },
-/*  51 */  {.menuItem = -MNU_F,           .numItems = sizeof(menu_F          )/sizeof(int16_t), .softkeyItem = menu_F           },
-/*  52 */  {.menuItem = -MNU_CHI2,        .numItems = sizeof(menu_chi2       )/sizeof(int16_t), .softkeyItem = menu_chi2        },
-/*  53 */  {.menuItem = -MNU_NORML,       .numItems = sizeof(menu_Norml      )/sizeof(int16_t), .softkeyItem = menu_Norml       },
-/*  54 */  {.menuItem = -MNU_LGNRM,       .numItems = sizeof(menu_LgNrm      )/sizeof(int16_t), .softkeyItem = menu_LgNrm       },
-/*  55 */  {.menuItem = -MNU_CAUCH,       .numItems = sizeof(menu_Cauch      )/sizeof(int16_t), .softkeyItem = menu_Cauch       },
-/*  56 */  {.menuItem = -MNU_EXPON,       .numItems = sizeof(menu_Expon      )/sizeof(int16_t), .softkeyItem = menu_Expon       },
-/*  57 */  {.menuItem = -MNU_LOGIS,       .numItems = sizeof(menu_Logis      )/sizeof(int16_t), .softkeyItem = menu_Logis       },
-/*  58 */  {.menuItem = -MNU_WEIBL,       .numItems = sizeof(menu_Weibl      )/sizeof(int16_t), .softkeyItem = menu_Weibl       },
-/*  59 */  {.menuItem = -MNU_BINOM,       .numItems = sizeof(menu_Binom      )/sizeof(int16_t), .softkeyItem = menu_Binom       },
-/*  60 */  {.menuItem = -MNU_GEOM,        .numItems = sizeof(menu_Geom       )/sizeof(int16_t), .softkeyItem = menu_Geom        },
-/*  61 */  {.menuItem = -MNU_HYPER,       .numItems = sizeof(menu_Hyper      )/sizeof(int16_t), .softkeyItem = menu_Hyper       },
-/*  62 */  {.menuItem = -MNU_NBIN,        .numItems = sizeof(menu_Nbin       )/sizeof(int16_t), .softkeyItem = menu_Nbin        },
-/*  63 */  {.menuItem = -MNU_POISS,       .numItems = sizeof(menu_Poiss      )/sizeof(int16_t), .softkeyItem = menu_Poiss       },
-/*  64 */  {.menuItem = -MNU_PFN,         .numItems = sizeof(menu_PFN        )/sizeof(int16_t), .softkeyItem = menu_PFN         },
-/*  65 */  {.menuItem = -MNU_PFN2,        .numItems = sizeof(menu_PFN2       )/sizeof(int16_t), .softkeyItem = menu_PFN2        },
-/*  66 */  {.menuItem = -MNU_STAT,        .numItems = sizeof(menu_STAT       )/sizeof(int16_t), .softkeyItem = menu_STAT        },
-/*  67 */  {.menuItem = -MNU_SUMS,        .numItems = sizeof(menu_SUMS       )/sizeof(int16_t), .softkeyItem = menu_SUMS        },
-/*  68 */  {.menuItem = -MNU_GRAPH,       .numItems = sizeof(menu_GRAPH      )/sizeof(int16_t), .softkeyItem = menu_GRAPH       },
-/*  69 */  {.menuItem = -MNU_PLOT_STAT,   .numItems = sizeof(menu_PLOT_STAT  )/sizeof(int16_t), .softkeyItem = menu_PLOT_STAT   },
-/*  70 */  {.menuItem = -MNU_PLOT_LR,     .numItems = sizeof(menu_PLOT_LR    )/sizeof(int16_t), .softkeyItem = menu_PLOT_LR     },
-/*  71 */  {.menuItem = -MNU_HPLOT,       .numItems = sizeof(menu_HPLOT      )/sizeof(int16_t), .softkeyItem = menu_HPLOT       },
-/*  72 */  {.menuItem = -MNU_HIST,        .numItems = sizeof(menu_HIST       )/sizeof(int16_t), .softkeyItem = menu_HIST        },
-/*  73 */  {.menuItem = -MNU_STK,         .numItems = sizeof(menu_STK        )/sizeof(int16_t), .softkeyItem = menu_STK         },
-/*  74 */  {.menuItem = -MNU_TEST,        .numItems = sizeof(menu_TEST       )/sizeof(int16_t), .softkeyItem = menu_TEST        },
-/*  75 */  {.menuItem = -MNU_XFN,         .numItems = sizeof(menu_XFN        )/sizeof(int16_t), .softkeyItem = menu_XFN         },
-/*  76 */  {.menuItem = -MNU_ORTHOG,      .numItems = sizeof(menu_Orthog     )/sizeof(int16_t), .softkeyItem = menu_Orthog      },
-/*  77 */  {.menuItem = -MNU_ELLIPT,      .numItems = sizeof(menu_Ellipt     )/sizeof(int16_t), .softkeyItem = menu_Ellipt      },
-/*  78 */  {.menuItem = -MNU_CATALOG,     .numItems = sizeof(menu_CATALOG    )/sizeof(int16_t), .softkeyItem = menu_CATALOG     },
-/*  79 */  {.menuItem = -MNU_CHARS,       .numItems = sizeof(menu_CHARS      )/sizeof(int16_t), .softkeyItem = menu_CHARS       },
-/*  80 */  {.menuItem = -MNU_VARS,        .numItems = sizeof(menu_VARS       )/sizeof(int16_t), .softkeyItem = menu_VARS        },
-/*  81 */  {.menuItem = -MNU_ALPHA_OMEGA, .numItems = sizeof(menu_ALPHA_OMEGA)/sizeof(int16_t), .softkeyItem = menu_ALPHA_OMEGA },
-/*  82 */  {.menuItem = -MNU_alpha_omega, .numItems = sizeof(menu_alpha_omega)/sizeof(int16_t), .softkeyItem = menu_alpha_omega },
-/*  83 */  {.menuItem = -MNU_FCNS,        .numItems = sizeof(menu_FCNS       )/sizeof(int16_t), .softkeyItem = menu_FCNS        },
-/*  84 */  {.menuItem = -MNU_ALPHAMATH,   .numItems = sizeof(menu_alphaMATH  )/sizeof(int16_t), .softkeyItem = menu_alphaMATH   },
-/*  85 */  {.menuItem = -MNU_ALPHADOT,    .numItems = sizeof(menu_alphaDot   )/sizeof(int16_t), .softkeyItem = menu_alphaDot    },
-/*  86 */  {.menuItem = -MNU_ALPHAFN,     .numItems = sizeof(menu_alphaFN    )/sizeof(int16_t), .softkeyItem = menu_alphaFN     },
-/*  87 */  {.menuItem = -MNU_ANGLECONV,   .numItems = sizeof(menu_AngleConv  )/sizeof(int16_t), .softkeyItem = menu_AngleConv   },
-/*  88 */  {.menuItem = -MNU_UNITCONV,    .numItems = sizeof(menu_UnitConv   )/sizeof(int16_t), .softkeyItem = menu_UnitConv    },
-/*  89 */  {.menuItem = -MNU_CONVE,       .numItems = sizeof(menu_ConvE      )/sizeof(int16_t), .softkeyItem = menu_ConvE       },
-/*  90 */  {.menuItem = -MNU_CONVP,       .numItems = sizeof(menu_ConvP      )/sizeof(int16_t), .softkeyItem = menu_ConvP       },
-/*  91 */  {.menuItem = -MNU_CONVFP,      .numItems = sizeof(menu_ConvFP     )/sizeof(int16_t), .softkeyItem = menu_ConvFP      },
-/*  92 */  {.menuItem = -MNU_CONVM,       .numItems = sizeof(menu_ConvM      )/sizeof(int16_t), .softkeyItem = menu_ConvM       },
-/*  93 */  {.menuItem = -MNU_CONVX,       .numItems = sizeof(menu_ConvX      )/sizeof(int16_t), .softkeyItem = menu_ConvX       },
-/*  94 */  {.menuItem = -MNU_CONVV,       .numItems = sizeof(menu_ConvV      )/sizeof(int16_t), .softkeyItem = menu_ConvV       },
-/*  95 */  {.menuItem = -MNU_CONVA,       .numItems = sizeof(menu_ConvA      )/sizeof(int16_t), .softkeyItem = menu_ConvA       },
-/*  96 */  {.menuItem = -MNU_CONST,       .numItems = sizeof(menu_CONST      )/sizeof(int16_t), .softkeyItem = menu_CONST       },
-/*  97 */  {.menuItem = -MNU_IO,          .numItems = sizeof(menu_IO         )/sizeof(int16_t), .softkeyItem = menu_IO          },
-/*  98 */  {.menuItem = -MNU_PRINT,       .numItems = sizeof(menu_PRINT      )/sizeof(int16_t), .softkeyItem = menu_PRINT       },
-/*  99 */  {.menuItem = -MNU_TAM,         .numItems = sizeof(menu_Tam        )/sizeof(int16_t), .softkeyItem = menu_Tam         },
-/* 100 */  {.menuItem = -MNU_TAMCMP,      .numItems = sizeof(menu_TamCmp     )/sizeof(int16_t), .softkeyItem = menu_TamCmp      },
-/* 101 */  {.menuItem = -MNU_TAMSTORCL,   .numItems = sizeof(menu_TamStoRcl  )/sizeof(int16_t), .softkeyItem = menu_TamStoRcl   },
-/* 102 */  {.menuItem = -MNU_TAMSHUFFLE,  .numItems = sizeof(menu_TamShuffle )/sizeof(int16_t), .softkeyItem = menu_TamShuffle  },
-/* 103 */  {.menuItem = -MNU_TAMLABEL,    .numItems = sizeof(menu_TamLabel   )/sizeof(int16_t), .softkeyItem = menu_TamLabel    },
-/* 104 */  {.menuItem = -MNU_EQ_EDIT,     .numItems = sizeof(menu_Eim        )/sizeof(int16_t), .softkeyItem = menu_Eim         },
-/* 105 */  {.menuItem = -MNU_TIMERF,      .numItems = sizeof(menu_Timer      )/sizeof(int16_t), .softkeyItem = menu_Timer       },
-/* 106 */  {.menuItem = -ITM_DELITM,      .numItems = sizeof(menu_DELITM     )/sizeof(int16_t), .softkeyItem = menu_DELITM      },
-/* 107 */  {.menuItem =  0,               .numItems = 0,                                        .softkeyItem = NULL             }
+/*   1 */  {.menuItem = -MNU_MyAlpha,     .numItems = 0,                                        .softkeyItem = NULL             }, // MyAlpha must be the 2nd
+/*   2 */  {.menuItem = -MNU_MyPFN,       .numItems = 0,                                        .softkeyItem = NULL             }, // MyPFN must be the 3rd
+/*   3 */  {.menuItem = -MNU_PROGS,       .numItems = 0,                                        .softkeyItem = NULL             },
+/*   4 */  {.menuItem = -MNU_VAR,         .numItems = 0,                                        .softkeyItem = NULL             }, // The 16 first menus are
+/*   5 */  {.menuItem = -MNU_PROG,        .numItems = 0,                                        .softkeyItem = NULL             }, // variable softmenus and
+/*   6 */  {.menuItem = -MNU_MATRS,       .numItems = 0,                                        .softkeyItem = NULL             }, // MUST be in the same
+/*   7 */  {.menuItem = -MNU_STRINGS,     .numItems = 0,                                        .softkeyItem = NULL             }, // order as the
+/*   8 */  {.menuItem = -MNU_DATES,       .numItems = 0,                                        .softkeyItem = NULL             }, // dynamicSoftmenu area.
+/*   9 */  {.menuItem = -MNU_TIMES,       .numItems = 0,                                        .softkeyItem = NULL             }, //
+/*  10 */  {.menuItem = -MNU_ANGLES,      .numItems = 0,                                        .softkeyItem = NULL             }, // If you add or remove one:
+/*  11 */  {.menuItem = -MNU_SINTS,       .numItems = 0,                                        .softkeyItem = NULL             }, // don't forget to adjust
+/*  12 */  {.menuItem = -MNU_LINTS,       .numItems = 0,                                        .softkeyItem = NULL             }, // NUMBER_OF_DYNAMIC_SOFTMENUS
+/*  13 */  {.menuItem = -MNU_REALS,       .numItems = 0,                                        .softkeyItem = NULL             }, // in defines.h
+/*  14 */  {.menuItem = -MNU_CPXS,        .numItems = 0,                                        .softkeyItem = NULL             },
+/*  15 */  {.menuItem = -MNU_CONFIG,      .numItems = 0,                                        .softkeyItem = NULL             },
+/*  16 */  {.menuItem = -MNU_ALLVAR,      .numItems = 0,                                        .softkeyItem = NULL             },
+/*  17 */  {.menuItem = -MNU_MVAR,        .numItems = 0,                                        .softkeyItem = NULL             },
+/*  18 */  {.menuItem = -MNU_MENUS,       .numItems = 0,                                        .softkeyItem = NULL             },
+/*  19 */  {.menuItem = -MNU_DYNAMIC,     .numItems = 0,                                        .softkeyItem = NULL             },
+/*  20 */  {.menuItem = -ITM_MENU,        .numItems = 0,                                        .softkeyItem = NULL             },
+/*  21 */  {.menuItem = -MNU_TAMFLAG,     .numItems = sizeof(menu_TamFlag    )/sizeof(int16_t), .softkeyItem = menu_TamFlag     },
+/*  22 */  {.menuItem = -MNU_SYSFL,       .numItems = sizeof(menu_SYSFL      )/sizeof(int16_t), .softkeyItem = menu_SYSFL       },
+/*  23 */  {.menuItem = -MNU_ALPHAINTL,   .numItems = sizeof(menu_alpha_INTL )/sizeof(int16_t), .softkeyItem = menu_alpha_INTL  },
+/*  24 */  {.menuItem = -MNU_ALPHAintl,   .numItems = sizeof(menu_alpha_intl )/sizeof(int16_t), .softkeyItem = menu_alpha_intl  },
+/*  25 */  {.menuItem = -MNU_ADV,         .numItems = sizeof(menu_ADV        )/sizeof(int16_t), .softkeyItem = menu_ADV         },
+/*  26 */  {.menuItem = -MNU_Sfdx,        .numItems = sizeof(menu_Sfdx       )/sizeof(int16_t), .softkeyItem = menu_Sfdx        },
+/*  27 */  {.menuItem = -MNU_BITS,        .numItems = sizeof(menu_BITS       )/sizeof(int16_t), .softkeyItem = menu_BITS        },
+/*  28 */  {.menuItem = -MNU_CLK,         .numItems = sizeof(menu_CLK        )/sizeof(int16_t), .softkeyItem = menu_CLK         },
+/*  29 */  {.menuItem = -MNU_CLR,         .numItems = sizeof(menu_CLR        )/sizeof(int16_t), .softkeyItem = menu_CLR         },
+/*  30 */  {.menuItem = -MNU_CPX,         .numItems = sizeof(menu_CPX        )/sizeof(int16_t), .softkeyItem = menu_CPX         },
+/*  31 */  {.menuItem = -MNU_DISP,        .numItems = sizeof(menu_DISP       )/sizeof(int16_t), .softkeyItem = menu_DISP        },
+/*  32 */  {.menuItem = -MNU_EQN,         .numItems = sizeof(menu_EQN        )/sizeof(int16_t), .softkeyItem = menu_EQN         },
+/*  33 */  {.menuItem = -MNU_1STDERIV,    .numItems = sizeof(menu_1stDeriv   )/sizeof(int16_t), .softkeyItem = menu_1stDeriv    },
+/*  34 */  {.menuItem = -MNU_2NDDERIV,    .numItems = sizeof(menu_2ndDeriv   )/sizeof(int16_t), .softkeyItem = menu_2ndDeriv    },
+/*  35 */  {.menuItem = -MNU_Sf,          .numItems = sizeof(menu_Sf         )/sizeof(int16_t), .softkeyItem = menu_Sf          },
+/*  36 */  {.menuItem = -MNU_Solver,      .numItems = sizeof(menu_Solver     )/sizeof(int16_t), .softkeyItem = menu_Solver      },
+/*  37 */  {.menuItem = -MNU_EXP,         .numItems = sizeof(menu_EXP        )/sizeof(int16_t), .softkeyItem = menu_EXP         },
+/*  38 */  {.menuItem = -MNU_TRI,         .numItems = sizeof(menu_TRI        )/sizeof(int16_t), .softkeyItem = menu_TRI         },
+/*  39 */  {.menuItem = -MNU_FIN,         .numItems = sizeof(menu_FIN        )/sizeof(int16_t), .softkeyItem = menu_FIN         },
+/*  40 */  {.menuItem = -MNU_TVM,         .numItems = sizeof(menu_TVM        )/sizeof(int16_t), .softkeyItem = menu_TVM         },
+/*  41 */  {.menuItem = -MNU_FLAGS,       .numItems = sizeof(menu_FLAGS      )/sizeof(int16_t), .softkeyItem = menu_FLAGS       },
+/*  42 */  {.menuItem = -MNU_INFO,        .numItems = sizeof(menu_INFO       )/sizeof(int16_t), .softkeyItem = menu_INFO        },
+/*  43 */  {.menuItem = -MNU_INTS,        .numItems = sizeof(menu_INTS       )/sizeof(int16_t), .softkeyItem = menu_INTS        },
+/*  44 */  {.menuItem = -MNU_LOOP,        .numItems = sizeof(menu_LOOP       )/sizeof(int16_t), .softkeyItem = menu_LOOP        },
+/*  45 */  {.menuItem = -MNU_MATX,        .numItems = sizeof(menu_MATX       )/sizeof(int16_t), .softkeyItem = menu_MATX        },
+/*  46 */  {.menuItem = -MNU_SIMQ,        .numItems = sizeof(menu_M_SIM_Q    )/sizeof(int16_t), .softkeyItem = menu_M_SIM_Q     },
+/*  47 */  {.menuItem = -MNU_M_EDIT,      .numItems = sizeof(menu_M_EDIT     )/sizeof(int16_t), .softkeyItem = menu_M_EDIT      },
+/*  48 */  {.menuItem = -MNU_MODE,        .numItems = sizeof(menu_MODE       )/sizeof(int16_t), .softkeyItem = menu_MODE        },
+/*  49 */  {.menuItem = -MNU_PARTS,       .numItems = sizeof(menu_PARTS      )/sizeof(int16_t), .softkeyItem = menu_PARTS       },
+/*  50 */  {.menuItem = -MNU_PROB,        .numItems = sizeof(menu_PROB       )/sizeof(int16_t), .softkeyItem = menu_PROB        },
+/*  51 */  {.menuItem = -MNU_T,           .numItems = sizeof(menu_t          )/sizeof(int16_t), .softkeyItem = menu_t           },
+/*  52 */  {.menuItem = -MNU_F,           .numItems = sizeof(menu_F          )/sizeof(int16_t), .softkeyItem = menu_F           },
+/*  53 */  {.menuItem = -MNU_CHI2,        .numItems = sizeof(menu_chi2       )/sizeof(int16_t), .softkeyItem = menu_chi2        },
+/*  54 */  {.menuItem = -MNU_NORML,       .numItems = sizeof(menu_Norml      )/sizeof(int16_t), .softkeyItem = menu_Norml       },
+/*  55 */  {.menuItem = -MNU_LGNRM,       .numItems = sizeof(menu_LgNrm      )/sizeof(int16_t), .softkeyItem = menu_LgNrm       },
+/*  56 */  {.menuItem = -MNU_CAUCH,       .numItems = sizeof(menu_Cauch      )/sizeof(int16_t), .softkeyItem = menu_Cauch       },
+/*  57 */  {.menuItem = -MNU_EXPON,       .numItems = sizeof(menu_Expon      )/sizeof(int16_t), .softkeyItem = menu_Expon       },
+/*  58 */  {.menuItem = -MNU_LOGIS,       .numItems = sizeof(menu_Logis      )/sizeof(int16_t), .softkeyItem = menu_Logis       },
+/*  59 */  {.menuItem = -MNU_WEIBL,       .numItems = sizeof(menu_Weibl      )/sizeof(int16_t), .softkeyItem = menu_Weibl       },
+/*  60 */  {.menuItem = -MNU_BINOM,       .numItems = sizeof(menu_Binom      )/sizeof(int16_t), .softkeyItem = menu_Binom       },
+/*  61 */  {.menuItem = -MNU_GEOM,        .numItems = sizeof(menu_Geom       )/sizeof(int16_t), .softkeyItem = menu_Geom        },
+/*  62 */  {.menuItem = -MNU_HYPER,       .numItems = sizeof(menu_Hyper      )/sizeof(int16_t), .softkeyItem = menu_Hyper       },
+/*  63 */  {.menuItem = -MNU_NBIN,        .numItems = sizeof(menu_Nbin       )/sizeof(int16_t), .softkeyItem = menu_Nbin        },
+/*  64 */  {.menuItem = -MNU_POISS,       .numItems = sizeof(menu_Poiss      )/sizeof(int16_t), .softkeyItem = menu_Poiss       },
+/*  65 */  {.menuItem = -MNU_PFN,         .numItems = sizeof(menu_PFN        )/sizeof(int16_t), .softkeyItem = menu_PFN         },
+/*  66 */  {.menuItem = -MNU_PFN2,        .numItems = sizeof(menu_PFN2       )/sizeof(int16_t), .softkeyItem = menu_PFN2        },
+/*  67 */  {.menuItem = -MNU_STAT,        .numItems = sizeof(menu_STAT       )/sizeof(int16_t), .softkeyItem = menu_STAT        },
+/*  68 */  {.menuItem = -MNU_SUMS,        .numItems = sizeof(menu_SUMS       )/sizeof(int16_t), .softkeyItem = menu_SUMS        },
+/*  69 */  {.menuItem = -MNU_GRAPH,       .numItems = sizeof(menu_GRAPH      )/sizeof(int16_t), .softkeyItem = menu_GRAPH       },
+/*  70 */  {.menuItem = -MNU_PLOT_STAT,   .numItems = sizeof(menu_PLOT_STAT  )/sizeof(int16_t), .softkeyItem = menu_PLOT_STAT   },
+/*  71 */  {.menuItem = -MNU_PLOT_LR,     .numItems = sizeof(menu_PLOT_LR    )/sizeof(int16_t), .softkeyItem = menu_PLOT_LR     },
+/*  72 */  {.menuItem = -MNU_HPLOT,       .numItems = sizeof(menu_HPLOT      )/sizeof(int16_t), .softkeyItem = menu_HPLOT       },
+/*  73 */  {.menuItem = -MNU_HIST,        .numItems = sizeof(menu_HIST       )/sizeof(int16_t), .softkeyItem = menu_HIST        },
+/*  74 */  {.menuItem = -MNU_STK,         .numItems = sizeof(menu_STK        )/sizeof(int16_t), .softkeyItem = menu_STK         },
+/*  75 */  {.menuItem = -MNU_TEST,        .numItems = sizeof(menu_TEST       )/sizeof(int16_t), .softkeyItem = menu_TEST        },
+/*  76 */  {.menuItem = -MNU_XFN,         .numItems = sizeof(menu_XFN        )/sizeof(int16_t), .softkeyItem = menu_XFN         },
+/*  77 */  {.menuItem = -MNU_ORTHOG,      .numItems = sizeof(menu_Orthog     )/sizeof(int16_t), .softkeyItem = menu_Orthog      },
+/*  78 */  {.menuItem = -MNU_ELLIPT,      .numItems = sizeof(menu_Ellipt     )/sizeof(int16_t), .softkeyItem = menu_Ellipt      },
+/*  79 */  {.menuItem = -MNU_CATALOG,     .numItems = sizeof(menu_CATALOG    )/sizeof(int16_t), .softkeyItem = menu_CATALOG     },
+/*  80 */  {.menuItem = -MNU_CHARS,       .numItems = sizeof(menu_CHARS      )/sizeof(int16_t), .softkeyItem = menu_CHARS       },
+/*  81 */  {.menuItem = -MNU_VARS,        .numItems = sizeof(menu_VARS       )/sizeof(int16_t), .softkeyItem = menu_VARS        },
+/*  82 */  {.menuItem = -MNU_ALPHA_OMEGA, .numItems = sizeof(menu_ALPHA_OMEGA)/sizeof(int16_t), .softkeyItem = menu_ALPHA_OMEGA },
+/*  83 */  {.menuItem = -MNU_alpha_omega, .numItems = sizeof(menu_alpha_omega)/sizeof(int16_t), .softkeyItem = menu_alpha_omega },
+/*  84 */  {.menuItem = -MNU_FCNS,        .numItems = sizeof(menu_FCNS       )/sizeof(int16_t), .softkeyItem = menu_FCNS        },
+/*  85 */  {.menuItem = -MNU_ALPHAMATH,   .numItems = sizeof(menu_alphaMATH  )/sizeof(int16_t), .softkeyItem = menu_alphaMATH   },
+/*  86 */  {.menuItem = -MNU_ALPHADOT,    .numItems = sizeof(menu_alphaDot   )/sizeof(int16_t), .softkeyItem = menu_alphaDot    },
+/*  87 */  {.menuItem = -MNU_ALPHAFN,     .numItems = sizeof(menu_alphaFN    )/sizeof(int16_t), .softkeyItem = menu_alphaFN     },
+/*  88 */  {.menuItem = -MNU_ANGLECONV,   .numItems = sizeof(menu_AngleConv  )/sizeof(int16_t), .softkeyItem = menu_AngleConv   },
+/*  89 */  {.menuItem = -MNU_UNITCONV,    .numItems = sizeof(menu_UnitConv   )/sizeof(int16_t), .softkeyItem = menu_UnitConv    },
+/*  90 */  {.menuItem = -MNU_CONVE,       .numItems = sizeof(menu_ConvE      )/sizeof(int16_t), .softkeyItem = menu_ConvE       },
+/*  91 */  {.menuItem = -MNU_CONVP,       .numItems = sizeof(menu_ConvP      )/sizeof(int16_t), .softkeyItem = menu_ConvP       },
+/*  92 */  {.menuItem = -MNU_CONVFP,      .numItems = sizeof(menu_ConvFP     )/sizeof(int16_t), .softkeyItem = menu_ConvFP      },
+/*  93 */  {.menuItem = -MNU_CONVM,       .numItems = sizeof(menu_ConvM      )/sizeof(int16_t), .softkeyItem = menu_ConvM       },
+/*  94 */  {.menuItem = -MNU_CONVX,       .numItems = sizeof(menu_ConvX      )/sizeof(int16_t), .softkeyItem = menu_ConvX       },
+/*  95 */  {.menuItem = -MNU_CONVV,       .numItems = sizeof(menu_ConvV      )/sizeof(int16_t), .softkeyItem = menu_ConvV       },
+/*  96 */  {.menuItem = -MNU_CONVA,       .numItems = sizeof(menu_ConvA      )/sizeof(int16_t), .softkeyItem = menu_ConvA       },
+/*  97 */  {.menuItem = -MNU_CONST,       .numItems = sizeof(menu_CONST      )/sizeof(int16_t), .softkeyItem = menu_CONST       },
+/*  98 */  {.menuItem = -MNU_IO,          .numItems = sizeof(menu_IO         )/sizeof(int16_t), .softkeyItem = menu_IO          },
+/*  99 */  {.menuItem = -MNU_PRINT,       .numItems = sizeof(menu_PRINT      )/sizeof(int16_t), .softkeyItem = menu_PRINT       },
+/* 100 */  {.menuItem = -MNU_TAM,         .numItems = sizeof(menu_Tam        )/sizeof(int16_t), .softkeyItem = menu_Tam         },
+/* 101 */  {.menuItem = -MNU_TAMCMP,      .numItems = sizeof(menu_TamCmp     )/sizeof(int16_t), .softkeyItem = menu_TamCmp      },
+/* 102 */  {.menuItem = -MNU_TAMSTORCL,   .numItems = sizeof(menu_TamStoRcl  )/sizeof(int16_t), .softkeyItem = menu_TamStoRcl   },
+/* 103 */  {.menuItem = -MNU_TAMSHUFFLE,  .numItems = sizeof(menu_TamShuffle )/sizeof(int16_t), .softkeyItem = menu_TamShuffle  },
+/* 104 */  {.menuItem = -MNU_TAMLABEL,    .numItems = sizeof(menu_TamLabel   )/sizeof(int16_t), .softkeyItem = menu_TamLabel    },
+/* 105 */  {.menuItem = -MNU_EQ_EDIT,     .numItems = sizeof(menu_Eim        )/sizeof(int16_t), .softkeyItem = menu_Eim         },
+/* 106 */  {.menuItem = -MNU_TIMERF,      .numItems = sizeof(menu_Timer      )/sizeof(int16_t), .softkeyItem = menu_Timer       },
+/* 107 */  {.menuItem = -ITM_DELITM,      .numItems = sizeof(menu_DELITM     )/sizeof(int16_t), .softkeyItem = menu_DELITM      },
+/* 108 */  {.menuItem = -MNU_CAT_AIM,     .numItems = sizeof(menu_CAT_AIM    )/sizeof(int16_t), .softkeyItem = menu_CAT_AIM     },
+/* 109 */  {.menuItem = -MNU_MENUS_AIM,   .numItems = sizeof(menu_MENUS_AIM  )/sizeof(int16_t), .softkeyItem = menu_MENUS_AIM   },
+/* 110 */  {.menuItem =  0,               .numItems = 0,                                        .softkeyItem = NULL             }
 };
 
 dynamicSoftmenu_t dynamicSoftmenu[NUMBER_OF_DYNAMIC_SOFTMENUS] = {
 /*   0 */  {.menuItem = -MNU_MyMenu,  .numItems = 0, .menuContent = NULL},
 /*   1 */  {.menuItem = -MNU_MyAlpha, .numItems = 0, .menuContent = NULL},
-/*   2 */  {.menuItem = -MNU_PROGS,   .numItems = 0, .menuContent = NULL},
-/*   3 */  {.menuItem = -MNU_VAR,     .numItems = 0, .menuContent = NULL},
-/*   4 */  {.menuItem = -MNU_PROG,    .numItems = 0, .menuContent = NULL},
-/*   5 */  {.menuItem = -MNU_MATRS,   .numItems = 0, .menuContent = NULL},
-/*   6 */  {.menuItem = -MNU_STRINGS, .numItems = 0, .menuContent = NULL},
-/*   7 */  {.menuItem = -MNU_DATES,   .numItems = 0, .menuContent = NULL},
-/*   8 */  {.menuItem = -MNU_TIMES,   .numItems = 0, .menuContent = NULL},
-/*   9 */  {.menuItem = -MNU_ANGLES,  .numItems = 0, .menuContent = NULL},
-/*  10 */  {.menuItem = -MNU_SINTS,   .numItems = 0, .menuContent = NULL},
-/*  11 */  {.menuItem = -MNU_LINTS,   .numItems = 0, .menuContent = NULL},
-/*  12 */  {.menuItem = -MNU_REALS,   .numItems = 0, .menuContent = NULL},
-/*  13 */  {.menuItem = -MNU_CPXS,    .numItems = 0, .menuContent = NULL},
-/*  14 */  {.menuItem = -MNU_CONFIG,  .numItems = 0, .menuContent = NULL},
-/*  15 */  {.menuItem = -MNU_ALLVAR,  .numItems = 0, .menuContent = NULL},
-/*  16 */  {.menuItem = -MNU_MVAR,    .numItems = 0, .menuContent = NULL},
-/*  17 */  {.menuItem = -MNU_MENUS,   .numItems = 0, .menuContent = NULL},
-/*  18 */  {.menuItem = -MNU_DYNAMIC, .numItems = 0, .menuContent = NULL},
-/*  19 */  {.menuItem = -ITM_MENU   , .numItems = 0, .menuContent = NULL},
+/*   2 */  {.menuItem = -MNU_MyPFN,   .numItems = 0, .menuContent = NULL},
+/*   3 */  {.menuItem = -MNU_PROGS,   .numItems = 0, .menuContent = NULL},
+/*   4 */  {.menuItem = -MNU_VAR,     .numItems = 0, .menuContent = NULL},
+/*   5 */  {.menuItem = -MNU_PROG,    .numItems = 0, .menuContent = NULL},
+/*   6 */  {.menuItem = -MNU_MATRS,   .numItems = 0, .menuContent = NULL},
+/*   7 */  {.menuItem = -MNU_STRINGS, .numItems = 0, .menuContent = NULL},
+/*   8 */  {.menuItem = -MNU_DATES,   .numItems = 0, .menuContent = NULL},
+/*   9 */  {.menuItem = -MNU_TIMES,   .numItems = 0, .menuContent = NULL},
+/*  10 */  {.menuItem = -MNU_ANGLES,  .numItems = 0, .menuContent = NULL},
+/*  11 */  {.menuItem = -MNU_SINTS,   .numItems = 0, .menuContent = NULL},
+/*  12 */  {.menuItem = -MNU_LINTS,   .numItems = 0, .menuContent = NULL},
+/*  13 */  {.menuItem = -MNU_REALS,   .numItems = 0, .menuContent = NULL},
+/*  14 */  {.menuItem = -MNU_CPXS,    .numItems = 0, .menuContent = NULL},
+/*  15 */  {.menuItem = -MNU_CONFIG,  .numItems = 0, .menuContent = NULL},
+/*  16 */  {.menuItem = -MNU_ALLVAR,  .numItems = 0, .menuContent = NULL},
+/*  17 */  {.menuItem = -MNU_MVAR,    .numItems = 0, .menuContent = NULL},
+/*  18 */  {.menuItem = -MNU_MENUS,   .numItems = 0, .menuContent = NULL},
+/*  19 */  {.menuItem = -MNU_DYNAMIC, .numItems = 0, .menuContent = NULL},
+/*  20 */  {.menuItem = -ITM_MENU   , .numItems = 0, .menuContent = NULL},
 };
 
-uint8_t *getNthString(uint8_t *ptr, int16_t n) { // Starting with string 0 (the 1st string is returned for n=0)
+#if defined(PC_BUILD)
+  TO_QSPI const char *softMenuNames[] = {
+  /*   0 */    "MyMenu",
+  /*   1 */    "MyAlpha",
+  /*   2 */    "MyPFN",
+  /*   3 */    "PROGS",
+  /*   4 */    "VAR",
+  /*   5 */    "PROG",
+  /*   6 */    "MATRS",
+  /*   7 */    "STRINGS",
+  /*   8 */    "DATES",
+  /*   9 */    "TIMES",
+  /*  10 */    "ANGLES",
+  /*  11 */    "SINTS",
+  /*  12 */    "LINTS",
+  /*  13 */    "REALS",
+  /*  14 */    "CPXS",
+  /*  15 */    "CONFIG",
+  /*  16 */    "ALLVAR",
+  /*  17 */    "MVAR",
+  /*  18 */    "MENUS",
+  /*  19 */    "DYNAMIC",
+  /*  20 */    "ITM_MENU",
+  /*  21 */    "TAMFLAG",
+  /*  22 */    "SYSFL",
+  /*  23 */    "ALPHAINTL",
+  /*  24 */    "ALPHAintl",
+  /*  25 */    "ADV",
+  /*  26 */    "Sfdx",
+  /*  27 */    "BITS",
+  /*  28 */    "CLK",
+  /*  29 */    "CLR",
+  /*  30 */    "CPX",
+  /*  31 */    "DISP",
+  /*  32 */    "EQN",
+  /*  33 */    "1STDERIV",
+  /*  34 */    "2NDDERIV",
+  /*  35 */    "Sf",
+  /*  36 */    "Solver",
+  /*  37 */    "EXP",
+  /*  38 */    "TRI",
+  /*  39 */    "FIN",
+  /*  40 */    "TVM",
+  /*  41 */    "FLAGS",
+  /*  42 */    "INFO",
+  /*  43 */    "INTS",
+  /*  44 */    "LOOP",
+  /*  45 */    "MATX",
+  /*  46 */    "SIMQ",
+  /*  47 */    "M_EDIT",
+  /*  48 */    "MODE",
+  /*  49 */    "PARTS",
+  /*  50 */    "PROB",
+  /*  51 */    "T",
+  /*  52 */    "F",
+  /*  53 */    "CHI2",
+  /*  54 */    "NORML",
+  /*  55 */    "LGNRM",
+  /*  56 */    "CAUCH",
+  /*  57 */    "EXPON",
+  /*  58 */    "LOGIS",
+  /*  59 */    "WEIBL",
+  /*  60 */    "BINOM",
+  /*  61 */    "GEOM",
+  /*  62 */    "HYPER",
+  /*  63 */    "NBIN",
+  /*  64 */    "POISS",
+  /*  65 */    "PFN",
+  /*  66 */    "PFN2",
+  /*  67 */    "STAT",
+  /*  68 */    "SUMS",
+  /*  69 */    "GRAPH",
+  /*  70 */    "PLOT_STAT",
+  /*  71 */    "PLOT_LR",
+  /*  72 */    "HPLOT",
+  /*  73 */    "HIST",
+  /*  74 */    "STK",
+  /*  75 */    "TEST",
+  /*  76 */    "XFN",
+  /*  77 */    "ORTHOG",
+  /*  78 */    "ELLIPT",
+  /*  79 */    "CATALOG",
+  /*  80 */    "CHARS",
+  /*  81 */    "VARS",
+  /*  82 */    "ALPHA_OMEGA",
+  /*  83 */    "alpha_omega",
+  /*  84 */    "FCNS",
+  /*  85 */    "ALPHAMATH",
+  /*  86 */    "ALPHADOT",
+  /*  87 */    "ALPHAFN",
+  /*  88 */    "ANGLECONV",
+  /*  89 */    "UNITCONV",
+  /*  90 */    "CONVE",
+  /*  91 */    "CONVP",
+  /*  92 */    "CONVFP",
+  /*  93 */    "CONVM",
+  /*  94 */    "CONVX",
+  /*  95 */    "CONVV",
+  /*  96 */    "CONVA",
+  /*  97 */    "CONST",
+  /*  98 */    "IO",
+  /*  99 */    "PRINT",
+  /* 100 */    "TAM",
+  /* 101 */    "TAMCMP",
+  /* 102 */    "TAMSTORCL",
+  /* 103 */    "TAMSHUFFLE",
+  /* 104 */    "TAMLABEL",
+  /* 105 */    "EQ_EDIT",
+  /* 106 */    "TIMERF",
+  /* 107 */    "ITM_DELITM",
+  /* 108 */    "CAT_AIM",
+  /* 109 */    "MENUS_AIM"
+  };
+#endif // PC_BUILD
+
+uint8_t *getNthString(uint8_t *ptr, int16_t n) { // Starting with string 0 (the 1ast string is returned for n=0)
   while(n) {
     ptr += stringByteLength((char *)ptr) + 1;
     n--;
@@ -529,7 +656,8 @@ uint8_t *getNthString(uint8_t *ptr, int16_t n) { // Starting with string 0 (the 
 
 
 void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
-  printf("fnDynamicMenu:\n       softmenuId = %d\n  dynamicMenuItem = %d\n", softmenuStack[0].softmenuId, dynamicMenuItem);
+  smStackMode_t sm = smStackMode[0];
+  printf("fnDynamicMenu:\n       softmenuId = %d\n  dynamicMenuItem = %d\n", softmenuStacks[sm].item[0].softmenuId, dynamicMenuItem);
 }
 
 
@@ -713,7 +841,7 @@ void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
 
 
   static void _dynmenuConstructUser(int16_t menu) {
-    userMenuItem_t *menuData = (dynamicSoftmenu[menu].menuItem == -MNU_DYNAMIC) ? userMenus[currentUserMenu].menuItem : (dynamicSoftmenu[menu].menuItem == -MNU_MyAlpha) ? userAlphaItems : userMenuItems;
+    userMenuItem_t *menuData = (dynamicSoftmenu[menu].menuItem == -MNU_DYNAMIC) ? userMenus[currentUserMenu].menuItem : (dynamicSoftmenu[menu].menuItem == -MNU_MyMenu) ? userMenuItems : (dynamicSoftmenu[menu].menuItem == -MNU_MyAlpha) ? userAlphaItems : userPfnItems;
     int16_t i, numberOfBytes = 1;
     uint8_t *ptr;
 
@@ -773,6 +901,11 @@ void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
         break;
       }
 
+      case MNU_MyPFN: {
+        _dynmenuConstructUser(menu);
+        break;
+      }
+      
       case MNU_VAR: {
         _dynmenuConstructVars(menu, false, 0, false, _isWritingTam());
         break;
@@ -997,7 +1130,8 @@ void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
 
 
   void showSoftmenuCurrentPart(void) {
-    int16_t x, y, yDotted=0, currentFirstItem, item, numberOfItems, m = softmenuStack[0].softmenuId;
+    smStackMode_t sm = smStackMode[0];
+    int16_t x, y, yDotted=0, currentFirstItem, item, numberOfItems, m = softmenuStacks[sm].item[0].softmenuId;
     bool    dottedTopLine;
 
     if(tamIsWaitingKey()) {
@@ -1022,12 +1156,12 @@ void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
     else { // Static softmenu
       numberOfItems = softmenu[m].numItems;
     }
-    currentFirstItem = softmenuStack[0].firstItem;
+    currentFirstItem = softmenuStacks[sm].item[0].firstItem;
 
     if(numberOfItems <= 18) {
       dottedTopLine = false;
       if(catalog != CATALOG_NONE) {
-        currentFirstItem = softmenuStack[0].firstItem = 0;
+        currentFirstItem = softmenuStacks[sm].item[0].firstItem = 0;
         setCatalogLastPos();
       }
     }
@@ -1077,6 +1211,10 @@ void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
                   }
                   case MNU_MyAlpha: {
                     vm = (userAlphaItems[x + 6*y].item < 0) ? vmReverse : vmNormal;
+                    break;
+                  }
+                  case MNU_MyPFN: {
+                    vm = (userPfnItems[x + 6*y].item < 0) ? vmReverse : vmNormal;
                     break;
                   }
                   case MNU_DYNAMIC: {
@@ -1213,32 +1351,94 @@ void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
     }
   }
 
+
   /* Softmenu Stack management
    *
    * All functions for soft,enus stacks management are here
    *
    */
-   
+
+ static void fillSoftmenuStack(smStackMode_t stackMode, int16_t softmenuId) {  
+    for(int i=0; i<SOFTMENU_STACK_SIZE; i++) {
+      softmenuStacks[stackMode].item[i].softmenuId = softmenuId;
+      softmenuStacks[stackMode].item[i].firstItem  = 0;
+    }
+  }
+
 
   void softmenuStacksInit(void) {
-    memset(softmenuStack, 0, sizeof(softmenuStack)); // This works because the ID of MyMenu is 0
+    fillSoftmenuStack(smNormal, smMyMenu);                // Initialize RUM softmenu stack  (Normal mode)
+    fillSoftmenuStack(smAim,    smMyAlpha);               // Initialize AIM softmenu stack
+    fillSoftmenuStack(smPem,    smMyPFN);                 // Initialize PEM softmenu stack
+    memset(&smStackMode, smNormal, sizeof(smStackMode));  // Initialize stack mode   stack
   }
-  
+
+
   int16_t getSoftmenuId(int index) {
-    return softmenuStack[index].softmenuId;
+    smStackMode_t sm = smStackMode[0];
+    
+    return softmenuStacks[sm].item[index].softmenuId;
   }
+
 
   void setSoftmenuId(int index, int16_t menuId) {
-    softmenuStack[index].softmenuId = menuId;
+    smStackMode_t sm = smStackMode[0];
+    
+    #if defined(PC_BUILD)
+      printf("*** Set softmenu ID %3d %s\n",menuId, softMenuNames[baseMenu[sm]]);
+    #endif // PC_BUILD
+    
+    softmenuStacks[sm].item[index].softmenuId = menuId;
   }
+
 
   int16_t getSoftmenuFirstItem(void) {
-    return softmenuStack[0].firstItem;
+    smStackMode_t sm = smStackMode[0];
+    
+    return softmenuStacks[sm].item[0].firstItem;
   }
 
+
   void setSoftmenuFirstItem(int16_t item) {
-    softmenuStack[0].firstItem = item;
+    smStackMode_t sm = smStackMode[0];
+    
+    softmenuStacks[sm].item[0].firstItem = item;
   }
+
+
+  smStackMode_t getSmStackMode(void) {
+      return smStackMode[0];
+  }
+
+
+  void pushSmStackMode(smStackMode_t stackMode) {
+    int i;
+    
+    for(i=SOFTMENU_STACKMODE_SIZE-1; i>0; i--) {
+      smStackMode[i] = smStackMode[i-1];  
+    }    
+    smStackMode[0] = stackMode;
+    fillSoftmenuStack(stackMode, baseMenu[stackMode]);  // Reset content of the new softmenu stack
+
+    #if defined(PC_BUILD)
+      printf("*** Push stack mode %d - baseMenu %s\n",stackMode,softMenuNames[baseMenu[stackMode]]);
+    #endif // PC_BUILD
+  }
+
+
+  void popSmStackMode(void) {
+    int i;
+    
+    #if defined(PC_BUILD)
+      printf("*** Pop  stack mode %d - baseMenu %s\n",smStackMode[0],softMenuNames[baseMenu[smStackMode[0]]]);
+    #endif // PC_BUILD
+    
+    for(i=0; i<SOFTMENU_STACKMODE_SIZE-1; i++) {
+      smStackMode[i] = smStackMode[i+1];  
+    }    
+    smStackMode[SOFTMENU_STACKMODE_SIZE-1] = smNormal;    
+  }
+
 
   /* Pushes a new softmenu on the softmenu stack.
    *
@@ -1246,45 +1446,57 @@ void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
    */
   static void pushSoftmenu(int16_t softmenuId) {
     int i;
+    smStackMode_t sm = smStackMode[0];
 
-    if(softmenuStack[0].softmenuId == softmenuId) { // The menu to push on the stack is already displayed
+    if(softmenuStacks[sm].item[0].softmenuId == softmenuId) { // The menu to push on the stack is already displayed
       return;
     }
 
     for(i=0; i<SOFTMENU_STACK_SIZE; i++) { // Searching the stack for the menu to push on the stack
-      if(softmenuStack[i].softmenuId == softmenuId) { // if found, remove it
-        xcopy(softmenuStack + 1, softmenuStack, i * sizeof(softmenuStack_t));
+      if(softmenuStacks[sm].item[i].softmenuId == softmenuId) { // if found, remove it
+        xcopy(softmenuStacks[sm].item + 1, softmenuStacks[sm].item, i * sizeof(softmenuStackItem_t));
         break;
       }
     }
 
     if(i == SOFTMENU_STACK_SIZE) { // The menu to push was not found on the stack
-      xcopy(softmenuStack + 1, softmenuStack, (SOFTMENU_STACK_SIZE - 1) * sizeof(softmenuStack_t)); // shifting the entire stack
+      xcopy(softmenuStacks[sm].item + 1, softmenuStacks[sm].item, (SOFTMENU_STACK_SIZE - 1) * sizeof(softmenuStackItem_t)); // shifting the entire stack
     }
 
-
-    softmenuStack[0].softmenuId = softmenuId;
-    softmenuStack[0].firstItem = lastCatalogPosition[catalog];
+    #if defined(PC_BUILD)
+      printf("*** Push softmenuId %16s - stack %d - calcMode %d\n", softMenuNames[softmenuId], sm, calcMode);
+    #endif // PC_BUILD
+    
+    softmenuStacks[sm].item[0].softmenuId = softmenuId;
+    softmenuStacks[sm].item[0].firstItem = lastCatalogPosition[catalog];
   }
 
 
 
   void popSoftmenu(void) {
+    smStackMode_t sm = smStackMode[0];
+    
+    #if defined(PC_BUILD)
+      printf("*** Pop  softmenuId %16s - stack %d - calcMode %d\n",softMenuNames[softmenuStacks[sm].item[0].softmenuId],sm,calcMode);
+    #endif // PC_BUILD
+    
     screenUpdatingMode &= ~SCRUPD_MANUAL_MENU;
 
-    xcopy(softmenuStack, softmenuStack + 1, (SOFTMENU_STACK_SIZE - 1) * sizeof(softmenuStack_t)); // shifting the entire stack
-    memset(softmenuStack + SOFTMENU_STACK_SIZE - 1, 0, sizeof(softmenuStack_t)); // Put MyMenu in the last stack element
-
-    if(softmenuStack[0].softmenuId == 0 && calcMode == cmAim) { // MyMenu displayed and in AIM
-      softmenuStack[0].softmenuId = 1; // MyAlpha
+    xcopy(softmenuStacks[sm].item, softmenuStacks[sm].item + 1, (SOFTMENU_STACK_SIZE - 1) * sizeof(softmenuStackItem_t)); // shifting the entire stack
+    softmenuStacks[sm].item[3].softmenuId = baseMenu[sm];  // Put default menu in the last stack element
+    softmenuStacks[sm].item[0].firstItem = 0;
+   
+    // failsafe return to Normal stack
+    if (calcMode == cmNormal) {
+      while (sm != smNormal) {
+        popSmStackMode();
+        sm = smStackMode[0];
+      }
     }
-    else if(softmenuStack[0].softmenuId == 1 && calcMode != cmAim) { // MyAlpha displayed and not in AIM
-      softmenuStack[0].softmenuId = 0; // MyMenu
-    }
 
-    enterAsmModeIfMenuIsACatalog(softmenu[softmenuStack[0].softmenuId].menuItem);
+    enterAsmModeIfMenuIsACatalog(softmenu[softmenuStacks[sm].item[0].softmenuId].menuItem);
 
-    if(softmenu[softmenuStack[0].softmenuId].menuItem == -MNU_MVAR) {
+    if(softmenu[softmenuStacks[sm].item[0].softmenuId].menuItem == -MNU_MVAR) {
       setSystemFlag(FLAG_VMDISP);
     }
     else {
@@ -1296,8 +1508,9 @@ void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
 
   void showSoftmenu(int16_t id) {
     int16_t m;
+    smStackMode_t sm = smStackMode[0];
 
-    if(softmenu[softmenuStack[0].softmenuId].menuItem == -MNU_MENUS) {
+    if(softmenu[softmenuStacks[sm].item[0].softmenuId].menuItem == -MNU_MENUS) {
       leaveAsmMode();
     }
     enterAsmModeIfMenuIsACatalog(id);
@@ -1362,9 +1575,9 @@ void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
     else if(id == -MNU_ADV || id == -MNU_EQN) {
       currentSolverStatus &= ~SOLVER_STATUS_INTERACTIVE;
       for(int i=0; i<SOFTMENU_STACK_SIZE; i++) { // Searching the stack for MNU_MVAR
-        if(softmenu[softmenuStack[i].softmenuId].menuItem == -MNU_MVAR) { // if found, remove it
-          xcopy(softmenuStack + i, softmenuStack + i + 1, (SOFTMENU_STACK_SIZE - i - 1) * sizeof(softmenuStack_t));
-          memset(softmenuStack + SOFTMENU_STACK_SIZE - 1, 0, sizeof(softmenuStack_t)); // Put MyMenu in the last stack element
+        if(softmenu[softmenuStacks[sm].item[i].softmenuId].menuItem == -MNU_MVAR) { // if found, remove it
+          xcopy(softmenuStacks[sm].item, softmenuStacks[sm].item +i + 1, (SOFTMENU_STACK_SIZE - i - 1) * sizeof(softmenuStackItem_t)); // shifting the entire stack
+          memset(softmenuStacks[sm].item + SOFTMENU_STACK_SIZE - 1, 0, sizeof(softmenuStackItem_t)); // Put MyMenu in the last stack element
           --i; // redo
         }
       }
@@ -1383,8 +1596,9 @@ void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
       bugScreen(errorMessage);
     }
     else {
-      if(tamIsActive() || (calcMode == cmAssign && tam.alpha)) {
-        numberOfTamMenusToPop++;
+      //if(tamIsActive() || (calcMode == cmAssign && tam.alpha)) {
+      if(tamIsActive() && !tam.alpha) {           // Don't count menus in aim as they will be trashed with the aim menu stack
+         numberOfTamMenusToPop++;
       }
       pushSoftmenu(m);
       if(id == -MNU_MVAR) {
@@ -1399,20 +1613,23 @@ void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
 
 
   void setCatalogLastPos(void) {
-    lastCatalogPosition[catalog] = (catalog ? softmenuStack[0].firstItem : 0);
+    smStackMode_t sm = smStackMode[0];
+  
+    lastCatalogPosition[catalog] = (catalog ? softmenuStacks[sm].item[0].firstItem : 0);
 
     if(catalog == CATALOG_AINT) {
-      lastCatalogPosition[CATALOG_aint] = softmenuStack[0].firstItem;
+      lastCatalogPosition[CATALOG_aint] = softmenuStacks[sm].item[0].firstItem;
     }
     else if(catalog == CATALOG_aint) {
-      lastCatalogPosition[CATALOG_AINT] = softmenuStack[0].firstItem;
+      lastCatalogPosition[CATALOG_AINT] = softmenuStacks[sm].item[0].firstItem;
     }
   }
 
 
 
   bool currentSoftmenuScrolls(void) {
-    int16_t menuId = softmenuStack[0].softmenuId;
+    smStackMode_t sm = smStackMode[0];
+    int16_t menuId = softmenuStacks[sm].item[0].softmenuId;
     return (menuId > 1 &&
       (   (menuId <  NUMBER_OF_DYNAMIC_SOFTMENUS && dynamicSoftmenu[menuId].numItems > 18)
        || (menuId >= NUMBER_OF_DYNAMIC_SOFTMENUS &&        softmenu[menuId].numItems > 18)));
@@ -1421,7 +1638,8 @@ void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
 
 
   bool isAlphabeticSoftmenu(void) {
-    int16_t menuItem = softmenu[softmenuStack[0].softmenuId].menuItem;
+    smStackMode_t sm = smStackMode[0];
+    int16_t menuItem = softmenu[softmenuStacks[sm].item[0].softmenuId].menuItem;
     switch(menuItem) {
       case -MNU_ALPHAINTL:
       case -MNU_ALPHAintl:
@@ -1448,13 +1666,14 @@ char *dynmenuGetLabel(int16_t menuitem) {
 
 
 char *dynmenuGetLabelWithDup(int16_t menuitem, int16_t *dupNum) {
+  smStackMode_t sm = smStackMode[0];   
   if(dupNum) {
     *dupNum = 0;
   }
-  if(menuitem < 0 || menuitem >= dynamicSoftmenu[softmenuStack[0].softmenuId].numItems) {
+  if(menuitem < 0 || menuitem >= dynamicSoftmenu[softmenuStacks[sm].item[0].softmenuId].numItems) {
     return "";
   }
-  char *labelName = (char *)dynamicSoftmenu[softmenuStack[0].softmenuId].menuContent;
+  char *labelName = (char *)dynamicSoftmenu[softmenuStacks[sm].item[0].softmenuId].menuContent;
   char *prevLabelName = labelName;
   while(menuitem > 0) {
     labelName += stringByteLength(labelName) + 1;
@@ -1473,11 +1692,21 @@ char *dynmenuGetLabelWithDup(int16_t menuitem, int16_t *dupNum) {
 }
 
 
-
 void fnExitAllMenus(uint16_t unusedButMandatoryParameter) {
   #if !defined(TESTSUITE_BUILD)
-    while((softmenu[softmenuStack[0].softmenuId].menuItem != -MNU_MyMenu && softmenu[softmenuStack[0].softmenuId].menuItem != -MNU_MyAlpha) || (softmenu[softmenuStack[1].softmenuId].menuItem != -MNU_MyMenu)) {
-      popSoftmenu();
+    smStackMode_t sm = smStackMode[0];
+    fillSoftmenuStack(sm, baseMenu[sm]);                // Initialize current softmenu stack with the related base menu
+    catalog = CATALOG_NONE;
+    if (sm == smAim) {
+      setSystemFlag(FLAG_ALPHA);
     }
+    else {
+      clearSystemFlag(FLAG_ALPHA);
+    }
+
+    #if defined(PC_BUILD)
+      printf("*** Exit all - stack %d\n",sm);
+    #endif // PC_BUILD
+
   #endif // !TESTSUITE_BUILD
 }

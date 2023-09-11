@@ -1446,7 +1446,7 @@
   #define MNU_TIMERF                    1400
   #define MNU_HIST                      1401
   #define MNU_HPLOT                     1402
-  #define MNU_1403                      1403
+  #define MNU_MyPFN                     1403
 
 
   #define ITM_1COMPL                    1404
@@ -1877,8 +1877,11 @@
   #define ITM_VOLMINUS                  1814
   #define ITM_BUZZ                      1815
   #define ITM_PLAY                      1816
+  
+  #define MNU_CAT_AIM                   1817
+  #define MNU_MENUS_AIM                 1818
 
-  #define LAST_ITEM                     1817
+  #define LAST_ITEM                     1819
 
   #define NOPARAM                       9876 // Item for function who don't need an item
   #define CONFIRMED                     9877 // Confirmation for RESET, CLPALL, CLALL

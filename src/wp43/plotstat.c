@@ -1807,9 +1807,12 @@ void fnPlotStat(uint16_t plotMode){
 
     }
     else {
-      calcMode = cmNormal;
+      if ((calcMode == cmPlotStat) || (calcMode == cmGraph)) {
+        calcMode = cmNormal;
+      }
       displayCalcErrorMessage(ERROR_NO_SUMMATION_DATA, ERR_REGISTER_LINE, REGISTER_X);
       errorMoreInfo("There is no statistical/plot data available!");
+       
     }
   #endif // !TESTSUITE_BUILD
 }

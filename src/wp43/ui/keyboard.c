@@ -82,6 +82,12 @@ bool      _kbSeenInterrupt     = false;
         break;
       }
 
+      case MNU_MyPFN: {
+        dynamicMenuItem = firstItem + itemShift + fn;
+        item = userPfnItems[dynamicMenuItem].item;
+        break;
+      }
+      
       case MNU_DYNAMIC: {
         dynamicMenuItem = firstItem + itemShift + fn;
         item = userMenus[currentUserMenu].menuItem[dynamicMenuItem].item;
@@ -297,7 +303,7 @@ bool      _kbSeenInterrupt     = false;
   static void _closeCatalog(void) {
     bool inCatalog = false;
     for(int i = 0; i < SOFTMENU_STACK_SIZE; ++i) {
-      if(softmenu[getSoftmenuId(i)].menuItem == -MNU_CATALOG) {
+      if((softmenu[getSoftmenuId(i)].menuItem == -MNU_CATALOG) || (softmenu[getSoftmenuId(i)].menuItem == -MNU_CAT_AIM)) {
         inCatalog = true;
         break;
       }
@@ -386,7 +392,8 @@ bool      _kbSeenInterrupt     = false;
       #pragma GCC diagnostic push
       #pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
       switch(-softmenu[getSoftmenuId(0)].menuItem) {
-        case MNU_MENUS: {
+        case MNU_MENUS:
+        case MNU_MENUS_AIM: {
           if(item <= ASSIGN_USER_MENU) {
             currentUserMenu = ASSIGN_USER_MENU - item;
             item = -MNU_DYNAMIC;
@@ -394,6 +401,7 @@ bool      _kbSeenInterrupt     = false;
           /* fallthrough */
         }
         case MNU_CATALOG:
+        case MNU_CAT_AIM:
         case MNU_CHARS:
         case MNU_PROGS:
         case MNU_VARS: {
@@ -487,7 +495,16 @@ bool      _kbSeenInterrupt     = false;
         screenUpdatingMode &= ~SCRUPD_ONE_TIME_FLAGS;
         return true;
       }
-      case MNU_DYNAMIC: {
+      case MNU_MyPFN: {
+        assignToMyPFN((keyCode - kcF1) + (shiftG ? 12 : shiftF ? 6 : 0));
+        calcMode = previousCalcMode;
+        shiftF = shiftG = false;
+        _closeCatalog();
+        refreshScreen();
+        screenUpdatingMode &= ~SCRUPD_ONE_TIME_FLAGS;
+        return true;
+      }
+       case MNU_DYNAMIC: {
         assignToUserMenu((keyCode - kcF1) + (shiftG ? 12 : shiftF ? 6 : 0));
         calcMode = previousCalcMode;
         shiftF = shiftG = false;
@@ -497,10 +514,12 @@ bool      _kbSeenInterrupt     = false;
         return true;
       }
       case MNU_CATALOG:
+      //case MNU_CAT_AIM:
       case MNU_CHARS:
       case MNU_PROGS:
       case MNU_VARS:
-      case MNU_MENUS: {
+      case MNU_MENUS:
+      case MNU_MENUS_AIM: {
         screenUpdatingMode &= ~SCRUPD_ONE_TIME_FLAGS;
         return false;
       }
@@ -601,7 +620,7 @@ bool      _kbSeenInterrupt     = false;
             return;
           }
           else if(item < 0) { // softmenu
-            if(calcMode == cmAssign && itemToBeAssigned == 0 && softmenu[getSoftmenuId(0)].menuItem == -MNU_MENUS) {
+            if(calcMode == cmAssign && itemToBeAssigned == 0 && ((softmenu[getSoftmenuId(0)].menuItem == -MNU_MENUS) || (softmenu[getSoftmenuId(0)].menuItem == -MNU_MENUS_AIM))) {
               itemToBeAssigned = item;
             }
             else {
@@ -705,6 +724,13 @@ bool      _kbSeenInterrupt     = false;
             if(tam.alpha && calcMode != cmAssign && tam.mode != tmNewMenu) {
               tamLeaveMode();
             }
+            if(calcMode == cmPem && getSystemFlag(FLAG_ALPHA)) {
+              if(getSmStackMode() != smPem) {
+                popSmStackMode();  // Return to previous softmenu stack which should be smNormal
+              }
+              clearSystemFlag(FLAG_ALPHA);
+            }
+
 
             if(lastErrorCode == 0) {
               if(temporaryInformation == TI_VIEW_REGISTER) {
@@ -1179,9 +1205,7 @@ bool      _kbSeenInterrupt     = false;
 
       default: {
         if(calcMode == cmAssign && itemToBeAssigned != 0 && item == ITM_USERMODE) {
-          while(getSoftmenuId(0) > 1) {
-            popSoftmenu();
-          }
+          fnExitAllMenus(NOPARAM);
           if(previousCalcMode == cmAim) {
             setSoftmenuId(0,1);
             calcModeUpdateGui();
@@ -1561,7 +1585,6 @@ void fnKeyEnter(uint16_t unusedButMandatoryParameter) {
 
       case cmAim: {
         calcModeEnter(cmNormal);
-        popSoftmenu();
 
         if(aimBuffer[0] == 0) {
           #if defined(DEBUGUNDO)
@@ -1637,8 +1660,9 @@ void fnKeyEnter(uint16_t unusedButMandatoryParameter) {
           if(allFormulae[currentFormula].pointerToFormulaData == WP43_NULL) {
             deleteEquation(currentFormula);
           }
+        } else {
+          popSoftmenu();
         }
-        popSoftmenu();
         break;
       }
 
@@ -1851,7 +1875,11 @@ void fnKeyExit(uint16_t unusedButMandatoryParameter) {
           fnBst(NOPARAM); // Set the PGM pointer to the original position
           break;
         }
-        if(getSoftmenuId(0) > 1) { // not MyMenu and not MyAlpha
+        if(getSoftmenuId(0) == smMyAlpha ) { // MyAlpha displayed in PEM ->
+          popSmStackMode();  // Return to previous softmenu stack which should be smPem
+          break;
+        }
+        if(getSoftmenuId(0) != smMyPFN ) { // not MyPFN
           popSoftmenu();
           break;
         }
@@ -1879,8 +1907,9 @@ void fnKeyExit(uint16_t unusedButMandatoryParameter) {
             if(allFormulae[currentFormula].pointerToFormulaData == WP43_NULL) {
               deleteEquation(currentFormula);
             }
+          } else {
+            popSoftmenu();
           }
-          popSoftmenu();
         }
         break;
       }
@@ -1929,7 +1958,8 @@ void fnKeyExit(uint16_t unusedButMandatoryParameter) {
       }
 
       case cmAssign: {
-        if((getSoftmenuId(0) <= 1 && getSoftmenuId(1) <= 1) || (previousCalcMode == cmEim && softmenu[getSoftmenuId(0)].menuItem == -MNU_EQ_EDIT)) { // MyMenu or MyAlpha is displayed
+        if((getSoftmenuId(0) <= 2 && getSoftmenuId(1) <= 2) || (previousCalcMode == cmEim && softmenu[getSoftmenuId(0)].menuItem == -MNU_EQ_EDIT)) { // MyMenu or MyAlpha is displayed
+          printf("calcMode %d - previousCalcMode %d\n", calcMode, previousCalcMode);
           calcMode = previousCalcMode;
           if(tam.alpha) {
             assignLeaveAlpha();

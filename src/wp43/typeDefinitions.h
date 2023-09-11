@@ -287,13 +287,22 @@
 
 
 
-  /**
-   * \struct softmenuStack_t
-   * Stack of softmenus.
+ /**
+   * \struct softmenuStackItem_t
+   * Softmenu stack item.
    */
   typedef struct {
     int16_t softmenuId; ///< Softmenu ID = rank in dynamicSoftmenu or softmenu
     int16_t firstItem;  ///< Current first item on the screen (unshifted F1 = bottom left)
+  } softmenuStackItem_t;
+
+  
+    /**
+   * \struct softmenuStacks_t
+   * Stack of softmenus.
+   */
+  typedef struct {
+    softmenuStackItem_t item[SOFTMENU_STACK_SIZE];
   } softmenuStack_t;
 
 
@@ -362,7 +371,7 @@
 
   /**
    * \struct userMenuItem_t
-   * Structure keeping the information for one item of MyMenu and MyAlpha.
+   * Structure keeping the information for one item of MyMenu, MyAlpha or MyPFN.
    */
   typedef struct {
     int16_t  item;               ///< Item ID

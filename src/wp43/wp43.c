@@ -34,6 +34,7 @@ bool                   lastProgramListEnd;
 bool                   programListEnd;
 bool                   serialIOIconEnabled;
 bool                   pemCursorIsZerothStep;
+bool                   pendingScreenRefresh;
 
 realContext_t          ctxtReal4;    //   limited digits: used for higher speed internal real calcs
 realContext_t          ctxtReal34;   //   34 digits
@@ -55,9 +56,10 @@ dataBlock_t           *currentLocalFlags;
 dataBlock_t           *currentSubroutineLevelData;
 
 namedVariableHeader_t *allNamedVariables;
-softmenuStack_t        softmenuStack[SOFTMENU_STACK_SIZE];
+softmenuStack_t        softmenuStacks[4];          // 4 softmenuStacks: normal, aim, pem, rfu (eim?)
 userMenuItem_t         userMenuItems[18];
 userMenuItem_t         userAlphaItems[18];
+userMenuItem_t         userPfnItems[18];
 userMenu_t            *userMenus;
 programmableMenu_t     programmableMenu;
 calcKey_t              kbd_usr[37];

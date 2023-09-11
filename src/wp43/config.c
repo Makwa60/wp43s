@@ -892,6 +892,7 @@ void fnReset(uint16_t confirmation) {
 
     memset(userMenuItems,  0, sizeof(userMenuItem_t) * 18);
     memset(userAlphaItems, 0, sizeof(userMenuItem_t) * 18);
+    memset(userPfnItems,   0, sizeof(userMenuItem_t) * 18);
     userMenus = NULL;
     numberOfUserMenus = 0;
     currentUserMenu = 0;
@@ -902,6 +903,7 @@ void fnReset(uint16_t confirmation) {
     fnClearMenu(NOPARAM);
 
     screenUpdatingMode = SCRUPD_AUTO;
+    pendingScreenRefresh = false;
 
     // The following lines are test data
     addTestPrograms();

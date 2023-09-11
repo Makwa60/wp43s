@@ -39,7 +39,10 @@ void sortOneCatalog(const char *menuName, int catalogType, int16_t generationTyp
 
   numberOfItems = 0;
   for(item=1; item<LAST_ITEM; item++) {
-    if((indexOfItems[item].status & CAT_STATUS) == catalogType && strcmp(indexOfItems[item].itemCatalogName, "CATALOG") && strcmp(indexOfItems[item].itemCatalogName, "MENUS")) { // CATALOG and MENUS are not in another catalog
+    if((indexOfItems[item].status & CAT_STATUS) == catalogType && strcmp(indexOfItems[item].itemCatalogName, "CATALOG")
+        && strcmp(indexOfItems[item].itemCatalogName, "CAT_AIM")
+        //&& strcmp(indexOfItems[item].itemCatalogName, "MENUS" STD_alpha)
+        && strcmp(indexOfItems[item].itemCatalogName, "MENUS")) { // CATALOG, CAT_AIM and MENUS are not in another catalog
       if(   generationType == GENERATION_FOR_DMCP
          || generationType == GENERATION_FOR_BOTH
          || (generationType == GENERATION_FOR_PC && strcmp(indexOfItems[item].itemCatalogName, "SYSTEM")

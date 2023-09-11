@@ -2280,8 +2280,10 @@
 
 
   void closeAim(void) {
+    #if defined PC_BUILD
+      printf("*** closeAim\n"); 
+    #endif
     calcModeEnter(cmNormal);
-    popSoftmenu();
 
     if(aimBuffer[0] == 0) {
       #if defined(DEBUGUNDO)

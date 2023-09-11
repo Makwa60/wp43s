@@ -47,8 +47,9 @@
 // Backup versions:
 // 92 Add CONFIG and ALLVAR catalogs
 // 93 Change softmenu stack depth from 8 to 4
+// 94 Add different softmenu stacks for RUM, AIM & PEM, add MyPFN user menu
 //
-#define BACKUP_VERSION                     93  // Change softmenu stack depth from 8 to 4
+#define BACKUP_VERSION                     94  // Add different softmenu stacks for RUM, AIM, PEM and EIM, add MyPFN user menu
 #define OLDEST_COMPATIBLE_BACKUP_VERSION   87  // save running app
 #define START_REGISTER_VALUE             1000  // was 1522, why?
 
@@ -106,12 +107,14 @@ static uint32_t restore(void *buffer, uint32_t size) {
     save(asmBuffer,                           sizeof(asmBuffer));
     save(oldTime,                             sizeof(oldTime));
     save(dateTimeString,                      sizeof(dateTimeString));
-    save(softmenuStack,                       sizeof(softmenuStack));
+    save(softmenuStacks,                      sizeof(softmenuStacks));
+    save(smStackMode,                         sizeof(smStackMode));
     save(globalRegister,                      sizeof(globalRegister));
     save(savedStackRegister,                  sizeof(savedStackRegister));
     save(kbd_usr,                             sizeof(kbd_usr));
     save(userMenuItems,                       sizeof(userMenuItems));
     save(userAlphaItems,                      sizeof(userAlphaItems));
+    save(userPfnItems,                        sizeof(userPfnItems));
     save(&tam.mode,                           sizeof(tam.mode));
     save(&tam.function,                       sizeof(tam.function));
     save(&tam.alpha,                          sizeof(tam.alpha));
@@ -367,16 +370,24 @@ static uint32_t restore(void *buffer, uint32_t size) {
       restore(asmBuffer,                           sizeof(asmBuffer));
       restore(oldTime,                             sizeof(oldTime));
       restore(dateTimeString,                      sizeof(dateTimeString));
-      restore(softmenuStack,                       sizeof(softmenuStack));
-      if (backupVersion < 93) {                                             // only half of the saved softmenuStack has been  restored, 
-          restore(globalRegister,                  sizeof(softmenuStack));  // need to read and discard the second part
-          softmenuStacksInit();                                             // reinitialize the softmenuSTack to a clean state
-      }
+      if (backupVersion < 93) {
+        restore(softmenuStacks,                    sizeof(softmenuStacks)/2);   // single softmenuStack , depth 8 levels,
+        softmenuStacksInit();                                                   // reinitialize the softmenuStack to a clean state
+      } else if (backupVersion == 93) { 
+        restore(softmenuStacks,                    sizeof(softmenuStacks)/4);   // single softmenuStack , depth 4 levels,
+        softmenuStacksInit();                                                   // reinitialize the softmenuStack to a clean state
+      } else {
+        restore(&softmenuStacks,                   sizeof(softmenuStacks));     // Four softmenu Stacks, depth 4 levels each
+        restore(smStackMode,                       sizeof(smStackMode));
+      } 
       restore(globalRegister,                      sizeof(globalRegister));
       restore(savedStackRegister,                  sizeof(savedStackRegister));
       restore(kbd_usr,                             sizeof(kbd_usr));
       restore(userMenuItems,                       sizeof(userMenuItems));
       restore(userAlphaItems,                      sizeof(userAlphaItems));
+      if (backupVersion > 93) {
+        restore(userPfnItems,                      sizeof(userPfnItems));       // MyPFN menu is available from backup version 94
+      }
       restore(&tam.mode,                           sizeof(tam.mode));
       restore(&tam.function,                       sizeof(tam.function));
       restore(&tam.alpha,                          sizeof(tam.alpha));
@@ -1051,6 +1062,19 @@ void fnSave(uint16_t saveMode) {
     if(userAlphaItems[i].argumentName[0] != 0) {
       strcat(tmpString, " ");
       stringToUtf8(userAlphaItems[i].argumentName, (uint8_t *)tmpString + strlen(tmpString));
+    }
+    strcat(tmpString, "\n");
+    save(tmpString, strlen(tmpString));
+  }
+
+  // MyPFN
+  sprintf(tmpString, "MYPFN\n18\n");
+  save(tmpString, strlen(tmpString));
+  for(i=0; i<18; i++) {
+    sprintf(tmpString, "%" PRId16, userPfnItems[i].item);
+    if(userPfnItems[i].argumentName[0] != 0) {
+      strcat(tmpString, " ");
+      stringToUtf8(userPfnItems[i].argumentName, (uint8_t *)tmpString + strlen(tmpString));
     }
     strcat(tmpString, "\n");
     save(tmpString, strlen(tmpString));
@@ -1809,6 +1833,31 @@ static bool restoreOneSection(uint16_t loadMode, uint16_t s, uint16_t n, uint16_
           }
           if((*str != '\n') && (*str != 0)) {
             utf8ToString((uint8_t *)str, userAlphaItems[i].argumentName);
+          }
+        }
+      }
+    }
+  }
+
+  else if(strcmp(tmpString, "MYPFN") == 0) {
+    readLine(tmpString); // Number of keys
+    numberOfRegs = stringToInt16(tmpString);
+    for(int16_t i=0; i<numberOfRegs; i++) {
+      readLine(tmpString); // key
+      if(loadMode == LM_ALL || loadMode == LM_SYSTEM_STATE) {
+        str = tmpString;
+        userPfnItems[i].item            = stringToInt16(str);
+        userPfnItems[i].argumentName[0] = 0;
+
+        while((*str != ' ') && (*str != '\n') && (*str != 0)) {
+          str++;
+        }
+        if(*str == ' ') {
+          while(*str == ' ') {
+            str++;
+          }
+          if((*str != '\n') && (*str != 0)) {
+            utf8ToString((uint8_t *)str, userPfnItems[i].argumentName);
           }
         }
       }

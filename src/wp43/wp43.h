@@ -49,6 +49,7 @@
     extern uint32_t            *screenData;
     extern bool                 screenChange;
   #endif //PC_BUILD
+    extern bool                 pendingScreenRefresh;
 
   // Variables stored in FLASH
   extern const item_t                    indexOfItems[];
@@ -100,9 +101,10 @@
   extern dataBlock_t           *currentSubroutineLevelData;
 
   extern namedVariableHeader_t *allNamedVariables;
-  extern softmenuStack_t        softmenuStack[SOFTMENU_STACK_SIZE];
+  extern softmenuStack_t        softmenuStacks[4];          // 4 softmenuStacks: normal, aim, pem, rfu (eim?)
   extern userMenuItem_t         userMenuItems[18];
   extern userMenuItem_t         userAlphaItems[18];
+  extern userMenuItem_t         userPfnItems[18];
   extern userMenu_t            *userMenus;
   extern programmableMenu_t     programmableMenu;
   extern calcKey_t              kbd_usr[37];
