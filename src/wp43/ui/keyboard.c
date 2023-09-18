@@ -1105,36 +1105,44 @@ bool      _kbSeenInterrupt     = false;
       }
 
       case ITM_UP: {
-        fnKeyUp(NOPARAM);
-        if(currentSoftmenuScrolls() || calcMode != cmNormal || temporaryInformation != TI_NO_INFO) {
-          refreshScreen();
-        }
-        temporaryInformation = TI_NO_INFO;
-        keyActionProcessed = true;
-        #if (REAL34_WIDTH_TEST == 1)
-          if(++largeur > SCREEN_WIDTH) {
-            largeur--;
+        if(calcMode != cmConfirmation) {
+          fnKeyUp(NOPARAM);
+          if(currentSoftmenuScrolls() || calcMode != cmNormal || temporaryInformation != TI_NO_INFO) {
+            refreshScreen();
           }
-          uIntToLongInteger(largeur, lgInt);
-          convertLongIntegerToLongIntegerRegister(lgInt, REGISTER_Z);
-        #endif // (REAL34_WIDTH_TEST == 1)
+          temporaryInformation = TI_NO_INFO;
+          keyActionProcessed = true;
+          #if (REAL34_WIDTH_TEST == 1)
+            if(++largeur > SCREEN_WIDTH) {
+              largeur--;
+            }
+              uIntToLongInteger(largeur, lgInt);
+            convertLongIntegerToLongIntegerRegister(lgInt, REGISTER_Z);
+          #endif // (REAL34_WIDTH_TEST == 1)
+        } else {
+          keyActionProcessed = true;
+        }
         break;
       }
 
       case ITM_DOWN: {
-        fnKeyDown(NOPARAM);
-        if(currentSoftmenuScrolls() || calcMode != cmNormal || temporaryInformation != TI_NO_INFO) {
-          refreshScreen();
-        }
-        temporaryInformation = TI_NO_INFO;
-        keyActionProcessed = true;
-        #if (REAL34_WIDTH_TEST == 1)
-          if(--largeur < 20) {
-            largeur++;
+        if(calcMode != cmConfirmation) {
+          fnKeyDown(NOPARAM);
+          if(currentSoftmenuScrolls() || calcMode != cmNormal || temporaryInformation != TI_NO_INFO) {
+            refreshScreen();
           }
-          uIntToLongInteger(largeur, lgInt);
-          convertLongIntegerToLongIntegerRegister(lgInt, REGISTER_Z);
-        #endif // (REAL34_WIDTH_TEST == 1)
+          temporaryInformation = TI_NO_INFO;
+          keyActionProcessed = true;
+          #if (REAL34_WIDTH_TEST == 1)
+            if(--largeur < 20) {
+              largeur++;
+            }
+            uIntToLongInteger(largeur, lgInt);
+            convertLongIntegerToLongIntegerRegister(lgInt, REGISTER_Z);
+          #endif // (REAL34_WIDTH_TEST == 1)
+        } else {
+          keyActionProcessed = true;
+        }
         break;
       }
 
