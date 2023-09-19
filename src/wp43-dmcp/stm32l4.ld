@@ -27,6 +27,9 @@ SECTIONS {
     . = ALIGN(8);
     _qspi_start = .;   /* create a global symbol at qspi start */
     *(.qspi)           /* .qspi  sections */
+    *(.rodata)         /* From C47: Added by Martin .rodata  sections (constants, strings, etc.) */
+    *(.rodata*str1.1)  /* From C47: Added by Martin .rodata  sections (constants, strings, etc.) */
+
     . = ALIGN(8);
     _qspi_end = .;     /* define a global symbols at end of qspi */
   } >QSPI /* AT> FLASH */
