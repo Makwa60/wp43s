@@ -15,7 +15,7 @@ bool real34CompareAbsGreaterThan(const real34_t *number1, const real34_t *number
   real34CopyAbs(number1, &num1);
   real34CopyAbs(number2, &num2);
   real34Compare(&num1, &num2, &num2);
-  return real34ToInt32(&num2) > 0;
+  return real34IsPositive(&num2) && !real34IsZero(&num2);
 }
 
 
@@ -26,7 +26,7 @@ bool real34CompareAbsGreaterEqual(const real34_t *number1, const real34_t *numbe
   real34CopyAbs(number1, &num1);
   real34CopyAbs(number2, &num2);
   real34Compare(&num1, &num2, &num2);
-  return real34ToInt32(&num2) >= 0;
+  return real34IsPositive(&num2) && !real34IsZero(&num2);
 }
 
 
@@ -37,7 +37,7 @@ bool real34CompareAbsLessThan(const real34_t *number1, const real34_t *number2) 
   real34CopyAbs(number1, &num1);
   real34CopyAbs(number2, &num2);
   real34Compare(&num1, &num2, &num2);
-  return real34ToInt32(&num2) < 0;
+  return real34IsNegative(&num2) && !real34IsZero(&num2);
 }
 
 
@@ -46,7 +46,7 @@ bool real34CompareEqual(const real34_t *number1, const real34_t *number2) {
   real34_t compare;
 
   real34Compare(number1, number2, &compare);
-  return real34ToInt32(&compare) == 0;
+  return real34IsZero(&compare);
 }
 
 
@@ -55,7 +55,7 @@ bool real34CompareGreaterEqual(const real34_t *number1, const real34_t *number2)
   real34_t compare;
 
   real34Compare(number1, number2, &compare);
-  return real34ToInt32(&compare) >= 0;
+  return real34IsPositive(&compare) || real34IsZero(&compare);
 }
 
 
@@ -64,7 +64,7 @@ bool real34CompareGreaterThan(const real34_t *number1, const real34_t *number2) 
   real34_t compare;
 
   real34Compare(number1, number2, &compare);
-  return real34ToInt32(&compare) > 0;
+  return real34IsPositive(&compare) && !real34IsZero(&compare);
 }
 
 
@@ -73,7 +73,7 @@ bool real34CompareLessEqual(const real34_t *number1, const real34_t *number2) {
   real34_t compare;
 
   real34Compare(number1, number2, &compare);
-  return real34ToInt32(&compare) <= 0;
+  return real34IsNegative(&compare) || real34IsZero(&compare);
 }
 
 
@@ -82,101 +82,85 @@ bool real34CompareLessThan(const real34_t *number1, const real34_t *number2) {
   real34_t compare;
 
   real34Compare(number1, number2, &compare);
-  return real34ToInt32(&compare) < 0;
+  return real34IsNegative(&compare) && !real34IsZero(&compare);
 }
 
 
 
 bool realCompareAbsGreaterThan(const real_t *number1, const real_t *number2) {
   real_t num1, num2;
-  int32_t cmp;
 
   realCopyAbs(number1, &num1);
   realCopyAbs(number2, &num2);
   realCompare(&num1, &num2, &num2, &ctxtReal75);
-  cmp = realToInt32(&num2);
-  return cmp > 0;
+  return realIsPositive(&num2) && !realIsZero(&num2);
 }
 
 
 /*
 bool realCompareAbsGreaterEqual(const real_t *number1, const real_t *number2) {
   real_t num1, num2;
-  int32_t cmp;
 
   realCopyAbs(number1, &num1);
   realCopyAbs(number2, &num2);
   realCompare(&num1, &num2, &num2, &ctxtReal75);
-  cmp = realToInt32(&num2);
-  return cmp >= 0;
+  return realIsPositive(&num2) || realIsZero(&num2);
 }
 */
 
 
 bool realCompareAbsLessThan(const real_t *number1, const real_t *number2) {
   real_t num1, num2;
-  int32_t cmp;
 
   realCopyAbs(number1, &num1);
   realCopyAbs(number2, &num2);
   realCompare(&num1, &num2, &num2, &ctxtReal75);
-  cmp = realToInt32(&num2);
-  return cmp < 0;
+  return realIsNegative(&num2) && !realIsZero(&num2);
 }
 
 
 
 bool realCompareEqual(const real_t *number1, const real_t *number2) {
   real_t compare;
-  int32_t cmp;
 
   realCompare(number1, number2, &compare, &ctxtReal75);
-  cmp = realToInt32(&compare);
-  return cmp == 0;
+  return realIsZero(&compare);
 }
 
 
 
 bool realCompareGreaterEqual(const real_t *number1, const real_t *number2) {
   real_t compare;
-  int32_t cmp;
 
   realCompare(number1, number2, &compare, &ctxtReal75);
-  cmp = realToInt32(&compare);
-  return cmp >= 0;
+  return realIsPositive(&compare) || realIsZero(&compare);
 }
 
 
 
 bool realCompareGreaterThan(const real_t *number1, const real_t *number2) {
   real_t compare;
-  int32_t cmp;
 
   realCompare(number1, number2, &compare, &ctxtReal75);
-  cmp = realToInt32(&compare);
-  return cmp > 0;
+  return realIsPositive(&compare) && !realIsZero(&compare);
 }
 
 
 
 bool realCompareLessEqual(const real_t *number1, const real_t *number2) {
   real_t compare;
-  int32_t cmp;
 
   realCompare(number1, number2, &compare, &ctxtReal75);
-  cmp = realToInt32(&compare);
-  return cmp <= 0;
+  return realIsNegative(&compare) || realIsZero(&compare);
 }
 
 
 
 bool realCompareLessThan(const real_t *number1, const real_t *number2) {
   real_t compare;
-  int32_t cmp;
 
   realCompare(number1, number2, &compare, &ctxtReal75);
-  cmp = realToInt32(&compare);
-  return cmp < 0;
+  return realIsNegative(&compare) && !realIsZero(&compare);
 }
 
 

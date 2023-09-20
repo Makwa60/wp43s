@@ -71,7 +71,7 @@ void fnMultiply(uint16_t unusedButMandatoryParameter) {
 
 
 void mulComplexComplex(const real_t *factor1Real, const real_t *factor1Imag, const real_t *factor2Real, const real_t *factor2Imag, real_t *productReal, real_t *productImag, realContext_t *realContext) {
-  real_t a, b, c, d;
+  real_t a, b, c, d, p, t;
   bool   aIsZero, bIsZero, cIsZero, dIsZero, aIsInfinite, bIsInfinite, cIsInfinite, dIsInfinite;
 
   realCopy(factor1Real, &a);
@@ -109,20 +109,24 @@ void mulComplexComplex(const real_t *factor1Real, const real_t *factor1Imag, con
   //  realAdd(&b, &d, &b, realContext);
   //  realPolarToRectangular(&a, &b, productReal, productImag, realContext);
   //}
-  else { // perform multiplication in rectangular form
+  else { // perform multiplication in rectangular form using numerically stable approach
     // real part
-    realMultiply(&a, &c, productReal, realContext);                   // a*c
-    realMultiply(&b, &d, productImag, realContext);                   // b*d
-    realSubtract(productReal, productImag, productReal, realContext); // a*c - b*d
+    realMultiply(&a, &c, &p, realContext);                  // RN(ac)
+    realChangeSign(&b);
+    realFMA(&b, &d, &p, &t, realContext);                   // RN(p - bd)
+    realChangeSign(&b);
+    realChangeSign(&p);
+    realFMA(&a, &c, &p, productReal, realContext);          // RN(ac - p)
+    realAdd(productReal, &t, productReal, realContext);     // RN(RN(p - bd) + RN(ac - p))
 
     // imaginary part
-    realMultiply(&a, &d, productImag, realContext);     // a*d
-    realMultiply(&b, &c, &a, realContext);              // b*c
-    realAdd(productImag, &a, productImag, realContext); // a*d + b*c
+    realMultiply(&a, &d, &p, realContext);                  // RN(ad)
+    realFMA(&b, &c, &p, &t, realContext);                   // RN(bc + p)
+    realChangeSign(&p);
+    realFMA(&a, &d, &p, productImag, realContext);          // RN(ad - p)
+    realAdd(productImag, &t, productImag, realContext);     // RN(RN(bc + p) + RN(ad - p))
   }
 }
-
-
 
 /******************************************************************************************************************************************************************************************/
 /* long integer × ...                                                                                                                                                                     */
