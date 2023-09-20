@@ -16,6 +16,7 @@
 #include "mathematics/ln.h"
 #include "mathematics/lnPOne.h"
 #include "mathematics/lnbeta.h"
+#include "mathematics/magnitude.h"
 #include "mathematics/multiplication.h"
 #include "mathematics/sin.h"
 #include "mathematics/squareRoot.h"
@@ -982,11 +983,11 @@ bool WP34S_AbsoluteError(const real_t *x, const real_t *y, const real_t *tol, re
 
 
 bool WP34S_ComplexAbsError(const real_t *xReal, const real_t *xImag, const real_t *yReal, const real_t *yImag, const real_t *tol, realContext_t *realContext) {
-  real_t a, b, r, t;
+  real_t a, b, r;
 
   realSubtract(xReal, yReal, &a, realContext), realSubtract(xImag, yImag, &b, realContext);
-  realRectangularToPolar(&a, &b, &r, &t, realContext);
-  return realCompareAbsLessThan(&r, tol);
+  complexMagnitude(&a, &b, &r, realContext);
+  return realCompareLessThan(&r, tol);
 }
 
 
@@ -1973,7 +1974,11 @@ void WP34S_ComplexLambertW(const real_t *xReal, const real_t *xImag, real_t *res
   realCopy(xReal, &zr), realCopy(xImag, &zi);
   realCopy(const_1, &wr), realCopy(const_1, &wi);
   realAdd(xReal, const_1, &pr, realContext), realCopy(xImag, &pi);
-  if((!realIsZero(&pr)) || (!realIsZero(&pi))) {
+  if (realIsZero(&zi) && realIsNegative(&zr) && realCompareGreaterEqual(&zr, const__1)) {
+    // Close to -1/e, the series is very slow to converge
+    realCopy(const_1, &pr);
+    realCopy(realIsNegative(&pi) ? const__1 : const_1, &pi);
+  } else if (!realIsZero(&pr) || !realIsZero(&pi)) {
     lnComplex(&pr, &pi, &pr, &pi, realContext);
     realCopy(&pr, &wr), realCopy(&pi, &wi);
   }
@@ -1985,7 +1990,7 @@ void WP34S_ComplexLambertW(const real_t *xReal, const real_t *xImag, real_t *res
     realSubtract(&qr, &zr, &qr, realContext), realSubtract(&qi, &zi, &qi, realContext);
     divComplexComplex(&qr, &qi, &tr, &ti, &qr, &qi, realContext);
     realSubtract(&wr, &qr, &wr, realContext), realSubtract(&wi, &qi, &wi, realContext);
-    if(WP34S_ComplexAbsError(&wr, &wi, &pr, &pi, (realContext == &ctxtReal39) ? const_1e_37 : const_1e_49, realContext)) {
+    if(WP34S_ComplexAbsError(&wr, &wi, &pr, &pi, const_1e_37, realContext)) {
       break;
     }
     realCopy(&wr, &pr), realCopy(&wi, &pi);
