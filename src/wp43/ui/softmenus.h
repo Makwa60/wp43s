@@ -41,6 +41,10 @@
 
   void     fnExitAllMenus         (uint16_t unusedButMandatoryParameter);
 
+    /**
+     * Initialize the user menus and prepopulate MyAlpha and MyPFN.
+     */  void     initUserMenus          (void);
+
   #if !defined(TESTSUITE_BUILD)
     /**
      * Displays one softkey.

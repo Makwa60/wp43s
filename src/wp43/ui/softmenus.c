@@ -4,6 +4,7 @@
 #include "ui/softmenus.h"
 
 #include "apps/bugScreen.h"
+#include "assign.h"
 #include "calcMode.h"
 #include "charString.h"
 #include "core/memory.h"
@@ -653,7 +654,36 @@ uint8_t *getNthString(uint8_t *ptr, int16_t n) { // Starting with string 0 (the 
   return ptr;
 }
 
-
+void initUserMenus() {
+  // initialize MyMenu
+  memset(userMenuItems,  0, sizeof(userMenuItem_t) * 18);
+  
+  // initialize MyAlpha
+  memset(userAlphaItems, 0, sizeof(userMenuItem_t) * 18);
+  itemToBeAssigned = -MNU_ALPHAMATH;
+  assignToMyAlpha(0);
+  itemToBeAssigned = -MNU_ALPHADOT;
+  assignToMyAlpha(1);
+  itemToBeAssigned = -MNU_ALPHA_OMEGA;
+  assignToMyAlpha(4);
+  itemToBeAssigned = -MNU_ALPHAINTL;
+  assignToMyAlpha(5);
+  
+  // initialize MyPFN
+  memset(userPfnItems,   0, sizeof(userMenuItem_t) * 18);
+  itemToBeAssigned = -MNU_LOOP;
+  assignToMyPFN(0);
+  itemToBeAssigned = -MNU_TEST;
+  assignToMyPFN(1);
+  itemToBeAssigned = -MNU_PFN;
+  assignToMyPFN(4);
+  itemToBeAssigned = -MNU_PFN2;
+  assignToMyPFN(5);
+  
+  userMenus = NULL;
+  numberOfUserMenus = 0;
+  currentUserMenu = 0;
+}
 
 void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
   smStackMode_t sm = smStackMode[0];
