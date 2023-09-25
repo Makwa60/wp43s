@@ -890,12 +890,8 @@ void fnReset(uint16_t confirmation) {
     lastKeyCode = 0;
     entryStatus = 0;
 
-    memset(userMenuItems,  0, sizeof(userMenuItem_t) * 18);
-    memset(userAlphaItems, 0, sizeof(userMenuItem_t) * 18);
-    memset(userPfnItems,   0, sizeof(userMenuItem_t) * 18);
-    userMenus = NULL;
-    numberOfUserMenus = 0;
-    currentUserMenu = 0;
+    initUserMenus();
+    
     userKeyLabelSize = 37/*keys*/ * 6/*states*/ * 1/*byte terminator*/ + 1/*byte sentinel*/;
     userKeyLabel = allocWp43(userKeyLabelSize);
     memset(userKeyLabel,   0, TO_BYTES(TO_BLOCKS(userKeyLabelSize)));
