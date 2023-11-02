@@ -36,7 +36,7 @@ The *WP43* pocket calculator is a new fast, compact, reliable, and solid problem
 
 *WP43* provides the amplest function set ever seen in an *RPN calculator*:
 
-- More than 680 functions, including *Euler's Beta* and *Riemann's Zeta*, *Lambert's W*, *Bessel functions* of first kind, *Bernoulli* and *Fibonacci numbers*, *Jacobi elliptic functions* and *integrals*, as well as the *Chebyshev*, *Hermite*, *Laguerre*, and *Legendre* polynomials (no table books or running computer software in these matters anymore).
+- More than 700 functions, including *Euler's Beta* and *Riemann's Zeta*, *Lambert's W*, *Bessel functions* of first kind, *Bernoulli* and *Fibonacci numbers*, *Jacobi elliptic functions* and *integrals*, as well as the *Chebyshev*, *Hermite*, *Laguerre*, and *Legendre* polynomials (no table books or running computer software in these matters anymore).
 - 14 probability distributions: general *normal (Gaussian)*, *Student's t*, *chi-square*, *Fisher's F*, *Poisson*, *binomial*, *geometric*, *hypergeometric*, *Cauchy-Lorentz*, *exponential*, *logistic*, *Weibull*, and more.
 - 10 curve fitting models featuring two or three parameters (linear, orthogonal, exponential, logarithmic, power, root, hyperbolic, parabolic, Cauchy and Gauss peak).
 - Over 50 fundamental physical constants (following CODATA 2018) as used today by national standards institutes like *NIST* or *PTB*, plus important mathematical, astronomical, and surveying constants.
