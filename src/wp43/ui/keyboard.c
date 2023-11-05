@@ -67,12 +67,17 @@ bool      _kbSeenInterrupt     = false;
     int16_t row, menuId = getSoftmenuId(0);
     int16_t firstItem = getSoftmenuFirstItem();
 
+    #if defined(PC_BUILD)
+      printf("**[DL]** determineFunctionKeyItem item %d - calcMode %d\n",softmenu[menuId].menuItem, calcMode);
+    #endif // PC_BUILD
+    
     #pragma GCC diagnostic push
     #pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
     switch(-softmenu[menuId].menuItem) {
       case MNU_MyMenu: {
         dynamicMenuItem = firstItem + itemShift + fn;
         item = userMenuItems[dynamicMenuItem].item;
+        setCurrentUserMenu(item, userMenuItems[dynamicMenuItem].argumentName);
         break;
       }
 
@@ -91,6 +96,8 @@ bool      _kbSeenInterrupt     = false;
       case MNU_DYNAMIC: {
         dynamicMenuItem = firstItem + itemShift + fn;
         item = userMenus[currentUserMenu].menuItem[dynamicMenuItem].item;
+        // currentUserMenu update is managed later on in executeFunction
+        setCurrentUserMenu(item, userMenus[currentUserMenu].menuItem[dynamicMenuItem].argumentName);
         break;
       }
 
@@ -206,7 +213,9 @@ bool      _kbSeenInterrupt     = false;
               }
               else {
                 item = -MNU_DYNAMIC;
-                currentUserMenu = i;
+                if (calcMode != cmAssign) {
+                  currentUserMenu = i;
+                }
               }
             }
           }
@@ -622,6 +631,8 @@ bool      _kbSeenInterrupt     = false;
           else if(item < 0) { // softmenu
             if(calcMode == cmAssign && itemToBeAssigned == 0 && ((softmenu[getSoftmenuId(0)].menuItem == -MNU_MENUS) || (softmenu[getSoftmenuId(0)].menuItem == -MNU_MENUS_AIM))) {
               itemToBeAssigned = item;
+              leaveAsmMode();
+              popSoftmenu();
             }
             else {
               showSoftmenu(item);
@@ -973,6 +984,7 @@ bool      _kbSeenInterrupt     = false;
     if(calcMode == cmAssign && itemToBeAssigned != 0 && tamBuffer[0] == 0) {
       assignToKey(keyCode);
       calcMode = previousCalcMode;
+      printf("*** btnReleased calcMode %d - stack %d\n", calcMode, getSmStackMode());
       shiftF = shiftG = false;
       refreshScreen();
     }

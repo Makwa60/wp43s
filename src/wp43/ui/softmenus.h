@@ -71,6 +71,14 @@
     void   showSoftmenu           (int16_t id);
     
     /**
+     * Sets currentUserMenu to the id of funcparam in userMenus[] table
+     *
+     * \param[in] item        function will set currentUserMenu if item == -MNU_DYNAMIC)
+     * \param[in] funcParam   user menu name to check for id if item == -MNU_DYNAMIC
+     */
+     void   setCurrentUserMenu     (int16_t item, char* funcParam);
+    
+    /**
      * Softmenus Stacks initialization
      */
     void    softmenuStacksInit     (void);

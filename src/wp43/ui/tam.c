@@ -1047,16 +1047,18 @@ void tamReset(void) {
 
     clearSystemFlag(FLAG_ALPHA);
 
-    #if defined(PC_BUILD) && (SCREEN_800X480 == 0)
-      if(tam.mode == tmNewMenu) {
-        setSystemFlag(FLAG_ALPHA);
-        aimBuffer[0] = 0;
-        calcModeEnter(cmAim);
-      }
-      else {
-        calcModeUpdateGui();
-      }
-    #endif // PC_BUILD && (SCREEN_800X480 == 0)
+// **[DL]** Why is this only for PC_BUILD ? Removing until better understanding
+//
+//    #if defined(PC_BUILD) && (SCREEN_800X480 == 0)
+//      if(tam.mode == tmNewMenu) {
+//        setSystemFlag(FLAG_ALPHA);
+//        aimBuffer[0] = 0;
+//        calcModeEnter(cmAim);
+//      }
+//      else {
+//        calcModeUpdateGui();
+//      }
+//    #endif // PC_BUILD && (SCREEN_800X480 == 0)
   }
 
 
