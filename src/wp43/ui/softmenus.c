@@ -1197,7 +1197,7 @@ void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
       numberOfItems = softmenu[m].numItems;
     }
     currentFirstItem = softmenuStacks[sm].item[0].firstItem;
-
+    
     if(numberOfItems <= 18) {
       dottedTopLine = false;
       if(catalog != CATALOG_NONE) {
@@ -1526,7 +1526,7 @@ void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
     smStackMode_t sm = smStackMode[0];
     
     #if defined(PC_BUILD)
-      printf("*** Pop  softmenuId %16s - stack %d - calcMode %d\n",softMenuNames[softmenuStacks[sm].item[0].softmenuId],sm,calcMode);
+      printf("*** Pop  softmenuId %16s - stack %d - calcMode %d - tam.mode %d - tam.alpha %d\n",softMenuNames[softmenuStacks[sm].item[0].softmenuId],sm,calcMode,tam.mode,tam.alpha);
     #endif // PC_BUILD
     
     screenUpdatingMode &= ~SCRUPD_MANUAL_MENU;

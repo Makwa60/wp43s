@@ -48,8 +48,9 @@
 // 92 Add CONFIG and ALLVAR catalogs
 // 93 Change softmenu stack depth from 8 to 4
 // 94 Add different softmenu stacks for RUM, AIM & PEM, add MyPFN user menu
+// 95 Updated softmenuStack_t structure for user menu id
 //
-#define BACKUP_VERSION                     94  // Add different softmenu stacks for RUM, AIM, PEM and EIM, add MyPFN user menu
+#define BACKUP_VERSION                     95  // Updated softmenuStack_t structure for user menu id
 #define OLDEST_COMPATIBLE_BACKUP_VERSION   87  // save running app
 #define START_REGISTER_VALUE             1000  // was 1522, why?
 
@@ -376,8 +377,12 @@ static uint32_t restore(void *buffer, uint32_t size) {
       } else if (backupVersion == 93) { 
         restore(softmenuStacks,                    sizeof(softmenuStacks)/4);   // single softmenuStack , depth 4 levels,
         softmenuStacksInit();                                                   // reinitialize the softmenuStack to a clean state
+      } else if (backupVersion == 94) { 
+        restore(softmenuStacks,                    4*4*4);                      // Four softmenu Stacks, depth 4 levels each, 4 bytes per level (2xint16)                    
+        softmenuStacksInit();                                                   // reinitialize the softmenuStack to a clean state
+        restore(smStackMode,                       sizeof(smStackMode));
       } else {
-        restore(&softmenuStacks,                   sizeof(softmenuStacks));     // Four softmenu Stacks, depth 4 levels each
+        restore(&softmenuStacks,                   sizeof(softmenuStacks));     // Four softmenu Stacks, depth 4 levels each, 6 bytes per level (3xint16)
         restore(smStackMode,                       sizeof(smStackMode));
       } 
       restore(globalRegister,                      sizeof(globalRegister));
@@ -726,6 +731,7 @@ static uint32_t restore(void *buffer, uint32_t size) {
       }
       calcModeUpdateGui();
       updateMatrixHeightCache();
+      cachedDynamicMenu = 0;
       refreshScreen();
     }
   }

@@ -68,7 +68,7 @@ bool      _kbSeenInterrupt     = false;
     int16_t firstItem = getSoftmenuFirstItem();
 
     #if defined(PC_BUILD)
-      printf("**[DL]** determineFunctionKeyItem item %d - calcMode %d\n",softmenu[menuId].menuItem, calcMode);
+      printf("**[DL]** determineFunctionKeyItem item %d - calcMode %d - tam.mode %d\n",softmenu[menuId].menuItem, calcMode, tam.mode);
     #endif // PC_BUILD
     
     #pragma GCC diagnostic push
@@ -320,7 +320,7 @@ bool      _kbSeenInterrupt     = false;
         break;
       }
     }
-    if(inCatalog || softmenu[getSoftmenuId(0)].menuItem == -MNU_CONST) {
+    if(inCatalog || (softmenu[getSoftmenuId(0)].menuItem == -MNU_CONST) || (tam.mode == tmNewMenu)) {
       switch(-softmenu[getSoftmenuId(0)].menuItem) {
         case MNU_TAM:
         case MNU_TAMCMP:
@@ -984,7 +984,6 @@ bool      _kbSeenInterrupt     = false;
     if(calcMode == cmAssign && itemToBeAssigned != 0 && tamBuffer[0] == 0) {
       assignToKey(keyCode);
       calcMode = previousCalcMode;
-      printf("*** btnReleased calcMode %d - stack %d\n", calcMode, getSmStackMode());
       shiftF = shiftG = false;
       refreshScreen();
     }
@@ -1756,7 +1755,7 @@ void fnKeyExit(uint16_t unusedButMandatoryParameter) {
           else {
             leaveAsmMode();
             popSoftmenu();
-            if(tamIsActive()) {
+            if((tamIsActive()) && (numberOfTamMenusToPop > 0)) {
               numberOfTamMenusToPop--;
             }
           }

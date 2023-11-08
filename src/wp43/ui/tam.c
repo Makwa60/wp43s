@@ -1065,7 +1065,7 @@ void tamReset(void) {
 
   void tamLeaveMode(void) {
     #if defined PC_BUILD
-      printf("*** tamModeLeave calcMode %d - stack %d - tam.alpha %d\n", calcMode, getSmStackMode(),tam.alpha);
+      printf("*** tamLeaveMode calcMode %d - stack %d - tam.alpha %d numberOfTamMenusToPop %d\n", calcMode, getSmStackMode(),tam.alpha,numberOfTamMenusToPop);
     #endif
     if(screenUpdatingMode & (SCRUPD_MANUAL_STACK | SCRUPD_SKIP_STACK_ONE_TIME)) {
       clearTamBuffer();
