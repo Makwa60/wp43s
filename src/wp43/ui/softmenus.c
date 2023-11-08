@@ -1158,6 +1158,16 @@ void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
   }
 
 
+  void setCurrentUserMenu(int16_t item, char* funcParam) {
+    if (item == -MNU_DYNAMIC) {
+      for(uint32_t i = 0; i < numberOfUserMenus; ++i) {
+        if(compareString(funcParam, userMenus[i].menuName, CMP_NAME) == 0) {
+            currentUserMenu = i;
+        }
+      }
+    }
+  }
+
 
   void showSoftmenuCurrentPart(void) {
     smStackMode_t sm = smStackMode[0];
@@ -1187,7 +1197,7 @@ void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
       numberOfItems = softmenu[m].numItems;
     }
     currentFirstItem = softmenuStacks[sm].item[0].firstItem;
-
+    
     if(numberOfItems <= 18) {
       dottedTopLine = false;
       if(catalog != CATALOG_NONE) {
@@ -1451,7 +1461,7 @@ void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
     fillSoftmenuStack(stackMode, baseMenu[stackMode]);  // Reset content of the new softmenu stack
 
     #if defined(PC_BUILD)
-      printf("*** Push stack mode %d - baseMenu %s\n",stackMode,softMenuNames[baseMenu[stackMode]]);
+      printf("*** Push stack mode %d - baseMenu %s - calcMode %d\n",stackMode,softMenuNames[baseMenu[stackMode]],calcMode);
     #endif // PC_BUILD
   }
 
@@ -1460,7 +1470,7 @@ void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
     int i;
     
     #if defined(PC_BUILD)
-      printf("*** Pop  stack mode %d - baseMenu %s\n",smStackMode[0],softMenuNames[baseMenu[smStackMode[0]]]);
+      printf("*** Pop  stack mode %d - baseMenu %s - calcMode %d\n",smStackMode[0],softMenuNames[baseMenu[smStackMode[0]]],calcMode);
     #endif // PC_BUILD
     
     for(i=0; i<SOFTMENU_STACKMODE_SIZE-1; i++) {
@@ -1476,14 +1486,22 @@ void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
    */
   static void pushSoftmenu(int16_t softmenuId) {
     int i;
+    int16_t userMenuId;
     smStackMode_t sm = smStackMode[0];
 
-    if(softmenuStacks[sm].item[0].softmenuId == softmenuId) { // The menu to push on the stack is already displayed
+    if(softmenu[softmenuId].menuItem == -MNU_DYNAMIC) {       // Get currentUserMenu Id
+      userMenuId = currentUserMenu;
+      printf("***[DL]** pushSoftmenu userMenuId %d\n",userMenuId);
+    } else {
+      userMenuId = 0;
+    }
+
+    if((softmenuStacks[sm].item[0].softmenuId == softmenuId) && (softmenuStacks[sm].item[0].userMenuId == userMenuId)) { // The menu to push on the stack is already displayed
       return;
     }
 
     for(i=0; i<SOFTMENU_STACK_SIZE; i++) { // Searching the stack for the menu to push on the stack
-      if(softmenuStacks[sm].item[i].softmenuId == softmenuId) { // if found, remove it
+      if((softmenuStacks[sm].item[i].softmenuId == softmenuId) && (softmenuStacks[sm].item[i].userMenuId == userMenuId)) { // if found, remove it
         xcopy(softmenuStacks[sm].item + 1, softmenuStacks[sm].item, i * sizeof(softmenuStackItem_t));
         break;
       }
@@ -1499,6 +1517,7 @@ void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
     
     softmenuStacks[sm].item[0].softmenuId = softmenuId;
     softmenuStacks[sm].item[0].firstItem = lastCatalogPosition[catalog];
+    softmenuStacks[sm].item[0].userMenuId = userMenuId;
   }
 
 
@@ -1507,7 +1526,7 @@ void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
     smStackMode_t sm = smStackMode[0];
     
     #if defined(PC_BUILD)
-      printf("*** Pop  softmenuId %16s - stack %d - calcMode %d\n",softMenuNames[softmenuStacks[sm].item[0].softmenuId],sm,calcMode);
+      printf("*** Pop  softmenuId %16s - stack %d - calcMode %d - tam.mode %d - tam.alpha %d\n",softMenuNames[softmenuStacks[sm].item[0].softmenuId],sm,calcMode,tam.mode,tam.alpha);
     #endif // PC_BUILD
     
     screenUpdatingMode &= ~SCRUPD_MANUAL_MENU;
@@ -1531,6 +1550,10 @@ void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
     }
     else {
       clearSystemFlag(FLAG_VMDISP);
+    }
+
+    if(softmenu[softmenuStacks[sm].item[0].softmenuId].menuItem == -MNU_DYNAMIC) {
+      currentUserMenu = softmenuStacks[sm].item[0].userMenuId;
     }
   }
 

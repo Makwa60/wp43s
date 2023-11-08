@@ -706,6 +706,7 @@ void assignLeaveAlpha(void) {
   while(numberOfTamMenusToPop--) {
     popSoftmenu();
   }
+  numberOfTamMenusToPop = 0;
   if(getSoftmenuId(0) == 1) { // MyAlpha
     //setSoftmenuId(0,0); // MyMenu
     popSmStackMode();
