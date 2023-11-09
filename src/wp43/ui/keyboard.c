@@ -320,7 +320,7 @@ bool      _kbSeenInterrupt     = false;
         break;
       }
     }
-    if(inCatalog || (softmenu[getSoftmenuId(0)].menuItem == -MNU_CONST) || (tam.mode == tmNewMenu)) {
+    if(inCatalog || (softmenu[getSoftmenuId(0)].menuItem == -MNU_CONST) || (tam.mode == tmNewMenu)) {  // adding tmNewMenu as quick fix for alpha menu support
       switch(-softmenu[getSoftmenuId(0)].menuItem) {
         case MNU_TAM:
         case MNU_TAMCMP:

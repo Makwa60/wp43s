@@ -15,5 +15,6 @@
 
   #define PROGRAM_NAME    "WP43"
   #define PROGRAM_VERSION VERSION_SHORT
+  #define PROGRAM_KEYMAP_ID 0x33345057          // WP43
 
 #endif // !MAIN_H

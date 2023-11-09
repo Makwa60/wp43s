@@ -336,7 +336,7 @@
 
 
   char *getSystemFlagName(uint16_t sf) {
-    return indexOfItems[SFL_TDM24 + (sf & 0x3fff)].itemCatalogName;
+    return (char *)indexOfItems[SFL_TDM24 + (sf & 0x3fff)].itemCatalogName;
   }
 
 
