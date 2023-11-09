@@ -1757,7 +1757,9 @@ void fnExitAllMenus(uint16_t unusedButMandatoryParameter) {
       clearSystemFlag(FLAG_ALPHA);
     }
 
-    #if defined(PC_BUILD)
+    temporaryInformation = TI_NO_INFO;
+
+      #if defined(PC_BUILD)
       printf("*** Exit all - stack %d\n",sm);
     #endif // PC_BUILD
 
