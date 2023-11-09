@@ -23,7 +23,9 @@
 
 bool     backToDMCP;
 uint32_t nextTimerRefresh;
-bool     wp43KbdLayout;
+
+// [DL - 2023/11/09] We assume that the WP43 keymap.bin has been applied and don't check anymore the keyboard layout
+// bool     wp43KbdLayout;
 
 #define M0 1   //  20 000 Hz  Read Key1 & 2
 #define M1 2   //  10 000 Hz  Key Pressed
@@ -51,9 +53,11 @@ bool     wp43KbdLayout;
 
 
 int convertKeyCode(int key) {
-  if(!wp43KbdLayout) {
-    return key;
-  }
+
+// [DL - 2023/11/09] We assume that the WP43 keymap.bin has been applied and don't check anymore the keyboard layout
+//  if(!wp43KbdLayout) {
+//    return key;
+//  }
 
   // For key reassignment see:
   // https://technical.swissmicros.com/dm42/devel/dmcp_devel_manual/#_system_key_table
@@ -255,17 +259,19 @@ void program_main(void) {
   //SET_ST(STAT_ALPHA_TAB_Fn); // Alpha key table includes F keys - This doesn't apply to the WP43
 
   lcd_clear_buf();
-  lcd_putsAt(t24, 4, "Press the bottom left key."); lcd_refresh();
-  while(key != 33 && key != 37) {
-    key = key_pop();
-    while(key == -1) {
-      sys_sleep();
-      key = key_pop();
-    }
-  }
-
-  wp43KbdLayout = (key == 37); // bottom left key
-  key = kcNoKey;
+  
+// [DL - 2023/11/09] We assume that the WP43 keymap.bin has been applied and don't check anymore the keyboard layout
+//  lcd_putsAt(t24, 4, "Press the bottom left key."); lcd_refresh();
+//  while(key != 33 && key != 37) {
+//    key = key_pop();
+//    while(key == -1) {
+//      sys_sleep();
+//      key = key_pop();
+//    }
+//  }
+//
+//  wp43KbdLayout = (key == 37); // bottom left key
+//  key = kcNoKey;
 
   lcd_clear_buf();
   timeCapture();
