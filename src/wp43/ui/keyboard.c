@@ -1740,6 +1740,11 @@ void fnKeyExit(uint16_t unusedButMandatoryParameter) {
       currentSolverStatus &= ~SOLVER_STATUS_INTERACTIVE;
     }
 
+    if(temporaryInformation != TI_NO_INFO) {    // If TI present then Exit just clears TI
+      temporaryInformation = TI_NO_INFO;
+      return;
+    }
+
     switch(calcMode) {
       case cmConfirmation:
       case cmErrorMessage: {
