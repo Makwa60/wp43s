@@ -656,7 +656,7 @@ void clearScreen(void) {
         displayTemporaryInformationOnX(prefix);
         sprintf(prefix, "Saved global and local registers");
         showString(prefix, &standardFont, 1, Y_POSITION_OF_REGISTER_X_LINE - REGISTER_LINE_HEIGHT*(regist - REGISTER_X) - 3, vmNormal, true, true);
-        sprintf(prefix, "(w/ local flags) restored");
+        sprintf(prefix, "(with local flags) restored");
         showString(prefix, &standardFont, 1, Y_POSITION_OF_REGISTER_X_LINE - REGISTER_LINE_HEIGHT*(regist - REGISTER_X) + 17, vmNormal, true, true);
       }
 
