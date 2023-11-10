@@ -67,10 +67,6 @@ bool      _kbSeenInterrupt     = false;
     int16_t row, menuId = getSoftmenuId(0);
     int16_t firstItem = getSoftmenuFirstItem();
 
-    #if defined(PC_BUILD)
-      printf("**[DL]** determineFunctionKeyItem item %d - calcMode %d - tam.mode %d\n",softmenu[menuId].menuItem, calcMode, tam.mode);
-    #endif // PC_BUILD
-    
     #pragma GCC diagnostic push
     #pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
     switch(-softmenu[menuId].menuItem) {

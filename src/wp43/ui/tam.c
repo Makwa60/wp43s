@@ -999,9 +999,9 @@ void tamReset(void) {
       }
 
       case tmStoRcl: {
-        if(!catalog || catalog != CATALOG_MVAR) {
+//        if(!catalog || catalog != CATALOG_MVAR) {      [**DL**] Removed to allow tam menu for STO/RCL in the solver
           showSoftmenu(-MNU_TAMSTORCL);
-        }
+//        }
         break;
       }
 
