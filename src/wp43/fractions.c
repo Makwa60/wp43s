@@ -107,7 +107,7 @@ void fraction(calcRegister_t regist, int16_t *sign, uint64_t *intPart, uint64_t 
   realPlus(const_9999, &delta, &ctxtReal34);
 
   uint32_t ip;
-  bool_t of;
+  bool of;
   realToUInt32(&temp0, DEC_ROUND_DOWN, &ip, &of);
   *intPart = ip;
   uInt32ToReal(*intPart, &temp3);
@@ -123,7 +123,7 @@ void fraction(calcRegister_t regist, int16_t *sign, uint64_t *intPart, uint64_t 
     // and https://www.johndcook.com/blog/2010/10/20/best-rational-approximation/#comment-1077474
 
     uint32_t a=0, b=1, c=1, d=1, oldA=0, oldB=0, oldC=0, oldD=0;
-    bool_t exactValue = false;
+    bool exactValue = false;
     real_t mediant, temp1;
 
     //printf("\n\n\n====================================================================================================\n");
