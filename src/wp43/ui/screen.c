@@ -820,8 +820,7 @@ void clearScreen(void) {
           }
         }
 
-        else if(temporaryInformation == TI_NO_INFO
-                && getSystemFlag(FLAG_FRACT)
+        else if(getSystemFlag(FLAG_FRACT)
                     && (    getRegisterDataType(regist) == dtReal34
                          && (
                                 (   real34CompareAbsGreaterThan(REGISTER_REAL34_DATA(regist), const34_1e_4)
