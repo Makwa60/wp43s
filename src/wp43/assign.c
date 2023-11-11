@@ -137,7 +137,7 @@ TO_QSPI const calcKey_t kbd_std[37] = {
 };
 #endif // REDUCED_AIM_KEYBOARD
 
-
+static void _assignItem(userMenuItem_t *menuItem);
 
 void fnAssign(uint16_t mode) {
   if(mode) {
@@ -153,11 +153,78 @@ void fnAssign(uint16_t mode) {
 
 
 
+static void _removeMenuAssignments(uint16_t id) {
+  itemToBeAssigned = ITM_NULL;
+  
+  // Predefined configurable menus
+  for(int i = 0; i < 18; ++i) {
+    // MyMenu
+    if((userMenuItems[i].item == -MNU_DYNAMIC) && (compareString(userMenuItems[i].argumentName, userMenus[id].menuName, CMP_NAME) == 0)) {
+      assignToMyMenu(i);
+    }
+    // MyAlpha
+    if((userAlphaItems[i].item == -MNU_DYNAMIC) && (compareString(userAlphaItems[i].argumentName, userMenus[id].menuName, CMP_NAME) == 0)) {
+      assignToMyAlpha(i);
+    }
+    // MyPFN
+    if((userPfnItems[i].item == -MNU_DYNAMIC) && (compareString(userPfnItems[i].argumentName, userMenus[id].menuName, CMP_NAME) == 0)) {
+      assignToMyPFN(i);
+    }
+  }
+  // User-defined menus
+  for(int i = 0; i < numberOfUserMenus; ++i) {
+    for(int j = 0; j < 18; ++j) {
+      if((userMenus[i].menuItem[j].item == -MNU_DYNAMIC) && (compareString(userMenus[i].menuItem[j].argumentName, userMenus[id].menuName, CMP_NAME) == 0)) {
+        printf("**[DL]** i %d - j %d -userMenus[i].menuItem[j].item %d - userMenus[i].menuItem[j].argumentName %s\n",i,j,userMenus[i].menuItem[j].item,userMenus[i].menuItem[j].argumentName);
+        _assignItem(&userMenus[i].menuItem[j]);
+      }
+    }
+  }
+  // Keys
+  calcKey_t *key;
+  char lbl[22];
+  bool f = shiftF;
+  bool g = shiftG;
+  for(int i = 0; i < 37; ++i) {
+    key = kbd_usr + i;
+    if(key->primary == -MNU_DYNAMIC) {
+      stringToUtf8((char *)getNthString((uint8_t *)userKeyLabel, i*6),(uint8_t *)lbl);
+      if(compareString(lbl,userMenus[id].menuName, CMP_NAME) == 0) {
+        shiftF = false;
+        shiftG = false;
+        assignToKey(i+1);
+      }
+    }
+    if(key->fShifted == -MNU_DYNAMIC) {
+      stringToUtf8((char *)getNthString((uint8_t *)userKeyLabel, i*6+1),(uint8_t *)lbl);
+      if(compareString(lbl,userMenus[id].menuName, CMP_NAME) == 0) {
+        shiftF = true;
+        shiftG = false;
+        assignToKey(i+1);
+      }
+    }
+    if(key->gShifted == -MNU_DYNAMIC) {
+      stringToUtf8((char *)getNthString((uint8_t *)userKeyLabel, i*6+2),(uint8_t *)lbl);
+      if(compareString(lbl,userMenus[id].menuName, CMP_NAME) == 0) {
+        shiftF = false;
+        shiftG = true;
+        assignToKey(i+1);
+      }
+    }
+  }
+  shiftF = f;
+  shiftG = g;
+}
+
+
+
 void fnDeleteMenu(uint16_t id) {
   if(id >= numberOfUserMenus) {
     displayCalcErrorMessage(ERROR_CANNOT_DELETE_PREDEF_ITEM, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
+    return;
   }
   else {
+    _removeMenuAssignments(id);   // Remove assignments before deleting the user menu
     if(numberOfUserMenus == 1) {
       freeWp43(userMenus, sizeof(userMenu_t));
       userMenus = NULL;

@@ -1034,14 +1034,17 @@ void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
         numberOfBytes = 1;
         numberOfGlobalLabels = 0;
         memset(tmpString, 0, TMP_STR_LENGTH);
-        for(i=0; i<LAST_ITEM; i++) {
-          if((indexOfItems[i].status & CAT_STATUS) == CAT_MENU && indexOfItems[i].itemCatalogName[0] != 0 && i != MNU_CATALOG && i != MNU_MENUS) {
-            int16_t len = stringByteLength(indexOfItems[i].itemCatalogName);
-            xcopy(tmpString + 15 * numberOfGlobalLabels, indexOfItems[i].itemCatalogName, len);
-            numberOfGlobalLabels++;
-            numberOfBytes += 1 + len;
+        if (softmenu[getSoftmenuId(1)].menuItem != -ITM_DELITM) {     // Don't include predefined menus for DELITM
+          for(i=0; i<LAST_ITEM; i++) {
+            if((indexOfItems[i].status & CAT_STATUS) == CAT_MENU && indexOfItems[i].itemCatalogName[0] != 0 && i != MNU_CATALOG && i != MNU_MENUS) {
+              int16_t len = stringByteLength(indexOfItems[i].itemCatalogName);
+              xcopy(tmpString + 15 * numberOfGlobalLabels, indexOfItems[i].itemCatalogName, len);
+              numberOfGlobalLabels++;
+              numberOfBytes += 1 + len;
+            }
           }
         }
+        
         for(i=0; i<numberOfUserMenus; i++) {
           int16_t len = stringByteLength(userMenus[i].menuName);
           xcopy(tmpString + 15 * numberOfGlobalLabels, userMenus[i].menuName, len);
