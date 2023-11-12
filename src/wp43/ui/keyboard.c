@@ -393,7 +393,7 @@ bool      _kbSeenInterrupt     = false;
     }
     if(calcMode == cmAssign && itemToBeAssigned != 0 && !(tam.alpha && tam.mode != tmNewMenu)) {
       int16_t item = determineFunctionKeyItem(keyCode);
-
+      
       #pragma GCC diagnostic push
       #pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
       switch(-softmenu[getSoftmenuId(0)].menuItem) {

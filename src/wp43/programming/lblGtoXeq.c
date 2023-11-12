@@ -96,7 +96,12 @@ void goToGlobalStep(int32_t step) {
     if(*labelName == 0) {
       return;
     }
-
+#if !defined(TESTSUITE_BUILD)
+    if((softmenu[getSoftmenuId(0)].menuItem != -MNU_PROG) && (softmenu[getSoftmenuId(0)].menuItem != -MNU_PROGS)) {  // Don't apply the dupNum logic in configurable menus
+      dupNum = 0;
+    }
+#endif // !TESTSUITE_BUILD
+ 
     int16_t c, len = stringByteLength((char *)labelName);
     for(uint16_t lbl=0; lbl<numberOfLabels; lbl++) {
       uint8_t *lblPtr;
@@ -169,7 +174,7 @@ void fnGotoDot(uint16_t globalStepNumber) {
 
 
 
-void fnExecute(uint16_t label) {
+void fnExecute(uint16_t label) { 
   if(programRunStop == PGM_RUNNING) {
     dataBlock_t *_currentSubroutineLevelData = currentSubroutineLevelData;
     allSubroutineLevels.numberOfSubroutineLevels += 1;
