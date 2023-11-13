@@ -624,7 +624,7 @@ int solver(calcRegister_t variable, const real34_t *y, const real34_t *x, real34
       result = SOLVER_RESULT_NORMAL;
     }
 
-    real34Copy(&fb, resZ);
+    _executeSolver(variable, &b, resZ);
     real34Copy(&b1, resY);
     real34Copy(&b, resX);
 
