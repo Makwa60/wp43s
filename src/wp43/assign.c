@@ -504,7 +504,7 @@ static bool _assignTamNum(calcKey_t *key, uint16_t item) {
 void assignToKey(keyCode_t keyCode) {
   calcKey_t *key = kbd_usr + keyCode - 1;
   userMenuItem_t tmpMenuItem;
-  int keyStateCode = ((previousCalcMode) == cmAim ? 3 : 0) + (shiftG ? 2 : shiftF ? 1 : 0);
+  keyStateCode = ((previousCalcMode) == cmAim ? 3 : 0) + (shiftG ? 2 : shiftF ? 1 : 0);
   const calcKey_t *stdKey = kbd_std + keyCode - 1;
 
   _assignItem(&tmpMenuItem);
@@ -853,7 +853,7 @@ void assignGetName1(void) {
 }
 
 static bool _assignToKey(int16_t keyFunc) {
-  int keyStateCode = (previousCalcMode) == cmAim ? 3 : 0;
+  keyStateCode = (previousCalcMode) == cmAim ? 3 : 0;
 
   for(int i = 0; i < 3; ++i) {
     for(int j = 0; j < 37; ++j) {

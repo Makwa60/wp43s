@@ -763,6 +763,20 @@ bool      _kbSeenInterrupt     = false;
                   keyActionProcessed = true;
                 }
                 else {
+                  if(item == ITM_XEQ && dynamicMenuItem > -1) {
+                    char *varCatalogItem = dynmenuGetLabel(dynamicMenuItem);
+                    calcRegister_t regist = findNamedLabel(varCatalogItem);
+                    if(regist != INVALID_VARIABLE) {
+                      item = regist - FIRST_LABEL + ASSIGN_LABELS;
+                    }
+                    else {
+                      displayCalcErrorMessage(ERROR_LABEL_NOT_FOUND, ERR_REGISTER_LINE, REGISTER_X);
+                      #if(EXTRA_INFO_ON_CALC_ERROR == 1)
+                        sprintf(errorMessage, "string '%s' is not a named label", varCatalogItem);
+                        moreInfoOnError("In function btnFnReleased:", errorMessage, NULL, NULL);
+                      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+                    }
+                  }
                   itemToBeAssigned = item;
                 }
               }
@@ -938,7 +952,7 @@ bool      _kbSeenInterrupt     = false;
     }
 
     if(getSystemFlag(FLAG_USER)) {
-      int keyStateCode = (getSystemFlag(FLAG_ALPHA) ? 3 : 0) + (g ? 2 : f ? 1 : 0);
+      keyStateCode = (getSystemFlag(FLAG_ALPHA) ? 3 : 0) + (g ? 2 : f ? 1 : 0);
       char *funcParam = (char *)getNthString((uint8_t *)userKeyLabel, (keyCode - 1) * 6 + keyStateCode);
       xcopy(tmpString, funcParam, stringByteLength(funcParam) + 1);
     }
@@ -946,9 +960,9 @@ bool      _kbSeenInterrupt     = false;
       *tmpString = 0;
     }
 
-    showFunctionNameItem = 0;
+   showFunctionNameItem = 0;
     if(item != ITM_NOP && item != ITM_NULL) {
-      processKeyAction(item);
+     processKeyAction(item);
       if(!keyActionProcessed) {
         showFunctionName(item, 1000); // 1000ms = 1s
       }
@@ -986,13 +1000,14 @@ bool      _kbSeenInterrupt     = false;
     else if(showFunctionNameItem != 0) {
       item = showFunctionNameItem;
       hideFunctionName();
+      
+      char *funcParam = (char *)getNthString((uint8_t *)userKeyLabel, (keyCode - 1) * 6 + keyStateCode);
+
       if(item < 0) {
+        setCurrentUserMenu(item, funcParam);
         showSoftmenu(item);
       }
       else {
-        int keyStateCode = (getSystemFlag(FLAG_ALPHA) ? 3 : 0) + (shiftG ? 2 : shiftF ? 1 : 0);
-        char *funcParam = (char *)getNthString((uint8_t *)userKeyLabel, (keyCode - 1) * 6 + keyStateCode);
-
         if(item != ITM_NOP && tam.alpha && indexOfItems[item].func != addItemToBuffer) {
           // We are in TAM mode so need to cancel first (equivalent to EXIT)
           tamLeaveMode();
@@ -1406,6 +1421,21 @@ bool      _kbSeenInterrupt     = false;
                   }
                 }
                 else {
+                  if(item == ITM_XEQ && getSystemFlag(FLAG_USER) && tmpString[0] != 0) {
+                    char label[15];
+                    xcopy(label,tmpString, stringByteLength(tmpString) + 1);
+                    calcRegister_t regist = findNamedLabel(label);
+                    if(regist != INVALID_VARIABLE) {
+                      item = regist - FIRST_LABEL + ASSIGN_LABELS;
+                    }
+                    else {
+                      displayCalcErrorMessage(ERROR_LABEL_NOT_FOUND, ERR_REGISTER_LINE, REGISTER_X);
+                      #if(EXTRA_INFO_ON_CALC_ERROR == 1)
+                        sprintf(errorMessage, "string '%s' is not a named label", tmpString);
+                        moreInfoOnError("In function btnFnReleased:", errorMessage, NULL, NULL);
+                      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+                    }
+                  }
                   itemToBeAssigned = item;
                 }
                 keyActionProcessed = true;
