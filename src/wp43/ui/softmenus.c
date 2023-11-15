@@ -1376,6 +1376,9 @@ void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
         }
         showEquation(EQUATION_AIM_BUFFER, equationEditorScrollPosition, equationEditorCursor, false, NULL, NULL);
       }
+      if(softmenu[m].menuItem == -MNU_Sfdx && (currentSolverStatus & SOLVER_STATUS_USES_FORMULA) && (currentSolverStatus & SOLVER_STATUS_INTERACTIVE)) {
+        showEquation(currentFormula, 0, EQUATION_NO_CURSOR, false, NULL, NULL);
+      }
     }
 
     if(0 <= yDotted && yDotted <= 2) {
@@ -1565,6 +1568,7 @@ void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
   void showSoftmenu(int16_t id) {
     int16_t m;
     smStackMode_t sm = smStackMode[0];
+    bool integrateWithOnlyVariable = false;
 
     if(softmenu[softmenuStacks[sm].item[0].softmenuId].menuItem == -MNU_MENUS) {
       leaveAsmMode();
@@ -1584,9 +1588,12 @@ void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
     else if(id == -MNU_ALPHA_OMEGA && alphaCase == AC_LOWER) { // alpha...omega
       id = -MNU_alpha_omega;
     }
-    else if(id == -MNU_Solver || id == -MNU_Sf || id == -MNU_1STDERIV || id == -MNU_2NDDERIV) {
+    else if(id == -MNU_Solver || id == -MNU_Sf || id == -MNU_1STDERIV || id == -MNU_2NDDERIV || (id == -MNU_MVAR && (currentSolverStatus & SOLVER_STATUS_INTERACTIVE) && !(currentSolverStatus & SOLVER_STATUS_USES_FORMULA) && (currentSolverStatus & SOLVER_STATUS_EQUATION_MODE) == SOLVER_STATUS_EQUATION_INTEGRATE)) {
       int32_t numberOfVars = -1;
-      currentSolverStatus = SOLVER_STATUS_USES_FORMULA | SOLVER_STATUS_INTERACTIVE;
+      uint8_t *varList = NULL;
+      if(id != -MNU_MVAR) {
+        currentSolverStatus = SOLVER_STATUS_USES_FORMULA | SOLVER_STATUS_INTERACTIVE;
+      }
       currentMvarLabel = INVALID_VARIABLE;
       switch(-id) {
         case MNU_Solver: {
@@ -1607,17 +1614,38 @@ void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
         }
       }
       cachedDynamicMenu = 0;
-      parseEquation(currentFormula, EQUATION_PARSER_MVAR, aimBuffer, tmpString);
+      if(id == -MNU_MVAR) {
+        for(int m = 0; m < NUMBER_OF_DYNAMIC_SOFTMENUS; ++m) {
+          if(softmenu[m].menuItem == -MNU_MVAR) {
+            initVariableSoftmenu(m);
+            varList = dynamicSoftmenu[m].menuContent;
+            (getNthString(varList, dynamicSoftmenu[m].numItems))[0] = 0;
+            break;
+          }
+        }
+        if(varList == NULL) {
+          bugScreen("In function showSoftmenu: MVAR not found!");
+          varList = (uint8_t *)"\0";
+        }
+      }
+      else {
+        parseEquation(currentFormula, EQUATION_PARSER_MVAR, aimBuffer, tmpString);
+        varList = (uint8_t *)tmpString;
+      }
       id = -MNU_MVAR;
-      while((getNthString((uint8_t *)tmpString, ++numberOfVars))[0] != 0) {
+      while((getNthString(varList, ++numberOfVars))[0] != 0) {
       }
       if(numberOfVars > 12) {
         displayCalcErrorMessage(ERROR_EQUATION_TOO_COMPLEX, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
         errorMoreInfo("there are more than 11 variables in this equation!");
       }
+      else if((currentSolverStatus & SOLVER_STATUS_EQUATION_MODE) == SOLVER_STATUS_EQUATION_INTEGRATE && numberOfVars == 1) {
+        currentSolverVariable = findOrAllocateNamedVariable((char *)getNthString(varList, 0));
+        integrateWithOnlyVariable = true;
+      }
       else if((currentSolverStatus & SOLVER_STATUS_EQUATION_MODE) == SOLVER_STATUS_EQUATION_1ST_DERIVATIVE || (currentSolverStatus & SOLVER_STATUS_EQUATION_MODE) == SOLVER_STATUS_EQUATION_2ND_DERIVATIVE) {
-        if((getNthString((uint8_t *)tmpString, 1))[0] == 0) {
-          currentSolverVariable = findOrAllocateNamedVariable((char *)getNthString((uint8_t *)tmpString, 0));
+        if((getNthString(varList, 1))[0] == 0) {
+          currentSolverVariable = findOrAllocateNamedVariable((char *)getNthString(varList, 0));
           reallyRunFunction(ITM_STO, currentSolverVariable);
           if((currentSolverStatus & SOLVER_STATUS_EQUATION_MODE) == SOLVER_STATUS_EQUATION_1ST_DERIVATIVE) {
             fn1stDerivEq(NOPARAM);
@@ -1663,6 +1691,11 @@ void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
       else {
         clearSystemFlag(FLAG_VMDISP);
       }
+    }
+
+    if(integrateWithOnlyVariable) {
+      showSoftmenu(-MNU_Sfdx);
+      currentSolverStatus |= SOLVER_STATUS_SINGLE_VARIABLE;
     }
   }
 
