@@ -1376,6 +1376,9 @@ void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
         }
         showEquation(EQUATION_AIM_BUFFER, equationEditorScrollPosition, equationEditorCursor, false, NULL, NULL);
       }
+      if(softmenu[m].menuItem == -MNU_Sfdx && (currentSolverStatus & SOLVER_STATUS_USES_FORMULA) && (currentSolverStatus & SOLVER_STATUS_INTERACTIVE)) {
+        showEquation(currentFormula, 0, EQUATION_NO_CURSOR, false, NULL, NULL);
+      }
     }
 
     if(0 <= yDotted && yDotted <= 2) {
