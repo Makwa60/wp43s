@@ -1845,6 +1845,11 @@ void fnKeyExit(uint16_t unusedButMandatoryParameter) {
           }
           else {
             popSoftmenu();
+            if(softmenu[getSoftmenuId(0)].menuItem == -MNU_MVAR && ((currentSolverStatus & SOLVER_STATUS_EQUATION_MODE) == SOLVER_STATUS_EQUATION_INTEGRATE) && (currentSolverStatus & SOLVER_STATUS_SINGLE_VARIABLE)) {
+              popSoftmenu();
+              currentSolverStatus &= ~SOLVER_STATUS_EQUATION_MODE;
+              currentSolverStatus &= ~SOLVER_STATUS_INTERACTIVE;
+            }
           }
           screenUpdatingMode &= ~SCRUPD_MANUAL_MENU;
           if(temporaryInformation == TI_NO_INFO) {
