@@ -92,8 +92,10 @@ bool      _kbSeenInterrupt     = false;
       case MNU_DYNAMIC: {
         dynamicMenuItem = firstItem + itemShift + fn;
         item = userMenus[currentUserMenu].menuItem[dynamicMenuItem].item;
-        // currentUserMenu update is managed later on in executeFunction
-        setCurrentUserMenu(item, userMenus[currentUserMenu].menuItem[dynamicMenuItem].argumentName);
+        // update currentUserMenu if not selecting a menu slot to assign to
+        if( !(calcMode == cmAssign && itemToBeAssigned !=0) ) {
+          setCurrentUserMenu(item, userMenus[currentUserMenu].menuItem[dynamicMenuItem].argumentName);
+        }
         break;
       }
 
@@ -763,7 +765,7 @@ bool      _kbSeenInterrupt     = false;
                   keyActionProcessed = true;
                 }
                 else {
-                  if(item == ITM_XEQ && dynamicMenuItem > -1) {
+                  if(item == ITM_XEQ && dynamicMenuItem > -1) {                          // Program assignment
                     char *varCatalogItem = dynmenuGetLabel(dynamicMenuItem);
                     calcRegister_t regist = findNamedLabel(varCatalogItem);
                     if(regist != INVALID_VARIABLE) {
@@ -773,6 +775,20 @@ bool      _kbSeenInterrupt     = false;
                       displayCalcErrorMessage(ERROR_LABEL_NOT_FOUND, ERR_REGISTER_LINE, REGISTER_X);
                       #if(EXTRA_INFO_ON_CALC_ERROR == 1)
                         sprintf(errorMessage, "string '%s' is not a named label", varCatalogItem);
+                        moreInfoOnError("In function btnFnReleased:", errorMessage, NULL, NULL);
+                      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+                    }
+                  }
+                  else if(item == ITM_RCL && dynamicMenuItem > -1) {                     // Variable assignment
+                    char *varCatalogItem = dynmenuGetLabel(dynamicMenuItem);
+                    calcRegister_t regist = findNamedVariable(varCatalogItem);
+                    if(regist != INVALID_VARIABLE) {
+                      item = regist - FIRST_NAMED_VARIABLE + ASSIGN_NAMED_VARIABLES;
+                    }
+                    else {
+                      displayCalcErrorMessage(ERROR_LABEL_NOT_FOUND, ERR_REGISTER_LINE, REGISTER_X);
+                      #if(EXTRA_INFO_ON_CALC_ERROR == 1)
+                        sprintf(errorMessage, "string '%s' is not a named variable", varCatalogItem);
                         moreInfoOnError("In function btnFnReleased:", errorMessage, NULL, NULL);
                       #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
                     }
@@ -1432,6 +1448,21 @@ bool      _kbSeenInterrupt     = false;
                       displayCalcErrorMessage(ERROR_LABEL_NOT_FOUND, ERR_REGISTER_LINE, REGISTER_X);
                       #if(EXTRA_INFO_ON_CALC_ERROR == 1)
                         sprintf(errorMessage, "string '%s' is not a named label", tmpString);
+                        moreInfoOnError("In function btnFnReleased:", errorMessage, NULL, NULL);
+                      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+                    }
+                  }
+                  else if(item == ITM_RCL && getSystemFlag(FLAG_USER) && tmpString[0] != 0) {
+                    char var[15];
+                    xcopy(var,tmpString, stringByteLength(tmpString) + 1);
+                    calcRegister_t regist = findNamedVariable(var);
+                    if(regist != INVALID_VARIABLE) {
+                      item = regist - FIRST_NAMED_VARIABLE + ASSIGN_NAMED_VARIABLES;
+                    }
+                    else {
+                      displayCalcErrorMessage(ERROR_LABEL_NOT_FOUND, ERR_REGISTER_LINE, REGISTER_X);
+                      #if(EXTRA_INFO_ON_CALC_ERROR == 1)
+                        sprintf(errorMessage, "string '%s' is not a named variable", var);
                         moreInfoOnError("In function btnFnReleased:", errorMessage, NULL, NULL);
                       #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
                     }
