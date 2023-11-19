@@ -1283,6 +1283,21 @@ void parseEquation(uint16_t equationId, uint16_t parseMode, char *buffer, char *
             inExponent = false;
             exponentSignCanOccur = false;
           }
+          else if(strPtr[0] == '^' && strPtr[1] == '(' && bufPtr - buffer == 3 && buffer[0] == 'e' && buffer[1] == STD_SUB_E[0] && buffer[2] == STD_SUB_E[1]) {
+            // 'eE^' as a function
+            strcpy(buffer, "EXP");
+            strPtr += 2;
+            _parseWord(buffer, parseMode, PARSER_HINT_FUNCTION, mvarBuffer);
+            bufPtr = buffer;
+            buffer[0] = 0;
+            numericCount = 0;
+            afterClosingParenthesis = false;
+            unaryMinusCanOccur = true;
+            afterSpace = false;
+            inExponent = false;
+            exponentSignCanOccur = false;
+            break;
+          }
           else if(exponentSignCanOccur && (*strPtr == '+' || *strPtr == '-')) {
             /* exponent sign */
             *(bufPtr++) = *(strPtr++);
