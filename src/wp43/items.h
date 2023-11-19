@@ -513,7 +513,7 @@
   #define SFL_TRACE                      482
   #define SFL_USER                       483
   #define SFL_LOWBAT                     484
-  #define SFL_SLOW                       485
+  #define ITM_0485                       485
   #define SFL_SPCRES                     486
   #define SFL_SSIZE8                     487
   #define SFL_QUIET                      488

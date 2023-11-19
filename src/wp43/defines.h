@@ -121,7 +121,7 @@
   #define FLAG_TRACE                            0x8013
   #define FLAG_USER                             0x8014
   #define FLAG_LOWBAT                           0xc015
-  #define FLAG_SLOW                             0x8016
+  #define FLAG_NOWAS                            0x8016
   #define FLAG_SPCRES                           0x8017
   #define FLAG_SSIZE8                           0x8018
   #define FLAG_QUIET                            0x8019
