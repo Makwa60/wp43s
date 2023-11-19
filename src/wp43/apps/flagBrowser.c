@@ -273,7 +273,6 @@ flagScreen_t flagScreen;
     oneSystemFlag(FLAG_NUMIN,   "NUM.IN",  &line, &firstFlag);
     oneSystemFlag(FLAG_PRTACT,  "PRTACT",  &line, &firstFlag);
     oneSystemFlag(FLAG_QUIET,   "QUIET",   &line, &firstFlag);
-    oneSystemFlag(FLAG_SLOW,    "SLOW",    &line, &firstFlag);
     oneSystemFlag(FLAG_SOLVING, "SOLVING", &line, &firstFlag);
     oneSystemFlag(FLAG_SPCRES,  "SPCRES",  &line, &firstFlag);
     oneSystemFlag(FLAG_TRACE,   "TRACE",   &line, &firstFlag);

@@ -799,12 +799,14 @@ void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
         numberOfBytes += 1 + allNamedVariables[i].variableName[0];
       }
     }
-    for(int i=12; i<NUMBER_OF_RESERVED_VARIABLES; i++) {
-      calcRegister_t regist = i+FIRST_RESERVED_VARIABLE;
-      if((!applyFilter || _filterDataType(regist, typeFilter, isAngular)) && (!onlyWritable || _registerIsWritable(regist))) {
-        xcopy(tmpString + 15 * numberOfVars, allReservedVariables[i].reservedVariableName + 1, allReservedVariables[i].reservedVariableName[0]);
-        numberOfVars++;
-        numberOfBytes += 1 + allReservedVariables[i].reservedVariableName[0];
+    if (softmenu[getSoftmenuId(2)].menuItem != -ITM_DELITM) {     // Don't include reserved variables for DELITM
+      for(int i=12; i<NUMBER_OF_RESERVED_VARIABLES; i++) {
+        calcRegister_t regist = i+FIRST_RESERVED_VARIABLE;
+        if((!applyFilter || _filterDataType(regist, typeFilter, isAngular)) && (!onlyWritable || _registerIsWritable(regist))) {
+          xcopy(tmpString + 15 * numberOfVars, allReservedVariables[i].reservedVariableName + 1, allReservedVariables[i].reservedVariableName[0]);
+          numberOfVars++;
+          numberOfBytes += 1 + allReservedVariables[i].reservedVariableName[0];
+        }
       }
     }
 

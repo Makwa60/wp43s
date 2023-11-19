@@ -4,6 +4,7 @@
 #include "registers.h"
 
 #include "apps/bugScreen.h"
+#include "assign.h"
 #include "charString.h"
 #include "config.h"
 #include "constantPointers.h"
@@ -767,6 +768,7 @@ calcRegister_t findOrAllocateNamedVariable(const char *variableName) {
 
 void fnDeleteVariable(uint16_t regist) {
   if(regist >= FIRST_NAMED_VARIABLE && regist < (FIRST_NAMED_VARIABLE + numberOfNamedVariables)) {
+    removeUserItemAssignments(ITM_RCL,(char *)allNamedVariables[regist - FIRST_NAMED_VARIABLE].variableName+1);   // Remove assignments before deleting the variable
     freeRegisterData(regist);
     for(uint16_t i = (regist - FIRST_NAMED_VARIABLE); i < (numberOfNamedVariables - 1); ++i) {
       allNamedVariables[i] = allNamedVariables[i + 1];
