@@ -1881,7 +1881,13 @@
   #define MNU_CAT_AIM                   1817
   #define MNU_MENUS_AIM                 1818
 
-  #define LAST_ITEM                     1819
+  #define ITM_MEDIAN                    1819
+  #define ITM_MAD                       1820
+  #define ITM_IQR                       1821
+  #define ITM_SIGMARANGE                1822
+  #define ITM_PERCENTILE                1823
+
+  #define LAST_ITEM                     1824
 
   #define NOPARAM                       9876 // Item for function who don't need an item
   #define CONFIRMED                     9877 // Confirmation for RESET, CLPALL, CLALL

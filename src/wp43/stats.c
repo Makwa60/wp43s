@@ -817,7 +817,6 @@ void fnXmin(uint16_t unusedButMandatoryParameter) {
 }
 
 
-
 void fnXmax(uint16_t unusedButMandatoryParameter) {
   if(checkMinimumDataPoints(const_1)) {
     liftStack();
@@ -828,6 +827,25 @@ void fnXmax(uint16_t unusedButMandatoryParameter) {
     convertRealToReal34ResultRegister(SIGMA_YMAX, REGISTER_Y);
 
     temporaryInformation = TI_XMAX_YMAX;
+  }
+}
+
+
+void fnRangeXY(uint16_t unusedButMandatoryParameter) {
+  real_t t;
+
+  if(checkMinimumDataPoints(const_1)) {
+    liftStack();
+    setSystemFlag(FLAG_ASLIFT);
+    liftStack();
+
+    realSubtract(SIGMA_XMAX, SIGMA_XMIN, &t, &ctxtReal39);
+    convertRealToReal34ResultRegister(&t, REGISTER_X);
+
+    realSubtract(SIGMA_YMAX, SIGMA_YMIN, &t, &ctxtReal39);
+    convertRealToReal34ResultRegister(&t, REGISTER_Y);
+
+    //temporaryInformation = TI_RANGEX_RANGEY;
   }
 }
 
