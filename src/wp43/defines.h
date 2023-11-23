@@ -200,7 +200,8 @@
   #define PTP_VARIABLE                       (11 << 9) //
   #define PTP_SHUFFLE                        (12 << 9) //
   #define PTP_LITERAL                        (13 << 9) // Literal
-  #define PTP_DISABLED                       (14 << 9) // Not programmable
+  #define PTP_REM                            (14 << 9) //
+  #define PTP_DISABLED                       (15 << 9) // Not programmable
 
 
   #define INC_FLAG                                   0
