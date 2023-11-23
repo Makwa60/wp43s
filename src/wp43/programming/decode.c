@@ -709,6 +709,25 @@ static void decodeLiteral(uint8_t *literalAddress) {
 
 
 
+static void decodeRem(uint8_t *literalAddress) {
+  if(*(uint8_t *)(literalAddress++) == STRING_LABEL_VARIABLE) {
+    char *str = tmpString;
+    getStringLabelOrVariableName(literalAddress);
+    str = stringAppend(str, "REM ");
+    str = stringAppend(str, STD_LEFT_SINGLE_QUOTE);
+    str = stringAppend(str, tmpStringLabelOrVariableName);
+    str = stringAppend(str, STD_RIGHT_SINGLE_QUOTE);
+  }
+
+  #if !defined(DMCP_BUILD)
+    else {
+      printf("\nERROR: %u is not an acceptable parameter for ITM_LITERAL!\n", *(uint8_t *)(literalAddress - 1));
+    }
+  #endif // !DMCP_BUILD
+}
+
+
+
 void decodeOneStep(uint8_t *step) {
   uint16_t op = *(step++);
   if(op & 0x80) {
@@ -734,6 +753,11 @@ void decodeOneStep(uint8_t *step) {
 
       case PTP_LITERAL: {
         decodeLiteral(step);
+        break;
+      }
+
+      case PTP_REM: {
+        decodeRem(step);
         break;
       }
 
