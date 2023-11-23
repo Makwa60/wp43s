@@ -1541,7 +1541,7 @@ void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
 
     xcopy(softmenuStacks[sm].item, softmenuStacks[sm].item + 1, (SOFTMENU_STACK_SIZE - 1) * sizeof(softmenuStackItem_t)); // shifting the entire stack
     softmenuStacks[sm].item[3].softmenuId = baseMenu[sm];  // Put default menu in the last stack element
-    softmenuStacks[sm].item[0].firstItem = 0;
+    //softmenuStacks[sm].item[0].firstItem = 0;
    
     // failsafe return to Normal stack
     if (calcMode == cmNormal) {
