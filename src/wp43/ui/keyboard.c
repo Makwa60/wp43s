@@ -2478,6 +2478,10 @@ void fnKeyUp(uint16_t unusedButMandatoryParameter) {
           shiftF = shiftG = false;
           refreshScreen();
         }
+        else if(itemToBeAssigned == 0 && softmenu[getSoftmenuId(0)].menuItem == -MNU_MyPFN) {
+          initMyPFN(false);
+        }
+
         break;
       }
 
@@ -2616,6 +2620,9 @@ void fnKeyDown(uint16_t unusedButMandatoryParameter) {
           calcMode = previousCalcMode;
           shiftF = shiftG = false;
           refreshScreen();
+        }
+        else if(itemToBeAssigned == 0 && softmenu[getSoftmenuId(0)].menuItem == -MNU_MyPFN) {
+          initMyPFN(true);
         }
         break;
       }

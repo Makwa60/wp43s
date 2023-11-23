@@ -154,27 +154,30 @@ void fnAssign(uint16_t mode) {
 
 
 void removeUserItemAssignments(int16_t userItem, char *userItemName) {
+  bool deleteAllItems = false;
+
   itemToBeAssigned = ITM_NULL;
-  
+  if (compareString(userItemName, "", CMP_NAME) == 0) deleteAllItems = true;
+
   // Predefined configurable menus
   for(int i = 0; i < 18; ++i) {
     // MyMenu
-    if((userMenuItems[i].item == userItem) && (compareString(userMenuItems[i].argumentName, userItemName, CMP_NAME) == 0)) {
+    if((userMenuItems[i].item == userItem) && (deleteAllItems || (compareString(userMenuItems[i].argumentName, userItemName, CMP_NAME) == 0))) {
       assignToMyMenu(i);
     }
     // MyAlpha
-    if((userAlphaItems[i].item == userItem) && (compareString(userAlphaItems[i].argumentName, userItemName, CMP_NAME) == 0)) {
+    if((userAlphaItems[i].item == userItem) && (deleteAllItems || (compareString(userAlphaItems[i].argumentName, userItemName, CMP_NAME) == 0))) {
       assignToMyAlpha(i);
     }
     // MyPFN
-    if((userPfnItems[i].item == userItem) && (compareString(userPfnItems[i].argumentName, userItemName, CMP_NAME) == 0)) {
+    if((userPfnItems[i].item == userItem) && (deleteAllItems || (compareString(userPfnItems[i].argumentName, userItemName, CMP_NAME) == 0))) {
       assignToMyPFN(i);
     }
   }
   // User-defined menus
   for(int i = 0; i < numberOfUserMenus; ++i) {
     for(int j = 0; j < 18; ++j) {
-      if((userMenus[i].menuItem[j].item == userItem) && (compareString(userMenus[i].menuItem[j].argumentName, userItemName, CMP_NAME) == 0)) {
+      if((userMenus[i].menuItem[j].item == userItem) && (deleteAllItems || (compareString(userMenus[i].menuItem[j].argumentName, userItemName, CMP_NAME) == 0))) {
         _assignItem(&userMenus[i].menuItem[j]);
       }
     }
@@ -188,7 +191,7 @@ void removeUserItemAssignments(int16_t userItem, char *userItemName) {
     key = kbd_usr + i;
     if(key->primary == userItem) {
       stringToUtf8((char *)getNthString((uint8_t *)userKeyLabel, i*6),(uint8_t *)lbl);
-      if(compareString(lbl,userItemName, CMP_NAME) == 0) {
+      if(deleteAllItems || (compareString(lbl,userItemName, CMP_NAME) == 0)) {
         shiftF = false;
         shiftG = false;
         assignToKey(i+1);
@@ -196,7 +199,7 @@ void removeUserItemAssignments(int16_t userItem, char *userItemName) {
     }
     if(key->fShifted == userItem) {
       stringToUtf8((char *)getNthString((uint8_t *)userKeyLabel, i*6+1),(uint8_t *)lbl);
-      if(compareString(lbl,userItemName, CMP_NAME) == 0) {
+      if(deleteAllItems || (compareString(lbl,userItemName, CMP_NAME) == 0)) {
         shiftF = true;
         shiftG = false;
         assignToKey(i+1);
@@ -204,7 +207,7 @@ void removeUserItemAssignments(int16_t userItem, char *userItemName) {
     }
     if(key->gShifted == userItem) {
       stringToUtf8((char *)getNthString((uint8_t *)userKeyLabel, i*6+2),(uint8_t *)lbl);
-      if(compareString(lbl,userItemName, CMP_NAME) == 0) {
+      if(deleteAllItems || (compareString(lbl,userItemName, CMP_NAME) == 0)) {
         shiftF = false;
         shiftG = true;
         assignToKey(i+1);
