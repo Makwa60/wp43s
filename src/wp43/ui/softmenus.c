@@ -174,6 +174,14 @@ TO_QSPI const int16_t menu_Poiss[]       = { ITM_POISSP,                    ITM_
 /*      Menu name                           <----------------------------------------------------------------------------- 6 functions ---------------------------------------------------------------------------->  */
 /*                                          <---------------------------------------------------------------------- 6 f shifted functions ------------------------------------------------------------------------->  */
 /*                                          <---------------------------------------------------------------------- 6 g shifted functions ------------------------------------------------------------------------->  */
+TO_QSPI const int16_t menu_MyPFNb[]      = { ITM_LBL,                       ITM_GTO,                    ITM_ISG,                  ITM_DSE,               ITM_RTN,                    -MNU_PFN,
+                                             ITM_XLT,                       ITM_XLE,                    ITM_XEQU,                 ITM_XNE,               ITM_XLE,                     ITM_XLT,
+                                             ITM_NULL,                      ITM_NULL,                   ITM_NULL,                 ITM_NULL,              ITM_NULL,                    ITM_NULL                      };
+
+TO_QSPI const int16_t menu_MyPFN[]       = {-MNU_LOOP,                     -MNU_TEST,                   ITM_NULL,                 ITM_NULL,             -MNU_PFN,                    -MNU_PFN2,
+                                             ITM_NULL,                      ITM_NULL,                   ITM_NULL,                 ITM_NULL,              ITM_NULL,                    ITM_NULL,
+                                             ITM_NULL,                      ITM_NULL,                   ITM_NULL,                 ITM_NULL,              ITM_NULL,                    ITM_NULL                      };
+
 TO_QSPI const int16_t menu_PFN[]         = { ITM_INPUT,                     ITM_MVAR,                   ITM_VARMNU,               ITM_END,               ITM_PAUSE,                  -MNU_PFN2,
                                              ITM_R_CLR,                     ITM_R_COPY,                 ITM_R_SORT,               ITM_R_SWAP,            ITM_LocR,                    ITM_POPLR,
                                              ITM_PUTK,                      ITM_ERR,                    ITM_MSG,                  ITM_CNST,              ITM_TICKS,                   ITM_REM                       };
@@ -670,19 +678,18 @@ void initUserMenus() {
   assignToMyAlpha(5);
   
   // initialize MyPFN
-  memset(userPfnItems,   0, sizeof(userMenuItem_t) * 18);
-  itemToBeAssigned = -MNU_LOOP;
-  assignToMyPFN(0);
-  itemToBeAssigned = -MNU_TEST;
-  assignToMyPFN(1);
-  itemToBeAssigned = -MNU_PFN;
-  assignToMyPFN(4);
-  itemToBeAssigned = -MNU_PFN2;
-  assignToMyPFN(5);
+  initMyPFN(true);
   
   userMenus = NULL;
   numberOfUserMenus = 0;
   currentUserMenu = 0;
+}
+
+void initMyPFN(bool  stdMenu) {
+  for(uint16_t ii=0; ii<18; ii++) {  
+    itemToBeAssigned = (stdMenu ? menu_MyPFN[ii] : menu_MyPFNb[ii]) ;      
+    assignToMyPFN(ii);
+  }
 }
 
 void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {

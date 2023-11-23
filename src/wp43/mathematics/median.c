@@ -21,6 +21,7 @@
 #include "registerValueConversions.h"
 #include "stack.h"
 #include "stats.h"
+#include <string.h>
 
 #include "wp43.h"
 
