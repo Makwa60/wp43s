@@ -210,24 +210,24 @@ void fnClPAll(uint16_t confirmation) {
   else {
     // Remove assignments of all global labels, before deleting all programs
     removeUserItemAssignments(ITM_XEQ,"");   // Remove all labels assignments
- 
-    bool wasInRam = (programList[currentProgramNumber - 1].step > 0);
+
     resizeProgramMemory(TO_BYTES(1)); // 1 block for an empty program
-    *(beginOfProgramMemory + 0)   = 255; // .END.
-    *(beginOfProgramMemory + 1)   = 255; // .END.
+    currentStep                   = beginOfProgramMemory;
     firstFreeProgramByte          = beginOfProgramMemory;
-    freeProgramBytes              = 2;
+    firstDisplayedStep            = beginOfProgramMemory;
+    firstDisplayedLocalStepNumber = 0;
+    labelList                     = NULL;
+    programList                   = NULL;
+    *(beginOfProgramMemory + 0) = 255; // .END.
+    *(beginOfProgramMemory + 1) = 255; // .END.
+    freeProgramBytes            = 2;
+
+    currentLocalStepNumber        = 1;
+    firstDisplayedLocalStepNumber = 0;
+
+    scanLabelsAndPrograms();
     temporaryInformation          = TI_NO_INFO;
     programRunStop                = PGM_STOPPED;
-    if(wasInRam) {
-      currentStep                   = beginOfProgramMemory;
-      firstDisplayedStep            = beginOfProgramMemory;
-      firstDisplayedLocalStepNumber = 0;
-      currentLocalStepNumber        = 1;
-      beginOfCurrentProgram         = beginOfProgramMemory;
-      endOfCurrentProgram           = firstFreeProgramByte;
-    }
-    scanLabelsAndPrograms();
   }
 }
 
@@ -725,7 +725,7 @@ void pemAlpha(int16_t item) {
       return;
     }
     else if((item == ITM_ENTER) || (item == ITM_EXIT)) {
-      if ((item == ITM_EXIT) && ((softmenu[getSoftmenuId(0)].menuItem != -MNU_MyAlpha) || (softmenu[getSoftmenuId(1)].menuItem != -MNU_MyAlpha))) {         
+      if ((item == ITM_EXIT) && ((softmenu[getSoftmenuId(0)].menuItem != -MNU_MyAlpha) || (softmenu[getSoftmenuId(1)].menuItem != -MNU_MyAlpha))) {
         popSoftmenu();
       } else {
         pemCloseAlphaInput();
@@ -776,7 +776,7 @@ void pemAlpha(int16_t item) {
 void pemCloseAlphaInput(void) {
   #if !defined(TESTSUITE_BUILD)
     #if defined PC_BUILD
-      printf("*** pemCloseAlphaInput\n"); 
+      printf("*** pemCloseAlphaInput\n");
     #endif
 
     aimBuffer[0] = 0;
@@ -1284,7 +1284,7 @@ void insertStepInProgram(int16_t func) {
           fnKeyExit(NOPARAM);
           break;
         }
-        
+
         case ITM_EXITALLNP: {      // 1810
           fnExitAllMenus(NOPARAM);
           break;
@@ -1377,7 +1377,9 @@ void addStepInProgram(int16_t func) {
   insertStepInProgram(func);
   if((aimBuffer[0] == 0 && !getSystemFlag(FLAG_ALPHA)) || tamIsActive()) {
     currentStep = findPreviousStep(currentStep);
-    --currentLocalStepNumber;
+    if(currentLocalStepNumber > 1) {
+      --currentLocalStepNumber;
+    }
     pemCursorIsZerothStep = false;
     if((indexOfItems[func].status & PTP_STATUS) == PTP_DISABLED) {
       switch(func) {
