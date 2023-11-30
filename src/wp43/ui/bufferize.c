@@ -718,9 +718,9 @@
           case ITM_MtoPC:
           case ITM_PCtoM:
           case ITM_MMtoPOINT:
-          case ITM_MMtoPOINTb:
+          case ITM_KGtoOZ:
           case ITM_POINTtoMM:
-          case ITM_POINTtoMMb:
+          case ITM_OZtoKG:
           case ITM_MtoYD:
           case ITM_YDtoM:
           case ITM_PSItoPA:
@@ -740,9 +740,9 @@
           case ITM_QTtoL:
           case ITM_LtoQT:
           case ITM_FATHOMtoM:
-          case ITM_FATHOMtoMb:
+          case ITM_INCHtoM:
           case ITM_MtoFATHOM:
-          case ITM_MtoFATHOMb:
+          case ITM_MtoINCH:
           case ITM_BARRELtoM3:
           case ITM_BARRELtoM3b:
           case ITM_M3toBARREL:
@@ -771,6 +771,14 @@
           case ITM_MtoMILE:
           case ITM_NMItoM:
           case ITM_MtoNMI:
+          case ITM_KGtoTRZ:
+          case ITM_KGtoTRZb:
+          case ITM_TRZtoKG:
+          case ITM_TRZtoKGb:
+          case ITM_CARATtoKG:
+          case ITM_CARATtoKGb:
+          case ITM_KGtoCARAT:
+          case ITM_KGtoCARATb:
           case ITM_NSIGMA:
           case ITM_SIGMAx:
           case ITM_SIGMAy:
@@ -859,7 +867,29 @@
           case ITM_MULPIto:
           case ITM_Kk:
           case ITM_Ek:
-          case ITM_ARG: {
+          case ITM_ARG:
+          case ITM_ACtoM2:
+          case ITM_ACtoM2b:
+          case ITM_M2toAC:
+          case ITM_M2toACb:
+          case ITM_ACUStoM2:
+          case ITM_ACUStoM2b:
+          case ITM_M2toACUS:
+          case ITM_M2toACUSb:
+          case ITM_FZUKtoM3:
+          case ITM_FZUKtoM3b:
+          case ITM_M3toFZUK:
+          case ITM_M3toFZUKb:
+          case ITM_FZUStoM3:
+          case ITM_FZUStoM3b:
+          case ITM_M3toFZUS:
+          case ITM_M3toFZUSb:
+          case ITM_GLUKtoM3:
+          case ITM_M3toGLUK:
+          case ITM_GLUStoM3:
+          case ITM_M3toGLUS:
+          case ITM_QTtoM3:
+          case ITM_M3toQT: {
             mimRunFunction(item, indexOfItems[item].param);
             break;
           }
