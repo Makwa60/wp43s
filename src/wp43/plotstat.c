@@ -905,6 +905,8 @@ void graphPlotstat(uint16_t selection) {
     uint8_t   yo, yn, yN;
     float x;
     float y;
+    const float old_x_min = x_min;
+    const float old_x_max = x_max;
 
     statnum = 0;
     if(calcMode == cmGraph) {
@@ -1197,6 +1199,9 @@ void graphPlotstat(uint16_t selection) {
         int16_t index = -1;
         char ss[100], tt[100];
         int32_t n;
+
+        x_min = old_x_min;
+        x_max = old_x_max;
 
         eformat_eng2(ss, "(", x_max, 2, "");
         eformat_eng2(tt,radixProcess("#"),y_max,2,")");
