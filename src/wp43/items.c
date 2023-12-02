@@ -837,6 +837,7 @@ void fnNop(uint16_t unusedButMandatoryParameter) {
   void fnVolumeDown                (uint16_t unusedButMandatoryParameter) {}
   void fnBuzz                      (uint16_t unusedButMandatoryParameter) {}
   void fnPlay                      (uint16_t unusedButMandatoryParameter) {}
+  void fnExecutePlusSkip           (uint16_t unusedButMandatoryParameter) {}   //DL
 #endif // GENERATE_CATALOGS
 
 
@@ -2759,6 +2760,7 @@ TO_QSPI const item_t indexOfItems[] = {
 /* 1843 */  { fnCvtGalusM3,                 divide,                      "m" STD_SUP_3 STD_RIGHT_ARROW "gl" STD_US,     "m" STD_SUP_3 STD_RIGHT_ARROW "gl" STD_US,     (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
 /* 1844 */  { fnCvtQuartM3,                 multiply,                    "qt." STD_RIGHT_ARROW "m" STD_SUP_3,           "qt." STD_RIGHT_ARROW "m" STD_SUP_3,           (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
 /* 1845 */  { fnCvtQuartM3,                 divide,                      "m" STD_SUP_3 STD_RIGHT_ARROW "qt.",           "m" STD_SUP_3 STD_RIGHT_ARROW "qt.",           (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/* 1846 */  { fnExecutePlusSkip,            tmLabel,                     "XEQ.SKP",                                     "XEQ.SKP",                                     (0 << TAM_MAX_BITS) |    99, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_LABEL        },
 
-/* 1846 */  { itemToBeCoded,                NOPARAM,                     "",                                            "Last item",                                   (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_ENABLED   | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     }
+/* 1847 */  { itemToBeCoded,                NOPARAM,                     "",                                            "Last item",                                   (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_ENABLED   | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     }
 };

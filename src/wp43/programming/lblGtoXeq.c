@@ -221,6 +221,13 @@ void fnExecute(uint16_t label) {
 }
 
 
+void fnExecutePlusSkip(uint16_t label) {
+  fnExecute(label);
+  if((programRunStop == PGM_RUNNING) && (lastErrorCode == ERROR_NONE)) {
+    currentReturnLocalStep++;
+  }
+}
+
 
 void fnReturn(uint16_t skip) {
   dataBlock_t *_currentSubroutineLevelData = currentSubroutineLevelData;
