@@ -409,8 +409,9 @@ static void _integrate(calcRegister_t regist, const real_t *a, const real_t *b, 
     do { // DEI_j_loop::
       WP34S_SinhCosh(&x, NULL, &x, realContext); // cosh(t) (cosh is much faster than sinh/tanh)
       realCopy(&x, &ch); // save for later
-      realMultiply(&x, &x, &x, realContext);
-      realSubtract(&x, const_1, &x, realContext);
+      //realMultiply(&x, &x, &x, realContext);
+      //realSubtract(&x, const_1, &x, realContext);
+      realFMA(&x, &x, const__1, &x, realContext);
       realSquareRoot(&x, &x, realContext);
       realMultiply(&x, const_piOn2, &x, realContext); // pi/2*sqrt(cosh(t)^2 - 1) = pi/2*sinh(t)
       if(ES) { // ES mode?
@@ -428,8 +429,9 @@ static void _integrate(calcRegister_t regist, const real_t *a, const real_t *b, 
       // stack filled with exp/cosh of pi/2*sinh(t)
       realCopy(&y, &x);
       if(!ES) { // ES mode?
-        realMultiply(&x, &x, &x, realContext);      // no ES mode, get r (the abscissa in the
-        realSubtract(&x, const_1, &x, realContext); // normalized domain)
+        //realMultiply(&x, &x, &x, realContext);      // no ES mode, get r (the abscissa in the
+        //realSubtract(&x, const_1, &x, realContext); // normalized domain)
+        realFMA(&x, &x, const__1, &x, realContext);
         realSquareRoot(&x, &x, realContext);
       } // DEI_es_skip::
       if(TS) { // TS mode?
@@ -441,8 +443,9 @@ static void _integrate(calcRegister_t regist, const real_t *a, const real_t *b, 
       realCopy(&x, &rp); // save normalized abscissa
       // done with abscissas and weights  --------------------
       // evaluate integrand ----------------------------------
-      realMultiply(&x, &bma2, &x, realContext); // r*(b - a)/2
-      realAdd(&x, &bpa2, &x, realContext); // (b + a)/2 + r*(b - a)/2
+      //realMultiply(&x, &bma2, &x, realContext); // r*(b - a)/2
+      //realAdd(&x, &bpa2, &x, realContext); // (b + a)/2 + r*(b - a)/2
+      realFMA(&x, &bma2, &bpa2, &x, realContext);
       DEI_xeq_user(regist, &x, &x, realContext); // f(bpa2 + bma2*r)
       realMultiply(&x, &w, &x, realContext); // fplus*w
       realCopy(&x, &tmp); realCopy(&rp, &x); realCopy(&tmp, &rp); // p = fplus*w stored, r in X
