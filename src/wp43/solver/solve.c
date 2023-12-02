@@ -170,7 +170,6 @@ void fnSolve(uint16_t labelOrVariable) {
           break;
         }
       }
-      saveForUndo();
       adjustResult(REGISTER_X, false, false, REGISTER_X, REGISTER_Y, -1);
 
       //manipulate the graph minimuma and maximum points based on the solver result, part 2
@@ -387,6 +386,7 @@ int solver(calcRegister_t variable, const real34_t *y, const real34_t *x, real34
     int      result = SOLVER_RESULT_NORMAL;
     bool     was_inting = getSystemFlag(FLAG_INTING);
 
+    saveForUndo();
     realCopy(const_1, &tol);
     tol.exponent -= (significantDigits == 0 || significantDigits >= 32) ? 32 : significantDigits;
 
@@ -603,6 +603,15 @@ int solver(calcRegister_t variable, const real34_t *y, const real34_t *x, real34
       real34ToReal(&b, &bb);
       real34ToReal(&b1, &bb1);
 
+
+      #if defined(DMCP_BUILD)
+        if(key_empty() == 0) { // abort the solver
+          programRunStop = PGM_WAITING;
+          break;
+        }
+      #endif //DMCP_BUILD
+
+
     } while(result == SOLVER_RESULT_NORMAL &&
             (real34IsSpecial(&b2) || !real34CompareEqual(&b1, &b2) || !(extendRange || extremum || WP34S_RelativeError(&bb, &bb1, &tol, &ctxtReal39))) &&
             (originallyLevel || !((!extendRange && WP34S_RelativeError(&bb, &bb1, &tol, &ctxtReal39)) || real34CompareEqual(&b, &b1) || real34CompareEqual(&fb, const34_0)))
@@ -629,6 +638,7 @@ int solver(calcRegister_t variable, const real34_t *y, const real34_t *x, real34
     real34Copy(&b, resX);
 
     if(result == SOLVER_RESULT_EXTREMUM) { // Check if the result is really an extremum
+      setSystemFlag(FLAG_SOLVING);
       real34Copy(const34_1e_32, &tmp);
       while(true) {
         real34Add(resX, &tmp, &a);
@@ -653,6 +663,7 @@ int solver(calcRegister_t variable, const real34_t *y, const real34_t *x, real34
         }
       }
     }
+    clearSystemFlag(FLAG_SOLVING);
 
     if(result == SOLVER_RESULT_NORMAL && real34IsInfinite(REGISTER_REAL34_DATA(variable)) && extendRange && real34IsZero(resZ)) {
       result = SOLVER_RESULT_CONSTANT;
