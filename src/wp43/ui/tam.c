@@ -796,7 +796,7 @@ void tamReset(void) {
       if(tam.mode == tmNewMenu) {
         value = 1;
       }
-      else if(tam.function == ITM_XEQ) {
+      else if((tam.function == ITM_XEQ) || (tam.function == ITM_XEQP1)) {
         value = findNamedLabelWithDuplicate(buffer, dupNum);
         if(value == INVALID_VARIABLE) {
           for(int i = 0; i < LAST_ITEM; ++i) {

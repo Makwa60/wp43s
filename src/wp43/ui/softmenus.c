@@ -188,7 +188,7 @@ TO_QSPI const int16_t menu_PFN[]         = { ITM_INPUT,                     ITM_
 
 TO_QSPI const int16_t menu_PFN2[]        = { ITM_MENU,                      ITM_KEYG,                   ITM_KEYX,                 ITM_CLMENU,            ITM_EXITALL,                 ITM_RTNP1,
                                              ITM_BACK,                      ITM_CASE,                   ITM_SKIP,                 ITM_NOP,               ITM_SDL,                     ITM_SDR,
-                                             ITM_AGRAPH,                    ITM_PIXEL,                  ITM_POINT,                ITM_NULL,              ITM_NULL,                    ITM_NULL                      };
+                                             ITM_AGRAPH,                    ITM_PIXEL,                  ITM_POINT,                ITM_NULL,              ITM_NULL,                    ITM_XEQP1                     };
 
 TO_QSPI const int16_t menu_STAT[]        = { ITM_SIGMAPLUS,                 ITM_XBAR,                   ITM_STDDEVWEIGHTED,       ITM_STDDEV,            ITM_SM,                      ITM_SUM,
                                              ITM_SIGMAMINUS,                ITM_XW,                     ITM_SW,                   ITM_STDDEVPOP,         ITM_SMW,                     ITM_XRMS,
