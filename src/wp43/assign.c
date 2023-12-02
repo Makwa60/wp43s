@@ -253,6 +253,15 @@ void fnDeleteMenu(uint16_t id) {
 
 
 
+void deleteUserMenus(void) {
+  removeUserItemAssignments(-MNU_DYNAMIC,"");           // Remove all user menus assignments
+  freeWp43(userMenus, sizeof(userMenu_t) * numberOfUserMenus);
+  userMenus = NULL;
+  numberOfUserMenus = 0;
+}
+
+
+
 void updateAssignTamBuffer(void) {
   char *tbPtr = tamBuffer;
   tbPtr = stringAppend(tbPtr, "ASSIGN ");
@@ -706,7 +715,11 @@ void assignToKey(keyCode_t keyCode) {
   setUserKeyArgument((keyCode - 1) * 6 + keyStateCode, tmpMenuItem.argumentName);
 }
 
-
+void initUserKeyArgument(void) {
+  userKeyLabelSize = 37/*keys*/ * 6/*states*/ * 1/*byte terminator*/ + 1/*byte sentinel*/;
+  userKeyLabel = allocWp43(userKeyLabelSize);
+  memset(userKeyLabel,   0, TO_BYTES(TO_BLOCKS(userKeyLabelSize)));   
+}
 
 void setUserKeyArgument(uint16_t position, const char *name) {
   char *userKeyLabelPtr1 = (char *)getNthString((uint8_t *)userKeyLabel, position);

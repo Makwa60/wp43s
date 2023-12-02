@@ -693,6 +693,7 @@ void initUserMenus() {
 }
 
 void initMyPFN(bool  stdMenu) {
+  memset(userPfnItems, 0, sizeof(userMenuItem_t) * 18);
   for(uint16_t ii=0; ii<18; ii++) {  
     itemToBeAssigned = (stdMenu ? menu_MyPFN[ii] : menu_MyPFNb[ii]) ;      
     assignToMyPFN(ii);
@@ -809,9 +810,15 @@ void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
       calcRegister_t regist = i+FIRST_NAMED_VARIABLE;
       if(!applyFilter || _filterDataType(regist, typeFilter, isAngular)) {
         xcopy(tmpString + 15 * numberOfVars, allNamedVariables[i].variableName + 1, allNamedVariables[i].variableName[0]);
-        numberOfVars++;
-        numberOfBytes += 1 + allNamedVariables[i].variableName[0];
-      }
+        if((softmenu[getSoftmenuId(2)].menuItem == -ITM_DELITM) &&       // Don't include "STATS", "HISTO", "Mat_A", "Mat_B" and "Mat_X" for DELITM
+           ((compareString(tmpString + 15 * numberOfVars, "STATS", CMP_NAME) == 0) || (compareString(tmpString + 15 * numberOfVars, "HISTO", CMP_NAME) == 0) ||
+            (compareString(tmpString + 15 * numberOfVars, "Mat_A", CMP_NAME) == 0) || (compareString(tmpString + 15 * numberOfVars, "Mat_B", CMP_NAME) == 0) ||
+            (compareString(tmpString + 15 * numberOfVars, "Mat_X", CMP_NAME) == 0))) {
+              memset(tmpString + 15 * numberOfVars, 0, 15);
+        } else {
+          numberOfVars++;
+          numberOfBytes += 1 + allNamedVariables[i].variableName[0];
+        }      }
     }
     if (softmenu[getSoftmenuId(2)].menuItem != -ITM_DELITM) {     // Don't include reserved variables for DELITM
       for(int i=12; i<NUMBER_OF_RESERVED_VARIABLES; i++) {

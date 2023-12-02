@@ -8,6 +8,7 @@
 #include "apps/fontBrowser.h"
 #include "apps/registerBrowser.h"
 #include "apps/timerApp.h"
+#include "assign.h"
 #include "calcMode.h"
 #include "charString.h"
 #include "constantPointers.h"
@@ -485,7 +486,27 @@ void fnGetHide(uint16_t unusedButMandatoryParameter) {
   longIntegerFree(range);
 }
 
+void initSimEqMatABX(void) {
+  void *memPtr;
+  
+  allocateNamedVariable("Mat_A", dtReal34Matrix, REAL34_SIZE_IN_BYTES + 4);
+  memPtr = getRegisterDataPointer(FIRST_NAMED_VARIABLE);
+  ((dataBlock_t *)memPtr)->matrixRows = 1;
+  ((dataBlock_t *)memPtr)->matrixColumns = 1;
+  real34Zero(memPtr + 4);
 
+  allocateNamedVariable("Mat_B", dtReal34Matrix, REAL34_SIZE_IN_BYTES + 4);
+  memPtr = getRegisterDataPointer(FIRST_NAMED_VARIABLE + 1);
+  ((dataBlock_t *)memPtr)->matrixRows = 1;
+  ((dataBlock_t *)memPtr)->matrixColumns = 1;
+  real34Zero(memPtr + 4);
+
+  allocateNamedVariable("Mat_X", dtReal34Matrix, REAL34_SIZE_IN_BYTES + 4);
+  memPtr = getRegisterDataPointer(FIRST_NAMED_VARIABLE + 2);
+  ((dataBlock_t *)memPtr)->matrixRows = 1;
+  ((dataBlock_t *)memPtr)->matrixColumns = 1;
+  real34Zero(memPtr + 4);
+}
 
 void fnClAll(uint16_t confirmation) {
   if(confirmation == NOT_CONFIRMED) {
@@ -514,7 +535,23 @@ void fnClAll(uint16_t confirmation) {
     }
     thereIsSomethingToUndo = false;
 
+    // Clear user menus
+    fnExitAllMenus(NOPARAM);
+    deleteUserMenus();                     // Remove all user menus and user menus assignments
+    initUserMenus();                       // Set default content for MyMenu, MyAlpha and MyPFN
+
+    // Clear All Key assignments
+    xcopy(kbd_usr, kbd_std, sizeof(kbd_std));
+    fnClearFlag(FLAG_USER);
+    freeWp43(userKeyLabel, userKeyLabelSize);
+    initUserKeyArgument();
+
     // TODO: clear (or delete) named variables
+    // Delete named variables
+    for(uint16_t var = numberOfNamedVariables; var > 0; var--) {  // Remove all user variables and user variables assignments
+      fnDeleteVariable(FIRST_NAMED_VARIABLE + var -1);
+    }
+    initSimEqMatABX();
 
     // Clear global flags
     fnClFAll(CONFIRMED);
@@ -718,24 +755,7 @@ void fnReset(uint16_t confirmation) {
     numberOfNamedVariables = 0;
     allNamedVariables = NULL;
 
-
-    allocateNamedVariable("Mat_A", dtReal34Matrix, REAL34_SIZE_IN_BYTES + 4);
-    memPtr = getRegisterDataPointer(FIRST_NAMED_VARIABLE);
-    ((dataBlock_t *)memPtr)->matrixRows = 1;
-    ((dataBlock_t *)memPtr)->matrixColumns = 1;
-    real34Zero(memPtr + 4);
-
-    allocateNamedVariable("Mat_B", dtReal34Matrix, REAL34_SIZE_IN_BYTES + 4);
-    memPtr = getRegisterDataPointer(FIRST_NAMED_VARIABLE + 1);
-    ((dataBlock_t *)memPtr)->matrixRows = 1;
-    ((dataBlock_t *)memPtr)->matrixColumns = 1;
-    real34Zero(memPtr + 4);
-
-    allocateNamedVariable("Mat_X", dtReal34Matrix, REAL34_SIZE_IN_BYTES + 4);
-    memPtr = getRegisterDataPointer(FIRST_NAMED_VARIABLE + 2);
-    ((dataBlock_t *)memPtr)->matrixRows = 1;
-    ((dataBlock_t *)memPtr)->matrixColumns = 1;
-    real34Zero(memPtr + 4);
+    initSimEqMatABX();
 
     #if !defined(TESTSUITE_BUILD)
       matrixIndex = INVALID_VARIABLE; // Unset matrix index
@@ -846,7 +866,7 @@ void fnReset(uint16_t confirmation) {
     #if !defined(TESTSUITE_BUILD)
       softmenuStacksInit();
     #endif // !TESTSUITE_BUILD
-    
+
     aimBuffer[0] = 0;
     lastErrorCode = 0;
 
@@ -891,10 +911,11 @@ void fnReset(uint16_t confirmation) {
     entryStatus = 0;
 
     initUserMenus();
-    
-    userKeyLabelSize = 37/*keys*/ * 6/*states*/ * 1/*byte terminator*/ + 1/*byte sentinel*/;
-    userKeyLabel = allocWp43(userKeyLabelSize);
-    memset(userKeyLabel,   0, TO_BYTES(TO_BLOCKS(userKeyLabelSize)));
+
+    initUserKeyArgument();
+    //userKeyLabelSize = 37/*keys*/ * 6/*states*/ * 1/*byte terminator*/ + 1/*byte sentinel*/;
+    //userKeyLabel = allocWp43(userKeyLabelSize);
+    //memset(userKeyLabel,   0, TO_BYTES(TO_BLOCKS(userKeyLabelSize)));
 
     fnClearMenu(NOPARAM);
 
@@ -946,7 +967,7 @@ void fnReset(uint16_t confirmation) {
     #if (DEBUG_PANEL == 1)
       debugInit();
     #endif // DEBUG_PANEL == 1
-    
+
     #if defined(DMCP_BUILD)
       //Check and update current power status (USB / LOWBAT)
       dmcpCheckPowerStatus();
@@ -973,21 +994,21 @@ void runDMCPmenu(uint16_t unusedButMandatoryParameter) {
 
   #if defined(DMCP_BUILD)
     run_menu_item_sys(MI_DMCP_MENU);
-    
+
     // Sync TDM24 flag with DMCP clk24
     if (is_flag_clk24()) {
         setSystemFlag(FLAG_TDM24);
     } else {
-        clearSystemFlag(FLAG_TDM24); 
+        clearSystemFlag(FLAG_TDM24);
     }
-    
+
     // Sync DMY/YMD/MDY flag with DMCP dmy
     clearSystemFlag(FLAG_DMY);
     clearSystemFlag(FLAG_MDY);
     clearSystemFlag(FLAG_YMD);
-    
+
     int dmcp_dmy = get_flag_dmy();
-    
+
     switch(dmcp_dmy) {
         case SYS_MDY: {
           setSystemFlag(FLAG_MDY);
@@ -1011,7 +1032,7 @@ void activateUSBdisk(uint16_t unusedButMandatoryParameter) {
   #if defined(PC_BUILD)
     temporaryInformation = TI_DMCP_ONLY;
   #endif // PC_BUILD
-  
+
   #if defined(DMCP_BUILD)
     run_menu_item_sys(MI_MSC);
   #endif // DMCP_BUILD

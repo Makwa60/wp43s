@@ -22,6 +22,7 @@
   void assignToUserMenu           (uint16_t position);
   void assignToKey                (keyCode_t keyCode);
 
+  void initUserKeyArgument        (void);
   void setUserKeyArgument         (uint16_t position, const char *name);
   void createMenu                 (const char *name);
 
@@ -44,4 +45,9 @@
    */
   void removeUserItemAssignments  (int16_t item, char *userItemName);
 
+  /**
+   * Delete all user menus and user menus assignments
+   *
+   */
+  void deleteUserMenus            (void); 
 #endif // !ASSIGN_H

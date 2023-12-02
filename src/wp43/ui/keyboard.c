@@ -1074,7 +1074,7 @@ bool      _kbSeenInterrupt     = false;
 
 
   void leavePem(void) {
-      const uint16_t mask = ~((1 << BITS_TO_SHIFT) - 1); // 0xfffc for 4 byte blocks, 0xfff8 for 8 byte blocks, ...
+    const uint16_t mask = ~((1 << BITS_TO_SHIFT) - 1); // 0xfffc for 4 byte blocks, 0xfff8 for 8 byte blocks, ...
     if(freeProgramBytes >= TO_BYTES(1)) { // Push the programs to the end of RAM
       uint32_t newProgramSize = (uint32_t)((uint8_t *)(ram + RAM_SIZE_IN_BLOCKS) - beginOfProgramMemory) - (freeProgramBytes & mask);
       uint16_t localStepNumber = currentLocalStepNumber;
