@@ -354,10 +354,10 @@
   #define ITM_MtoPC                      332
   #define ITM_PCtoM                      333
   #define ITM_MMtoPOINT                  334
-  #define ITM_MMtoPOINTb                 335
+  #define ITM_KGtoOZ                     335
   #define ITM_MILEtoM                    336
   #define ITM_POINTtoMM                  337
-  #define ITM_POINTtoMMb                 338
+  #define ITM_OZtoKG                     338
   #define ITM_MtoMILE                    339
   #define ITM_MtoYD                      340
   #define ITM_YDtoM                      341
@@ -378,10 +378,10 @@
   #define ITM_QTtoL                      356
   #define ITM_LtoQT                      357
   #define ITM_FATHOMtoM                  358
-  #define ITM_FATHOMtoMb                 359
+  #define ITM_INCHtoM                    359
   #define ITM_NMItoM                     360
   #define ITM_MtoFATHOM                  361
-  #define ITM_MtoFATHOMb                 362
+  #define ITM_MtoINCH                    362
   #define ITM_MtoNMI                     363
   #define ITM_BARRELtoM3                 364
   #define ITM_BARRELtoM3b                365
@@ -407,14 +407,14 @@
   #define ITM_MtoZHANGb                  385
   #define ITM_FENtoM                     386
   #define ITM_MtoFEN                     387
-  #define ITM_0388                       388
-  #define ITM_0389                       389
-  #define ITM_0390                       390
-  #define ITM_0391                       391
-  #define ITM_0392                       392
-  #define ITM_0393                       393
-  #define ITM_0394                       394
-  #define ITM_0395                       395
+  #define ITM_KGtoTRZ                    388
+  #define ITM_KGtoTRZb                   389
+  #define ITM_TRZtoKG                    390
+  #define ITM_TRZtoKGb                   391
+  #define ITM_CARATtoKG                  392
+  #define ITM_CARATtoKGb                 393
+  #define ITM_KGtoCARAT                  394
+  #define ITM_KGtoCARATb                 395
 
 
   // Flag, bit, rotation, and logical OPs
@@ -1887,7 +1887,30 @@
   #define ITM_SIGMARANGE                1822
   #define ITM_PERCENTILE                1823
 
-  #define LAST_ITEM                     1824
+  #define ITM_ACtoM2                    1824
+  #define ITM_ACtoM2b                   1825
+  #define ITM_M2toAC                    1826
+  #define ITM_M2toACb                   1827
+  #define ITM_ACUStoM2                  1828
+  #define ITM_ACUStoM2b                 1829
+  #define ITM_M2toACUS                  1830
+  #define ITM_M2toACUSb                 1831
+  #define ITM_FZUKtoM3                  1832
+  #define ITM_FZUKtoM3b                 1833
+  #define ITM_M3toFZUK                  1834
+  #define ITM_M3toFZUKb                 1835
+  #define ITM_FZUStoM3                  1836
+  #define ITM_FZUStoM3b                 1837
+  #define ITM_M3toFZUS                  1838
+  #define ITM_M3toFZUSb                 1839
+  #define ITM_GLUKtoM3                  1840
+  #define ITM_M3toGLUK                  1841
+  #define ITM_GLUStoM3                  1842
+  #define ITM_M3toGLUS                  1843
+  #define ITM_QTtoM3                    1844
+  #define ITM_M3toQT                    1845
+
+  #define LAST_ITEM                     1846
 
   #define NOPARAM                       9876 // Item for function who don't need an item
   #define CONFIRMED                     9877 // Confirmation for RESET, CLPALL, CLALL

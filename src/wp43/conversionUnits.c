@@ -191,6 +191,11 @@ void fnCvtOzG(uint16_t multiplyDivide) {
 }
 
 
+void fnCvtOzKg(uint16_t multiplyDivide) {
+  unitConversion(const_OzToKg, multiplyDivide);
+}
+
+
 void fnCvtStoneKg(uint16_t multiplyDivide) {
   unitConversion(const_StoneToKg, multiplyDivide);
 }
@@ -206,6 +211,11 @@ void fnCvtTrozG(uint16_t multiplyDivide) {
 }
 
 
+void fnCvtTrozKg(uint16_t multiplyDivide) {
+  unitConversion(const_TrozToKg, multiplyDivide);
+}
+
+
 void fnCvtTonKg(uint16_t multiplyDivide) {
   unitConversion(const_TonToKg, multiplyDivide);
 }
@@ -218,6 +228,11 @@ void fnCvtShorttonKg(uint16_t multiplyDivide) {
 
 void fnCvtCaratG(uint16_t multiplyDivide) {
   unitConversion(const_CaratToG, multiplyDivide);
+}
+
+
+void fnCvtCaratKg(uint16_t multiplyDivide) {
+  unitConversion(const_CaratToKg, multiplyDivide);
 }
 
 
@@ -263,6 +278,11 @@ void fnCvtPcM(uint16_t multiplyDivide) {
 
 void fnCvtInchMm(uint16_t multiplyDivide) {
   unitConversion(const_InchToMm, multiplyDivide);
+}
+
+
+void fnCvtInchM(uint16_t multiplyDivide) {
+  unitConversion(const_InchToM, multiplyDivide);
 }
 
 
@@ -331,8 +351,18 @@ void fnCvtGalukL(uint16_t multiplyDivide) {
 }
 
 
+void fnCvtGalukM3(uint16_t multiplyDivide) {
+  unitConversion(const_GalukToM3, multiplyDivide);
+}
+
+
 void fnCvtGalusL(uint16_t multiplyDivide) {
   unitConversion(const_GalusToL, multiplyDivide);
+}
+
+
+void fnCvtGalusM3(uint16_t multiplyDivide) {
+  unitConversion(const_GalusToM3, multiplyDivide);
 }
 
 
@@ -341,8 +371,18 @@ void fnCvtFlozukMl(uint16_t multiplyDivide) {
 }
 
 
+void fnCvtFlozukM3(uint16_t multiplyDivide) {
+  unitConversion(const_FlozukToM3, multiplyDivide);
+}
+
+
 void fnCvtFlozusMl(uint16_t multiplyDivide) {
   unitConversion(const_FlozusToMl, multiplyDivide);
+}
+
+
+void fnCvtFlozusM3(uint16_t multiplyDivide) {
+  unitConversion(const_FlozusToM3, multiplyDivide);
 }
 
 
@@ -356,13 +396,28 @@ void fnCvtQuartL(uint16_t multiplyDivide) {
 }
 
 
+void fnCvtQuartM3(uint16_t multiplyDivide) {
+  unitConversion(const_QuartToM3, multiplyDivide);
+}
+
+
 void fnCvtAcreHa(uint16_t multiplyDivide) {
-  unitConversion(const_AccreToHa, multiplyDivide);
+  unitConversion(const_AcreToHa, multiplyDivide);
 }
 
 
 void fnCvtAcreusHa(uint16_t multiplyDivide) {
-  unitConversion(const_AccreusToHa, multiplyDivide);
+  unitConversion(const_AcreusToHa, multiplyDivide);
+}
+
+
+void fnCvtAcreM2(uint16_t multiplyDivide) {
+  unitConversion(const_AcreToM2, multiplyDivide);
+}
+
+
+void fnCvtAcreusM2(uint16_t multiplyDivide) {
+  unitConversion(const_AcreusToM2, multiplyDivide);
 }
 
 
