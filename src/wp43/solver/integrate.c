@@ -104,13 +104,15 @@ void fnIntegrate(uint16_t labelOrVariable) {
   }
   else if(labelOrVariable >= FIRST_NAMED_VARIABLE && labelOrVariable <= LAST_NAMED_VARIABLE) {
     real_t acc, ulim, llim, res;
+    bool smallerEpsilon = false;
     real34ToReal(REGISTER_REAL34_DATA(RESERVED_VARIABLE_ACC),  &acc);
     real34ToReal(REGISTER_REAL34_DATA(RESERVED_VARIABLE_ULIM), &ulim);
     real34ToReal(REGISTER_REAL34_DATA(RESERVED_VARIABLE_LLIM), &llim);
+    smallerEpsilon = realCompareAbsLessThan(&acc, const_1e_16) && ((realCompareAbsLessThan(&ulim, const_1e_32) || realCompareAbsLessThan(&llim, const_1e_32)));
     if(realIsZero(&acc)) { // it may freeze if ACC=0
       realCopy(const_1e_6143, &acc);
     }
-    integrate(labelOrVariable, &llim, &ulim, &acc, &res, &ctxtReal39);
+    integrate(labelOrVariable, &llim, &ulim, &acc, &res, smallerEpsilon ? &ctxtReal75 : &ctxtReal39);
     fnClearStack(NOPARAM);
     reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
     reallocateRegister(REGISTER_Y, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
@@ -352,11 +354,17 @@ static void _integrate(calcRegister_t regist, const real_t *a, const real_t *b, 
   // [1e-34 -34 bpa2 bma2]
   realMultiply(acc, const_1on10, &eps, realContext);
   realMultiply(&eps, &eps, &eps, realContext);
-  if(realCompareAbsLessThan(&eps, const_1e_32)) {
-    realCopy(const_1e_32, &eps); // save epsilon = 10^-37
-  }
+  //if(realCompareAbsLessThan(&eps, const_1e_37)) {                                // WP43
+  //  realCopy(const_1e_37, &eps); // save epsilon = 10^-37                        // WP43
+  //}                                                                              // WP43
+  if(!realIsSpecial(a) && !realIsSpecial(b) && (realIsZero(a) || realIsZero(b))) { // WP43
+    if(realCompareAbsLessThan(&eps, const_1e_6143)) {                              // WP43
+      realCopy(const_1e_6143, &eps);                                               // WP43
+    }                                                                              // WP43
+  }                                                                                // WP43
   realCopy(acc, &thr); // save the convergence threshold [<- ACC]
-  real34ToReal(const34_7, &lvl); // maxlevel = round(log2(digits)) + 2 [pre-calculated]
+  //real34ToReal(const34_7, &lvl); // maxlevel = round(log2(digits)) + 2 [pre-calculated]
+  realCopy(realContext->digits >= 48 ? const_8 : const_7, &lvl);                   // WP43
   if(bpa2z) { // the sinhsinh case and the expsinh case
               // when the finite limit == 0 can use a
               // smaller epsilon
