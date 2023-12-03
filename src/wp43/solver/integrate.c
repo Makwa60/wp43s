@@ -108,8 +108,7 @@ void fnIntegrate(uint16_t labelOrVariable) {
     real34ToReal(REGISTER_REAL34_DATA(RESERVED_VARIABLE_ULIM), &ulim);
     real34ToReal(REGISTER_REAL34_DATA(RESERVED_VARIABLE_LLIM), &llim);
     integrate(labelOrVariable, &llim, &ulim, &acc, &res, &ctxtReal39);
-    liftStack();
-    liftStack();
+    fnClearStack(NOPARAM);
     reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
     reallocateRegister(REGISTER_Y, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
     convertRealToReal34ResultRegister(&res, REGISTER_X);
