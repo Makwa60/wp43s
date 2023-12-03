@@ -235,8 +235,8 @@ static void _integratorIteration(void) {
 static void DEI_xeq_user(calcRegister_t regist, const real_t *x, real_t *res, realContext_t *realContext) {
   // call user's function  -------------------------------
   if(!realIsSpecial(x)) { // abscissa is good?
-    bool d = getSystemFlag(FLAG_SPCRES);
-    clearSystemFlag(FLAG_SPCRES);
+    //bool d = getSystemFlag(FLAG_SPCRES);
+    //clearSystemFlag(FLAG_SPCRES);
     reallocateRegister(regist, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
     realToReal34(x, REGISTER_REAL34_DATA(regist));
     fnFillStack(NOPARAM);
@@ -247,9 +247,9 @@ static void DEI_xeq_user(calcRegister_t regist, const real_t *x, real_t *res, re
     if(realIsSpecial(res)) { // do not stop in error (if flag D was set)
       realZero(res);
     }
-    if(d) {
-      setSystemFlag(FLAG_SPCRES); // set flag D for internal calculations
-    }
+    //if(d) {
+    //  setSystemFlag(FLAG_SPCRES); // set flag D for internal calculations
+    //}
   }
   else { // DEI_bad_absc::
     realZero(res);
