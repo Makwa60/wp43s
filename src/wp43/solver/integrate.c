@@ -556,6 +556,9 @@ static void _integrate(calcRegister_t regist, const real_t *a, const real_t *b, 
     // stack: 0-new_err-10*err-ss
     realZero(&z); // stack: 0-new_err-10*err-0
   } // DEI_res_okay::
+  else { // yes, assume result is OK
+    realCopy(&x, &tmp);
+  }
   realCopy(&z, &x); realCopy(&tmp, &y); // stack: 0-err-... or ss-err-...
   // done with bad results  ******************************
   //  exit  **********************************************
