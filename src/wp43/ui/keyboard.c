@@ -621,6 +621,19 @@ bool      _kbSeenInterrupt     = false;
             return;
           }
           else if(calcMode != cmPem && item == ITM_INTEGRAL) {
+            switch(calcMode) {
+              case cmNim: {
+                closeNim();
+                break;
+              }
+              case cmAim: {
+                closeAim();
+                break;
+              }
+              default: {
+                // do nothing
+              }
+            }
             reallyRunFunction(item, currentSolverVariable);
             refreshScreen();
             screenUpdatingMode &= ~SCRUPD_ONE_TIME_FLAGS;
