@@ -22,6 +22,7 @@
   #define CLP_WITH_MENU                    1 // CLP shows menu (more like 42S than WP34S): set to 0 if you want to retain the old behavior like WP34S
   #define USE_REAL34_FUNCTIONS             1 // Set to 1 to enable faster (but less precise) functions
   #define ENABLE_SOLVER_PROGRESS           1 // Set to 1 to enable solver progress display (only if called in run mode)
+  #define USE_MICHALSKI_MOSIG_TANH_SINH    1 // Set to 1 to use Michalski & Mosig tanh-sinh integration
 
   #define DECNUMDIGITS                    75 // Default number of digits used in the decNumber library
 
@@ -355,7 +356,7 @@
   #define NUMBER_OF_DATA_TYPES_FOR_CALCULATIONS     10
 
   // Number of constants
-  #define NUMBER_OF_CONSTANTS_39                   233
+  #define NUMBER_OF_CONSTANTS_39                   235
   #define NUMBER_OF_CONSTANTS_51                    42
   #define NUMBER_OF_CONSTANTS_1071                   1
   #define NUMBER_OF_CONSTANTS_34                    58

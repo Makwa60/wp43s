@@ -245,6 +245,7 @@
   extern const real_t * const const_1e_49;
   extern const real_t * const const_1e_37;
   extern const real_t * const const_1e_24;
+  extern const real_t * const const_1e_16;
   extern const real_t * const const_1e_6;
   extern const real_t * const const_1e_4;
   extern const real_t * const const_9on160;
@@ -325,6 +326,7 @@
   extern const real_t * const const_1e9;
   extern const real_t * const const_2p32;
   extern const real_t * const const_1e32;
+  extern const real_t * const const_1e_6143;
   extern const real_t * const const_1e_10000;
   extern const real_t * const const_995on1000;
   extern const real_t * const const_1e_32;
