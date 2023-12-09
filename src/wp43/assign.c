@@ -5,6 +5,7 @@
 
 #include "calcMode.h"
 #include "charString.h"
+#include "config.h"
 #include "core/memory.h"
 #include "defines.h"
 #include "error.h"
@@ -227,6 +228,9 @@ void fnDeleteMenu(uint16_t id) {
   }
   else {
     removeUserItemAssignments(-MNU_DYNAMIC,userMenus[id].menuName);   // Remove assignments before deleting the user menu
+    #if !defined(TESTSUITE_BUILD)
+      removeUserMenuFromStacks(id);                                   // Remove user menu from the stacks before deleting it
+    #endif // !TESTSUITE_BUILD
     if(numberOfUserMenus == 1) {
       freeWp43(userMenus, sizeof(userMenu_t));
       userMenus = NULL;
@@ -243,21 +247,51 @@ void fnDeleteMenu(uint16_t id) {
   if(currentUserMenu > id) {
     --currentUserMenu;
   }
-  #if !defined(TESTSUITE_BUILD)
-    else if(currentUserMenu == id) {
-      showSoftmenu(-MNU_DYNAMIC);
-      popSoftmenu();
-    }
-  #endif // !TESTSUITE_BUILD
 }
 
 
 
-void deleteUserMenus(void) {
-  removeUserItemAssignments(-MNU_DYNAMIC,"");           // Remove all user menus assignments
-  freeWp43(userMenus, sizeof(userMenu_t) * numberOfUserMenus);
-  userMenus = NULL;
-  numberOfUserMenus = 0;
+void fnDeleteUserMenus(uint16_t confirmation) {
+  if(confirmation == NOT_CONFIRMED) {
+    setConfirmationMode(fnDeleteUserMenus);
+  }
+  else {
+    removeUserItemAssignments(-MNU_DYNAMIC,"");           // Remove all user menus assignments
+    #if !defined(TESTSUITE_BUILD)
+      removeUserMenuFromStacks(numberOfUserMenus);        // Remove all user menus from the stacks before deleting them
+    #endif // !TESTSUITE_BUILD
+    freeWp43(userMenus, sizeof(userMenu_t) * numberOfUserMenus);
+    userMenus = NULL;
+    numberOfUserMenus = 0;
+    temporaryInformation = TI_DEL_ALL_MENUS;
+  }
+}
+
+void fnClearUserMenus(uint16_t confirmation) {
+  int i;
+  if(confirmation == NOT_CONFIRMED) {
+    setConfirmationMode(fnClearUserMenus);
+  }
+  else {
+    for(i=0; i<numberOfUserMenus; i++) {
+      memset(userMenus[i].menuItem, 0, 18 * sizeof(userMenuItem_t));        
+    }
+    temporaryInformation = TI_CLEAR_ALL_MENUS;
+  }
+}
+
+
+void fnClearKeyAssignments(uint16_t confirmation) {
+  if(confirmation == NOT_CONFIRMED) {
+    setConfirmationMode(fnClearKeyAssignments);
+  }
+  else {
+    xcopy(kbd_usr, kbd_std, sizeof(kbd_std));
+    fnClearFlag(FLAG_USER);
+    freeWp43(userKeyLabel, userKeyLabelSize);
+    initUserKeyArgument();
+    temporaryInformation = TI_CLKEYS;
+  }
 }
 
 
@@ -768,7 +802,6 @@ void createMenu(const char *name) {
     errorMoreInfo("the menu '%s' does not follow the naming convention", name);
   }
 }
-
 
 
 void assignEnterAlpha(void) {

@@ -38,8 +38,11 @@
 
   uint8_t *getNthString           (uint8_t *ptr, int16_t n); // Starting with string 0 (the 1st string is returned for n=0)
   void     fnDynamicMenu          (uint16_t unusedButMandatoryParameter);
-  void     initMyPFN              (bool stdMenu); 
+  void     fnClearMyMenu          (uint16_t unusedButMandatoryParameter);
+  void     fnClearMyPFN           (uint16_t unusedButMandatoryParameter);
+  void     fnClearMyAlpha         (uint16_t unusedButMandatoryParameter);
   void     fnExitAllMenus         (uint16_t unusedButMandatoryParameter);
+  void     initMyPFN              (bool stdMenu); 
 
     /**
      * Initialize the user menus and prepopulate MyAlpha and MyPFN.
@@ -107,6 +110,11 @@
      * Pops a softmenu from the softmenu stack.
      */
     void    popSoftmenu            (void);
+
+    /**
+     * Remove a User menu from a softmenu stack.
+     */
+    void removeUserMenuFromStacks  (int16_t userMenuId);
     
      /**
      * Push a new stackmode to the softmenu stackmode stack.

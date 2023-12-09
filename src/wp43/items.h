@@ -1910,8 +1910,17 @@
   #define ITM_QTtoM3                    1844
   #define ITM_M3toQT                    1845
   #define ITM_XEQP1                     1846
+  #define ITM_CLKEYS                    1847
+  #define ITM_CLVALL                    1848
+  #define ITM_DLVALL                    1849
+  #define ITM_CLMALL                    1850
+  #define ITM_DLMALL                    1851
+  #define MNU_CLMY                      1852
+  #define ITM_CLMYMENU                  1853
+  #define ITM_CLMYPFN                   1854
+  #define ITM_CLMYALPHA                 1855
 
-  #define LAST_ITEM                     1847
+  #define LAST_ITEM                     1856
 
   #define NOPARAM                       9876 // Item for function who don't need an item
   #define CONFIRMED                     9877 // Confirmation for RESET, CLPALL, CLALL

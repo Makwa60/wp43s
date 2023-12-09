@@ -537,21 +537,14 @@ void fnClAll(uint16_t confirmation) {
 
     // Clear user menus
     fnExitAllMenus(NOPARAM);
-    deleteUserMenus();                     // Remove all user menus and user menus assignments
+    fnDeleteUserMenus(CONFIRMED);          // Delete all user menus and user menus assignments
     initUserMenus();                       // Set default content for MyMenu, MyAlpha and MyPFN
 
     // Clear All Key assignments
-    xcopy(kbd_usr, kbd_std, sizeof(kbd_std));
-    fnClearFlag(FLAG_USER);
-    freeWp43(userKeyLabel, userKeyLabelSize);
-    initUserKeyArgument();
+    fnClearKeyAssignments(NOPARAM);
 
-    // TODO: clear (or delete) named variables
     // Delete named variables
-    for(uint16_t var = numberOfNamedVariables; var > 0; var--) {  // Remove all user variables and user variables assignments
-      fnDeleteVariable(FIRST_NAMED_VARIABLE + var -1);
-    }
-    initSimEqMatABX();
+    fnDeleteAllVariables(CONFIRMED);
 
     // Clear global flags
     fnClFAll(CONFIRMED);
@@ -913,9 +906,6 @@ void fnReset(uint16_t confirmation) {
     initUserMenus();
 
     initUserKeyArgument();
-    //userKeyLabelSize = 37/*keys*/ * 6/*states*/ * 1/*byte terminator*/ + 1/*byte sentinel*/;
-    //userKeyLabel = allocWp43(userKeyLabelSize);
-    //memset(userKeyLabel,   0, TO_BYTES(TO_BLOCKS(userKeyLabelSize)));
 
     fnClearMenu(NOPARAM);
 
