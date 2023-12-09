@@ -63,9 +63,15 @@ TO_QSPI const int16_t menu_CLK[]         = { ITM_DATE,                      ITM_
 #endif // DMCP_BUILD
                                              ITM_NULL,                      ITM_NULL,                   ITM_NULL,                 ITM_NULL,              ITM_NULL,                    ITM_JUL_GREG                  };
 
-TO_QSPI const int16_t menu_CLR[]         = { ITM_CLSIGMA,                   ITM_CLP,                    ITM_CF,                   ITM_CLMENU,            ITM_CLCVAR,                  ITM_CLX,
-                                             ITM_CLREGS,                    ITM_CLPALL,                 ITM_CLFALL,               ITM_NULL,              ITM_CLLCD,                   ITM_CLSTK,
-                                             ITM_CLALL,                     ITM_CLBKUP,                 ITM_NULL,                 ITM_DELITM,            ITM_NULL,                    ITM_RESET                     };
+//TO_QSPI const int16_t menu_CLR[]         = { ITM_CLSIGMA,                   ITM_CLP,                    ITM_CF,                   ITM_CLMENU,            ITM_CLCVAR,                  ITM_CLX,
+//                                             ITM_CLREGS,                    ITM_CLPALL,                 ITM_CLFALL,               ITM_NULL,              ITM_CLLCD,                   ITM_CLSTK,
+//                                             ITM_CLALL,                     ITM_CLBKUP,                 ITM_NULL,                 ITM_DELITM,            ITM_NULL,                    ITM_RESET                     };
+TO_QSPI const int16_t menu_CLR[]         = { ITM_CLSIGMA,                   ITM_CLP,                    ITM_CLCVAR,               ITM_CF,               -MNU_CLMY,                    ITM_CLX,
+                                             ITM_CLREGS,                    ITM_CLPALL,                 ITM_CLVALL,               ITM_CLFALL,            ITM_CLMALL,                  ITM_CLSTK,
+                                             ITM_CLALL,                     ITM_CLBKUP,                 ITM_DLVALL,               ITM_NULL,              ITM_DLMALL,                  ITM_CLLCD,
+                                             ITM_RESET,                     ITM_NULL,                   ITM_CLKEYS,               ITM_DELITM,            ITM_CLMENU,                  ITM_NULL                      };
+
+TO_QSPI const int16_t menu_CLMY[]        = { ITM_NULL,                      ITM_NULL,                   ITM_NULL,                 ITM_CLMYMENU,          ITM_CLMYPFN,                 ITM_CLMYALPHA                 };
 
 /*      Menu name                           <----------------------------------------------------------------------------- 6 functions ---------------------------------------------------------------------------->  */
 /*                                          <---------------------------------------------------------------------- 6 f shifted functions ------------------------------------------------------------------------->  */
@@ -518,6 +524,7 @@ TO_QSPI const softmenu_t softmenu[] = {
 /* 107 */  {.menuItem = -ITM_DELITM,      .numItems = sizeof(menu_DELITM     )/sizeof(int16_t), .softkeyItem = menu_DELITM      },
 /* 108 */  {.menuItem = -MNU_CAT_AIM,     .numItems = sizeof(menu_CAT_AIM    )/sizeof(int16_t), .softkeyItem = menu_CAT_AIM     },
 /* 109 */  {.menuItem = -MNU_MENUS_AIM,   .numItems = sizeof(menu_MENUS_AIM  )/sizeof(int16_t), .softkeyItem = menu_MENUS_AIM   },
+/* 109 */  {.menuItem = -MNU_CLMY,        .numItems = sizeof(menu_CLMY       )/sizeof(int16_t), .softkeyItem = menu_CLMY        },
 /* 110 */  {.menuItem =  0,               .numItems = 0,                                        .softkeyItem = NULL             }
 };
 
@@ -656,7 +663,8 @@ dynamicSoftmenu_t dynamicSoftmenu[NUMBER_OF_DYNAMIC_SOFTMENUS] = {
   /* 106 */    "TIMERF",
   /* 107 */    "ITM_DELITM",
   /* 108 */    "CAT_AIM",
-  /* 109 */    "MENUS_AIM"
+  /* 109 */    "MENUS_AIM",
+  /* 110 */    "CLMy..."
   };
 #endif // PC_BUILD
 
@@ -669,11 +677,15 @@ uint8_t *getNthString(uint8_t *ptr, int16_t n) { // Starting with string 0 (the 
   return ptr;
 }
 
-void initUserMenus() {
-  // initialize MyMenu
+void fnClearMyMenu(uint16_t unusedButMandatoryParameter) {
   memset(userMenuItems,  0, sizeof(userMenuItem_t) * 18);
-  
-  // initialize MyAlpha
+}
+
+void fnClearMyPFN(uint16_t unusedButMandatoryParameter) {
+  initMyPFN(true);
+}
+
+void fnClearMyAlpha(uint16_t unusedButMandatoryParameter) {
   memset(userAlphaItems, 0, sizeof(userMenuItem_t) * 18);
   itemToBeAssigned = -MNU_ALPHAMATH;
   assignToMyAlpha(0);
@@ -683,9 +695,18 @@ void initUserMenus() {
   assignToMyAlpha(4);
   itemToBeAssigned = -MNU_ALPHAINTL;
   assignToMyAlpha(5);
+}
+
+
+void initUserMenus() {
+  // initialize MyMenu
+  fnClearMyMenu(NOPARAM);
+  
+  // initialize MyAlpha
+  fnClearMyAlpha(NOPARAM);
   
   // initialize MyPFN
-  initMyPFN(true);
+  fnClearMyPFN(NOPARAM);
   
   userMenus = NULL;
   numberOfUserMenus = 0;
@@ -811,8 +832,10 @@ void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
       if(!applyFilter || _filterDataType(regist, typeFilter, isAngular)) {
         xcopy(tmpString + 15 * numberOfVars, allNamedVariables[i].variableName + 1, allNamedVariables[i].variableName[0]);
         if((softmenu[getSoftmenuId(2)].menuItem == -ITM_DELITM) &&       // Don't include "STATS", "HISTO", "Mat_A", "Mat_B" and "Mat_X" for DELITM
-           ((compareString(tmpString + 15 * numberOfVars, "STATS", CMP_NAME) == 0) || (compareString(tmpString + 15 * numberOfVars, "HISTO", CMP_NAME) == 0) ||
-            (compareString(tmpString + 15 * numberOfVars, "Mat_A", CMP_NAME) == 0) || (compareString(tmpString + 15 * numberOfVars, "Mat_B", CMP_NAME) == 0) ||
+           ((compareString(tmpString + 15 * numberOfVars, "STATS", CMP_NAME) == 0) ||
+            (compareString(tmpString + 15 * numberOfVars, "HISTO", CMP_NAME) == 0) ||
+            (compareString(tmpString + 15 * numberOfVars, "Mat_A", CMP_NAME) == 0) ||
+            (compareString(tmpString + 15 * numberOfVars, "Mat_B", CMP_NAME) == 0) ||
             (compareString(tmpString + 15 * numberOfVars, "Mat_X", CMP_NAME) == 0))) {
               memset(tmpString + 15 * numberOfVars, 0, 15);
         } else {
@@ -1431,6 +1454,7 @@ void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
     for(int i=0; i<SOFTMENU_STACK_SIZE; i++) {
       softmenuStacks[stackMode].item[i].softmenuId = softmenuId;
       softmenuStacks[stackMode].item[i].firstItem  = 0;
+      softmenuStacks[stackMode].item[i].userMenuId = 0;
     }
   }
 
@@ -1561,9 +1585,10 @@ void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
     screenUpdatingMode &= ~SCRUPD_MANUAL_MENU;
 
     xcopy(softmenuStacks[sm].item, softmenuStacks[sm].item + 1, (SOFTMENU_STACK_SIZE - 1) * sizeof(softmenuStackItem_t)); // shifting the entire stack
-    softmenuStacks[sm].item[3].softmenuId = baseMenu[sm];  // Put default menu in the last stack element
-    //softmenuStacks[sm].item[0].firstItem = 0;
-   
+    softmenuStacks[sm].item[SOFTMENU_STACK_SIZE - 1].softmenuId = baseMenu[sm];  // Put default menu in the last stack element
+    softmenuStacks[sm].item[SOFTMENU_STACK_SIZE - 1].firstItem = 0;
+    softmenuStacks[sm].item[SOFTMENU_STACK_SIZE - 1].userMenuId = 0;
+  
     // failsafe return to Normal stack
     if (calcMode == cmNormal) {
       while (sm != smNormal) {
@@ -1585,6 +1610,35 @@ void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
       currentUserMenu = softmenuStacks[sm].item[0].userMenuId;
     }
   }
+
+
+  void removeUserMenuFromStacks(int16_t userMenuId) {
+    int i;
+    smStackMode_t sm;
+    bool all = (userMenuId == numberOfUserMenus ? 1 : 0);
+
+    for(sm=0; sm<SOFTMENU_STACKMODE_SIZE; sm++) {  // For all softmenu stacks
+      for(i=0; i<SOFTMENU_STACK_SIZE; i++) { // Searching the stack for the user menu to remove from the stack
+        printf("*** Id %d sm %d item %d menuItem %d userMenuId %d\n",userMenuId,sm,i,softmenu[softmenuStacks[sm].item[i].softmenuId].menuItem,softmenuStacks[sm].item[i].userMenuId);
+        if(softmenu[softmenuStacks[sm].item[i].softmenuId].menuItem == -MNU_DYNAMIC) {
+          if((softmenuStacks[sm].item[i].userMenuId == userMenuId) || all==true) { // if found, remove it
+            #if defined(PC_BUILD)
+              printf("*** Remove userMenuId %d from stack %d\n", softmenuStacks[sm].item[i].userMenuId,sm);
+            #endif // PC_BUILD
+            xcopy(softmenuStacks[sm].item + i, softmenuStacks[sm].item + i + 1, (SOFTMENU_STACK_SIZE - i) * sizeof(softmenuStackItem_t));
+            softmenuStacks[sm].item[SOFTMENU_STACK_SIZE - 1].softmenuId = baseMenu[sm];  // Put default menu in the last stack element
+            softmenuStacks[sm].item[SOFTMENU_STACK_SIZE - 1].firstItem = 0;
+            softmenuStacks[sm].item[SOFTMENU_STACK_SIZE - 1].userMenuId = 0;
+            i--;
+          }
+          else if(softmenuStacks[sm].item[i].userMenuId > userMenuId) { // adjust other menuIDs
+            softmenuStacks[sm].item[i].userMenuId--;
+          }
+        }
+      }
+    }
+  }
+
 
 
 

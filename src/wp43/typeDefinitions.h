@@ -493,7 +493,12 @@
     TI_SETTINGS_RESTORED   = 59,
     TI_SUMS_RESTORED       = 60,
     TI_VARIABLES_RESTORED  = 61,
-    TI_DMCP_ONLY           = 62
+    TI_DMCP_ONLY           = 62,
+    TI_CLKEYS              = 63,
+    TI_DEL_ALL_VARIABLES   = 64,
+    TI_DEL_ALL_MENUS       = 65,
+    TI_CLEAR_ALL_MENUS     = 66,
+    TI_CLEAR_ALL_VARIABLES = 67
   } temporaryInformation_t;
 
 

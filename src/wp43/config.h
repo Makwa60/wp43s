@@ -185,6 +185,7 @@
   void     fnGetRange            (uint16_t unusedButMandatoryParameter);
   void     fnHide                (uint16_t digits);
   void     fnGetHide             (uint16_t unusedButMandatoryParameter);
+  void     initSimEqMatABX       (void);
 
   void     configSetUpTimers     (void);
 
