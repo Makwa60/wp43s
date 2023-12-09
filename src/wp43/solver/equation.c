@@ -1491,6 +1491,8 @@ void parseEquation(uint16_t equationId, uint16_t parseMode, char *buffer, char *
     if(parseMode == EQUATION_PARSER_XEQ) {
       _processOperator(PARSER_OPERATOR_ITM_END_OF_FORMULA, mvarBuffer);
     }
-    aimBuffer[0] = 0; // Clear aimBuffer;
+    if(buffer == aimBuffer) {
+      aimBuffer[0] = 0; // Clear aimBuffer;
+    }
   #endif // !TESTSUITE_BUILD
 }
