@@ -16,7 +16,7 @@ The *WP43* pocket calculator is a new fast, compact, reliable, and solid problem
 - The aim is to create a serious scientific instrument like we did with the [*WP 34S*](https://sourceforge.net/projects/wp34s/).
 
 ## Features
-- Please see the [**WP43 Owner's Manual**](https://gitlab.com/rpncalculators/wp43/-/blob/master/docs/OwnersManual.pdf).
+- Please see the [**_WP43 Owner's Manual_**](https://gitlab.com/rpncalculators/wp43/-/blob/master/docs/OwnersManual.pdf).
 
 ## Donations
 If you want to support our work by donating some money to this project, please use this [link](https://www.paypal.com/cgi-bin/webscr?item_name=Donation+to+WP43&cmd=_donations&business=walter.bonin%40web.de&lc=us). Thankyou, hartstikke bedankt, mange tak(k), merci bien, mille grazie, muchas gracias, muito obrigado, suurkiitokset, tack så mycket, vielen Dank!
