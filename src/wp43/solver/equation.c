@@ -1024,6 +1024,18 @@ void showEquation(uint16_t equationId, uint16_t startAt, uint16_t cursorAt, bool
             bufPtr += stringByteLength(bufPtr) + 1;
             ++tmpVal;
           }
+          #if USE_ITALIC_CONSTANT != 0
+            if(compareString(indexOfItems[ITM_CONSTi].itemCatalogName, strPtr, CMP_NAME) == 0) {
+              return;
+            }
+          #else /* USE_ITALIC_CONSTANT != 0 */
+            if(compareString("i", strPtr, CMP_NAME) == 0) {
+              return;
+            }
+            if(compareString("j", strPtr, CMP_NAME) == 0) {
+              return;
+            }
+          #endif /* USE_ITALIC_CONSTANT != 0 */
           for(uint32_t i = CST_01; i <= CST_79; ++i) { // check for constants
             if(compareString(indexOfItems[i].itemCatalogName, strPtr, CMP_NAME) == 0) {
               return;
@@ -1074,6 +1086,21 @@ void showEquation(uint16_t equationId, uint16_t startAt, uint16_t cursorAt, bool
             fnDrop(NOPARAM);
             return;
           }
+          #if USE_ITALIC_CONSTANT != 0
+            if(compareString(indexOfItems[ITM_CONSTi].itemCatalogName, strPtr, CMP_NAME) == 0) {
+              runFunction(ITM_CONSTi);
+              _pushNumericStack(mvarBuffer, REGISTER_REAL34_DATA(REGISTER_X), REGISTER_IMAG34_DATA(REGISTER_X));
+              fnDrop(NOPARAM);
+              return;
+            }
+          #else /* USE_ITALIC_CONSTANT != 0 */
+            if(compareString("i", strPtr, CMP_NAME) == 0 || compareString("j", strPtr, CMP_NAME) == 0) {
+              runFunction(ITM_CONSTi);
+              _pushNumericStack(mvarBuffer, REGISTER_REAL34_DATA(REGISTER_X), REGISTER_IMAG34_DATA(REGISTER_X));
+              fnDrop(NOPARAM);
+              return;
+            }
+          #endif /* USE_ITALIC_CONSTANT != 0 */
           for(uint32_t i = CST_01; i <= CST_79; ++i) { // check for constants
             if(compareString(indexOfItems[i].itemCatalogName, strPtr, CMP_NAME) == 0) {
               runFunction(i);

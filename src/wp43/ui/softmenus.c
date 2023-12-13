@@ -9,6 +9,7 @@
 #include "charString.h"
 #include "core/memory.h"
 #include "error.h"
+#include "fonts.h"
 #include "flags.h"
 #include "hal/lcd.h"
 #include "items.h"
@@ -961,6 +962,11 @@ void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
       else if(menuData[i].item == ITM_NOP || menuData[i].item == ITM_NULL) {
         numberOfBytes += 1;
       }
+      #if USE_ITALIC_CONSTANT == 0
+        else if(menuData[i].item == ITM_CONSTi) {
+          numberOfBytes += stringByteLength(COMPLEX_UNIT) + 1;
+        }
+      #endif /* USE_ITALIC_CONSTANT == 0 */
       else if(indexOfItems[abs(menuData[i].item)].itemCatalogName[0] == 0) {
         numberOfBytes += stringByteLength(indexOfItems[abs(menuData[i].item)].itemSoftmenuName) + 1;
       }
@@ -978,6 +984,11 @@ void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
       else if(menuData[i].item == ITM_NULL) {
         lbl = "";
       }
+      #if USE_ITALIC_CONSTANT == 0
+        else if(menuData[i].item == ITM_CONSTi) {
+          lbl = COMPLEX_UNIT;
+        }
+      #endif /* USE_ITALIC_CONSTANT == 0 */
       else if(indexOfItems[abs(menuData[i].item)].itemCatalogName[0] == 0) {
         lbl = indexOfItems[abs(menuData[i].item)].itemSoftmenuName;
       }
@@ -1440,6 +1451,11 @@ void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
             else if(item == ITM_PLOT || item == ITM_PLOT_LR || item == ITM_HPLOT  || item == ITM_DRAW) {       //colour PLOT in reverse font to appear to be menus
               showSoftkey(indexOfItems[item%10000].itemSoftmenuName, x, y-currentFirstItem/6, vmReverse, (item/10000)==0 || (item/10000)==2, (item/10000)==0 || (item/10000)==1);
             }
+            #if USE_ITALIC_CONSTANT == 0
+              else if(item == ITM_CONSTi) {
+                showSoftkey(COMPLEX_UNIT, x, y-currentFirstItem/6, vmNormal, (item/10000)==0 || (item/10000)==2, (item/10000)==0 || (item/10000)==1);
+              }
+            #endif /* USE_ITALIC_CONSTANT == 0 */
             else {
               showSoftkey(indexOfItems[item%10000].itemSoftmenuName, x, y-currentFirstItem/6, vmNormal, (item/10000)==0 || (item/10000)==2, (item/10000)==0 || (item/10000)==1);
             }

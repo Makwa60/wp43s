@@ -599,6 +599,15 @@ bool validateName(const char *name) {
 
 
 bool isUniqueName(const char *name) {
+  #if USE_ITALIC_CONSTANT == 0
+    if(compareString(name, "i", CMP_NAME) == 0) {
+      return false;
+    }
+    if(compareString(name, "j", CMP_NAME) == 0) {
+      return false;
+    }
+  #endif /* USE_ITALIC_CONSTANT == 0 */
+
   // Built-in items
   for(uint32_t i = 0; i < LAST_ITEM; ++i) {
     switch(indexOfItems[i].status & CAT_STATUS) {
