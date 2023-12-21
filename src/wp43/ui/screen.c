@@ -255,7 +255,7 @@ void clearScreen(void) {
 
   void cbShowNop(uint16_t param) {
     if((showFunctionNameItem == ITM_EXIT) || (showFunctionNameItem == ITM_EXITALL) || (showFunctionNameItem == ITM_EXITALLNP)) {
-      if((showFunctionNameItem == ITM_EXIT)) {
+      if(showFunctionNameItem == ITM_EXIT) {
         fnExitAllMenus(NOPARAM);                 // Exit all menu and update display when entering EXITALL
         #if defined PC_BUILD
           refreshScreen();

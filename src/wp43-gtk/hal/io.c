@@ -226,7 +226,7 @@ void show_warning(char *string)
             GTK_DIALOG_DESTROY_WITH_PARENT,
             GTK_MESSAGE_WARNING,
             GTK_BUTTONS_OK,
-            string);
+            "%s", string);
   gtk_window_set_title(GTK_WINDOW(dialog), "Warning");
   gtk_dialog_run(GTK_DIALOG(dialog));
   gtk_widget_destroy(dialog);
