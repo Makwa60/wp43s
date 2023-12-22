@@ -32,6 +32,16 @@
    */
   void julianDayToInternalDate (const real34_t *source, real34_t *destination);
 
+  #if ENABLE_DATE_TYPE_WITH_TIME != 0
+    /**
+     * Convert internal date representation to time (as internal representation of dtTime34)
+     *
+     * \param[in] source
+     * \param[out] destination
+     */
+    void internalDateToTime (const real34_t *source, real34_t *destination);
+  #endif // ENABLE_DATE_TYPE_WITH_TIME != 0
+
   /**
    * Check date argument and get Julian day
    *

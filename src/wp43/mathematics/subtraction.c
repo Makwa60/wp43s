@@ -26,7 +26,7 @@ TO_QSPI void (* const subtraction[NUMBER_OF_DATA_TYPES_FOR_CALCULATIONS][NUMBER_
 /*  1 Long integer  */ {subLonILonI, subRealLonI, subCplxLonI, subTimeLonI, subDateLonI, subError, subRemaLonI, subCxmaLonI, subShoILonI,  subError},
 /*  2 Real34        */ {subLonIReal, subRealReal, subCplxReal, subTimeReal, subDateReal, subError, subRemaReal, subCxmaReal, subShoIReal,  subError},
 /*  3 Complex34     */ {subLonICplx, subRealCplx, subCplxCplx, subError,    subError,    subError, subRemaCplx, subCxmaCplx, subShoICplx,  subError},
-/*  4 Time          */ {subLonITime, subRealTime, subError,    subTimeTime, subError,    subError, subError,    subError,    subError,     subError},
+/*  4 Time          */ {subLonITime, subRealTime, subError,    subTimeTime, subDateTime, subError, subError,    subError,    subError,     subError},
 /*  5 Date          */ {subError,    subError,    subError,    subError,    subDateDate, subError, subError,    subError,    subError,     subError},
 /*  6 String        */ {subError,    subError,    subError,    subError,    subError,    subError, subError,    subError,    subError,     subError},
 /*  7 Real34 mat    */ {subLonIRema, subRealRema, subCplxRema, subError,    subError,    subError, subRemaRema, subCxmaRema, subShoIRema,  subError},
@@ -362,7 +362,12 @@ void subDateDate(void) {
 
   real34Subtract(REGISTER_REAL34_DATA(REGISTER_Y), REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_Y));
   real34Divide(REGISTER_REAL34_DATA(REGISTER_Y), const34_86400, &val);
-  convertReal34ToLongIntegerRegister(&val, REGISTER_X, DEC_ROUND_DOWN);
+  #if ENABLE_DATE_TYPE_WITH_TIME != 0
+    reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
+    real34Copy(&val, REGISTER_REAL34_DATA(REGISTER_X));
+  #else // ENABLE_DATE_TYPE_WITH_TIME != 0
+    convertReal34ToLongIntegerRegister(&val, REGISTER_X, DEC_ROUND_DOWN);
+  #endif // ENABLE_DATE_TYPE_WITH_TIME != 0
 }
 
 
@@ -378,7 +383,9 @@ void subDateReal(void) {
   real34_t val;
 
   if(xAngularMode == amNone) {
-    real34ToIntegralValue(REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X), roundingModeTable[roundingMode]);
+    #if ENABLE_DATE_TYPE_WITH_TIME == 0
+      real34ToIntegralValue(REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X), roundingModeTable[roundingMode]);
+    #endif // ENABLE_DATE_TYPE_WITH_TIME == 0
     real34Multiply(REGISTER_REAL34_DATA(REGISTER_X), const34_86400, &val);
     reallocateRegister(REGISTER_X, dtDate, REAL34_SIZE_IN_BYTES, amNone);
     real34Subtract(REGISTER_REAL34_DATA(REGISTER_Y), &val, REGISTER_REAL34_DATA(REGISTER_X));
@@ -387,6 +394,18 @@ void subDateReal(void) {
     subError();
   }
 }
+
+
+
+#if ENABLE_DATE_TYPE_WITH_TIME != 0
+  void subDateTime(void) {
+    real34_t val;
+
+    real34Copy(REGISTER_REAL34_DATA(REGISTER_X), &val);
+    reallocateRegister(REGISTER_X, dtDate, REAL34_SIZE_IN_BYTES, amNone);
+    real34Subtract(REGISTER_REAL34_DATA(REGISTER_Y), &val, REGISTER_REAL34_DATA(REGISTER_X));
+  }
+#endif // ENABLE_DATE_TYPE_WITH_TIME != 0
 
 
 

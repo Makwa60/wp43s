@@ -1830,6 +1830,14 @@ void checkExpectedOutParameter(char *p) {
           processError("system flag DMY should be clear but it is set!");
         }
       }
+      else if(!strcmp(l+3, "TDM24")) {
+        if(r[0] == '1' && !getSystemFlag(FLAG_TDM24)) {
+          processError("system flag TDM24 should be set but it is clear!");
+        }
+        else if(r[0] == '0' && getSystemFlag(FLAG_TDM24)) {
+          processError("system flag TDM24 should be clear but it is set!");
+        }
+      }
       else {
         processError("missformed numbered flag checking. After FL_ there shall be a number from 0 to 111, a lettered, or a system flag.");
       }
