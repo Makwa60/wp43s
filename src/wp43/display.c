@@ -1742,7 +1742,7 @@ void timeToDisplayString(calcRegister_t regist, char *displayString, bool ignore
   else {
     realZero(&tmp);
   }
-  if(realCompareAbsLessThan(&real, &value) || (ignoreTDisp && (!realIsZero(&tmp)))) {
+  if(!realIsZero(&real) && (realCompareAbsLessThan(&real, &value) || (ignoreTDisp && (!realIsZero(&tmp))))) {
     if(ignoreTDisp || (timeDisplayFormatDigits == 0)) {
       displayFormat = dfAll;
       displayFormatDigits = 0;
