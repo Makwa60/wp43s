@@ -111,6 +111,11 @@ void fnCvtYearS(uint16_t multiplyDivide) {
 }
 
 
+void fnCvtDayS(uint16_t multiplyDivide) {
+  unitConversion(const_86400, multiplyDivide);
+}
+
+
 void fnCvtCalJ(uint16_t multiplyDivide) {
   unitConversion(const_CalToJ, multiplyDivide);
 }
