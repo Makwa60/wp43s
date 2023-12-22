@@ -1676,7 +1676,7 @@ void longIntegerToAllocatedString(const longInteger_t lgInt, char *str, int32_t 
 
 
 
-static void _timeToDisplayString(const real34_t *source, char *displayString, bool ignoreTDisp, bool allowSuffixedSeconds) {
+static void _timeToDisplayString(const real34_t *source, char *displayString, bool ignoreTDisp, bool isTimeInterval) {
   real_t         real, value, tmp, h, m, s;
   longInteger_t  hli;
   int32_t        sign, i;
@@ -1712,7 +1712,7 @@ static void _timeToDisplayString(const real34_t *source, char *displayString, bo
   else {
     realZero(&tmp);
   }
-  if(allowSuffixedSeconds && !realIsZero(&real) && (realCompareAbsLessThan(&real, &value) || (ignoreTDisp && (!realIsZero(&tmp))))) {
+  if(isTimeInterval && !realIsZero(&real) && (realCompareAbsLessThan(&real, &value) || (ignoreTDisp && (!realIsZero(&tmp))))) {
     if(ignoreTDisp || (timeDisplayFormatDigits == 0)) {
       displayFormat = dfAll;
       displayFormatDigits = 0;
@@ -1739,7 +1739,7 @@ static void _timeToDisplayString(const real34_t *source, char *displayString, bo
     switch(timeDisplayFormatDigits) {
       case 0: {
         realCopy(const_86400, &value);
-        if((!sign) && (!getSystemFlag(FLAG_TDM24)) && realCompareLessThan(&real, &value)) {
+        if((!sign) && (!getSystemFlag(FLAG_TDM24)) && realCompareLessThan(&real, &value) && !isTimeInterval) {
           isValid12hTime = true;
         }
         for(bDigits = 0; bDigits < (isValid12hTime ? 14 : 16); ++bDigits) {
@@ -1785,7 +1785,7 @@ static void _timeToDisplayString(const real34_t *source, char *displayString, bo
   realDivideRemainder(&s, const_60, &s, &ctxtReal39);
   realDivideRemainder(&m, const_60, &m, &ctxtReal39);
   // 12-hour time
-  if((!getSystemFlag(FLAG_TDM24)) && (!sign)) {
+  if((!getSystemFlag(FLAG_TDM24)) && (!sign) && (!isTimeInterval)) {
     if(realCompareLessThan(&h, const_24)) {
       isValid12hTime = true;
       if(realCompareGreaterEqual(&h, const_12)) {
@@ -1919,7 +1919,7 @@ void dateToDisplayString(calcRegister_t regist, char *displayString) {
 
 
 void timeToDisplayString(calcRegister_t regist, char *displayString, bool ignoreTDisp) {
-  _timeToDisplayString(REGISTER_REAL34_DATA(regist), displayString, ignoreTDisp, true);
+  _timeToDisplayString(REGISTER_REAL34_DATA(regist), displayString, ignoreTDisp, getRegisterAngularMode(regist) == amTmItvl);
 }
 
 

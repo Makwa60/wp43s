@@ -352,7 +352,7 @@ void divTimeLonI(void) {
   real_t y, x;
 
   convertLongIntegerRegisterToReal(REGISTER_X, &x, &ctxtReal39);
-  reallocateRegister(REGISTER_X, dtTime, REAL34_SIZE_IN_BYTES, amNone);
+  reallocateRegister(REGISTER_X, dtTime, REAL34_SIZE_IN_BYTES, amTmItvl);
 
   if(realIsZero(&x)) {
     if(real34IsZero(REGISTER_REAL34_DATA(REGISTER_Y))) {
@@ -396,7 +396,7 @@ void divTimeShoI(void) {
   real_t y, x;
 
   convertShortIntegerRegisterToReal(REGISTER_X, &x, &ctxtReal39);
-  reallocateRegister(REGISTER_X, dtTime, REAL34_SIZE_IN_BYTES, amNone);
+  reallocateRegister(REGISTER_X, dtTime, REAL34_SIZE_IN_BYTES, amTmItvl);
 
   if(realIsZero(&x)) {
     if(real34IsZero(REGISTER_REAL34_DATA(REGISTER_Y))) {
@@ -439,7 +439,7 @@ void divShoITime(void) {
 void divTimeReal(void) {
   if(real34IsZero(REGISTER_REAL34_DATA(REGISTER_Y)) && real34IsZero(REGISTER_REAL34_DATA(REGISTER_X))) {
     if(getSystemFlag(FLAG_SPCRES)) {
-      reallocateRegister(REGISTER_X, dtTime, REAL34_SIZE_IN_BYTES, amNone);
+      reallocateRegister(REGISTER_X, dtTime, REAL34_SIZE_IN_BYTES, amTmItvl);
       convertRealToReal34ResultRegister(const_NaN, REGISTER_X);
     }
     else {

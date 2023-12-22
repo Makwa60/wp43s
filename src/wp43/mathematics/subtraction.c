@@ -108,6 +108,7 @@ void subLonILonI(void) {
 void subLonITime(void) {
   convertLongIntegerRegisterToTimeRegister(REGISTER_Y, REGISTER_Y);
   real34Subtract(REGISTER_REAL34_DATA(REGISTER_Y), REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X));
+  setRegisterAngularMode(REGISTER_X, amTmItvl);
 }
 
 
@@ -303,6 +304,12 @@ void subCplxLonI(void) {
  ***********************************************/
 void subTimeTime(void) {
   real34Subtract(REGISTER_REAL34_DATA(REGISTER_Y), REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X));
+  if(getRegisterAngularMode(REGISTER_Y) == amNone && getRegisterAngularMode(REGISTER_X) == amTmItvl) {
+    setRegisterAngularMode(REGISTER_X, amNone);
+  }
+  else {
+    setRegisterAngularMode(REGISTER_X, amTmItvl);
+  }
 }
 
 
@@ -339,6 +346,7 @@ void subRealTime(void) {
   if(yAngularMode == amNone) {
     convertReal34RegisterToTimeRegister(REGISTER_Y, REGISTER_Y);
     real34Subtract(REGISTER_REAL34_DATA(REGISTER_Y), REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X));
+    setRegisterAngularMode(REGISTER_X, amTmItvl);
   }
   else {
     subError();

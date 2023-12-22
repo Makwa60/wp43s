@@ -155,6 +155,7 @@ void addLonITime(void) {
 void addTimeLonI(void) {
   convertLongIntegerRegisterToTimeRegister(REGISTER_X, REGISTER_X);
   real34Add(REGISTER_REAL34_DATA(REGISTER_Y), REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X));
+  setRegisterAngularMode(REGISTER_X, getRegisterAngularMode(REGISTER_Y));
 }
 
 
@@ -292,7 +293,15 @@ void addCplxLonI(void) {
 
 
 void addTimeTime(void) {
+  bool timeInterval = true;
+  if(getRegisterAngularMode(REGISTER_Y) == amNone) {
+    timeInterval = !timeInterval;
+  }
+  if(getRegisterAngularMode(REGISTER_X) == amNone) {
+    timeInterval = !timeInterval;
+  }
   real34Add(REGISTER_REAL34_DATA(REGISTER_Y), REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X));
+  setRegisterAngularMode(REGISTER_X, timeInterval ? amTmItvl : amNone);
 }
 
 
@@ -305,6 +314,7 @@ void addTimeReal(void) {
   if(xAngularMode == amNone) {
     convertReal34RegisterToTimeRegister(REGISTER_X, REGISTER_X);
     real34Add(REGISTER_REAL34_DATA(REGISTER_Y), REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X));
+    setRegisterAngularMode(REGISTER_X, getRegisterAngularMode(REGISTER_Y));
   }
   else {
     addError();
