@@ -83,6 +83,13 @@ void addCplxStri(void);
 void addCplxShoI(void);
 void addCplxReal(void);
 void addCplxCplx(void);
+#if ENABLE_DATE_TYPE_WITH_TIME != 0
+  void addDateTime(void);
+  void addTimeDate(void);
+#else // ENABLE_DATE_TYPE_WITH_TIME != 0
+  #define addDateTime addError
+  #define addTimeDate addError
+#endif // ENABLE_DATE_TYPE_WITH_TIME != 0
 
 TO_QSPI void (* const addition[NUMBER_OF_DATA_TYPES_FOR_CALCULATIONS][NUMBER_OF_DATA_TYPES_FOR_CALCULATIONS])(void) = {
 // regX |    regY ==>   1            2            3            4            5            6            7            8            9             10
@@ -90,8 +97,8 @@ TO_QSPI void (* const addition[NUMBER_OF_DATA_TYPES_FOR_CALCULATIONS][NUMBER_OF_
 /*  1 Long integer  */ {addLonILonI, addRealLonI, addCplxLonI, addTimeLonI, addDateLonI, addStriLonI, addRemaLonI, addCxmaLonI, addShoILonI,  addError},
 /*  2 Real34        */ {addLonIReal, addRealReal, addCplxReal, addTimeReal, addDateReal, addStriReal, addRemaReal, addCxmaReal, addShoIReal,  addError},
 /*  3 Complex34     */ {addLonICplx, addRealCplx, addCplxCplx, addError,    addError,    addStriCplx, addRemaCplx, addCxmaCplx, addShoICplx,  addError},
-/*  4 Time          */ {addLonITime, addRealTime, addError,    addTimeTime, addError,    addStriTime, addError,    addError,    addError,     addError},
-/*  5 Date          */ {addLonIDate, addRealDate, addError,    addError,    addError,    addStriDate, addError,    addError,    addError,     addError},
+/*  4 Time          */ {addLonITime, addRealTime, addError,    addTimeTime, addDateTime, addStriTime, addError,    addError,    addError,     addError},
+/*  5 Date          */ {addLonIDate, addRealDate, addError,    addDateTime, addError,    addStriDate, addError,    addError,    addError,     addError},
 /*  6 String        */ {addLonIStri, addRealStri, addCplxStri, addTimeStri, addDateStri, addStriStri, addRemaStri, addCxmaStri, addShoIStri,  addError},
 /*  7 Real34 mat    */ {addLonIRema, addRealRema, addCplxRema, addError,    addError,    addStriRema, addRemaRema, addCxmaRema, addShoIRema,  addError},
 /*  8 Complex34 mat */ {addLonICxma, addRealCxma, addCplxCxma, addError,    addError,    addStriCxma, addRemaCxma, addCxmaCxma, addShoICxma,  addError},
@@ -148,6 +155,7 @@ void addLonITime(void) {
 void addTimeLonI(void) {
   convertLongIntegerRegisterToTimeRegister(REGISTER_X, REGISTER_X);
   real34Add(REGISTER_REAL34_DATA(REGISTER_Y), REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X));
+  setRegisterAngularMode(REGISTER_X, getRegisterAngularMode(REGISTER_Y));
 }
 
 
@@ -285,7 +293,15 @@ void addCplxLonI(void) {
 
 
 void addTimeTime(void) {
+  bool timeInterval = true;
+  if(getRegisterAngularMode(REGISTER_Y) == amNone) {
+    timeInterval = !timeInterval;
+  }
+  if(getRegisterAngularMode(REGISTER_X) == amNone) {
+    timeInterval = !timeInterval;
+  }
   real34Add(REGISTER_REAL34_DATA(REGISTER_Y), REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X));
+  setRegisterAngularMode(REGISTER_X, timeInterval ? amTmItvl : amNone);
 }
 
 
@@ -298,6 +314,7 @@ void addTimeReal(void) {
   if(xAngularMode == amNone) {
     convertReal34RegisterToTimeRegister(REGISTER_X, REGISTER_X);
     real34Add(REGISTER_REAL34_DATA(REGISTER_Y), REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X));
+    setRegisterAngularMode(REGISTER_X, getRegisterAngularMode(REGISTER_Y));
   }
   else {
     addError();
@@ -329,7 +346,9 @@ void addDateReal(void) {
   xAngularMode = getRegisterAngularMode(REGISTER_X);
 
   if(xAngularMode == amNone) {
-    real34ToIntegralValue(REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X), roundingModeTable[roundingMode]);
+    #if ENABLE_DATE_TYPE_WITH_TIME == 0
+      real34ToIntegralValue(REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X), roundingModeTable[roundingMode]);
+    #endif // ENABLE_DATE_TYPE_WITH_TIME == 0
     real34Multiply(REGISTER_REAL34_DATA(REGISTER_X), const34_86400, &val);
     reallocateRegister(REGISTER_X, dtDate, REAL34_SIZE_IN_BYTES, amNone);
     real34Add(REGISTER_REAL34_DATA(REGISTER_Y), &val, REGISTER_REAL34_DATA(REGISTER_X));
@@ -348,7 +367,9 @@ void addRealDate(void) {
   yAngularMode = getRegisterAngularMode(REGISTER_Y);
 
   if(yAngularMode == amNone) {
-    real34ToIntegralValue(REGISTER_REAL34_DATA(REGISTER_Y), REGISTER_REAL34_DATA(REGISTER_Y), roundingModeTable[roundingMode]);
+    #if ENABLE_DATE_TYPE_WITH_TIME == 0
+      real34ToIntegralValue(REGISTER_REAL34_DATA(REGISTER_Y), REGISTER_REAL34_DATA(REGISTER_Y), roundingModeTable[roundingMode]);
+    #endif // ENABLE_DATE_TYPE_WITH_TIME == 0
     real34Multiply(REGISTER_REAL34_DATA(REGISTER_Y), const34_86400, &val);
     real34Add(&val, REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X));
   }
@@ -356,6 +377,24 @@ void addRealDate(void) {
     addError();
   }
 }
+
+
+
+#if ENABLE_DATE_TYPE_WITH_TIME != 0
+  void addDateTime(void) {
+    real34_t val;
+
+    real34Copy(REGISTER_REAL34_DATA(REGISTER_X), &val);
+    reallocateRegister(REGISTER_X, dtDate, REAL34_SIZE_IN_BYTES, amNone);
+    real34Add(REGISTER_REAL34_DATA(REGISTER_Y), &val, REGISTER_REAL34_DATA(REGISTER_X));
+  }
+
+
+
+  void addTimeDate(void) {
+    real34Add(REGISTER_REAL34_DATA(REGISTER_Y), REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X));
+  }
+#endif // ENABLE_DATE_TYPE_WITH_TIME != 0
 
 
 

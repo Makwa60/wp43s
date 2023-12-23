@@ -30,6 +30,7 @@
 
   // Duration
   void fnCvtYearS     (uint16_t multiplyDivide);
+  void fnCvtDayS      (uint16_t multiplyDivide);
 
   // Energy
   void fnCvtCalJ      (uint16_t multiplyDivide);

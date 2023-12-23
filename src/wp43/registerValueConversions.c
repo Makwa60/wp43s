@@ -452,6 +452,9 @@ void convertDateRegisterToReal34Register(calcRegister_t source, calcRegister_t d
 
 void convertReal34RegisterToDateRegister(calcRegister_t source, calcRegister_t destination) {
   real34_t part1, part2, part3;
+  #if ENABLE_DATE_TYPE_WITH_TIME != 0
+    real34_t part4, part5, part6;
+  #endif // ENABLE_DATE_TYPE_WITH_TIME != 0
   bool     isNegative;
 
   isNegative = real34IsNegative(REGISTER_REAL34_DATA(source));
@@ -464,7 +467,24 @@ void convertReal34RegisterToDateRegister(calcRegister_t source, calcRegister_t d
   real34ToIntegralValue(&part2, &part2, DEC_ROUND_DOWN);
   real34Subtract(&part3, &part2, &part3);
   real34Multiply(&part3, getSystemFlag(FLAG_YMD) ? const34_100 : const34_10000, &part3);
-  real34ToIntegralValue(&part3, &part3, DEC_ROUND_DOWN);
+  #if ENABLE_DATE_TYPE_WITH_TIME == 0
+    real34ToIntegralValue(&part3, &part3, DEC_ROUND_DOWN);
+  #else // ENABLE_DATE_TYPE_WITH_TIME == 0
+    real34Copy(&part3, &part4);
+    real34ToIntegralValue(&part3, &part3, DEC_ROUND_DOWN);
+    real34Subtract(&part4, &part3, &part4);
+    real34Multiply(&part4, const34_100, &part4);
+
+    real34Copy(&part4, &part5);
+    real34ToIntegralValue(&part4, &part4, DEC_ROUND_DOWN);
+    real34Subtract(&part5, &part4, &part5);
+    real34Multiply(&part5, const34_100, &part5);
+
+    real34Copy(&part5, &part6);
+    real34ToIntegralValue(&part5, &part5, DEC_ROUND_DOWN);
+    real34Subtract(&part6, &part5, &part6);
+    real34Multiply(&part6, const34_100, &part6);
+  #endif // ENABLE_DATE_TYPE_WITH_TIME == 0
 
   if(isNegative) {
     if(getSystemFlag(FLAG_YMD)) {
@@ -494,8 +514,13 @@ void convertReal34RegisterToDateRegister(calcRegister_t source, calcRegister_t d
     composeJulianDay(&part3, &part2, &part1, REGISTER_REAL34_DATA(destination));
   }
 
-  real34Multiply(REGISTER_REAL34_DATA(destination), const34_86400, REGISTER_REAL34_DATA(destination));
-  real34Add(REGISTER_REAL34_DATA(destination), const34_43200, REGISTER_REAL34_DATA(destination));
+  real34FMA(REGISTER_REAL34_DATA(destination), const34_86400, const34_43200, REGISTER_REAL34_DATA(destination));
+
+  #if ENABLE_DATE_TYPE_WITH_TIME != 0
+    real34FMA(&part4, const34_3600, REGISTER_REAL34_DATA(destination), REGISTER_REAL34_DATA(destination));
+    real34FMA(&part5, const34_60, REGISTER_REAL34_DATA(destination), REGISTER_REAL34_DATA(destination));
+    real34Add(REGISTER_REAL34_DATA(destination), &part6, REGISTER_REAL34_DATA(destination));
+  #endif // ENABLE_DATE_TYPE_WITH_TIME != 0
 }
 
 

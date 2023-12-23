@@ -168,6 +168,7 @@ void mulLonITime(void) {
 
   realMultiply(&y, &x, &x, &ctxtReal39);
   realToReal34(&x, REGISTER_REAL34_DATA(REGISTER_X));
+  setRegisterAngularMode(REGISTER_X, amTmItvl);
 }
 
 
@@ -183,7 +184,7 @@ void mulTimeLonI(void) {
 
   real34ToReal(REGISTER_REAL34_DATA(REGISTER_Y), &y);
   convertLongIntegerRegisterToReal(REGISTER_X, &x, &ctxtReal39);
-  reallocateRegister(REGISTER_X, dtTime, REAL34_SIZE_IN_BYTES, amNone);
+  reallocateRegister(REGISTER_X, dtTime, REAL34_SIZE_IN_BYTES, amTmItvl);
 
   realMultiply(&y, &x, &x, &ctxtReal39);
   realToReal34(&x, REGISTER_REAL34_DATA(REGISTER_X));
@@ -430,7 +431,7 @@ void mulTimeShoI(void) {
 
   real34ToReal(REGISTER_REAL34_DATA(REGISTER_Y), &y);
   convertShortIntegerRegisterToReal(REGISTER_X, &x, &ctxtReal39);
-  reallocateRegister(REGISTER_X, dtTime, REAL34_SIZE_IN_BYTES, amNone);
+  reallocateRegister(REGISTER_X, dtTime, REAL34_SIZE_IN_BYTES, amTmItvl);
 
   realMultiply(&y, &x, &x, &ctxtReal39);
   realToReal34(&x, REGISTER_REAL34_DATA(REGISTER_X));
@@ -452,6 +453,7 @@ void mulShoITime(void) {
 
   realMultiply(&y, &x, &x, &ctxtReal39);
   realToReal34(&x, REGISTER_REAL34_DATA(REGISTER_X));
+  setRegisterAngularMode(REGISTER_X, amTmItvl);
 }
 
 
@@ -470,7 +472,7 @@ void mulTimeReal(void) {
 
   if(xAngularMode == amNone) {
     real34Copy(REGISTER_REAL34_DATA(REGISTER_X), &b);
-    reallocateRegister(REGISTER_X, dtTime, REAL34_SIZE_IN_BYTES, amNone);
+    reallocateRegister(REGISTER_X, dtTime, REAL34_SIZE_IN_BYTES, amTmItvl);
     real34Multiply(REGISTER_REAL34_DATA(REGISTER_Y), &b, REGISTER_REAL34_DATA(REGISTER_X));
   }
   else {
@@ -493,6 +495,7 @@ void mulRealTime(void) {
 
   if(yAngularMode == amNone) {
     real34Multiply(REGISTER_REAL34_DATA(REGISTER_Y), REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X));
+    setRegisterAngularMode(REGISTER_X, amTmItvl);
   }
   else {
     mulError();

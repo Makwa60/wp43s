@@ -1676,37 +1676,7 @@ void longIntegerToAllocatedString(const longInteger_t lgInt, char *str, int32_t 
 
 
 
-void dateToDisplayString(calcRegister_t regist, char *displayString) {
-  real34_t j, y, yy, m, d;
-  uint64_t yearval64;
-  char sign[] = {0, 0};
-
-  internalDateToJulianDay(REGISTER_REAL34_DATA(regist), &j);
-  decomposeJulianDay(&j, &y, &m, &d);
-  if(real34IsNegative(&y)) {
-    sign[0] = '-';
-  }
-  real34CopyAbs(&y, &y);
-  real34CopyAbs(&y, &yy);
-  real34DivideRemainder(&y, const34_2p32, &y);
-  real34Divide(&yy, const34_2p32, &yy);
-  real34ToIntegralValue(&yy, &yy, DEC_ROUND_DOWN);
-  yearval64 = (((uint64_t)real34ToUInt32(&yy) << 32) | ((uint64_t)real34ToUInt32(&y)));
-
-  if(getSystemFlag(FLAG_DMY)) {
-    sprintf(displayString, "%02" PRIu32 ".%02" PRIu32 ".%s%04" PRIu64, real34ToUInt32(&d), real34ToUInt32(&m), sign, yearval64);
-  }
-  else if(getSystemFlag(FLAG_MDY)) {
-    sprintf(displayString, "%02" PRIu32 "/%02" PRIu32 "/%s%04" PRIu64, real34ToUInt32(&m), real34ToUInt32(&d), sign, yearval64);
-  }
-  else { // YMD
-    sprintf(displayString, "%s%04" PRIu64 "-%02" PRIu32 "-%02" PRIu32, sign, yearval64, real34ToUInt32(&m), real34ToUInt32(&d));
-  }
-}
-
-
-
-void timeToDisplayString(calcRegister_t regist, char *displayString, bool ignoreTDisp) {
+static void _timeToDisplayString(const real34_t *source, char *displayString, bool ignoreTDisp, bool isTimeInterval) {
   real_t         real, value, tmp, h, m, s;
   longInteger_t  hli;
   int32_t        sign, i;
@@ -1716,7 +1686,7 @@ void timeToDisplayString(calcRegister_t regist, char *displayString, bool ignore
   bool           isValid12hTime = false, isAfternoon = false, overflow;
   uint8_t        savedDisplayFormat = displayFormat, savedDisplayFormatDigits = displayFormatDigits;
 
-  real34ToReal(REGISTER_REAL34_DATA(regist), &real);
+  real34ToReal(source, &real);
   sign = realIsNegative(&real);
 
   // Short time (displayed like SCI/ENG)
@@ -1742,7 +1712,7 @@ void timeToDisplayString(calcRegister_t regist, char *displayString, bool ignore
   else {
     realZero(&tmp);
   }
-  if(!realIsZero(&real) && (realCompareAbsLessThan(&real, &value) || (ignoreTDisp && (!realIsZero(&tmp))))) {
+  if(isTimeInterval && !realIsZero(&real) && (realCompareAbsLessThan(&real, &value) || (ignoreTDisp && (!realIsZero(&tmp))))) {
     if(ignoreTDisp || (timeDisplayFormatDigits == 0)) {
       displayFormat = dfAll;
       displayFormatDigits = 0;
@@ -1751,7 +1721,7 @@ void timeToDisplayString(calcRegister_t regist, char *displayString, bool ignore
       displayFormat = getSystemFlag(FLAG_ALLENG) ? dfEng : dfSci;
       displayFormatDigits = 3;
     }
-    real34ToDisplayString(REGISTER_REAL34_DATA(regist), amSecond, displayString, &standardFont, 2000, ignoreTDisp ? 34 : 16, false, STD_SPACE_4_PER_EM, false);
+    real34ToDisplayString(source, amSecond, displayString, &standardFont, 2000, ignoreTDisp ? 34 : 16, false, STD_SPACE_4_PER_EM, false);
     displayFormatDigits = savedDisplayFormatDigits;
     displayFormat = savedDisplayFormat;
     return;
@@ -1769,7 +1739,7 @@ void timeToDisplayString(calcRegister_t regist, char *displayString, bool ignore
     switch(timeDisplayFormatDigits) {
       case 0: {
         realCopy(const_86400, &value);
-        if((!sign) && (!getSystemFlag(FLAG_TDM24)) && realCompareLessThan(&real, &value)) {
+        if((!sign) && (!getSystemFlag(FLAG_TDM24)) && realCompareLessThan(&real, &value) && !isTimeInterval) {
           isValid12hTime = true;
         }
         for(bDigits = 0; bDigits < (isValid12hTime ? 14 : 16); ++bDigits) {
@@ -1815,7 +1785,7 @@ void timeToDisplayString(calcRegister_t regist, char *displayString, bool ignore
   realDivideRemainder(&s, const_60, &s, &ctxtReal39);
   realDivideRemainder(&m, const_60, &m, &ctxtReal39);
   // 12-hour time
-  if((!getSystemFlag(FLAG_TDM24)) && (!sign)) {
+  if((!getSystemFlag(FLAG_TDM24)) && (!sign) && (!isTimeInterval)) {
     if(realCompareLessThan(&h, const_24)) {
       isValid12hTime = true;
       if(realCompareGreaterEqual(&h, const_12)) {
@@ -1904,6 +1874,52 @@ void timeToDisplayString(calcRegister_t regist, char *displayString, bool ignore
   else if(isValid12hTime) {
     strcat(displayString, "a.m.");
   }
+}
+
+
+
+void dateToDisplayString(calcRegister_t regist, char *displayString) {
+  real34_t j, y, yy, m, d;
+  #if ENABLE_DATE_TYPE_WITH_TIME != 0
+    real34_t t;
+  #endif // ENABLE_DATE_TYPE_WITH_TIME != 0
+  uint64_t yearval64;
+  char sign[] = {0, 0};
+
+  internalDateToJulianDay(REGISTER_REAL34_DATA(regist), &j);
+  #if ENABLE_DATE_TYPE_WITH_TIME != 0
+    internalDateToTime(REGISTER_REAL34_DATA(regist), &t);
+  #endif // ENABLE_DATE_TYPE_WITH_TIME != 0
+  decomposeJulianDay(&j, &y, &m, &d);
+  if(real34IsNegative(&y)) {
+    sign[0] = '-';
+  }
+  real34CopyAbs(&y, &y);
+  real34CopyAbs(&y, &yy);
+  real34DivideRemainder(&y, const34_2p32, &y);
+  real34Divide(&yy, const34_2p32, &yy);
+  real34ToIntegralValue(&yy, &yy, DEC_ROUND_DOWN);
+  yearval64 = (((uint64_t)real34ToUInt32(&yy) << 32) | ((uint64_t)real34ToUInt32(&y)));
+
+  if(getSystemFlag(FLAG_DMY)) {
+    sprintf(displayString, "%02" PRIu32 ".%02" PRIu32 ".%s%04" PRIu64, real34ToUInt32(&d), real34ToUInt32(&m), sign, yearval64);
+  }
+  else if(getSystemFlag(FLAG_MDY)) {
+    sprintf(displayString, "%02" PRIu32 "/%02" PRIu32 "/%s%04" PRIu64, real34ToUInt32(&m), real34ToUInt32(&d), sign, yearval64);
+  }
+  else { // YMD
+    sprintf(displayString, "%s%04" PRIu64 "-%02" PRIu32 "-%02" PRIu32, sign, yearval64, real34ToUInt32(&m), real34ToUInt32(&d));
+  }
+
+  #if ENABLE_DATE_TYPE_WITH_TIME != 0
+    _timeToDisplayString(&t, displayString + stringByteLength(displayString), false, false);
+  #endif // ENABLE_DATE_TYPE_WITH_TIME != 0
+}
+
+
+
+void timeToDisplayString(calcRegister_t regist, char *displayString, bool ignoreTDisp) {
+  _timeToDisplayString(REGISTER_REAL34_DATA(regist), displayString, ignoreTDisp, getRegisterAngularMode(regist) == amTmItvl);
 }
 
 

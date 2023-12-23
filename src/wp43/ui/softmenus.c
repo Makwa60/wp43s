@@ -301,8 +301,8 @@ TO_QSPI const int16_t menu_AngleConv[]   = { ITM_toDEG,                     ITM_
 /*      Menu name                           <----------------------------------------------------------------------------- 6 functions ---------------------------------------------------------------------------->  */
 /*                                          <---------------------------------------------------------------------- 6 f shifted functions ------------------------------------------------------------------------->  */
 /*                                          <---------------------------------------------------------------------- 6 g shifted functions ------------------------------------------------------------------------->  */
-TO_QSPI const int16_t menu_UnitConv[]    = { -MNU_CONVE,                    -MNU_CONVP,                 ITM_YEARtoS,              -MNU_CONVFP,           -MNU_CONVM,                  -MNU_CONVX,
-                                             ITM_CtoF,                      ITM_FtoC,                   ITM_StoYEAR,              ITM_NULL,              -MNU_CONVV,                  -MNU_CONVA,
+TO_QSPI const int16_t menu_UnitConv[]    = { -MNU_CONVE,                    -MNU_CONVP,                 -MNU_CONVTIME,            -MNU_CONVFP,           -MNU_CONVM,                  -MNU_CONVX,
+                                             ITM_CtoF,                      ITM_FtoC,                   ITM_NULL,                 ITM_NULL,              -MNU_CONVV,                  -MNU_CONVA,
                                              ITM_NULL,                      ITM_NULL,                   ITM_NULL,                 ITM_NULL,              ITM_NULL,                    ITM_NULL,
                                              10000+ITM_PRtoDBc,             10000+ITM_DBtoPRc,          10000+ITM_NMtoLBFFTb,     10000+ITM_LBFFTtoNMb,  10000+ITM_FRtoDBc,           10000+ITM_DBtoFRc,
                                              30000+ITM_PRtoDBb,             30000+ITM_DBtoPRb,          20000+ITM_NMtoLBFFT,      20000+ITM_LBFFTtoNM,   30000+ITM_FRtoDBb,           30000+ITM_DBtoFRb,
@@ -352,6 +352,8 @@ TO_QSPI const int16_t menu_ConvV[]       = { ITM_GLUKtoM3,                  ITM_
                                              ITM_GLUKtoL,                   ITM_LtoGLUK,                ITM_QTtoL,                ITM_LtoQT,             ITM_GLUStoL,                 ITM_LtoGLUS,
                                              10000+ITM_FZUKtoMLb,           10000+ITM_MLtoFZUKb,        ITM_NULL,                 ITM_NULL,              10000+ITM_FZUStoMLb,         10000+ITM_MLtoFZUSb,
                                              20000+ITM_FZUKtoML,            20000+ITM_MLtoFZUK,         ITM_NULL,                 ITM_NULL,              20000+ITM_FZUStoML,          20000+ITM_MLtoFZUS            };
+
+TO_QSPI const int16_t menu_ConvTime[]    = { ITM_DAYtoS,                    ITM_StoDAY,                 ITM_NULL,                 ITM_NULL,              ITM_YEARtoS,                 ITM_StoYEAR                   };
 
 TO_QSPI const int16_t menu_alphaFN[]     = { ITM_XtoALPHA,                  ITM_ALPHARL,                ITM_ALPHARR,              ITM_ALPHASL,           ITM_ALPHASR,                 ITM_ALPHAtoX,
                                              ITM_NULL,                      ITM_NULL,                   ITM_NULL,                 ITM_NULL,              ITM_ALPHALENG,               ITM_ALPHAPOS,
@@ -524,8 +526,9 @@ TO_QSPI const softmenu_t softmenu[] = {
 /* 107 */  {.menuItem = -ITM_DELITM,      .numItems = sizeof(menu_DELITM     )/sizeof(int16_t), .softkeyItem = menu_DELITM      },
 /* 108 */  {.menuItem = -MNU_CAT_AIM,     .numItems = sizeof(menu_CAT_AIM    )/sizeof(int16_t), .softkeyItem = menu_CAT_AIM     },
 /* 109 */  {.menuItem = -MNU_MENUS_AIM,   .numItems = sizeof(menu_MENUS_AIM  )/sizeof(int16_t), .softkeyItem = menu_MENUS_AIM   },
-/* 109 */  {.menuItem = -MNU_CLMY,        .numItems = sizeof(menu_CLMY       )/sizeof(int16_t), .softkeyItem = menu_CLMY        },
-/* 110 */  {.menuItem =  0,               .numItems = 0,                                        .softkeyItem = NULL             }
+/* 110 */  {.menuItem = -MNU_CLMY,        .numItems = sizeof(menu_CLMY       )/sizeof(int16_t), .softkeyItem = menu_CLMY        },
+/* 111 */  {.menuItem = -MNU_CONVTIME,    .numItems = sizeof(menu_ConvTime   )/sizeof(int16_t), .softkeyItem = menu_ConvTime    },
+/* 112 */  {.menuItem =  0,               .numItems = 0,                                        .softkeyItem = NULL             }
 };
 
 dynamicSoftmenu_t dynamicSoftmenu[NUMBER_OF_DYNAMIC_SOFTMENUS] = {
@@ -664,7 +667,8 @@ dynamicSoftmenu_t dynamicSoftmenu[NUMBER_OF_DYNAMIC_SOFTMENUS] = {
   /* 107 */    "ITM_DELITM",
   /* 108 */    "CAT_AIM",
   /* 109 */    "MENUS_AIM",
-  /* 110 */    "CLMy..."
+  /* 110 */    "CLMy...",
+  /* 111 */    "CONVTIME"
   };
 #endif // PC_BUILD
 

@@ -577,7 +577,7 @@ void getString(char *str) {
 
 
 void setParameter(char *p) {
-  char l[200], r[200], real[200], imag[200], angMod[200]; //, letter;
+  char l[200], r[400], real[200], imag[200], angMod[200]; //, letter;
   int32_t i;
   angularMode_t am = amDegree;
 
@@ -1828,6 +1828,14 @@ void checkExpectedOutParameter(char *p) {
         }
         else if(r[0] == '0' && getSystemFlag(FLAG_DMY)) {
           processError("system flag DMY should be clear but it is set!");
+        }
+      }
+      else if(!strcmp(l+3, "TDM24")) {
+        if(r[0] == '1' && !getSystemFlag(FLAG_TDM24)) {
+          processError("system flag TDM24 should be set but it is clear!");
+        }
+        else if(r[0] == '0' && getSystemFlag(FLAG_TDM24)) {
+          processError("system flag TDM24 should be clear but it is set!");
         }
       }
       else {

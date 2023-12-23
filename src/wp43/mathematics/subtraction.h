@@ -36,6 +36,11 @@
   void subDateLonI(void);
   void subDateDate(void);
   void subDateReal(void);
+  #if ENABLE_DATE_TYPE_WITH_TIME != 0
+    void subDateTime(void);
+  #else // ENABLE_DATE_TYPE_WITH_TIME != 0
+    #define subDateTime subError
+  #endif // ENABLE_DATE_TYPE_WITH_TIME != 0
 
   //      RegYRegX
   void subRemaLonI(void);

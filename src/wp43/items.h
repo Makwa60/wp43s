@@ -1920,7 +1920,11 @@
   #define ITM_CLMYPFN                   1854
   #define ITM_CLMYALPHA                 1855
 
-  #define LAST_ITEM                     1856
+  #define MNU_CONVTIME                  1856
+  #define ITM_DAYtoS                    1857
+  #define ITM_StoDAY                    1858
+
+  #define LAST_ITEM                     1859
 
   #define NOPARAM                       9876 // Item for function who don't need an item
   #define CONFIRMED                     9877 // Confirmation for RESET, CLPALL, CLALL

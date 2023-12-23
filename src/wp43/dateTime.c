@@ -81,6 +81,18 @@ void julianDayToInternalDate(const real34_t *source, real34_t *destination) {
 
 
 
+#if ENABLE_DATE_TYPE_WITH_TIME != 0
+  void internalDateToTime(const real34_t *source, real34_t *destination) {
+    real34Subtract(source, const34_43200, destination);
+    real34DivideRemainder(destination, const34_86400, destination);
+    if(real34IsNegative(destination) && !real34IsZero(destination)) { // very unlikely but in case
+      real34Add(destination, const34_86400, destination);
+    }
+  }
+#endif // ENABLE_DATE_TYPE_WITH_TIME != 0
+
+
+
 bool checkDateArgument(calcRegister_t regist, real34_t *jd) {
   #pragma GCC diagnostic push
   #pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
@@ -445,14 +457,26 @@ void fnJulianToDate(uint16_t unusedButMandatoryParameter) {
       julianDayToInternalDate(REGISTER_REAL34_DATA(REGISTER_X), &date);
       reallocateRegister(REGISTER_X, dtDate, REAL34_SIZE_IN_BYTES, amNone);
       real34Copy(&date, REGISTER_REAL34_DATA(REGISTER_X));
+      #if ENABLE_DATE_TYPE_WITH_TIME != 0
+        real34Add(REGISTER_REAL34_DATA(REGISTER_X), const34_43200, REGISTER_REAL34_DATA(REGISTER_X));
+      #endif // ENABLE_DATE_TYPE_WITH_TIME != 0
       break;
     }
 
     case dtReal34: {
+      #if ENABLE_DATE_TYPE_WITH_TIME != 0
+        real34_t tm34;
+        real34Add(REGISTER_REAL34_DATA(REGISTER_X), const34_1on2, REGISTER_REAL34_DATA(REGISTER_X));
+        modInt(REGISTER_REAL34_DATA(REGISTER_X), const34_1, &tm34);
+      #endif // ENABLE_DATE_TYPE_WITH_TIME != 0
       real34ToIntegralValue(REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X), DEC_ROUND_DOWN);
       julianDayToInternalDate(REGISTER_REAL34_DATA(REGISTER_X), &date);
       reallocateRegister(REGISTER_X, dtDate, REAL34_SIZE_IN_BYTES, amNone);
       real34Copy(&date, REGISTER_REAL34_DATA(REGISTER_X));
+      #if ENABLE_DATE_TYPE_WITH_TIME != 0
+        real34Multiply(&tm34, const34_86400, &tm34);
+        real34Add(REGISTER_REAL34_DATA(REGISTER_X), &tm34, REGISTER_REAL34_DATA(REGISTER_X));
+      #endif // ENABLE_DATE_TYPE_WITH_TIME != 0
       break;
     }
 
@@ -474,13 +498,32 @@ void fnJulianToDate(uint16_t unusedButMandatoryParameter) {
 
 void fnDateToJulian(uint16_t unusedButMandatoryParameter) {
   real34_t jd34;
+  #if ENABLE_DATE_TYPE_WITH_TIME != 0
+    real34_t tm34;
+  #endif // ENABLE_DATE_TYPE_WITH_TIME != 0
 
   if(!saveLastX()) {
     return;
   }
 
   if(checkDateArgument(REGISTER_X, &jd34)) {
-    convertReal34ToLongIntegerRegister(&jd34, REGISTER_X, DEC_ROUND_FLOOR);
+    #if ENABLE_DATE_TYPE_WITH_TIME != 0
+      if(getRegisterDataType(REGISTER_X) == dtDate) {
+        internalDateToTime(REGISTER_REAL34_DATA(REGISTER_X), &tm34);
+      }
+      else { // dtReal34
+        real34Multiply(REGISTER_REAL34_DATA(REGISTER_X), getSystemFlag(FLAG_YMD) ? const34_10000 : const34_1e6, &tm34);
+        modInt(&tm34, const34_1, &tm34);
+        real34Multiply(&tm34, const34_100, &tm34);
+        hmmssToSeconds(&tm34, &tm34);
+      }
+      real34Subtract(&tm34, const34_43200, &tm34);
+      real34Divide(&tm34, const34_86400, &tm34);
+      reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
+      real34Add(&jd34, &tm34, REGISTER_REAL34_DATA(REGISTER_X));
+    #else // ENABLE_DATE_TYPE_WITH_TIME != 0
+      convertReal34ToLongIntegerRegister(&jd34, REGISTER_X, DEC_ROUND_FLOOR);
+    #endif // ENABLE_DATE_TYPE_WITH_TIME != 0
   }
 }
 
@@ -798,6 +841,9 @@ void fnToHms(uint16_t unusedButMandatoryParameter) {
 void fnDate(uint16_t unusedButMandatoryParameter) {
   real34_t y, m, d, j;
   dateInfo_t dateInfo;
+  #if ENABLE_DATE_TYPE_WITH_TIME != 0
+    timeInfo_t timeInfo;
+  #endif // ENABLE_DATE_TYPE_WITH_TIME != 0
 
   timeGetDateInfo(&dateInfo);
   uInt32ToReal34(dateInfo.year,  &y);
@@ -809,6 +855,12 @@ void fnDate(uint16_t unusedButMandatoryParameter) {
   reallocateRegister(REGISTER_X, dtDate, REAL34_SIZE_IN_BYTES, amNone);
   julianDayToInternalDate(&j, REGISTER_REAL34_DATA(REGISTER_X));
   temporaryInformation = TI_DAY_OF_WEEK;
+
+  #if ENABLE_DATE_TYPE_WITH_TIME != 0
+    timeGetTimeInfo(&timeInfo);
+    uInt32ToReal34((uint32_t)timeInfo.hour * 3600u + (uint32_t)timeInfo.min * 60u + (uint32_t)timeInfo.sec, &m);
+    real34Add(REGISTER_REAL34_DATA(REGISTER_X), &m, REGISTER_REAL34_DATA(REGISTER_X));
+  #endif // ENABLE_DATE_TYPE_WITH_TIME != 0
 }
 
 

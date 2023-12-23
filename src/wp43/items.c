@@ -495,6 +495,7 @@ void fnNop(uint16_t unusedButMandatoryParameter) {
   void fnCvtRadToDeg               (uint16_t unusedButMandatoryParameter) {}
   void fnCvtFromCurrentAngularMode (uint16_t unusedButMandatoryParameter) {}
   void fnCvtYearS                  (uint16_t unusedButMandatoryParameter) {}
+  void fnCvtDayS                   (uint16_t unusedButMandatoryParameter) {}
   void fnCvtCaratG                 (uint16_t unusedButMandatoryParameter) {}
   void fnCvtCaratKg                (uint16_t unusedButMandatoryParameter) {}
   void fnCvtJinKg                  (uint16_t unusedButMandatoryParameter) {}
@@ -2779,5 +2780,9 @@ TO_QSPI const item_t indexOfItems[] = {
 /* 1854 */  { fnClearMyPFN,                 NOPARAM,                     "CLMyP",                                       "CLMyP",                                       (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABL_XEQ | EIM_DISABLED | PTP_DISABLED     },
 /* 1855 */  { fnClearMyAlpha,               NOPARAM,                     "CLMy" STD_alpha,                              "CLMy" STD_alpha,                              (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABL_XEQ | EIM_DISABLED | PTP_DISABLED     },
 
-/* 1856 */  { itemToBeCoded,                NOPARAM,                     "",                                            "Last item",                                   (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_ENABLED   | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     }
+/* 1856 */  { itemToBeCoded,                NOPARAM,                     "Time:",                                       "Time:",                                       (0 << TAM_MAX_BITS) |     0, CAT_MENU | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
+/* 1857 */  { fnCvtDayS,                    multiply,                    "day" STD_RIGHT_ARROW "s",                     "day" STD_RIGHT_ARROW "s",                     (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/* 1858 */  { fnCvtDayS,                    divide,                      "s" STD_RIGHT_ARROW "day",                     "s" STD_RIGHT_ARROW "day",                     (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+
+/* 1859 */  { itemToBeCoded,                NOPARAM,                     "",                                            "Last item",                                   (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_ENABLED   | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     }
 };
