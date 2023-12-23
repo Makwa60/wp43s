@@ -320,7 +320,11 @@
           const char *addChar = item == ITM_PAIR_OF_PARENTHESES ? "()" :
                                 item == ITM_VERTICAL_BAR        ? "||" :
                                 item == ITM_ROOT_SIGN           ? STD_SQUARE_ROOT "()" :
+          #if USE_ITALIC_CONSTANT != 0
+                                item == ITM_ALOG_SYMBOL         ? STD_EULER_e "^()" :
+          #else /* USE_ITALIC_CONSTANT != 0 */
                                 item == ITM_ALOG_SYMBOL         ? "e" STD_SUB_E "^()" :
+          #endif /* USE_ITALIC_CONSTANT != 0 */
                                 indexOfItems[item].itemSoftmenuName;
           char *aimCursorPos = aimBuffer;
           char *aimBottomPos = aimBuffer + stringByteLength(aimBuffer);
@@ -334,7 +338,11 @@
           xcopy(aimCursorPos, addChar, itemLen);
           switch(item) {
             case ITM_ALOG_SYMBOL: {
-              equationEditorCursor += 4;
+              #if USE_ITALIC_CONSTANT != 0
+                equationEditorCursor += 3;
+              #else /* USE_ITALIC_CONSTANT != 0 */
+                equationEditorCursor += 4;
+              #endif /* USE_ITALIC_CONSTANT != 0 */
               break;
             }
             case ITM_ROOT_SIGN: {
