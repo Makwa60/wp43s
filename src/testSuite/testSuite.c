@@ -577,7 +577,7 @@ void getString(char *str) {
 
 
 void setParameter(char *p) {
-  char l[200], r[200], real[200], imag[200], angMod[200]; //, letter;
+  char l[200], r[400], real[200], imag[200], angMod[200]; //, letter;
   int32_t i;
   angularMode_t am = amDegree;
 
