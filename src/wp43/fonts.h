@@ -410,6 +410,8 @@
   #define STD_RATIONAL_Q                "\xa1\x1a"
   #define STD_REAL_R                    "\xa1\x1d"
   #define STD_INTEGER_Z                 "\xa1\x24"
+  #define STD_EULER_e                   "\xa1\x47"
+  #define STD_IMAGINARY_i               "\xa1\x48"
   #define STD_SUP_0                     "\xa1\x60"
   #define STD_SUP_1                     "\xa1\x61"
   #define STD_SUP_2                     "\xa1\x62"
