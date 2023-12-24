@@ -89,7 +89,7 @@
 
   void shortIntegerToDisplayString       (calcRegister_t regist, char *displayString, bool determineFont);
   void longIntegerRegisterToDisplayString(calcRegister_t regist, char *displayString, int32_t strLg, int16_t maxWidth, int16_t maxExp, const char *separator);
-  void dateToDisplayString               (calcRegister_t regist, char *displayString);
+  void dateToDisplayString               (calcRegister_t regist, char *displayString, bool ignoreTDisp);
   void timeToDisplayString               (calcRegister_t regist, char *displayString, bool ignoreTDisp);
   void real34MatrixToDisplayString       (calcRegister_t regist, char *displayString);
   void complex34MatrixToDisplayString    (calcRegister_t regist, char *displayString);

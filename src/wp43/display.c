@@ -1878,13 +1878,16 @@ static void _timeToDisplayString(const real34_t *source, char *displayString, bo
 
 
 
-void dateToDisplayString(calcRegister_t regist, char *displayString) {
+void dateToDisplayString(calcRegister_t regist, char *displayString, bool ignoreTDisp) {
   real34_t j, y, yy, m, d;
   #if ENABLE_DATE_TYPE_WITH_TIME != 0
     real34_t t;
   #endif // ENABLE_DATE_TYPE_WITH_TIME != 0
   uint64_t yearval64;
   char sign[] = {0, 0};
+  #if ENABLE_DATE_TYPE_WITH_TIME != 0
+    const uint8_t savedTimeDisplayFormatDigits = timeDisplayFormatDigits;
+  #endif // ENABLE_DATE_TYPE_WITH_TIME != 0
 
   internalDateToJulianDay(REGISTER_REAL34_DATA(regist), &j);
   #if ENABLE_DATE_TYPE_WITH_TIME != 0
@@ -1912,7 +1915,11 @@ void dateToDisplayString(calcRegister_t regist, char *displayString) {
   }
 
   #if ENABLE_DATE_TYPE_WITH_TIME != 0
-    _timeToDisplayString(&t, displayString + stringByteLength(displayString), false, false);
+    if(timeDisplayFormatDigits == 0 || timeDisplayFormatDigits >= 3) {
+      timeDisplayFormatDigits = 3;
+    }
+    _timeToDisplayString(&t, displayString + stringByteLength(displayString), ignoreTDisp, false);
+    timeDisplayFormatDigits = savedTimeDisplayFormatDigits;
   #endif // ENABLE_DATE_TYPE_WITH_TIME != 0
 }
 
@@ -2056,7 +2063,7 @@ void fnShow(uint16_t unusedButMandatoryParameter) {
     }
 
     case dtDate: {
-      dateToDisplayString(REGISTER_X, tmpString);
+      dateToDisplayString(REGISTER_X, tmpString, true);
       break;
     }
 

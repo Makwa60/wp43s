@@ -472,14 +472,14 @@ void addTimeStri(void) {
 
 
 void addStriDate(void) {
-  dateToDisplayString(REGISTER_X, tmpString);
+  dateToDisplayString(REGISTER_X, tmpString, false);
   _addString(tmpString);
 }
 
 
 
 void addDateStri(void) {
-  dateToDisplayString(REGISTER_Y, tmpString);
+  dateToDisplayString(REGISTER_Y, tmpString, false);
   _addPrecedingString(tmpString);
 }
 

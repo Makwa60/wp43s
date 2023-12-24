@@ -420,8 +420,14 @@ void convertLongIntegerRegisterToTimeRegister(calcRegister_t source, calcRegiste
 
 void convertDateRegisterToReal34Register(calcRegister_t source, calcRegister_t destination) {
   real34_t y, m, d, j;
+  #if ENABLE_DATE_TYPE_WITH_TIME != 0
+    real34_t t, h, mn, s;
+  #endif // ENABLE_DATE_TYPE_WITH_TIME != 0
   bool     isNegative;
 
+  #if ENABLE_DATE_TYPE_WITH_TIME != 0
+    internalDateToTime(REGISTER_REAL34_DATA(source), &t);
+  #endif // ENABLE_DATE_TYPE_WITH_TIME != 0
   internalDateToJulianDay(REGISTER_REAL34_DATA(source), &j);
   decomposeJulianDay(&j, &y, &m, &d);
   isNegative = real34IsNegative(&y);
@@ -443,6 +449,16 @@ void convertDateRegisterToReal34Register(calcRegister_t source, calcRegister_t d
   reallocateRegister(destination, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
   real34Add(&y, &m, REGISTER_REAL34_DATA(destination));
   real34Add(REGISTER_REAL34_DATA(destination), &d, REGISTER_REAL34_DATA(destination));
+
+  #if ENABLE_DATE_TYPE_WITH_TIME != 0
+    real34Divide(&t, const34_3600, &h ); real34ToIntegralValue(&h,  &h,  DEC_ROUND_DOWN); real34Multiply(&h,  const34_3600, &mn); real34Subtract(&t, &mn, &t);
+    real34Divide(&t, const34_60,   &mn); real34ToIntegralValue(&mn, &mn, DEC_ROUND_DOWN); real34Multiply(&mn, const34_60,   &s ); real34Subtract(&t, &s,  &s);
+    real34FMA(&h, const34_100, &mn, &t); real34FMA(&t, const34_100, &s, &t);
+    real34Multiply(&t, const34_1e_6, &t);
+    real34Multiply(&t, getSystemFlag(FLAG_YMD) ? const34_1e_4 : const34_1e_6, &t);
+    real34Add(REGISTER_REAL34_DATA(destination), &t, REGISTER_REAL34_DATA(destination));
+  #endif // ENABLE_DATE_TYPE_WITH_TIME != 0
+
   if(isNegative) {
     real34SetNegativeSign(REGISTER_REAL34_DATA(destination));
   }
