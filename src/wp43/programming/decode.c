@@ -602,7 +602,7 @@ static void decodeLiteral(uint8_t *literalAddress) {
       reallocateRegister(TEMP_REGISTER_1, dtDate, REAL34_SIZE_IN_BYTES, amNone);
       stringToReal34(tmpStringLabelOrVariableName, REGISTER_REAL34_DATA(TEMP_REGISTER_1));
       julianDayToInternalDate(REGISTER_REAL34_DATA(TEMP_REGISTER_1), REGISTER_REAL34_DATA(TEMP_REGISTER_1));
-      dateToDisplayString(TEMP_REGISTER_1, tmpString);
+      dateToDisplayString(TEMP_REGISTER_1, tmpString, true);
       break;
     }
 
