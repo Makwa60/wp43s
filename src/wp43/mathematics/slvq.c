@@ -182,6 +182,10 @@ void fnSlvq(uint16_t unusedButMandatoryParameter) {
   adjustResult(REGISTER_X, false, true, REGISTER_X, -1, -1);
   adjustResult(REGISTER_Y, false, true, REGISTER_Y, -1, -1);
   adjustResult(REGISTER_Z, false, true, REGISTER_Z, -1, -1);
+
+  if(programRunStop == PGM_RUNNING) {
+    temporaryInformation = realRoots ? TI_TRUE : TI_FALSE;
+  }
 }
 
 
