@@ -232,6 +232,7 @@ magnitude
 argument
 unitVector
 
+slvc
 slvq
 agm
 

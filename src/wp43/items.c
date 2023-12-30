@@ -340,6 +340,7 @@ void fnNop(uint16_t unusedButMandatoryParameter) {
   void fnLcm                       (uint16_t unusedButMandatoryParameter) {}
   void fnSign                      (uint16_t unusedButMandatoryParameter) {}
   void fnSlvq                      (uint16_t unusedButMandatoryParameter) {}
+  void fnSlvc                      (uint16_t unusedButMandatoryParameter) {}
   void fnGetIntegerSignMode        (uint16_t unusedButMandatoryParameter) {}
   void fnLog2                      (uint16_t unusedButMandatoryParameter) {}
   void fnLog10                     (uint16_t unusedButMandatoryParameter) {}
@@ -2458,7 +2459,7 @@ TO_QSPI const item_t indexOfItems[] = {
 /* 1552 */  { fnLoad,                       LM_NAMED_VARIABLES,          "LoadV",                                       "LoadV",                                       (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_DISABLED     },
 /* 1553 */  { popAllLocalRegistersAndFlags, NOPARAM,                     "PopLR",                                       "PopLR",                                       (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
 /* 1554 */  { fnNop,                        NOPARAM,                     "REM",                                         "REM",                                         (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_REM          },
-/* 1555 */  { itemToBeCoded,                NOPARAM,                     "1555",                                        "1555",                                        (0 << TAM_MAX_BITS) |     0, CAT_FREE | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_DISABLED     },
+/* 1555 */  { fnSlvc,                       NOPARAM,                     "SLVC",                                        "SLVC",                                        (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
 /* 1556 */  { fnPutKey,                     tmRegister,                  "PUTK",                                        "PUTK",                                        (0 << TAM_MAX_BITS) |    99, CAT_FNCT | SLS_ENABLED   | US_ENABL_XEQ | EIM_DISABLED | PTP_REGISTER     },
 /* 1557 */  { fnAngularMode,                amRadian,                    "RAD",                                         "RAD",                                         (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
 /* 1558 */  { fnCvtToCurrentAngularMode,    amRadian,                    "RAD" STD_RIGHT_ARROW,                         "RAD" STD_RIGHT_ARROW,                         (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },

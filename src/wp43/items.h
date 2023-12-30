@@ -1600,7 +1600,7 @@
   #define ITM_LOADV                     1552
   #define ITM_POPLR                     1553
   #define ITM_REM                       1554
-  #define ITM_1555                      1555
+  #define ITM_SLVC                      1555
   #define ITM_PUTK                      1556
   #define ITM_RAD                       1557
   #define ITM_RADto                     1558

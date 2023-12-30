@@ -9,6 +9,8 @@
 
   #include "realType.h"
 
+  void fnSlvc(uint16_t unusedButMandatoryParameter);
+
   /**
    * Solve monic cubic equation x^3 + b x^2 + c x + d = 0.
    *
