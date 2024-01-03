@@ -555,7 +555,7 @@ void fnFlipFlag(uint16_t flag) {
 
 void fnClFAll(uint16_t confirmation) {
   if(confirmation == NOT_CONFIRMED) {
-    setConfirmationMode(fnClAll);
+    setConfirmationMode(fnClFAll);
   }
   else {
     // Leave lettered flags as they are

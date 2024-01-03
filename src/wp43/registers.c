@@ -1246,6 +1246,10 @@ void copySourceRegisterToDestRegister(calcRegister_t sourceRegister, calcRegiste
         intToLongInteger(4, longIntVar);
         break;
       }
+      case amMil: {
+        intToLongInteger(5, longIntVar);
+        break;
+      }
       default: {
         intToLongInteger(0, longIntVar);
         break;
