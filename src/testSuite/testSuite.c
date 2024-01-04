@@ -2998,17 +2998,17 @@ void processLine(void) {
 
   else if(strncmp(line, "DESC: ", 6) == 0) {
     //printf("%s\n", line);
-    strcpy(lastInParameters, line + 6);
+    strcpy(testCaseName, line + 6);
   }
 
   else if(strncmp(line, "DESC_PREFIX: ", 13) == 0) {
     //printf("%s\n", line);
-    strcpy(lastInParameters, line + 13);
+    strcpy(testCasePrefix, line + 13);
   }
 
   else if(strncmp(line, "DESC_SUFFIX: ", 13) == 0) {
     //printf("%s\n", line);
-    strcpy(lastInParameters, line + 13);
+    strcpy(testCaseSuffix, line + 13);
   }
 
   else if(strncmp(line, "FUNC: ", 6) == 0) {
