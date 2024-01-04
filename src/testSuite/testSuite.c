@@ -47,6 +47,7 @@ extern const int16_t menu_alpha_intl[];
 extern const int16_t menu_REGIST[];
 extern const softmenu_t softmenu[];
 char msgString[2060], line[100000], lastInParameters[10000], fileName[1000], *filePath, filePathName[2000], registerExpectedAndValue[1000], realString[1000];
+char testCaseName[1000], testCasePrefix[1000], testCaseSuffix[1000];
 int32_t lineNumber, numTestsFile, numTestsTotal, failedTests;
 int32_t functionIndex, funcType, correctSignificantDigits;
 void (*funcNoParam)(uint16_t);
@@ -2995,18 +2996,42 @@ void processLine(void) {
     inParameters(line + 4);
   }
 
+  else if(strncmp(line, "DESC: ", 6) == 0) {
+    //printf("%s\n", line);
+    strcpy(lastInParameters, line + 6);
+  }
+
+  else if(strncmp(line, "DESC_PREFIX: ", 13) == 0) {
+    //printf("%s\n", line);
+    strcpy(lastInParameters, line + 13);
+  }
+
+  else if(strncmp(line, "DESC_SUFFIX: ", 13) == 0) {
+    //printf("%s\n", line);
+    strcpy(lastInParameters, line + 13);
+  }
+
   else if(strncmp(line, "FUNC: ", 6) == 0) {
     //printf("%s\n", line);
     functionToCall(line + 6);
   }
 
   else if(strncmp(line, "OUT: ", 5) == 0) {
+    const bool prefixNeedsSpace = testCasePrefix[0] != 0 && testCasePrefix[strlen(testCasePrefix) - 1] != ' ';
+    const bool suffixNeedsSpace = testCaseName[0]   != 0 && testCaseName[  strlen(testCaseName)   - 1] != ' ';
     if(testStarted) {
       reporterEndTest(false, "see error messages");
     }
     testStarted = true;
     testPassed = true;
-    sprintf(msgString, "test number %d", testInFile++);
+    if(testCaseName[0] != 0) {
+      sprintf(msgString, "%s%s%s%s%s", testCasePrefix, prefixNeedsSpace ? " " : "", testCaseName, suffixNeedsSpace ? " " : "", testCaseSuffix);
+      testCaseName[0] = 0;
+      ++testInFile;
+    }
+    else {
+      sprintf(msgString, "%s%stest number %d %s", testCasePrefix, prefixNeedsSpace ? " " : "", testInFile++, testCaseSuffix);
+    }
     reporterStartTest(msgString);
     callFunction();
 
