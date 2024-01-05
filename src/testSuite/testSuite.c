@@ -2985,7 +2985,10 @@ void processLine(void) {
     if('a' <= line[i] && line[i] <= 'z') {
       line[i] -= 32;
     }
-    if(i >= 5 && strncmp(line, "FUNC: ", 6) == 0) {
+    if(i >= 5 && (strncmp(line, "FUNC: ", 6) == 0 || strncmp(line, "DESC: ", 6) == 0)) {
+      break;
+    }
+    if(i >= 12 && (strncmp(line, "DESC_PREFIX: ", 13) == 0 || strncmp(line, "DESC_SUFFIX: ", 13) == 0)) {
       break;
     }
   }
