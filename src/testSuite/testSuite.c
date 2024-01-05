@@ -48,6 +48,7 @@ extern const int16_t menu_REGIST[];
 extern const softmenu_t softmenu[];
 char msgString[2060], line[100000], lastInParameters[10000], fileName[1000], *filePath, filePathName[2000], registerExpectedAndValue[1000], realString[1000];
 char testCaseName[1000], testCasePrefix[1000], testCaseSuffix[1000];
+char lastFunctionName[1000];
 int32_t lineNumber, numTestsFile, numTestsTotal, failedTests;
 int32_t functionIndex, funcType, correctSignificantDigits;
 void (*funcNoParam)(uint16_t);
@@ -3017,6 +3018,7 @@ void processLine(void) {
   else if(strncmp(line, "FUNC: ", 6) == 0) {
     //printf("%s\n", line);
     functionToCall(line + 6);
+    strcpy(lastFunctionName, line + 6);
   }
 
   else if(strncmp(line, "OUT: ", 5) == 0) {
@@ -3033,7 +3035,7 @@ void processLine(void) {
       ++testInFile;
     }
     else {
-      sprintf(msgString, "%s%stest number %d %s", testCasePrefix, prefixNeedsSpace ? " " : "", testInFile++, testCaseSuffix);
+      sprintf(msgString, "%s%s%d. [%s] %s %s", testCasePrefix, prefixNeedsSpace ? " " : "", testInFile++, lastFunctionName, lastInParameters+4, testCaseSuffix);
     }
     reporterStartTest(msgString);
     callFunction();
