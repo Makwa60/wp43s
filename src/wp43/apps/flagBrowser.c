@@ -83,7 +83,7 @@ flagScreen_t flagScreen;
     tmpString[CHARS_PER_LINE * line] = 0;
     firstFlag = true;
     for(int f=0; f<NUMBER_OF_GLOBAL_FLAGS; f++) {
-      if(getFlag(f)) {
+      if((f != 100) && (f != 105) && (f != 106) && (f != 109) && getFlag(f)) {  // Don't show global flags B (105), C (106), I (109) and X (100), already visible in the status bar 
         if(f < 10) {
           flagNumber[0] = '0' + f;
           flagNumber[1] = 0;
@@ -253,7 +253,7 @@ flagScreen_t flagScreen;
       }
     }
 
-    // System flags
+    // System flags - don't show the ones already visible in the status bar
     firstFlag = true;
     tmpString[CHARS_PER_LINE * ++line] = 0;
     oneSystemFlag(FLAG_ALLENG,  "ALLENG",  &line, &firstFlag);
@@ -261,12 +261,12 @@ flagScreen_t flagScreen;
     oneSystemFlag(FLAG_AUTOFF,  "AUTOFF",  &line, &firstFlag);
     oneSystemFlag(FLAG_AUTXEQ,  "AUTXEQ",  &line, &firstFlag);
     oneSystemFlag(FLAG_CPXj,    "CPXj",    &line, &firstFlag);
-    oneSystemFlag(FLAG_ENDPMT,  "ENDPMT",  &line, &firstFlag);
+    //oneSystemFlag(FLAG_ENDPMT,  "ENDPMT",  &line, &firstFlag);
     #if USE_REAL34_FUNCTIONS == 1
       oneSystemFlag(FLAG_FASTFN,  "FASTFN",  &line, &firstFlag);
     #endif // USE_REAL34_FUNCTIONS == 1
-    oneSystemFlag(FLAG_FRACT,   "FRACT",   &line, &firstFlag);
-    oneSystemFlag(FLAG_GROW,    "GROW",    &line, &firstFlag);
+    //oneSystemFlag(FLAG_FRACT,   "FRACT",   &line, &firstFlag);
+    //oneSystemFlag(FLAG_GROW,    "GROW",    &line, &firstFlag);
     oneSystemFlag(FLAG_IGN1ER,  "IGN1ER",  &line, &firstFlag);
     oneSystemFlag(FLAG_INTING,  "INTING",  &line, &firstFlag);
     oneSystemFlag(FLAG_LEAD0,   "LEAD.0",  &line, &firstFlag);
@@ -276,8 +276,8 @@ flagScreen_t flagScreen;
     oneSystemFlag(FLAG_SOLVING, "SOLVING", &line, &firstFlag);
     oneSystemFlag(FLAG_SPCRES,  "SPCRES",  &line, &firstFlag);
     oneSystemFlag(FLAG_TRACE,   "TRACE",   &line, &firstFlag);
-    oneSystemFlag(FLAG_USB,     "USB",     &line, &firstFlag);
-    oneSystemFlag(FLAG_VMDISP,  "VMDISP",  &line, &firstFlag);
+    //oneSystemFlag(FLAG_USB,     "USB",     &line, &firstFlag);
+    //oneSystemFlag(FLAG_VMDISP,  "VMDISP",  &line, &firstFlag);
     line++;
 
     if(flagScreen == fsUninitialized) {
