@@ -9,13 +9,14 @@
 #include <string.h>
 
 #define FILE_NAME            "testSuiteJunit.xml"
-#define MAX_TEST_SUITES_SIZE 1000000
+#define MAX_TEST_SUITES_SIZE 2000000
 #define MAX_TEST_SUITE_SIZE   100000
 
 static uint32_t _passingTests = 0;
 static uint32_t _failingTests = 0;
 static char     _testSuiteName[100];
-static char     _testName[100];
+static char     _testName[200];
+static char     escapedTestName[1200];
 static uint32_t _testsInSuite = 0;
 static char     _testSuiteOut[MAX_TEST_SUITE_SIZE];
 static uint32_t _testSuiteOutPtr = 0;
@@ -23,6 +24,44 @@ static char     _testSuitesOut[MAX_TEST_SUITES_SIZE];
 static uint32_t _testSuitesOutPtr = 0;
 static uint32_t _passingTestsInSuite = 0;
 static uint32_t _failingTestsInSuite = 0;
+
+static void escapeName(const char *in, char *out) {
+  while(*in != 0) {
+    switch(*in) {
+      case '"':
+        *(out++) = '&';
+        *(out++) = 'q';
+        *(out++) = 'u';
+        *(out++) = 'o';
+        *(out++) = 't';
+        *(out++) = ';';
+        break;
+      case '<':
+        *(out++) = '&';
+        *(out++) = 'l';
+        *(out++) = 't';
+        *(out++) = ';';
+        break;
+      case '>':
+        *(out++) = '&';
+        *(out++) = 'g';
+        *(out++) = 't';
+        *(out++) = ';';
+        break;
+      case '&':
+        *(out++) = '&';
+        *(out++) = 'a';
+        *(out++) = 'm';
+        *(out++) = 'p';
+        *(out++) = ';';
+        break;
+      default:
+        *(out++) = *in;
+    }
+    ++in;
+  }
+  *out = 0;
+}
 
 static void _junitStartTestSuites(void) {
 }
@@ -38,10 +77,11 @@ static void _junitStartTest(void) {
 
 static void _junitEndTest(bool passed, const char *errorMsg) {
   char tmp[1000];
+  escapeName(_testName, escapedTestName);
   if(passed) {
-    sprintf(tmp, "\t\t<testcase time=\"0\" name=\"%s\" classname=\"%s\" />\n", _testName, _testSuiteName);
+    sprintf(tmp, "\t\t<testcase time=\"0\" name=\"%s\" classname=\"%s\" />\n", escapedTestName, _testSuiteName);
   } else {
-    sprintf(tmp, "\t\t<testcase time=\"0\" name=\"%s\" classname=\"%s\">\n\t\t\t<failure message=\"%s\" />\n\t\t</testcase>\n", _testName, _testSuiteName, errorMsg);
+    sprintf(tmp, "\t\t<testcase time=\"0\" name=\"%s\" classname=\"%s\">\n\t\t\t<failure message=\"%s\" />\n\t\t</testcase>\n", escapedTestName, _testSuiteName, errorMsg);
   }
   assert(strlen(tmp) + _testSuiteOutPtr < MAX_TEST_SUITE_SIZE);
   strcpy(_testSuiteOut + _testSuiteOutPtr, tmp);
@@ -110,7 +150,7 @@ static void _stdoutEndTestSuites(void) {
 }
 
 void reporterStartTestSuites(void) {
-  _testName[99] = '\0';
+  _testName[199] = '\0';
   _testSuiteName[99] = '\0';
   _stdoutStartTestSuites();
   _junitStartTestSuites();
@@ -126,7 +166,7 @@ void reporterStartTestSuite(const char *testSuiteName) {
 }
 
 void reporterStartTest(const char *testName) {
-  strncpy(_testName, testName, 99);
+  strncpy(_testName, testName, 199);
   _testsInSuite++;
   _stdoutStartTest();
   _junitStartTest();
