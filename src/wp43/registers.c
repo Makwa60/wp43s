@@ -777,7 +777,7 @@ void fnDeleteVariable(uint16_t regist) {
     allNamedVariables[numberOfNamedVariables - 1].header.descriptor = 0;
     allNamedVariables[numberOfNamedVariables - 1].variableName[0] = 0;
     allNamedVariables[numberOfNamedVariables - 1].variableName[1] = 0;
-    allNamedVariables = reallocWp43(allNamedVariables, sizeof(namedVariableHeader_t) * numberOfNamedVariables, sizeof(namedVariableHeader_t) * (numberOfNamedVariables + 1));
+    allNamedVariables = reallocWp43(allNamedVariables, sizeof(namedVariableHeader_t) * numberOfNamedVariables, sizeof(namedVariableHeader_t) * (numberOfNamedVariables - 1));
     numberOfNamedVariables -= 1;
   }
   else if(regist >= FIRST_NAMED_VARIABLE && regist < LAST_NAMED_VARIABLE) {
