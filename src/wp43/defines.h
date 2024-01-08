@@ -24,6 +24,7 @@
   #define ENABLE_SOLVER_PROGRESS           1 // Set to 1 to enable solver progress display (only if called in run mode)
   #define USE_MICHALSKI_MOSIG_TANH_SINH    1 // Set to 1 to use Michalski & Mosig tanh-sinh integration
   #define ENABLE_DATE_TYPE_WITH_TIME       1 // Set to 1 to enable dtDate with time of the day
+  #define USE_ITALIC_CONSTANT              0 // Set to 1 to use italic e and i for Euler's e and imaginary unit (disables CPXj)
 
   #define DECNUMDIGITS                    75 // Default number of digits used in the decNumber library
 
@@ -739,7 +740,11 @@
   #define mod(n, d)                            (((n)%(d) + (d)) % (d))                                         // mod(n,d) = n - d*floor(n/d)  where floor(a) is the biggest integer <= a
   //#define modulo(n, d)                         ((n)%(d)<0 ? ((d)<0 ? (n)%(d) - (d) : (n)%(d) + (d)) : (n)%(d)) // modulo(n,d) = rmd(n,d) (+ |d| if rmd(n,d)<0)  thus the result is always >= 0
   #define modulo(n, d)                         ((n)%(d)<0 ? (n)%(d)+(d) : (n)%(d))                             // This version works only if d > 0
-  #define COMPLEX_UNIT                         (getSystemFlag(FLAG_CPXj)   ? STD_j     : STD_i)
+  #if USE_ITALIC_CONSTANT != 0
+    #define COMPLEX_UNIT                       STD_IMAGINARY_i
+  #else // USE_ITALIC_CONSTANT != 0
+    #define COMPLEX_UNIT                       (getSystemFlag(FLAG_CPXj)   ? STD_j     : STD_i)
+  #endif // USE_ITALIC_CONSTANT != 0
   #define RADIX34_MARK_CHAR                    (getSystemFlag(FLAG_DECIMP) ? '.'       : ',')
   #define RADIX34_MARK_STRING                  (getSystemFlag(FLAG_DECIMP) ? "."       : ",")
   #define PRODUCT_SIGN                         (getSystemFlag(FLAG_MULTx)  ? STD_CROSS : STD_DOT)

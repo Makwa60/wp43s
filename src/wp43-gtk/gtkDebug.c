@@ -780,14 +780,16 @@
         gtk_widget_show(lbl1[row++]);
       }
 
-      if(row < DEBUG_LINES) {
-        sprintf(string, "FLAG_CPXj                                 = %s = %s",     getBooleanName(getSystemFlag(FLAG_CPXj)), getTimeFormatName(getSystemFlag(FLAG_CPXj)));
-        gtk_label_set_label(GTK_LABEL(lbl1[row]), string);
-        gtk_widget_show(lbl1[row++]);
-      }
+      #if USE_ITALIC_CONSTANT == 0
+        if(row < DEBUG_LINES) {
+          sprintf(string, "FLAG_CPXj                                 = %s = %s",     getBooleanName(getSystemFlag(FLAG_CPXj)), getTimeFormatName(getSystemFlag(FLAG_CPXj)));
+          gtk_label_set_label(GTK_LABEL(lbl1[row]), string);
+          gtk_widget_show(lbl1[row++]);
+        }
+      #endif // USE_ITALIC_CONSTANT == 0
 
       if(row < DEBUG_LINES) {
-        sprintf(string, "FLAG_LEAD.0                               = %s",          getBooleanName(getSystemFlag(FLAG_CPXj)));
+        sprintf(string, "FLAG_LEAD.0                               = %s",          getBooleanName(getSystemFlag(FLAG_LEAD0)));
         gtk_label_set_label(GTK_LABEL(lbl1[row]), string);
         gtk_widget_show(lbl1[row++]);
       }

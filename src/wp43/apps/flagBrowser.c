@@ -260,7 +260,9 @@ flagScreen_t flagScreen;
     oneSystemFlag(FLAG_ALPIN,   "ALP.IN",  &line, &firstFlag);
     oneSystemFlag(FLAG_AUTOFF,  "AUTOFF",  &line, &firstFlag);
     oneSystemFlag(FLAG_AUTXEQ,  "AUTXEQ",  &line, &firstFlag);
-    oneSystemFlag(FLAG_CPXj,    "CPXj",    &line, &firstFlag);
+    #if USE_ITALIC_CONSTANT == 0
+      oneSystemFlag(FLAG_CPXj,    "CPXj",    &line, &firstFlag);
+    #endif // USE_ITALIC_CONSTANT == 0
     //oneSystemFlag(FLAG_ENDPMT,  "ENDPMT",  &line, &firstFlag);
     #if USE_REAL34_FUNCTIONS == 1
       oneSystemFlag(FLAG_FASTFN,  "FASTFN",  &line, &firstFlag);

@@ -1285,7 +1285,7 @@ void parseEquation(uint16_t equationId, uint16_t parseMode, char *buffer, char *
             inExponent = false;
             exponentSignCanOccur = false;
           }
-          else if(strPtr[0] == '^' && strPtr[1] == '(' && bufPtr - buffer == 3 && buffer[0] == 'e' && buffer[1] == STD_SUB_E[0] && buffer[2] == STD_SUB_E[1]) {
+          else if(strPtr[0] == '^' && strPtr[1] == '(' && ((bufPtr - buffer == 3 && buffer[0] == 'e' && buffer[1] == STD_SUB_E[0] && buffer[2] == STD_SUB_E[1]) || (bufPtr - buffer == 2 && buffer[0] == STD_EULER_e[0] && buffer[1] == STD_EULER_e[1]))) {
             // 'eE^' as a function
             strcpy(buffer, "EXP");
             strPtr += 2;
