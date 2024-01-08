@@ -305,6 +305,7 @@ void solveCubicEquation(const real_t *c2Real, const real_t *c2Imag, const real_t
   // x^3 + b x^2 + c x + d = 0
   // Abramowitz & Stegun §3.8.2
   real_t qr, qi, rr, ri, s1r, s1i, s2r, s2i, ar, ai;
+  const bool realIn = realIsZero(c2Imag) && realIsZero(c1Imag) && realIsZero(c0Imag);
 
   // q = (c - b^2 / 3) / 3
   mulComplexComplex(c2Real, c2Imag, c2Real, c2Imag, &qr, &qi, realContext);
@@ -349,14 +350,15 @@ void solveCubicEquation(const real_t *c2Real, const real_t *c2Imag, const real_t
   _realCheckedAdd(x3Real, &rr, x2Real, realContext);      _realCheckedAdd(x3Imag, &ri, x2Imag, realContext);
   _realCheckedSubtract(x3Real, &rr, x3Real, realContext); _realCheckedSubtract(x3Imag, &ri, x3Imag, realContext);
 
-  // discriminant
-  realMultiply(rReal, const__108, rReal, realContext);
-  realMultiply(rImag, const__108, rImag, realContext);
-
   // Force real outputs when the roots are known to be real
-  if(realIsZero(c2Imag) && realIsZero(c1Imag) && realIsZero(c0Imag)) {
-    realCopy(const_0, rImag);
-    if(realIsZero(rReal)) {
+  if(realIn) {
+    if(realIsZero(rReal) || realIsNegative(rImag)) {
+      /* Three real roots */
+      realCopy(const_0, x1Imag);
+      realCopy(const_0, x2Imag);
+      realCopy(const_0, x3Imag);
+    } else {
+      /* One real, two complex roots */
       if(realCompareAbsLessThan(x1Imag, x2Imag)) {
         if(realCompareAbsLessThan(x1Imag, x3Imag)) {
           realCopy(const_0, x1Imag);
@@ -372,10 +374,10 @@ void solveCubicEquation(const real_t *c2Real, const real_t *c2Imag, const real_t
           realCopy(const_0, x3Imag);
         }
       }
-    } else if(realIsPositive(rReal)) {
-      realCopy(const_0, x1Imag);
-      realCopy(const_0, x2Imag);
-      realCopy(const_0, x3Imag);
     }
   }
+
+  // discriminant
+  realMultiply(rReal, const__108, rReal, realContext);
+  realMultiply(rImag, const__108, rImag, realContext);
 }
