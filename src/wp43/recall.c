@@ -293,11 +293,16 @@ void fnRecallStack(uint16_t regist) {
 
 
 
-void fnRecallElement(uint16_t unusedButMandatoryParameter) {
+static void _fnRecallElement(bool stepForward);
+
+void fnRecallVElement(uint16_t unusedButMandatoryParameter) {
   #if !defined(TESTSUITE_BUILD)
     if(matrixIndex == INVALID_VARIABLE) {
       displayCalcErrorMessage(ERROR_NO_MATRIX_INDEXED, ERR_REGISTER_LINE, REGISTER_X);
-      errorMoreInfo("Cannot execute RCLEL without a matrix indexed");
+      #if(EXTRA_INFO_ON_CALC_ERROR == 1)
+        sprintf(errorMessage, "Cannot execute RCLEL without a matrix indexed");
+        moreInfoOnError("In function fnRecallElement:", errorMessage, NULL, NULL);
+      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
     }
     else {
       callByIndexedMatrix(recallElementReal, recallElementComplex);
@@ -305,6 +310,21 @@ void fnRecallElement(uint16_t unusedButMandatoryParameter) {
   #endif // !TESTSUITE_BUILD
 }
 
+
+void fnRecallElement(uint16_t unusedButMandatoryParameter) {
+  #if !defined(TESTSUITE_BUILD)
+    if(matrixIndex == INVALID_VARIABLE) {
+      displayCalcErrorMessage(ERROR_NO_MATRIX_INDEXED, ERR_REGISTER_LINE, REGISTER_X);
+      #if(EXTRA_INFO_ON_CALC_ERROR == 1)
+        sprintf(errorMessage, "Cannot execute RCLEL without a matrix indexed");
+        moreInfoOnError("In function fnRecallElement:", errorMessage, NULL, NULL);
+      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+    }
+    else {
+      callByIndexedMatrix(recallElementReal, recallElementComplex);
+    }
+  #endif // !TESTSUITE_BUILD
+}
 
 
 void fnRecallIJ(uint16_t unusedButMandatoryParameter) {

@@ -394,6 +394,7 @@ void fnNop(uint16_t unusedButMandatoryParameter) {
   void fnRecall                    (uint16_t unusedButMandatoryParameter) {}
   void fnRecallConfig              (uint16_t unusedButMandatoryParameter) {}
   void fnRecallElement             (uint16_t unusedButMandatoryParameter) {}
+  void fnRecallVElement            (uint16_t unusedButMandatoryParameter) {}
   void fnRecallIJ                  (uint16_t unusedButMandatoryParameter) {}
   void fnRecallStack               (uint16_t unusedButMandatoryParameter) {}
   void fnRecallAdd                 (uint16_t unusedButMandatoryParameter) {}
@@ -499,6 +500,7 @@ void fnNop(uint16_t unusedButMandatoryParameter) {
   void fnStore                     (uint16_t unusedButMandatoryParameter) {}
   void fnStoreConfig               (uint16_t unusedButMandatoryParameter) {}
   void fnStoreElement              (uint16_t unusedButMandatoryParameter) {}
+  void fnStoreVElement             (uint16_t unusedButMandatoryParameter) {}
   void fnStoreIJ                   (uint16_t unusedButMandatoryParameter) {}
   void fnStoreStack                (uint16_t unusedButMandatoryParameter) {}
   void fnStoreAdd                  (uint16_t unusedButMandatoryParameter) {}
@@ -2940,5 +2942,9 @@ TO_QSPI const item_t indexOfItems[] = {
 /* 1876 */  { fnAimCursorLeft,              NOPARAM,                     "",                                            STD_LEFT_ARROW,                                (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
 /* 1877 */  { fnAimCursorRight,             NOPARAM,                     "",                                            STD_RIGHT_ARROW,                               (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
 
-/* 1878 */  { itemToBeCoded,                NOPARAM,                     "",                                            "Last item",                                   (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_ENABLED   | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     }
+/* 1878 */  { itemToBeCoded,                NOPARAM,                     "FACTORS",                                     "FACTORS",                                     (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/* 1879 */  { fnRecallElement,              tmMDim,                      "RCLVEL",                                      "RCLVEL",                                      (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_REGISTER     },
+/* 1880 */  { fnStoreElement,               tmMDim,                      "STOVEL",                                      "STOVEL",                                      (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_REGISTER     },
+
+/* 1881 */  { itemToBeCoded,                NOPARAM,                     "",                                            "Last item",                                   (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_ENABLED   | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     }
 };
