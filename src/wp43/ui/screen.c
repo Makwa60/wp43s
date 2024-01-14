@@ -553,6 +553,55 @@ void clearScreen(void) {
     }
   }
 
+  void _printTiStatisticLr(char* prefix) {
+    uint16_t model = (uint16_t)((~lrSelection) & 0x01FF);
+    switch(model) {
+      case 511: {
+        sprintf(prefix, "OrthoF selected for L.R.");
+        break;
+      }
+      case 510: {
+        sprintf(prefix, "LinF selected for L.R.");
+        break;
+      }
+      case 509: {
+        sprintf(prefix, "ExpF selected for L.R.");
+        break;
+      }
+      case 507: {
+        sprintf(prefix, "LogF selected for L.R.");
+        break;
+      }
+      case 503: {
+        sprintf(prefix, "PowerF selected for L.R.");
+        break;
+      }
+      case 495: {
+        sprintf(prefix, "RootF selected for L.R.");
+        break;
+      }
+      case 479: {
+        sprintf(prefix, "HypF selected for L.R.");
+        break;
+      }
+      case 447: {
+        sprintf(prefix, "ParabF selected for L.R.");
+        break;
+      }
+      case 383: {
+        sprintf(prefix, "CauchF selected for L.R.");
+        break;
+      }
+      case 255: {
+        sprintf(prefix, "GaussF selected for L.R.");
+        break;
+      }
+      default: {
+        sprintf(prefix, "%03" PRIu16 " selected for L.R.", model);
+      }
+    }
+  }
+  
   void refreshRegisterLine(calcRegister_t regist) {
     int16_t       w, wLastBaseNumeric, wLastBaseStandard, prefixWidth, lineWidth = 0;
     bool          prefixPre = true;
@@ -573,12 +622,7 @@ void clearScreen(void) {
 
       if(temporaryInformation == TI_STATISTIC_LR && (getRegisterDataType(REGISTER_X) != dtReal34)) {
         if(regist == REGISTER_X) {
-          if((uint16_t)((~lrSelection) & 0x01FF) == 511) {
-            sprintf(tmpString, "L.R. selected to OrthoF.");
-          }
-          else {
-            sprintf(tmpString, "L.R. selected to %03" PRIu16 ".", (uint16_t)((~lrSelection) & 0x01FF));
-          }
+          _printTiStatisticLr(tmpString);
           errorMoreInfo("BestF is set, but will not work until REAL data points are used.\n%s", errorMessages[ERROR_INVALID_DATA_TYPE_FOR_OP]);
           w = stringWidth(tmpString, &standardFont, true, true);
           showString(tmpString, &standardFont, SCREEN_WIDTH - w, Y_POSITION_OF_REGISTER_X_LINE - REGISTER_LINE_HEIGHT*(regist - REGISTER_X) + 6, vmNormal, true, true);
@@ -1296,12 +1340,7 @@ void clearScreen(void) {
 
           else if(temporaryInformation == TI_STATISTIC_LR) {
              if(regist == REGISTER_X) {
-               if( (uint16_t)((~lrSelection) & 0x01FF) == 511) {
-                 sprintf(prefix, "L.R. selected to OrthoF");
-               }
-               else {
-                 sprintf(prefix, "L.R. selected to %03" PRIu16, (uint16_t)((~lrSelection) & 0x01FF));
-               }
+               _printTiStatisticLr(prefix);
                prefixWidth = stringWidth(prefix, &standardFont, true, true) + 1;
                //lcd_fill_rect(0, Y_POSITION_OF_REGISTER_Y_LINE - 2, SCREEN_WIDTH, 1, LCD_EMPTY_VALUE);
              }
