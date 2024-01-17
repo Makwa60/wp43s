@@ -201,7 +201,12 @@ static void _doXToAlpha(uint16_t regist) {
 
   longIntegerFree(lgInt);
 
-  _readDestinationRegister(regist);
+  if (regist != REGISTER_X) {
+    _readDestinationRegister(regist);
+  }
+  else {
+    tmpString[0] = 0;      // If destination register is X just return the alpha character from the character code
+  }
 
   if(stringGlyphLength(tmpString) >= MAX_NUMBER_OF_GLYPHS_IN_STRING) {
     displayCalcErrorMessage(ERROR_STRING_WOULD_BE_TOO_LONG, ERR_REGISTER_LINE, REGISTER_X);
@@ -234,7 +239,9 @@ void fnXToAlpha(uint16_t regist) {
     case dtReal34:
     case dtShortInteger: {
       _doXToAlpha(regist);
-      fnDrop(0);
+      if (regist != REGISTER_X) {          // Don't drop X if it is the destination register
+        fnDrop(0);
+      }
       return;
     }
 
@@ -253,14 +260,24 @@ void fnXToAlpha(uint16_t regist) {
         l = stringByteLength(tmpString);
         reallocateRegister(regist, dtString, l + 1, amNone);
         xcopy(REGISTER_STRING_DATA(regist), tmpString, l + 1);
-        fnDrop(0);
+        if (regist != REGISTER_X) {          // Don't drop X if it is the destination register
+          fnDrop(0);
+        }
       }
       return;
     }
 
     case dtReal34Matrix: {
-      elementwiseRema_UInt16(_doXToAlpha, regist);
-      fnDrop(0);
+      if (regist != REGISTER_X) {          
+        elementwiseRema_UInt16(_doXToAlpha, regist);
+        fnDrop(0);
+      }
+      else {                                 // if X is the destination register, just return in X a string composed of the character codes from the matrux in X
+        reallocateRegister(REGISTER_L, dtString, 1, amNone);
+        xcopy(REGISTER_STRING_DATA(REGISTER_L), "", 1);
+        elementwiseRema_UInt16(_doXToAlpha, REGISTER_L);
+        fnSwapX(REGISTER_L);
+      }
       return;
     }
 
