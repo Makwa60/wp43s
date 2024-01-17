@@ -13,6 +13,7 @@
 #include "registers.h"
 #include "registerValueConversions.h"
 #include "ui/keyboard.h"
+#include "ui/screen.h"
 
 #include "wp43.h"
 
@@ -487,6 +488,26 @@ void calculateNextPrime(longInteger_t currentNumber, longInteger_t nextPrime) {
   }
 }
 
+
+static void _showProgress(const real34_t *ss) {
+  #if !defined (TESTSUITE_BUILD)
+    clearRegisterLine(REGISTER_Z, true, true);
+    clearRegisterLine(REGISTER_Y, true, true);
+    clearRegisterLine(REGISTER_X, true, true);
+    uint8_t savedDisplayFormatDigits = displayFormatDigits;
+    displayFormatDigits = displayFormat == dfAll ? 0 : 33;
+    real34ToDisplayString(ss, amNone, tmpString, &standardFont, 9999, 34, false, STD_SPACE_PUNCTUATION, true);
+    showString(tmpString, &standardFont, 1, Y_POSITION_OF_REGISTER_X_LINE + 6, vmNormal, true, true);
+    displayFormatDigits = savedDisplayFormatDigits;
+    #if defined DMCP_BUILD
+      lcd_refresh();
+    #endif //DMCP_BUILD
+  #endif //TESTSUITE_BUILD
+}
+
+
+
+
 bool addFactor(longInteger_t factor, real34Matrix_t *matrix) {
   //printLongIntegerToConsole(factor,"-->","\n");
   if(getRegisterDataType(REGISTER_X) != dtReal34Matrix) {
@@ -522,12 +543,15 @@ bool addFactor(longInteger_t factor, real34Matrix_t *matrix) {
   linkToRealMatrixRegister(REGISTER_X,  matrix);
   longIntegerToAllocatedString(factor, tmpString, TMP_STR_LENGTH);
   stringToReal34(tmpString, &matrix->matrixElements[rows * cols]);
+  _showProgress(&matrix->matrixElements[rows * cols]);
+
 
   return true;
 }
 
 
-void fnPrimeFactors (uint16_t unusedButMandatoryParameter) {
+
+void fnPrimeFactors(uint16_t unusedButMandatoryParameter) {
   real34_t m34;
 
   longInteger_t currentNumber, nextPrime, remainder, quotient, eval, temp;
@@ -578,6 +602,16 @@ void fnPrimeFactors (uint16_t unusedButMandatoryParameter) {
   uIntToLongInteger(1,eval);
 
   while(longIntegerIsPositive(eval)) {
+
+    #if defined(DMCP_BUILD)
+      if(kbCheckForInterrupt()) {
+        showString("key Waiting ...", &standardFont, 20, 40, vmNormal, false, false);
+        programRunStop = PGM_WAITING;
+        break;
+      }
+    #endif //DMCP_BUILD
+
+
     longIntegerDivideQuotientRemainder(currentNumber, nextPrime, quotient, remainder);
     longIntegerSubtract(quotient, nextPrime, eval);
     if(longIntegerIsZero(remainder)) {
