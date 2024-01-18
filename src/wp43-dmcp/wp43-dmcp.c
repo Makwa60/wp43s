@@ -242,6 +242,7 @@ void dmcpWaitForEvent(void) {
       CLR_ST(STAT_CLK_WKUP_SECONDS);
     }
     sys_sleep();
+    dmcpCheckPowerStatus();      // Regularly (second/minute) check the current powerstatus to update LOWBAT if necessary
   }
 }
 
