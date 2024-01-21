@@ -32,6 +32,11 @@
   void     timerReset     (void);
 
   /**
+   * Adjust all running timers for time roll-over at midnight.
+   */
+  void     timerRollOver  (void);
+
+  /**
    * Configure the callback function for a given timer.
    * This function will only be called once when the timer has expired.
    * If it should be called repeatedly then the callback function should

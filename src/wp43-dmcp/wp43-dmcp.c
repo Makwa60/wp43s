@@ -208,8 +208,13 @@ void dmcpWaitForEvent(void) {
   uint32_t lastCapturedTime = timeCurrentMs();
   timeCapture();
   uint32_t newCapturedTime = timeCurrentMs();
+  if(newCapturedTime < lastCapturedTime) {
+    // Time moved backwards (ON time < OFF time, or time set-up earlier by the user)
+    timerStart(tidTimeUpdate, NOPARAM, 100);    // Restart TimeUpdate timer
+    return;
+  }
   // The current time is only updated once per main loop, so check how long since the last time update
-  uint32_t elapsedTime = newCapturedTime - lastCapturedTime;
+  uint32_t elapsedTime = newCapturedTime - lastCapturedTime;    
   if(nextTimerRefresh <= elapsedTime) {
     // The next timer is already due
     return;
@@ -243,6 +248,13 @@ void dmcpWaitForEvent(void) {
     }
     sys_sleep();
     dmcpCheckPowerStatus();      // Regularly (second/minute) check the current powerstatus to update LOWBAT if necessary
+  }
+  lastCapturedTime = newCapturedTime;
+  timeCapture();
+  newCapturedTime = timeCurrentMs();
+  if(newCapturedTime < lastCapturedTime) {
+    timerRollOver();                            // Adjust all running timers for time roll-over at midnight
+    return;
   }
 }
 

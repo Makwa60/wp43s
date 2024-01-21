@@ -88,6 +88,19 @@ void timerReset(void) {
 }
 
 
+void timerRollOver(void) {
+  for(int i = 0; i < MAX_TIMER_ID; i++) {
+    if(_timer[i].isRunning == true) {
+      if(_timer[i].expire  >= 86400000u) {
+        _timer[i].expire  -= 86400000u;
+      }
+      else {
+        _timer[i].expire  = 0u;
+      }
+    }
+  }
+}
+
 
 void timerConfig(timerId_t nr, timerCallback_t func) {
   assert(nr < MAX_TIMER_ID);
