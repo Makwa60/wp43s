@@ -181,7 +181,7 @@ TO_QSPI const int16_t menu_Poiss[]       = { ITM_POISSP,                    ITM_
 /*                                          <---------------------------------------------------------------------- 6 f shifted functions ------------------------------------------------------------------------->  */
 /*                                          <---------------------------------------------------------------------- 6 g shifted functions ------------------------------------------------------------------------->  */
 TO_QSPI const int16_t menu_MyPFNb[]      = { ITM_LBL,                       ITM_GTO,                    ITM_ISG,                  ITM_DSE,               ITM_RTN,                    -MNU_PFN,
-                                             ITM_XLT,                       ITM_XLE,                    ITM_XEQU,                 ITM_XNE,               ITM_XLE,                     ITM_XLT,
+                                             ITM_XLT,                       ITM_XLE,                    ITM_XEQU,                 ITM_XNE,               ITM_XGE,                     ITM_XGT,
                                              ITM_NULL,                      ITM_NULL,                   ITM_NULL,                 ITM_NULL,              ITM_NULL,                    ITM_NULL                      };
 
 TO_QSPI const int16_t menu_MyPFN[]       = {-MNU_LOOP,                     -MNU_TEST,                   ITM_NULL,                 ITM_NULL,             -MNU_PFN,                    -MNU_PFN2,
