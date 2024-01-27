@@ -304,51 +304,44 @@ TO_QSPI const int16_t menu_AngleConv[]   = { ITM_toDEG,                     ITM_
 TO_QSPI const int16_t menu_UnitConv[]    = { -MNU_CONVE,                    -MNU_CONVP,                 -MNU_CONVTIME,            -MNU_CONVFP,           -MNU_CONVM,                  -MNU_CONVX,
                                              ITM_CtoF,                      ITM_FtoC,                   ITM_NULL,                 ITM_NULL,              -MNU_CONVV,                  -MNU_CONVA,
                                              ITM_NULL,                      ITM_NULL,                   ITM_NULL,                 ITM_NULL,              ITM_NULL,                    ITM_NULL,
-                                             10000+ITM_PRtoDBc,             10000+ITM_DBtoPRc,          10000+ITM_NMtoLBFFTb,     10000+ITM_LBFFTtoNMb,  10000+ITM_FRtoDBc,           10000+ITM_DBtoFRc,
-                                             30000+ITM_PRtoDBb,             30000+ITM_DBtoPRb,          20000+ITM_NMtoLBFFT,      20000+ITM_LBFFTtoNM,   30000+ITM_FRtoDBb,           30000+ITM_DBtoFRb,
-                                             20000+ITM_PRtoDB,              20000+ITM_DBtoPR,           ITM_NULL,                 ITM_NULL,              20000+ITM_FRtoDB,            20000+ITM_DBtoFR              };
+                                             10000+ITM_PRtoDBb,             10000+ITM_DBtoPRb,          10000+ITM_FRtoDBb,        10000+ITM_DBtoFRb,     ITM_LBFFTtoNM,               ITM_NMtoLBFFT,
+                                             20000+ITM_PRtoDB,              20000+ITM_DBtoPR,           20000+ITM_FRtoDB,         20000+ITM_DBtoFR,      ITM_NULL,                    ITM_NULL,                     };
 
 TO_QSPI const int16_t menu_ConvE[]       = { ITM_CALtoJ,                    ITM_JtoCAL,                 ITM_BTUtoJ,               ITM_JtoBTU,            ITM_WHtoJ,                   ITM_JtoWH                     };
 
 TO_QSPI const int16_t menu_ConvP[]       = { ITM_HPEtoW,                    ITM_WtoHPE,                 ITM_HPUKtoW,              ITM_WtoHPUK,           ITM_HPMtoW,                  ITM_WtoHPM                    };
 
-TO_QSPI const int16_t menu_ConvFP[]      = { ITM_LBFtoN,                    ITM_NtoLBF,                 ITM_PAtoBAR,              ITM_BARtoPA,           ITM_PSItoPA,                 ITM_PAtoPSI,
-                                             10000+ITM_INCHHGtoPAb,         10000+ITM_PAtoINCHHGb,      10000+ITM_TORtoPAb,       10000+ITM_PAtoTORb,    10000+ITM_ATMtoPA,           10000+ITM_PAtoATM,
-                                             20000+ITM_INCHHGtoPA,          20000+ITM_PAtoINCHHG,       20000+ITM_TORtoPA,        20000+ITM_PAtoTOR,     20000+ITM_ATMtoPAb,          20000+ITM_PAtoATMb,
-                                             ITM_NULL,                      ITM_NULL,                   10000+ITM_MMHGtoPAb,      10000+ITM_PAtoMMHGb,   ITM_NULL,                    ITM_NULL,
-                                             ITM_NULL,                      ITM_NULL,                   20000+ITM_MMHGtoPA,       20000+ITM_PAtoMMHG,    ITM_NULL,                    ITM_NULL                      };
+TO_QSPI const int16_t menu_ConvFP[]      = { ITM_LBFtoN,                    ITM_NtoLBF,                 ITM_BARtoPA,              ITM_PAtoBAR,           ITM_PSItoPA,                 ITM_PAtoPSI,
+                                             ITM_INCHHGtoPA,                ITM_PAtoINCHHG,             ITM_TORtoPA,              ITM_PAtoTOR,           ITM_ATMtoPA,                 ITM_PAtoATM,
+                                             ITM_NULL,                      ITM_NULL,                   ITM_MMHGtoPA,             ITM_PAtoMMHG,          ITM_NULL,                    ITM_NULL                      };
 
 TO_QSPI const int16_t menu_ConvM[]       = { ITM_LBStoKG,                   ITM_KGtoLBS,                ITM_CWTtoKG,              ITM_KGtoCWT,           ITM_OZtoKG,                  ITM_KGtoOZ,
-                                             10000+ITM_STOtoKGb,            10000+ITM_KGtoSTOb,         10000+ITM_SCWtoKGb,       10000+ITM_KGtoSCWb,    10000+ITM_TRZtoKGb,          10000+ITM_KGtoTRZb,
-                                             20000+ITM_STOtoKG,             20000+ITM_KGtoSTO,          20000+ITM_SCWtoKG,        20000+ITM_KGtoSCW,     20000+ITM_TRZtoKG,           20000+ITM_KGtoTRZ,
-                                             ITM_TONtoKG,                   ITM_KGtoTON,                10000+ITM_STtoKGc,        10000+ITM_KGtoSTc,     10000+ITM_CARATtoKGb,        10000+ITM_KGtoCARATb,
-                                             10000+ITM_LIANGtoKGb,          10000+ITM_KGtoLIANGb,       30000+ITM_STtoKGb,        30000+ITM_KGtoSTb,     20000+ITM_CARATtoKG,         20000+ITM_KGtoCARAT,
-                                             20000+ITM_LIANGtoKG,           20000+ITM_KGtoLIANG,        20000+ITM_STtoKG,         20000+ITM_KGtoST,      ITM_JINtoKG,                 ITM_KGtoJIN,
-                                             ITM_OZtoG,                     ITM_GtoOZ,                  10000+ITM_TRZtoGb,        10000+ITM_GtoTRZb,     10000+ITM_CARATtoGb,         10000+ITM_GtoCARATb,
-                                             ITM_NULL,                      ITM_NULL,                   20000+ITM_TRZtoG,         20000+ITM_GtoTRZ,      20000+ITM_CARATtoG,          20000+ITM_GtoCARAT            };
+                                             ITM_STOtoKG,                   ITM_KGtoSTO,                10000+ITM_SCWtoKGb,       10000+ITM_KGtoSCWb,    10000+ITM_TRZtoKGb,          10000+ITM_KGtoTRZb,
+                                             ITM_NULL,                      ITM_NULL,                   20000+ITM_SCWtoKG,        20000+ITM_KGtoSCW,     20000+ITM_TRZtoKG,           20000+ITM_KGtoTRZ,
+                                             ITM_TONtoKG,                   ITM_KGtoTON,                10000+ITM_STtoKGb,        10000+ITM_KGtoSTb,     ITM_CARATtoKG,               ITM_KGtoCARAT,
+                                             ITM_NULL,                      ITM_NULL,                   20000+ITM_STtoKG,         20000+ITM_KGtoST,      ITM_NULL,                    ITM_NULL,
+                                             ITM_LIANGtoKG,                 ITM_KGtoLIANG,              ITM_NULL,                 ITM_NULL,              ITM_JINtoKG,                 ITM_KGtoJIN,
+                                             ITM_OZtoG,                     ITM_GtoOZ,                  10000+ITM_TRZtoGb,        10000+ITM_GtoTRZb,     ITM_CARATtoG,                ITM_GtoCARAT,
+                                             ITM_NULL,                      ITM_NULL,                   20000+ITM_TRZtoG,         20000+ITM_GtoTRZ,      ITM_NULL,                    ITM_NULL                      };
 
 TO_QSPI const int16_t menu_ConvX[]       = { ITM_AUtoM,                     ITM_MtoAU,                  ITM_LYtoM,                ITM_MtoLY,             ITM_PCtoM,                   ITM_MtoPC,
                                              ITM_MILEtoM,                   ITM_MtoMILE,                ITM_NMItoM,               ITM_MtoNMI,            ITM_FTtoM,                   ITM_MtoFT,
-                                             ITM_INCHtoM,                   ITM_MtoINCH,                ITM_NULL,                 ITM_NULL,              ITM_YDtoM,                   ITM_MtoYD,
-                                             ITM_LItoM,                     ITM_MtoLI,                  ITM_YINtoM,               ITM_MtoYIN,            10000+ITM_ZHANGtoMb,         10000+ITM_MtoZHANGb,
-                                             ITM_NULL,                      ITM_NULL,                   ITM_NULL,                 ITM_NULL,              20000+ITM_ZHANGtoM,          20000+ITM_MtoZHANG,
+                                             ITM_INCHtoM,                   ITM_MtoINCH,                ITM_POINTtoM,             ITM_MtoPOINT,          ITM_YDtoM,                   ITM_MtoYD,
+                                             ITM_LItoM,                     ITM_MtoLI,                  ITM_YINtoM,               ITM_MtoYIN,            ITM_ZHANGtoM,                ITM_MtoZHANG,
                                              ITM_CHItoM,                    ITM_MtoCHI,                 ITM_CUNtoM,               ITM_MtoCUN,            ITM_FENtoM,                  ITM_MtoFEN,
-                                             ITM_FATHOMtoM,                 ITM_MtoFATHOM,              ITM_NULL,                 ITM_NULL,              10000+ITM_FTUStoMc,          10000+ITM_MtoFTUSc,
-                                             ITM_INCHtoMM,                  ITM_MMtoINCH,               ITM_POINTtoMM,            ITM_MMtoPOINT,         30000+ITM_FTUStoMb,          30000+ITM_MtoFTUSb,
-                                             ITM_MItoKM,                    ITM_KMtoMI,                 ITM_NMItoKM,              ITM_KMtoNMI,           20000+ITM_FTUStoM,           20000+ITM_MtoFTUS             };
+                                             ITM_FATHOMtoM,                 ITM_MtoFATHOM,              ITM_NULL,                 ITM_NULL,              ITM_NULL,                    ITM_NULL,
+                                             ITM_INCHtoMM,                  ITM_MMtoINCH,               ITM_POINTtoMM,            ITM_MMtoPOINT,         10000+ITM_FTUStoMb,          10000+ITM_MtoFTUSb,
+                                             ITM_MItoKM,                    ITM_KMtoMI,                 ITM_NMItoKM,              ITM_KMtoNMI,           20000+ITM_FTUStoM,           20000+ITM_MtoFTUS,            };
 
-TO_QSPI const int16_t menu_ConvA[]       = { 10000+ITM_ACtoM2b,             10000+ITM_M2toACb,          ITM_MUtoM2,               ITM_M2toMU,            10000+ITM_ACUStoM2b,         10000+ITM_M2toACUSb,
-                                             20000+ITM_ACtoM2,              20000+ITM_M2toAC,           ITM_NULL,                 ITM_NULL,              20000+ITM_ACUStoM2,          20000+ITM_M2toACUS,
-                                             ITM_NULL,                      ITM_NULL,                   ITM_NULL,                 ITM_NULL,              ITM_NULL,                    ITM_NULL,
-                                             10000+ITM_ACtoHAb,             10000+ITM_HAtoACb,          ITM_HECTAREtoM2,          ITM_M2toHECTARE,       10000+ITM_ACUStoHAb,         10000+ITM_HAtoACUSb,
-                                             20000+ITM_ACtoHA,              20000+ITM_HAtoAC,           ITM_NULL,                 ITM_NULL,              20000+ITM_ACUStoHA,          20000+ITM_HAtoACUS            };
+TO_QSPI const int16_t menu_ConvA[]       = { ITM_ACtoM2,                    ITM_M2toAC,                 ITM_MUtoM2,               ITM_M2toMU,            ITM_ACUStoM2,                ITM_M2toACUS,
+                                             ITM_ACtoHA,                    ITM_HAtoAC,                 ITM_HECTAREtoM2,          ITM_M2toHECTARE,       ITM_ACUStoHA,                ITM_HAtoACUS                  };
 
 /*      Menu name                           <----------------------------------------------------------------------------- 6 functions ---------------------------------------------------------------------------->  */
 /*                                          <---------------------------------------------------------------------- 6 f shifted functions ------------------------------------------------------------------------->  */
 /*                                          <---------------------------------------------------------------------- 6 g shifted functions ------------------------------------------------------------------------->  */
 TO_QSPI const int16_t menu_ConvV[]       = { ITM_GLUKtoM3,                  ITM_M3toGLUK,               ITM_QTtoM3,               ITM_M3toQT,            ITM_GLUStoM3,                ITM_M3toGLUS,
-                                             10000+ITM_FZUKtoM3b,           10000+ITM_M3toFZUKb,        10000+ITM_BARRELtoM3b,    10000+ITM_M3toBARRELb, 10000+ITM_FZUStoM3b,         10000+ITM_M3toFZUSb,
-                                             20000+ITM_FZUKtoM3,            20000+ITM_M3toFZUK,         20000+ITM_BARRELtoM3,     20000+ITM_M3toBARREL,  20000+ITM_FZUStoM3,          20000+ITM_M3toFZUS,
+                                             10000+ITM_FZUKtoM3b,           10000+ITM_M3toFZUKb,        ITM_BARRELtoM3,           ITM_M3toBARREL,        10000+ITM_FZUStoM3b,         10000+ITM_M3toFZUSb,
+                                             20000+ITM_FZUKtoM3,            20000+ITM_M3toFZUK,         ITM_NULL,                 ITM_NULL,              20000+ITM_FZUStoM3,          20000+ITM_M3toFZUS,
                                              ITM_GLUKtoL,                   ITM_LtoGLUK,                ITM_QTtoL,                ITM_LtoQT,             ITM_GLUStoL,                 ITM_LtoGLUS,
                                              10000+ITM_FZUKtoMLb,           10000+ITM_MLtoFZUKb,        ITM_NULL,                 ITM_NULL,              10000+ITM_FZUStoMLb,         10000+ITM_MLtoFZUSb,
                                              20000+ITM_FZUKtoML,            20000+ITM_MLtoFZUK,         ITM_NULL,                 ITM_NULL,              20000+ITM_FZUStoML,          20000+ITM_MLtoFZUS            };

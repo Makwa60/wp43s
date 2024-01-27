@@ -243,24 +243,24 @@
   #define ITM_FtoC                       221
   #define ITM_DBtoPR                     222
   #define ITM_DBtoPRb                    223
-  #define ITM_DBtoPRc                    224
+  #define ITM_0224                       224
   #define ITM_DBtoFR                     225
   #define ITM_DBtoFRb                    226
-  #define ITM_DBtoFRc                    227
+  #define ITM_0227                       227
   #define ITM_PRtoDB                     228
   #define ITM_PRtoDBb                    229
-  #define ITM_PRtoDBc                    230
+  #define ITM_0230                       230
   #define ITM_FRtoDB                     231
   #define ITM_FRtoDBb                    232
-  #define ITM_FRtoDBc                    233
+  #define ITM_0233                       233
   #define ITM_ACtoHA                     234
-  #define ITM_ACtoHAb                    235
+  #define ITM_0235                       235
   #define ITM_HAtoAC                     236
-  #define ITM_HAtoACb                    237
+  #define ITM_0237                       237
   #define ITM_ACUStoHA                   238
-  #define ITM_ACUStoHAb                  239
+  #define ITM_0239                       239
   #define ITM_HAtoACUS                   240
-  #define ITM_HAtoACUSb                  241
+  #define ITM_0241                       241
   #define ITM_PAtoATM                    242
   #define ITM_ATMtoPA                    243
   #define ITM_AUtoM                      244
@@ -272,19 +272,19 @@
   #define ITM_CALtoJ                     250
   #define ITM_JtoCAL                     251
   #define ITM_LBFFTtoNM                  252
-  #define ITM_LBFFTtoNMb                 253
+  #define ITM_POINTtoM                   253
   #define ITM_NMtoLBFFT                  254
-  #define ITM_NMtoLBFFTb                 255
+  #define ITM_MtoPOINT                   255
   #define ITM_CWTtoKG                    256
   #define ITM_KGtoCWT                    257
   #define ITM_FTtoM                      258
   #define ITM_MtoFT                      259
   #define ITM_FTUStoM                    260
   #define ITM_FTUStoMb                   261
-  #define ITM_FTUStoMc                   262
+  #define ITM_0262                       262
   #define ITM_MtoFTUS                    263
   #define ITM_MtoFTUSb                   264
-  #define ITM_MtoFTUSc                   265
+  #define ITM_0265                       265
   #define ITM_FZUKtoML                   266
   #define ITM_FZUKtoMLb                  267
   #define ITM_MLtoFZUK                   268
@@ -304,9 +304,9 @@
   #define ITM_HPUKtoW                    282
   #define ITM_WtoHPUK                    283
   #define ITM_INCHHGtoPA                 284
-  #define ITM_INCHHGtoPAb                285
+  #define ITM_0285                       285
   #define ITM_PAtoINCHHG                 286
-  #define ITM_PAtoINCHHGb                287
+  #define ITM_0287                       287
   #define ITM_INCHtoMM                   288
   #define ITM_MMtoINCH                   289
   #define ITM_WHtoJ                      290
@@ -320,21 +320,21 @@
   #define ITM_SCWtoKG                    298
   #define ITM_SCWtoKGb                   299
   #define ITM_KGtoSTO                    300
-  #define ITM_KGtoSTOb                   301
+  #define ITM_0301                       301
   #define ITM_STOtoKG                    302
-  #define ITM_STOtoKGb                   303
+  #define ITM_0303                       303
   #define ITM_KGtoST                     304
   #define ITM_KGtoSTb                    305
-  #define ITM_KGtoSTc                    306
+  #define ITM_0306                       306
   #define ITM_STtoKG                     307
   #define ITM_STtoKGb                    308
-  #define ITM_STtoKGc                    309
+  #define ITM_0309                       309
   #define ITM_KGtoTON                    310
   #define ITM_KGtoLIANG                  311
-  #define ITM_KGtoLIANGb                 312
+  #define ITM_0312                       312
   #define ITM_TONtoKG                    313
   #define ITM_LIANGtoKG                  314
-  #define ITM_LIANGtoKGb                 315
+  #define ITM_0315                       315
   #define ITM_GtoTRZ                     316
   #define ITM_GtoTRZb                    317
   #define ITM_TRZtoG                     318
@@ -344,9 +344,9 @@
   #define ITM_LYtoM                      322
   #define ITM_MtoLY                      323
   #define ITM_MMHGtoPA                   324
-  #define ITM_MMHGtoPAb                  325
+  #define ITM_0325                       325
   #define ITM_PAtoMMHG                   326
-  #define ITM_PAtoMMHGb                  327
+  #define ITM_0327                       327
   #define ITM_MItoKM                     328
   #define ITM_KMtoMI                     329
   #define ITM_KMtoNMI                    330
@@ -370,10 +370,10 @@
   #define ITM_StoYEAR                    348
   #define ITM_YEARtoS                    349
   #define ITM_CARATtoG                   350
-  #define ITM_CARATtoGb                  351
+  #define ITM_0351                       351
   #define ITM_JINtoKG                    352
   #define ITM_GtoCARAT                   353
-  #define ITM_GtoCARATb                  354
+  #define ITM_0354                       354
   #define ITM_KGtoJIN                    355
   #define ITM_QTtoL                      356
   #define ITM_LtoQT                      357
@@ -384,11 +384,11 @@
   #define ITM_MtoINCH                    362
   #define ITM_MtoNMI                     363
   #define ITM_BARRELtoM3                 364
-  #define ITM_BARRELtoM3b                365
+  #define ITM_0365                       365
   #define ITM_M3toBARREL                 366
-  #define ITM_M3toBARRELb                367
-  #define ITM_ATMtoPAb                   368
-  #define ITM_PAtoATMb                   369
+  #define ITM_0367                       367
+  #define ITM_0368                       368
+  #define ITM_0369                       369
   #define ITM_HECTAREtoM2                370
   #define ITM_M2toHECTARE                371
   #define ITM_MUtoM2                     372
@@ -402,9 +402,9 @@
   #define ITM_CUNtoM                     380
   #define ITM_MtoCUN                     381
   #define ITM_ZHANGtoM                   382
-  #define ITM_ZHANGtoMb                  383
+  #define ITM_0383                       383
   #define ITM_MtoZHANG                   384
-  #define ITM_MtoZHANGb                  385
+  #define ITM_0385                       385
   #define ITM_FENtoM                     386
   #define ITM_MtoFEN                     387
   #define ITM_KGtoTRZ                    388
@@ -412,9 +412,9 @@
   #define ITM_TRZtoKG                    390
   #define ITM_TRZtoKGb                   391
   #define ITM_CARATtoKG                  392
-  #define ITM_CARATtoKGb                 393
+  #define ITM_0393                       393
   #define ITM_KGtoCARAT                  394
-  #define ITM_KGtoCARATb                 395
+  #define ITM_0395                       395
 
 
   // Flag, bit, rotation, and logical OPs
@@ -1888,13 +1888,13 @@
   #define ITM_PERCENTILE                1823
 
   #define ITM_ACtoM2                    1824
-  #define ITM_ACtoM2b                   1825
+  #define ITM_1825                      1825
   #define ITM_M2toAC                    1826
-  #define ITM_M2toACb                   1827
+  #define ITM_1827                      1827
   #define ITM_ACUStoM2                  1828
-  #define ITM_ACUStoM2b                 1829
+  #define ITM_1829                      1829
   #define ITM_M2toACUS                  1830
-  #define ITM_M2toACUSb                 1831
+  #define ITM_1831                      1831
   #define ITM_FZUKtoM3                  1832
   #define ITM_FZUKtoM3b                 1833
   #define ITM_M3toFZUK                  1834
