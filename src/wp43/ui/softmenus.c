@@ -302,7 +302,7 @@ TO_QSPI const int16_t menu_AngleConv[]   = { ITM_toDEG,                     ITM_
 /*                                          <---------------------------------------------------------------------- 6 f shifted functions ------------------------------------------------------------------------->  */
 /*                                          <---------------------------------------------------------------------- 6 g shifted functions ------------------------------------------------------------------------->  */
 TO_QSPI const int16_t menu_UnitConv[]    = { -MNU_CONVE,                    -MNU_CONVP,                 -MNU_CONVTIME,            -MNU_CONVFP,           -MNU_CONVM,                  -MNU_CONVX,
-                                             ITM_CtoF,                      ITM_FtoC,                   ITM_NULL,                 ITM_NULL,              -MNU_CONVV,                  -MNU_CONVA,
+                                             ITM_FtoC,                      ITM_CtoF,                   ITM_NULL,                 ITM_NULL,              -MNU_CONVV,                  -MNU_CONVA,
                                              ITM_NULL,                      ITM_NULL,                   ITM_NULL,                 ITM_NULL,              ITM_NULL,                    ITM_NULL,
                                              10000+ITM_PRtoDBb,             10000+ITM_DBtoPRb,          10000+ITM_FRtoDBb,        10000+ITM_DBtoFRb,     ITM_LBFFTtoNM,               ITM_NMtoLBFFT,
                                              20000+ITM_PRtoDB,              20000+ITM_DBtoPR,           20000+ITM_FRtoDB,         20000+ITM_DBtoFR,      ITM_NULL,                    ITM_NULL,                     };
