@@ -518,6 +518,7 @@ void fnNop(uint16_t unusedButMandatoryParameter) {
   void fnCvtFenM                   (uint16_t unusedButMandatoryParameter) {}
   void fnCvtMileM                  (uint16_t unusedButMandatoryParameter) {}
   void fnCvtNMiM                   (uint16_t unusedButMandatoryParameter) {}
+  void fnCvtPointM                 (uint16_t unusedButMandatoryParameter) {}
   void addItemToBuffer             (uint16_t unusedButMandatoryParameter) {}
   void fnOff                       (uint16_t unusedButMandatoryParameter) {}
   void fnAim                       (uint16_t unusedButMandatoryParameter) {}
@@ -1125,9 +1126,9 @@ TO_QSPI const item_t indexOfItems[] = {
 /*  250 */  { fnCvtCalJ,                    multiply,                    "cal" STD_RIGHT_ARROW "J",                     "J " STD_LEFT_ARROW,                           (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
 /*  251 */  { fnCvtCalJ,                    divide,                      "J" STD_RIGHT_ARROW "cal",                     STD_RIGHT_ARROW " cal",                        (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
 /*  252 */  { fnCvtLbfftNm,                 multiply,                    "lbft" STD_RIGHT_SHORT_ARROW "Nm",             "Nm " STD_LEFT_ARROW,                          (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
-/*  253 */  { itemToBeCoded,                NOPARAM,                     "pt." STD_RIGHT_ARROW "m",                     "m " STD_LEFT_ARROW,                           (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/*  253 */  { fnCvtPointM,                  multiply,                    "pt." STD_RIGHT_ARROW "m",                     "m " STD_LEFT_ARROW,                           (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
 /*  254 */  { fnCvtLbfftNm,                 divide,                      "Nm" STD_RIGHT_SHORT_ARROW "lbft",             STD_RIGHT_ARROW "lbf" STD_DOT "ft",            (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
-/*  255 */  { itemToBeCoded,                NOPARAM,                     "m" STD_RIGHT_ARROW "pt.",                     STD_RIGHT_ARROW STD_SPACE_4_PER_EM "point",    (0 << TAM_MAX_BITS) |     0, CAT_DUPL | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/*  255 */  { fnCvtPointM,                  divide,                      "m" STD_RIGHT_ARROW "pt.",                     STD_RIGHT_ARROW STD_SPACE_4_PER_EM "point",    (0 << TAM_MAX_BITS) |     0, CAT_DUPL | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
 /*  256 */  { fnCvtCwtKg,                   multiply,                    "cwt" STD_RIGHT_ARROW "kg",                    "kg " STD_LEFT_ARROW,                          (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
 /*  257 */  { fnCvtCwtKg,                   divide,                      "kg" STD_RIGHT_ARROW "cwt",                    STD_RIGHT_ARROW " cwt",                        (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
 /*  258 */  { fnCvtFtM,                     multiply,                    "ft." STD_RIGHT_ARROW "m",                     "m " STD_LEFT_ARROW,                           (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
