@@ -193,6 +193,7 @@
   extern const real_t * const const_MiToM;
   extern const real_t * const const_NmiToM;
   extern const real_t * const const_InchToM;
+  extern const real_t * const const_PointToM;
   extern const real_t * const const_AcreToHa;
   extern const real_t * const const_AcreusToHa;
   extern const real_t * const const_MuToM2;

@@ -306,6 +306,11 @@ void fnCvtPointMm(uint16_t multiplyDivide) {
 }
 
 
+void fnCvtPointM(uint16_t multiplyDivide) {
+  unitConversion(const_PointToM, multiplyDivide);
+}
+
+
 void fnCvtFathomM(uint16_t multiplyDivide) {
   unitConversion(const_FathomToM, multiplyDivide);
 }

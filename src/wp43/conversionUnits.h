@@ -80,6 +80,7 @@
   void fnCvtInchMm    (uint16_t multiplyDivide);
   void fnCvtSfeetM    (uint16_t multiplyDivide);
   void fnCvtYardM     (uint16_t multiplyDivide);
+  void fnCvtPointM    (uint16_t multiplyDivide);
   void fnCvtPointMm   (uint16_t multiplyDivide);
   void fnCvtFathomM   (uint16_t multiplyDivide);
   void fnCvtLiM       (uint16_t multiplyDivide);
