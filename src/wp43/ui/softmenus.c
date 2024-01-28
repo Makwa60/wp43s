@@ -1142,10 +1142,34 @@ void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
 
 
 
+  static bool isUnitConversionSoftmenu(void) {
+    smStackMode_t sm = smStackMode[0];
+    int16_t menuItem = softmenu[softmenuStacks[sm].item[0].softmenuId].menuItem;
+    switch(menuItem) {
+      case -MNU_UNITCONV:
+      case -MNU_CONVA:
+      case -MNU_CONVE:
+      case -MNU_CONVFP:
+      case -MNU_CONVM:
+      case -MNU_CONVP:
+      case -MNU_CONVV:
+      case -MNU_CONVX:
+      case -MNU_CONVTIME: {
+        return true;
+      }
+      default: {
+        return false;
+      }
+    }
+  }
+
+
+
   void showSoftkey(const char *label, int16_t xSoftkey, int16_t ySoftKey, videoMode_t videoMode, bool topLine, bool bottomLine) {
-    int16_t x1, y1, x2, y2;
+    int16_t x1, y1, x2, y2, x3;
     int16_t w;
     char l[15];
+    const bool unitConv = isUnitConversionSoftmenu();
 
     if((calcMode == cmPlotStat || calcMode == cmGraph) && xSoftkey >= 2) {           //prevent softkeys columns 3-6 from displaying over the graph
         return;
@@ -1200,7 +1224,16 @@ void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
     *lw = 0;
     w = stringWidth(l, &standardFont, false, false);
 
-    showString(l, &standardFont, x1 + (xSoftkey == 5 ? 33 : 34) - w/2, y1 + 2, videoMode, false, false);
+    if(!unitConv || videoMode != vmNormal) {
+      x3 = x1 + (xSoftkey == 5 ? 33 : 34) - w/2;
+    }
+    else if(xSoftkey % 2 == 1) {
+      x3 = x1 + 2;
+    }
+    else {
+      x3 = x2 - 1 - w;
+    }
+    showString(l, &standardFont, x3, y1 + 2, videoMode, false, false);
   }
 
 
