@@ -265,8 +265,8 @@
   #define ITM_ATMtoPA                    243
   #define ITM_AUtoM                      244
   #define ITM_MtoAU                      245
-  #define ITM_BARtoPA                    246
-  #define ITM_PAtoBAR                    247
+  #define ITM_PAtoBAR                    246
+  #define ITM_BARtoPA                    247
   #define ITM_BTUtoJ                     248
   #define ITM_JtoBTU                     249
   #define ITM_CALtoJ                     250
