@@ -603,13 +603,13 @@ void fnPrimeFactors(uint16_t unusedButMandatoryParameter) {
 
   while(longIntegerIsPositive(eval)) {
 
-    #if defined(DMCP_BUILD)
+    #if !defined(TESTSUITE_BUILD)
       if(kbCheckForInterrupt()) {
         showString("key Waiting ...", &standardFont, 20, 40, vmNormal, false, false);
         programRunStop = PGM_WAITING;
         break;
       }
-    #endif //DMCP_BUILD
+    #endif //!TESTSUITE_BUILD
 
 
     longIntegerDivideQuotientRemainder(currentNumber, nextPrime, quotient, remainder);
