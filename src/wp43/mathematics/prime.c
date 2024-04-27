@@ -605,7 +605,7 @@ bool addFactor(longInteger_t factor, real34Matrix_t *matrix, const real34_t *las
       #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
       return false;
     }
-  #endif
+  #endif // !TESTSUITE_BUILD
 
   if ( cols == 0 ) {
     #ifdef WGR
@@ -644,14 +644,16 @@ bool addFactor(longInteger_t factor, real34Matrix_t *matrix, const real34_t *las
       }
       ++wkgCols;
       faddr->expons[faddr->nExpons-1] = 1;
-      if(!redimMatrixRegister(REGISTER_X, rows, wkgCols)) {
-        displayCalcErrorMessage(ERROR_NOT_ENOUGH_MEMORY_FOR_NEW_MATRIX, ERR_REGISTER_LINE, REGISTER_X);
-        #if(EXTRA_INFO_ON_CALC_ERROR == 1)
-          sprintf(errorMessage, "Not enough memory for a %" PRIu32 STD_CROSS "%" PRIu32 " matrix", rows, cols);
-          moreInfoOnError("In function fnPrimeFactors:", errorMessage, NULL, NULL);
-        #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
-        return false;
-      }
+      #if !defined(TESTSUITE_BUILD)
+        if(!redimMatrixRegister(REGISTER_X, rows, wkgCols)) {
+          displayCalcErrorMessage(ERROR_NOT_ENOUGH_MEMORY_FOR_NEW_MATRIX, ERR_REGISTER_LINE, REGISTER_X);
+          #if(EXTRA_INFO_ON_CALC_ERROR == 1)
+            sprintf(errorMessage, "Not enough memory for a %" PRIu32 STD_CROSS "%" PRIu32 " matrix", rows, cols);
+            moreInfoOnError("In function fnPrimeFactors:", errorMessage, NULL, NULL);
+          #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+          return false;
+        }
+      #endif // !TESTSUITE_BUILD
     }
     n = rows*(faddr->nExpons);
     c = n/2;
