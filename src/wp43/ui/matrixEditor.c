@@ -14,6 +14,7 @@
 #include "hal/lcd.h"
 #include "longIntegerType.h"
 #include "items.h"
+#include "mathematics/comparisonReals.h"
 #include "mathematics/matrix.h"
 #include "mathematics/toPolar.h"
 #include "registers.h"
@@ -872,29 +873,51 @@ smallFont:
     bool    noFix = (mtxWidth < 0);
     mtxWidth = abs(mtxWidth);
     totalWidth = baseWidth + mtxWidth;
-    if(displayFormat == dfAll && noFix) {
-      displayFormat = getSystemFlag(FLAG_ALLENG) ? dfEng : dfSci;
-      displayFormatDigits = digits;
+
+
+    bool_t allElementAreIntegers = true;                   //allElementAreIntegers will remain true if ALL elements are integer 
+    for(int i = 0; i < maxRows; i++) {
+      for(int j = 0; j < maxCols; j++) {
+        allElementAreIntegers &= real34IsAnInteger(&matrix->matrixElements[i*cols+j]);
+      }
     }
-    if(totalWidth > maxWidth || leftEllipsis) {
-      if(font == &numericFont) {
-        displayFormat = tmpDisplayFormat;
-        displayFormatDigits = tmpDisplayFormatDigits;
+    if(allElementAreIntegers) {                            //allElementAreIntegers will remain true if ALL elements are integer 
+      displayFormat = dfFix;
+      displayFormatDigits = 0;
+      mtxWidth = getRealMatrixColumnWidths(matrix, prefixWidth, font, colWidth, rPadWidth, &digits, maxCols);
+      noFix = (mtxWidth < 0);
+      mtxWidth = abs(mtxWidth);
+      totalWidth = baseWidth + mtxWidth;
+      if(totalWidth > maxWidth) {
+        maxCols--;
         goto smallFont;
       }
-      else {
-        displayFormat = dfSci;
-        displayFormatDigits = 3;
-        mtxWidth = getRealMatrixColumnWidths(matrix, prefixWidth, font, colWidth, rPadWidth, &digits, maxCols);
-        noFix = (mtxWidth < 0);
-        mtxWidth = abs(mtxWidth);
-        totalWidth = baseWidth + mtxWidth;
-        if(totalWidth > maxWidth) {
-          maxCols--;
+    } else {
+      if(displayFormat == DF_ALL && noFix) {
+        displayFormat = getSystemFlag(FLAG_ALLENG) ? dfEng : dfSci;
+        displayFormatDigits = digits;
+      }
+      if(totalWidth > maxWidth || leftEllipsis) {
+        if(font == &numericFont) {
+          displayFormat = tmpDisplayFormat;
+          displayFormatDigits = tmpDisplayFormatDigits;
           goto smallFont;
+        }
+        else {
+          displayFormat = dfSci;
+          displayFormatDigits = 3;
+          mtxWidth = getRealMatrixColumnWidths(matrix, prefixWidth, font, colWidth, rPadWidth, &digits, maxCols);
+          noFix = (mtxWidth < 0);
+          mtxWidth = abs(mtxWidth);
+          totalWidth = baseWidth + mtxWidth;
+          if(totalWidth > maxWidth) {
+            maxCols--;
+            goto smallFont;
+          }
         }
       }
     }
+
     if(forEditor) {
       if((matSelCol < sCol) && leftEllipsis) {
         scrollColumn--;
