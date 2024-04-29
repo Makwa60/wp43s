@@ -8,6 +8,7 @@
 #include "error.h"
 #include "flags.h"
 #include "fonts.h"
+#include "hal/lcd.h"
 #include "integers.h"
 #include "matrix.h"
 #include "registers.h"
@@ -510,9 +511,6 @@ void calculateNextPrime(longInteger_t currentNumber, longInteger_t nextPrime) {
     refreshRegisterLine(REGISTER_X);
 
     displayFormatDigits = savedDisplayFormatDigits;
-    #if defined DMCP_BUILD
-      lcd_refresh();
-    #endif //DMCP_BUILD
   }
 #endif //TESTSUITE_BUILD
 
@@ -699,7 +697,7 @@ void fnPrimeFactors(uint16_t unusedButMandatoryParameter) {
         sprintf(errorMessage, "DataType %" PRIu32, getRegisterDataType(REGISTER_X));
         moreInfoOnError("In function fnPrimeFactors:", errorMessage, "has decimals and cannot have prime factors.", "");
       #endif
-      goto endandclose;
+      goto abort;
     }
     convertReal34ToLongInteger(REGISTER_REAL34_DATA(REGISTER_X), currentNumber, DEC_ROUND_DOWN);
   }
@@ -710,10 +708,20 @@ void fnPrimeFactors(uint16_t unusedButMandatoryParameter) {
       sprintf(errorMessage, "the input type %s is not allowed for FACTORS!", getDataTypeName(getRegisterDataType(REGISTER_X), false, false));
       moreInfoOnError("In function fnPrimeFactors:", errorMessage, NULL, NULL);
     #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+    goto abort;
+  }
+
+  if(longIntegerIsZero(currentNumber) || longIntegerSign(currentNumber) == -1) {             // <=0 end
+    goto abort;
+  } else {
+    longIntegerSubtractUInt(currentNumber,1,temp);                                           // ==1 end
+    if(longIntegerIsZero(temp)) {
+      goto abort;
+    }
   }
 
   if(!saveLastX()) {
-    goto endandclose;
+    goto abort;
   }
 
   longIntegerSetPositiveSign(currentNumber);
@@ -728,8 +736,9 @@ void fnPrimeFactors(uint16_t unusedButMandatoryParameter) {
   while(longIntegerIsPositive(eval)) {
 
     #if !defined(TESTSUITE_BUILD)
-      dumpExponents(&matrix, &faddr, 12);
       _showProgress(&lastAdded, nextPrime);
+      dumpExponents(&matrix, &faddr, 12);
+      lcd_refresh();
 
       if(kbCheckForInterrupt()) {
         showString("key Waiting ...", &standardFont, 20, 40, vmNormal, false, false);
@@ -768,6 +777,7 @@ void fnPrimeFactors(uint16_t unusedButMandatoryParameter) {
 endandclose:
   dumpExponents(&matrix, &faddr, 65535);
   clearFactorAdder(&faddr);
+abort:
   longIntegerFree(lastFactor);
   longIntegerFree(temp);
   longIntegerFree(eval);
