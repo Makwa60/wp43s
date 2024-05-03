@@ -528,7 +528,7 @@ typedef struct FactorAdder
 } FactorAdder_t;
 
 
-void initFactorAdder(FactorAdder_t *faddr) {
+static void initFactorAdder(FactorAdder_t *faddr) {
   faddr->nExpons = 0;
   longIntegerInit(faddr->lastFactor);
 };
@@ -557,7 +557,7 @@ void dumpExponents(real34Matrix_t *matrix, FactorAdder_t *faddr, uint16_t dumpFo
 }
 
 
-bool addFactor(longInteger_t lastFactor, longInteger_t factor, real34Matrix_t *matrix, const real34_t *lastAdded,FactorAdder_t *faddr) {
+static bool addFactor(longInteger_t lastFactor, longInteger_t factor, real34Matrix_t *matrix, const real34_t *lastAdded,FactorAdder_t *faddr) {
   //printLongIntegerToConsole(factor,"-->","\n");
   #ifdef WGR
     printf("wgr:  addFactor()\n");
