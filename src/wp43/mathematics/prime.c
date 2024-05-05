@@ -643,7 +643,7 @@ static bool addFactor(longInteger_t lastFactor, longInteger_t factor, real34Matr
             moreInfoOnError("In function addFactor:", errorMessage, NULL, NULL);
           #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
         return false;
-        #endif // !TESTSUITE_BUILD        
+        #endif // !TESTSUITE_BUILD
       }
       ++wkgCols;
       faddr->expons[faddr->nExpons-1] = 1;
@@ -689,7 +689,7 @@ void fnPrimeFactors(uint16_t unusedButMandatoryParameter) {
   }
   else if(getRegisterDataType(REGISTER_X) == dtReal34) {
     real34ToIntegralValue(REGISTER_REAL34_DATA(REGISTER_X), &m34, DEC_ROUND_UP);
-    real34Subtract(REGISTER_REAL34_DATA(REGISTER_X), &m34, &m34); // Fractional part    
+    real34Subtract(REGISTER_REAL34_DATA(REGISTER_X), &m34, &m34); // Fractional part
     if(!real34IsZero(&m34)) {
       displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
       #if defined(PC_BUILD)
