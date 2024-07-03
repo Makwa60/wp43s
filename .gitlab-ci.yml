@@ -81,7 +81,7 @@ testSuite:
   script:
     - make test
   tags:
-    - saas-linux-small-amd64*
+    - saas-linux-small-amd64
     
 codeDocs:
   stage: test
