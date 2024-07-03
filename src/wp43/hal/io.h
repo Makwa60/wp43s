@@ -108,6 +108,11 @@
   void ioFileClose(void);
 
   /**
+   * Returns the EOF indicator.
+   */
+  int ioEof(void);
+  
+  /**
    * Delete the given file.
    * The file should not be open.
    *

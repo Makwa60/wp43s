@@ -205,6 +205,12 @@ void ioFileClose(void) {
 
 
 
+int ioEof(void) {
+  assert(_ioFileHandle != NULL);
+  return feof(_ioFileHandle);
+}
+
+
 int ioFileRemove(ioFilePath_t path, uint32_t *errorNumber) {
   assert(_ioFileHandle == NULL);
   static char filename[40];

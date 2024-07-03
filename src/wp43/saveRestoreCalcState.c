@@ -1184,16 +1184,57 @@ void fnSave(uint16_t saveMode) {
 
 
 void readLine(char *line) {
-  restore(line, 1);
-  while(*line == '\n' || *line == '\r') {
+  if(!ioEof()) {
     restore(line, 1);
-  }
+    while((*line == '\n' || *line == '\r') && !ioEof()) {
+      restore(line, 1);
+    }
 
-  while(*line != '\n' && *line != '\r') {
-    restore(++line, 1);
+    while(*line != '\n' && *line != '\r' && !ioEof()) {
+      restore(++line, 1);
+    }
   }
-
+  
   *line = 0;
+}
+
+void read2Lines(char *line1, char *line2) {  // Needed to capture empty lines due to empty strings saved from registers
+  char eol1,eol2;
+  
+  if(!ioEof()) {
+    restore(line1, 1);
+    while((*line1 == '\n' || *line1 == '\r') && !ioEof()) {
+      restore(line1, 1);
+    }
+
+    while(*line1 != '\n' && *line1 != '\r' && !ioEof()) {
+      restore(++line1, 1);
+    }
+  }
+  eol1 = *line1;  
+  *line1 = 0;
+  
+  if(!ioEof()) {
+    restore(line2, 1);
+    eol2 = *line2;   
+    if ((((eol1 == '\n') && (eol2 ==  '\n')) || ((eol1 == '\r') && (eol2 ==  '\r'))) && !ioEof()) {   // empty string between two CR or two LF
+      *line2 = 0;
+      return;
+    }
+    if ((((eol1 == '\r') && (eol2 ==  '\n')) || ((eol1 == '\n') && (eol2 ==  '\r'))) && !ioEof()) {   // end line is CRLF or LFCR
+      restore(line2, 1);
+      if (((*line2 == '\n') || (*line2 == '\r')) && !ioEof()) {     // empty string after CRLF or LFCR
+        *line2 = 0;
+        return;
+      }
+    }
+
+    while(*line2 != '\n' && *line2 != '\r' && !ioEof()) {
+      restore(++line2, 1);
+    }
+  }
+
+  *line2 = 0;
 }
 
 
@@ -1530,8 +1571,7 @@ static bool restoreOneSection(uint16_t loadMode, uint16_t s, uint16_t n, uint16_
     for(int16_t i=0; i<numberOfRegs; i++) {
       readLine(tmpString); // Register number
       regist = stringToInt16(tmpString + 1);
-      readLine(aimBuffer); // Register data type
-      readLine(tmpString); // Register value
+      read2Lines(aimBuffer,tmpString); // Register data type & Register value
 
       if(loadMode == LM_ALL || (loadMode == LM_REGISTERS && regist < REGISTER_X) || (loadMode == LM_REGISTERS_PARTIAL && regist >= s && regist < (s + n))) {
         restoreRegister(loadMode == LM_REGISTERS_PARTIAL ? (regist - s + d) : regist, aimBuffer, tmpString);
@@ -1615,8 +1655,7 @@ static bool restoreOneSection(uint16_t loadMode, uint16_t s, uint16_t n, uint16_
       for(int16_t i=0; i<numberOfRegs; i++) {
         readLine(tmpString); // Register number
         regist = stringToInt16(tmpString + 2) + FIRST_LOCAL_REGISTER;
-        readLine(aimBuffer); // Register data type
-        readLine(tmpString); // Register value
+        read2Lines(aimBuffer,tmpString); // Register data type & Register value
 
         if(loadMode == LM_ALL || loadMode == LM_REGISTERS) {
           restoreRegister(regist, aimBuffer, tmpString);
@@ -1641,8 +1680,7 @@ static bool restoreOneSection(uint16_t loadMode, uint16_t s, uint16_t n, uint16_
     numberOfRegs = stringToInt16(tmpString);
     for(int16_t i=0; i<numberOfRegs; i++) {
       readLine(errorMessage); // Variable name
-      readLine(aimBuffer); // Variable data type
-      readLine(tmpString); // Variable value
+      read2Lines(aimBuffer,tmpString); // Variable data type & Variable value
 
       if(loadMode == LM_ALL || loadMode == LM_NAMED_VARIABLES || 
         (loadMode == LM_SUMS && ((strcmp(errorMessage, "STATS") == 0) || (strcmp(errorMessage, "HISTO") == 0)))) {
