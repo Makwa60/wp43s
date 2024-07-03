@@ -76,24 +76,13 @@ dmcp:
 
 testSuite:
   stage: test
-  coverage: '/^TOTAL.*\s+(\d+\%)$/'
   before_script:
     - *linux-script-before
   script:
     - make test
-    - make coverage
-  artifacts:
-    expire_in: 5 day
-    paths:
-      - testSuiteJunit.xml
-    reports:
-      junit: testSuiteJunit.xml
-      coverage_report:
-        coverage_format: cobertura
-        path: build.sim/meson-logs/coverage.xml
   tags:
-    - saas-linux-small-amd64
-
+    - saas-linux-small-amd64*
+    
 codeDocs:
   stage: test
   before_script:
