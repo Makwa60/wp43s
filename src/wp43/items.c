@@ -148,7 +148,7 @@ void fnNop(uint16_t unusedButMandatoryParameter) {
     }
 
     if(programRunStop != PGM_RUNNING) {
-      if(func == ITM_RCL && dynamicMenuItem > -1) {
+      if(func == ITM_RCL && dynamicMenuItem > -1 && calcMode != cmPem) {
         char *varCatalogItem = dynmenuGetLabel(dynamicMenuItem);
         calcRegister_t regist = findNamedVariable(varCatalogItem);
         if(regist != INVALID_VARIABLE) {
@@ -164,7 +164,7 @@ void fnNop(uint16_t unusedButMandatoryParameter) {
         }
         return;
       }
-      else if(func == ITM_XEQ && dynamicMenuItem > -1) {
+      else if(func == ITM_XEQ && dynamicMenuItem > -1  && calcMode != cmPem) {
         char *varCatalogItem = dynmenuGetLabel(dynamicMenuItem);
         calcRegister_t regist = findNamedLabel(varCatalogItem);
         if(regist != INVALID_VARIABLE) {
