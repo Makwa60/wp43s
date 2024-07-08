@@ -66,6 +66,7 @@
   extern void                            (* const division[NUMBER_OF_DATA_TYPES_FOR_CALCULATIONS][NUMBER_OF_DATA_TYPES_FOR_CALCULATIONS])(void);
   extern void                            (*confirmedFunction)(uint16_t);
   extern const softmenu_t                softmenu[];
+  extern const confirmationTI_t          confirmationTI[];
   extern real51_t                 const *gammaLanczosCoefficients;
   extern real51_t                 const *angle180;
   extern real51_t                 const *angle90;

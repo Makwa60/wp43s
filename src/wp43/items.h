@@ -1849,7 +1849,7 @@
   #define ITM_HNORM                     1793
 
   #define ITM_SQRT1PX2                  1794
-  
+
   #define ITM_ACTUSB                    1795
   #define ITM_DUMP                      1796
 
@@ -1877,7 +1877,7 @@
   #define ITM_VOLMINUS                  1814
   #define ITM_BUZZ                      1815
   #define ITM_PLAY                      1816
-  
+
   #define MNU_CAT_AIM                   1817
   #define MNU_MENUS_AIM                 1818
 
@@ -1919,12 +1919,15 @@
   #define ITM_CLMYMENU                  1853
   #define ITM_CLMYPFN                   1854
   #define ITM_CLMYALPHA                 1855
-
   #define MNU_CONVTIME                  1856
   #define ITM_DAYtoS                    1857
   #define ITM_StoDAY                    1858
 
-  #define LAST_ITEM                     1859
+  #define MNU_YESNO                     1859
+  #define ITM_YES                       1860
+  #define ITM_NO                        1861
+
+  #define LAST_ITEM                     1862
 
   #define NOPARAM                       9876 // Item for function who don't need an item
   #define CONFIRMED                     9877 // Confirmation for RESET, CLPALL, CLALL

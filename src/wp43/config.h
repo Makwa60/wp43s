@@ -177,6 +177,10 @@
   void     restoreStats          (void);
   void     fnReset               (uint16_t confirmation);
   void     setConfirmationMode   (void (*func)(uint16_t));
+  void     fnConfirmationYes     (uint16_t unusedButMandatoryParameter);
+  void     fnConfirmationNo      (uint16_t unusedButMandatoryParameter);
+  uint16_t getConfirmationTiId   (void);
+
   void     fnClAll               (uint16_t confirmation);
   void     backToSystem          (uint16_t unusedButMandatoryParameter);
   void     runDMCPmenu           (uint16_t unusedButMandatoryParameter);

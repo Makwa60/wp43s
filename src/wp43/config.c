@@ -383,6 +383,42 @@ void fnFractionType(uint16_t unusedButMandatoryParameter) {
 }
 
 
+/* Confirmation messages */
+TO_QSPI const confirmationTI_t confirmationTI[] = {
+    {.item = ITM_CLALL,    .confirm = "Clear all?",                  .complete = "All cleared"                  },
+    {.item = ITM_CLFALL,   .confirm = "Clear all flags?",            .complete = "All flags cleared"            },
+    {.item = ITM_CLPALL,   .confirm = "Delete all programs?",        .complete = "All programs deleted"         },
+    {.item = ITM_CLREGS,   .confirm = "Clear registers?",            .complete = "All registers cleared"        },
+    {.item = ITM_CLMALL,   .confirm = "Clear all user menus?",       .complete = "All user menus cleared"       },
+    {.item = ITM_CLVALL,   .confirm = "Clear all user variables?",   .complete = "All user variables cleared"   },
+    {.item = ITM_CLKEYS,   .confirm = "Clear all key assignments?",  .complete = "All key assignments cleared"  },
+    {.item = ITM_DLMALL,   .confirm = "Delete all user menus?",      .complete = "All user menus deleted"       },
+    {.item = ITM_DLVALL,   .confirm = "Delete all user variables?",  .complete = "All user variables deleted"   },
+    {.item = ITM_CLBKUP,   .confirm = "Delete backup file?",         .complete = "Backup file deleted"          },
+    {.item = ITM_RESET,    .confirm = "Reset?",                      .complete = ""                             },
+    {.item = ITM_SYSTEM,   .confirm = "Exit to system?",             .complete = ""                             },
+    {.item = 0,            .confirm = "Are you sure?",               .complete = ""                             }          // Default TI for items requiring confirmation but not listed in this table
+};
+
+uint16_t getConfirmationTiId(void) {
+  uint16_t id;
+  uint16_t item = 0;
+  for(id=0; id<LAST_ITEM; id++) {
+    if(indexOfItems[id].func == confirmedFunction) {
+      item = id;
+      break;
+    }
+  }
+  id = 0;
+  while(confirmationTI[id].item != 0) {
+    if(confirmationTI[id].item == item) {
+      break;
+    }
+    id++;
+  }
+  return id;
+}
+
 
 void setConfirmationMode(void (*func)(uint16_t)) {
   previousCalcMode = calcMode;
@@ -391,8 +427,33 @@ void setConfirmationMode(void (*func)(uint16_t)) {
   clearSystemFlag(FLAG_ALPHA);
   confirmedFunction = func;
   temporaryInformation = TI_ARE_YOU_SURE;
+#if !defined(TESTSUITE_BUILD)
+  showSoftmenu(-MNU_YESNO);
+#endif // !TESTSUITE_BUILD
 }
 
+
+void fnConfirmationYes(uint16_t unusedButMandatoryParameter) {
+#if !defined(TESTSUITE_BUILD)
+  if(calcMode == cmConfirmation) {
+      calcMode = previousCalcMode;
+      popSoftmenu();                // Pop MNU_YESNO
+      temporaryInformation = TI_NO_INFO;
+      confirmedFunction(CONFIRMED);
+  }
+#endif // !TESTSUITE_BUILD
+}
+
+
+ void fnConfirmationNo(uint16_t unusedButMandatoryParameter) {
+#if !defined(TESTSUITE_BUILD)
+  if(calcMode == cmConfirmation) {
+      calcMode = previousCalcMode;
+      popSoftmenu();                // Pop MNU_YESNO
+      temporaryInformation = TI_NO_INFO;
+  }
+#endif // !TESTSUITE_BUILD
+}
 
 
 void fnRange(uint16_t unusedButMandatoryParameter) {
@@ -488,7 +549,7 @@ void fnGetHide(uint16_t unusedButMandatoryParameter) {
 
 void initSimEqMatABX(void) {
   void *memPtr;
-  
+
   allocateNamedVariable("Mat_A", dtReal34Matrix, REAL34_SIZE_IN_BYTES + 4);
   memPtr = getRegisterDataPointer(FIRST_NAMED_VARIABLE);
   ((dataBlock_t *)memPtr)->matrixRows = 1;
@@ -549,7 +610,11 @@ void fnClAll(uint16_t confirmation) {
     // Clear global flags
     fnClFAll(CONFIRMED);
 
-    temporaryInformation = TI_NO_INFO;
+    if(programRunStop != PGM_RUNNING) {
+      temporaryInformation = TI_CONFIRM_COMPLETED;
+    } else {
+      temporaryInformation = TI_NO_INFO;
+    }
     if(programRunStop == PGM_WAITING) {
       programRunStop = PGM_STOPPED;
     }

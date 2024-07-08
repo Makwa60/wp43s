@@ -180,12 +180,12 @@ void systemFlagAction(uint16_t systemFlag, uint16_t action) {
       }
       break;
     }
-    
+
     case FLAG_TDM24: {
       timeSetSystemTimeFormat(action);
       break;
     }
-    
+
     default: {
     }
   }
@@ -554,7 +554,7 @@ void fnFlipFlag(uint16_t flag) {
 
 
 void fnClFAll(uint16_t confirmation) {
-  if(confirmation == NOT_CONFIRMED) {
+  if((confirmation == NOT_CONFIRMED) && (programRunStop != PGM_RUNNING)) {
     setConfirmationMode(fnClFAll);
   }
   else {
@@ -564,6 +564,12 @@ void fnClFAll(uint16_t confirmation) {
 
     if(currentLocalFlags != NULL) {
       currentLocalFlags->localFlags = 0;
+    }
+    
+    if(programRunStop != PGM_RUNNING) {
+      temporaryInformation = TI_CONFIRM_COMPLETED;
+    } else {
+      temporaryInformation = TI_NO_INFO;
     }
   }
 }

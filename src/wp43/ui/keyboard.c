@@ -824,6 +824,12 @@ bool      _kbSeenInterrupt     = false;
           _closeCatalog();
           fnKeyInCatalog = 0;
         }
+        else if((calcMode == cmConfirmation) && (item == ITM_YES || item == ITM_NO)) {
+          runFunction(item);
+        }
+      }
+      else if(calcMode == cmConfirmation) {
+        temporaryInformation = TI_ARE_YOU_SURE;      // Keep confirmation message on screen
       }
 
       refreshScreen();
@@ -935,7 +941,7 @@ bool      _kbSeenInterrupt     = false;
 
 
 
-  void btnPressed(keyCode_t keyCode) {
+  void btnPressed(keyCode_t keyCode) {   
     if(_kbCheckForInterrupt) {
       if(keyCode == kcExit) {
         _kbSeenInterrupt = true;
@@ -1203,7 +1209,7 @@ bool      _kbSeenInterrupt     = false;
         }
         else {
           fnKeyExit(NOPARAM);
-          if(temporaryInformation != TI_NO_INFO) {
+          if((temporaryInformation != TI_NO_INFO) && (calcMode != cmConfirmation)) {
             refreshScreen();
           }
           temporaryInformation = TI_NO_INFO;
@@ -1387,15 +1393,19 @@ bool      _kbSeenInterrupt     = false;
             case cmConfirmation: {
               if(item == ITM_3 || item == ITM_XEQ || item == ITM_ENTER) { // Yes or XEQ or ENTER
                 calcMode = previousCalcMode;
+                popSoftmenu();                    // Pop MNU_YESNO
+                temporaryInformation = TI_NO_INFO;
                 confirmedFunction(CONFIRMED);
               }
 
               else if(item == ITM_DIV || item == ITM_EXIT) { // No or EXIT
                 calcMode = previousCalcMode;
+                popSoftmenu();                    // Pop MNU_YESNO
+                temporaryInformation = TI_NO_INFO;
               }
 
               else {
-                temporaryInformation = TI_ARE_YOU_SURE;
+                temporaryInformation = TI_ARE_YOU_SURE;      // Keep confirmation message on screen
               }
 
               keyActionProcessed = true;
@@ -1768,6 +1778,7 @@ void fnKeyEnter(uint16_t unusedButMandatoryParameter) {
 
       case cmConfirmation: {
         calcMode = previousCalcMode;
+        popSoftmenu();                    // Pop MNU_YESNO
         confirmedFunction(CONFIRMED);
         break;
       }
@@ -1810,7 +1821,7 @@ void fnKeyExit(uint16_t unusedButMandatoryParameter) {
       currentSolverStatus &= ~SOLVER_STATUS_INTERACTIVE;
     }
 
-    if(temporaryInformation != TI_NO_INFO) {    // If TI present then Exit just clears TI
+    if((temporaryInformation != TI_NO_INFO) && (calcMode != cmConfirmation)){    // If TI present then Exit just clears TI
       temporaryInformation = TI_NO_INFO;
       return;
     }
@@ -2049,6 +2060,7 @@ void fnKeyExit(uint16_t unusedButMandatoryParameter) {
 
       case cmConfirmation: {
         calcMode = previousCalcMode;
+        popSoftmenu();                    // Pop MNU_YESNO
         temporaryInformation = TI_NO_INFO;
         if(programRunStop == PGM_WAITING) {
           programRunStop = PGM_STOPPED;
@@ -2136,6 +2148,11 @@ void fnKeyCC(uint16_t unusedButMandatoryParameter) {
       case cmPlotStat:
       case cmTimerApp:
       case cmGraph: {
+        break;
+      }
+      
+      case cmConfirmation: {
+        temporaryInformation = TI_ARE_YOU_SURE;      // Keep confirmation message on screen
         break;
       }
 
@@ -2252,6 +2269,7 @@ void fnKeyBackspace(uint16_t unusedButMandatoryParameter) {
 
       case cmConfirmation: {
         calcMode = previousCalcMode;
+        popSoftmenu();                    // Pop MNU_YESNO
         temporaryInformation = TI_NO_INFO;
         if(programRunStop == PGM_WAITING) {
           programRunStop = PGM_STOPPED;
