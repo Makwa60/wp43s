@@ -252,7 +252,7 @@ void fnDeleteMenu(uint16_t id) {
 
 
 void fnDeleteUserMenus(uint16_t confirmation) {
-  if(confirmation == NOT_CONFIRMED) {
+  if((confirmation == NOT_CONFIRMED) && (programRunStop != PGM_RUNNING)) {
     setConfirmationMode(fnDeleteUserMenus);
   }
   else {
@@ -263,20 +263,30 @@ void fnDeleteUserMenus(uint16_t confirmation) {
     freeWp43(userMenus, sizeof(userMenu_t) * numberOfUserMenus);
     userMenus = NULL;
     numberOfUserMenus = 0;
-    temporaryInformation = TI_DEL_ALL_MENUS;
+    
+    if(programRunStop != PGM_RUNNING) {
+      temporaryInformation = TI_CONFIRM_COMPLETED;
+    } else {
+      temporaryInformation = TI_NO_INFO;
+    }
   }
 }
 
 void fnClearUserMenus(uint16_t confirmation) {
   int i;
-  if(confirmation == NOT_CONFIRMED) {
+  if((confirmation == NOT_CONFIRMED) && (programRunStop != PGM_RUNNING)) {
     setConfirmationMode(fnClearUserMenus);
   }
   else {
     for(i=0; i<numberOfUserMenus; i++) {
-      memset(userMenus[i].menuItem, 0, 18 * sizeof(userMenuItem_t));        
+      memset(userMenus[i].menuItem, 0, 18 * sizeof(userMenuItem_t));
     }
-    temporaryInformation = TI_CLEAR_ALL_MENUS;
+    
+    if(programRunStop != PGM_RUNNING) {
+      temporaryInformation = TI_CONFIRM_COMPLETED;
+    } else {
+      temporaryInformation = TI_NO_INFO;
+    }
   }
 }
 
@@ -290,7 +300,12 @@ void fnClearKeyAssignments(uint16_t confirmation) {
     fnClearFlag(FLAG_USER);
     freeWp43(userKeyLabel, userKeyLabelSize);
     initUserKeyArgument();
-    temporaryInformation = TI_CLKEYS;
+    
+    if(programRunStop != PGM_RUNNING) {
+      temporaryInformation = TI_CONFIRM_COMPLETED;
+    } else {
+      temporaryInformation = TI_NO_INFO;
+    }
   }
 }
 
@@ -752,7 +767,7 @@ void assignToKey(keyCode_t keyCode) {
 void initUserKeyArgument(void) {
   userKeyLabelSize = 37/*keys*/ * 6/*states*/ * 1/*byte terminator*/ + 1/*byte sentinel*/;
   userKeyLabel = allocWp43(userKeyLabelSize);
-  memset(userKeyLabel,   0, TO_BYTES(TO_BLOCKS(userKeyLabelSize)));   
+  memset(userKeyLabel,   0, TO_BYTES(TO_BLOCKS(userKeyLabelSize)));
 }
 
 void setUserKeyArgument(uint16_t position, const char *name) {

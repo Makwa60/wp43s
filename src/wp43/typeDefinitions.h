@@ -298,7 +298,7 @@
     int16_t userMenuId; ///< Id of the user menu when softmenuId is DYNMNU
   } softmenuStackItem_t;
 
-  
+
     /**
    * \struct softmenuStacks_t
    * Stack of softmenus.
@@ -348,6 +348,18 @@
      real34Matrix_t    realMatrix;
      complex34Matrix_t complexMatrix;
   } any34Matrix_t;
+
+
+
+  /**
+   * \struct confirmationTI_t
+   * Structure keeping the TI message for items requiring confirmation.
+   */
+  typedef struct {
+     int16_t  item;             ///< Item ID
+     char     confirm[30];      ///< Confirmation message
+     char     complete[30];     ///< Conpletion message
+  } confirmationTI_t;
 
 
 
@@ -495,11 +507,7 @@
     TI_SUMS_RESTORED       = 60,
     TI_VARIABLES_RESTORED  = 61,
     TI_DMCP_ONLY           = 62,
-    TI_CLKEYS              = 63,
-    TI_DEL_ALL_VARIABLES   = 64,
-    TI_DEL_ALL_MENUS       = 65,
-    TI_CLEAR_ALL_MENUS     = 66,
-    TI_CLEAR_ALL_VARIABLES = 67
+    TI_CONFIRM_COMPLETED   = 63
   } temporaryInformation_t;
 
 

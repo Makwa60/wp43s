@@ -226,7 +226,11 @@ void fnClPAll(uint16_t confirmation) {
     firstDisplayedLocalStepNumber = 0;
 
     scanLabelsAndPrograms();
-    temporaryInformation          = TI_NO_INFO;
+    if(programRunStop != PGM_RUNNING) {
+      temporaryInformation = TI_CONFIRM_COMPLETED;
+    } else {
+      temporaryInformation = TI_NO_INFO;
+    }
     programRunStop                = PGM_STOPPED;
   }
 }

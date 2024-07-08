@@ -12,6 +12,7 @@
 #include "apps/timerApp.h"
 #include "calcMode.h"
 #include "charString.h"
+#include "config.h"
 #include "constantPointers.h"
 #include "core/memory.h"
 #include "curveFitting.h"
@@ -502,7 +503,7 @@ void clearScreen(void) {
   void displayTemporaryInformationOnX(char *prefix) {
     int16_t       w, prefixWidth;
     temporaryInformation_t savedTempInformation;
-    
+
     prefixWidth = stringWidth(prefix, &standardFont, true, true) + 1;
     savedTempInformation = temporaryInformation;
     temporaryInformation = TI_NO_INFO;
@@ -511,25 +512,25 @@ void clearScreen(void) {
     refreshRegisterLine(REGISTER_Y);
     refreshRegisterLine(REGISTER_X);
     temporaryInformation = savedTempInformation;
- 
+
     if (getRegisterDataType(REGISTER_X) == dtReal34) {
         clearRegisterLine(REGISTER_X, true, true);
         if (getSystemFlag(FLAG_FRACT)) {
           fractionToDisplayString(REGISTER_X, tmpString);
         } else {
           real34ToDisplayString(REGISTER_REAL34_DATA(REGISTER_X), getRegisterAngularMode(REGISTER_X), tmpString, &numericFont, SCREEN_WIDTH - prefixWidth, NUMBER_OF_DISPLAY_DIGITS, true, STD_SPACE_PUNCTUATION, true);
-        } 
+        }
         w = stringWidth(tmpString, &numericFont, false, true);
         showString(prefix, &standardFont, 1, Y_POSITION_OF_REGISTER_X_LINE + 6, vmNormal, true, true);
         showString(tmpString, &numericFont, SCREEN_WIDTH - w, Y_POSITION_OF_REGISTER_X_LINE, vmNormal, false, true);
-    } 
+    }
     else if(getRegisterDataType(REGISTER_X) == dtComplex34) {
         clearRegisterLine(REGISTER_X, true, true);
         complex34ToDisplayString(REGISTER_COMPLEX34_DATA(REGISTER_X), tmpString, &numericFont, SCREEN_WIDTH - prefixWidth, NUMBER_OF_DISPLAY_DIGITS, true, STD_SPACE_PUNCTUATION, true);
         w = stringWidth(tmpString, &numericFont, false, true);
         showString(prefix, &standardFont, 1, Y_POSITION_OF_REGISTER_X_LINE + 6, vmNormal, true, true);
         showString(tmpString, &numericFont, SCREEN_WIDTH - w, Y_POSITION_OF_REGISTER_X_LINE, vmNormal, false, true);
-    } 
+    }
     else if(getRegisterDataType(REGISTER_X) == dtLongInteger) {
         clearRegisterLine(REGISTER_X, true, true);
         longIntegerRegisterToDisplayString(REGISTER_X, tmpString, TMP_STR_LENGTH, SCREEN_WIDTH - prefixWidth, 50, STD_SPACE_PUNCTUATION);
@@ -547,7 +548,7 @@ void clearScreen(void) {
           w = stringWidth(tmpString, &standardFont, false, true);
           showString(tmpString, &standardFont, SCREEN_WIDTH - w, Y_POSITION_OF_REGISTER_X_LINE + 6, vmNormal, false, true);
         }
-    } 
+    }
     else {
         showString(prefix, &standardFont, 1, Y_POSITION_OF_REGISTER_X_LINE + 6, vmNormal, true, true);
     }
@@ -601,7 +602,7 @@ void clearScreen(void) {
       }
     }
   }
-  
+
   void refreshRegisterLine(calcRegister_t regist) {
     int16_t       w, wLastBaseNumeric, wLastBaseStandard, prefixWidth, lineWidth = 0;
     bool          prefixPre = true;
@@ -630,7 +631,14 @@ void clearScreen(void) {
       }
 
       else if(temporaryInformation == TI_ARE_YOU_SURE && regist == REGISTER_X) {
-        showString("Are you sure?", &standardFont, 1, Y_POSITION_OF_REGISTER_X_LINE - REGISTER_LINE_HEIGHT*(regist - REGISTER_X) + 6, vmNormal, true, true);
+        uint16_t id = getConfirmationTiId();
+        showString(confirmationTI[id].confirm, &standardFont, 1, Y_POSITION_OF_REGISTER_X_LINE - REGISTER_LINE_HEIGHT*(regist - REGISTER_X) + 6, vmNormal, true, true);
+      }
+      
+      else if(temporaryInformation == TI_CONFIRM_COMPLETED && regist == REGISTER_X) {
+        uint16_t id = getConfirmationTiId();
+        w = stringWidth(confirmationTI[id].complete, &standardFont, true, true);
+        showString(confirmationTI[id].complete, &standardFont, SCREEN_WIDTH - w, Y_POSITION_OF_REGISTER_X_LINE - REGISTER_LINE_HEIGHT*(regist - REGISTER_X) + 6, vmNormal, true, true);
       }
 
       else if(temporaryInformation == TI_WHO && regist == REGISTER_X) {
@@ -664,48 +672,18 @@ void clearScreen(void) {
         showString(tmpString, &standardFont, SCREEN_WIDTH - w, Y_POSITION_OF_REGISTER_X_LINE - REGISTER_LINE_HEIGHT*(regist - REGISTER_X) + 6, vmNormal, true, true);
       }
 
-      else if(temporaryInformation == TI_CLKEYS && regist == REGISTER_X) {
-        sprintf(tmpString, "All key assignments cleared");
-        w = stringWidth(tmpString, &standardFont, true, true);
-        showString(tmpString, &standardFont, SCREEN_WIDTH - w, Y_POSITION_OF_REGISTER_X_LINE - REGISTER_LINE_HEIGHT*(regist - REGISTER_X) + 6, vmNormal, true, true);
-      }
-
-      else if(temporaryInformation == TI_DEL_ALL_VARIABLES && regist == REGISTER_X) {
-        sprintf(tmpString, "All user variables deleted");
-        w = stringWidth(tmpString, &standardFont, true, true);
-        showString(tmpString, &standardFont, SCREEN_WIDTH - w, Y_POSITION_OF_REGISTER_X_LINE - REGISTER_LINE_HEIGHT*(regist - REGISTER_X) + 6, vmNormal, true, true);
-      }
-
-      else if(temporaryInformation == TI_DEL_ALL_MENUS && regist == REGISTER_X) {
-        sprintf(tmpString, "All user menus deleted");
-        w = stringWidth(tmpString, &standardFont, true, true);
-        showString(tmpString, &standardFont, SCREEN_WIDTH - w, Y_POSITION_OF_REGISTER_X_LINE - REGISTER_LINE_HEIGHT*(regist - REGISTER_X) + 6, vmNormal, true, true);
-      }
-
-      else if(temporaryInformation == TI_CLEAR_ALL_MENUS && regist == REGISTER_X) {
-        sprintf(tmpString, "All user menus cleared");
-        w = stringWidth(tmpString, &standardFont, true, true);
-        showString(tmpString, &standardFont, SCREEN_WIDTH - w, Y_POSITION_OF_REGISTER_X_LINE - REGISTER_LINE_HEIGHT*(regist - REGISTER_X) + 6, vmNormal, true, true);
-      }
-
-      else if(temporaryInformation == TI_CLEAR_ALL_VARIABLES && regist == REGISTER_X) {
-        sprintf(tmpString, "All user variables cleared");
-        w = stringWidth(tmpString, &standardFont, true, true);
-        showString(tmpString, &standardFont, SCREEN_WIDTH - w, Y_POSITION_OF_REGISTER_X_LINE - REGISTER_LINE_HEIGHT*(regist - REGISTER_X) + 6, vmNormal, true, true);
-      }
-
-      #if defined(PC_BUILD)
+     #if defined(PC_BUILD)
       else if(temporaryInformation == TI_DMCP_ONLY && regist == REGISTER_X) {
         sprintf(prefix, "Not available on the simulator");
         displayTemporaryInformationOnX(prefix);
       }
       #endif // PC_BUILD
-      
+
       else if(temporaryInformation == TI_SAVED && regist == REGISTER_X) {
         sprintf(prefix, "Saved");
         displayTemporaryInformationOnX(prefix);
       }
-      
+
       else if(temporaryInformation == TI_BACKUP_RESTORED && regist == REGISTER_X) {
         sprintf(prefix, "Backup restored");
         displayTemporaryInformationOnX(prefix);

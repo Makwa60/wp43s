@@ -2306,5 +2306,11 @@ void fnDeleteBackup(uint16_t confirmation) {
       displayCalcErrorMessage(ERROR_IO, ERR_REGISTER_LINE, REGISTER_X);
       errorMoreInfo("removing the backup failed with error code %d", errorNumber);
     }
+    else if(programRunStop != PGM_RUNNING) {
+      temporaryInformation = TI_CONFIRM_COMPLETED;
+    } 
+    else {
+      temporaryInformation = TI_NO_INFO;
+    }
   }
 }

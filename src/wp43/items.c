@@ -849,6 +849,8 @@ void fnNop(uint16_t unusedButMandatoryParameter) {
   void fnDeleteUserMenus           (uint16_t unusedButMandatoryParameter) {}   //DL
   void fnClearUserMenus            (uint16_t unusedButMandatoryParameter) {}   //DL
   void fnClearAllVariables         (uint16_t unusedButMandatoryParameter) {}   //DL
+  void fnConfirmationYes           (uint16_t unusedButMandatoryParameter) {}   //DL
+  void fnConfirmationNo            (uint16_t unusedButMandatoryParameter) {}   //DL
 #endif // GENERATE_CATALOGS
 
 
@@ -2789,10 +2791,10 @@ TO_QSPI const item_t indexOfItems[] = {
 /* 1845 */  { fnCvtQuartM3,                 divide,                      "m" STD_SUP_3 STD_RIGHT_ARROW "qt.",           STD_RIGHT_ARROW " qt.",                        (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
 /* 1846 */  { fnExecutePlusSkip,            tmLabel,                     "XEQ.SKP",                                     "XEQ.SKP",                                     (0 << TAM_MAX_BITS) |    99, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_LABEL        },
 /* 1847 */  { fnClearKeyAssignments,        NOT_CONFIRMED,               "CLKEYS",                                      "CLKEYS",                                      (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABL_XEQ | EIM_DISABLED | PTP_DISABLED     },
-/* 1848 */  { fnClearAllVariables,          NOT_CONFIRMED,               "CLVall",                                      "CLVall",                                      (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABL_XEQ | EIM_DISABLED | PTP_DISABLED     },
-/* 1849 */  { fnDeleteAllVariables,         NOT_CONFIRMED,               "DelVall",                                     "DelVall",                                     (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABL_XEQ | EIM_DISABLED | PTP_DISABLED     },
-/* 1850 */  { fnClearUserMenus,             NOT_CONFIRMED,               "CLMall",                                      "CLMall",                                      (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABL_XEQ | EIM_DISABLED | PTP_DISABLED     },
-/* 1851 */  { fnDeleteUserMenus,            NOT_CONFIRMED,               "DelMall",                                     "DelMall",                                     (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABL_XEQ | EIM_DISABLED | PTP_DISABLED     },
+/* 1848 */  { fnClearAllVariables,          NOT_CONFIRMED,               "CLVall",                                      "CLVall",                                      (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABL_XEQ | EIM_DISABLED | PTP_NONE         },
+/* 1849 */  { fnDeleteAllVariables,         NOT_CONFIRMED,               "DelVall",                                     "DelVall",                                     (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABL_XEQ | EIM_DISABLED | PTP_NONE         },
+/* 1850 */  { fnClearUserMenus,             NOT_CONFIRMED,               "CLMall",                                      "CLMall",                                      (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABL_XEQ | EIM_DISABLED | PTP_NONE         },
+/* 1851 */  { fnDeleteUserMenus,            NOT_CONFIRMED,               "DelMall",                                     "DelMall",                                     (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABL_XEQ | EIM_DISABLED | PTP_NONE         },
 /* 1852 */  { itemToBeCoded,                NOPARAM,                     "CLMy...",                                     "CLMy...",                                     (0 << TAM_MAX_BITS) |     0, CAT_MENU | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
 /* 1853 */  { fnClearMyMenu,                NOPARAM,                     "CLMyM",                                       "CLMyM",                                       (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABL_XEQ | EIM_DISABLED | PTP_DISABLED     },
 /* 1854 */  { fnClearMyPFN,                 NOPARAM,                     "CLMyP",                                       "CLMyP",                                       (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABL_XEQ | EIM_DISABLED | PTP_DISABLED     },
@@ -2802,5 +2804,9 @@ TO_QSPI const item_t indexOfItems[] = {
 /* 1857 */  { fnCvtDayS,                    multiply,                    "day" STD_RIGHT_ARROW "s",                     "s " STD_LEFT_ARROW,                           (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
 /* 1858 */  { fnCvtDayS,                    divide,                      "s" STD_RIGHT_ARROW "day",                     STD_RIGHT_ARROW " day",                        (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
 
-/* 1859 */  { itemToBeCoded,                NOPARAM,                     "",                                            "Last item",                                   (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_ENABLED   | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     }
+/* 1859 */  { itemToBeCoded,                NOPARAM,                     "YESNO",                                       "YESNO",                                       (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
+/* 1860 */  { fnConfirmationYes,            NOPARAM,                     "YES",                                         "YES",                                         (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
+/* 1861 */  { fnConfirmationNo,             NOPARAM,                     "NO",                                          "NO",                                          (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
+
+/* 1862 */  { itemToBeCoded,                NOPARAM,                     "",                                            "Last item",                                   (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_ENABLED   | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     }
 };
