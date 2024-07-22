@@ -108,7 +108,11 @@ int _ioFileNameFromFilePath(ioFilePath_t path, char * filename) {
       strcpy(filename, BASEPATH "res/dmcp/testPgms.bin");
       return FILE_OK;
     case ioPathBackup:
+      #if !defined(XPB)
       strcpy(filename, "backup.bin");
+      #else
+      strcpy(filename, "backupX.bin");
+      #endif // !XPB
       return FILE_OK;
     case ioPathRegDump:
       if (create_dir("./" SAVE_DIR) != 0) return FILE_ERROR;

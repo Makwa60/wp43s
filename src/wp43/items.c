@@ -577,6 +577,8 @@ void fnNop(uint16_t unusedButMandatoryParameter) {
   void fnCoefficientDetermination  (uint16_t unusedButMandatoryParameter) {}
   void fnMinExpStdDev              (uint16_t unusedButMandatoryParameter) {}
   void fnMedianXY                  (uint16_t unusedButMandatoryParameter) {}
+  void fnLowerQuartileXY           (uint16_t unusedButMandatoryParameter) {}
+  void fnUpperQuartileXY           (uint16_t unusedButMandatoryParameter) {}
   void fnMADXY                     (uint16_t unusedButMandatoryParameter) {}
   void fnIQRXY                     (uint16_t unusedButMandatoryParameter) {}
   void fnPercentileXY              (uint16_t unusedButMandatoryParameter) {}
@@ -854,6 +856,7 @@ void fnNop(uint16_t unusedButMandatoryParameter) {
 #endif // GENERATE_CATALOGS
 
 
+#define RANGE_  STD_SUB_R STD_SUB_A STD_SUB_N STD_SUB_G STD_SUB_E    // Strings to maintain table columns below
 
 TO_QSPI const item_t indexOfItems[] = {
 
@@ -2728,7 +2731,7 @@ TO_QSPI const item_t indexOfItems[] = {
 
 /* 1794 */  { fnSqrt1Px2,                   NOPARAM,                     STD_SQUARE_ROOT "(1+x" STD_SUP_2 ")",          STD_SQUARE_ROOT "(1+x" STD_SUP_2 ")",          (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
 
-/* 1795 */  { activateUSBdisk,              NOPARAM,                     "ActUSB",                                      "ActUSB",                                      (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
+/* 1795 */  { activateUSBdisk,              NOPARAM,                     "USB",                                         "USB",                                         (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
 /* 1796 */  { fnDumpRegXToFile,             NOPARAM,                     "DUMP",                                        "DUMP",                                        (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
 
 /* 1797 */  { fnAngularMode,                amMil,                       "MIL",                                         "MIL",                                         (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
@@ -2759,13 +2762,19 @@ TO_QSPI const item_t indexOfItems[] = {
 /* 1817 */  { itemToBeCoded,                NOPARAM,                     "CAT_AIM",                                     "CAT_AIM",                                     (0 << TAM_MAX_BITS) |     0, CAT_MENU | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
 /* 1818 */  { itemToBeCoded,                NOPARAM,                     "MENUS",                                       "MENUS",                                       (0 << TAM_MAX_BITS) |     0, CAT_MENU | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
 
+#if defined(XPB)
+/* 1819 */  { fnMedianXY,                   NOPARAM,                     "x" STD_SUB_M STD_SUB_E STD_SUB_D STD_SUB_N,   "x" STD_SUB_M STD_SUB_E STD_SUB_D STD_SUB_N,   (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/* 1820 */  { fnMADXY,                      NOPARAM,                     "x" STD_SUB_M STD_SUB_A STD_SUB_D,             "x" STD_SUB_M STD_SUB_A STD_SUB_D,             (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/* 1821 */  { fnIQRXY,                      NOPARAM,                     "x" STD_SUB_I STD_SUB_Q STD_SUB_R,             "x" STD_SUB_I STD_SUB_Q STD_SUB_R,             (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/* 1822 */  { fnRangeXY,                    NOPARAM,                     "x" RANGE_,                                    "x" RANGE_,                                    (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/* 1823 */  { fnPercentileXY,               NOPARAM,                     "x%" STD_SUB_I STD_SUB_L STD_SUB_E,            "x%" STD_SUB_I STD_SUB_L STD_SUB_E,            (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+#else
 /* 1819 */  { fnMedianXY,                   NOPARAM,                     "MEDIAN",                                      "MEDIAN",                                      (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
-/* 1820 */  { fnMADXY,                      NOPARAM,                     "MEDDEV",                                      "MEDDEV",                                      (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/* 1820 */  { fnMADXY,                      NOPARAM,                     "MAD",                                         "MAD",                                         (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
 /* 1821 */  { fnIQRXY,                      NOPARAM,                     "Q" STD_SUB_3 "-Q" STD_SUB_1,                  "Q" STD_SUB_3 "-Q" STD_SUB_1,                  (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
-/* 1822 */  { fnRangeXY,                    NOPARAM,                     "x" STD_SUB_m STD_SUB_a "-x" STD_SUB_m STD_SUB_i,
-                                                                                                                        "x" STD_SUB_m STD_SUB_a "-x" STD_SUB_m STD_SUB_i,
-                                                                                                                                                                       (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
-/* 1823 */  { fnPercentileXY,               NOPARAM,                     "Perctil",                                     "Perctil",                                     (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/* 1822 */  { fnRangeXY,                    NOPARAM,                     STD_DELTA "x",                                 STD_DELTA "x",                                 (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/* 1823 */  { fnPercentileXY,               NOPARAM,                     "%ile",                                        "%ile",                                        (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+#endif // XPB
 
 /* 1824 */  { fnCvtAcreM2,                  multiply,                    "ac" STD_RIGHT_ARROW "m" STD_SUP_2,            "m" STD_SUP_2 " " STD_LEFT_ARROW,              (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
 /* 1825 */  { itemToBeCoded,                NOPARAM,                     "1825",                                        "1825",                                        (0 << TAM_MAX_BITS) |     0, CAT_FREE | SLS_ENABLED   | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
@@ -2808,5 +2817,9 @@ TO_QSPI const item_t indexOfItems[] = {
 /* 1860 */  { fnConfirmationYes,            NOPARAM,                     "YES",                                         "YES",                                         (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
 /* 1861 */  { fnConfirmationNo,             NOPARAM,                     "NO",                                          "NO",                                          (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
 
-/* 1862 */  { itemToBeCoded,                NOPARAM,                     "",                                            "Last item",                                   (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_ENABLED   | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     }
+/* 1862 */  { itemToBeCoded,                NOPARAM,                     "FIT",                                         "FIT",                                         (0 << TAM_MAX_BITS) |     0, CAT_MENU | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
+/* 1863 */  { fnLowerQuartileXY,            NOPARAM,                     "x" STD_SUB_Q STD_SUB_1,                       "x" STD_SUB_Q STD_SUB_1,                       (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/* 1864 */  { fnUpperQuartileXY,            NOPARAM,                     "x" STD_SUB_Q STD_SUB_3,                       "x" STD_SUB_Q STD_SUB_3,                       (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+
+/* 1865 */  { itemToBeCoded,                NOPARAM,                     "",                                            "Last item",                                   (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_ENABLED   | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     }
 };

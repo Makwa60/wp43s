@@ -38,6 +38,13 @@ sim: build.sim testPgms
 	cp build.sim/src/generateConstants/constantPointers.* src/generated/
 	cp build.sim/src/ttf2RasterFonts/rasterFontsData.c src/generated/
 	cp build.sim/src/generateLookupTables/lookupTables.* src/generated/
+    
+simX: build.sim testPgms
+	cd build.sim && ninja simX
+	cp build.sim/src/generateCatalogs/softmenuCatalogsX.h src/generated/
+	cp build.sim/src/generateConstants/constantPointers.* src/generated/
+	cp build.sim/src/ttf2RasterFonts/rasterFontsData.c src/generated/
+	cp build.sim/src/generateLookupTables/lookupTables.* src/generated/
 
 release: build.rel testPgms
 	cd build.rel && ninja sim
@@ -56,6 +63,9 @@ coverage: build.sim
 
 dmcp: build.dmcp
 	cd build.dmcp && ninja dmcp
+
+dmcpX: build.dmcp
+	cd build.dmcp && ninja dmcpX
 
 dmcp-power: build.dmcp-power
 	cd build.dmcp-power && ninja dmcp
