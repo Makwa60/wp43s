@@ -17,3 +17,23 @@ softmenuCatalogs_h = custom_target(
   build_by_default : false,
   output           : 'softmenuCatalogs.h',
   command          : [generateCatalogs, '@OUTPUT@'])
+
+#
+# Experimental Build
+#
+generateCatalogsX = executable(
+  'generateCatalogsX',
+  build_by_default    : false,
+  sources             : files('generateCatalogs.c') +
+                        generateCatalogs_src +
+                        [rasterFontsData_c],
+  c_args              : ['-DGENERATE_CATALOGS'] + ['-DXPB'],
+  include_directories : [decNumber_inc, wp43_inc],
+  dependencies        : [gtk_dep, gmp_dep],
+  native              : true,
+  override_options    : ['b_coverage=false'])
+softmenuCatalogsX_h = custom_target(
+  'softmenuCatalogsX.h',
+  build_by_default : false,
+  output           : 'softmenuCatalogsX.h',
+  command          : [generateCatalogsX, '@OUTPUT@'])

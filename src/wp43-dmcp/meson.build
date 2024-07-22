@@ -108,3 +108,86 @@ keymap = custom_target(
   command          : [bash, mk_keymap, 'WP43', '@INPUT@'])
 
 alias_target('keymap', keymap)
+
+#
+# Experimental Build
+#
+wp43X_lib = static_library(
+  'libwp43X',
+  build_by_default    : false,
+  sources             : decNumber_src + wp43_src + wp43_dmcp_src +
+                        [rasterFontsData_c, softmenuCatalogsX_h,
+                          constantPointers_ch, lookupTables_ch, vcs_h, version_h],
+  c_args              : dmcp_cargs + ['-DXPB'],
+  include_directories : [decNumber_inc, wp43_inc, dmcp_inc],
+  dependencies        : arm_gmp_dep,
+  pic                 : false,
+  override_options    : ['debug=false', 'optimization=s'])
+  
+# First pass building the ELF to get the size of the QSPI
+wp43X_pre_elf = executable(
+  'WP43X_pre.elf',
+  build_by_default    : false,
+  sources             : dmcp_src + [vcs_h, version_h],
+  c_args              : dmcp_cargs + ['-DXPB'],
+  link_args           : dmcp_linkargs,
+  link_with           : wp43X_lib,
+  include_directories : [wp43_inc, dmcp_inc],
+  pie                 : false,
+  override_options    : ['debug=false', 'optimization=s'])
+wp43X_pre_qspi_incorrect_crc = custom_target(
+  'WP43X_pre_qspi_incorrect_crc.bin',
+  build_by_default : false,
+  input            : [wp43X_pre_elf],
+  output           : 'WP43X_pre_qspi_incorrect_crc.bin',
+  command          : [arm_objcopy, '--only-section', '.qspi', '-O', 'binary', '@INPUT@', '@OUTPUT@'])
+wp43X_pre_qspi = custom_target(
+  'WP43X_pre_qspi.bin',
+  build_by_default : false,
+  input            : [wp43X_pre_qspi_incorrect_crc],
+  output           : 'WP43X_pre_qspi.bin',
+  command          : [bash, modify_crc, forcecrc32, '@INPUT@', '@OUTPUT@'])
+generated_qspiX_crc_h = custom_target(
+  'generated_qspiX_crc.h',
+  build_by_default : false,
+  input            : [wp43X_pre_qspi],
+  output           : 'generated_qspiX_crc.h',
+  command          : [bash, gen_qspi_crc, '@INPUT@', '@OUTPUT@'])
+
+# Second pass building the ELF including the correct qspi_crc.h
+wp43X_elf = executable(
+  'WP43X.elf',
+  build_by_default    : false,
+  sources             : dmcp_src + [vcs_h, version_h, generated_qspiX_crc_h],
+  c_args              : dmcp_cargs + ['-DUSE_GEN_QSPI_CRC'] + ['-DXPB'],
+  link_args           : dmcp_linkargs,
+  link_with           : wp43X_lib,
+  include_directories : [wp43_inc, dmcp_inc],
+  pie                 : false,
+  override_options    : ['debug=false', 'optimization=s'])
+wp43X_flash = custom_target(
+  'WP43X_flash.bin',
+  build_by_default : false,
+  input            : [wp43X_elf],
+  output           : 'WP43X_flash.bin',
+  command          : [arm_objcopy, '--remove-section', '.qspi', '-O', 'binary', '@INPUT@', '@OUTPUT@'])
+wp43X_pgm = custom_target(
+  'WP43X.pgm',
+  build_by_default : false,
+  input            : [wp43X_flash],
+  output           : 'WP43X.pgm',
+  command          : [bash, add_pgm_chsum, '@INPUT@', '@OUTPUT@'])
+wp43X_qspi_incorrect_crc = custom_target(
+  'WP43X_qspi_incorrect_crc.bin',
+  build_by_default : false,
+  input            : [wp43X_elf],
+  output           : 'WP43X_qspi_incorrect_crc.bin',
+  command          : [arm_objcopy, '--only-section', '.qspi', '-O', 'binary', '@INPUT@', '@OUTPUT@'])
+wp43X_qspi = custom_target(
+  'WP43X_qspi.bin',
+  build_by_default : false,
+  input            : [wp43X_qspi_incorrect_crc],
+  output           : 'WP43X_qspi.bin',
+  command          : [bash, modify_crc, forcecrc32, '@INPUT@', '@OUTPUT@'])
+
+alias_target('dmcpX', wp43X_pgm, wp43X_qspi)

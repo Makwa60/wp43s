@@ -1926,8 +1926,12 @@
   #define MNU_YESNO                     1859
   #define ITM_YES                       1860
   #define ITM_NO                        1861
+  
+  #define MNU_FIT                       1862
+  #define ITM_LOWER_QUARTILE            1863
+  #define ITM_UPPER_QUARTILE            1864
 
-  #define LAST_ITEM                     1862
+  #define LAST_ITEM                     1865
 
   #define NOPARAM                       9876 // Item for function who don't need an item
   #define CONFIRMED                     9877 // Confirmation for RESET, CLPALL, CLALL

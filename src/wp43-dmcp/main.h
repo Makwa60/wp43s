@@ -13,7 +13,11 @@
 
   #include "version.h"
 
+#if !defined(XPB)
   #define PROGRAM_NAME    "WP43"
+#else
+  #define PROGRAM_NAME    "WP43X"
+#endif // !XPB
   #define PROGRAM_VERSION VERSION_SHORT
   #define PROGRAM_KEYMAP_ID 0x33345057          // WP43
 

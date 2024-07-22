@@ -48,3 +48,21 @@ sim = executable(
   override_options    : override_opts,
   win_subsystem       : 'windows')
 alias_target('sim', sim)
+  
+#
+# Experimental Build
+#
+simX = executable(
+  'wp43X',
+  sources             : decNumber_src + wp43_src + wp43_gtk_src + wp43_gtk_rc +
+                        [rasterFontsData_c, softmenuCatalogsX_h,
+                          constantPointers_ch, lookupTables_ch, vcs_h, version_h],
+  c_args              : cflags + ['-DXPB'],
+  c_pch               : 'pch/wp43-gtk_pch.h',
+  link_args           : linkargs,
+  include_directories : [decNumber_inc, wp43_inc],
+  dependencies        : [gtk_dep, gmp_dep, m_dep, pulse_dep],
+  native              : true,
+  override_options    : override_opts,
+  win_subsystem       : 'windows')
+alias_target('simX', simX)

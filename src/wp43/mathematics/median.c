@@ -147,6 +147,11 @@ static void computeQ1Unsorted(real_t *data, uint16_t n, const real_t *unusedButM
   computeQ1Sorted(data, n, quartile);
 }
 
+static void computeQ3Unsorted(real_t *data, uint16_t n, const real_t *unusedButMandatoryParameter, real_t *quartile) {
+  qsort(data, n, sizeof(*data), &statsRealCompare);
+  computeQ3Sorted(data, n, quartile);
+}
+
 static real_t *getXvalues(uint16_t *n) {
   real34Matrix_t stats;
   uint16_t rows, cols, i;
@@ -223,6 +228,30 @@ static void doStatsOperation(void (*func)(real_t *data, uint16_t n, const real_t
  ***********************************************/
 void fnMedianXY(uint16_t unusedButMandatoryParameter) {
   doStatsOperation(&computeMedianUnsorted, const_1, NULL/*, TI_MEDIANX_MEDIANY*/);
+}
+
+/**********************************************
+ * \brief Q1 ==> regX, regY
+ * enables stack lift and refreshes the stack.
+ * regX = Lower quartile x, regY = Lower quartile y
+ *
+ * \param[in] unusedButMandatoryParameter uint16_t
+ * \return void
+ ***********************************************/
+void fnLowerQuartileXY(uint16_t unusedButMandatoryParameter) {
+  doStatsOperation(&computeQ1Unsorted, const_3, NULL/*, TI_Q1X_Q1Y*/);
+}
+
+/**********************************************
+ * \brief Q3 ==> regX, regY
+ * enables stack lift and refreshes the stack.
+ * regX = Upper quartile x, regY = Upper quartile y
+ *
+ * \param[in] unusedButMandatoryParameter uint16_t
+ * \return void
+ ***********************************************/
+void fnUpperQuartileXY(uint16_t unusedButMandatoryParameter) {
+  doStatsOperation(&computeQ3Unsorted, const_3, NULL/*, TI_Q3X_Q3Y*/);
 }
 
 // Sort the data and compute the median absolute deviation
