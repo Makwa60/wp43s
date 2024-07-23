@@ -580,8 +580,8 @@ dynamicSoftmenu_t dynamicSoftmenu[NUMBER_OF_DYNAMIC_SOFTMENUS] = {
 };
 
 #if defined(PC_BUILD)
-  TO_QSPI const char *softMenuNames[] = {
-  /*   0 */    "MyMenu",
+  TO_QSPI const char *softMenuNames[] = {     // This list should match with the menus defined in softmenu[]
+  /*   0 */    "MyMenu",                      // If you add or remove a menu in softmenu[], it should be added or removed here in the same position
   /*   1 */    "MyAlpha",
   /*   2 */    "MyPFN",
   /*   3 */    "PROGS",
@@ -693,7 +693,8 @@ dynamicSoftmenu_t dynamicSoftmenu[NUMBER_OF_DYNAMIC_SOFTMENUS] = {
   /* 109 */    "MENUS_AIM",
   /* 110 */    "CLMy...",
   /* 111 */    "CONVTIME",
-  /* 112 */    "YESNO"
+  /* 112 */    "YESNO",
+  /* 113 */    "FIT"
   };
 #endif // PC_BUILD
 
