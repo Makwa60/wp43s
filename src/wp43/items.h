@@ -1175,18 +1175,18 @@
   #define ITM_SUB_z                     1141
   #define ITM_DELITM_PROG               1142
   #define ITM_DELITM_MENU               1143
-  #define ITM_1144                      1144
-  #define ITM_1145                      1145
-  #define ITM_1146                      1146
-  #define ITM_1147                      1147
-  #define ITM_1148                      1148
-  #define ITM_1149                      1149
-  #define ITM_1150                      1150
-  #define ITM_1151                      1151
-  #define ITM_1152                      1152
-  #define ITM_1153                      1153
-  #define ITM_1154                      1154
-  #define ITM_1155                      1155
+  #define ITM_CH_DIGRAPH                1144
+  #define ITM_SUP_CH_DIGRAPH            1145
+  #define ITM_SUB_CH_DIGRAPH            1146
+  #define ITM_ch_DIGRAPH                1147
+  #define ITM_SUP_ch_DIGRAPH            1148
+  #define ITM_SUB_ch_DIGRAPH            1149
+  #define ITM_QU_DIGRAPH                1150
+  #define ITM_SUP_QU_DIGRAPH            1151
+  #define ITM_SUB_QU_DIGRAPH            1152
+  #define ITM_qu_DIGRAPH                1153
+  #define ITM_SUP_qu_DIGRAPH            1154
+  #define ITM_SUB_qu_DIGRAPH            1155
   #define ITM_1156                      1156
   #define ITM_1157                      1157
   #define ITM_1158                      1158

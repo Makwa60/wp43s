@@ -351,6 +351,11 @@ bool      _kbSeenInterrupt     = false;
       keyActionProcessed = true;
     }
 
+    else if(alphaCase == AC_LOWER && (item == ITM_CH_DIGRAPH || item == ITM_QU_DIGRAPH)) {
+      addItemToBuffer(item + (ITM_ch_DIGRAPH - ITM_CH_DIGRAPH));
+      keyActionProcessed = true;
+    }
+
     else if(item == ITM_DOWN_ARROW) {
       nextChar = NC_SUBSCRIPT;
       keyActionProcessed = true;
