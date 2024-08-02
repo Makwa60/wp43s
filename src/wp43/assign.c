@@ -950,7 +950,8 @@ static bool _assignToKey(int16_t keyFunc) {
           break;
         }
       }
-      if(keyFunc == kf && (!getSystemFlag(FLAG_USER) || getNthString((uint8_t *)userKeyLabel, j * 6 + keyStateCode + i) == 0)) {
+//      if(keyFunc == kf && (!getSystemFlag(FLAG_USER) || strcmp((char *)getNthString((uint8_t *)userKeyLabel, j * 6 + keyStateCode + i),"") == 0)) {
+      if(keyFunc == kf && (!getSystemFlag(FLAG_USER) || getNthString((uint8_t *)userKeyLabel, j * 6 + keyStateCode + i)[0] == 0)) {
         keyCode_t kc = j + 1;
         shiftF = (i == 1);
         shiftG = (i == 2);
