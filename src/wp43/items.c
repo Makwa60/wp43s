@@ -48,6 +48,7 @@
 #include "ui/statusBar.h"
 #include "ui/tam.h"
 #include "ui/tone.h"
+#include <string.h>
 
 #include "wp43.h"
 
@@ -148,39 +149,53 @@ void fnNop(uint16_t unusedButMandatoryParameter) {
     }
 
     if(programRunStop != PGM_RUNNING) {
-      if(func == ITM_RCL && dynamicMenuItem > -1 && calcMode != cmPem) {
+      if(func == ITM_RCL && dynamicMenuItem > -1) {
         char *varCatalogItem = dynmenuGetLabel(dynamicMenuItem);
-        calcRegister_t regist = findNamedVariable(varCatalogItem);
-        if(regist != INVALID_VARIABLE) {
-          reallyRunFunction(func, regist);
+        if (strcmp(varCatalogItem, "RCL") != 0) {
+          calcRegister_t var = findNamedVariable(varCatalogItem);
+          if(var != INVALID_VARIABLE) {
+            if(calcMode == cmPem) {
+              insertUserItemInProgram(func, varCatalogItem);
+            }
+            else {
+              reallyRunFunction(func, var);
+            }
+          }
+          else if(getSystemFlag(FLAG_IGN1ER)) {
+            clearSystemFlag(FLAG_IGN1ER);
+            errorMoreInfo("string '%s' is not a named variable\nignored since IGN1ER was set", varCatalogItem);
+          }
+          else {
+            displayCalcErrorMessage(ERROR_UNDEF_SOURCE_VAR, ERR_REGISTER_LINE, REGISTER_X);
+            errorMoreInfo("string '%s' is not a named variable", varCatalogItem);
+          }
+          return;
         }
-        else if(getSystemFlag(FLAG_IGN1ER)) {
-          clearSystemFlag(FLAG_IGN1ER);
-          errorMoreInfo("string '%s' is not a named variable\nignored since IGN1ER was set", varCatalogItem);
-        }
-        else {
-          displayCalcErrorMessage(ERROR_UNDEF_SOURCE_VAR, ERR_REGISTER_LINE, REGISTER_X);
-          errorMoreInfo("string '%s' is not a named variable", varCatalogItem);
-        }
-        return;
       }
-      else if(func == ITM_XEQ && dynamicMenuItem > -1  && calcMode != cmPem) {
+      if(func == ITM_XEQ && dynamicMenuItem > -1) {
         char *varCatalogItem = dynmenuGetLabel(dynamicMenuItem);
-        calcRegister_t regist = findNamedLabel(varCatalogItem);
-        if(regist != INVALID_VARIABLE) {
-          reallyRunFunction(func, regist);
+        if (strcmp(varCatalogItem, "XEQ") != 0) {
+          calcRegister_t label = findNamedLabel(varCatalogItem);
+          if(label != INVALID_VARIABLE) {
+            if(calcMode == cmPem) {
+              insertUserItemInProgram(func, varCatalogItem);
+            }
+            else {
+              reallyRunFunction(func, label);
+            }
+          }
+          else if(getSystemFlag(FLAG_IGN1ER)) {
+            clearSystemFlag(FLAG_IGN1ER);
+            errorMoreInfo("string '%s' is not a named label\nignored since IGN1ER was set", varCatalogItem);
+          }
+          else {
+            displayCalcErrorMessage(ERROR_LABEL_NOT_FOUND, ERR_REGISTER_LINE, REGISTER_X);
+            errorMoreInfo("string '%s' is not a named label", varCatalogItem);
+          }
+          return;
         }
-        else if(getSystemFlag(FLAG_IGN1ER)) {
-          clearSystemFlag(FLAG_IGN1ER);
-          errorMoreInfo("string '%s' is not a named label\nignored since IGN1ER was set", varCatalogItem);
-        }
-        else {
-          displayCalcErrorMessage(ERROR_LABEL_NOT_FOUND, ERR_REGISTER_LINE, REGISTER_X);
-          errorMoreInfo("string '%s' is not a named label", varCatalogItem);
-        }
-        return;
       }
-      else if(!tamIsActive() && tmValue <= indexOfItems[func].param && indexOfItems[func].param <= tmCmp && (calcMode != cmPem || aimBuffer[0] == 0 || nimNumberPart != NP_INT_BASE)) {
+      if(!tamIsActive() && tmValue <= indexOfItems[func].param && indexOfItems[func].param <= tmCmp && (calcMode != cmPem || aimBuffer[0] == 0 || nimNumberPart != NP_INT_BASE)) {
         tamEnterMode(func);
         return;
       }

@@ -88,7 +88,7 @@ bool      _kbSeenInterrupt     = false;
         item = userPfnItems[dynamicMenuItem].item;
         break;
       }
-      
+
       case MNU_DYNAMIC: {
         dynamicMenuItem = firstItem + itemShift + fn;
         item = userMenus[currentUserMenu].menuItem[dynamicMenuItem].item;
@@ -400,7 +400,7 @@ bool      _kbSeenInterrupt     = false;
     }
     if(calcMode == cmAssign && itemToBeAssigned != 0 && !(tam.alpha && tam.mode != tmNewMenu)) {
       int16_t item = determineFunctionKeyItem(keyCode);
-      
+
       #pragma GCC diagnostic push
       #pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
       switch(-softmenu[getSoftmenuId(0)].menuItem) {
@@ -785,30 +785,34 @@ bool      _kbSeenInterrupt     = false;
                 else {
                   if(item == ITM_XEQ && dynamicMenuItem > -1) {                          // Program assignment
                     char *varCatalogItem = dynmenuGetLabel(dynamicMenuItem);
-                    calcRegister_t regist = findNamedLabel(varCatalogItem);
-                    if(regist != INVALID_VARIABLE) {
-                      item = regist - FIRST_LABEL + ASSIGN_LABELS;
-                    }
-                    else {
-                      displayCalcErrorMessage(ERROR_LABEL_NOT_FOUND, ERR_REGISTER_LINE, REGISTER_X);
-                      #if(EXTRA_INFO_ON_CALC_ERROR == 1)
-                        sprintf(errorMessage, "string '%s' is not a named label", varCatalogItem);
-                        moreInfoOnError("In function btnFnReleased:", errorMessage, NULL, NULL);
-                      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+                    if (strcmp(varCatalogItem, "XEQ") != 0) {
+                      calcRegister_t label = findNamedLabel(varCatalogItem);
+                      if(label != INVALID_VARIABLE) {
+                        item = label - FIRST_LABEL + ASSIGN_LABELS;
+                      }
+                      else {
+                        displayCalcErrorMessage(ERROR_LABEL_NOT_FOUND, ERR_REGISTER_LINE, REGISTER_X);
+                        #if(EXTRA_INFO_ON_CALC_ERROR == 1)
+                          sprintf(errorMessage, "string '%s' is not a named label", varCatalogItem);
+                          moreInfoOnError("In function btnFnReleased:", errorMessage, NULL, NULL);
+                        #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+                      }
                     }
                   }
                   else if(item == ITM_RCL && dynamicMenuItem > -1) {                     // Variable assignment
                     char *varCatalogItem = dynmenuGetLabel(dynamicMenuItem);
-                    calcRegister_t regist = findNamedVariable(varCatalogItem);
-                    if(regist != INVALID_VARIABLE) {
-                      item = regist - FIRST_NAMED_VARIABLE + ASSIGN_NAMED_VARIABLES;
-                    }
-                    else {
-                      displayCalcErrorMessage(ERROR_LABEL_NOT_FOUND, ERR_REGISTER_LINE, REGISTER_X);
-                      #if(EXTRA_INFO_ON_CALC_ERROR == 1)
-                        sprintf(errorMessage, "string '%s' is not a named variable", varCatalogItem);
-                        moreInfoOnError("In function btnFnReleased:", errorMessage, NULL, NULL);
-                      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+                    if (strcmp(varCatalogItem, "RCL") != 0) {
+                      calcRegister_t var = findNamedVariable(varCatalogItem);
+                      if(var != INVALID_VARIABLE) {
+                        item = var - FIRST_NAMED_VARIABLE + ASSIGN_NAMED_VARIABLES;
+                      }
+                      else {
+                        displayCalcErrorMessage(ERROR_LABEL_NOT_FOUND, ERR_REGISTER_LINE, REGISTER_X);
+                        #if(EXTRA_INFO_ON_CALC_ERROR == 1)
+                          sprintf(errorMessage, "string '%s' is not a named variable", varCatalogItem);
+                          moreInfoOnError("In function btnFnReleased:", errorMessage, NULL, NULL);
+                        #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+                      }
                     }
                   }
                   itemToBeAssigned = item;
@@ -946,7 +950,7 @@ bool      _kbSeenInterrupt     = false;
 
 
 
-  void btnPressed(keyCode_t keyCode) {   
+  void btnPressed(keyCode_t keyCode) {
     if(_kbCheckForInterrupt) {
       if(keyCode == kcExit) {
         _kbSeenInterrupt = true;
@@ -1040,7 +1044,7 @@ bool      _kbSeenInterrupt     = false;
     else if(showFunctionNameItem != 0) {
       item = showFunctionNameItem;
       hideFunctionName();
-      
+
       char *funcParam = (char *)getNthString((uint8_t *)userKeyLabel, (keyCode - 1) * 6 + keyStateCode);
 
       if(item < 0) {
@@ -1055,7 +1059,18 @@ bool      _kbSeenInterrupt     = false;
         if(item == ITM_RCL && getSystemFlag(FLAG_USER) && funcParam[0] != 0) {
           calcRegister_t var = findNamedVariable(funcParam);
           if(var != INVALID_VARIABLE) {
-            reallyRunFunction(item, var);
+            if(calcMode == cmPem) {  // Insert user variable recall in program
+              #if defined(PC_BUILD)
+                printf("**[DL]** insertUserItemInProgram(item=%d, funcParam=%s)\n",item,funcParam);
+              #endif // PC_BUILD
+              insertUserItemInProgram(item, funcParam);
+            }
+            else {                    // Execute item
+              #if defined(PC_BUILD)
+                printf("**[DL]** reallyRunFunction(item=%d, var=%d, funcParam=%s)\n",item,var,funcParam);
+              #endif // PC_BUILD
+              reallyRunFunction(item, var);
+            }
           }
           else if(getSystemFlag(FLAG_IGN1ER)) {
             clearSystemFlag(FLAG_IGN1ER);
@@ -1069,7 +1084,18 @@ bool      _kbSeenInterrupt     = false;
         else if(item == ITM_XEQ && getSystemFlag(FLAG_USER) && funcParam[0] != 0) {
           calcRegister_t label = findNamedLabel(funcParam);
           if(label != INVALID_VARIABLE) {
-            reallyRunFunction(item, label);
+            if(calcMode == cmPem) {  // Insert user program call in program
+              #if defined(PC_BUILD)
+                printf("**[DL]** insertUserItemInProgram(item=%d, funcParam=%s)\n",item,funcParam);
+              #endif // PC_BUILD
+              insertUserItemInProgram(item, funcParam);
+            }
+            else {                    // Execute item
+              #if defined(PC_BUILD)
+                printf("**[DL]** reallyRunFunction(item=%d, label=%d, funcParam=%s)\n",item,label,funcParam);
+              #endif // PC_BUILD
+              reallyRunFunction(item, label);
+            }
           }
           else if(getSystemFlag(FLAG_IGN1ER)) {
             clearSystemFlag(FLAG_IGN1ER);
@@ -1335,6 +1361,7 @@ bool      _kbSeenInterrupt     = false;
             case cmNormal: {
               if(item == ITM_EXPONENT || item == ITM_PERIOD || (ITM_0 <= item && item <= ITM_9)) {
                 addItemToNimBuffer(item);
+                refreshRegisterLine(REGISTER_X);
                 keyActionProcessed = true;
               }
               // Following commands do not timeout to NOP
@@ -1369,8 +1396,9 @@ bool      _kbSeenInterrupt     = false;
                 keyActionProcessed = true;
               }
               else {
-                keyActionProcessed = true;
                 addItemToNimBuffer(item);
+                refreshRegisterLine(REGISTER_X);
+                keyActionProcessed = true;
               }
               break;
             }
@@ -2155,7 +2183,7 @@ void fnKeyCC(uint16_t unusedButMandatoryParameter) {
       case cmGraph: {
         break;
       }
-      
+
       case cmConfirmation: {
         temporaryInformation = TI_ARE_YOU_SURE;      // Keep confirmation message on screen
         break;

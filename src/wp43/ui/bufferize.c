@@ -1612,7 +1612,7 @@
           }
         }
         break;
-    }
+      }
 
       case ITM_dotD: {
         if(nimNumberPart == NP_REAL_FLOAT_PART) {
@@ -1635,6 +1635,10 @@
             }
             return;
           }
+        }
+        else if(nimNumberPart == NP_INT_10) {
+          done = true;
+          lastIntegerBase = 0;
         }
         break;
     }
