@@ -1929,7 +1929,10 @@ void fnKeyExit(uint16_t unusedButMandatoryParameter) {
         }
         else {
           if(getSoftmenuId(0) <= 1) { // MyMenu or MyAlpha is displayed
-            currentInputVariable = INVALID_VARIABLE;
+            if(currentInputVariable != INVALID_VARIABLE) {
+              currentInputVariable = INVALID_VARIABLE;
+              screenUpdatingMode &= ~SCRUPD_MANUAL_MENU;
+            }
           }
           else {
             popSoftmenu();
@@ -1938,10 +1941,10 @@ void fnKeyExit(uint16_t unusedButMandatoryParameter) {
               currentSolverStatus &= ~SOLVER_STATUS_EQUATION_MODE;
               currentSolverStatus &= ~SOLVER_STATUS_INTERACTIVE;
             }
-          }
-          screenUpdatingMode &= ~SCRUPD_MANUAL_MENU;
-          if(temporaryInformation == TI_NO_INFO) {
-            screenUpdatingMode |= SCRUPD_SKIP_STACK_ONE_TIME;
+            screenUpdatingMode &= ~SCRUPD_MANUAL_MENU;
+            if(temporaryInformation == TI_NO_INFO) {
+              screenUpdatingMode |= SCRUPD_SKIP_STACK_ONE_TIME;
+            }
           }
         }
         break;
