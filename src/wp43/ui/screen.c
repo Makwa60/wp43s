@@ -471,7 +471,8 @@ void clearScreen(void) {
       const uint16_t cols = matrix.header.matrixColumns;
       bool           smallFont = (rows >= 5);
       int16_t        dummyVal[MATRIX_MAX_COLUMNS * (MATRIX_MAX_ROWS * 2 + 3) + 1] = {};
-      const int16_t  mtxWidth = getComplexMatrixColumnWidths(&matrix, prefixWidth, &numericFont, dummyVal, dummyVal + MATRIX_MAX_COLUMNS, dummyVal + MATRIX_MAX_COLUMNS * 2, dummyVal + MATRIX_MAX_COLUMNS * 3, dummyVal + MATRIX_MAX_COLUMNS * (MATRIX_MAX_ROWS + 3), dummyVal + MATRIX_MAX_COLUMNS * (MATRIX_MAX_ROWS * 2 + 3), cols > MATRIX_MAX_COLUMNS ? MATRIX_MAX_COLUMNS : cols);
+      int16_t  mtxWidth = getComplexMatrixColumnWidths(&matrix, prefixWidth, &numericFont, dummyVal, dummyVal + MATRIX_MAX_COLUMNS, dummyVal + MATRIX_MAX_COLUMNS * 2, dummyVal + MATRIX_MAX_COLUMNS * 3, dummyVal + MATRIX_MAX_COLUMNS * (MATRIX_MAX_ROWS + 3), dummyVal + MATRIX_MAX_COLUMNS * (MATRIX_MAX_ROWS * 2 + 3), cols > MATRIX_MAX_COLUMNS ? MATRIX_MAX_COLUMNS : cols);
+      mtxWidth = abs(mtxWidth);
       if(mtxWidth > MATRIX_LINE_WIDTH) {
         smallFont = true;
       }
@@ -841,7 +842,7 @@ void clearScreen(void) {
             wLastBaseStandard = 0;
           }
 
-          displayNim(nimBufferDisplay, lastBase, wLastBaseNumeric, wLastBaseStandard);
+          displayNim(nimBufferDisplay, lastBase, wLastBaseNumeric, wLastBaseStandard, prefix, (currentInputVariable != INVALID_VARIABLE? prefixWidth: 0));
         }
 
         else if(regist == AIM_REGISTER_LINE && ((calcMode == cmAim && !tamIsActive()) || (calcMode == cmAssign && previousCalcMode == cmAim))) {
@@ -1608,6 +1609,9 @@ void clearScreen(void) {
             if(temporaryInformation == TI_VIEW_REGISTER && origRegist == REGISTER_T) {
               viewRegName(prefix, &prefixWidth);
             }
+            if(origRegist == REGISTER_X && currentInputVariable != INVALID_VARIABLE) {
+              inputRegName(prefix, &prefixWidth);
+            }
             showRealMatrix(&matrix, prefixWidth);
             if(lastErrorCode != 0) {
               refreshRegisterLine(errorMessageRegisterLine);
@@ -1634,9 +1638,13 @@ void clearScreen(void) {
         else if(getRegisterDataType(regist) == dtComplex34Matrix) {
           if((origRegist == REGISTER_X && calcMode != cmMim) || (temporaryInformation == TI_VIEW_REGISTER && origRegist == REGISTER_T)) {
             complex34Matrix_t matrix;
+            prefixWidth = 0; prefix[0] = 0;
             linkToComplexMatrixRegister(regist, &matrix);
             if(temporaryInformation == TI_VIEW_REGISTER && origRegist == REGISTER_T) {
               viewRegName(prefix, &prefixWidth);
+            }
+            if(origRegist == REGISTER_X && currentInputVariable != INVALID_VARIABLE) {
+              inputRegName(prefix, &prefixWidth);
             }
             showComplexMatrix(&matrix, prefixWidth);
             if(lastErrorCode != 0) {
@@ -1683,10 +1691,11 @@ void clearScreen(void) {
 
 
 
-  void displayNim(const char *nim, const char *lastBase, int16_t wLastBaseNumeric, int16_t wLastBaseStandard) {
+  void displayNim(const char *nim, const char *lastBase, int16_t wLastBaseNumeric, int16_t wLastBaseStandard, const char *prefix, int16_t prefixWidth) {
     int16_t w;
-    if(stringWidth(nim, &numericFont, true, true) + wLastBaseNumeric <= SCREEN_WIDTH - 16) { // 16 is the numeric font cursor width
-      uint32_t xCursor = showString(nim, &numericFont, 0, Y_POSITION_OF_NIM_LINE, vmNormal, true, true);
+    uint32_t xNim = (prefixWidth == 0 ? 0 : showString(prefix, &standardFont, 1, Y_POSITION_OF_NIM_LINE + TEMPORARY_INFO_OFFSET, vmNormal, true, true));
+    if(prefixWidth + stringWidth(nim, &numericFont, true, true) + wLastBaseNumeric <= SCREEN_WIDTH - 16) { // 16 is the numeric font cursor width
+      uint32_t xCursor = showString(nim, &numericFont, xNim + 0, Y_POSITION_OF_NIM_LINE, vmNormal, true, true);
       uint32_t yCursor = Y_POSITION_OF_NIM_LINE;
       cursorShow(false, xCursor, yCursor);
 
@@ -1694,8 +1703,8 @@ void clearScreen(void) {
         showString(lastBase, &numericFont, xCursor + 16, Y_POSITION_OF_NIM_LINE, vmNormal, true, true);
       }
     }
-    else if(stringWidth(nim, &standardFont, true, true) + wLastBaseStandard <= SCREEN_WIDTH - 8) { // 8 is the standard font cursor width
-      uint32_t xCursor = showString(nim, &standardFont, 0, Y_POSITION_OF_NIM_LINE + 6, vmNormal, true, true);
+    else if(prefixWidth + stringWidth(nim, &standardFont, true, true) + wLastBaseStandard <= SCREEN_WIDTH - 8) { // 8 is the standard font cursor width
+      uint32_t xCursor = showString(nim, &standardFont, xNim + 0, Y_POSITION_OF_NIM_LINE + 6, vmNormal, true, true);
       uint32_t yCursor = Y_POSITION_OF_NIM_LINE + 6;
       cursorShow(true, xCursor, yCursor);
 
@@ -1708,17 +1717,17 @@ void clearScreen(void) {
       w = stringByteLength(nim) + 1;
       xcopy(tmpString,        nim, w);
       xcopy(tmpString + 1500, nim, w);
-      nimw = stringAfterPixels(tmpString, &standardFont, SCREEN_WIDTH - 1, true, true);
+      nimw = stringAfterPixels(tmpString, &standardFont, SCREEN_WIDTH - 1 -prefixWidth, true, true);
       w = nimw - tmpString;
       *nimw = 0;
 
-      if(stringWidth(tmpString + 1500 + w, &standardFont, true, true) + wLastBaseStandard > SCREEN_WIDTH - 8) { // 8 is the standard font cursor width
+      if(prefixWidth + stringWidth(tmpString + 1500 + w, &standardFont, true, true) + wLastBaseStandard > SCREEN_WIDTH - 8) { // 8 is the standard font cursor width
         btnClicked(kcBackspace);
       }
       else {
-        showString(tmpString, &standardFont, 0, Y_POSITION_OF_NIM_LINE - 3, vmNormal, true, true);
+        showString(tmpString, &standardFont, xNim + 0, Y_POSITION_OF_NIM_LINE - 3, vmNormal, true, true);
 
-        uint32_t xCursor = showString(tmpString + 1500 + w, &standardFont, 0, Y_POSITION_OF_NIM_LINE + 18, vmNormal, true, true);
+        uint32_t xCursor = showString(tmpString + 1500 + w, &standardFont, xNim + 0, Y_POSITION_OF_NIM_LINE + 18, vmNormal, true, true);
         uint32_t yCursor = Y_POSITION_OF_NIM_LINE + 18;
         cursorShow(true, xCursor, yCursor);
 

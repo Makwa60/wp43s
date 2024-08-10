@@ -461,10 +461,10 @@ void fnDelRow(uint16_t unusedParamButMandatory) {
         *(lb++) = STD_SUB_0[0];
         *(lb++) = STD_SUB_0[1] + (lastDenominator % 10);
         *(lb++) = 0;
-        displayNim(tmpString, lastBase, stringWidth(lastBase, &numericFont, true, true), stringWidth(lastBase, &standardFont, true, true));
+        displayNim(tmpString, lastBase, stringWidth(lastBase, &numericFont, true, true), stringWidth(lastBase, &standardFont, true, true), "", 0);
       }
       else {
-        displayNim(tmpString, "", 0, 0);
+        displayNim(tmpString, "", 0, 0, "", 0);
       }
     }
 
@@ -811,6 +811,7 @@ void fnDelRow(uint16_t unusedParamButMandatory) {
     int16_t         Y_POS = Y_POSITION_OF_REGISTER_X_LINE;
     int16_t         X_POS = 0;
     int16_t         totalWidth = 0, width = 0;
+    const bool      viewRegister = (prefixWidth > 0) && (temporaryInformation == TI_VIEW_REGISTER);
     const font_t   *font;
     int16_t         fontHeight = NUMERIC_FONT_HEIGHT;
     int16_t         maxWidth = MATRIX_LINE_WIDTH - prefixWidth;
@@ -857,10 +858,12 @@ smallFont:
     const bool leftEllipsis = (sCol > 0);
     int16_t    digits;
 
-    if(prefixWidth > 0) {
+//    if(prefixWidth > 0) {
+    if(viewRegister) {
       Y_POS = Y_POSITION_OF_REGISTER_T_LINE - REGISTER_LINE_HEIGHT + 1 + maxRows * fontHeight;
     }
-    if(prefixWidth > 0 && font == &standardFont) {
+//    if(prefixWidth > 0 && font == &standardFont) {
+    if(viewRegister && font == &standardFont) {
       Y_POS += (maxRows == 1 ? STANDARD_FONT_HEIGHT : REGISTER_LINE_HEIGHT - STANDARD_FONT_HEIGHT);
     }
 
@@ -909,7 +912,8 @@ smallFont:
     }
     baseWidth -= stringWidth(STD_SPACE_FIGURE, font, true, true);
 
-    if(prefixWidth > 0) {
+//    if(prefixWidth > 0) {
+    if(viewRegister) {
       X_POS = prefixWidth;
     }
     else if(!forEditor) {
@@ -926,7 +930,8 @@ smallFont:
         clearRegisterLine(REGISTER_T, true, true);
       }
     }
-    else if(prefixWidth > 0) {
+//    else if(prefixWidth > 0) {
+    else if(viewRegister) {
       clearRegisterLine(REGISTER_T, true, true);
       if(rows >= 2) {
         clearRegisterLine(REGISTER_Z, true, true);
@@ -1138,6 +1143,7 @@ smallFont:
     int16_t         Y_POS = Y_POSITION_OF_REGISTER_X_LINE;
     int16_t         X_POS = 0;
     int16_t         totalWidth = 0, width = 0;
+    const bool      viewRegister = (prefixWidth > 0) && (temporaryInformation == TI_VIEW_REGISTER);
     const font_t   *font;
     int16_t         fontHeight = NUMERIC_FONT_HEIGHT;
     int16_t         maxWidth = MATRIX_LINE_WIDTH - prefixWidth;
@@ -1187,10 +1193,12 @@ smallFont:
     bool    leftEllipsis = (sCol > 0);
     int16_t digits;
 
-    if(prefixWidth > 0) {
+//    if(prefixWidth > 0) {
+    if(viewRegister) {
       Y_POS = Y_POSITION_OF_REGISTER_T_LINE - REGISTER_LINE_HEIGHT + 1 + maxRows * fontHeight;
     }
-    if(prefixWidth > 0 && font == &standardFont) {
+//    if(prefixWidth > 0 && font == &standardFont) {
+    if(viewRegister && font == &standardFont) {
       Y_POS += (maxRows == 1 ? STANDARD_FONT_HEIGHT : REGISTER_LINE_HEIGHT - STANDARD_FONT_HEIGHT);
     }
 
@@ -1246,7 +1254,8 @@ smallFont:
     }
     baseWidth -= stringWidth(STD_SPACE_FIGURE, font, true, true);
 
-    if(prefixWidth > 0) {
+//    if(prefixWidth > 0) {
+    if(viewRegister) {
       X_POS = prefixWidth;
     }
     else if(!forEditor) {
@@ -1263,7 +1272,8 @@ smallFont:
         clearRegisterLine(REGISTER_T, true, true);
       }
     }
-    else if(prefixWidth > 0) {
+//    else if(prefixWidth > 0) {
+    else if(viewRegister) {
       clearRegisterLine(REGISTER_T, true, true);
       if(rows >= 2) {
         clearRegisterLine(REGISTER_Z, true, true);

@@ -113,7 +113,7 @@
      */
     void     refreshRegisterLine                (calcRegister_t regist);
 
-    void     displayNim                         (const char *nim, const char *lastBase, int16_t wLastBaseNumeric, int16_t wLastBaseStandard);
+    void     displayNim                         (const char *nim, const char *lastBase, int16_t wLastBaseNumeric, int16_t wLastBaseStandard, const char *prefix, int16_t prefixWidth);
     void     clearTamBuffer                     (void);
     void     clearShiftState                    (void);
     void     displayShiftAndTamBuffer           (void);

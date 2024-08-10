@@ -1257,6 +1257,21 @@
           nimNumberPart = NP_INT_BASE;
           //debugNIM();
         }
+        else if(nimNumberPart == NP_INT_BASE) {  // Exit SI mode
+          done = true;
+          lastChar = strlen(aimBuffer) - 1;
+          if(aimBuffer[lastChar] == '#') {
+            if(hexDigits > 0) {
+              nimNumberPart = NP_INT_16;
+            }
+            else {
+              nimNumberPart = NP_INT_10;
+            }
+            //debugNIM();
+            lastIntegerBase = 0;
+            aimBuffer[lastChar--] = 0;
+          }
+        }
         break;
       }
 
@@ -1596,6 +1611,7 @@
       case ITM_DMS: {
         if(nimNumberPart == NP_INT_10 || nimNumberPart == NP_REAL_FLOAT_PART) {
           done = true;
+          lastIntegerBase = 0;
 
           screenUpdatingMode &= ~SCRUPD_SKIP_STACK_ONE_TIME;
           closeNim();
@@ -1636,16 +1652,17 @@
             return;
           }
         }
-        else if(nimNumberPart == NP_INT_10) {
+        else if(nimNumberPart == NP_INT_10) {   // Exit SI mode
           done = true;
           lastIntegerBase = 0;
         }
         break;
-    }
+      }
 
       case ITM_toHMS: {
         if(nimNumberPart == NP_INT_10 || nimNumberPart == NP_REAL_FLOAT_PART || nimNumberPart == NP_REAL_EXPONENT) {
           done = true;
+          lastIntegerBase = 0;
 
           screenUpdatingMode &= ~SCRUPD_SKIP_STACK_ONE_TIME;
           closeNim();
