@@ -101,7 +101,7 @@ void goToGlobalStep(int32_t step) {
       dupNum = 0;
     }
 #endif // !TESTSUITE_BUILD
- 
+
     int16_t c, len = stringByteLength((char *)labelName);
     for(uint16_t lbl=0; lbl<numberOfLabels; lbl++) {
       uint8_t *lblPtr;
@@ -174,7 +174,7 @@ void fnGotoDot(uint16_t globalStepNumber) {
 
 
 
-void fnExecute(uint16_t label) { 
+void fnExecute(uint16_t label) {
   if(programRunStop == PGM_RUNNING) {
     dataBlock_t *_currentSubroutineLevelData = currentSubroutineLevelData;
     allSubroutineLevels.numberOfSubroutineLevels += 1;
@@ -289,6 +289,8 @@ void fnRunProgram(uint16_t unusedButMandatoryParameter) {
     currentInputVariable = INVALID_VARIABLE;
   }
   dynamicMenuItem = -1;
+  refreshRegisterLine(REGISTER_T);     // Clear previous VIEW or AVIEW data, if any
+  refreshRegisterLine(REGISTER_Z);     // Clear previous test result, if any 
   runProgram(false, INVALID_VARIABLE);
 }
 
@@ -839,7 +841,12 @@ void runProgram(bool singleStep, uint16_t menuLabel) {
         opCode = ((uint16_t)(opCode & 0x7F) << 8) | *(currentStep + 1);
       }
       if(temporaryInformation == TI_TRUE || temporaryInformation == TI_FALSE || temporaryInformation == TI_SOLVER_FAILED || (opCode != ITM_RTN && opCode != ITM_STOP && opCode != ITM_END && opCode != 0x7fff)) {
-        temporaryInformation = TI_NO_INFO;
+        if(getSystemFlag(FLAG_VIEW) || getSystemFlag(FLAG_AVIEW_PROMPT)) {  // Keep display for VIEW and AVIEW
+          temporaryInformation = TI_VIEW_REGISTER;
+        }
+        else {
+          temporaryInformation = TI_NO_INFO;
+        }
       }
       stepsToBeAdvanced = executeOneStep(currentStep);
       if(lastErrorCode == ERROR_NONE) {

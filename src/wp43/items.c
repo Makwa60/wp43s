@@ -62,9 +62,55 @@ void fnNop(uint16_t unusedButMandatoryParameter) {
 }
 
 
-
 #if !defined(TESTSUITE_BUILD) && !defined(GENERATE_CATALOGS)
+  int16_t lastFunc = 0;
+  int16_t lastParam = 0;
+  char    lastTemp[16];
+  char *lastFuncCatalogName(void) {
+    if(lastFunc == ITM_VERS || lastFunc == NOPARAM) return "";
+    if(lastFunc == ITM_CNST) {
+      if(lastParam <= LAST_CONSTANT-FIRST_CONSTANT - 1) {                 //less 1 for the ITM_CNST inside the range (historically)
+        int16_t addOffset = (lastParam > indexOfItems[ITM_CNST - 1].param ? 1 : 0);
+        strcpy(lastTemp, indexOfItems[lastParam + 128 + addOffset].itemCatalogName);
+      }
+      else {
+        lastTemp[0] = 0;
+      }
+    }
+    else {
+      strcpy(lastTemp, indexOfItems[lastFunc].itemCatalogName);
+    }
+    return lastTemp;
+  }
+
+  char *lastFuncSoftmenuName(void) {
+    if(lastFunc == ITM_VERS || lastFunc == NOPARAM) return "";
+    if(lastFunc == ITM_CNST) {
+      if(lastParam <= LAST_CONSTANT-FIRST_CONSTANT - 1) {                 //less 1 for the ITM_CNST inside the range (historically)
+        int16_t addOffset = (lastParam > indexOfItems[ITM_CNST - 1].param ? 1 : 0);
+        strcpy(lastTemp, indexOfItems[lastParam + 128 + addOffset].itemSoftmenuName);
+      }
+      else {
+        lastTemp[0] = 0;
+      }
+    }
+    else {
+      strcpy(lastTemp, indexOfItems[lastFunc].itemSoftmenuName);
+    }
+    return lastTemp;
+  }
+
+  int16_t lastSTORCL(void) {
+    return lastParam;
+  }
+
+  int16_t lastFuncNo(void) {
+    return lastFunc;
+  }
+
   void reallyRunFunction(int16_t func, uint16_t param) {
+    lastFunc = func;
+    lastParam = param;
     if((indexOfItems[func].status & US_STATUS) == US_ENABLED || (indexOfItems[func].status & US_STATUS) == US_ENABL_XEQ) {
       if((programRunStop != PGM_RUNNING || getSystemFlag(FLAG_IGN1ER)) && calcMode != cmGraph && calcMode != cmNoUndo && !getSystemFlag(FLAG_SOLVING)) {
         #if defined(DEBUGUNDO)
@@ -539,6 +585,8 @@ void fnNop(uint16_t unusedButMandatoryParameter) {
   void fnAim                       (uint16_t unusedButMandatoryParameter) {}
   void fnShow                      (uint16_t unusedButMandatoryParameter) {}
   void fnView                      (uint16_t unusedButMandatoryParameter) {}
+  void fnAview                     (uint16_t unusedButMandatoryParameter) {}
+  void fnPrompt                    (uint16_t unusedButMandatoryParameter) {}
   void fnLastX                     (uint16_t unusedButMandatoryParameter) {}
   void fnCyx                       (uint16_t unusedButMandatoryParameter) {}
   void fnPyx                       (uint16_t unusedButMandatoryParameter) {}
@@ -2835,6 +2883,9 @@ TO_QSPI const item_t indexOfItems[] = {
 /* 1862 */  { itemToBeCoded,                NOPARAM,                     "FIT",                                         "FIT",                                         (0 << TAM_MAX_BITS) |     0, CAT_MENU | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
 /* 1863 */  { fnLowerQuartileXY,            NOPARAM,                     "x" STD_SUB_Q STD_SUB_1,                       "x" STD_SUB_Q STD_SUB_1,                       (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
 /* 1864 */  { fnUpperQuartileXY,            NOPARAM,                     "x" STD_SUB_Q STD_SUB_3,                       "x" STD_SUB_Q STD_SUB_3,                       (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+
+/* 2108 */  { fnAview,                      tmMDim,                      "AVIEW",                                       "AVIEW",                                       (0 << TAM_MAX_BITS) |    99, CAT_FNCT | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_REGISTER     },
+/* 2020 */  { fnPrompt,                     tmMDim,                      "PROMPT",                                      "PROMPT",                                      (0 << TAM_MAX_BITS) |    99, CAT_FNCT | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_REGISTER     },
 
 /* 1865 */  { itemToBeCoded,                NOPARAM,                     "",                                            "Last item",                                   (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_ENABLED   | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     }
 };

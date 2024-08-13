@@ -9,6 +9,7 @@
   #define ITEMS_H
 
   #include <stdint.h>
+  #include <stdbool.h>
 
   #define ITM_NULL                         0
 
@@ -1926,17 +1927,27 @@
   #define MNU_YESNO                     1859
   #define ITM_YES                       1860
   #define ITM_NO                        1861
-  
+
   #define MNU_FIT                       1862
   #define ITM_LOWER_QUARTILE            1863
   #define ITM_UPPER_QUARTILE            1864
 
-  #define LAST_ITEM                     1865
+  #define ITM_AVIEW                     1865
+  #define ITM_PROMPT                    1866
+
+  #define LAST_ITEM                     1867
 
   #define NOPARAM                       9876 // Item for function who don't need an item
   #define CONFIRMED                     9877 // Confirmation for RESET, CLPALL, CLALL
   #define NOT_CONFIRMED                 9878 // Confirmation for RESET, CLPALL, CLALL
   #define ITM_PROD_SIGN                 9999 // Multiplication sign × or ·
+
+
+  bool     itemNotAvail           (int16_t itemNr);
+  char     *lastFuncCatalogName   (void);
+  char     *lastFuncSoftmenuName  (void);
+  int16_t  lastSTORCL             (void);
+  int16_t  lastFuncNo             (void);
 
   void reallyRunFunction(int16_t func, uint16_t param);
 
