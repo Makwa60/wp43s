@@ -2161,15 +2161,18 @@ void _view(uint16_t regist) {
 
 void fnView(uint16_t regist) {
   setSystemFlag(FLAG_VIEW);
+  clearSystemFlag(FLAG_AVIEW_PROMPT);
   _view(regist);
 }
 
 void fnAview(uint16_t regist) {
+  clearSystemFlag(FLAG_VIEW);
   setSystemFlag(FLAG_AVIEW_PROMPT);
   _view(regist);
 }
 
 void fnPrompt(uint16_t regist) {
+  clearSystemFlag(FLAG_VIEW);
   setSystemFlag(FLAG_AVIEW_PROMPT);
   _view(regist);
   fnStopProgram(NOPARAM);
