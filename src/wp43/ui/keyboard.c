@@ -25,6 +25,7 @@
 #include "items.h"
 #include "mathematics/matrix.h"
 #include "plotstat.h"
+#include "programming/lblGtoXeq.h"
 #include "programming/manage.h"
 #include "programming/nextStep.h"
 #include "programming/programmableMenu.h"
@@ -762,6 +763,8 @@ bool      _kbSeenInterrupt     = false;
             if(lastErrorCode == 0) {
               if(temporaryInformation == TI_VIEW_REGISTER) {
                 temporaryInformation = TI_NO_INFO;
+                clearSystemFlag(FLAG_VIEW);
+                clearSystemFlag(FLAG_AVIEW_PROMPT);
                 updateMatrixHeightCache();
               }
               else {
@@ -864,6 +867,8 @@ bool      _kbSeenInterrupt     = false;
     if(key->primary == ITM_SHIFTf && !shiftG && (calcMode == cmNormal || calcMode == cmAim || calcMode == cmNim || calcMode == cmMim || calcMode == cmEim || calcMode == cmPem || calcMode == cmPlotStat || calcMode == cmGraph || calcMode == cmAssign)) {
       if(temporaryInformation == TI_VIEW_REGISTER) {
         temporaryInformation = TI_NO_INFO;
+        clearSystemFlag(FLAG_VIEW);
+        clearSystemFlag(FLAG_AVIEW_PROMPT);
         updateMatrixHeightCache();
       }
       else {
@@ -882,6 +887,8 @@ bool      _kbSeenInterrupt     = false;
     else if(key->primary == ITM_SHIFTg && !shiftF && (calcMode == cmNormal || calcMode == cmAim || calcMode == cmNim || calcMode == cmMim || calcMode == cmEim || calcMode == cmPem || calcMode == cmPlotStat || calcMode == cmGraph || calcMode == cmAssign)) {
       if(temporaryInformation == TI_VIEW_REGISTER) {
         temporaryInformation = TI_NO_INFO;
+        clearSystemFlag(FLAG_VIEW);
+        clearSystemFlag(FLAG_AVIEW_PROMPT);
         updateMatrixHeightCache();
       }
       else {
@@ -1060,15 +1067,9 @@ bool      _kbSeenInterrupt     = false;
           calcRegister_t var = findNamedVariable(funcParam);
           if(var != INVALID_VARIABLE) {
             if(calcMode == cmPem) {  // Insert user variable recall in program
-              #if defined(PC_BUILD)
-                printf("**[DL]** insertUserItemInProgram(item=%d, funcParam=%s)\n",item,funcParam);
-              #endif // PC_BUILD
               insertUserItemInProgram(item, funcParam);
             }
             else {                    // Execute item
-              #if defined(PC_BUILD)
-                printf("**[DL]** reallyRunFunction(item=%d, var=%d, funcParam=%s)\n",item,var,funcParam);
-              #endif // PC_BUILD
               reallyRunFunction(item, var);
             }
           }
@@ -1085,15 +1086,9 @@ bool      _kbSeenInterrupt     = false;
           calcRegister_t label = findNamedLabel(funcParam);
           if(label != INVALID_VARIABLE) {
             if(calcMode == cmPem) {  // Insert user program call in program
-              #if defined(PC_BUILD)
-                printf("**[DL]** insertUserItemInProgram(item=%d, funcParam=%s)\n",item,funcParam);
-              #endif // PC_BUILD
               insertUserItemInProgram(item, funcParam);
             }
             else {                    // Execute item
-              #if defined(PC_BUILD)
-                printf("**[DL]** reallyRunFunction(item=%d, label=%d, funcParam=%s)\n",item,label,funcParam);
-              #endif // PC_BUILD
               reallyRunFunction(item, label);
             }
           }
@@ -1110,6 +1105,10 @@ bool      _kbSeenInterrupt     = false;
           runFunction(item);
         }
       }
+    }
+    if(programRunStop == PGM_SINGLE_STEP) {     // Key pressed was SST
+      programRunStop = PGM_STOPPED;
+      runProgram(true, INVALID_VARIABLE);       // Execute one program step after key released
     }
     if(!inAutoRepeat && timerIsRunning(tidAutoRepeat)) {
       timerStop(tidAutoRepeat);
@@ -1166,9 +1165,15 @@ bool      _kbSeenInterrupt     = false;
       if(item == ITM_UP || item == ITM_DOWN || item == ITM_EXIT) {
         temporaryInformation = TI_VIEW_REGISTER;
       }
+      else {
+        clearSystemFlag(FLAG_VIEW);
+        clearSystemFlag(FLAG_AVIEW_PROMPT);
+      }
     }
     else if(item != ITM_UP && item != ITM_DOWN && item != ITM_EXIT) {
       temporaryInformation = TI_NO_INFO;
+      clearSystemFlag(FLAG_VIEW);
+      clearSystemFlag(FLAG_AVIEW_PROMPT);
     }
     if(programRunStop == PGM_WAITING) {
       programRunStop = PGM_STOPPED;
@@ -1199,6 +1204,8 @@ bool      _kbSeenInterrupt     = false;
             refreshScreen();
           }
           temporaryInformation = TI_NO_INFO;
+          clearSystemFlag(FLAG_VIEW);
+          clearSystemFlag(FLAG_AVIEW_PROMPT);
           keyActionProcessed = true;
           #if (REAL34_WIDTH_TEST == 1)
             if(++largeur > SCREEN_WIDTH) {
@@ -1220,6 +1227,8 @@ bool      _kbSeenInterrupt     = false;
             refreshScreen();
           }
           temporaryInformation = TI_NO_INFO;
+          clearSystemFlag(FLAG_VIEW);
+          clearSystemFlag(FLAG_AVIEW_PROMPT);
           keyActionProcessed = true;
           #if (REAL34_WIDTH_TEST == 1)
             if(--largeur < 20) {
@@ -1244,6 +1253,8 @@ bool      _kbSeenInterrupt     = false;
             refreshScreen();
           }
           temporaryInformation = TI_NO_INFO;
+          clearSystemFlag(FLAG_VIEW);
+          clearSystemFlag(FLAG_AVIEW_PROMPT);
           keyActionProcessed = true;
         }
         break;
@@ -1923,6 +1934,8 @@ void fnKeyExit(uint16_t unusedButMandatoryParameter) {
       case cmNormal: {
         if(temporaryInformation == TI_SHOW_REGISTER || temporaryInformation == TI_VIEW_REGISTER) {
           temporaryInformation = TI_NO_INFO;
+          clearSystemFlag(FLAG_VIEW);
+          clearSystemFlag(FLAG_AVIEW_PROMPT);
         }
         else if(lastErrorCode != 0) {
           lastErrorCode = 0;

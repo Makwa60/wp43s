@@ -190,16 +190,16 @@ TO_QSPI const int16_t menu_MyPFN[]       = {-MNU_LOOP,                     -MNU_
 
 TO_QSPI const int16_t menu_PFN[]         = { ITM_INPUT,                     ITM_MVAR,                   ITM_VARMNU,               ITM_END,               ITM_PAUSE,                  -MNU_PFN2,
                                              ITM_R_CLR,                     ITM_R_COPY,                 ITM_R_SORT,               ITM_R_SWAP,            ITM_LocR,                    ITM_POPLR,
-                                             ITM_PUTK,                      ITM_ERR,                    ITM_MSG,                  ITM_CNST,              ITM_TICKS,                   ITM_REM                       };
+                                             ITM_PUTK,                      ITM_PROMPT,                 ITM_AVIEW,                ITM_CNST,              ITM_TICKS,                   ITM_REM                       };
 
 #if defined(XPB)
 TO_QSPI const int16_t menu_PFN2[]        = { ITM_MENU,                      ITM_KEYG,                   ITM_KEYX,                 ITM_CLMENU,            ITM_EXITALL,                -MNU_MyPFN,
                                              ITM_BACK,                      ITM_CASE,                   ITM_SKIP,                 ITM_SDL,               ITM_SDR,                     ITM_RTNP1,
-                                             ITM_AGRAPH,                    ITM_PIXEL,                  ITM_POINT,                ITM_NULL,              ITM_NOP,                     ITM_XEQP1                     };
-#else                                            
+                                             ITM_AGRAPH,                    ITM_PIXEL,                  ITM_POINT,                ITM_ERR,               ITM_MSG,                     ITM_XEQP1                     };
+#else
 TO_QSPI const int16_t menu_PFN2[]        = { ITM_MENU,                      ITM_KEYG,                   ITM_KEYX,                 ITM_CLMENU,            ITM_EXITALL,                 ITM_RTNP1,
                                              ITM_BACK,                      ITM_CASE,                   ITM_SKIP,                 ITM_NOP,               ITM_SDL,                     ITM_SDR,
-                                             ITM_AGRAPH,                    ITM_PIXEL,                  ITM_POINT,                ITM_NULL,              ITM_NULL,                    ITM_XEQP1                     };
+                                             ITM_AGRAPH,                    ITM_PIXEL,                  ITM_POINT,                ITM_ERR,               ITM_MSG,                     ITM_XEQP1                     };
 #endif // XPB
 
 TO_QSPI const int16_t menu_STAT[]        = { ITM_SIGMAPLUS,                 ITM_XBAR,                   ITM_STDDEVWEIGHTED,       ITM_STDDEV,            ITM_SM,                      ITM_SUM,
@@ -210,7 +210,7 @@ TO_QSPI const int16_t menu_STAT[]        = { ITM_SIGMAPLUS,                 ITM_
                                              ITM_NULL,                      ITM_XRMS,                   ITM_PERCENTILE,           ITM_MAD,               ITM_IQR,                     ITM_NULL,
                                              ITM_NULL,                      ITM_XH,                     ITM_NULL,                 ITM_NULL,              ITM_NULL,                    ITM_NULL                      };
 
-#else                                            
+#else
                                              ITM_NULL,                      ITM_MEDIAN,                 ITM_MAD,                  ITM_IQR,               ITM_PERCENTILE,              ITM_NULL,
                                              ITM_NULL,                      ITM_XRMS,                   ITM_XMIN,                 ITM_XMAX,              ITM_SIGMARANGE,              ITM_NULL,
                                              ITM_NULL,                      ITM_XH,                     ITM_NULL,                 ITM_NULL,              ITM_NULL,                    ITM_NULL                      };
@@ -219,11 +219,11 @@ TO_QSPI const int16_t menu_STAT[]        = { ITM_SIGMAPLUS,                 ITM_
 TO_QSPI const int16_t menu_FIT[]         = { ITM_SIGMAPLUS,                 ITM_LR,                     ITM_SA,                   ITM_CORR,              ITM_XCIRC,                   ITM_YCIRC,
                                              ITM_SIGMAMINUS,                ITM_NULL,                   ITM_SXY,                  ITM_COV,               ITM_NULL,                   -MNU_HIST,
                                              ITM_CLSIGMA,                   ITM_PLOT_LR,                ITM_NULL,                 ITM_NULL,              ITM_NULL,                    ITM_PLOT,
-                                             
+
                                              ITM_LINF,                      ITM_EXPF,                   ITM_LOGF,                 ITM_POWERF,            ITM_NULL,                    ITM_ORTHOF,
                                              ITM_PARABF,                    ITM_HYPF,                   ITM_ROOTF,                ITM_NULL,              ITM_NULL,                    ITM_NULL,
                                              ITM_GAUSSF,                    ITM_CAUCHF,                 ITM_NULL,                 ITM_BESTF,             ITM_NULL,                    ITM_NULL                      };
-   
+
 TO_QSPI const int16_t menu_SUMS[]        = { ITM_NSIGMA,                    ITM_SIGMAx,                 ITM_SIGMAx2,              ITM_SIGMAxy,           ITM_SIGMAy2,                 ITM_SIGMAy,
                                              ITM_NULL,                      ITM_SIGMAlnx,               ITM_SIGMAln2x,            ITM_SIGMAlnxy,         ITM_SIGMAln2y,               ITM_SIGMAlny,
                                              ITM_SIGMAx2y,                  ITM_SIGMAxlny,              ITM_SIGMAx2lny,           ITM_SIGMAlnyonx,       ITM_NULL,                    ITM_SIGMAylnx,
@@ -708,7 +708,7 @@ void fnClearMyMenu(uint16_t unusedButMandatoryParameter) {
 void fnClearMyPFN(uint16_t unusedButMandatoryParameter) {
 #if defined(XPB)
   initMyPFN( false );
-#else  
+#else
   initMyPFN( true );
 #endif // XPB
 }

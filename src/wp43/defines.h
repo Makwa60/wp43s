@@ -145,12 +145,10 @@
   #define FLAG_USB                              0xc028
   #define FLAG_ENDPMT                           0xc029
   #define FLAG_FRCSRN                           0x802a
-  #if USE_REAL34_FUNCTIONS == 1
-    #define FLAG_FASTFN                         0x802b
-    #define NUMBER_OF_SYSTEM_FLAGS                  44
-  #else // USE_REAL34_FUNCTIONS == 1
-    #define NUMBER_OF_SYSTEM_FLAGS                  43
-  #endif // USE_REAL34_FUNCTIONS == 1
+  #define FLAG_FASTFN                           0x802b
+  #define FLAG_VIEW                             0x802c
+  #define FLAG_AVIEW_PROMPT                     0x802d
+  #define NUMBER_OF_SYSTEM_FLAGS                    46
 
   #define TAM_MAX_BITS                              14
   #define TAM_MAX_MASK                          0x3fff
@@ -209,6 +207,10 @@
 
   #define INC_FLAG                                   0
   #define DEC_FLAG                                   1
+
+  // List of constants
+  #define FIRST_CONSTANT                        CST_01
+  #define LAST_CONSTANT                         CST_79
 
   ///////////////////////////////////////////////////////
   // Register numbering:
@@ -496,6 +498,7 @@
   #define PGM_PAUSED                                 3
   #define PGM_KEY_PRESSED_WHILE_PAUSED               4
   #define PGM_RESUMING                               5
+  #define PGM_SINGLE_STEP                            6
 
   // Save mode
   #define SM_BACKUP                                  0

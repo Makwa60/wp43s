@@ -132,9 +132,10 @@ void frmCalcMouseButtonPressed(GtkWidget *notUsed, GdkEvent *event, gpointer dat
 
 void frmCalcMouseButtonReleased(GtkWidget *notUsed, GdkEvent *event, gpointer data) {
   if(key != kcNoKey) {
-    btnReleased(key);
-    lcd_refresh();
+    keyCode_t newKey = key;
     key = kcNoKey;
+    btnReleased(newKey);
+    lcd_refresh();
   }
 }
 

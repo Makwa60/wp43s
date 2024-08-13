@@ -355,6 +355,11 @@ void clearScreen(void) {
 
 
   static void viewRegName(char *prefix, int16_t *prefixWidth) {
+    if(getSystemFlag(FLAG_AVIEW_PROMPT)) {
+      prefix[0] = 0;
+      prefixWidth = 0;
+      return;
+    }
     if(currentViewRegister < REGISTER_X) {
       sprintf(prefix, "R%02" PRIu16 STD_SPACE_4_PER_EM "=" STD_SPACE_4_PER_EM, currentViewRegister);
     }
@@ -635,7 +640,7 @@ void clearScreen(void) {
         uint16_t id = getConfirmationTiId();
         showString(confirmationTI[id].confirm, &standardFont, 1, Y_POSITION_OF_REGISTER_X_LINE - REGISTER_LINE_HEIGHT*(regist - REGISTER_X) + 6, vmNormal, true, true);
       }
-      
+
       else if(temporaryInformation == TI_CONFIRM_COMPLETED && regist == REGISTER_X) {
         uint16_t id = getConfirmationTiId();
         w = stringWidth(confirmationTI[id].complete, &standardFont, true, true);

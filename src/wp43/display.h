@@ -65,6 +65,8 @@
   void fnShow                            (uint16_t unusedButMandatoryParameter);
   void mimShowElement                    (void);
   void fnView                            (uint16_t regist);
+  void fnAview                           (uint16_t regist);
+  void fnPrompt                          (uint16_t regist);
   void real34ToDisplayString             (const real34_t *real34, uint32_t tag, char *displayString, const font_t *font, int16_t maxWidth, int16_t displayHasNDigits, bool limitExponent, const char *separator, bool frontSpace);
 
   /**

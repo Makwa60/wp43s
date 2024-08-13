@@ -13,9 +13,11 @@
 #include "flags.h"
 #include "fonts.h"
 #include "fractions.h"
+#include "items.h"
 #include "mathematics/comparisonReals.h"
 #include "mathematics/toPolar.h"
 #include "programming/input.h"
+#include "programming/lblGtoXeq.h"
 #include "registers.h"
 #include "registerValueConversions.h"
 #include "store.h"
@@ -2145,14 +2147,30 @@ void mimShowElement(void) {
 
 
 
-void fnView(uint16_t regist) {
+void _view(uint16_t regist) {
   if(regInRange(regist)) {
     currentViewRegister = regist;
     temporaryInformation = TI_VIEW_REGISTER;
     if(programRunStop == PGM_RUNNING) {
       refreshScreen();
-      fnPause(10);
-      temporaryInformation = TI_NO_INFO;
+      //fnPause(10);                          // removed pause to avoid slowing down programs when VIEW/AVIEW are used in loops
+      //temporaryInformation = TI_NO_INFO;    // removed to signal to STOP, so that STOP does not clear the screen after VIEW
     }
   }
+}
+
+void fnView(uint16_t regist) {
+  setSystemFlag(FLAG_VIEW);
+  _view(regist);
+}
+
+void fnAview(uint16_t regist) {
+  setSystemFlag(FLAG_AVIEW_PROMPT);
+  _view(regist);
+}
+
+void fnPrompt(uint16_t regist) {
+  setSystemFlag(FLAG_AVIEW_PROMPT);
+  _view(regist);
+  fnStopProgram(NOPARAM);
 }
