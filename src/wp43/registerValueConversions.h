@@ -104,4 +104,7 @@
   double  convertRegisterToDouble                            (calcRegister_t regist);
   #define DOUBLE_NOT_INIT 3.402823466e+38f //maximum float value
 
+  void    badTypeError                                       (calcRegister_t reg);
+  void    badDomainError                                     (calcRegister_t reg);
+
 #endif // !REGISTERVALUECONVERSIONS_H

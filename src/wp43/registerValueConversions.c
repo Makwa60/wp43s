@@ -8,6 +8,7 @@
 #include "constantPointers.h"
 #include "core/memory.h"
 #include "dateTime.h"
+#include "debug.h"
 #include "display.h"
 #include "error.h"
 #include "flags.h"
@@ -820,4 +821,21 @@ void realToFloat(const real_t *vv, float *v) {
 
 void realToDouble(const real_t *vv, double *v) {      //Not using double internally, i.e. using float type. Change fnRealToFloat if double is needed in future
   *v = fnRealToFloat(vv);
+}
+
+// C47 value error routines - 2024-08-15
+void badTypeError(calcRegister_t reg) {
+  displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, REGISTER_T);
+#if (EXTRA_INFO_ON_CALC_ERROR == 1)
+  sprintf(errorMessage, "cannot convert Register %d from %s", reg, getRegisterDataTypeName(reg, true, false));
+  moreInfoOnError("In function badTypeError:", errorMessage, NULL, NULL);
+#endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+}
+
+void badDomainError(calcRegister_t reg) {
+  displayCalcErrorMessage(ERROR_ARG_EXCEEDS_FUNCTION_DOMAIN, ERR_REGISTER_LINE, REGISTER_T);
+#if (EXTRA_INFO_ON_CALC_ERROR == 1)
+  sprintf(errorMessage, "The input value is outside of the domain.");
+  moreInfoOnError("In function badDomainError:", errorMessage, NULL, NULL);
+#endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
 }

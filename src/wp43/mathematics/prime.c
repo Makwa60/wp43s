@@ -5,10 +5,14 @@
 
 #include "debug.h"
 #include "error.h"
+#include "integers.h"
 #include "registers.h"
 #include "registerValueConversions.h"
 
 #include "wp43.h"
+
+#define maximumPrime 308   //10^308 is the limit set on HW for prime numbers due to freeze conditions
+
 
 /*
 // primes less than 212
@@ -102,7 +106,10 @@ static bool longIntegerIsPrime1(longInteger_t primeCandidate) {
 
 
 void fnIsPrime(uint16_t unusedButMandatoryParameter) {
-  longInteger_t primeCandidate;
+  longInteger_t tmp, primeCandidate;
+
+  longIntegerInit(primeCandidate);
+  longIntegerInit(tmp);
 
   if(getRegisterDataType(REGISTER_X) == dtShortInteger) {
     convertShortIntegerRegisterToLongInteger(REGISTER_X, primeCandidate);
@@ -122,23 +129,37 @@ void fnIsPrime(uint16_t unusedButMandatoryParameter) {
       sprintf(errorMessage, "the input type %s is not allowed for PRIME?!", getDataTypeName(getRegisterDataType(REGISTER_X), false, false));
       moreInfoOnError("In function fnIsPrime:", errorMessage, NULL, NULL);
     #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
-    return;
+    goto abort;
   }
 
   longIntegerSetPositiveSign(primeCandidate);
+
+#if defined(DMCP_BUILD)
+  longIntegerPowerUIntUInt(10,maximumPrime,tmp);
+  longIntegerSubtract(primeCandidate, tmp, tmp);   // (primeCandidate - 10^308) positive is too large for HW only
+  if(longIntegerIsPositive(tmp)) {
+    badDomainError(REGISTER_X);
+    goto abort;
+  }
+#endif    // DMCP_BUILD
+
   //temporaryInformation = (longIntegerIsPrime1(primeCandidate) ? TI_TRUE : TI_FALSE);
   //temporaryInformation = (longIntegerIsPrime2(primeCandidate) ? TI_TRUE : TI_FALSE);
   temporaryInformation = (longIntegerIsPrime(primeCandidate) ? TI_TRUE : TI_FALSE);
+
+abort:
+  longIntegerFree(tmp);
   longIntegerFree(primeCandidate);
 }
 
 
 
 void fnNextPrime(uint16_t unusedButMandatoryParameter) {
-  longInteger_t currentNumber, nextPrime;
+  longInteger_t tmp, currentNumber, nextPrime;
 
   longIntegerInit(currentNumber);
   longIntegerInit(nextPrime);
+  longIntegerInit(tmp);
 
   if(getRegisterDataType(REGISTER_X) == dtShortInteger) {
     convertShortIntegerRegisterToLongInteger(REGISTER_X, currentNumber);
@@ -159,12 +180,20 @@ void fnNextPrime(uint16_t unusedButMandatoryParameter) {
       moreInfoOnError("In function fnIsPrime:", errorMessage, NULL, NULL);
     #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
   }
-
   if(!saveLastX()) {
-    return;
+    goto abort;
   }
 
   longIntegerSetPositiveSign(currentNumber);
+
+#if defined(DMCP_BUILD)
+  longIntegerPowerUIntUInt(10,maximumPrime,tmp);
+  longIntegerSubtract(currentNumber, tmp, tmp);   // (currentNumber - 10^308) positive is too large for HW only
+  if(longIntegerIsPositive(tmp)) {
+    badDomainError(REGISTER_X);
+    goto abort;
+  }
+#endif    // DMCP_BUILD
 
   longIntegerNextPrime(currentNumber, nextPrime);
 
@@ -175,6 +204,8 @@ void fnNextPrime(uint16_t unusedButMandatoryParameter) {
     convertLongIntegerToLongIntegerRegister(nextPrime, REGISTER_X);
   }
 
+abort:
+  longIntegerFree(tmp);
   longIntegerFree(nextPrime);
   longIntegerFree(currentNumber);
 }
