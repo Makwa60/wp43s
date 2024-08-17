@@ -701,12 +701,8 @@ void clearScreen(void) {
       }
 
       else if(temporaryInformation == TI_PROGRAMS_RESTORED && regist == REGISTER_X) {
-        sprintf(prefix, "                                ");
+        sprintf(prefix, "Saved programs and equations appended");
         displayTemporaryInformationOnX(prefix);
-        sprintf(prefix, "Saved programs and equations");
-        showString(prefix, &standardFont, 1, Y_POSITION_OF_REGISTER_X_LINE - REGISTER_LINE_HEIGHT*(regist - REGISTER_X) - 3, vmNormal, true, true);
-        sprintf(prefix, "appended");
-        showString(prefix, &standardFont, 1, Y_POSITION_OF_REGISTER_X_LINE - REGISTER_LINE_HEIGHT*(regist - REGISTER_X) + 17, vmNormal, true, true);
      }
 
       else if(temporaryInformation == TI_REGISTERS_RESTORED && regist == REGISTER_X) {
