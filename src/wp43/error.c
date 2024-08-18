@@ -37,7 +37,7 @@ TO_QSPI const char *errorMessages[NUMBER_OF_ERROR_CODES] = {
 /*  8 */  "Out of range",
 /*  9 */  "Illegal digit in integer input for this base",
 /* 10 */  "Input is too long",
-/* 11 */  "RAM is full",
+/* 11 */  "RAM does not suffice",
 /* 12 */  "Stack clash",
 /* 13 */  "Operation is undefined in this mode",
 /* 14 */  "Word size is too small",
@@ -81,6 +81,7 @@ TO_QSPI const char *errorMessages[NUMBER_OF_ERROR_CODES] = {
 /* 52 */  "Bad input", // This error is not in ReM and cannot occur (theoretically).
 /* 53 */  "Cannot write file ", 
 /* 54 */  "No program specified",
+/* 55 */  "Not enough memory to load the programs",
 };
 
 

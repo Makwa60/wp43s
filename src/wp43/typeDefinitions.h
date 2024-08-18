@@ -507,7 +507,8 @@
     TI_SUMS_RESTORED       = 60,
     TI_VARIABLES_RESTORED  = 61,
     TI_DMCP_ONLY           = 62,
-    TI_CONFIRM_COMPLETED   = 63
+    TI_CONFIRM_COMPLETED   = 63,
+    TI_MEMORY_TO_LOAD_PGMS = 64
   } temporaryInformation_t;
 
 
