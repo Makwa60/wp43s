@@ -1865,6 +1865,9 @@ void fnKeyExit(uint16_t unusedButMandatoryParameter) {
       currentSolverStatus &= ~SOLVER_STATUS_INTERACTIVE;
     }
 
+    if(temporaryInformation == TI_MEMORY_TO_LOAD_PGMS) {
+      temporaryInformation = TI_NO_INFO;
+    }
     if((temporaryInformation != TI_NO_INFO) && (calcMode != cmConfirmation)){    // If TI present then Exit just clears TI
       temporaryInformation = TI_NO_INFO;
       return;

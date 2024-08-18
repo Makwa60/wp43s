@@ -705,6 +705,11 @@ void clearScreen(void) {
         displayTemporaryInformationOnX(prefix);
      }
 
+      else if(temporaryInformation == TI_MEMORY_TO_LOAD_PGMS && regist == REGISTER_X) {
+        sprintf(prefix, "Required %s" STD_SPACE_4_PER_EM "b; available %" PRIu16 STD_SPACE_4_PER_EM "b", tmpString + 300, TO_BYTES(freeMemoryRegions[numberOfFreeMemoryRegions - 1].sizeInBlocks));
+        displayTemporaryInformationOnX(prefix);
+     }
+
       else if(temporaryInformation == TI_REGISTERS_RESTORED && regist == REGISTER_X) {
         sprintf(prefix, "                                  ");
         displayTemporaryInformationOnX(prefix);
