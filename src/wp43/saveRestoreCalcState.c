@@ -1966,7 +1966,7 @@ static bool restoreOneSection(uint16_t loadMode, uint16_t s, uint16_t n, uint16_
     else if(loadMode == LM_PROGRAMS) {
       const uint16_t availableSize = TO_BYTES(freeMemoryRegions[numberOfFreeMemoryRegions - 1].sizeInBlocks);
       if(numberOfBytes > (size_t)availableSize) {
-        displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
+        displayCalcErrorMessage(ERROR_NOT_ENOUGH_MEMORY_TO_LOAD_PGMS, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
         errorMoreInfo("attempting to load %" PRIu64 " bytes of programs but only %" PRIu16 " bytes available", (uint64_t)numberOfBytes, availableSize);
         return false; // abort
       }
