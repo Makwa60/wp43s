@@ -1500,9 +1500,6 @@ static gboolean keyPressed(GtkWidget *w, GdkEventKey *event, gpointer data) {
       case GDK_KEY_Z:
         copyAllRegistersToClipboard();
         return FALSE;
-
-      default:
-        // do nothing here
     }
   }
   keyCode_t kc = _keyCodeFromGdkKey(gdkKey,alphaInput);
