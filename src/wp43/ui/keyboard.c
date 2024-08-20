@@ -1337,12 +1337,12 @@ bool      _kbSeenInterrupt     = false;
         }
         else if((calcMode != cmPem || !getSystemFlag(FLAG_ALPHA)) && catalog && catalog != CATALOG_MVAR) {
           if(ITM_A <= item && item <= ITM_Z && alphaCase == AC_LOWER) {
-            addItemToBuffer(item + 26);
+            addItemToBuffer(item + (ITM_a - ITM_A));
             keyActionProcessed = true;
           }
 
           else if(ITM_ALPHA <= item && item <= ITM_OMEGA && alphaCase == AC_LOWER) {
-            addItemToBuffer(item + 36);
+            addItemToBuffer(item + (ITM_alpha - ITM_ALPHA));
             keyActionProcessed = true;
           }
 

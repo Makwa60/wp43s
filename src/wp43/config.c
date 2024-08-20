@@ -948,6 +948,8 @@ void fnReset(uint16_t confirmation) {
 
     #if defined(PC_BUILD) || defined(TESTSUITE_BUILD)
       debugMemAllocation = true;
+      forceTamAlpha = false;
+      deadKey = 0;
     #endif // PC_BUILD || TESTSUITE_BUILD
 
     // RNG initialisation

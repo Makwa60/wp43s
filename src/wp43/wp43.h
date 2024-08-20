@@ -42,6 +42,8 @@
   // Variables for the simulator
   #if defined(PC_BUILD) || defined(TESTSUITE_BUILD)
     extern bool                 debugMemAllocation;
+    extern bool                 forceTamAlpha;
+    extern uint32_t             deadKey;
   #endif // PC_BUILD || TESTSUITE_BUILD
 
   #if defined(PC_BUILD)

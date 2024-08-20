@@ -1046,6 +1046,13 @@ void tamReset(void) {
     _tamUpdateBuffer();
 
     clearSystemFlag(FLAG_ALPHA);
+    
+    #if defined(PC_BUILD)
+      if(forceTamAlpha) {
+        forceTamAlpha = false;
+        tamProcessInput(ITM_alpha);  // (DL] enter tam alpha for simulator easy keyboard entry
+      }
+    #endif // PC_BUILD
 
 // **[DL]** Why is this only for PC_BUILD ? Removing until better understanding
 //

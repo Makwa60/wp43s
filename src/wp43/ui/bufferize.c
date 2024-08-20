@@ -2314,7 +2314,7 @@
 
   void closeAim(void) {
     #if defined PC_BUILD
-      printf("*** closeAim\n"); 
+      printf("*** closeAim\n");
     #endif
     calcModeEnter(cmNormal);
 

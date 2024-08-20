@@ -698,10 +698,10 @@ void pemAlpha(int16_t item) {
       int32_t len = stringByteLength(aimBuffer);
       if(alphaCase == AC_LOWER) {
         if(ITM_A <= item && item <= ITM_Z) {
-          item += 26;
+          item += (ITM_a - ITM_A);
         }
         else if(ITM_ALPHA <= item && item <= ITM_OMEGA) {
-          item += 36;
+          item += (ITM_alpha - ITM_ALPHA);
         }
       }
       if ((nextChar == NC_NORMAL) || ((item != ITM_DOWN_ARROW) && (item != ITM_UP_ARROW))) {
@@ -1375,11 +1375,11 @@ void insertStepInProgram(int16_t func) {
 void insertUserItemInProgram(int16_t func, char *funcParam) {
   uint32_t opBytes=0;
   uint16_t nameLength = stringByteLength(funcParam);
-  
+
   if((!pemCursorIsZerothStep) && ((aimBuffer[0] == 0 && !getSystemFlag(FLAG_ALPHA)) || tam.mode) && !isAtEndOfProgram(currentStep) && !isAtEndOfPrograms(currentStep)) {
     currentStep = findNextStep(currentStep);
     ++currentLocalStepNumber;
-  }  
+  }
   if(func < 128) {
     tmpString[opBytes++] = func;
   }
@@ -1392,7 +1392,7 @@ void insertUserItemInProgram(int16_t func, char *funcParam) {
   tmpString[opBytes + 1] = nameLength;
   xcopy(tmpString + opBytes + 2, funcParam, nameLength);
   _insertInProgram((uint8_t *)tmpString, nameLength + opBytes + 2);
-  
+
   currentStep = findPreviousStep(currentStep);
   if(currentLocalStepNumber > 1) {
     --currentLocalStepNumber;
@@ -1401,7 +1401,7 @@ void insertUserItemInProgram(int16_t func, char *funcParam) {
   if(!programListEnd) {
     scrollPemBackwards();
   }
-} 
+}
 
 
 
