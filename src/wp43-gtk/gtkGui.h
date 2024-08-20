@@ -26,6 +26,31 @@
   } calcKeyboard_t;
 
   /**
+   * \struct gdkKeyMap_t
+   * Structure keeping the mapping between character items and GDK_KEY values.
+   */
+  typedef struct {
+    int16_t   item;
+    uint32_t  gdkKey;
+  } gdkKeyMap_t;
+  
+  /**
+   * \struct deadKeys_t
+   * Structure keeping the mapping between character items and their equivalent when dead keys are used.
+   */
+  typedef struct {
+    int16_t   item;
+    int16_t   item_macron;
+    int16_t   item_acute;
+    int16_t   item_breve;
+    int16_t   item_grave;
+    int16_t   item_diaresis;
+    int16_t   item_tilde;
+    int16_t   item_circ;
+    int16_t   item_caron;
+    int16_t   item_ogonek;
+  }   deadKeysMap_t;
+  /**
    * Creates the calc's GUI window with all the widgets.
    */
   void setupUI(void);
