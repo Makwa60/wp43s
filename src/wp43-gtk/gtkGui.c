@@ -1231,6 +1231,8 @@ static int16_t _getDeadKeyItem (int16_t item) {
 }
 
 static keyCode_t _keyCodeFromGdkKey(uint32_t gdkKey, bool Alpha) {
+  int16_t item;
+  
   printf("**[DL]** _keyCodeFromGdkKey gdkKey %x\n",gdkKey);
   if(Alpha) {
     switch(gdkKey) {
@@ -1288,7 +1290,7 @@ static keyCode_t _keyCodeFromGdkKey(uint32_t gdkKey, bool Alpha) {
         return kcNoKey;
 
       default:
-        int16_t item = _getGdkKeyItem(gdkKey);
+        item = _getGdkKeyItem(gdkKey);
         if(item != 0) {
           if(deadKey != 0) {
             item = _getDeadKeyItem(item);
