@@ -49,12 +49,17 @@
     int16_t   item_circ;
     int16_t   item_caron;
     int16_t   item_ogonek;
+    int16_t   item_ring;
+    int16_t   item_cedilla;
+    int16_t   item_stroke;
+    int16_t   item_dot;
   }   deadKeysMap_t;
   /**
    * Creates the calc's GUI window with all the widgets.
    */
   void setupUI(void);
   bool guiUseTamL(void);
+  void setAlphaCaseToCapsLockState();
 
   extern GtkWidget      *grid;
   extern calcKeyboard_t  calcKeyboard[MAX_KEYS];

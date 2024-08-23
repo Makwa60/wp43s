@@ -15,6 +15,7 @@
 #include "error.h"
 #include "flags.h"
 #include "fonts.h"
+#include "gtkGui.h"
 #include "hal/time.h"
 #include "hal/timer.h"
 #include "items.h"
@@ -53,6 +54,11 @@
     shiftG = false;
     aimBuffer[0] = 0;
     calcModeEnter(cmAim);
+
+    #if defined(PC_BUILD)
+      setAlphaCaseToCapsLockState();  // Reflect caps lock key status
+    #endif
+
     if(programRunStop != PGM_RUNNING) {
       entryStatus |= 0x01;
       setSystemFlag(FLAG_ALPIN);

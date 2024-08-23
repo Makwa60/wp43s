@@ -19,6 +19,7 @@
 #include "ui/bufferize.h"
 #include "ui/keyboard.h"
 #include "ui/screen.h"
+#include "ui/statusBar.h"
 #include "ui/tam.h"
 #include "wp43-gtk.h"
 #include <stdbool.h>
@@ -489,15 +490,25 @@ void frmCalcMouseButtonReleased(GtkWidget *notUsed, GdkEvent *event, gpointer da
 const gdkKeyMap_t gdkKeyMap[] = {
 //  #define ITM_INDIRECTION                539
   { .item = ITM_0                          ,  .gdkKey = GDK_KEY_0                           },
+  { .item = ITM_0                          ,  .gdkKey = GDK_KEY_KP_0                        },
   { .item = ITM_1                          ,  .gdkKey = GDK_KEY_1                           },
+  { .item = ITM_1                          ,  .gdkKey = GDK_KEY_KP_1                        },
   { .item = ITM_2                          ,  .gdkKey = GDK_KEY_2                           },
+  { .item = ITM_2                          ,  .gdkKey = GDK_KEY_KP_2                        },
   { .item = ITM_3                          ,  .gdkKey = GDK_KEY_3                           },
+  { .item = ITM_3                          ,  .gdkKey = GDK_KEY_KP_3                        },
   { .item = ITM_4                          ,  .gdkKey = GDK_KEY_4                           },
+  { .item = ITM_4                          ,  .gdkKey = GDK_KEY_KP_4                        },
   { .item = ITM_5                          ,  .gdkKey = GDK_KEY_5                           },
+  { .item = ITM_5                          ,  .gdkKey = GDK_KEY_KP_5                        },
   { .item = ITM_6                          ,  .gdkKey = GDK_KEY_6                           },
+  { .item = ITM_6                          ,  .gdkKey = GDK_KEY_KP_6                        },
   { .item = ITM_7                          ,  .gdkKey = GDK_KEY_7                           },
+  { .item = ITM_7                          ,  .gdkKey = GDK_KEY_KP_7                        },
   { .item = ITM_8                          ,  .gdkKey = GDK_KEY_8                           },
+  { .item = ITM_8                          ,  .gdkKey = GDK_KEY_KP_8                        },
   { .item = ITM_9                          ,  .gdkKey = GDK_KEY_9                           },
+  { .item = ITM_9                          ,  .gdkKey = GDK_KEY_KP_9                        },
   { .item = ITM_A                          ,  .gdkKey = GDK_KEY_A                           },
   { .item = ITM_B                          ,  .gdkKey = GDK_KEY_B                           },
   { .item = ITM_C                          ,  .gdkKey = GDK_KEY_C                           },
@@ -679,7 +690,7 @@ const gdkKeyMap_t gdkKeyMap[] = {
   { .item = ITM_Y_DIARESIS                 ,  .gdkKey = GDK_KEY_Ydiaeresis                  },
   { .item = ITM_Z_ACUTE                    ,  .gdkKey = GDK_KEY_Zacute                      },
   { .item = ITM_Z_CARON                    ,  .gdkKey = GDK_KEY_Zcaron                      },
-//  #define ITM_Z_DOT                      731
+  { .item = ITM_Z_DOT                      ,  .gdkKey = GDK_KEY_Zabovedot                   },
   { .item = ITM_a_MACRON                   ,  .gdkKey = GDK_KEY_amacron                     },
   { .item = ITM_a_ACUTE                    ,  .gdkKey = GDK_KEY_aacute                      },
   { .item = ITM_a_BREVE                    ,  .gdkKey = GDK_KEY_abreve                      },
@@ -706,7 +717,7 @@ const gdkKeyMap_t gdkKeyMap[] = {
   { .item = ITM_h_STROKE                   ,  .gdkKey = GDK_KEY_hstroke                     },
   { .item = ITM_i_MACRON                   ,  .gdkKey = GDK_KEY_imacron                     },
   { .item = ITM_i_ACUTE                    ,  .gdkKey = GDK_KEY_iacute                      },
-//  #define ITM_i_BREVE                    758
+  { .item = ITM_i_BREVE                    ,  .gdkKey = GDK_KEY_ibreve                      },
   { .item = ITM_i_GRAVE                    ,  .gdkKey = GDK_KEY_igrave                      },
   { .item = ITM_i_DIARESIS                 ,  .gdkKey = GDK_KEY_idiaeresis                  },
   { .item = ITM_i_CIRC                     ,  .gdkKey = GDK_KEY_icircumflex                 },
@@ -753,7 +764,7 @@ const gdkKeyMap_t gdkKeyMap[] = {
   { .item = ITM_y_DIARESIS                 ,  .gdkKey = GDK_KEY_ydiaeresis                  },
   { .item = ITM_z_ACUTE                    ,  .gdkKey = GDK_KEY_zacute                      },
   { .item = ITM_z_CARON                    ,  .gdkKey = GDK_KEY_zcaron                      },
-//  #define ITM_z_DOT                      805
+  { .item = ITM_z_DOT                      ,  .gdkKey = GDK_KEY_zabovedot                   },
   { .item = ITM_SPACE                      ,  .gdkKey = GDK_KEY_space                       },
   { .item = ITM_EXCLAMATION_MARK           ,  .gdkKey = GDK_KEY_exclam                      },
   { .item = ITM_DOUBLE_QUOTE               ,  .gdkKey = GDK_KEY_quotedbl                    },
@@ -764,12 +775,17 @@ const gdkKeyMap_t gdkKeyMap[] = {
   { .item = ITM_QUOTE                      ,  .gdkKey = GDK_KEY_apostrophe                  },
   { .item = ITM_LEFT_PARENTHESIS           ,  .gdkKey = GDK_KEY_parenleft                   },
   { .item = ITM_RIGHT_PARENTHESIS          ,  .gdkKey = GDK_KEY_parenright                  },
-  { .item = ITM_ASTERISK                   ,  .gdkKey = GDK_KEY_asterisk                    },
+  { .item = ITM_PROD_SIGN                  ,  .gdkKey = GDK_KEY_asterisk                    },
+  { .item = ITM_PROD_SIGN                  ,  .gdkKey = GDK_KEY_KP_Multiply                 },
   { .item = ITM_PLUS                       ,  .gdkKey = GDK_KEY_plus                        },
+  { .item = ITM_PLUS                       ,  .gdkKey = GDK_KEY_KP_Add                      },
   { .item = ITM_COMMA                      ,  .gdkKey = GDK_KEY_comma                       },
+  { .item = ITM_COMMA                      ,  .gdkKey = GDK_KEY_KP_Decimal                  },
   { .item = ITM_MINUS                      ,  .gdkKey = GDK_KEY_minus                       },
+  { .item = ITM_MINUS                      ,  .gdkKey = GDK_KEY_KP_Subtract                 },
   { .item = ITM_PERIOD                     ,  .gdkKey = GDK_KEY_period                      },
   { .item = ITM_SLASH                      ,  .gdkKey = GDK_KEY_slash                       },
+  { .item = ITM_SLASH                      ,  .gdkKey = GDK_KEY_KP_Divide                   },
   { .item = ITM_COLON                      ,  .gdkKey = GDK_KEY_colon                       },
   { .item = ITM_SEMICOLON                  ,  .gdkKey = GDK_KEY_semicolon                   },
   { .item = ITM_LESS_THAN                  ,  .gdkKey = GDK_KEY_less                        },
@@ -807,8 +823,8 @@ const gdkKeyMap_t gdkKeyMap[] = {
   { .item = ITM_CROSS                      ,  .gdkKey = GDK_KEY_multiply                    },
   { .item = ITM_eth                        ,  .gdkKey = GDK_KEY_eth                         },
 //  #define ITM_OBELUS                     857
-//  #define ITM_E_DOT                      858
-//  #define ITM_e_DOT                      859
+  { .item = ITM_E_DOT                      ,  .gdkKey = GDK_KEY_Eabovedot                   },
+  { .item = ITM_e_DOT                      ,  .gdkKey = GDK_KEY_eabovedot                   },
   { .item = ITM_E_CARON                    ,  .gdkKey = GDK_KEY_Ecaron                      },
   { .item = ITM_e_CARON                    ,  .gdkKey = GDK_KEY_ecaron                      },
   { .item = ITM_R_ACUTE                    ,  .gdkKey = GDK_KEY_Racute                      },
@@ -817,22 +833,22 @@ const gdkKeyMap_t gdkKeyMap[] = {
   { .item = ITM_u_OGONEK                   ,  .gdkKey = GDK_KEY_uogonek                     },
 //  #define ITM_y_UNDER_ROOT               866
 //  #define ITM_x_UNDER_ROOT               867
-//  #define ITM_SPACE_EM                   868
-//  #define ITM_SPACE_3_PER_EM             869
-//  #define ITM_SPACE_4_PER_EM             870
+  { .item = ITM_SPACE_EM                   ,  .gdkKey = GDK_KEY_emspace                     },
+  { .item = ITM_SPACE_3_PER_EM             ,  .gdkKey = GDK_KEY_em3space                    },
+  { .item = ITM_SPACE_4_PER_EM             ,  .gdkKey = GDK_KEY_em4space                    },
 //  #define ITM_SPACE_6_PER_EM             871
-//  #define ITM_SPACE_FIGURE               872
-//  #define ITM_SPACE_PUNCTUATION          873
-//  #define ITM_SPACE_HAIR                 874
-//  #define ITM_LEFT_SINGLE_QUOTE          875
-//  #define ITM_RIGHT_SINGLE_QUOTE         876
-//  #define ITM_SINGLE_LOW_QUOTE           877
+  { .item = ITM_SPACE_FIGURE               ,  .gdkKey = GDK_KEY_digitspace                  },
+  { .item = ITM_SPACE_PUNCTUATION          ,  .gdkKey = GDK_KEY_punctspace                  },
+  { .item = ITM_SPACE_HAIR                 ,  .gdkKey = GDK_KEY_hairspace                   },
+  { .item = ITM_LEFT_SINGLE_QUOTE          ,  .gdkKey = GDK_KEY_leftsinglequotemark         },
+  { .item = ITM_RIGHT_SINGLE_QUOTE         ,  .gdkKey = GDK_KEY_rightsinglequotemark        },
+  { .item = ITM_SINGLE_LOW_QUOTE           ,  .gdkKey = GDK_KEY_singlelowquotemark          },
 //  #define ITM_SINGLE_HIGH_QUOTE          878
-//  #define ITM_LEFT_DOUBLE_QUOTE          879
-//  #define ITM_RIGHT_DOUBLE_QUOTE         880
-//  #define ITM_DOUBLE_LOW_QUOTE           881
+  { .item = ITM_LEFT_DOUBLE_QUOTE          ,  .gdkKey = GDK_KEY_leftdoublequotemark         },
+  { .item = ITM_RIGHT_DOUBLE_QUOTE         ,  .gdkKey = GDK_KEY_rightdoublequotemark        },
+  { .item = ITM_DOUBLE_LOW_QUOTE           ,  .gdkKey = GDK_KEY_doublelowquotemark          },
 //  #define ITM_DOUBLE_HIGH_QUOTE          882
-//  #define ITM_ELLIPSIS                   883
+  { .item = ITM_ELLIPSIS                   ,  .gdkKey = GDK_KEY_ellipsis                    },
 //  #define ITM_BINARY_ONE                 884
   { .item = ITM_EURO                       ,  .gdkKey = GDK_KEY_EuroSign                    },
 //  #define ITM_COMPLEX_C                  886
@@ -841,10 +857,10 @@ const gdkKeyMap_t gdkKeyMap[] = {
 //  #define ITM_NATURAL_N                  889
 //  #define ITM_RATIONAL_Q                 890
 //  #define ITM_REAL_R                     891
-//  #define ITM_LEFT_ARROW                 892
-//  #define ITM_UP_ARROW                   893
-//  #define ITM_RIGHT_ARROW                894
-//  #define ITM_DOWN_ARROW                 895
+  { .item = ITM_LEFT_ARROW                 ,  .gdkKey = GDK_KEY_leftarrow                   },
+  { .item = ITM_UP_ARROW                   ,  .gdkKey = GDK_KEY_uparrow                     },
+  { .item = ITM_RIGHT_ARROW                ,  .gdkKey = GDK_KEY_rightarrow                  },
+  { .item = ITM_DOWN_ARROW                 ,  .gdkKey = GDK_KEY_downarrow                   },
 //  #define ITM_SERIAL_IO                  896
 //  #define ITM_RIGHT_SHORT_ARROW          897
 //  #define ITM_LEFT_RIGHT_ARROWS          898
@@ -854,26 +870,26 @@ const gdkKeyMap_t gdkKeyMap[] = {
 //  #define ITM_UNDO_SIGN                  902
 //  #define ITM_FOR_ALL                    903
 //  #define ITM_COMPLEMENT                 904
-//  #define ITM_PARTIAL_DIFF               905
+  { .item = ITM_PARTIAL_DIFF               ,  .gdkKey = GDK_KEY_partialderivative           },
 //  #define ITM_THERE_EXISTS               906
 //  #define ITM_THERE_DOES_NOT_EXIST       907
-//  #define ITM_EMPTY_SET                  908
+  { .item = ITM_EMPTY_SET                  ,  .gdkKey = GDK_KEY_emptyset                    },
 //  #define ITM_INCREMENT                  909
-//  #define ITM_NABLA                      910
-//  #define ITM_ELEMENT_OF                 911
-//  #define ITM_NOT_ELEMENT_OF             912
-//  #define ITM_CONTAINS                   913
+  { .item = ITM_NABLA                      ,  .gdkKey = GDK_KEY_nabla                       },
+  { .item = ITM_ELEMENT_OF                 ,  .gdkKey = GDK_KEY_elementof                   },
+  { .item = ITM_NOT_ELEMENT_OF             ,  .gdkKey = GDK_KEY_notelementof                },
+  { .item = ITM_CONTAINS                   ,  .gdkKey = GDK_KEY_containsas                  },
 //  #define ITM_DOES_NOT_CONTAIN           914
 //  #define ITM_BINARY_ZERO                915
 //  #define ITM_PRODUCT                    916
-//  #define ITM_MINUS_PLUS                 917
-//  #define ITM_RING                       918
-//  #define ITM_BULLET                     919
-//  #define ITM_SQUARE_ROOT                920
-//  #define ITM_CUBE_ROOT                  921
+  { .item = ITM_MINUS_PLUS                 ,  .gdkKey = GDK_KEY_plusminus                   },
+  { .item = ITM_RING                       ,  .gdkKey = GDK_KEY_jot                         },
+  { .item = ITM_BULLET                     ,  .gdkKey = GDK_KEY_enfilledcircbullet          },
+  { .item = ITM_SQUARE_ROOT                ,  .gdkKey = GDK_KEY_squareroot                  },
+  { .item = ITM_CUBE_ROOT                  ,  .gdkKey = GDK_KEY_cuberoot                    },
 //  #define ITM_xTH_ROOT                   922
 //  #define ITM_PROPORTIONAL               923
-//  #define ITM_INFINITY                   924
+  { .item = ITM_INFINITY                   ,  .gdkKey = GDK_KEY_infinity                    },
 //  #define ITM_RIGHT_ANGLE                925
 //  #define ITM_ANGLE_SIGN                 926
 //  #define ITM_MEASURED_ANGLE             927
@@ -881,29 +897,29 @@ const gdkKeyMap_t gdkKeyMap[] = {
 //  #define ITM_DOES_NOT_DIVIDE            929
 //  #define ITM_PARALLEL_SIGN              930
 //  #define ITM_NOT_PARALLEL               931
-//  #define ITM_AND                        932
-//  #define ITM_OR                         933
-//  #define ITM_INTERSECTION               934
-//  #define ITM_UNION                      935
-//  #define ITM_INTEGRAL_SIGN              936
-//  #define ITM_DOUBLE_INTEGRAL            937
+  { .item = ITM_AND                        ,  .gdkKey = GDK_KEY_logicaland                  },
+  { .item = ITM_OR                         ,  .gdkKey = GDK_KEY_logicalor                   },
+  { .item = ITM_INTERSECTION               ,  .gdkKey = GDK_KEY_intersection                },
+  { .item = ITM_UNION                      ,  .gdkKey = GDK_KEY_union                       },
+  { .item = ITM_INTEGRAL_SIGN              ,  .gdkKey = GDK_KEY_integral                    },
+  { .item = ITM_DOUBLE_INTEGRAL            ,  .gdkKey = GDK_KEY_dintegral                   },
 //  #define ITM_CONTOUR_INTEGRAL           938
 //  #define ITM_SURFACE_INTEGRAL           939
 //  #define ITM_RATIO                      940
-//  #define ITM_CHECK_MARK                 941
-//  #define ITM_ASYMPOTICALLY_EQUAL        942
-//  #define ITM_ALMOST_EQUAL               943
+  { .item = ITM_CHECK_MARK                 ,  .gdkKey = GDK_KEY_checkmark                   },
+  { .item = ITM_ASYMPOTICALLY_EQUAL        ,  .gdkKey = GDK_KEY_similarequal                },
+  { .item = ITM_ALMOST_EQUAL               ,  .gdkKey = GDK_KEY_approximate                 },
 //  #define ITM_COLON_EQUALS               944
 //  #define ITM_CORRESPONDS_TO             945
 //  #define ITM_ESTIMATES                  946
-//  #define ITM_NOT_EQUAL                  947
-//  #define ITM_IDENTICAL_TO               948
-//  #define ITM_LESS_EQUAL                 949
-//  #define ITM_GREATER_EQUAL              950
+  { .item = ITM_NOT_EQUAL                  ,  .gdkKey = GDK_KEY_notequal                    },
+  { .item = ITM_IDENTICAL_TO               ,  .gdkKey = GDK_KEY_identical                   },
+  { .item = ITM_LESS_EQUAL                 ,  .gdkKey = GDK_KEY_lessthanequal               },
+  { .item = ITM_GREATER_EQUAL              ,  .gdkKey = GDK_KEY_greaterthanequal            },
 //  #define ITM_MUCH_LESS                  951
 //  #define ITM_MUCH_GREATER               952
 //  #define ITM_SUN                        953
-//  #define ITM_DOWN_TACK                  954
+  { .item = ITM_DOWN_TACK                  ,  .gdkKey = GDK_KEY_downtack                    },
 //  #define ITM_PERPENDICULAR              955
 //  #define ITM_XOR                        956
 //  #define ITM_NAND                       957
@@ -1095,38 +1111,43 @@ const gdkKeyMap_t gdkKeyMap[] = {
 };
 
 const deadKeysMap_t deadKeysMap[] = {
-//    item           item_macron      item_acute      item_breve      item_grave      item_diaresis      item_tilde      item_circ      item_caron     item_ogonek
-    { ITM_A        , ITM_A_MACRON   , ITM_A_ACUTE   , ITM_A_BREVE   , ITM_A_GRAVE   , ITM_A_DIARESIS   , ITM_A_TILDE   , ITM_A_CIRC   , ITM_A        , ITM_A_OGONEK },
-    { ITM_C        , ITM_C          , ITM_C_ACUTE   , ITM_C         , ITM_C         , ITM_C            , ITM_C         , ITM_C        , ITM_C_CARON  , ITM_C        },
-    { ITM_D        , ITM_D          , ITM_D         , ITM_D         , ITM_D         , ITM_D            , ITM_D         , ITM_D        , ITM_D_CARON  , ITM_D        },
-    { ITM_E        , ITM_E_MACRON   , ITM_E_ACUTE   , ITM_E_BREVE   , ITM_E_GRAVE   , ITM_E_DIARESIS   , ITM_E         , ITM_E_CIRC   , ITM_E        , ITM_E_OGONEK },
-    { ITM_G        , ITM_G          , ITM_G         , ITM_G_BREVE   , ITM_G         , ITM_G            , ITM_G         , ITM_G        , ITM_G        , ITM_G        },
-    { ITM_I        , ITM_I_MACRON   , ITM_I_ACUTE   , ITM_I_BREVE   , ITM_I_GRAVE   , ITM_I_DIARESIS   , ITM_I         , ITM_I_CIRC   , ITM_I        , ITM_I_OGONEK },
-    { ITM_L        , ITM_L          , ITM_L_ACUTE   , ITM_L         , ITM_L         , ITM_L            , ITM_L         , ITM_L        , ITM_L        , ITM_L        },
-    { ITM_N        , ITM_N          , ITM_N_ACUTE   , ITM_N         , ITM_N         , ITM_N            , ITM_N_TILDE   , ITM_N        , ITM_N_CARON  , ITM_N        },
-    { ITM_O        , ITM_O_MACRON   , ITM_O_ACUTE   , ITM_O_BREVE   , ITM_O_GRAVE   , ITM_O_DIARESIS   , ITM_O_TILDE   , ITM_O_CIRC   , ITM_O        , ITM_O        },
-    { ITM_S        , ITM_S          , ITM_S_ACUTE   , ITM_S         , ITM_S         , ITM_S            , ITM_S         , ITM_S        , ITM_S_CARON  , ITM_S        },
-    { ITM_T        , ITM_T          , ITM_T         , ITM_T         , ITM_T         , ITM_T            , ITM_T         , ITM_T        , ITM_T_CARON  , ITM_T        },
-    { ITM_U        , ITM_U_MACRON   , ITM_U_ACUTE   , ITM_U_BREVE   , ITM_U_GRAVE   , ITM_U_DIARESIS   , ITM_U_TILDE   , ITM_U_CIRC   , ITM_U        , ITM_U        },
-    { ITM_W        , ITM_W          , ITM_W         , ITM_W         , ITM_W         , ITM_W            , ITM_W         , ITM_W_CIRC   , ITM_W        , ITM_W        },
-    { ITM_Y        , ITM_Y          , ITM_Y_ACUTE   , ITM_Y         , ITM_Y         , ITM_Y_DIARESIS   , ITM_Y         , ITM_Y_CIRC   , ITM_Y        , ITM_Y        },
-    { ITM_Z        , ITM_Z          , ITM_Z_ACUTE   , ITM_Z         , ITM_Z         , ITM_Z            , ITM_Z         , ITM_Z        , ITM_Z_CARON  , ITM_Z        },
-    { ITM_a        , ITM_a_MACRON   , ITM_a_ACUTE   , ITM_a_BREVE   , ITM_a_GRAVE   , ITM_a_DIARESIS   , ITM_a_TILDE   , ITM_a_CIRC   , ITM_a        , ITM_a_OGONEK },
-    { ITM_c        , ITM_c          , ITM_c_ACUTE   , ITM_c         , ITM_c         , ITM_c            , ITM_c         , ITM_c        , ITM_c_CARON  , ITM_c        },
-    { ITM_e        , ITM_e_MACRON   , ITM_e_ACUTE   , ITM_e_BREVE   , ITM_e_GRAVE   , ITM_e_DIARESIS   , ITM_e         , ITM_e_CIRC   , ITM_e        , ITM_e_OGONEK },
-    { ITM_g        , ITM_g          , ITM_g         , ITM_g_BREVE   , ITM_g         , ITM_g            , ITM_g         , ITM_g        , ITM_g        , ITM_g        },
-    { ITM_i        , ITM_i_MACRON   , ITM_i_ACUTE   , ITM_i_BREVE   , ITM_i_GRAVE   , ITM_i_DIARESIS   , ITM_i         , ITM_i_CIRC   , ITM_i        , ITM_i_OGONEK },
-    { ITM_l        , ITM_l          , ITM_l_ACUTE   , ITM_l         , ITM_l         , ITM_l            , ITM_l         , ITM_l        , ITM_l        , ITM_l        },
-    { ITM_n        , ITM_n          , ITM_n_ACUTE   , ITM_n         , ITM_n         , ITM_n            , ITM_n_TILDE   , ITM_n        , ITM_n_CARON  , ITM_n        },
-    { ITM_o        , ITM_o_MACRON   , ITM_o_ACUTE   , ITM_o_BREVE   , ITM_o_GRAVE   , ITM_o_DIARESIS   , ITM_o_TILDE   , ITM_o_CIRC   , ITM_o        , ITM_o        },
-    { ITM_r        , ITM_r          , ITM_r_ACUTE   , ITM_r         , ITM_r         , ITM_r            , ITM_r         , ITM_r        , ITM_r_CARON  , ITM_r        },
-    { ITM_s        , ITM_s          , ITM_s_ACUTE   , ITM_s         , ITM_s         , ITM_s            , ITM_s         , ITM_s        , ITM_s_CARON  , ITM_s        },
-    { ITM_u        , ITM_u_MACRON   , ITM_u_ACUTE   , ITM_u_BREVE   , ITM_u_GRAVE   , ITM_u_DIARESIS   , ITM_u_TILDE   , ITM_u_CIRC   , ITM_u        , ITM_u        },
-    { ITM_w        , ITM_w          , ITM_w         , ITM_w         , ITM_w         , ITM_w            , ITM_w         , ITM_w_CIRC   , ITM_w        , ITM_w        },
-    { ITM_x        , ITM_x          , ITM_x         , ITM_x         , ITM_x         , ITM_x            , ITM_x         , ITM_x_CIRC   , ITM_x        , ITM_x        },
-    { ITM_y        , ITM_y          , ITM_y_ACUTE   , ITM_y         , ITM_y         , ITM_y_DIARESIS   , ITM_y         , ITM_y_CIRC   , ITM_y        , ITM_y        },
-    { ITM_z        , ITM_z          , ITM_z_ACUTE   , ITM_z         , ITM_z         , ITM_z            , ITM_z         , ITM_z        , ITM_z_CARON  , ITM_z        },
-    { 0            , 0              , 0             , 0             , 0             , 0                , 0             , 0            , 0            , 0            }
+//    item           item_macron      item_acute      item_breve      item_grave      item_diaresis      item_tilde      item_circ       item_caron     item_ogonek    item_ring      item_cedilla   item_stroke    item_dot
+    { ITM_A        , ITM_A_MACRON   , ITM_A_ACUTE   , ITM_A_BREVE   , ITM_A_GRAVE   , ITM_A_DIARESIS   , ITM_A_TILDE   , ITM_A_CIRC    , ITM_A        , ITM_A_OGONEK , ITM_A_RING   , ITM_A        , ITM_A        , ITM_A        },
+    { ITM_C        , ITM_C          , ITM_C_ACUTE   , ITM_C         , ITM_C         , ITM_C            , ITM_C         , ITM_C         , ITM_C_CARON  , ITM_C        , ITM_C        , ITM_C_CEDILLA, ITM_C        , ITM_C        },
+    { ITM_D        , ITM_D          , ITM_D         , ITM_D         , ITM_D         , ITM_D            , ITM_D         , ITM_D         , ITM_D_CARON  , ITM_D        , ITM_D        , ITM_D        , ITM_D_STROKE , ITM_D        },
+    { ITM_E        , ITM_E_MACRON   , ITM_E_ACUTE   , ITM_E_BREVE   , ITM_E_GRAVE   , ITM_E_DIARESIS   , ITM_E         , ITM_E_CIRC    , ITM_E_CARON  , ITM_E_OGONEK , ITM_E        , ITM_E        , ITM_E        , ITM_E_DOT    },
+    { ITM_G        , ITM_G          , ITM_G         , ITM_G_BREVE   , ITM_G         , ITM_G            , ITM_G         , ITM_G         , ITM_G        , ITM_G        , ITM_G        , ITM_G        , ITM_G        , ITM_G        },
+    { ITM_I        , ITM_I_MACRON   , ITM_I_ACUTE   , ITM_I_BREVE   , ITM_I_GRAVE   , ITM_I_DIARESIS   , ITM_I         , ITM_I_CIRC    , ITM_I        , ITM_I_OGONEK , ITM_I        , ITM_I        , ITM_I        , ITM_I_DOT    },
+    { ITM_L        , ITM_L          , ITM_L_ACUTE   , ITM_L         , ITM_L         , ITM_L            , ITM_L         , ITM_L         , ITM_L        , ITM_L        , ITM_L        , ITM_L        , ITM_L_STROKE , ITM_L        },
+    { ITM_N        , ITM_N          , ITM_N_ACUTE   , ITM_N         , ITM_N         , ITM_N            , ITM_N_TILDE   , ITM_N         , ITM_N_CARON  , ITM_N        , ITM_N        , ITM_N        , ITM_N        , ITM_N        },
+    { ITM_O        , ITM_O_MACRON   , ITM_O_ACUTE   , ITM_O_BREVE   , ITM_O_GRAVE   , ITM_O_DIARESIS   , ITM_O_TILDE   , ITM_O_CIRC    , ITM_O        , ITM_O        , ITM_O        , ITM_O        , ITM_O_STROKE , ITM_O        },
+    { ITM_R        , ITM_R          , ITM_R_ACUTE   , ITM_R         , ITM_R         , ITM_R            , ITM_R         , ITM_R         , ITM_R_CARON  , ITM_R        , ITM_R        , ITM_R        , ITM_R        , ITM_R        },
+    { ITM_S        , ITM_S          , ITM_S_ACUTE   , ITM_S         , ITM_S         , ITM_S            , ITM_S         , ITM_S         , ITM_S_CARON  , ITM_S        , ITM_S        , ITM_S_CEDILLA, ITM_S        , ITM_S        },
+    { ITM_T        , ITM_T          , ITM_T         , ITM_T         , ITM_T         , ITM_T            , ITM_T         , ITM_T         , ITM_T_CARON  , ITM_T        , ITM_T        , ITM_T_CEDILLA, ITM_T        , ITM_T        },
+    { ITM_U        , ITM_U_MACRON   , ITM_U_ACUTE   , ITM_U_BREVE   , ITM_U_GRAVE   , ITM_U_DIARESIS   , ITM_U_TILDE   , ITM_U_CIRC    , ITM_U        , ITM_U_OGONEK , ITM_U_RING   , ITM_U        , ITM_U        , ITM_U        },
+    { ITM_W        , ITM_W          , ITM_W         , ITM_W         , ITM_W         , ITM_W            , ITM_W         , ITM_W_CIRC    , ITM_W        , ITM_W        , ITM_W        , ITM_W        , ITM_W        , ITM_W        },
+    { ITM_Y        , ITM_Y          , ITM_Y_ACUTE   , ITM_Y         , ITM_Y         , ITM_Y_DIARESIS   , ITM_Y         , ITM_Y_CIRC    , ITM_Y        , ITM_Y        , ITM_Y        , ITM_Y        , ITM_Y        , ITM_Y        },
+    { ITM_Z        , ITM_Z          , ITM_Z_ACUTE   , ITM_Z         , ITM_Z         , ITM_Z            , ITM_Z         , ITM_Z         , ITM_Z_CARON  , ITM_Z        , ITM_Z        , ITM_Z        , ITM_Z        , ITM_Z_DOT    },
+    { ITM_a        , ITM_a_MACRON   , ITM_a_ACUTE   , ITM_a_BREVE   , ITM_a_GRAVE   , ITM_a_DIARESIS   , ITM_a_TILDE   , ITM_a_CIRC    , ITM_a        , ITM_a_OGONEK , ITM_a_RING   , ITM_a        , ITM_a        , ITM_a        },
+    { ITM_c        , ITM_c          , ITM_c_ACUTE   , ITM_c         , ITM_c         , ITM_c            , ITM_c         , ITM_c         , ITM_c_CARON  , ITM_c        , ITM_c        , ITM_c_CEDILLA, ITM_c        , ITM_c        },
+    { ITM_d        , ITM_d          , ITM_d         , ITM_d         , ITM_d         , ITM_d            , ITM_d         , ITM_d         , ITM_d        , ITM_d        , ITM_d        , ITM_d        , ITM_d_STROKE , ITM_d        },
+    { ITM_e        , ITM_e_MACRON   , ITM_e_ACUTE   , ITM_e_BREVE   , ITM_e_GRAVE   , ITM_e_DIARESIS   , ITM_e         , ITM_e_CIRC    , ITM_e_CARON  , ITM_e_OGONEK , ITM_e        , ITM_e        , ITM_e        , ITM_e_DOT    },
+    { ITM_g        , ITM_g          , ITM_g         , ITM_g_BREVE   , ITM_g         , ITM_g            , ITM_g         , ITM_g         , ITM_g        , ITM_g        , ITM_g        , ITM_g        , ITM_g        , ITM_g        },
+    { ITM_h        , ITM_h          , ITM_h         , ITM_h         , ITM_h         , ITM_h            , ITM_h         , ITM_h         , ITM_h        , ITM_h        , ITM_h        , ITM_h        , ITM_h_STROKE , ITM_h        },
+    { ITM_i        , ITM_i_MACRON   , ITM_i_ACUTE   , ITM_i_BREVE   , ITM_i_GRAVE   , ITM_i_DIARESIS   , ITM_i         , ITM_i_CIRC    , ITM_i        , ITM_i_OGONEK , ITM_i        , ITM_i        , ITM_i        , ITM_i_DOT    },
+    { ITM_l        , ITM_l          , ITM_l_ACUTE   , ITM_l         , ITM_l         , ITM_l            , ITM_l         , ITM_l         , ITM_l        , ITM_l        , ITM_l        , ITM_l        , ITM_l_STROKE , ITM_l        },
+    { ITM_n        , ITM_n          , ITM_n_ACUTE   , ITM_n         , ITM_n         , ITM_n            , ITM_n_TILDE   , ITM_n         , ITM_n_CARON  , ITM_n        , ITM_n        , ITM_n        , ITM_n        , ITM_n        },
+    { ITM_o        , ITM_o_MACRON   , ITM_o_ACUTE   , ITM_o_BREVE   , ITM_o_GRAVE   , ITM_o_DIARESIS   , ITM_o_TILDE   , ITM_o_CIRC    , ITM_o        , ITM_o        , ITM_o        , ITM_o        , ITM_o_STROKE , ITM_o        },
+    { ITM_r        , ITM_r          , ITM_r_ACUTE   , ITM_r         , ITM_r         , ITM_r            , ITM_r         , ITM_r         , ITM_r_CARON  , ITM_r        , ITM_r        , ITM_r        , ITM_r        , ITM_r        },
+    { ITM_s        , ITM_s          , ITM_s_ACUTE   , ITM_s         , ITM_s         , ITM_s            , ITM_s         , ITM_s         , ITM_s_CARON  , ITM_s        , ITM_s        , ITM_s_CEDILLA, ITM_s        , ITM_s        },
+    { ITM_t        , ITM_t          , ITM_t         , ITM_t         , ITM_t         , ITM_t            , ITM_t         , ITM_t         , ITM_t        , ITM_t        , ITM_t        , ITM_t_CEDILLA, ITM_t        , ITM_t        },
+    { ITM_u        , ITM_u_MACRON   , ITM_u_ACUTE   , ITM_u_BREVE   , ITM_u_GRAVE   , ITM_u_DIARESIS   , ITM_u_TILDE   , ITM_u_CIRC    , ITM_u        , ITM_u_OGONEK , ITM_u_RING   , ITM_u        , ITM_u        , ITM_u        },
+    { ITM_w        , ITM_w          , ITM_w         , ITM_w         , ITM_w         , ITM_w            , ITM_w         , ITM_w_CIRC    , ITM_w        , ITM_w        , ITM_w        , ITM_w        , ITM_w        , ITM_w        },
+    { ITM_x        , ITM_x          , ITM_x         , ITM_x         , ITM_x         , ITM_x            , ITM_x         , ITM_x_CIRC    , ITM_x        , ITM_x        , ITM_x        , ITM_x        , ITM_x        , ITM_x        },
+    { ITM_y        , ITM_y          , ITM_y_ACUTE   , ITM_y         , ITM_y         , ITM_y_DIARESIS   , ITM_y         , ITM_y_CIRC    , ITM_y        , ITM_y        , ITM_y        , ITM_y        , ITM_y        , ITM_y        },
+    { ITM_z        , ITM_z          , ITM_z_ACUTE   , ITM_z         , ITM_z         , ITM_z            , ITM_z         , ITM_z         , ITM_z_CARON  , ITM_z        , ITM_z        , ITM_z        , ITM_z        , ITM_z_DOT    },
+    { ITM_SPACE    , ITM_SPACE      , ITM_SPACE     , ITM_SPACE     , ITM_SPACE     , ITM_SPACE        , ITM_TILDE     , ITM_CIRCUMFLEX, ITM_SPACE    , ITM_SPACE    , ITM_RING     , ITM_SPACE    , ITM_SPACE    , ITM_DOT      },
+    { 0            , 0              , 0             , 0             , 0             , 0                , 0             , 0             , 0            , 0            , 0            , 0            , 0            , 0            }
 };
 
 const int16_t greekMap[] = {
@@ -1200,16 +1221,16 @@ static int16_t _getDeadKeyItem (int16_t item) {
   while(deadKeysMap[i].item != 0) {
     if(deadKeysMap[i].item == item) {
       switch(deadKey) {
-        case GDK_KEY_dead_macron  :
+        case GDK_KEY_dead_macron :
           return deadKeysMap[i].item_macron;
 
-        case GDK_KEY_dead_acute  :
+        case GDK_KEY_dead_acute :
           return deadKeysMap[i].item_acute;
 
-        case GDK_KEY_dead_breve  :
+        case GDK_KEY_dead_breve :
           return deadKeysMap[i].item_breve;
 
-        case GDK_KEY_dead_grave  :
+        case GDK_KEY_dead_grave :
           return deadKeysMap[i].item_grave;
 
         case GDK_KEY_dead_diaeresis :
@@ -1221,8 +1242,20 @@ static int16_t _getDeadKeyItem (int16_t item) {
         case GDK_KEY_dead_circumflex:
           return deadKeysMap[i].item_circ;
 
-        case GDK_KEY_dead_ogonek  :
+        case GDK_KEY_dead_ogonek :
           return deadKeysMap[i].item_ogonek;
+
+        case GDK_KEY_dead_abovering :
+          return deadKeysMap[i].item_ring;
+
+        case GDK_KEY_dead_cedilla :
+          return deadKeysMap[i].item_cedilla;
+
+        case GDK_KEY_dead_stroke :
+          return deadKeysMap[i].item_ring;
+
+        case GDK_KEY_dead_abovedot :
+          return deadKeysMap[i].item_dot;
       }
     }
     i++;
@@ -1230,11 +1263,24 @@ static int16_t _getDeadKeyItem (int16_t item) {
   return item;
 }
 
+void setAlphaCaseToCapsLockState() {
+  if(gdk_keymap_get_caps_lock_state(gdk_keymap_get_for_display(gdk_display_get_default()))) {
+    alphaCase = AC_UPPER;
+  }
+  else {
+    alphaCase = AC_LOWER;
+  }
+  refreshStatusBar();
+  lcd_refresh();
+}
+
 static keyCode_t _keyCodeFromGdkKey(uint32_t gdkKey, bool Alpha) {
   int16_t item;
-  
-  printf("**[DL]** _keyCodeFromGdkKey gdkKey %x\n",gdkKey);
+
+  printf("**[DL]** _keyCodeFromGdkKey gdkKey %x capslock state %d\n", gdkKey, gdk_keymap_get_caps_lock_state(gdk_keymap_get_for_display(gdk_display_get_default())));
+
   if(Alpha) {
+    setAlphaCaseToCapsLockState();
     switch(gdkKey) {
       case GDK_KEY_F1:
         return kcF1;
@@ -1286,11 +1332,18 @@ static keyCode_t _keyCodeFromGdkKey(uint32_t gdkKey, bool Alpha) {
       case GDK_KEY_dead_tilde :
       case GDK_KEY_dead_circumflex:
       case GDK_KEY_dead_ogonek  :
+      case GDK_KEY_dead_abovering :
+      case GDK_KEY_dead_cedilla :
+      case GDK_KEY_dead_stroke :
+      case GDK_KEY_dead_abovedot :
         deadKey = gdkKey;
         return kcNoKey;
 
       default:
         item = _getGdkKeyItem(gdkKey);
+        if(item == ITM_PROD_SIGN) {
+          item = (getSystemFlag(FLAG_MULTx) ? ITM_CROSS : ITM_DOT);
+        }
         if(item != 0) {
           if(deadKey != 0) {
             item = _getDeadKeyItem(item);
@@ -1379,7 +1432,9 @@ static keyCode_t _keyCodeFromGdkKey(uint32_t gdkKey, bool Alpha) {
         return kcTri;
 
       case GDK_KEY_X:
-          forceTamAlpha = true;
+          #if defined (XPB)
+            forceTamAlpha = true;
+          #endif
           return(kcXeq);
 
       case GDK_KEY_Page_Down:

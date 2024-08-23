@@ -32,6 +32,10 @@
 #include <stdlib.h>
 #include <string.h>
 
+#if defined(PC_BUILD)
+#include "gtkGui.h"
+#endif
+
 #include "wp43.h"
 
 // Structure of the program memory.
@@ -671,6 +675,10 @@ void pemAlpha(int16_t item) {
       aimBuffer[0] = 0;
       alphaCase = AC_UPPER;
       nextChar = NC_NORMAL;
+      
+      #if defined(PC_BUILD)
+        setAlphaCaseToCapsLockState();  // Reflect caps lock key status
+      #endif
 
       pushSmStackMode(smAim);  // Select AIM softmenu stack with MyAlpha default menu
 
