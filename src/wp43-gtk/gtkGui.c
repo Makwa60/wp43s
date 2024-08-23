@@ -1277,7 +1277,7 @@ void setAlphaCaseToCapsLockState() {
 static keyCode_t _keyCodeFromGdkKey(uint32_t gdkKey, bool Alpha) {
   int16_t item;
 
-  printf("**[DL]** _keyCodeFromGdkKey gdkKey %x capslock state %d\n", gdkKey, gdk_keymap_get_caps_lock_state(gdk_keymap_get_for_display(gdk_display_get_default())));
+//  printf("**[DL]** _keyCodeFromGdkKey gdkKey %x capslock state %d\n", gdkKey, gdk_keymap_get_caps_lock_state(gdk_keymap_get_for_display(gdk_display_get_default())));
 
   if(Alpha) {
     setAlphaCaseToCapsLockState();
@@ -1322,6 +1322,9 @@ static keyCode_t _keyCodeFromGdkKey(uint32_t gdkKey, bool Alpha) {
 
       case GDK_KEY_Escape:
         return kcExit;
+  
+      case GDK_KEY_Control_R:
+        return kcRun;
 
       //dead keys detection
       case GDK_KEY_dead_macron  :

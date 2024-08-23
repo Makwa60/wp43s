@@ -15,7 +15,6 @@
 #include "error.h"
 #include "flags.h"
 #include "fonts.h"
-#include "gtkGui.h"
 #include "hal/time.h"
 #include "hal/timer.h"
 #include "items.h"
@@ -37,6 +36,10 @@
 #include "ui/tam.h"
 #include <stdbool.h>
 #include <string.h>
+
+#if defined(PC_BUILD)
+#include "gtkGui.h"
+#endif
 
 #include "wp43.h"
 
