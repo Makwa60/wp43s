@@ -37,6 +37,10 @@
 #include <stdbool.h>
 #include <string.h>
 
+#if defined(PC_BUILD)
+#include "gtkGui.h"
+#endif
+
 #include "wp43.h"
 
 #if !defined(TESTSUITE_BUILD)
@@ -53,6 +57,11 @@
     shiftG = false;
     aimBuffer[0] = 0;
     calcModeEnter(cmAim);
+
+    #if defined(PC_BUILD)
+      setAlphaCaseToCapsLockState();  // Reflect caps lock key status
+    #endif
+
     if(programRunStop != PGM_RUNNING) {
       entryStatus |= 0x01;
       setSystemFlag(FLAG_ALPIN);
