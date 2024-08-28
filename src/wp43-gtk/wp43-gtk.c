@@ -110,6 +110,10 @@ int main(int argc, char* argv[]) {
   //ramDump();
   //refreshScreen();
 
+  //#if defined(OSX)  // not implemented for now due to conflict with calculator up and down arrows for caps status control
+  //   g_timeout_add_seconds(1, (GSourceFunc) setAlphaCaseToCapsLockState, NULL);  //periodic update of caps lock in status bar - needed for Mac
+  //#endif
+
   if(getSystemFlag(FLAG_AUTXEQ)) {
     clearSystemFlag(FLAG_AUTXEQ);
     if(programRunStop != PGM_RUNNING) {
