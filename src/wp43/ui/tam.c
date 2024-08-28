@@ -26,6 +26,10 @@
 #include <stdbool.h>
 #include <string.h>
 
+#if defined(PC_BUILD)
+#include "gtkGui.h"
+#endif
+
 #include "wp43.h"
 
 tamState_t tam;
@@ -401,6 +405,9 @@ void tamReset(void) {
         if(tam.alpha) {
           setSystemFlag(FLAG_ALPHA);
           calcModeEnter(cmAim);
+          #if defined(PC_BUILD)
+            setAlphaCaseToCapsLockState();  // Reflect caps lock key status
+          #endif
         }
         calcModeUpdateGui();
       }
@@ -438,6 +445,9 @@ void tamReset(void) {
         if(beginWithLowercase) {
           alphaCase = AC_LOWER;
         }
+        #if defined(PC_BUILD)
+          setAlphaCaseToCapsLockState();  // Reflect caps lock key status
+        #endif
       }
       return;
     }
@@ -1046,7 +1056,7 @@ void tamReset(void) {
     _tamUpdateBuffer();
 
     clearSystemFlag(FLAG_ALPHA);
-    
+
     #if defined(PC_BUILD)
       if(forceTamAlpha) {
         forceTamAlpha = false;
@@ -1085,7 +1095,7 @@ void tamReset(void) {
     while(numberOfTamMenusToPop--) {
       popSoftmenu();
     }
-    
+
     tam.alpha = false;
     tam.mode = 0;
     catalog = CATALOG_NONE;

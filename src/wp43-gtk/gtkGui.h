@@ -33,7 +33,7 @@
     int16_t   item;
     uint32_t  gdkKey;
   } gdkKeyMap_t;
-  
+
   /**
    * \struct deadKeys_t
    * Structure keeping the mapping between character items and their equivalent when dead keys are used.
@@ -57,9 +57,9 @@
   /**
    * Creates the calc's GUI window with all the widgets.
    */
-  void setupUI(void);
-  bool guiUseTamL(void);
-  void setAlphaCaseToCapsLockState();
+  void     setupUI                     (void);
+  bool     guiUseTamL                  (void);
+  gboolean setAlphaCaseToCapsLockState (void);
 
   extern GtkWidget      *grid;
   extern calcKeyboard_t  calcKeyboard[MAX_KEYS];

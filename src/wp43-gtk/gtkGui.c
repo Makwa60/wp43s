@@ -14,6 +14,7 @@
 #include "gtkScreen.h"
 #include "hal/lcd.h"
 #include "items.h"
+#include "mathematics/square.h"
 #include "programming/manage.h"
 #include "saveRestoreCalcState.h"
 #include "ui/bufferize.h"
@@ -1252,7 +1253,7 @@ static int16_t _getDeadKeyItem (int16_t item) {
           return deadKeysMap[i].item_cedilla;
 
         case GDK_KEY_dead_stroke :
-          return deadKeysMap[i].item_ring;
+          return deadKeysMap[i].item_stroke;
 
         case GDK_KEY_dead_abovedot :
           return deadKeysMap[i].item_dot;
@@ -1263,7 +1264,7 @@ static int16_t _getDeadKeyItem (int16_t item) {
   return item;
 }
 
-void setAlphaCaseToCapsLockState() {
+gboolean setAlphaCaseToCapsLockState() {
   if(gdk_keymap_get_caps_lock_state(gdk_keymap_get_for_display(gdk_display_get_default()))) {
     alphaCase = AC_UPPER;
   }
@@ -1272,12 +1273,13 @@ void setAlphaCaseToCapsLockState() {
   }
   refreshStatusBar();
   lcd_refresh();
+  return true;
 }
 
 static keyCode_t _keyCodeFromGdkKey(uint32_t gdkKey, bool Alpha) {
   int16_t item;
 
-//  printf("**[DL]** _keyCodeFromGdkKey gdkKey %x capslock state %d\n", gdkKey, gdk_keymap_get_caps_lock_state(gdk_keymap_get_for_display(gdk_display_get_default())));
+  //printf("**[DL]** _keyCodeFromGdkKey gdkKey %x capslock state %d\n", gdkKey, gdk_keymap_get_caps_lock_state(gdk_keymap_get_for_display(gdk_display_get_default())));
 
   if(Alpha) {
     setAlphaCaseToCapsLockState();
@@ -1309,6 +1311,7 @@ static keyCode_t _keyCodeFromGdkKey(uint32_t gdkKey, bool Alpha) {
 
       case GDK_KEY_Tab:
         shiftF = true;
+        shiftG = false;
         return kcSwap;
 
       case GDK_KEY_BackSpace:
@@ -1322,7 +1325,7 @@ static keyCode_t _keyCodeFromGdkKey(uint32_t gdkKey, bool Alpha) {
 
       case GDK_KEY_Escape:
         return kcExit;
-  
+
       case GDK_KEY_Control_R:
         return kcRun;
 
@@ -1422,6 +1425,11 @@ static keyCode_t _keyCodeFromGdkKey(uint32_t gdkKey, bool Alpha) {
       case GDK_KEY_q:
         return kcSqrt;
 
+      case GDK_KEY_apostrophe:       // Shortcut to f alpha
+        shiftF = true;
+        shiftG = false;
+        return kcSqrt;
+
       case GDK_KEY_R:
       case GDK_KEY_r:
         return kcRcl;
@@ -1435,6 +1443,7 @@ static keyCode_t _keyCodeFromGdkKey(uint32_t gdkKey, bool Alpha) {
         return kcTri;
 
       case GDK_KEY_X:
+      case GDK_KEY_x:
           #if defined (XPB)
             forceTamAlpha = true;
           #endif
@@ -1529,6 +1538,19 @@ static keyCode_t _keyCodeFromGdkKey(uint32_t gdkKey, bool Alpha) {
       case GDK_KEY_Escape:
         return kcExit;
 
+      case GDK_KEY_twosuperior:      // Shortcut to x²
+        if(!tamIsActive()) {
+          if (calcMode == cmNim) {
+            closeNim();
+          }
+          if((calcMode == cmNormal) || (calcMode == cmPem)) {
+            runFunction(ITM_SQUARE);
+            refreshScreen();
+            lcd_refresh();
+          }
+        }
+        return kcNoKey;
+
       default:
         return kcNoKey;
     }
@@ -1540,17 +1562,18 @@ static keyCode_t _keyCodeFromGdkKey(uint32_t gdkKey, bool Alpha) {
 static gboolean keyPressed(GtkWidget *w, GdkEventKey *event, gpointer data) {
   uint32_t gdkKey = event->keyval;
   bool alphaInput = (getSystemFlag(FLAG_ALPHA)  || (calcMode == cmAim || calcMode == cmEim || (catalog && catalog != CATALOG_MVAR)));
+
+  switch(gdkKey) {
+    case GDK_KEY_F10:
+      copyScreenToClipboard();
+    return FALSE;
+
+    case GDK_KEY_F9:
+      copyRegisterXToClipboard();
+    return FALSE;
+  }
   if (!alphaInput) {
     switch(gdkKey) {
-      case GDK_KEY_H:
-      case GDK_KEY_h:
-        copyScreenToClipboard();
-        return FALSE;
-
-      case GDK_KEY_x:
-        copyRegisterXToClipboard();
-        return FALSE;
-
       case GDK_KEY_z:
         copyStackRegistersToClipboard();
         return FALSE;
