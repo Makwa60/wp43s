@@ -959,7 +959,7 @@ void fnReset(uint16_t confirmation) {
     catalog = CATALOG_NONE;
     memset(lastCatalogPosition, 0, NUMBER_OF_CATALOGS * sizeof(lastCatalogPosition[0]));
     firstGregorianDay = 2361222 /* 14 Sept 1752 */;
-    exponentLimit = 6145;
+    exponentLimit = 999;       // default to 999 instead of 6145 max value to warrant 34 digit accuracy of trig functions within ±10^999
     exponentHideLimit = 0;
     lastIntegerBase = 0;
     lastDenominator = 4;
