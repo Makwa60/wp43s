@@ -290,7 +290,7 @@ void fnRunProgram(uint16_t unusedButMandatoryParameter) {
   }
   dynamicMenuItem = -1;
   refreshRegisterLine(REGISTER_T);     // Clear previous VIEW or AVIEW data, if any
-  refreshRegisterLine(REGISTER_Z);     // Clear previous test result, if any 
+  refreshRegisterLine(REGISTER_Z);     // Clear previous test result, if any
   runProgram(false, INVALID_VARIABLE);
 }
 
@@ -323,8 +323,9 @@ void fnStopProgram(uint16_t unusedButMandatoryParameter) {
 
   static void _executeWithIndirectRegister(uint8_t *paramAddress, uint16_t op) {
     uint8_t opParam = *(uint8_t *)paramAddress;
+    bool    tryAllocate = isFunctionAllowingNewVariable(op);
     if(opParam <= LAST_LOCAL_REGISTER) { // Local register from .00 to .98
-      int16_t realParam = indirectAddressing(opParam, _indirectionType(op), indexOfItems[op].tamMinMax >> TAM_MAX_BITS, indexOfItems[op].tamMinMax & TAM_MAX_MASK);
+      int16_t realParam = indirectAddressing(opParam, _indirectionType(op), indexOfItems[op].tamMinMax >> TAM_MAX_BITS, indexOfItems[op].tamMinMax & TAM_MAX_MASK, tryAllocate);
       if(realParam != FAILED_INDIRECTION) {
         reallyRunFunction(op, realParam);
       }
@@ -338,10 +339,11 @@ void fnStopProgram(uint16_t unusedButMandatoryParameter) {
 
   static void _executeWithIndirectVariable(uint8_t *stringAddress, uint16_t op) {
     calcRegister_t regist;
+    bool    tryAllocate = isFunctionAllowingNewVariable(op);
     _getStringLabelOrVariableName(stringAddress);
     regist = findNamedVariable(tmpStringLabelOrVariableName);
     if(regist != INVALID_VARIABLE) {
-      int16_t realParam = indirectAddressing(regist, _indirectionType(op), indexOfItems[op].tamMinMax >> TAM_MAX_BITS, indexOfItems[op].tamMinMax & TAM_MAX_MASK);
+      int16_t realParam = indirectAddressing(regist, _indirectionType(op), indexOfItems[op].tamMinMax >> TAM_MAX_BITS, indexOfItems[op].tamMinMax & TAM_MAX_MASK, tryAllocate);
       if(realParam != FAILED_INDIRECTION) {
         reallyRunFunction(op, realParam);
       }
