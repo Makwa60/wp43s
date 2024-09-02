@@ -1390,7 +1390,7 @@ void copySourceRegisterToDestRegister(calcRegister_t sourceRegister, calcRegiste
 
 
 
-int16_t indirectAddressing(calcRegister_t regist, uint16_t parameterType, int16_t minValue, int16_t maxValue) {
+int16_t indirectAddressing(calcRegister_t regist, uint16_t parameterType, int16_t minValue, int16_t maxValue, bool tryAllocate) {
   int16_t value;
   bool    isValidAlpha = false;
   printf("parameterType %u\n", parameterType); fflush(stdout);
@@ -1494,7 +1494,7 @@ int16_t indirectAddressing(calcRegister_t regist, uint16_t parameterType, int16_
   }
 
   else if(getRegisterDataType(regist) == dtString && parameterType == INDPM_REGISTER) {
-    value = findNamedVariable(REGISTER_STRING_DATA(regist));
+    value = (tryAllocate ? findOrAllocateNamedVariable(REGISTER_STRING_DATA(regist)) : findNamedVariable(REGISTER_STRING_DATA(regist)));
     isValidAlpha = true;
     if(value == INVALID_VARIABLE) {
       if(getSystemFlag(FLAG_IGN1ER)) {
@@ -1502,7 +1502,7 @@ int16_t indirectAddressing(calcRegister_t regist, uint16_t parameterType, int16_
       }
       else {
         displayCalcErrorMessage(ERROR_UNDEF_SOURCE_VAR, ERR_REGISTER_LINE, REGISTER_X);
-        errorMoreInfo("string '%s' is not a named variable", REGISTER_STRING_DATA(regist));
+        errorMoreInfo("string '%s' is not a named variable - tryAllocate is %s", REGISTER_STRING_DATA(regist),(tryAllocate? "true" : "false"));
       }
       clearSystemFlag(FLAG_IGN1ER);
       return FAILED_INDIRECTION;

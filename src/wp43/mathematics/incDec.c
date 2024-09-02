@@ -36,7 +36,7 @@ void incDecError(uint16_t regist, uint8_t flag) {
  * \return void
  ***********************************************/
 void fnDec(uint16_t regist) {
-  if(regist < FIRST_LOCAL_REGISTER + currentNumberOfLocalRegisters) {
+  if((regist < FIRST_LOCAL_REGISTER + currentNumberOfLocalRegisters) || (FIRST_NAMED_VARIABLE <= regist && regist <= FIRST_NAMED_VARIABLE + numberOfNamedVariables) || (FIRST_RESERVED_VARIABLE <= regist && regist <= LAST_RESERVED_VARIABLE) || (regist == TEMP_REGISTER_1)) {
     incDec[getRegisterDataType(regist)](regist, DEC_FLAG);
   }
 
@@ -57,7 +57,7 @@ void fnDec(uint16_t regist) {
  * \return void
  ***********************************************/
 void fnInc(uint16_t regist) {
-  if(regist < FIRST_LOCAL_REGISTER + currentNumberOfLocalRegisters) {
+  if((regist < FIRST_LOCAL_REGISTER + currentNumberOfLocalRegisters) || (FIRST_NAMED_VARIABLE <= regist && regist <= FIRST_NAMED_VARIABLE + numberOfNamedVariables) || (FIRST_RESERVED_VARIABLE <= regist && regist <= LAST_RESERVED_VARIABLE) || (regist == TEMP_REGISTER_1)) {
     incDec[getRegisterDataType(regist)](regist, INC_FLAG);
   }
 

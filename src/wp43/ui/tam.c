@@ -740,12 +740,13 @@ void tamReset(void) {
       // Check whether it is possible to add any more digits: if not, execute the function
       if((tryOoR || (min2 <= tam.value && tam.value <= max2)) && (forceTry || tam.value*10 > max2)) {
         int16_t value = tam.value;
+        bool    tryAllocate = (isFunctionAllowingNewVariable(tam.function) && !tam.indirect);
         bool    run = true;
         if(tam.dot) {
           value += FIRST_LOCAL_REGISTER;
         }
         if(tam.indirect && calcMode != cmPem) {
-          value = indirectAddressing(value, _indirectionType(tamOperation()), min, max);
+          value = indirectAddressing(value, _indirectionType(tamOperation()), min, max, tryAllocate);
           run = (value != FAILED_INDIRECTION);
         }
         if((indexOfItems[tamOperation()].status & PTP_STATUS) == PTP_VARIABLE && (value < FIRST_NAMED_VARIABLE || value > LAST_NAMED_VARIABLE)) {
@@ -880,7 +881,8 @@ void tamReset(void) {
         aimBuffer[0] = 0;
       }
       if(tam.indirect && value != INVALID_VARIABLE && calcMode != cmPem) {
-        value = indirectAddressing(value, _indirectionType(tam.function), min, max);
+        tryAllocate = isFunctionAllowingNewVariable(tam.function);
+        value = indirectAddressing(value, _indirectionType(tam.function), min, max, tryAllocate);
         if(value == FAILED_INDIRECTION) {
           value = INVALID_VARIABLE;
         }
