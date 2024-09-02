@@ -299,7 +299,7 @@ void tamReset(void) {
   static uint16_t _indirectionType(uint16_t func) {
     if(indexOfItems[func].param == tmFlagR || indexOfItems[func].param == tmFlagW) {
       return INDPM_FLAG;
-    } else if(tam.mode == tmStoRcl || tam.mode == tmMDim) {
+    } else if(tam.mode == tmStoRcl || tam.mode == tmRegister || tam.mode == tmCmp || tam.mode == tmMDim) {
       return INDPM_REGISTER;
     } else if(tam.mode == tmLabel) {
       return INDPM_LABEL;

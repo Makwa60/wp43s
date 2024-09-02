@@ -312,7 +312,7 @@ void fnStopProgram(uint16_t unusedButMandatoryParameter) {
   static uint16_t _indirectionType(uint16_t func) {
     if(indexOfItems[func].param == tmFlagR || indexOfItems[func].param == tmFlagW) {
       return INDPM_FLAG;
-    } else if(indexOfItems[func].param == tmStoRcl || indexOfItems[func].param == tmMDim) {
+    } else if(indexOfItems[func].param == tmStoRcl || indexOfItems[func].param == tmRegister || indexOfItems[func].param == tmCmp || indexOfItems[func].param == tmMDim) {
       return INDPM_REGISTER;
     } else if(indexOfItems[func].param == tmLabel) {
       return INDPM_LABEL;
