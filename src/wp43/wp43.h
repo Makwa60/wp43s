@@ -168,6 +168,7 @@
   extern uint8_t                screenUpdatingMode;
   extern uint8_t               *beginOfProgramMemory;
   extern uint8_t               *firstFreeProgramByte;
+  extern uint8_t               *beginOfNewlyLoadedProgramMemory;
 
   extern int16_t                lineTWidth;
   extern int16_t                rbrRegister;

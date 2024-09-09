@@ -41,7 +41,7 @@ uint8_t *countOpBytes(uint8_t *step, uint16_t paramMode) {
       }
       else {
         #if !defined(DMCP_BUILD)
-          printf("\nIn function countOpBytes case PARAM_DECLARE_LABEL: opParam %u is not a valid label!\n", opParam);
+          printf("In function countOpBytes case PARAM_DECLARE_LABEL: opParam %u is not a valid label!\n", opParam);
         #endif // !DMCP_BUILD
         return NULL;
       }
@@ -59,7 +59,7 @@ uint8_t *countOpBytes(uint8_t *step, uint16_t paramMode) {
       }
       else {
         #if !defined(DMCP_BUILD)
-          printf("\nIn function countOpBytes: case PARAM_LABEL, %u is not a valid parameter!", opParam);
+          printf("In function countOpBytes: case PARAM_LABEL, %u is not a valid parameter!\n", opParam);
         #endif // !DMCP_BUILD
         return NULL;
       }
@@ -78,7 +78,7 @@ uint8_t *countOpBytes(uint8_t *step, uint16_t paramMode) {
       }
       else {
         #if !defined(DMCP_BUILD)
-          printf("\nIn function countOpBytes: case PARAM_REGISTER / PARAM_VARIABLE, %u is not a valid parameter!", opParam);
+          printf("In function countOpBytes: case PARAM_REGISTER / PARAM_VARIABLE, %u is not a valid parameter!\n", opParam);
         #endif // !DMCP_BUILD
         return NULL;
       }
@@ -96,7 +96,7 @@ uint8_t *countOpBytes(uint8_t *step, uint16_t paramMode) {
       }
       else {
         #if !defined(DMCP_BUILD)
-          printf("\nIn function countOpBytes: case PARAM_FLAG, %u is not a valid parameter!", opParam);
+          printf("In function countOpBytes: case PARAM_FLAG, %u is not a valid parameter!\n", opParam);
         #endif // !DMCP_BUILD
         return NULL;
       }
@@ -114,7 +114,7 @@ uint8_t *countOpBytes(uint8_t *step, uint16_t paramMode) {
       }
       else {
         #if !defined(DMCP_BUILD)
-          printf("\nIn function countOpBytes: case PARAM_NUMBER, %u is not a valid parameter!", opParam);
+          printf("In function countOpBytes: case PARAM_NUMBER, %u is not a valid parameter!\n", opParam);
         #endif // !DMCP_BUILD
         return NULL;
       }
@@ -135,7 +135,7 @@ uint8_t *countOpBytes(uint8_t *step, uint16_t paramMode) {
       }
       else {
         #if !defined(DMCP_BUILD)
-          printf("\nIn function countOpBytes: case PARAM_NUMBER, %u is not a valid parameter!", opParam);
+          printf("In function countOpBytes: case PARAM_NUMBER, %u is not a valid parameter!\n", opParam);
         #endif // !DMCP_BUILD
         return NULL;
       }
@@ -157,7 +157,7 @@ uint8_t *countOpBytes(uint8_t *step, uint16_t paramMode) {
       }
       else {
         #if !defined(DMCP_BUILD)
-          printf("\nIn function countOpBytes: case PARAM_COMPARE, %u is not a valid parameter!", opParam);
+          printf("In function countOpBytes: case PARAM_COMPARE, %u is not a valid parameter!\n", opParam);
         #endif // !DMCP_BUILD
         return NULL;
       }
@@ -170,7 +170,7 @@ uint8_t *countOpBytes(uint8_t *step, uint16_t paramMode) {
 
     default: {
       #if !defined(DMCP_BUILD)
-        printf("\nIn function countOpBytes: paramMode %u is not valid!\n", paramMode);
+        printf("In function countOpBytes: paramMode %u is not valid!\n", paramMode);
       #endif // !DMCP_BUILD
       return NULL;
     }

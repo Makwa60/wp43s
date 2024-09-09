@@ -248,7 +248,7 @@
   #define SAVED_REGISTER_D                         218
   #define SAVED_REGISTER_L                         219
   #define LAST_SAVED_STACK_REGISTER                219
-  #define NUMBER_OF_TEMP_REGISTERS                   2 // 220, 221
+  #define NUMBER_OF_TEMP_REGISTERS                   2 // 220, 221, 222
   #define FIRST_TEMP_REGISTER                      220
   #define TEMP_REGISTER_1                          220
   #define TEMP_REGISTER_2_SAVED_STATS              221

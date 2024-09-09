@@ -1935,7 +1935,11 @@
   #define ITM_AVIEW                     1865
   #define ITM_PROMPT                    1866
 
-  #define LAST_ITEM                     1867
+  #define ITM_NOP_NUMBER_8              1867
+  #define ITM_NOP_REGISTER              1868
+  #define ITM_NOP_LABEL                 1869
+
+  #define LAST_ITEM                     1870
 
   #define NOPARAM                       9876 // Item for function who don't need an item
   #define CONFIRMED                     9877 // Confirmation for RESET, CLPALL, CLALL

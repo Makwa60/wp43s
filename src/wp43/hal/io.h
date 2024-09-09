@@ -23,6 +23,8 @@
 #define LIB_DIR        "LIBRARY"
 #define LIB_FILE       "wp43.dat"
 
+#define LOG_DIR        "LOGFILES"
+
 #define MRET_SAVESTATE   777
 #define MRET_LOADSTATE   888
 
@@ -38,15 +40,16 @@
    * appropriate location dependent on the platform.
    */
   typedef enum {
-    ioPathSaveFile      = 0, ///< save file used in SAVE and LOAD functions
-    ioPathPgmFile       = 1, ///< program file
-    ioPathTestPgms      = 2, ///< test programs
-    ioPathBackup        = 3, ///< backup file for full state used in simulators
-    ioPathRegDump       = 4, ///< register dump file which enables to view the full digits of long integers
-    ioPathSaveStateFile = 6, ///< state file used in SAVEST function
-    ioPathLoadStateFile = 7, ///< state file used in LOADST function
-    ioPathSaveProgram   = 8, ///< program file used in WRITEP function
-    ioPathLoadProgram   = 9, ///< program file used in READP function
+    ioPathSaveFile      =  0, ///< save file used in SAVE and LOAD functions
+    ioPathPgmFile       =  1, ///< program file
+    ioPathTestPgms      =  2, ///< test programs
+    ioPathBackup        =  3, ///< backup file for full state used in simulators
+    ioPathRegDump       =  4, ///< register dump file which enables to view the full digits of long integers
+    ioPathSaveStateFile =  6, ///< state file used in SAVEST function
+    ioPathLoadStateFile =  7, ///< state file used in LOADST function
+    ioPathSaveProgram   =  8, ///< program file used in WRITEP function
+    ioPathLoadProgram   =  9, ///< program file used in READP function
+    ioPathLog           = 10, ///< log file used to log program incompatibilities
   } ioFilePath_t;
 
   /**
@@ -111,7 +114,7 @@
    * Returns the EOF indicator.
    */
   int ioEof(void);
-  
+
   /**
    * Delete the given file.
    * The file should not be open.
@@ -121,50 +124,50 @@
    * \return FILE_OK if delete succeeded, or FILE_ERROR if not
    */
   int ioFileRemove(ioFilePath_t path, uint32_t *errorNumber);
-  
+
    /**
    * Callback function for Save State File selected file.
    * Called from the DMCP file_selection_screen() dialog.
    *
    * \param[in] path file selected
    * \param[in] file name selected
-   * \param[in] data - unsused 
+   * \param[in] data - unsused
    * \param[out] set tmpFileName with the path file selected
    * \return MRET_SAVESTATE
    */
   int save_statefile(const char * fpath, const char * fname, void * data);
-  
+
    /**
    * Callback function for Load State File selected file.
    * Called from the DMCP file_selection_screen() dialog.
    *
    * \param[in] path file selected
    * \param[in] file name selected
-   * \param[in] data - unsused 
+   * \param[in] data - unsused
    * \param[out] set tmpFileName with the path file selected
    * \return MRET_LOADSTATE
    */
   int load_statefile(const char * fpath, const char * fname, void * data);
-  
+
    /**
    * Callback function for Save Program File selected file.
    * Called from the DMCP file_selection_screen() dialog.
    *
    * \param[in] path file selected
    * \param[in] file name selected
-   * \param[in] data - unsused 
+   * \param[in] data - unsused
    * \param[out] set tmpFileName with the path file selected
    * \return MRET_SAVESTATE
    */
   int save_programfile(const char * fpath, const char * fname, void * data);
-  
+
    /**
    * Callback function for Load Program File selected file.
    * Called from the DMCP file_selection_screen() dialog.
    *
    * \param[in] path file selected
    * \param[in] file name selected
-   * \param[in] data - unsused 
+   * \param[in] data - unsused
    * \param[out] set tmpFileName with the path file selected
    * \return MRET_LOADSTATE
    */
@@ -183,5 +186,5 @@
    * Only relevant for the DMCP version, not used for the simulator
    */
   void fnDiskInfo(uint16_t unusedButMandatoryParameter);
-  
+
 #endif // IO_H

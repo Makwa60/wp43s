@@ -675,7 +675,7 @@ void pemAlpha(int16_t item) {
       aimBuffer[0] = 0;
       alphaCase = AC_UPPER;
       nextChar = NC_NORMAL;
-      
+
       #if defined(PC_BUILD)
         setAlphaCaseToCapsLockState();  // Reflect caps lock key status
       #endif
@@ -1137,6 +1137,12 @@ void insertStepInProgram(int16_t func) {
     if(aimBuffer[0] != 0 && !getSystemFlag(FLAG_ALPHA)) {
       pemCloseNumberInput();
       aimBuffer[0] = 0;
+    }
+    if(catalog) {      // If called from a catalog such as FNCS, exit catalog and Asm Mode
+      #if !defined(TESTSUITE_BUILD)
+        leaveAsmMode();
+        popSoftmenu();
+      #endif // !TESTSUITE_BUILD
     }
     tam.function = ITM_REM;
     pemAlpha(func);

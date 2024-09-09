@@ -851,7 +851,8 @@ void runProgram(bool singleStep, uint16_t menuLabel) {
         }
       }
       stepsToBeAdvanced = executeOneStep(currentStep);
-      if(lastErrorCode == ERROR_NONE) {
+      if((lastErrorCode == ERROR_NONE) || (opCode == ITM_MSG)) {
+        lastErrorCode = ERROR_NONE;
         switch(stepsToBeAdvanced) {
           case -1: { // Already the pointer is set
             break;

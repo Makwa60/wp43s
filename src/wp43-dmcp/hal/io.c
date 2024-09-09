@@ -40,19 +40,25 @@ int _ioFileNameFromFilePath(ioFilePath_t path, char * filename) {
       check_create_dir(STATE_DIR);
       ret = file_selection_screen("Save Calculator State", STATE_DIR, STATE_EXT, save_statefile, 1, 1, filename);
       return (ret == MRET_EXIT? FILE_CANCEL : FILE_OK);
-   case ioPathLoadStateFile:
+    case ioPathLoadStateFile:
       check_create_dir(STATE_DIR);
       ret = file_selection_screen("Load Calculator State", STATE_DIR, STATE_EXT, load_statefile, 0, 0, filename);
       return (ret == MRET_EXIT? FILE_CANCEL : FILE_OK);
-   case ioPathSaveProgram:
+    case ioPathSaveProgram:
       check_create_dir(PROGRAMS_DIR);
       ret = file_selection_screen("Save Program", PROGRAMS_DIR, PRGM_EXT, save_programfile, 1, 1, filename);
       return (ret == MRET_EXIT? FILE_CANCEL : FILE_OK);
-   case ioPathLoadProgram:
+    case ioPathLoadProgram:
       check_create_dir(PROGRAMS_DIR);
       ret = file_selection_screen("Load Program", PROGRAMS_DIR, PRGM_EXT, load_programfile, 0, 0, filename);
       return (ret == MRET_EXIT? FILE_CANCEL : FILE_OK);
-  default:
+    case ioPathLog:
+      check_create_dir(LOG_DIR);
+      strcpy(filename, LOG_DIR "\\log-");
+      getTimeStampString(filename + strlen(filename));
+      strcat(filename, ".txt");
+      return FILE_OK;
+    default:
       return FILE_ERROR;
   }
 }
@@ -187,7 +193,7 @@ int load_statefile(const char * fpath, const char * fname, void * data) {
   //lcd_puts(t24, "Are you sure to load this file?");
   lcd_puts(t24, "Press [ENTER] to confirm.");
   lcd_refresh();
-  
+
   wait_for_key_release(-1);
 
   for(;;) {

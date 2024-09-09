@@ -2177,3 +2177,18 @@ void fnPrompt(uint16_t regist) {
   _view(regist);
   fnStopProgram(NOPARAM);
 }
+
+void fnErrorMessage(uint16_t errorCode) {           // displays the error message string defined by erroCOde using the AVIEW logic
+  int16_t lenInBytes = stringByteLength(errorMessages[errorCode]) + 1;
+  int16_t regist = TEMP_REGISTER_2_SAVED_STATS;     // There should be no usage conflict
+
+  clearSystemFlag(FLAG_VIEW);
+  setSystemFlag(FLAG_AVIEW_PROMPT);
+  reallocateRegister(regist, dtString, lenInBytes, amNone);
+  xcopy(REGISTER_STRING_DATA(regist), errorMessages[errorCode], lenInBytes);
+  currentViewRegister = regist;
+  temporaryInformation = TI_VIEW_REGISTER;
+  if(programRunStop == PGM_RUNNING) {
+    refreshScreen();
+  }
+}

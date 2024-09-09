@@ -741,7 +741,7 @@ void fnReset(uint16_t confirmation) {
     freeProgramBytes            = 2;
 
     scanLabelsAndPrograms();
-
+    
     // "Not found glyph" initialization
     if(glyphNotFound.data == NULL) {
       glyphNotFound.data = malloc(38);

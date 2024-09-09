@@ -79,7 +79,7 @@ TO_QSPI const char *errorMessages[NUMBER_OF_ERROR_CODES] = {
 /* 50 */  "Non-programmable command, please remove",
 /* 51 */  "No global label in this program",
 /* 52 */  "Bad input", // This error is not in ReM and cannot occur (theoretically).
-/* 53 */  "Cannot write file ", 
+/* 53 */  "Cannot write file ",
 /* 54 */  "No program specified",
 /* 55 */  "Not enough memory to load the programs",
 };
@@ -140,45 +140,6 @@ TO_QSPI const char *errorMessages[NUMBER_OF_ERROR_CODES] = {
 
 void fnRaiseError(uint16_t errorCode) {
   displayCalcErrorMessage((errorCode_t)errorCode, ERR_REGISTER_LINE, REGISTER_X);
-}
-
-
-
-void fnErrorMessage(uint16_t unusedButMandatoryParameter) {
-  real34_t r, maxErr;
-  uInt32ToReal34(NUMBER_OF_ERROR_CODES, &maxErr);
-
-  #pragma GCC diagnostic push
-  #pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
-  switch(getRegisterDataType(REGISTER_X)) {
-    case dtLongInteger: {
-      convertLongIntegerRegisterToReal34(REGISTER_X, &r);
-      break;
-    }
-
-    case dtReal34: {
-      if(getRegisterAngularMode(REGISTER_X) == amNone) {
-        real34Copy(REGISTER_REAL34_DATA(REGISTER_X), &r);
-        break;
-      }
-      /* fallthrough */
-    }
-
-    default: {
-      displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, REGISTER_X);
-      errorMoreInfo("data type %s cannot be used for this function!", getRegisterDataTypeName(REGISTER_X, false, false));
-      return;
-    }
-  }
-  #pragma GCC diagnostic pop
-
-  if(real34CompareLessEqual(const34_1, &r) && real34CompareLessThan(&r, &maxErr)) {
-    displayCalcErrorMessage((errorCode_t)real34ToUInt32(&r), ERR_REGISTER_LINE, REGISTER_X);
-  }
-  else {
-    displayCalcErrorMessage(ERROR_OUT_OF_RANGE, ERR_REGISTER_LINE, REGISTER_X);
-    errorMoreInfo("the argument is not less than %u or is negative!", NUMBER_OF_ERROR_CODES);
-  }
 }
 
 

@@ -1393,8 +1393,8 @@ void copySourceRegisterToDestRegister(calcRegister_t sourceRegister, calcRegiste
 int16_t indirectAddressing(calcRegister_t regist, uint16_t parameterType, int16_t minValue, int16_t maxValue, bool tryAllocate) {
   int16_t value;
   bool    isValidAlpha = false;
-  printf("parameterType %u\n", parameterType); fflush(stdout);
-  printf("currentNumberOfLocalFlags %u\n", currentNumberOfLocalFlags); fflush(stdout);
+  //printf("parameterType %u\n", parameterType); fflush(stdout);
+  //printf("currentNumberOfLocalFlags %u\n", currentNumberOfLocalFlags); fflush(stdout);
 
   switch(parameterType) {
     case INDPM_REGISTER: {
@@ -1428,23 +1428,6 @@ int16_t indirectAddressing(calcRegister_t regist, uint16_t parameterType, int16_
   }
 
   else if(getRegisterDataType(regist) == dtReal34) {
-    real34_t maxValue34;
-
-    int32ToReal34(maxValue, &maxValue34);
-    if(real34CompareLessThan(REGISTER_REAL34_DATA(regist), const34_0) || real34CompareGreaterEqual(REGISTER_REAL34_DATA(regist), &maxValue34)) {
-      #if (EXTRA_INFO_ON_CALC_ERROR == 1)
-        real34ToString(REGISTER_REAL34_DATA(regist), errorMessage);
-      #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
-      if(getSystemFlag(FLAG_IGN1ER)) {
-        errorMoreInfo("register %" PRId16 " = %s:\nthis value is negative or too big!\nignored since IGN1ER was set", regist, errorMessage);
-      }
-      else {
-        displayCalcErrorMessage(ERROR_OUT_OF_RANGE, ERR_REGISTER_LINE, REGISTER_X);
-        errorMoreInfo("register %" PRId16 " = %s:\nthis value is negative or too big!", regist, errorMessage);
-      }
-      clearSystemFlag(FLAG_IGN1ER);
-      return FAILED_INDIRECTION;
-    }
     value = real34ToInt32(REGISTER_REAL34_DATA(regist));
   }
 
