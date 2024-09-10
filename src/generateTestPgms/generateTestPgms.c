@@ -10706,11 +10706,11 @@ int main(int argc, char* argv[]) {
     *(currentStep++) = (ITM_IXYZ >> 8) | 0x80;
     *(currentStep++) =  ITM_IXYZ       & 0xff;
 
-    *(currentStep++) = (ITM_IGAMMAP >> 8) | 0x80;
-    *(currentStep++) =  ITM_IGAMMAP       & 0xff;
+    *(currentStep++) = (ITM_GAMMAP >> 8) | 0x80;
+    *(currentStep++) =  ITM_GAMMAP       & 0xff;
 
-    *(currentStep++) = (ITM_IGAMMAQ >> 8) | 0x80;
-    *(currentStep++) =  ITM_IGAMMAQ       & 0xff;
+    *(currentStep++) = (ITM_GAMMAQ >> 8) | 0x80;
+    *(currentStep++) =  ITM_GAMMAQ       & 0xff;
 
     *(currentStep++) = (ITM_IPLUS >> 8) | 0x80;
     *(currentStep++) =  ITM_IPLUS       & 0xff;

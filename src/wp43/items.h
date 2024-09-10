@@ -1534,8 +1534,8 @@
   #define ITM_IM                        1485
   #define ITM_INDEX                     1486
   #define ITM_IXYZ                      1487
-  #define ITM_IGAMMAP                   1488
-  #define ITM_IGAMMAQ                   1489
+  #define ITM_GAMMAP                    1488
+  #define ITM_GAMMAQ                    1489
   #define ITM_IPLUS                     1490
   #define ITM_IMINUS                    1491
   #define ITM_JYX                       1492
