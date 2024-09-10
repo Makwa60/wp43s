@@ -79,7 +79,6 @@
   extern const char     *errorMessages[NUMBER_OF_ERROR_CODES];
 
   void fnRaiseError           (uint16_t errorCode);
-  void fnErrorMessage         (uint16_t unusedButMandatoryParameter);
 
   void displayCalcErrorMessage(errorCode_t errorCode, calcRegister_t errMessageRegisterLine, calcRegister_t errRegisterLine);
 

@@ -49,11 +49,12 @@
 // Program versions:
 // 01 Original version
 // 02 Audio extensions (VOL, VOL?, BUZZ, PLAY)
+// 03 Changed 'MSG r' to 'MSG n'
 //
-#define PROGRAM_VERSION                     02  // Audio extensions (VOL, VOL?, BUZZ, PLAY)
+#define PROGRAM_VERSION                     03  // Changed 'MSG r' to 'MSG n'
 #define OLDEST_COMPATIBLE_PROGRAM_VERSION   01  // Original version
 #define BACKUP_FORMAT                       00  // Same program format as in backup file
-#define TEXT_FORMAT                         01  // Text program format - for future use 
+#define TEXT_FORMAT                         01  // Text program format - for future use
 
 // Structure of the program file.
 // Format: ASCII
@@ -114,18 +115,18 @@ void fnSaveProgram(uint16_t label) {
 #if !defined(TESTSUITE_BUILD)
   uint32_t programVersion = PROGRAM_VERSION;
   ioFilePath_t path;
-//  char tmpString[3000];             //The concurrent use of the global tmpString 
+//  char tmpString[3000];             //The concurrent use of the global tmpString
 //                                  //as target does not work while the source is at
 //                                  //tmpRegisterString = tmpString + START_REGISTER_VALUE;
 //                                  //Temporary solution is to use a local variable of sufficient length for the target.
   uint32_t i;
   int ret;
- 
+
 #if defined(DMCP_BUILD)
-  // Don't pass through if the power is insufficient  
+  // Don't pass through if the power is insufficient
   if ( power_check_screen() ) return;
 #endif
- 
+
   // Find program boundaries
   const uint16_t savedCurrentLocalStepNumber = currentLocalStepNumber;
   uint16_t savedCurrentProgramNumber = currentProgramNumber;
@@ -133,11 +134,11 @@ void fnSaveProgram(uint16_t label) {
   if(label == 0 && !tam.alpha && tam.digitsSoFar == 0) {
   }
   // Existing global label
-  else if(label >= FIRST_LABEL && label <= LAST_LABEL) {        
+  else if(label >= FIRST_LABEL && label <= LAST_LABEL) {
     fnGoto(label);
   }
   // Invalid label
-  else {                                      
+  else {
     displayCalcErrorMessage(ERROR_OUT_OF_RANGE, ERR_REGISTER_LINE, REGISTER_X);
     #if (EXTRA_INFO_ON_CALC_ERROR == 1)
       sprintf(errorMessage, "label %" PRIu16 " is not a global label", label);
@@ -145,7 +146,7 @@ void fnSaveProgram(uint16_t label) {
     #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
     return;
   }
-  
+
   // program in flash memory : return without saving
   if(programList[currentProgramNumber - 1].step < 0) { // flash memory
     displayCalcErrorMessage(ERROR_OUT_OF_RANGE, ERR_REGISTER_LINE, REGISTER_X);
@@ -158,7 +159,7 @@ void fnSaveProgram(uint16_t label) {
   if(ret != FILE_OK ) {
     if(ret == FILE_CANCEL ) {
       return;
-    } else { 
+    } else {
       #if !defined(DMCP_BUILD)
        printf("Cannot save program!\n");
       #endif
@@ -187,7 +188,7 @@ void fnSaveProgram(uint16_t label) {
   if (currentProgramNumber == numberOfPrograms) {
     sprintf(tmpString, "255\n255\n");
     ioFileWrite(tmpString, strlen(tmpString));
-  } 
+  }
 
   ioFileClose();
 
@@ -218,7 +219,7 @@ void fnLoadProgram(uint16_t unusedButMandatoryParameter) {
       return;
     }
   }
-  
+
   //Check save file version
   uint32_t loadedVersion = 0;
   readLine(tmpString);
@@ -234,7 +235,7 @@ void fnLoadProgram(uint16_t unusedButMandatoryParameter) {
       #endif // TESTSUITE_BUILD
     ioFileClose();
     return;
-  } 
+  }
   readLine(aimBuffer); // param
   readLine(tmpString); // value
   if(strcmp(aimBuffer, "WP43_program_file_version") == 0) {
@@ -274,8 +275,8 @@ void fnLoadProgram(uint16_t unusedButMandatoryParameter) {
       #endif // TESTSUITE_BUILD
       ioFileClose();
       return;
-    }  
-  } 
+    }
+  }
   readLine(aimBuffer); // param
   readLine(tmpString); // value
   if(strcmp(aimBuffer, "PROGRAM") == 0) {
@@ -283,7 +284,7 @@ void fnLoadProgram(uint16_t unusedButMandatoryParameter) {
   } else {
     ioFileClose();
     return;
-  } 
+  }
 
   if(_addEndNeeded()) {
     _addSpaceAfterPrograms(2);
@@ -300,12 +301,24 @@ void fnLoadProgram(uint16_t unusedButMandatoryParameter) {
     readLine(tmpString); // One byte
     startOfProgram[i] = stringToUint8(tmpString);
   }
- 
+
   *(firstFreeProgramByte    ) = 0xffu;
   *(firstFreeProgramByte + 1) = 0xffu;
   scanLabelsAndPrograms();
-  
+
   ioFileClose();
+
+  //-------------------------------------------------------------------------------------------------
+  // This is where user is informed about versions incompatibilities and changes to loaded data occur
+  // The code  below is an example of a version mismatch handling
+  // The string passed to show_warning() can be the same if it fits on the HW display (7 lines of ~32
+  // characters and standard ASCII characters), or two differents strings can used as shown below
+  //-------------------------------------------------------------------------------------------------
+  //
+
+    if(loadedVersion <= 2) { // Check program incompatibility for MSG - MSG r replaced by MSG n
+      replaceInstruction(startOfProgram, numberOfPrograms, ITM_MSG, ITM_NOP_REGISTER);
+    }
 
   temporaryInformation = TI_PROGRAM_LOADED;
 }

@@ -146,6 +146,12 @@ int _ioFileNameFromFilePath(ioFilePath_t path, char * filename) {
       }
       g_free(current_dir);
       return ret;
+    case ioPathLog:
+      if (create_dir("./" LOG_DIR) != 0) return FILE_ERROR;
+      strcpy(filename, LOG_DIR "/log-");
+      getTimeStampString(filename + strlen(filename));
+      strcat(filename, ".txt");
+      return FILE_OK;
     default:
       return FILE_ERROR;
   }

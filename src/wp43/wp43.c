@@ -114,6 +114,7 @@ uint8_t                entryStatus;
 uint8_t                screenUpdatingMode;
 uint8_t               *beginOfProgramMemory;
 uint8_t               *firstFreeProgramByte;
+uint8_t               *beginOfNewlyLoadedProgramMemory;
 
 int16_t                lineTWidth;
 int16_t                rbrRegister;

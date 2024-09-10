@@ -22,6 +22,7 @@
 #include "items.h"
 #include "mathematics/matrix.h"
 #include "plotstat.h"
+#include "programming/decode.h"
 #include "programming/lblGtoXeq.h"
 #include "programming/manage.h"
 #include "programming/nextStep.h"
@@ -49,8 +50,9 @@
 // 93 Change softmenu stack depth from 8 to 4
 // 94 Add different softmenu stacks for RUM, AIM & PEM, add MyPFN user menu
 // 95 Updated softmenuStack_t structure for user menu id
+// 96 Changed 'MSG r' to 'MSG n'
 //
-#define BACKUP_VERSION                     95  // Updated softmenuStack_t structure for user menu id
+#define BACKUP_VERSION                     96  // Changed 'MSG r' to 'MSG n'
 #define OLDEST_COMPATIBLE_BACKUP_VERSION   87  // save running app
 #define START_REGISTER_VALUE             1000  // was 1522, why?
 
@@ -374,17 +376,17 @@ static uint32_t restore(void *buffer, uint32_t size) {
       if (backupVersion < 93) {
         restore(softmenuStacks,                    sizeof(softmenuStacks)/2);   // single softmenuStack , depth 8 levels,
         softmenuStacksInit();                                                   // reinitialize the softmenuStack to a clean state
-      } else if (backupVersion == 93) { 
+      } else if (backupVersion == 93) {
         restore(softmenuStacks,                    sizeof(softmenuStacks)/4);   // single softmenuStack , depth 4 levels,
         softmenuStacksInit();                                                   // reinitialize the softmenuStack to a clean state
-      } else if (backupVersion == 94) { 
-        restore(softmenuStacks,                    4*4*4);                      // Four softmenu Stacks, depth 4 levels each, 4 bytes per level (2xint16)                    
+      } else if (backupVersion == 94) {
+        restore(softmenuStacks,                    4*4*4);                      // Four softmenu Stacks, depth 4 levels each, 4 bytes per level (2xint16)
         softmenuStacksInit();                                                   // reinitialize the softmenuStack to a clean state
         restore(smStackMode,                       sizeof(smStackMode));
       } else {
         restore(&softmenuStacks,                   sizeof(softmenuStacks));     // Four softmenu Stacks, depth 4 levels each, 6 bytes per level (3xint16)
         restore(smStackMode,                       sizeof(smStackMode));
-      } 
+      }
       restore(globalRegister,                      sizeof(globalRegister));
       restore(savedStackRegister,                  sizeof(savedStackRegister));
       restore(kbd_usr,                             sizeof(kbd_usr));
@@ -641,7 +643,7 @@ static uint32_t restore(void *buffer, uint32_t size) {
         }
       }
 
-      if(backupVersion <= 88) { // Program incompatibility
+      if(backupVersion <= 88) { // Program incompatibility for x→α
         int globalStep = 1;
         uint8_t *step = beginOfProgramMemory;
         printf("****Program binary incompatibility****\n");
@@ -688,6 +690,13 @@ static uint32_t restore(void *buffer, uint32_t size) {
             setRegisterAngularMode(regist, getRegisterAngularMode(regist) + 1);
           }
         }
+      }
+
+      if(backupVersion <= 95) { // Program incompatibility for MSG
+        printf("****Program binary incompatibility****\n");
+        printf("MSG now followed by a value\n");
+        printf("Loaded MSG in programs will be replaced by NOP\n");fflush(stdout);
+        replaceInstruction(beginOfProgramMemory, 1, ITM_MSG, ITM_NOP_REGISTER);
       }
 
       scanLabelsAndPrograms();
@@ -738,7 +747,7 @@ static uint32_t restore(void *buffer, uint32_t size) {
 #endif // PC_BUILD
 
 
-char aimBuffer1[400];             //The concurrent use of the global aimBuffer 
+char aimBuffer1[400];             //The concurrent use of the global aimBuffer
                                   //does not work. See tmpString.
                                   //Temporary solution is to use a local variable of sufficient length for the target.
 
@@ -748,7 +757,7 @@ char aimBuffer1[400];             //The concurrent use of the global aimBuffer
     longInteger_t lgInt;
     int16_t sign;
     uint64_t value;
-    uint32_t base; 
+    uint32_t base;
     char *str;
     uint8_t *cfg;
 
@@ -902,28 +911,28 @@ void fnSave(uint16_t saveMode) {
 #if !defined(TESTSUITE_BUILD)
   uint32_t backupVersion = BACKUP_VERSION;
   ioFilePath_t path;
-  char tmpString[3000];           //The concurrent use of the global tmpString 
+  char tmpString[3000];           //The concurrent use of the global tmpString
                                   //as target does not work while the source is at
                                   //tmpRegisterString = tmpString + START_REGISTER_VALUE;
                                   //Temporary solution is to use a local variable of sufficient length for the target.
   int ret;
-  
+
 #if defined(DMCP_BUILD)
-  // Don't pass through if the power is insufficient  
+  // Don't pass through if the power is insufficient
   if ( power_check_screen() ) return;
 #endif
 
   calcRegister_t regist;
   uint32_t i;
   char yy1[35], yy2[35];
-  
+
   if (saveMode == SM_BACKUP) {
     path = ioPathSaveFile;
   }
   else {
     path = ioPathSaveStateFile;
   }
-  
+
   ret = ioFileOpen(path, ioModeWrite);
 
   if(ret != FILE_OK ) {
@@ -1194,13 +1203,13 @@ void readLine(char *line) {
       restore(++line, 1);
     }
   }
-  
+
   *line = 0;
 }
 
 void read2Lines(char *line1, char *line2) {  // Needed to capture empty lines due to empty strings saved from registers
   char eol1,eol2;
-  
+
   if(!ioEof()) {
     restore(line1, 1);
     while((*line1 == '\n' || *line1 == '\r') && !ioEof()) {
@@ -1211,12 +1220,12 @@ void read2Lines(char *line1, char *line2) {  // Needed to capture empty lines du
       restore(++line1, 1);
     }
   }
-  eol1 = *line1;  
+  eol1 = *line1;
   *line1 = 0;
-  
+
   if(!ioEof()) {
     restore(line2, 1);
-    eol2 = *line2;   
+    eol2 = *line2;
     if ((((eol1 == '\n') && (eol2 ==  '\n')) || ((eol1 == '\r') && (eol2 ==  '\r'))) && !ioEof()) {   // empty string between two CR or two LF
       *line2 = 0;
       return;
@@ -1682,7 +1691,7 @@ static bool restoreOneSection(uint16_t loadMode, uint16_t s, uint16_t n, uint16_
       readLine(errorMessage); // Variable name
       read2Lines(aimBuffer,tmpString); // Variable data type & Variable value
 
-      if(loadMode == LM_ALL || loadMode == LM_NAMED_VARIABLES || 
+      if(loadMode == LM_ALL || loadMode == LM_NAMED_VARIABLES ||
         (loadMode == LM_SUMS && ((strcmp(errorMessage, "STATS") == 0) || (strcmp(errorMessage, "HISTO") == 0)))) {
         char *varName = errorMessage + strlen(errorMessage) + 1;
         utf8ToString((uint8_t *)errorMessage, varName);
@@ -2032,6 +2041,12 @@ static bool restoreOneSection(uint16_t loadMode, uint16_t s, uint16_t n, uint16_
       }
     }
 
+
+    if(loadMode == LM_PROGRAMS) {
+      beginOfNewlyLoadedProgramMemory = oldFirstFreeProgramByte;
+    }
+    else if(loadMode == LM_ALL) {
+    }
     for(size_t i=0; i<numberOfBytes; i++) {
       readLine(tmpString); // One byte
       if(loadMode == LM_ALL) {
@@ -2222,7 +2237,7 @@ void doLoad(uint16_t loadMode, uint16_t s, uint16_t n, uint16_t d, uint16_t load
   }
 
   ioFileClose();
-  
+
   //-------------------------------------------------------------------------------------------------
   // This is where user is informed about versions incompatibilities and changes to loaded data occur
   // The code  below is an example of a version mismatch handling
@@ -2230,41 +2245,17 @@ void doLoad(uint16_t loadMode, uint16_t s, uint16_t n, uint16_t d, uint16_t load
   // characters and standard ASCII characters), or two differents strings can used as shown below
   //-------------------------------------------------------------------------------------------------
   //
-  //Code example:
-  //
-  //if (loadMode == LM_ALL) {
-  //  if(loadedVersion <= 88) { // Program incompatibility
-  //  #if defined(PC_BUILD)
-  //    sprintf(tmpString,"****Program binary incompatibility****\n"
-  //                      "x→α now followed by a destination register\n"
-  //                      "Loaded x→α in RAM will be replaced by NOP\n"
-  //                      "CAVEAT: x→α in Flash will not be replaced so it may cause crash\n");
-  //  #endif // PC_BUILD
-  //  #if defined(DMCP_BUILD)                
-  //    sprintf(tmpString,"**Program binary incompatibility**\n"
-  //                      "x->a now uses a destination register\n"
-  //                      "x->a in RAM will be replaced by NOP\n"
-  //                      "CAVEAT: x->a in Flash will not be\n"
-  //                      "replaced so it may cause crash\n");
-  //  #endif // DMCP_BUILD
-  //  #if !defined(TESTSUITE_BUILD)
-  //    show_warning(tmpString);
-  //  #endif // TESTSUITE_BUILD
-  //  
-  //    int globalStep = 1;
-  //    uint8_t *step = beginOfProgramMemory;
-  //  
-  //    while(!isAtEndOfPrograms(step)) { // .END.
-  //      if(checkOpCodeOfStep(step, ITM_XtoALPHA)) { // x->alpha
-  //        step[0] = (ITM_NOP >> 8) | 0x80;
-  //        step[1] =  ITM_NOP       & 0xff;
-  //        printf("x→α found at global step %d\n", globalStep);
-  //      }
-  //      ++globalStep;
-  //      step = findNextStep(step);
-  //    }
-  //  }
-  //}
+
+  if(loadedVersion <= 95) { // Check program incompatibility for MSG - MSG r replaced by MSG n
+    if (loadMode == LM_ALL) {
+      replaceInstruction(beginOfProgramMemory, 1, ITM_MSG, ITM_NOP_REGISTER);
+    }
+    else if (loadMode == LM_PROGRAMS) {
+      replaceInstruction(beginOfNewlyLoadedProgramMemory, 1, ITM_MSG, ITM_NOP_REGISTER);
+    }
+  }
+
+  scanLabelsAndPrograms();
 
 
   #if !defined(TESTSUITE_BUILD)
@@ -2293,7 +2284,7 @@ void doLoad(uint16_t loadMode, uint16_t s, uint16_t n, uint16_t d, uint16_t load
       //Check and update current power status (USB / LOWBAT)
       dmcpCheckPowerStatus();
     #endif // DMCP_BUILD
-    
+
   #endif // !TESTSUITE_BUILD
 }
 
@@ -2325,9 +2316,87 @@ void fnDeleteBackup(uint16_t confirmation) {
     }
     else if(programRunStop != PGM_RUNNING) {
       temporaryInformation = TI_CONFIRM_COMPLETED;
-    } 
+    }
     else {
       temporaryInformation = TI_NO_INFO;
     }
+  }
+}
+
+void replaceInstruction(uint8_t *step, uint16_t programNumber, int16_t itemToReplace, int16_t itemNew) {
+  ioFilePath_t path;
+  int ret;
+  int localStep = 1;
+  char label[15];
+  uint8_t labelLength;
+  bool incompatibilityDetected = false;
+
+  sprintf(label,"#%d",programNumber);
+  if(checkOpCodeOfStep(step, ITM_LBL)) { // LBL
+    if(*(step + 1) > 109) { // Global label
+      labelLength = *(step + 2);
+      xcopy(label, (void *)(step + 3), labelLength);
+      label[labelLength]=0;
+    }
+  }
+
+  while(!isAtEndOfPrograms(step)) { // .END.
+    if(isAtEndOfProgram(step)) {    // END
+      programNumber++;
+      localStep = 1;
+      step = findNextStep(step);
+      sprintf(label,"#%d",programNumber);
+      if(checkOpCodeOfStep(step, ITM_LBL)) { // LBL
+        if(*(step + 1) > 109) { // Global label
+          labelLength = *(step + 2);
+          xcopy(label, (void *)(step + 3), labelLength);
+          label[labelLength]=0;
+        }
+      }
+    }
+    else {
+      if(checkOpCodeOfStep(step, itemToReplace)) {
+        step[0] = (itemNew >> 8) | 0x80;
+        step[1] =  itemNew       & 0xff;
+
+        if(incompatibilityDetected == false) {  //First incompatible instruction detected
+          incompatibilityDetected = true;
+          path = ioPathLog;
+          ret = ioFileOpen(path, ioModeWrite);
+
+          if(ret != FILE_OK ) {
+            if(ret == FILE_CANCEL ) {
+              return;
+            } else {
+              #if !defined(DMCP_BUILD)
+               printf("Cannot write log file!\n");
+              #endif
+              displayCalcErrorMessage(ERROR_CANNOT_WRITE_FILE, ERR_REGISTER_LINE, REGISTER_X);
+              return;
+            }
+          }
+          sprintf(tmpString,"****Program incompatibility detected****\n");
+          ioFileWrite(tmpString, strlen(tmpString));
+        }
+
+        sprintf(tmpString,"%s found at local step %5d in program #%3d '%7s' and replaced by %s\n",
+                indexOfItems[itemToReplace].itemCatalogName, localStep, programNumber, label, indexOfItems[itemNew].itemCatalogName);
+        ioFileWrite(tmpString, strlen(tmpString));
+      }
+    }
+    ++localStep;
+    step = findNextStep(step);
+  }
+  if(incompatibilityDetected) {
+    ioFileClose();
+
+    sprintf(tmpString,"*Program incompatibility detected*\n"
+                      "%s is replaced by %s\n"
+                      "in loaded programs.\n"
+                      "See log file for details\n", indexOfItems[itemToReplace].itemCatalogName, indexOfItems[itemNew].itemCatalogName);
+
+    #if !defined(TESTSUITE_BUILD)
+      show_warning(tmpString);
+    #endif // TESTSUITE_BUILD
   }
 }
