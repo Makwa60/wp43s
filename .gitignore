@@ -16,6 +16,9 @@
 /testSuite.exe
 /generate*.exe
 /ttf2RasterFonts.exe
+/LOGFILES
+/PROGRAMS
+/SAVFILES
 backup.bin
 wp43.sav
 wp43.dat

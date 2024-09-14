@@ -2046,7 +2046,7 @@ void fnScreenDump(uint16_t unusedButMandatoryParameter) {
         displayCalcErrorMessage(ERROR_OUT_OF_RANGE, ERR_REGISTER_LINE, REGISTER_X);
         #if (EXTRA_INFO_ON_CALC_ERROR == 1)
           longIntegerToAllocatedString(lgInt, errorMessage, ERROR_MESSAGE_LENGTH);
-          errorMoreInfo("register %" PRId16 " = %s:\n%sthis value is negative or too big!", regist, errorMessage);
+          errorMoreInfo("register %" PRId16 " = %s:\nthis value is negative or too big!", regist, errorMessage);
         #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
         longIntegerFree(lgInt);
         return -1;
