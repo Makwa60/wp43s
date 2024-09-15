@@ -147,6 +147,7 @@
 
   void       fnColumnMin                    (uint16_t unusedParamButMandatory);
   void       fnColumnMax                    (uint16_t unusedParamButMandatory);
+  void       fnMatrixFind                   (uint16_t unusedParamButMandatory);
 
   /**
    * Saves the STATS matrix if STATS is available.
