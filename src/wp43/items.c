@@ -837,6 +837,9 @@ void fnNop(uint16_t unusedButMandatoryParameter) {
   void fnQrDecomposition           (uint16_t unusedButMandatoryParameter) {}
   void fnEigenvalues               (uint16_t unusedButMandatoryParameter) {}
   void fnEigenvectors              (uint16_t unusedButMandatoryParameter) {}
+  void fnColumnMin                 (uint16_t unusedButMandatoryParameter) {}
+  void fnColumnMax                 (uint16_t unusedButMandatoryParameter) {}
+  void fnMatrixFind                (uint16_t unusedButMandatoryParameter) {}
   void fnCvtMultPiToRad            (uint16_t unusedButMandatoryParameter) {}
   void fnCvtRadToMultPi            (uint16_t unusedButMandatoryParameter) {}
   void fnJacobiSn                  (uint16_t unusedButMandatoryParameter) {}
@@ -2893,5 +2896,9 @@ TO_QSPI const item_t indexOfItems[] = {
 /* 1868 */  { fnNop,                        tmRegister,                  "NOP",                                         "NOP",                                         (0 << TAM_MAX_BITS) |    99, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_REGISTER     },
 /* 1869 */  { fnNop,                        tmLabel,                     "NOP",                                         "NOP",                                         (0 << TAM_MAX_BITS) |    99, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_LABEL        },
 
-/* 1870 */  { itemToBeCoded,                NOPARAM,                     "",                                            "Last item",                                   (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_ENABLED   | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     }
+/* 1870 */  { fnColumnMin,                  NOPARAM,                     "M.CMIN",                                      "CMIN",                                        (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/* 1871 */  { fnColumnMax,                  NOPARAM,                     "M.CMAX",                                      "CMAX",                                        (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/* 1872 */  { fnMatrixFind,                 NOPARAM,                     "M.FIND",                                      "FIND",                                        (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+
+/* 1873 */  { itemToBeCoded,                NOPARAM,                     "",                                            "Last item",                                   (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_ENABLED   | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     }
 };
