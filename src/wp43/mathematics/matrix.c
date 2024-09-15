@@ -301,6 +301,62 @@
 
     return true;
   }
+
+
+  static bool columnMinMaxReal(real34Matrix_t *matrix, bool calcMax) {
+    uint16_t r, res_r = 0;
+    real34_t res_val;
+    longInteger_t longIntVar;
+
+    const int16_t i = getIRegisterAsInt(true);
+    const int16_t j = getJRegisterAsInt(true);
+
+    realToReal34(calcMax ? const_minusInfinity : const_plusInfinity, &res_val);
+    if(i >= 0 && j >= 0 && i < matrix->header.matrixRows && j < matrix->header.matrixColumns) {
+      for(r = 0; r < matrix->header.matrixRows; ++r) {
+        if((!calcMax) && real34CompareLessThan(&matrix->matrixElements[r * matrix->header.matrixColumns + j], &res_val)) {
+          real34Copy(&matrix->matrixElements[r * matrix->header.matrixColumns + j], &res_val);
+          res_r = r;
+        }
+        else if(calcMax && real34CompareGreaterThan(&matrix->matrixElements[r * matrix->header.matrixColumns + j], &res_val)) {
+          real34Copy(&matrix->matrixElements[r * matrix->header.matrixColumns + j], &res_val);
+          res_r = r;
+        }
+      }
+
+      liftStack();
+      liftStack();
+
+      longIntegerInit(longIntVar);
+      uIntToLongInteger(res_r + 1, longIntVar);
+      convertLongIntegerToLongIntegerRegister(longIntVar, REGISTER_Y);
+      longIntegerFree(longIntVar);
+
+      reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
+      real34Copy(&res_val, REGISTER_REAL34_DATA(REGISTER_X));
+    }
+    else {
+      displayCalcErrorMessage(ERROR_OUT_OF_RANGE, ERR_REGISTER_LINE, REGISTER_X);
+      errorMoreInfo("rows %" PRIu16 " and/or %" PRIu16 " out of range", i, j);
+      return false;
+    }
+
+    return true;
+  }
+
+  static bool columnMinMatrix(real34Matrix_t *matrix) {
+    return columnMinMaxReal(matrix, false);
+  }
+
+  static bool columnMaxMatrix(real34Matrix_t *matrix) {
+    return columnMinMaxReal(matrix, true);
+  }
+
+  static bool columnMinMaxComplex(complex34Matrix_t *) {
+    displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, REGISTER_X);
+    errorMoreInfo("Cannot apply this function to %s", getRegisterDataTypeName(REGISTER_X, true, false));
+    return false;
+  }
 #endif // !TESTSUITE_BUILD
 
 
@@ -1265,6 +1321,18 @@ void fnEigenvectors(uint16_t unusedParamButMandatory) {
   }
 
   adjustResult(REGISTER_X, false, true, REGISTER_X, -1, -1);
+}
+
+void fnColumnMin(uint16_t unusedParamButMandatory) {
+  #if !defined(TESTSUITE_BUILD)
+    callByIndexedMatrix(columnMinMatrix, columnMinMaxComplex);
+  #endif // !TESTSUITE_BUILD
+}
+
+void fnColumnMax(uint16_t unusedParamButMandatory) {
+  #if !defined(TESTSUITE_BUILD)
+    callByIndexedMatrix(columnMaxMatrix, columnMinMaxComplex);
+  #endif // !TESTSUITE_BUILD
 }
 
 
