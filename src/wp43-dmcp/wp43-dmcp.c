@@ -173,7 +173,7 @@ const char alpha_upper_transl[] = "_" // code 0 unused
 
 void dmcpResetAutoOff(void) {
   // Key is ready -> clear auto off timer
-  if(!key_empty() || (calcMode == cmTimerApp) || !getSystemFlag(FLAG_AUTOFF) || getSystemFlag(FLAG_RUNTIM) || programRunStop == PGM_RUNNING) {
+  if(!key_empty() || ((calcMode == cmTimerApp) && timerAppState.started) || !getSystemFlag(FLAG_AUTOFF) || getSystemFlag(FLAG_RUNTIM) || programRunStop == PGM_RUNNING) {
     reset_auto_off();
   }
 }
