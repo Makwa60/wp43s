@@ -971,6 +971,9 @@ bool      _kbSeenInterrupt     = false;
     asnKey = keyCode;
 
     if(programRunStop == PGM_RUNNING || programRunStop == PGM_PAUSED) {
+      if((keyCode == kcExit || keyCode == kcRun) && (getSystemFlag(FLAG_INTING) || getSystemFlag(FLAG_SOLVING))) {
+        displayCalcErrorMessage(ERROR_SOLVER_ABORT, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
+      }
       lastKeyCode = keyCode;
     }
     else {

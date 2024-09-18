@@ -67,9 +67,10 @@
     ERROR_BAD_INPUT                        = 52,  // This error is not in ReM and cannot occur (theoretically).
     ERROR_CANNOT_WRITE_FILE                = 53,
     ERROR_NO_PROGRAM_SPECIFIED             = 54,
-    ERROR_NOT_ENOUGH_MEMORY_TO_LOAD_PGMS   = 55
+    ERROR_NOT_ENOUGH_MEMORY_TO_LOAD_PGMS   = 55,
+    ERROR_SOLVER_ABORT                     = 56
   } errorCode_t;
-  #define NUMBER_OF_ERROR_CODES              56
+  #define NUMBER_OF_ERROR_CODES              57
 
   #define ERROR_MESSAGE_LENGTH 512
 
