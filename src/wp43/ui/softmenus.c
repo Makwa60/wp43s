@@ -137,7 +137,7 @@ TO_QSPI const int16_t menu_MATX[]        = { ITM_M_NEW,                     ITM_
                                              ITM_ENORM,                     ITM_VANGLE,                 ITM_STOEL,                ITM_RCLEL,             ITM_M_PUT,                   ITM_M_GET,
                                              ITM_IPLUS,                     ITM_IMINUS,                 ITM_STOIJ,                ITM_RCLIJ,             ITM_JMINUS,                  ITM_JPLUS,
                                              ITM_RNORM,                     ITM_RSUM,                   ITM_M_LU,                 ITM_M_DIMQ,            ITM_NULL,                    ITM_M_RR,
-                                             ITM_M_CMIN,                    ITM_M_CMAX,                 ITM_M_QR,                 ITM_M_FIND,            ITM_EIGVAL,                  ITM_EIGVEC                    };
+                                             ITM_M_CMAX,                    ITM_M_CMIN,                 ITM_M_QR,                 ITM_M_FIND,            ITM_EIGVAL,                  ITM_EIGVEC                    };
 
 TO_QSPI const int16_t menu_M_SIM_Q[]     = { VAR_MATA,                      VAR_MATB,                   ITM_NULL,                 ITM_NULL,              ITM_NULL,                    ITM_MATX                      }; // Should VAR_MATA and VAR_MATB be reclaced by ITM_MATA (to be created) and ITM_MATB (to be created) here?
 
