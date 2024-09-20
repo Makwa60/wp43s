@@ -121,7 +121,9 @@ void fnIntegrate(uint16_t labelOrVariable) {
     reallocateRegister(REGISTER_Y, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
     convertRealToReal34ResultRegister(&res, REGISTER_X);
     convertRealToReal34ResultRegister(&acc, REGISTER_Y);
-    temporaryInformation = TI_INTEGRAL;
+    if(lastErrorCode != ERROR_SOLVER_ABORT) {
+      temporaryInformation = TI_INTEGRAL;
+    }
     adjustResult(REGISTER_X, false, false, REGISTER_X, -1, -1);
   }
   else {
@@ -151,6 +153,9 @@ void fnIntVar(uint16_t unusedButMandatoryParameter) {
 
 
 static void _integratorIteration(void) {
+  if(lastErrorCode == ERROR_SOLVER_ABORT) {
+    return;
+  }
   if(currentSolverStatus & SOLVER_STATUS_USES_FORMULA) {
     parseEquation(currentFormula, EQUATION_PARSER_XEQ, tmpString, tmpString + AIM_BUFFER_LENGTH);
   }
@@ -245,8 +250,11 @@ static void _integratorIteration(void) {
 // 16 local registers
 
 static void DEI_xeq_user(calcRegister_t regist, const real_t *x, real_t *res, realContext_t *realContext) {
+  if(lastErrorCode == ERROR_SOLVER_ABORT) { // Aborted?
+    realZero(res);
+  }
   // call user's function  -------------------------------
-  if(!realIsSpecial(x)) { // abscissa is good?
+  else if(!realIsSpecial(x)) { // abscissa is good?
     //bool d = getSystemFlag(FLAG_SPCRES);
     //clearSystemFlag(FLAG_SPCRES);
     reallocateRegister(regist, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
@@ -510,6 +518,9 @@ static void _integrate(calcRegister_t regist, const real_t *a, const real_t *b, 
       // DEI_updte_j::
       realAdd(&j, const_1, &j, realContext); // j += 1
       realMultiply(&j, &h, &x, realContext); // X = t = j*h
+      if(lastErrorCode == ERROR_SOLVER_ABORT) { // Aborted?
+        break;
+      }
     } while(realCompareLessEqual(&x, &tm)); // t <= tm?
                                             // yes, continue j loop
     // done with j loop ++++++++++++++++++++++++++++++++++++
@@ -554,6 +565,9 @@ static void _integrate(calcRegister_t regist, const real_t *a, const real_t *b, 
     }
     lg0 = true; // mark level 0 done,
     realSubtract(&lvl, const_1, &lvl, realContext); // update level &...
+    if(lastErrorCode == ERROR_SOLVER_ABORT) { // Aborted?
+      break;
+    }
   } while(realCompareGreaterEqual(&lvl, const_0)); // loop.
   // DEI_fin::
   realCopy(&z, &x); // recall result
