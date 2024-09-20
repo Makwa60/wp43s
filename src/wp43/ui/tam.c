@@ -522,7 +522,7 @@ void tamReset(void) {
         addStepInProgram(ITM_IP);
       }
       else {
-        fnIp(NOPARAM);
+        reallyRunFunction(ITM_IP, NOPARAM);
       }
       tamLeaveMode();
       return;
