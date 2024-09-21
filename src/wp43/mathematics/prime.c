@@ -438,8 +438,8 @@ void calculateNextPrime(longInteger_t currentNumber, longInteger_t nextPrime) {
   }
 
   if(longIntegerCompareUInt(currentNumber, 212) < 0) {
-    cn = longIntegerToUInt(currentNumber);
     while(true) {
+      cn = longIntegerToUInt(currentNumber);
       for(i=0; i<sizeof(smallPrimes)/sizeof(smallPrimes[0]); i++) {
         if(smallPrimes[i] == cn) {
           uIntToLongInteger(cn, nextPrime);
@@ -466,7 +466,8 @@ void calculateNextPrime(longInteger_t currentNumber, longInteger_t nextPrime) {
     }
   }
 
-  nextPrime = currentNumber + indices[m] - x;
+  //nextPrime = currentNumber + indices[m] - x;
+  longIntegerAddUInt(currentNumber, indices[m] - x, nextPrime);
   while(true) {
     for(o=m; o<m+48; o++) {
       //if(longIntegerIsPrime2(nextPrime)) {
