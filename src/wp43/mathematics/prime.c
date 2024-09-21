@@ -8,13 +8,13 @@
 #include "integers.h"
 #include "registers.h"
 #include "registerValueConversions.h"
+#include "ui/keyboard.h"
 
 #include "wp43.h"
 
 #define maximumPrime 308   //10^308 is the limit set on HW for prime numbers due to freeze conditions
 
 
-/*
 // primes less than 212
 TO_QSPI const uint8_t smallPrimes[] = {   2,   3,   5,   7,  11,  13,  17,  19,  23,  29,  31,  37,
                                          41,  43,  47,  53,  59,  61,  67,  71,  73,  79,  83,  89,
@@ -34,6 +34,9 @@ TO_QSPI const uint8_t offsets[] = {  10,   2,   4,   2,   4,   6,   2,   6,   4,
                                       4,   2,   4,   6,   2,   6,   4,   2,   4,   2,  10,   2 };
 
 
+void calculateNextPrime(longInteger_t currentNumber, longInteger_t nextPrime);
+
+/*
 // Test if a number is prime or not using a Miller-Rabin test
 #define QUICK_CHECK (101*101-1)
 #define NUMBER_OF_SMALL_PRIMES 25
@@ -195,7 +198,8 @@ void fnNextPrime(uint16_t unusedButMandatoryParameter) {
   }
 #endif    // DMCP_BUILD
 
-  longIntegerNextPrime(currentNumber, nextPrime);
+  //longIntegerNextPrime(currentNumber, nextPrime);
+  calculateNextPrime(currentNumber, nextPrime);
 
   if(getRegisterDataType(REGISTER_L) == dtShortInteger) {
     convertLongIntegerToShortIntegerRegister(nextPrime, getRegisterShortIntegerBase(REGISTER_L), REGISTER_X);
@@ -415,10 +419,11 @@ bool longIntegerIsPrime2(longInteger_t primeCandidate) {
   }
 
   return isLucasProbablePrime(primeCandidate, a);
-}
+} */
 
 // Next prime strictly larger than currentNumber
-void nextPrime(longInteger_t currentNumber, longInteger_t nextPrime) {
+//void nextPrime(longInteger_t currentNumber, longInteger_t nextPrime) {
+void calculateNextPrime(longInteger_t currentNumber, longInteger_t nextPrime) {
   uint32_t cn, i, x, s, e, m, o;
 
   if(longIntegerCompareUInt(currentNumber, 2) < 0) {
@@ -464,10 +469,15 @@ void nextPrime(longInteger_t currentNumber, longInteger_t nextPrime) {
   nextPrime = currentNumber + indices[m] - x;
   while(true) {
     for(o=m; o<m+48; o++) {
-      if(longIntegerIsPrime2(nextPrime)) {
+      //if(longIntegerIsPrime2(nextPrime)) {
+      if(longIntegerIsPrime(nextPrime)) {
         return;
       }
       longIntegerAddUInt(nextPrime, offsets[o % 48], nextPrime);
+      if(kbCheckForInterrupt()) { // in case it takes long time...
+        displayCalcErrorMessage(ERROR_SOLVER_ABORT, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
+        return;
+      }
     }
   }
-} */
+}
