@@ -466,7 +466,8 @@ void calculateNextPrime(longInteger_t currentNumber, longInteger_t nextPrime) {
     }
   }
 
-  nextPrime = currentNumber + indices[m] - x;
+  //nextPrime = currentNumber + indices[m] - x;
+  longIntegerAddUInt(currentNumber, indices[m] - x, nextPrime);
   while(true) {
     for(o=m; o<m+48; o++) {
       //if(longIntegerIsPrime2(nextPrime)) {
