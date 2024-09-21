@@ -17,6 +17,7 @@
 #include "mathematics/wp34s.h"
 #include "registers.h"
 #include "registerValueConversions.h"
+#include "ui/keyboard.h"
 #include <stdbool.h>
 
 #include "wp43.h"
@@ -460,6 +461,11 @@ static void bessel_recur(const real_t *nu, const real_t *x, bool is_y, bool desc
     plusMinus(descending, &alpha, const_1, &alpha, realContext);
     realCopy(&jnx, &jn_1x);
     realCopy(res, &jnx);
+
+    if(kbCheckForInterrupt()) { // in case it takes long time...
+      displayCalcErrorMessage(ERROR_SOLVER_ABORT, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
+      return;
+    }
   }
 }
 
