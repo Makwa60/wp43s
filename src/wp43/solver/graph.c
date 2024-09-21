@@ -1072,11 +1072,10 @@ void fnEqSolvGraph (uint16_t func) {
        break;
      }
      case EQ_PLOT: {
-       double ix1 = convertRegisterToDouble(REGISTER_X);
-       double ix0 = convertRegisterToDouble(REGISTER_Y);
+       double ix1 = convertRegisterToDouble((currentSolverStatus & SOLVER_STATUS_EQUATION_MODE) == SOLVER_STATUS_EQUATION_INTEGRATE ? RESERVED_VARIABLE_ULIM : REGISTER_X);
+       double ix0 = convertRegisterToDouble((currentSolverStatus & SOLVER_STATUS_EQUATION_MODE) == SOLVER_STATUS_EQUATION_INTEGRATE ? RESERVED_VARIABLE_LLIM : REGISTER_Y);
        #if (defined(VERBOSE_SOLVER00) || defined(VERBOSE_SOLVER0)) && defined(PC_BUILD)
-         printRegisterToConsole(REGISTER_Y,">>> ix0=","");
-         printRegisterToConsole(REGISTER_X," ix1=","\n");
+         printf(">>> ix0=%f ix1=%f\n", ix0, ix1);
        #endif // (VERBOSE_SOLVER00 || VERBOSE_SOLVER0) && PC_BUILD
 
        fnClDrawMx();

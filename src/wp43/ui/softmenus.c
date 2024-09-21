@@ -1735,18 +1735,22 @@ void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
       currentMvarLabel = INVALID_VARIABLE;
       switch(-id) {
         case MNU_Solver: {
+          currentSolverStatus &= ~SOLVER_STATUS_EQUATION_MODE;
           currentSolverStatus |= SOLVER_STATUS_EQUATION_SOLVER;
           break;
         }
         case MNU_Sf: {
+          currentSolverStatus &= ~SOLVER_STATUS_EQUATION_MODE;
           currentSolverStatus |= SOLVER_STATUS_EQUATION_INTEGRATE;
           break;
         }
         case MNU_1STDERIV: {
+          currentSolverStatus &= ~SOLVER_STATUS_EQUATION_MODE;
           currentSolverStatus |= SOLVER_STATUS_EQUATION_1ST_DERIVATIVE;
           break;
         }
         case MNU_2NDDERIV: {
+          currentSolverStatus &= ~SOLVER_STATUS_EQUATION_MODE;
           currentSolverStatus |= SOLVER_STATUS_EQUATION_2ND_DERIVATIVE;
           break;
         }
