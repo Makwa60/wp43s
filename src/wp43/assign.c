@@ -27,10 +27,6 @@
 
 //This variable is to store in flash memory
 
-#define REDUCED_AIM_KEYBOARD
-
-#ifndef REDUCED_AIM_KEYBOARD
-
 TO_QSPI const calcKey_t kbd_std[37] = {
 //keyId primary          fShifted         gShifted         keyLblAim        primaryAim         fShiftedAim            gShiftedAim    primaryTam
  {21,   ITM_1ONX,        ITM_TGLFRT,     -MNU_UNITCONV,    ITM_NULL,        ITM_A,            -MNU_ALPHAINTL,         ITM_ALPHA,     ITM_REG_A    },
@@ -40,62 +36,7 @@ TO_QSPI const calcKey_t kbd_std[37] = {
  {25,   ITM_EXP,         ITM_toHMS,       ITM_10x,         ITM_ALOG_SYMBOL, ITM_E,             ITM_ALOG_SYMBOL,       ITM_EPSILON,   ITM_E        },
  {26,   ITM_SQUAREROOTX, ITM_AIM,        -MNU_ALPHAFN,     ITM_ROOT_SIGN,   ITM_F,             ITM_ROOT_SIGN,         ITM_PHI,       ITM_alpha    },
 
- {31,   ITM_STO,         ITM_ASSIGN,      ITM_SAVE,        ITM_NULL,        ITM_G,             ITM_ASSIGN,            ITM_GAMMA,     ITM_NULL     },
- {32,   ITM_RCL,         ITM_RBR,         ITM_VIEW,        ITM_NULL,        ITM_H,             ITM_RBR,               ITM_CHI,       ITM_HEX      }, // if f or g are changed: adapt the function btnClicked section if(calcMode == cmNim) in keyboard.c. Case H for hexadecimal base
- {33,   ITM_Rdown,       ITM_Rup,        -MNU_CPX,         ITM_NULL,        ITM_I,             ITM_DOWN_ARROW,        ITM_IOTA,      ITM_REG_I    },
- {34,   ITM_CC,          ITM_MAGNITUDE,   ITM_ARG,         ITM_NULL,        ITM_J,             ITM_VERTICAL_BAR,      ITM_ETA,       ITM_REG_J    },
- {35,   ITM_SHIFTf,      ITM_NULL,        ITM_SNAP,        ITM_SHIFTf,      ITM_SHIFTf,        ITM_NULL,              ITM_SNAP,      ITM_SHIFTf   },
- {36,   ITM_SHIFTg,      ITM_USERMODE,    ITM_NULL,        ITM_SHIFTg,      ITM_SHIFTg,        ITM_USERMODE,          ITM_NULL,      ITM_SHIFTg   },
-
- {41,   ITM_ENTER,       ITM_FILL,        ITM_DROP,        ITM_ENTER,       ITM_ENTER,         ITM_NULL,              ITM_NULL,      ITM_ENTER    },
- {42,   ITM_XexY,        ITM_Xex,        -MNU_STK,         ITM_ex,          ITM_K,             ITM_ex,                ITM_KAPPA,     ITM_REG_K    },
- {43,   ITM_CHS,         ITM_DELTAPC,    -MNU_FIN,         ITM_PLUS_MINUS,  ITM_L,             ITM_PLUS_MINUS,        ITM_LAMBDA,    ITM_REG_L    },
- {44,   ITM_EXPONENT,    ITM_DSP,        -MNU_DISP,        ITM_NULL,        ITM_M,             ITM_UP_ARROW,          ITM_MU,        ITM_NULL     },
- {45,   ITM_BACKSPACE,   ITM_UNDO,       -MNU_CLR,         ITM_BACKSPACE,   ITM_BACKSPACE,     ITM_UNDO,             -MNU_CLR,       ITM_BACKSPACE},
-
- {51,   ITM_DIV,         ITM_PARALLEL,    ITM_MOD,         ITM_SLASH,       ITM_N,             ITM_SLASH,             ITM_NU,        ITM_DIV      },
- #if DMCP_BUILD
- {52,   ITM_7,           ITM_ACTUSB,     -MNU_FIT,         ITM_7,           ITM_O,             ITM_7,                 ITM_OMEGA,     ITM_7        },
- {53,   ITM_8,           ITM_SYSTEM,     -MNU_MODE,        ITM_8,           ITM_P,             ITM_8,                 ITM_PI,        ITM_8        },
-#else // !DMCP_BUILD
- {52,   ITM_7,           ITM_NULL,       -MNU_FIT,         ITM_7,           ITM_O,             ITM_7,                 ITM_OMEGA,     ITM_7        },    
- {53,   ITM_8,           ITM_NULL,       -MNU_MODE,        ITM_8,           ITM_P,             ITM_8,                 ITM_PI,        ITM_8        },
-#endif // DMCP_BUILD
- {54,   ITM_9,           ITM_LBL,         ITM_RTN,         ITM_9,           ITM_Q,             ITM_9,                 ITM_OMICRON,   ITM_9        },
- {55,   ITM_XEQ,         ITM_GTO,        -MNU_FLAGS,       ITM_NULL,        ITM_COLON,         ITM_QU_DIGRAPH,       -MNU_FLAGS,     ITM_NULL     },
-
- {61,   ITM_MULT,        ITM_XFACT,      -MNU_PROB,        ITM_CROSS,       ITM_R,             ITM_PROD_SIGN,         ITM_RHO,       ITM_MULT     },
- {62,   ITM_4,          -MNU_SUMS,       -MNU_STAT,        ITM_4,           ITM_S,             ITM_4,                 ITM_SIGMA,     ITM_4        },
- {63,   ITM_5,           ITM_toREC,       ITM_toPOL,       ITM_5,           ITM_T,             ITM_5,                 ITM_TAU,       ITM_5        },
- {64,   ITM_6,           ITM_TIMER,      -MNU_CLK,         ITM_6,           ITM_U,             ITM_6,                 ITM_THETA,     ITM_6        },
- {65,   ITM_UP,          ITM_BST,         ITM_SF,          ITM_UP,          ITM_UP,            ITM_BST,               ITM_SF,        ITM_UP       },
-
- {71,   ITM_SUB,        -MNU_INTS,       -MNU_PARTS,       ITM_MINUS,       ITM_V,             ITM_MINUS,            -MNU_ALPHAMATH, ITM_SUB      },
- {72,   ITM_1,          -MNU_ADV,        -MNU_EQN,         ITM_1,           ITM_W,             ITM_1,                 ITM_PSI,       ITM_1        },
- {73,   ITM_2,          -MNU_MATX,       -MNU_XFN,         ITM_2,           ITM_X,             ITM_2,                 ITM_XI,        ITM_2        },
- {74,   ITM_3,           ITM_CONSTpi,    -MNU_CONST,       ITM_3,           ITM_Y,             ITM_3,                 ITM_UPSILON,   ITM_3        },
- {75,   ITM_DOWN,        ITM_SST,         ITM_CF,          ITM_DOWN,        ITM_DOWN,          ITM_SST,               ITM_CF,        ITM_DOWN     },
-
- {81,   ITM_ADD,        -MNU_LOOP,       -MNU_TEST,        ITM_PLUS,        ITM_Z,             ITM_PLUS,              ITM_ZETA,      ITM_ADD      },
- {82,   ITM_0,          -MNU_IO,         -MNU_PRINT,       ITM_0,           ITM_QUESTION_MARK, ITM_0,                 ITM_PRINTER,   ITM_0        },
- {83,   ITM_PERIOD,      ITM_SHOW,       -MNU_INFO,        ITM_PERIOD,      ITM_COMMA,         ITM_PERIOD,           -MNU_ALPHADOT,  ITM_PERIOD   },
- {84,   ITM_RS,          ITM_PR,         -MNU_PFN,         ITM_NULL,        ITM_SPACE,         ITM_NULL,              ITM_NULL,      ITM_NULL     },
- {85,   ITM_EXIT,       -MNU_CATALOG,     ITM_OFF,         ITM_EXIT,        ITM_EXIT,         -MNU_CATALOG,           ITM_OFF,       ITM_EXIT     }
-//keyId primary          fShifted         gShifted         keyLblAim        primaryAim         fShiftedAim            gShiftedAim    primaryTam
-};
-
-#else  // if defined REDUCED_AIM_KEYBOARD
-
-TO_QSPI const calcKey_t kbd_std[37] = {
-//keyId primary          fShifted         gShifted         keyLblAim        primaryAim         fShiftedAim            gShiftedAim    primaryTam
- {21,   ITM_1ONX,        ITM_TGLFRT,     -MNU_UNITCONV,    ITM_NULL,        ITM_A,            -MNU_ALPHAINTL,         ITM_ALPHA,     ITM_REG_A    },
- {22,  -MNU_EXP,         ITM_toINT,      -MNU_BITS,        ITM_NUMBER_SIGN, ITM_B,             ITM_NUMBER_SIGN,       ITM_BETA,      ITM_REG_B    },
- {23,  -MNU_TRI,         ITM_DMS,        -MNU_ANGLECONV,   ITM_NULL,        ITM_C,             ITM_LEFT_PARENTHESIS,  ITM_GAMMA,     ITM_REG_C    },
- {24,   ITM_LN,          ITM_dotD,        ITM_LOG10,       ITM_NULL,        ITM_D,             ITM_RIGHT_PARENTHESIS, ITM_DELTA,     ITM_REG_D    }, // if f or g are changed: adapt the function btnClicked section if(calcMode == cmNim) in keyboard.c. Case D for decimal base
- {25,   ITM_EXP,         ITM_toHMS,       ITM_10x,         ITM_ALOG_SYMBOL, ITM_E,             ITM_ALOG_SYMBOL,       ITM_EPSILON,   ITM_E        },
- {26,   ITM_SQUAREROOTX, ITM_AIM,        -MNU_ALPHAFN,     ITM_ROOT_SIGN,   ITM_F,             ITM_ROOT_SIGN,         ITM_PHI,       ITM_alpha    },
-
- {31,   ITM_STO,         ITM_ASSIGN,      ITM_SAVE,        ITM_NULL,        ITM_G,             ITM_ASSIGN,            ITM_GAMMA,     ITM_NULL     },
+ {31,   ITM_STO,         ITM_ASSIGN,      ITM_SAVE,        ITM_NULL,        ITM_G,             ITM_ASSIGN,            ITM_GAMMA,     ITM_G        },
  {32,   ITM_RCL,         ITM_RBR,         ITM_VIEW,        ITM_NULL,        ITM_H,             ITM_CH_DIGRAPH,        ITM_CHI,       ITM_HEX      }, // if f or g are changed: adapt the function btnClicked section if(calcMode == cmNim) in keyboard.c. Case H for hexadecimal base
  {33,   ITM_Rdown,       ITM_Rup,        -MNU_CPX,         ITM_NULL,        ITM_I,             ITM_DOWN_ARROW,        ITM_IOTA,      ITM_REG_I    },
  {34,   ITM_CC,          ITM_MAGNITUDE,   ITM_ARG,         ITM_NULL,        ITM_J,             ITM_VERTICAL_BAR,      ITM_ETA,       ITM_REG_J    },
@@ -105,7 +46,7 @@ TO_QSPI const calcKey_t kbd_std[37] = {
  {41,   ITM_ENTER,       ITM_FILL,        ITM_DROP,        ITM_ENTER,       ITM_ENTER,         ITM_NULL,              ITM_NULL,      ITM_ENTER    },
  {42,   ITM_XexY,        ITM_Xex,        -MNU_STK,         ITM_ex,          ITM_K,             ITM_ex,                ITM_KAPPA,     ITM_REG_K    },
  {43,   ITM_CHS,         ITM_DELTAPC,    -MNU_FIN,         ITM_PLUS_MINUS,  ITM_L,             ITM_PLUS_MINUS,        ITM_LAMBDA,    ITM_REG_L    },
- {44,   ITM_EXPONENT,    ITM_DSP,        -MNU_DISP,        ITM_NULL,        ITM_M,             ITM_UP_ARROW,          ITM_MU,        ITM_NULL     },
+ {44,   ITM_EXPONENT,    ITM_DSP,        -MNU_DISP,        ITM_NULL,        ITM_M,             ITM_UP_ARROW,          ITM_MU,        ITM_M        },
  {45,   ITM_BACKSPACE,   ITM_UNDO,       -MNU_CLR,         ITM_BACKSPACE,   ITM_BACKSPACE,     ITM_NULL,              ITM_NULL,      ITM_BACKSPACE},
 
  {51,   ITM_DIV,         ITM_PARALLEL,    ITM_MOD,         ITM_SLASH,       ITM_N,             ITM_SLASH,             ITM_NU,        ITM_DIV      },
@@ -117,7 +58,7 @@ TO_QSPI const calcKey_t kbd_std[37] = {
  {53,   ITM_8,           ITM_NULL,       -MNU_MODE,        ITM_8,           ITM_P,             ITM_8,                 ITM_PI,        ITM_8        },
 #endif // DMCP_BUILD
  {54,   ITM_9,           ITM_LBL,         ITM_RTN,         ITM_9,           ITM_Q,             ITM_9,                 ITM_OMICRON,   ITM_9        },
- {55,   ITM_XEQ,         ITM_GTO,        -MNU_FLAGS,       ITM_NULL,        ITM_COLON,         ITM_QU_DIGRAPH,        ITM_NULL,      ITM_NULL     },
+ {55,   ITM_XEQ,         ITM_GTO,        -MNU_FLAGS,       ITM_NULL,        ITM_COLON,         ITM_QU_DIGRAPH,        ITM_NULL,      ITM_COLON     },
 
  {61,   ITM_MULT,        ITM_XFACT,      -MNU_PROB,        ITM_CROSS,       ITM_R,             ITM_PROD_SIGN,         ITM_RHO,       ITM_MULT     },
  {62,   ITM_4,          -MNU_SUMS,       -MNU_STAT,        ITM_4,           ITM_S,             ITM_4,                 ITM_SIGMA,     ITM_4        },
@@ -138,7 +79,7 @@ TO_QSPI const calcKey_t kbd_std[37] = {
  {85,   ITM_EXIT,       -MNU_CATALOG,     ITM_OFF,         ITM_EXIT,        ITM_EXIT,         -MNU_CAT_AIM,           ITM_OFF,       ITM_EXIT     }
 //keyId primary          fShifted         gShifted         keyLblAim        primaryAim         fShiftedAim            gShiftedAim    primaryTam
 };
-#endif // REDUCED_AIM_KEYBOARD
+
 
 static void _assignItem(userMenuItem_t *menuItem);
 

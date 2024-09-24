@@ -451,6 +451,18 @@ void tamReset(void) {
       }
       return;
     }
+    else if((tam.mode == tmLabel || (tam.mode == tmKey && tam.keyInputFinished)) && !tam.indirect && item == ITM_DIV) {
+      tam.alpha = true; aimBuffer[0] = 'N'; aimBuffer[1] = 0; forceTry = true;
+    }
+    else if((tam.mode == tmLabel || (tam.mode == tmKey && tam.keyInputFinished)) && !tam.indirect && item == ITM_MULT) {
+      tam.alpha = true; aimBuffer[0] = 'R'; aimBuffer[1] = 0; forceTry = true;
+    }
+    else if((tam.mode == tmLabel || (tam.mode == tmKey && tam.keyInputFinished)) && !tam.indirect && item == ITM_SUB) {
+      tam.alpha = true; aimBuffer[0] = 'V'; aimBuffer[1] = 0; forceTry = true;
+    }
+    else if((tam.mode == tmLabel || (tam.mode == tmKey && tam.keyInputFinished)) && !tam.indirect && item == ITM_ADD) {
+      tam.alpha = true; aimBuffer[0] = 'Z'; aimBuffer[1] = 0; forceTry = true;
+    }
     else if(item==ITM_Max || item==ITM_Min || item==ITM_ADD || item==ITM_SUB || item==ITM_MULT || item==ITM_DIV || item==ITM_Config || item==ITM_Stack || item==ITM_dddEL || item==ITM_dddIJ) { // Operation
       if(!tam.digitsSoFar && !tam.indirect) {
         if(tam.function == ITM_GTO) {
@@ -703,6 +715,23 @@ void tamReset(void) {
       tryOoR = true;
       forceTry = true;
     }
+    else if((tam.mode == tmLabel || (tam.mode == tmKey && tam.keyInputFinished)) && !tam.indirect) {
+      switch(item) {
+        case ITM_G: {
+          tam.alpha = true; aimBuffer[0] = 'G'; aimBuffer[1] = 0; forceTry = true;
+          break;
+        }
+        case ITM_HEX: {
+          tam.alpha = true; aimBuffer[0] = 'H'; aimBuffer[1] = 0; forceTry = true;
+          break;
+        }
+        case ITM_M: {
+          tam.alpha = true; aimBuffer[0] = 'M'; aimBuffer[1] = 0; forceTry = true;
+          break;
+        }
+      }
+    }
+
     else {
       // Do nothing
       return;
