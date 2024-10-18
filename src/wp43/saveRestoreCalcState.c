@@ -2330,6 +2330,7 @@ void replaceInstruction(uint8_t *step, uint16_t programNumber, int16_t itemToRep
   char label[15];
   uint8_t labelLength;
   bool incompatibilityDetected = false;
+  int16_t oldItem, newItem;
 
   sprintf(label,"#%d",programNumber);
   if(checkOpCodeOfStep(step, ITM_LBL)) { // LBL
@@ -2355,9 +2356,17 @@ void replaceInstruction(uint8_t *step, uint16_t programNumber, int16_t itemToRep
       }
     }
     else {
-      if(checkOpCodeOfStep(step, itemToReplace)) {
-        step[0] = (itemNew >> 8) | 0x80;
-        step[1] =  itemNew       & 0xff;
+      if((checkOpCodeOfStep(step, itemToReplace)) || ((checkOpCodeOfStep(step, ITM_REM)) && (step[2] != STRING_LABEL_VARIABLE))) {
+        if(checkOpCodeOfStep(step, itemToReplace)) {
+          oldItem = itemToReplace;
+          newItem = itemNew;
+        }
+        else { // Don't replace legitimate REM instructions, only old PRCL with same item ID but not followed by a string
+          oldItem = ITM_REM;
+          newItem = ITM_NOP;
+        }
+        step[0] = (newItem >> 8) | 0x80;
+        step[1] =  newItem       & 0xff;
 
         if(incompatibilityDetected == false) {  //First incompatible instruction detected
           incompatibilityDetected = true;
@@ -2380,7 +2389,7 @@ void replaceInstruction(uint8_t *step, uint16_t programNumber, int16_t itemToRep
         }
 
         sprintf(tmpString,"%s found at local step %5d in program #%3d '%7s' and replaced by %s\n",
-                indexOfItems[itemToReplace].itemCatalogName, localStep, programNumber, label, indexOfItems[itemNew].itemCatalogName);
+                (oldItem == ITM_REM ? "PRCL" : indexOfItems[oldItem].itemCatalogName), localStep, programNumber, label, indexOfItems[newItem].itemCatalogName);
         ioFileWrite(tmpString, strlen(tmpString));
       }
     }
