@@ -131,7 +131,7 @@
   #define FLAG_DECIMP                           0x801a
   #define FLAG_MULTx                            0x801b
   #define FLAG_ALLENG                           0x801c
-  #define FLAG_GROW                             0x801d
+  #define FLAG_GROW                             0xc01d
   #define FLAG_AUTOFF                           0x801e
   #define FLAG_AUTXEQ                           0x801f
   #define FLAG_PRTACT                           0x8020
