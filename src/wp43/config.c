@@ -901,6 +901,7 @@ void fnReset(uint16_t confirmation) {
     setSystemFlag(FLAG_ASLIFT);
     setSystemFlag(FLAG_PROPFR);
     setSystemFlag(FLAG_ENDPMT);// TVM application = END mode
+    setSystemFlag(FLAG_SSIZE8);
 
     hourGlassIconEnabled = false;
     watchIconEnabled = false;
