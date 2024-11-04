@@ -370,9 +370,14 @@ void tamReset(void) {
       }
       else if(tam.indirect) {
         tam.indirect = false;
-        if(tam.mode == tmFlagR || tam.mode == tmFlagW) {
+        if(tam.mode == tmFlagR) {
           popSoftmenu();
           showSoftmenu(-MNU_TAMFLAG);
+          --numberOfTamMenusToPop;
+        }
+        else if(tam.mode == tmFlagW) {
+          popSoftmenu();
+          showSoftmenu(-MNU_TAMFLAG_WRITE);
           --numberOfTamMenusToPop;
         }
         else if(tam.mode == tmLabel || (tam.mode == tmKey && tam.keyInputFinished)) {
@@ -1033,9 +1038,13 @@ void tamReset(void) {
         break;
       }
 
-      case tmFlagR:
-      case tmFlagW: {
+      case tmFlagR: {
         showSoftmenu(-MNU_TAMFLAG);
+        break;
+      }
+
+      case tmFlagW: {
+        showSoftmenu(-MNU_TAMFLAG_WRITE);
         break;
       }
 

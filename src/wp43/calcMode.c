@@ -279,6 +279,10 @@ calcMode_t calcMode;
         catalog = CATALOG_ALLVAR;
         break;
       }
+      case MNU_SYSFL_WRITABLE: {
+        catalog = CATALOG_SYFL_WRITABLE;
+        break;
+      }
       case MNU_Solver:
       case MNU_Sf:
       case MNU_1STDERIV:
