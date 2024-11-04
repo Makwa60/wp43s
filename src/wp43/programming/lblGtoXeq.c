@@ -35,25 +35,6 @@
 
 #include "wp43.h"
 
-// This array is in order to check if given system flag is read-only.
-// Although the definitions of symbols come with information about
-// whether they are user-modifiable, it is not recorded in programs.
-// NOTE: subscript must match with LSB of each system flag.
-TO_QSPI const uint16_t systemFlagsDefinition[NUMBER_OF_SYSTEM_FLAGS] = {
-  /* 0x00 */ FLAG_TDM24,    FLAG_YMD,          FLAG_DMY,     FLAG_MDY,
-  /* 0x04 */ FLAG_CPXRES,   FLAG_CPXj,         FLAG_POLAR,   FLAG_FRACT,
-  /* 0x08 */ FLAG_PROPFR,   FLAG_DENANY,       FLAG_DENFIX,  FLAG_CARRY,
-  /* 0x0c */ FLAG_OVERFLOW, FLAG_LEAD0,        FLAG_ALPHA,   FLAG_alphaCAP,
-  /* 0x10 */ FLAG_RUNTIM,   FLAG_RUNIO,        FLAG_PRINTS,  FLAG_TRACE,
-  /* 0x14 */ FLAG_USER,     FLAG_LOWBAT,       FLAG_NOWAS,   FLAG_SPCRES,
-  /* 0x18 */ FLAG_SSIZE8,   FLAG_QUIET,        FLAG_DECIMP,  FLAG_MULTx,
-  /* 0x1c */ FLAG_ALLENG,   FLAG_GROW,         FLAG_AUTOFF,  FLAG_AUTXEQ,
-  /* 0x20 */ FLAG_PRTACT,   FLAG_NUMIN,        FLAG_ALPIN,   FLAG_ASLIFT,
-  /* 0x24 */ FLAG_IGN1ER,   FLAG_INTING,       FLAG_SOLVING, FLAG_VMDISP,
-  /* 0x28 */ FLAG_USB,      FLAG_ENDPMT,       FLAG_FRCSRN,  FLAG_FASTFN,
-  /* 0x2c */ FLAG_VIEW,     FLAG_AVIEW_PROMPT,
-};
-
 void fnGoto(uint16_t label) {
   if(tamIsActive() || calcMode != cmPem) {
     if(dynamicMenuItem >= 0) {
@@ -428,17 +409,7 @@ void fnStopProgram(uint16_t unusedButMandatoryParameter) {
           reallyRunFunction(op, opParam);
         }
         else if(opParam == SYSTEM_FLAG_NUMBER) {
-          if(*paramAddress < NUMBER_OF_SYSTEM_FLAGS) {
-            #if !defined(DMCP_BUILD)
-              if(*paramAddress != (systemFlagsDefinition[*paramAddress] & 0xff)) { // systemFlagsDefinition[] order mismatch
-                sprintf(tmpString, "\nIn function _executeOp: case PARAM_FLAG, %s %u  %u: systemFlagsDefinition misordered! systemFlags[0x%02x] == 0x%04x", indexOfItems[op].itemCatalogName, opParam, *paramAddress, *paramAddress, systemFlagsDefinition[*paramAddress]);
-              }
-            #endif // !DMCP_BUILD
-            reallyRunFunction(op, systemFlagsDefinition[*paramAddress]);
-          }
-          else { // in case of corrupt program
-            sprintf(tmpString, "\nIn function _executeOp: case PARAM_FLAG, %s %u  %u is not a valid system flag!", indexOfItems[op].itemCatalogName, opParam, *paramAddress);
-          }
+          reallyRunFunction(op, indexOfItems[(*paramAddress) + FLAG_TDM24].param);
         }
         else if(opParam == INDIRECT_REGISTER) {
           _executeWithIndirectRegister(paramAddress, op);
