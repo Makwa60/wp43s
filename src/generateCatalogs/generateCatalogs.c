@@ -32,6 +32,8 @@ static int sortItems(void const *a, void const *b)  {
 
 
 void sortOneCatalog(const char *menuName, int catalogType, int16_t generationType) {
+  bool filterFlags = (strcmp(menuName, "SYSFL_writable") == 0);
+
   #if defined(DEBUG)
     printf("Generating catalog %s\n", menuName);
   #endif // DEBUG
@@ -48,10 +50,12 @@ void sortOneCatalog(const char *menuName, int catalogType, int16_t generationTyp
          || (generationType == GENERATION_FOR_PC && strcmp(indexOfItems[item].itemCatalogName, "SYSTEM")
                                                  && strcmp(indexOfItems[item].itemCatalogName, "SETTIM")
                                                  && strcmp(indexOfItems[item].itemCatalogName, "SETDAT"))) { // (not SYSTEM) and (not SETTIM) and (not SETDAT) when generating program for PC
-        itemList[numberOfItems++] = item;
-        if(numberOfItems == MAX_NUMBER_OF_ITEMS) {
-          printf("Array itemList is too small: increase the value of MAX_NUMBER_OF_ITEMS\n");
-          exit(-1);
+        if(!filterFlags || !(indexOfItems[item].param & 0x4000)) {
+          itemList[numberOfItems++] = item;
+          if(numberOfItems == MAX_NUMBER_OF_ITEMS) {
+            printf("Array itemList is too small: increase the value of MAX_NUMBER_OF_ITEMS\n");
+            exit(-1);
+          }
         }
       }
     }
@@ -124,6 +128,7 @@ int main(int argc, char* argv[]) {
 
   sortOneCatalog("CONST",      CAT_CNST, GENERATION_FOR_BOTH);
   sortOneCatalog("SYSFL",      CAT_SYFL, GENERATION_FOR_BOTH);
+  sortOneCatalog("SYSFL_writable", CAT_SYFL, GENERATION_FOR_BOTH);
   sortOneCatalog("alpha_INTL", CAT_AINT, GENERATION_FOR_BOTH);
   sortOneCatalog("alpha_intl", CAT_aint, GENERATION_FOR_BOTH);
 

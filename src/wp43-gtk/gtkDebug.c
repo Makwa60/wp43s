@@ -425,6 +425,9 @@
       case CATALOG_SYFL: {
         return "CATALOG_SYFL";
       }
+      case CATALOG_SYFL_WRITABLE: {
+        return "CATALOG_SYFL_WRITABLE";
+      }
       case CATALOG_AINT: {
         return "CATALOG_AINT";
       }

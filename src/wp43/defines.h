@@ -470,7 +470,8 @@
   #define CATALOG_CONFIG                            18
   #define CATALOG_ALLVAR                            19
   #define CATALOG_MVAR                              20
-  #define NUMBER_OF_CATALOGS                        21
+  #define CATALOG_SYFL_WRITABLE                     21
+  #define NUMBER_OF_CATALOGS                        22
 
   // String comparison type
   #define CMP_BINARY                                 0

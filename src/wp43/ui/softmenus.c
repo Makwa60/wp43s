@@ -413,6 +413,7 @@ TO_QSPI const int16_t menu_Tam[]         = { ITM_INDIRECTION,               -MNU
 TO_QSPI const int16_t menu_TamCmp[]      = { ITM_INDIRECTION,               -MNU_VAR,                   ITM_REG_X,                ITM_REG_Y,             ITM_REG_Z,                   ITM_REG_T,
                                              ITM_0P,                        ITM_1P,                     ITM_NULL,                 ITM_NULL,              ITM_NULL,                    ITM_NULL                      };
 TO_QSPI const int16_t menu_TamFlag[]     = { ITM_INDIRECTION,               -MNU_SYSFL,                 ITM_REG_X,                ITM_REG_Y,             ITM_REG_Z,                   ITM_REG_T                     };
+TO_QSPI const int16_t menu_TamFlagWr[]   = { ITM_INDIRECTION,               -MNU_SYSFL_WRITABLE,        ITM_REG_X,                ITM_REG_Y,             ITM_REG_Z,                   ITM_REG_T                     };
 TO_QSPI const int16_t menu_TamStoRcl[]   = { ITM_INDIRECTION,               -MNU_VAR,                   ITM_REG_X,                ITM_REG_Y,             ITM_REG_Z,                   ITM_REG_T,
                                              ITM_Config,                    ITM_Stack,                  ITM_NULL,                 ITM_NULL,              ITM_Max,                     ITM_Min,
                                              ITM_dddEL,                     ITM_dddIJ,                  ITM_NULL,                 ITM_NULL,              ITM_NULL,                    ITM_NULL                      };
@@ -546,7 +547,9 @@ TO_QSPI const softmenu_t softmenu[] = {
 /* 111 */  {.menuItem = -MNU_CONVTIME,    .numItems = sizeof(menu_ConvTime   )/sizeof(int16_t), .softkeyItem = menu_ConvTime    },
 /* 112 */  {.menuItem = -MNU_YESNO,       .numItems = sizeof(menu_YESNO      )/sizeof(int16_t), .softkeyItem = menu_YESNO       },
 /* 113 */  {.menuItem = -MNU_FIT,         .numItems = sizeof(menu_FIT        )/sizeof(int16_t), .softkeyItem = menu_FIT         },
-/* 114 */  {.menuItem =  0,               .numItems = 0,                                        .softkeyItem = NULL             }
+/* 114 */  {.menuItem = -MNU_TAMFLAG_WRITE,  .numItems = sizeof(menu_TamFlagWr     )/sizeof(int16_t), .softkeyItem = menu_TamFlagWr     },
+/* 115 */  {.menuItem = -MNU_SYSFL_WRITABLE, .numItems = sizeof(menu_SYSFL_writable)/sizeof(int16_t), .softkeyItem = menu_SYSFL_writable},
+/* 116 */  {.menuItem =  0,               .numItems = 0,                                        .softkeyItem = NULL             }
 };
 
 dynamicSoftmenu_t dynamicSoftmenu[NUMBER_OF_DYNAMIC_SOFTMENUS] = {
@@ -688,7 +691,8 @@ dynamicSoftmenu_t dynamicSoftmenu[NUMBER_OF_DYNAMIC_SOFTMENUS] = {
   /* 110 */    "CLMy...",
   /* 111 */    "CONVTIME",
   /* 112 */    "YESNO",
-  /* 113 */    "FIT"
+  /* 113 */    "FIT",
+  /* 114 */    "SYSFL_writable"
   };
 #endif // PC_BUILD
 
