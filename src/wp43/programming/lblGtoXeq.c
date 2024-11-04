@@ -409,7 +409,7 @@ void fnStopProgram(uint16_t unusedButMandatoryParameter) {
           reallyRunFunction(op, opParam);
         }
         else if(opParam == SYSTEM_FLAG_NUMBER) {
-          reallyRunFunction(op, indexOfItems[(*paramAddress) + FLAG_TDM24].param);
+          reallyRunFunction(op, indexOfItems[(*paramAddress) + SFL_TDM24].param);
         }
         else if(opParam == INDIRECT_REGISTER) {
           _executeWithIndirectRegister(paramAddress, op);
