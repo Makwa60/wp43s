@@ -292,7 +292,6 @@ flagScreen_t flagScreen;
     oneSystemFlag(FLAG_POLAR,    "POLAR",   &line, &firstFlag);
     oneSystemFlag(FLAG_PRINTS,   "PRINTS",  &line, &firstFlag);
     oneSystemFlag(FLAG_PROPFR,   "PROPFR",  &line, &firstFlag);
-    oneSystemFlag(FLAG_PRTACT,   "PRTACT",  &line, &firstFlag);
     oneSystemFlag(FLAG_QUIET,    "QUIET",   &line, &firstFlag);
     oneSystemFlag(FLAG_RUNIO,    "RUNIO",   &line, &firstFlag);
     oneSystemFlag(FLAG_RUNTIM,   "RUNTIM",  &line, &firstFlag);
