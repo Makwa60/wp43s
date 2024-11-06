@@ -124,7 +124,7 @@
   #define FLAG_TRACE                            0x8013
   #define FLAG_USER                             0x8014
   #define FLAG_LOWBAT                           0xc015
-  #define FLAG_NOWAS                            0x8016
+  #define FLAG_RESERVED_16                      0x8016
   #define FLAG_SPCRES                           0x8017
   #define FLAG_SSIZE8                           0x8018
   #define FLAG_QUIET                            0x8019
@@ -134,7 +134,7 @@
   #define FLAG_GROW                             0xc01d
   #define FLAG_AUTOFF                           0x801e
   #define FLAG_AUTXEQ                           0x801f
-  #define FLAG_PRTACT                           0x8020
+  #define FLAG_RESERVED_20                      0x8020
   #define FLAG_NUMIN                            0x8021
   #define FLAG_ALPIN                            0x8022
   #define FLAG_ASLIFT                           0xc023

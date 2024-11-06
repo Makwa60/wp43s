@@ -524,7 +524,7 @@
   #define SFL_GROW                       492
   #define SFL_AUTOFF                     493
   #define SFL_AUTXEQ                     494
-  #define SFL_PRTACT                     495
+  #define ITM_0495                       495
   #define SFL_NUMIN                      496
   #define SFL_ALPIN                      497
   #define SFL_ASLIFT                     498
