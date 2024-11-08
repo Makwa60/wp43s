@@ -180,7 +180,7 @@ uint8_t *countOpBytes(uint8_t *step, uint16_t paramMode) {
 
 
 uint8_t *countLiteralBytes(uint8_t *step) {
-  switch(*(uint8_t *)(step++)) {
+  switch(*(step++)) {
     case BINARY_SHORT_INTEGER: {
       return step + 9;
     }
@@ -221,7 +221,8 @@ uint8_t *countLiteralBytes(uint8_t *step) {
 
     default: {
       #if !defined(DMCP_BUILD)
-        printf("\nERROR: %u is not an acceptable parameter for ITM_LITERAL!\n", *(uint8_t *)(step - 1));
+        printf("\nERROR: in countLiteralBytes() %u is not an acceptable parameter for ITM_LITERAL!\n", *(step - 1));
+        printf("At address ram + %" PRIu32 "\n", (uint32_t)((step - 1) - (uint8_t *)ram));
       #endif // !DMCP_BUILD
       return NULL;
     }
@@ -473,7 +474,7 @@ void fnSst(uint16_t unusedButMandatoryParameter) {
   else {
     temporaryInformation = TI_NO_INFO;
     refreshRegisterLine(REGISTER_T);     // Clear previous VIEW or AVIEW data, if any
-    refreshRegisterLine(REGISTER_Z);     // Clear previous test result, if any 
+    refreshRegisterLine(REGISTER_Z);     // Clear previous test result, if any
     _showStep();
     if(currentInputVariable != INVALID_VARIABLE) {
       if(currentInputVariable & 0x8000) {

@@ -548,7 +548,7 @@ void fnStopProgram(uint16_t unusedButMandatoryParameter) {
 
 
   static void _putLiteral(uint8_t *literalAddress) {
-    switch(*(uint8_t *)(literalAddress++)) {
+    switch(*(literalAddress++)) {
       case BINARY_SHORT_INTEGER: {
         liftStack();
         setSystemFlag(FLAG_ASLIFT);
@@ -693,7 +693,8 @@ void fnStopProgram(uint16_t unusedButMandatoryParameter) {
 
       default: {
         #if !defined(DMCP_BUILD)
-          printf("\nERROR: %u is not an acceptable parameter for ITM_LITERAL!\n", *(uint8_t *)(literalAddress - 1));
+          printf("\nERROR: in _putLiteral() %u is not an acceptable parameter for ITM_LITERAL!\n", *(literalAddress - 1));
+          printf("At address ram + %llu\n", (literalAddress - 1) - (uint8_t *)ram);
         #endif // !DMCP_BUILD
       }
     }

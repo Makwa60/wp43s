@@ -175,6 +175,10 @@ void scanLabelsAndPrograms(void) {
     stepNumber++;
   }
 
+  //The folowing 2 lines added to address the FFFFFFFF issue in old state files
+  firstFreeProgramByte = step;
+  freeProgramBytes = (((uint8_t *)(ram + RAM_SIZE_IN_BLOCKS)) - firstFreeProgramByte) - 2;
+
   defineCurrentProgramFromCurrentStep();
 }
 
@@ -632,7 +636,7 @@ static void _insertInProgram(const uint8_t *dat, uint16_t sizeInBytes) {
   uint16_t globalStepNumber;
   if(freeProgramBytes < sizeInBytes) {
     uint8_t *oldBeginOfProgramMemory = beginOfProgramMemory;
-    uint32_t programSizeInBytes = TO_BYTES(RAM_SIZE_IN_BLOCKS - freeMemoryRegions[numberOfFreeMemoryRegions - 1].address - freeMemoryRegions[numberOfFreeMemoryRegions - 1].sizeInBlocks);
+    uint32_t programSizeInBytes = TO_BYTES(RAM_SIZE_IN_BLOCKS - TO_WP43MEMPTR(beginOfProgramMemory));
     uint32_t newProgramSizeInBytes = TO_BYTES(TO_BLOCKS(programSizeInBytes - freeProgramBytes + sizeInBytes));
     freeProgramBytes      += newProgramSizeInBytes - programSizeInBytes;
     resizeProgramMemory(newProgramSizeInBytes);
