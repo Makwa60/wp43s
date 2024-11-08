@@ -204,7 +204,7 @@ void freeGmp(void *pcMemPtr, size_t sizeInBytes) {
 
 
 void resizeProgramMemory(size_t newSizeInBytes) {
-  size_t currentSizeInBytes = TO_BYTES(RAM_SIZE_IN_BLOCKS - freeMemoryRegions[numberOfFreeMemoryRegions - 1].address - freeMemoryRegions[numberOfFreeMemoryRegions - 1].sizeInBlocks);
+  size_t currentSizeInBytes = TO_BYTES(RAM_SIZE_IN_BLOCKS - TO_WP43MEMPTR(beginOfProgramMemory));
   size_t deltaBytes, bytesToMove = 0;
   uint8_t *newProgramMemoryPointer = NULL;
 
@@ -219,7 +219,7 @@ void resizeProgramMemory(size_t newSizeInBytes) {
 
   if(newSizeInBytes > currentSizeInBytes) { // Increase program memory size
     deltaBytes = newSizeInBytes - currentSizeInBytes;
-    if(newSizeInBytes - currentSizeInBytes > (size_t)TO_BYTES(freeMemoryRegions[numberOfFreeMemoryRegions - 1].sizeInBlocks)) { // Out of memory
+    if(deltaBytes > (size_t)TO_BYTES(freeMemoryRegions[numberOfFreeMemoryRegions - 1].sizeInBlocks)) { // Out of memory
       #if defined(DMCP_BUILD)
         backToSystem(NOPARAM);
       #else // !DMCP_BUILD

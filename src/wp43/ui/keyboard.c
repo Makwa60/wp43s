@@ -1133,24 +1133,19 @@ bool      _kbSeenInterrupt     = false;
       uint16_t localStepNumber = currentLocalStepNumber;
       uint16_t programNumber = currentProgramNumber;
       uint16_t fdLocalStepNumber = firstDisplayedLocalStepNumber;
-      bool     inRam = (programList[currentProgramNumber - 1].step > 0);
-      if(inRam) {
-        currentStep           += (freeProgramBytes & mask);
-        firstDisplayedStep    += (freeProgramBytes & mask);
-        beginOfCurrentProgram += (freeProgramBytes & mask);
-        endOfCurrentProgram   += (freeProgramBytes & mask);
-      }
+      currentStep           += (freeProgramBytes & mask);
+      firstDisplayedStep    += (freeProgramBytes & mask);
+      beginOfCurrentProgram += (freeProgramBytes & mask);
+      endOfCurrentProgram   += (freeProgramBytes & mask);
       freeProgramBytes &= 0x03;
       resizeProgramMemory(newProgramSize);
       scanLabelsAndPrograms();
-      if(inRam) {
-        currentLocalStepNumber = localStepNumber;
-        currentProgramNumber = programNumber;
-        firstDisplayedLocalStepNumber = fdLocalStepNumber;
-        defineCurrentStep();
-        defineFirstDisplayedStep();
-        defineCurrentProgramFromCurrentStep();
-      }
+      currentLocalStepNumber = localStepNumber;
+      currentProgramNumber = programNumber;
+      firstDisplayedLocalStepNumber = fdLocalStepNumber;
+      defineCurrentStep();
+      defineFirstDisplayedStep();
+      defineCurrentProgramFromCurrentStep();
     }
   }
 

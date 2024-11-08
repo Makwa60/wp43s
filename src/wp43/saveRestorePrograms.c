@@ -80,7 +80,7 @@
 static void _addSpaceAfterPrograms(uint16_t sizeInBytes) {
   if(freeProgramBytes < sizeInBytes) {
     uint8_t *oldBeginOfProgramMemory = beginOfProgramMemory;
-    uint32_t programSizeInBytes = TO_BYTES(RAM_SIZE_IN_BLOCKS - freeMemoryRegions[numberOfFreeMemoryRegions - 1].address - freeMemoryRegions[numberOfFreeMemoryRegions - 1].sizeInBlocks);
+    uint32_t programSizeInBytes = TO_BYTES(RAM_SIZE_IN_BLOCKS - TO_WP43MEMPTR(beginOfProgramMemory));
     uint32_t newProgramSizeInBytes = TO_BYTES(TO_BLOCKS(programSizeInBytes - freeProgramBytes + sizeInBytes));
     freeProgramBytes      += newProgramSizeInBytes - programSizeInBytes;
     resizeProgramMemory(newProgramSizeInBytes);

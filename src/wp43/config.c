@@ -729,7 +729,7 @@ void fnReset(uint16_t confirmation) {
     memset(tamBuffer,        0, TAM_BUFFER_LENGTH);
 
     // Empty program initialization
-    beginOfProgramMemory          = (uint8_t *)(ram + freeMemoryRegions[0].sizeInBlocks);
+    beginOfProgramMemory          = (uint8_t *)(ram + (RAM_SIZE_IN_BLOCKS - 1)); // Last block of RAM
     currentStep                   = beginOfProgramMemory;
     firstFreeProgramByte          = beginOfProgramMemory;
     firstDisplayedStep            = beginOfProgramMemory;
@@ -741,7 +741,7 @@ void fnReset(uint16_t confirmation) {
     freeProgramBytes            = 2;
 
     scanLabelsAndPrograms();
-    
+
     // "Not found glyph" initialization
     if(glyphNotFound.data == NULL) {
       glyphNotFound.data = malloc(38);
@@ -901,7 +901,9 @@ void fnReset(uint16_t confirmation) {
     setSystemFlag(FLAG_ASLIFT);
     setSystemFlag(FLAG_PROPFR);
     setSystemFlag(FLAG_ENDPMT);// TVM application = END mode
-    setSystemFlag(FLAG_SSIZE8);
+    #if !defined(XPB)
+      setSystemFlag(FLAG_SSIZE8);
+    #endif // Not XPB
 
     hourGlassIconEnabled = false;
     watchIconEnabled = false;

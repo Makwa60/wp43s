@@ -1116,7 +1116,7 @@ void fnSave(uint16_t saveMode) {
   }
 
   // Programs
-  size_t currentSizeInBytes = TO_BYTES(RAM_SIZE_IN_BLOCKS - freeMemoryRegions[numberOfFreeMemoryRegions - 1].address - freeMemoryRegions[numberOfFreeMemoryRegions - 1].sizeInBlocks);
+  size_t currentSizeInBytes = TO_BYTES(RAM_SIZE_IN_BLOCKS - TO_WP43MEMPTR(beginOfProgramMemory));
   sprintf(tmpString, "PROGRAMS\n%" PRIu32 "\n", (uint32_t)currentSizeInBytes);
   save(tmpString, strlen(tmpString));
 
@@ -1963,7 +1963,7 @@ static bool restoreOneSection(uint16_t loadMode, uint16_t s, uint16_t n, uint16_
 
   else if(strcmp(tmpString, "PROGRAMS") == 0) {
     size_t numberOfBytes;
-    uint16_t oldSizeInBytes = TO_BYTES(RAM_SIZE_IN_BLOCKS - freeMemoryRegions[numberOfFreeMemoryRegions - 1].address - freeMemoryRegions[numberOfFreeMemoryRegions - 1].sizeInBlocks);
+    uint16_t oldSizeInBytes = TO_BYTES(RAM_SIZE_IN_BLOCKS - TO_WP43MEMPTR(beginOfProgramMemory));
     uint8_t *oldFirstFreeProgramByte = firstFreeProgramByte;
     uint16_t oldFreeProgramBytes = freeProgramBytes;
 
