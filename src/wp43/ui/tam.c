@@ -296,17 +296,6 @@ void tamReset(void) {
   }
 
 
-  static uint16_t _indirectionType(uint16_t func) {
-    if(indexOfItems[func].param == tmFlagR || indexOfItems[func].param == tmFlagW) {
-      return INDPM_FLAG;
-    } else if(tam.mode == tmStoRcl || tam.mode == tmRegister || tam.mode == tmCmp || tam.mode == tmMDim) {
-      return INDPM_REGISTER;
-    } else if(tam.mode == tmLabel) {
-      return INDPM_LABEL;
-    } else {
-      return INDPM_PARAM;
-    }
-  }
 
   static void _tamProcessInput(uint16_t item) {
     int16_t  min, max, min2, max2, dupNum;
@@ -370,21 +359,17 @@ void tamReset(void) {
       }
       else if(tam.indirect) {
         tam.indirect = false;
+        popSoftmenu();
         if(tam.mode == tmFlagR) {
-          popSoftmenu();
           showSoftmenu(-MNU_TAMFLAG);
-          --numberOfTamMenusToPop;
         }
         else if(tam.mode == tmFlagW) {
-          popSoftmenu();
           showSoftmenu(-MNU_TAMFLAG_WRITE);
-          --numberOfTamMenusToPop;
         }
         else if(tam.mode == tmLabel || (tam.mode == tmKey && tam.keyInputFinished)) {
-          popSoftmenu();
           showSoftmenu(-MNU_TAMLABEL);
-          --numberOfTamMenusToPop;
         }
+        --numberOfTamMenusToPop;
       }
       else if(tam.currentOperation != tam.function) {
         tam.currentOperation = tam.function;
@@ -780,7 +765,7 @@ void tamReset(void) {
           value += FIRST_LOCAL_REGISTER;
         }
         if(tam.indirect && calcMode != cmPem) {
-          value = indirectAddressing(value, _indirectionType(tamOperation()), min, max, tryAllocate);
+          value = indirectAddressing(value, indirectionType(tam.function), min, max, tryAllocate);
           run = (value != FAILED_INDIRECTION);
         }
         if((indexOfItems[tamOperation()].status & PTP_STATUS) == PTP_VARIABLE && (value < FIRST_NAMED_VARIABLE || value > LAST_NAMED_VARIABLE)) {
@@ -837,52 +822,86 @@ void tamReset(void) {
     else {
       char    *buffer = (forcedVar ? forcedVar : aimBuffer);
       bool     tryAllocate = (isFunctionAllowingNewVariable(tam.function) && !tam.indirect);
-      int16_t  value;
+      int16_t  value, value2;
       if(tam.mode == tmNewMenu) {
         value = 1;
       }
-      else if((tam.function == ITM_XEQ) || (tam.function == ITM_XEQP1)) {
-        value = findNamedLabelWithDuplicate(buffer, dupNum);
-        if(value == INVALID_VARIABLE) {
-          for(int i = 0; i < LAST_ITEM; ++i) {
-            if((indexOfItems[i].status & CAT_STATUS) == CAT_FNCT && compareString(buffer, indexOfItems[i].itemCatalogName, CMP_NAME) == 0) {
-              if(tam.mode) {
-                tamLeaveMode();
-              }
-              if(calcMode == cmPem) {
-                aimBuffer[0] = 0;
-                if(!programListEnd) {
-                  scrollPemBackwards();
+      else if(tam.mode == tmLabel || tam.mode == tmSolve || (tam.mode == tmKey && tam.keyInputFinished) || (tam.mode == tmDelItem && softmenu[getSoftmenuId(0)].menuItem == -MNU_PROGS)) {
+        if(!tam.indirect) {
+          value = findNamedLabelWithDuplicate(buffer, dupNum);
+        }
+        else {
+          value = findNamedVariable(buffer);
+          if(calcMode != cmPem) {
+            if(value != INVALID_VARIABLE) {
+              value2 = indirectAddressing(value, indirectionType(tam.function), min, max, tryAllocate);
+              buffer = REGISTER_STRING_DATA(value);
+              dynamicMenuItem = -1;
+              value = (value2 != FAILED_INDIRECTION ? value2 : INVALID_VARIABLE);
+            }
+            else {
+              displayCalcErrorMessage(ERROR_UNDEF_SOURCE_VAR, ERR_REGISTER_LINE, REGISTER_X);
+              #if (EXTRA_INFO_ON_CALC_ERROR == 1)
+                sprintf(errorMessage, "string '%s' is not a named variable", buffer);
+                moreInfoOnError("In function _tamProcessInput:", errorMessage, NULL, NULL);
+              #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+            }
+          }
+        }
+        if(value == INVALID_VARIABLE && ((tam.function == ITM_XEQ) || (tam.function == ITM_XEQP1))) {  // If no label found then look for XEQ 'function'
+          if(!tam.indirect) {                                                                          //  indirection (XEQ -> 'function') not supported
+            for(int i = 0; i < LAST_ITEM; ++i) {
+              if((indexOfItems[i].status & CAT_STATUS) == CAT_FNCT && compareString(buffer, indexOfItems[i].itemCatalogName, CMP_NAME) == 0) { //change here to slacken the character check for commands: CMP_CLEANED_STRING_ONLY
+                if(tam.mode) {
+                  tamLeaveMode();
                 }
+                if(calcMode == cmPem) {
+                  aimBuffer[0] = 0;
+                  if(!programListEnd) {
+                    scrollPemBackwards();
+                  }
+                }
+                runFunction(i);
+                return;
               }
-              runFunction(i);
-              return;
             }
           }
           if(calcMode != cmPem) {
             if(tam.mode) {
               tamLeaveMode();
             }
-            displayCalcErrorMessage(ERROR_FUNCTION_NOT_FOUND, ERR_REGISTER_LINE, REGISTER_X);
-            errorMoreInfo("string '%s' is neither a named label nor a function name", buffer);
+            if(!tam.indirect) {
+              displayCalcErrorMessage(ERROR_FUNCTION_NOT_FOUND, ERR_REGISTER_LINE, REGISTER_X);
+              #if (EXTRA_INFO_ON_CALC_ERROR == 1)
+                sprintf(errorMessage, "string '%s' is neither a named label nor a function name", buffer);
+                moreInfoOnError("In function _tamProcessInput:", errorMessage, NULL, NULL);
+              #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
+            }
             return;
           }
         }
-      }
-      else if(tam.mode == tmLabel || tam.mode == tmSolve || (tam.mode == tmKey && tam.keyInputFinished) || (tam.mode == tmDelItem && softmenu[getSoftmenuId(0)].menuItem == -MNU_PROGS)) {
-        value = findNamedLabelWithDuplicate(buffer, dupNum);
-        if(value == INVALID_VARIABLE && tam.function != ITM_LBL && tam.function != ITM_LBLQ && (calcMode != cmPem || tam.mode != tmSolve || tam.function == ITM_PGMSLV)) {
-          if(calcMode == cmPem) {
-            /* nothing to do */
-          }
-          else if(calcMode != cmPem && getSystemFlag(FLAG_IGN1ER)) {
+        else if(value == INVALID_VARIABLE && tam.function != ITM_LBL && tam.function != ITM_LBLQ && (calcMode != cmPem || tam.mode != tmSolve)) {
+          if(calcMode != cmPem && getSystemFlag(FLAG_IGN1ER)) {
             clearSystemFlag(FLAG_IGN1ER);
-            errorMoreInfo("string '%s' is not a named label\nignored since IGN1ER was set", buffer);
+            #if (EXTRA_INFO_ON_CALC_ERROR == 1)
+              sprintf(errorMessage, "string '%s' is not a named label", buffer);
+              moreInfoOnError("In function _tamProcessInput:", errorMessage, "ignored since IGN1ER was set", NULL);
+            #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
           }
-          else {
+          else if((calcMode != cmPem || tam.function != ITM_GTO)){
             displayCalcErrorMessage(ERROR_LABEL_NOT_FOUND, ERR_REGISTER_LINE, REGISTER_X);
-            errorMoreInfo("string '%s' is not a named label", buffer);
+            #if (EXTRA_INFO_ON_CALC_ERROR == 1)
+              sprintf(errorMessage, "string '%s' is not a named label", buffer);
+              moreInfoOnError("In function _tamProcessInput:", errorMessage, NULL, NULL);
+            #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
           }
+        }
+        else if (calcMode != cmPem) {
+          reallyRunFunction(tamOperation(), value);
+          if(tam.mode) {
+            tamLeaveMode();
+          }
+          return;
         }
       }
       else if(tam.mode == tmDelItem && softmenu[getSoftmenuId(0)].menuItem == -MNU_MENUS) {
@@ -916,7 +935,7 @@ void tamReset(void) {
       }
       if(tam.indirect && value != INVALID_VARIABLE && calcMode != cmPem) {
         tryAllocate = isFunctionAllowingNewVariable(tam.function);
-        value = indirectAddressing(value, _indirectionType(tam.function), min, max, tryAllocate);
+        value = indirectAddressing(value, indirectionType(tam.function), min, max, tryAllocate);
         if(value == FAILED_INDIRECTION) {
           value = INVALID_VARIABLE;
         }

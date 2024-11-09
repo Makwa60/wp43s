@@ -63,6 +63,28 @@ void fnNop(uint16_t unusedButMandatoryParameter) {
 
 
 #if !defined(TESTSUITE_BUILD) && !defined(GENERATE_CATALOGS)
+
+  uint16_t indirectionType(uint16_t func) {
+    switch(indexOfItems[func].param) {
+      case tmFlagR   :
+      case tmFlagW   : {
+        return INDPM_FLAG;
+      }
+      case tmStoRcl  :
+      case tmRegister:
+      case tmCmp     :
+      case tmMDim   : {
+        return INDPM_REGISTER;
+      }
+      case tmLabel   : {
+        return INDPM_LABEL;
+      }
+      default:          {
+        return INDPM_PARAM;
+      }
+    }
+  }
+
   int16_t lastFunc = 0;
   int16_t lastParam = 0;
   char    lastTemp[16];

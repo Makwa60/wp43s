@@ -1959,6 +1959,7 @@
   char     *lastFuncSoftmenuName  (void);
   int16_t  lastSTORCL             (void);
   int16_t  lastFuncNo             (void);
+  uint16_t indirectionType        (uint16_t func);
 
   void reallyRunFunction(int16_t func, uint16_t param);
 
