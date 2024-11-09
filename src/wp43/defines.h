@@ -24,7 +24,7 @@
   #define ENABLE_SOLVER_PROGRESS           1 // Set to 1 to enable solver progress display (only if called in run mode)
   #define USE_MICHALSKI_MOSIG_TANH_SINH    1 // Set to 1 to use Michalski & Mosig tanh-sinh integration
   #define ENABLE_DATE_TYPE_WITH_TIME       1 // Set to 1 to enable dtDate with time of the day
-  #define USE_ITALIC_CONSTANT              0 // Set to 1 to use italic e and i for Euler's e and imaginary unit (disables CPXj)
+  #define USE_ITALIC_CONSTANT              1 // Set to 1 to use italic e and i for Euler's e and imaginary unit (disables CPXj)
 
   #define DECNUMDIGITS                    75 // Default number of digits used in the decNumber library
 
