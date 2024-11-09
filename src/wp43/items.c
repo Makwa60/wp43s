@@ -1968,7 +1968,11 @@ TO_QSPI const item_t indexOfItems[] = {
 /*  996 */  { fnEqCursorRight,              NOPARAM,                     "",                                            STD_RIGHT_ARROW,                               (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
 /*  997 */  { addItemToBuffer,              ITM_PAIR_OF_PARENTHESES,     "",                                            "( )",                                         (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
 /*  998 */  { addItemToBuffer,              ITM_VERTICAL_BAR,            "",                                            "|",                                           (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
+#if USE_REAL34_FUNCTIONS == 1
+/*  999 */  { addItemToBuffer,              ITM_ALOG_SYMBOL,             "",                                            STD_EULER_e,                                   (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
+#else // USE_REAL34_FUNCTIONS == 1
 /*  999 */  { addItemToBuffer,              ITM_ALOG_SYMBOL,             "",                                            "e" STD_SUB_E,                                 (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
+#endif // USE_REAL34_FUNCTIONS == 1
 /* 1000 */  { addItemToBuffer,              ITM_ROOT_SIGN,               "",                                            STD_SQUARE_ROOT STD_SUP_MINUS,                 (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
 /* 1001 */  { addItemToBuffer,              ITM_TIMER_SYMBOL,            "",                                            STD_TIMER,                                     (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
 /* 1002 */  { fnIntVar,                     NOPARAM,                     STD_INTEGRAL "fdx Var",                        STD_INTEGRAL "fdx",                            (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
