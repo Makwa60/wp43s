@@ -309,23 +309,13 @@ void fnStopProgram(uint16_t unusedButMandatoryParameter) {
     tmpStringLabelOrVariableName[stringLength] = 0;
   }
 
-  static uint16_t _indirectionType(uint16_t func) {
-    if(indexOfItems[func].param == tmFlagR || indexOfItems[func].param == tmFlagW) {
-      return INDPM_FLAG;
-    } else if(indexOfItems[func].param == tmStoRcl || indexOfItems[func].param == tmRegister || indexOfItems[func].param == tmCmp || indexOfItems[func].param == tmMDim) {
-      return INDPM_REGISTER;
-    } else if(indexOfItems[func].param == tmLabel) {
-      return INDPM_LABEL;
-    } else {
-      return INDPM_PARAM;
-    }
-  }
+
 
   static void _executeWithIndirectRegister(uint8_t *paramAddress, uint16_t op) {
     uint8_t opParam = *(uint8_t *)paramAddress;
     bool    tryAllocate = isFunctionAllowingNewVariable(op);
     if(opParam <= LAST_LOCAL_REGISTER) { // Local register from .00 to .98
-      int16_t realParam = indirectAddressing(opParam, _indirectionType(op), indexOfItems[op].tamMinMax >> TAM_MAX_BITS, indexOfItems[op].tamMinMax & TAM_MAX_MASK, tryAllocate);
+      int16_t realParam = indirectAddressing(opParam, indirectionType(op), indexOfItems[op].tamMinMax >> TAM_MAX_BITS, indexOfItems[op].tamMinMax & TAM_MAX_MASK, tryAllocate);
       if(realParam != FAILED_INDIRECTION) {
         reallyRunFunction(op, realParam);
       }
@@ -343,7 +333,7 @@ void fnStopProgram(uint16_t unusedButMandatoryParameter) {
     _getStringLabelOrVariableName(stringAddress);
     regist = findNamedVariable(tmpStringLabelOrVariableName);
     if(regist != INVALID_VARIABLE) {
-      int16_t realParam = indirectAddressing(regist, _indirectionType(op), indexOfItems[op].tamMinMax >> TAM_MAX_BITS, indexOfItems[op].tamMinMax & TAM_MAX_MASK, tryAllocate);
+      int16_t realParam = indirectAddressing(regist, indirectionType(op), indexOfItems[op].tamMinMax >> TAM_MAX_BITS, indexOfItems[op].tamMinMax & TAM_MAX_MASK, tryAllocate);
       if(realParam != FAILED_INDIRECTION) {
         reallyRunFunction(op, realParam);
       }
