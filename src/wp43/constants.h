@@ -31,4 +31,13 @@
    */
   void fnPi      (uint16_t unusedButMandatoryParameter);
 
+  /**
+   * Replaces the X content with i
+   * That is, the imaginary unit.
+   * Enables \b stack \b lift and refreshes the stack.
+   *
+   * \param[in] unusedButMandatoryParameter
+   */
+  void fnImaginaryUnit(uint16_t unusedButMandatoryParameter);
+
 #endif // !CONSTANTS_H

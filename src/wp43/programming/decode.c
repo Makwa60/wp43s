@@ -743,7 +743,16 @@ void decodeOneStep(uint8_t *step) {
   else {
     switch(indexOfItems[op].status & PTP_STATUS) {
       case PTP_NONE: {
-        sprintf(tmpString, "%s%s", (CST_01 <= op && op <= CST_79) ? "# " : "", indexOfItems[op].itemCatalogName);
+        #if USE_ITALIC_CONSTANT == 0
+          if(op == ITM_CONSTi) {
+            sprintf(tmpString, "# %s", COMPLEX_UNIT);
+          }
+          else {
+        #endif /* USE_ITALIC_CONSTANT == 0 */
+        sprintf(tmpString, "%s%s", (CST_01 <= op && op <= CST_79) || op == ITM_CONSTi ? "# " : "", indexOfItems[op].itemCatalogName);
+        #if USE_ITALIC_CONSTANT == 0
+          }
+        #endif /* USE_ITALIC_CONSTANT == 0 */
         break;
       }
 

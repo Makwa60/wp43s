@@ -45,3 +45,15 @@ void fnPi(uint16_t unusedButMandatoryParameter) {
   convertRealToReal34ResultRegister(const_pi, REGISTER_X);
   adjustResult(REGISTER_X, false, false, REGISTER_X, -1, -1);
 }
+
+
+
+void fnImaginaryUnit(uint16_t unusedButMandatoryParameter) {
+  liftStack();
+  currentSolverStatus &= ~SOLVER_STATUS_READY_TO_EXECUTE;
+
+  reallocateRegister(REGISTER_X, dtComplex34, COMPLEX34_SIZE_IN_BYTES, amNone);
+  convertRealToReal34ResultRegister(const_0, REGISTER_X);
+  convertRealToImag34ResultRegister(const_1, REGISTER_X);
+  adjustResult(REGISTER_X, false, false, REGISTER_X, -1, -1);
+}

@@ -32,6 +32,9 @@ testPgms: build.sim
 	mkdir -p res/dmcp
 	cp build.sim/src/generateTestPgms/testPgms.bin res/dmcp/
 
+ttf:
+	cd res/Fonts && ../../tools/png2ttf.py Charsets_fa.png WP43_NumericFont.ttf WP43_StandardFont.ttf
+
 sim: build.sim testPgms
 	cd build.sim && ninja sim
 	cp build.sim/src/generateCatalogs/softmenuCatalogs.h src/generated/

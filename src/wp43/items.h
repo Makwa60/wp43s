@@ -225,7 +225,7 @@
   #define CST_78                         205
   #define CST_79                         206
   #define ITM_CNST                       207
-  #define ITM_0208                       208
+  #define ITM_CONSTi                     208
   #define ITM_0209                       209
   #define ITM_0210                       210
   #define ITM_0211                       211

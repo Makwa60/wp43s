@@ -270,6 +270,7 @@ void fnNop(uint16_t unusedButMandatoryParameter) {
   void fnPow10                     (uint16_t unusedButMandatoryParameter) {}
   void fnIntegerMode               (uint16_t unusedButMandatoryParameter) {}
   void fnConstant                  (uint16_t unusedButMandatoryParameter) {}
+  void fnImaginaryUnit             (uint16_t unusedButMandatoryParameter) {}
   void fnInvert                    (uint16_t unusedButMandatoryParameter) {}
   void fn2Pow                      (uint16_t unusedButMandatoryParameter) {}
   void fn10Pow                     (uint16_t unusedButMandatoryParameter) {}
@@ -1149,7 +1150,11 @@ TO_QSPI const item_t indexOfItems[] = {
 /*  205 */  { fnConstant,                   77,                          STD_INFINITY,                                  STD_INFINITY,                                  (0 << TAM_MAX_BITS) |     0, CAT_CNST | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
 /*  206 */  { itemToBeCoded,                78,                          "#",                                           "#",                                           (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_ENABLED   | US_UNCHANGED | EIM_DISABLED | PTP_NONE         },
 /*  207 */  { fnConstant,                   tmValue,                     "CNST",                                        "CNST",                                        (0 << TAM_MAX_BITS) |   215, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NUMBER_8_16  }, // 215 is replaced at run time by NUMBER_OF_CONSTANTS_39 + NUMBER_OF_CONSTANTS_51 + NUMBER_OF_CONSTANTS_1071 + NUMBER_OF_CONSTANTS_34 - 1
-/*  208 */  { itemToBeCoded,                NOPARAM,                     "0208",                                        "0208",                                        (0 << TAM_MAX_BITS) |     0, CAT_FREE | SLS_ENABLED   | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
+#if USE_ITALIC_CONSTANT != 0
+/*  208 */  { fnImaginaryUnit,              NOPARAM,                     STD_IMAGINARY_i,                               STD_IMAGINARY_i,                               (0 << TAM_MAX_BITS) |     0, CAT_CNST | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+#else /* USE_ITALIC_CONSTANT != 0 */
+/*  208 */  { fnImaginaryUnit,              NOPARAM,                     "i",                                           "i",                                           (0 << TAM_MAX_BITS) |     0, CAT_CNST | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+#endif /* USE_ITALIC_CONSTANT != 0 */
 /*  209 */  { itemToBeCoded,                NOPARAM,                     "0209",                                        "0209",                                        (0 << TAM_MAX_BITS) |     0, CAT_FREE | SLS_ENABLED   | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
 /*  210 */  { itemToBeCoded,                NOPARAM,                     "0210",                                        "0210",                                        (0 << TAM_MAX_BITS) |     0, CAT_FREE | SLS_ENABLED   | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
 /*  211 */  { itemToBeCoded,                NOPARAM,                     "0211",                                        "0211",                                        (0 << TAM_MAX_BITS) |     0, CAT_FREE | SLS_ENABLED   | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
