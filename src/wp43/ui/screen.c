@@ -52,8 +52,8 @@
 #include "wp43.h"
 
 #if !defined(TESTSUITE_BUILD)
-  static const char *whoStr1 = "WP43" STD_SPACE_3_PER_EM "by" STD_SPACE_3_PER_EM "Mihail," STD_SPACE_3_PER_EM "Martin," STD_SPACE_3_PER_EM "Ben," STD_SPACE_3_PER_EM "Walter," STD_SPACE_3_PER_EM "Jaco," STD_SPACE_3_PER_EM "Didier," ;
-  static const char *whoStr2 = "and" STD_SPACE_3_PER_EM "Pauli";
+  static const char *whoStr1 = "WP43" STD_SPACE_3_PER_EM "by" STD_SPACE_3_PER_EM "Ben," STD_SPACE_3_PER_EM "Didier," STD_SPACE_3_PER_EM "Jaco," STD_SPACE_3_PER_EM "Martin," STD_SPACE_3_PER_EM "Mihail," STD_SPACE_3_PER_EM "Pauli," ;
+  static const char *whoStr2 = "and" STD_SPACE_3_PER_EM "Walter";
   static const char *versionStr = "WP43" STD_SPACE_3_PER_EM VERSION_STRING;
 
   /* Names of day of week */
