@@ -630,7 +630,7 @@ void clearScreen(void) {
       if(temporaryInformation == TI_STATISTIC_LR && (getRegisterDataType(REGISTER_X) != dtReal34)) {
         if(regist == REGISTER_X) {
           _printTiStatisticLr(tmpString);
-          errorMoreInfo("BestF is set, but will not work until REAL data points are used.\n%s", errorMessages[ERROR_INVALID_DATA_TYPE_FOR_OP]);
+          errorMoreInfo("BestF is set but will not work until REAL data points are used.\n%s", errorMessages[ERROR_INVALID_DATA_TYPE_FOR_OP]);
           w = stringWidth(tmpString, &standardFont, true, true);
           showString(tmpString, &standardFont, SCREEN_WIDTH - w, Y_POSITION_OF_REGISTER_X_LINE - REGISTER_LINE_HEIGHT*(regist - REGISTER_X) + 6, vmNormal, true, true);
         }
