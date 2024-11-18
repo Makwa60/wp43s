@@ -966,7 +966,6 @@ void fnReset(uint16_t confirmation) {
     exponentHideLimit = 0;
     lastIntegerBase = 0;
     lastDenominator = 4;
-    temporaryInformation = TI_RESET;
 
     currentInputVariable = INVALID_VARIABLE;
     currentMvarLabel = INVALID_VARIABLE;
@@ -1032,6 +1031,8 @@ void fnReset(uint16_t confirmation) {
       //Check and update current power status (USB / LOWBAT)
       dmcpCheckPowerStatus();
     #endif // DMCP_BUILD
+ 
+    temporaryInformation = TI_RESET;
   }
 }
 

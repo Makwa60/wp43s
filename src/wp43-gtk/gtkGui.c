@@ -17,9 +17,11 @@
 #include "mathematics/square.h"
 #include "programming/manage.h"
 #include "saveRestoreCalcState.h"
+#include "solver/equation.h"
 #include "ui/bufferize.h"
 #include "ui/keyboard.h"
 #include "ui/screen.h"
+#include "ui/softmenus.h"
 #include "ui/statusBar.h"
 #include "ui/tam.h"
 #include "wp43-gtk.h"
@@ -1323,6 +1325,34 @@ static keyCode_t _keyCodeFromGdkKey(uint32_t gdkKey, bool Alpha) {
       case GDK_KEY_Down:
         return kcDown;
 
+      case GDK_KEY_Left:
+        if(tam.alpha || (tam.mode == tmNewMenu)) {
+          addItemToBuffer(ITM_AIM_LEFT);
+        }
+        else if((calcMode == cmAim) || ((calcMode == cmPem) && isAlphabeticSoftmenu())) {
+          fnAimCursorLeft(NOPARAM);
+        }
+        else if(calcMode == cmEim) {
+          fnEqCursorLeft(NOPARAM);
+        }
+        refreshScreen();
+        lcd_refresh();
+        return kcNoKey;
+
+      case GDK_KEY_Right:
+        if(tam.alpha  || (tam.mode == tmNewMenu)) {
+          addItemToBuffer(ITM_AIM_RIGHT);
+        }
+        else if((calcMode == cmAim) || ((calcMode == cmPem) && isAlphabeticSoftmenu())) {
+          fnAimCursorRight(NOPARAM);
+        }
+        else if(calcMode == cmEim) {
+          fnEqCursorRight(NOPARAM);
+        }
+        refreshScreen();
+        lcd_refresh();
+        return kcNoKey;
+
       case GDK_KEY_Escape:
         return kcExit;
 
@@ -1360,7 +1390,9 @@ static keyCode_t _keyCodeFromGdkKey(uint32_t gdkKey, bool Alpha) {
             item = greekMap[item - ITM_A];
           }
           if((calcMode == cmPem) && !tamIsActive() && getSystemFlag(FLAG_ALPHA) && !catalog) {
+            alphaCase = AC_UPPER;           // Temporary set to ensure no case conversion will be done in pemAlpha
             pemAlpha(item);
+            setAlphaCaseToCapsLockState();
           }
           else {
             addItemToBuffer(item);
@@ -1561,7 +1593,7 @@ static keyCode_t _keyCodeFromGdkKey(uint32_t gdkKey, bool Alpha) {
 
 static gboolean keyPressed(GtkWidget *w, GdkEventKey *event, gpointer data) {
   uint32_t gdkKey = event->keyval;
-  bool alphaInput = (getSystemFlag(FLAG_ALPHA)  || (calcMode == cmAim || calcMode == cmEim || (catalog && catalog != CATALOG_MVAR)));
+  bool alphaInput = (getSystemFlag(FLAG_ALPHA)  || (calcMode == cmAim || calcMode == cmEim || ((calcMode == cmAssign) & tam.alpha) || (tam.mode == tmNewMenu) || (catalog && catalog != CATALOG_MVAR)));
 
   switch(gdkKey) {
     case GDK_KEY_F10:

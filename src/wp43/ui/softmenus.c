@@ -291,9 +291,11 @@ TO_QSPI const int16_t menu_DELITM[]      = {  ITM_NULL,                     ITM_
 
 TO_QSPI const int16_t menu_YESNO[]       = {  ITM_NULL,                     ITM_YES,                    ITM_NULL,                 ITM_NULL,              ITM_NO,                      ITM_NULL                     };
 
-TO_QSPI const int16_t menu_CAT_AIM[]     = {  ITM_NULL,                     ITM_NULL,                  -MNU_CHARS,                ITM_NULL,              ITM_NULL,                   -MNU_MENUS_AIM                };
+TO_QSPI const int16_t menu_CAT_AIM[]     = { -MNU_CURSOR,                   ITM_NULL,                  -MNU_CHARS,                ITM_NULL,              ITM_NULL,                   -MNU_MENUS_AIM                };
 
-TO_QSPI const int16_t menu_MENUS_AIM[]   = { -MNU_ALPHAINTL,               -MNU_ALPHAMATH,             -MNU_ALPHADOT,            -MNU_ALPHA_OMEGA,       ITM_NULL,                    ITM_NULL                     };
+TO_QSPI const int16_t menu_MENUS_AIM[]   = { -MNU_ALPHAINTL,               -MNU_ALPHAMATH,             -MNU_ALPHADOT,            -MNU_ALPHA_OMEGA,      -MNU_CURSOR,                  ITM_NULL                     };
+
+TO_QSPI const int16_t menu_CURSOR[]      = {  ITM_AIM_LEFT,                 ITM_AIM_RIGHT,              ITM_NULL,                 ITM_NULL,              ITM_NULL,                    ITM_NULL                     };
 
 /*      Menu name                           <----------------------------------------------------------------------------- 6 functions ---------------------------------------------------------------------------->  */
 /*                                          <---------------------------------------------------------------------- 6 f shifted functions ------------------------------------------------------------------------->  */
@@ -550,7 +552,8 @@ TO_QSPI const softmenu_t softmenu[] = {
 /* 113 */  {.menuItem = -MNU_FIT,         .numItems = sizeof(menu_FIT        )/sizeof(int16_t), .softkeyItem = menu_FIT         },
 /* 114 */  {.menuItem = -MNU_TAMFLAG_WRITE,  .numItems = sizeof(menu_TamFlagWr     )/sizeof(int16_t), .softkeyItem = menu_TamFlagWr     },
 /* 115 */  {.menuItem = -MNU_SYSFL_WRITABLE, .numItems = sizeof(menu_SYSFL_writable)/sizeof(int16_t), .softkeyItem = menu_SYSFL_writable},
-/* 116 */  {.menuItem =  0,               .numItems = 0,                                        .softkeyItem = NULL             }
+/* 116 */  {.menuItem = -MNU_CURSOR,      .numItems = sizeof(menu_CURSOR     )/sizeof(int16_t), .softkeyItem = menu_CURSOR      },
+/* 117 */  {.menuItem =  0,               .numItems = 0,                                        .softkeyItem = NULL             }
 };
 
 dynamicSoftmenu_t dynamicSoftmenu[NUMBER_OF_DYNAMIC_SOFTMENUS] = {
@@ -694,7 +697,8 @@ dynamicSoftmenu_t dynamicSoftmenu[NUMBER_OF_DYNAMIC_SOFTMENUS] = {
   /* 112 */    "YESNO",
   /* 113 */    "FIT",
   /* 114 */    "TAMFLAG_WRITE",
-  /* 115 */    "SYSFL_writable"
+  /* 115 */    "SYSFL_writable",
+  /* 116 */    "CURSOR"
   };
 #endif // PC_BUILD
 
@@ -709,6 +713,7 @@ uint8_t *getNthString(uint8_t *ptr, int16_t n) { // Starting with string 0 (the 
 
 void fnClearMyMenu(uint16_t unusedButMandatoryParameter) {
   memset(userMenuItems,  0, sizeof(userMenuItem_t) * 18);
+  temporaryInformation = TI_MY_MENU_CLEARED;
 }
 
 void fnClearMyPFN(uint16_t unusedButMandatoryParameter) {
@@ -717,18 +722,24 @@ void fnClearMyPFN(uint16_t unusedButMandatoryParameter) {
 #else
   initMyPFN( true );
 #endif // XPB
+  temporaryInformation = TI_MY_PFN_CLEARED;
 }
 
 void fnClearMyAlpha(uint16_t unusedButMandatoryParameter) {
   memset(userAlphaItems, 0, sizeof(userMenuItem_t) * 18);
-  itemToBeAssigned = -MNU_ALPHAMATH;
+  itemToBeAssigned = ITM_AIM_LEFT;
   assignToMyAlpha(0);
-  itemToBeAssigned = -MNU_ALPHADOT;
+  itemToBeAssigned = -MNU_ALPHAMATH;
   assignToMyAlpha(1);
+  itemToBeAssigned = -MNU_ALPHADOT;
+  assignToMyAlpha(2);
   itemToBeAssigned = -MNU_ALPHA_OMEGA;
-  assignToMyAlpha(4);
+  assignToMyAlpha(3);
   itemToBeAssigned = -MNU_ALPHAINTL;
+  assignToMyAlpha(4);
+  itemToBeAssigned = ITM_AIM_RIGHT;
   assignToMyAlpha(5);
+  temporaryInformation = TI_MY_ALPHA_CLEARED;
 }
 
 
@@ -1672,8 +1683,11 @@ void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
     softmenuStacks[sm].item[SOFTMENU_STACK_SIZE - 1].userMenuId = 0;
 
     // failsafe return to Normal stack
-    if (calcMode == cmNormal) {
+    if ((calcMode == cmNormal) && !tamIsActive()) {
       while (sm != smNormal) {
+        #if defined(PC_BUILD)
+          printf("**[DL]** failsafe return to Normal stack\n");fflush(stdout);
+        #endif // PC_BUILD
         popSmStackMode();
         sm = smStackMode[0];
       }
@@ -1899,7 +1913,8 @@ void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
       case -MNU_alpha_omega:
       case -MNU_ALPHAMATH:
       case -MNU_MyAlpha:
-      case -MNU_ALPHADOT: {
+      case -MNU_ALPHADOT:
+      case -MNU_CURSOR: {
         return true;
       }
       default: {

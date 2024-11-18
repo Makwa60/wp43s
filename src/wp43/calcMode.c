@@ -94,8 +94,8 @@ calcMode_t calcMode;
 
   void calcModeNormal(void) {
     calcMode = cmNormal;
-    
-    if(getSmStackMode() != smNormal) {
+
+     if(getSmStackMode() != smNormal) {
         popSmStackMode();  // Return to previous softmenu stack which should be smNormal
     }
 

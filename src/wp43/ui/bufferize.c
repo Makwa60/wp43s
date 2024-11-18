@@ -43,6 +43,20 @@
 
 #include "wp43.h"
 
+  void fnAimCursorLeft(uint16_t unusedButMandatoryParameter) {
+    if(alphaCursor > 0) {
+      --alphaCursor;
+    }
+  }
+
+
+
+  void fnAimCursorRight(uint16_t unusedButMandatoryParameter) {
+    if(alphaCursor < (uint32_t)stringGlyphLength(aimBuffer)) {
+      ++alphaCursor;
+    }
+  }
+
 #if !defined(TESTSUITE_BUILD)
   void cbAsmActive(uint16_t param) {
     if(catalog) {
@@ -56,6 +70,7 @@
     shiftF = false;
     shiftG = false;
     aimBuffer[0] = 0;
+    alphaCursor = 0;
     calcModeEnter(cmAim);
 
     #if defined(PC_BUILD)
@@ -333,51 +348,17 @@
           sprintf(errorMessage, "In function addItemToBuffer: the AIM input buffer is full! %d bytes for now", AIM_BUFFER_LENGTH);
           bugScreen(errorMessage);
         }
-        else if(calcMode == cmEim) {
-          const char *addChar = item == ITM_PAIR_OF_PARENTHESES ? "()" :
-                                item == ITM_VERTICAL_BAR        ? "||" :
-                                item == ITM_ROOT_SIGN           ? STD_SQUARE_ROOT "()" :
-          #if USE_ITALIC_CONSTANT != 0
-                                item == ITM_ALOG_SYMBOL         ? STD_EULER_e "^()" :
-          #else /* USE_ITALIC_CONSTANT != 0 */
-                                item == ITM_ALOG_SYMBOL         ? "e" STD_SUB_E "^()" :
-          #endif /* USE_ITALIC_CONSTANT != 0 */
-                                indexOfItems[item].itemSoftmenuName;
-          char *aimCursorPos = aimBuffer;
-          char *aimBottomPos = aimBuffer + stringByteLength(aimBuffer);
-          uint32_t itemLen = stringByteLength(addChar);
-          for(uint32_t i = 0; i < equationEditorCursor; ++i) {
-            aimCursorPos += (*aimCursorPos & 0x80) ? 2 : 1;
-          }
-          for(; aimBottomPos >= aimCursorPos; --aimBottomPos) {
-            *(aimBottomPos + itemLen) = *aimBottomPos;
-          }
-          xcopy(aimCursorPos, addChar, itemLen);
-          switch(item) {
-            case ITM_ALOG_SYMBOL: {
-              #if USE_ITALIC_CONSTANT != 0
-                equationEditorCursor += 3;
-              #else /* USE_ITALIC_CONSTANT != 0 */
-                equationEditorCursor += 4;
-              #endif /* USE_ITALIC_CONSTANT != 0 */
-              break;
-            }
-            case ITM_ROOT_SIGN: {
-              equationEditorCursor += 2;
-              break;
-            }
-            case ITM_PAIR_OF_PARENTHESES:
-            case ITM_VERTICAL_BAR: {
-              equationEditorCursor += 1;
-              break;
-            }
-            default: {
-              equationEditorCursor += stringGlyphLength(indexOfItems[item].itemSoftmenuName);
-            }
-          }
+        else if((calcMode == cmEim) || (calcMode == cmAim))  {
+          insertAlphaCharacter(item, (calcMode == cmAim ? &alphaCursor : &equationEditorCursor));
+        }
+        else if(tam.alpha && (item == ITM_AIM_LEFT)) {
+          fnAimCursorLeft(NOPARAM);
+        }
+        else if(tam.alpha && (item == ITM_AIM_RIGHT)) {
+          fnAimCursorRight(NOPARAM);
         }
         else {
-          xcopy(aimBuffer + stringByteLength(aimBuffer), indexOfItems[item].itemSoftmenuName, stringByteLength(indexOfItems[item].itemSoftmenuName) + 1);
+          insertAlphaCharacter(item, &alphaCursor);
         }
       }
 
@@ -2342,6 +2323,64 @@
       aimBuffer[0] = 0;
 
       setSystemFlag(FLAG_ASLIFT);
+    }
+  }
+
+  void insertAlphaCharacter(uint16_t item, uint16_t *currentCursor) {
+    const char *addChar = item == ITM_PAIR_OF_PARENTHESES ? "()" :
+                          item == ITM_VERTICAL_BAR        ? "||" :
+                          item == ITM_ROOT_SIGN           ? STD_SQUARE_ROOT "()" :
+      #if USE_ITALIC_CONSTANT != 0
+                          item == ITM_ALOG_SYMBOL         ? STD_EULER_e "^()" :
+      #else /* USE_ITALIC_CONSTANT != 0 */
+                          item == ITM_ALOG_SYMBOL         ? "e" STD_SUB_E "^()" :
+      #endif /* USE_ITALIC_CONSTANT != 0 */
+                          indexOfItems[item].itemSoftmenuName;
+    char *aimCursorPos = aimBuffer;
+    char *aimBottomPos = aimBuffer + stringByteLength(aimBuffer);
+    uint32_t itemLen = stringByteLength(addChar);
+    for(uint32_t i = 0; i < *currentCursor; ++i) {
+      aimCursorPos += (*aimCursorPos & 0x80) ? 2 : 1;
+    }
+    for(; aimBottomPos >= aimCursorPos; --aimBottomPos) {
+      *(aimBottomPos + itemLen) = *aimBottomPos;
+    }
+    xcopy(aimCursorPos, addChar, itemLen);
+    switch(item) {
+      case ITM_ALOG_SYMBOL: {
+        #if USE_ITALIC_CONSTANT != 0
+          *currentCursor += 3;
+        #else /* USE_ITALIC_CONSTANT != 0 */
+          *currentCursor += 4;
+        #endif /* USE_ITALIC_CONSTANT != 0 */
+        break;
+      }
+      case ITM_ROOT_SIGN: {
+        *currentCursor += 2;
+        break;
+      }
+      case ITM_PAIR_OF_PARENTHESES:
+      case ITM_VERTICAL_BAR: {
+        *currentCursor += 1;
+        break;
+      }
+      default: {
+        *currentCursor += stringGlyphLength(indexOfItems[item].itemSoftmenuName);
+      }
+    }
+  }
+
+  void deleteAlphaCharacter(uint16_t *currentCursor) {
+    char *srcPos = aimBuffer;
+    char *dstPos = aimBuffer;
+    char *lstPos = aimBuffer + stringNextGlyph(aimBuffer, stringLastGlyph(aimBuffer));
+    --*currentCursor;
+    for(uint32_t i = 0; i < *currentCursor; ++i) {
+      dstPos += (*dstPos & 0x80) ? 2 : 1;
+    }
+    srcPos = dstPos + ((*dstPos & 0x80) ? 2 : 1);
+    for(; srcPos <= lstPos;) {
+      *(dstPos++) = *(srcPos++);
     }
   }
 #endif // !TESTSUITE_BUILD

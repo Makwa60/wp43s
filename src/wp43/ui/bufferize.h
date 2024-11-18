@@ -10,10 +10,16 @@
   #include <stdint.h>
   #include "realType.h"
 
+
+    void     fnAimCursorLeft          (uint16_t unusedButMandatoryParameter);
+    void     fnAimCursorRight         (uint16_t unusedButMandatoryParameter);
+    
   #if !defined(TESTSUITE_BUILD)
     void     cbAsmActive              (uint16_t param);
 
     void     fnAim                    (uint16_t unusedButMandatoryParameter);
+    void     insertAlphaCharacter     (uint16_t item, uint16_t *currentCursor);
+    void     deleteAlphaCharacter     (uint16_t *currentCursor);
     void     resetAlphaSelectionBuffer(void);
     uint16_t convertItemToSubOrSup    (uint16_t item, int16_t subOrSup);
 

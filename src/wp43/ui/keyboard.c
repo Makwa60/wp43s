@@ -714,14 +714,28 @@ bool      _kbSeenInterrupt     = false;
           if(tamIsActive() && catalog && (tam.digitsSoFar || tam.function == ITM_BESTF || tam.function == ITM_CNST || (!tam.indirect && (tam.mode == tmValue || tam.mode == tmValueChb)))) {
             // disabled
           }
-          else if(tamIsActive() && (!tam.alpha || isAlphabeticSoftmenu())) {
+          else if((tamIsActive()  && (!tam.alpha || isAlphabeticSoftmenu())) || ((calcMode == cmAssign) && (previousCalcMode != cmAim) && isAlphabeticSoftmenu())) {
             addItemToBuffer(item);
           }
           else if((calcMode == cmNormal || calcMode == cmAim ) && isAlphabeticSoftmenu()) {
             if(calcMode == cmNormal) {
               fnAim(NOPARAM);
             }
-            addItemToBuffer(item);
+            if(item == ITM_AIM_LEFT) {
+              fnAimCursorLeft(NOPARAM);
+            }
+            else if(item == ITM_AIM_RIGHT) {
+              fnAimCursorRight(NOPARAM);
+            }
+            else {
+              addItemToBuffer(item);
+            }
+          }
+          else if((calcMode == cmPem) && isAlphabeticSoftmenu() && (item == ITM_AIM_LEFT)) {
+            fnAimCursorLeft(NOPARAM);
+          }
+          else if((calcMode == cmPem) && isAlphabeticSoftmenu() && (item == ITM_AIM_RIGHT)) {
+            fnAimCursorRight(NOPARAM);
           }
           else if(calcMode == cmEim && catalog && catalog != CATALOG_MVAR) {
             addItemToBuffer(item);
@@ -1905,9 +1919,14 @@ void fnKeyExit(uint16_t unusedButMandatoryParameter) {
         if(calcMode == cmPem) {
           aimBuffer[0] = 0;
         }
-        tamLeaveMode();
-        if(calcMode == cmPem) {
-          scrollPemBackwards();
+        if(tam.alpha && softmenu[getSoftmenuId(0)].menuItem != -MNU_MyAlpha) {
+          popSoftmenu();
+        }
+        else {
+          tamLeaveMode();
+          if(calcMode == cmPem) {
+            scrollPemBackwards();
+          }
         }
       }
       return;
@@ -2247,9 +2266,8 @@ void fnKeyBackspace(uint16_t unusedButMandatoryParameter) {
             cursorShow(true, xCursor, Y_POSITION_OF_AIM_LINE + 6);
           }
         }
-        else if(stringByteLength(aimBuffer) > 0) {
-          lg = stringLastGlyph(aimBuffer);
-          aimBuffer[lg] = 0;
+        else if(alphaCursor > 0) {
+          deleteAlphaCharacter(&alphaCursor);
         }
         if(aimBuffer[0] == 0) {
           closeAim();
@@ -2275,17 +2293,7 @@ void fnKeyBackspace(uint16_t unusedButMandatoryParameter) {
 
       case cmEim: {
         if(equationEditorCursor > 0) {
-          char *srcPos = aimBuffer;
-          char *dstPos = aimBuffer;
-          char *lstPos = aimBuffer + stringNextGlyph(aimBuffer, stringLastGlyph(aimBuffer));
-          --equationEditorCursor;
-          for(uint32_t i = 0; i < equationEditorCursor; ++i) {
-            dstPos += (*dstPos & 0x80) ? 2 : 1;
-          }
-          srcPos = dstPos + ((*dstPos & 0x80) ? 2 : 1);
-          for(; srcPos <= lstPos;) {
-            *(dstPos++) = *(srcPos++);
-          }
+          deleteAlphaCharacter(&equationEditorCursor);
         }
         break;
       }
@@ -2390,9 +2398,10 @@ void fnKeyBackspace(uint16_t unusedButMandatoryParameter) {
             calcMode = previousCalcMode;
           }
           else if(stringByteLength(aimBuffer) != 0) {
-            // Delete the last character
-            int16_t lg = stringLastGlyph(aimBuffer);
-            aimBuffer[lg] = 0;
+            // Delete the character before the cursor
+            if(alphaCursor > 0) {
+              deleteAlphaCharacter(&alphaCursor);
+            }
           }
           else {
             assignLeaveAlpha();
@@ -2404,9 +2413,10 @@ void fnKeyBackspace(uint16_t unusedButMandatoryParameter) {
             itemToBeAssigned = 0;
           }
           else if(stringByteLength(aimBuffer) != 0) {
-            // Delete the last character
-            int16_t lg = stringLastGlyph(aimBuffer);
-            aimBuffer[lg] = 0;
+            // Delete the character before the cursor
+            if(alphaCursor > 0) {
+              deleteAlphaCharacter(&alphaCursor);
+            }
           }
           else {
             assignLeaveAlpha();

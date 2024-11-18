@@ -677,6 +677,21 @@ void clearScreen(void) {
         w = stringWidth(tmpString, &standardFont, true, true);
         showString(tmpString, &standardFont, SCREEN_WIDTH - w, Y_POSITION_OF_REGISTER_X_LINE - REGISTER_LINE_HEIGHT*(regist - REGISTER_X) + 6, vmNormal, true, true);
       }
+      
+      else if(temporaryInformation == TI_MY_MENU_CLEARED && regist == REGISTER_X) {
+        sprintf(prefix, "MyMenu cleared.");
+        displayTemporaryInformationOnX(prefix);
+      }
+
+      else if(temporaryInformation == TI_MY_PFN_CLEARED && regist == REGISTER_X) {
+        sprintf(prefix, "MyPFN cleared.");
+        displayTemporaryInformationOnX(prefix);
+      }
+
+      else if(temporaryInformation == TI_MY_ALPHA_CLEARED && regist == REGISTER_X) {
+        sprintf(prefix, "My" STD_alpha " cleared.");
+        displayTemporaryInformationOnX(prefix);
+      }
 
      #if defined(PC_BUILD)
       else if(temporaryInformation == TI_DMCP_ONLY && regist == REGISTER_X) {
@@ -852,16 +867,14 @@ void clearScreen(void) {
         }
 
         else if(regist == AIM_REGISTER_LINE && ((calcMode == cmAim && !tamIsActive()) || (calcMode == cmAssign && previousCalcMode == cmAim))) {
-          if(stringWidth(aimBuffer, &standardFont, true, true) < SCREEN_WIDTH - 8) { // 8 is the standard font cursor width
-            uint32_t xCursor = showString(aimBuffer, &standardFont, 1, Y_POSITION_OF_NIM_LINE + 6, vmNormal, true, true);
-            uint32_t yCursor = Y_POSITION_OF_NIM_LINE + 6;
-            cursorShow(true, xCursor, yCursor);
+          insertAlphaCursor(0);
+          if(stringWidth(tmpString, &standardFont, true, true) < SCREEN_WIDTH - 8) { // 8 is the standard font cursor width
+            showString(tmpString, &standardFont, 1, Y_POSITION_OF_NIM_LINE + 6, vmNormal, true, true);
           }
           else {
             char *aimw;
-            w = stringByteLength(aimBuffer) + 1;
-            xcopy(tmpString,        aimBuffer, w);
-            xcopy(tmpString + 1500, aimBuffer, w);
+            w = stringByteLength(tmpString) + 1;
+            xcopy(tmpString + 1500, tmpString, w);
             aimw = stringAfterPixels(tmpString, &standardFont, SCREEN_WIDTH - 2, true, true);
             w = aimw - tmpString;
             *aimw = 0;
@@ -871,10 +884,7 @@ void clearScreen(void) {
             }
             else {
               showString(tmpString, &standardFont, 1, Y_POSITION_OF_NIM_LINE - 3, vmNormal, true, true);
-
-              uint32_t xCursor = showString(tmpString + 1500 + w, &standardFont, 1, Y_POSITION_OF_NIM_LINE + 18, vmNormal, true, true);
-              uint32_t yCursor = Y_POSITION_OF_NIM_LINE + 18;
-              cursorShow(true, xCursor, yCursor);
+              showString(tmpString + 1500 + w, &standardFont, 1, Y_POSITION_OF_NIM_LINE + 18, vmNormal, true, true);
             }
           }
         }
@@ -2178,6 +2188,58 @@ void fnAGraph(uint16_t regist) {
         displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, REGISTER_X);
         errorMoreInfo("register %" PRId16 " is %s:\nnot suited for addressing!", regist, getRegisterDataTypeName(regist, true, false));
       }
+    }
+  #endif // !TESTSUITE_BUILD
+}
+
+void insertAlphaCursor(uint16_t startAt) {
+  #if !defined(TESTSUITE_BUILD)
+    char       *bufPtr = tmpString + startAt;
+    const char *strPtr = aimBuffer;
+    uint16_t    strLength = 0;
+    int16_t     strWidth = 0;
+    int16_t     glyphWidth = 0;
+
+    *bufPtr       = 0;
+
+    if(alphaCursor == 0) {
+      *bufPtr       = STD_CURSOR[0];
+      *(bufPtr + 1) = STD_CURSOR[1];
+      *(bufPtr + 2) = 0;
+      glyphWidth = stringWidth(bufPtr, &standardFont, true, true);
+      strWidth += glyphWidth;
+      bufPtr += 2;
+    }
+
+    while((*strPtr) != 0) {
+      ++strLength;
+      *bufPtr = *strPtr;
+
+      /* Double-byte characters */
+      if((*strPtr) & 0x80) {
+        *(bufPtr + 1) = *(strPtr + 1);
+        *(bufPtr + 2) = 0;
+        bufPtr += 2;
+      }
+
+      /* Single-byte characters */
+      else {
+      *(bufPtr + 1) = 0;
+      bufPtr += 1;
+      }
+
+      /* Cursor */
+      if(strLength == alphaCursor) {
+         *bufPtr       = STD_CURSOR[0];
+        *(bufPtr + 1) = STD_CURSOR[1];
+        *(bufPtr + 2) = 0;
+        glyphWidth = stringWidth(bufPtr, &standardFont, true, true);
+        strWidth += glyphWidth;
+        bufPtr += 2;
+      }
+
+      /* Next character */
+      strPtr += ((*strPtr) & 0x80) ? 2 : 1;
     }
   #endif // !TESTSUITE_BUILD
 }

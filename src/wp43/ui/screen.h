@@ -18,8 +18,9 @@
   void       fnPixel                            (uint16_t unusedButMandatoryParameter);
   void       fnPoint                            (uint16_t unusedButMandatoryParameter);
   void       fnAGraph                           (uint16_t regist);
+  void       insertAlphaCursor                  (uint16_t startAt);
 
-  void     clearScreen                        (void);
+  void       clearScreen                        (void);
 
   #if !defined(TESTSUITE_BUILD)
     void     refreshScreen                      (void);
@@ -103,9 +104,9 @@
      * Display temporary information message on register X line.
      *
      * \param[in] *prefix Temporary Information message string
-     */    
+     */
 	void displayTemporaryInformationOnX         (char *prefix);
-	
+
 	/**
      * Displays one register line.
      *

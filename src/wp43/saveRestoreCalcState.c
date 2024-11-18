@@ -51,8 +51,9 @@
 // 94 Add different softmenu stacks for RUM, AIM & PEM, add MyPFN user menu
 // 95 Updated softmenuStack_t structure for user menu id
 // 96 Changed 'MSG r' to 'MSG n'
+// 97 Added cursor arrows to Mya
 //
-#define BACKUP_VERSION                     96  // Changed 'MSG r' to 'MSG n'
+#define BACKUP_VERSION                     97  // Added cursor arrows to Mya
 #define OLDEST_COMPATIBLE_BACKUP_VERSION   87  // save running app
 #define START_REGISTER_VALUE             1000  // was 1522, why?
 
@@ -287,6 +288,7 @@ static uint32_t restore(void *buffer, uint32_t size) {
     save(&currentFormula,                     sizeof(currentFormula));
     save(&equationEditorCursor,               sizeof(equationEditorCursor));
     save(&equationEditorScrollPosition,       sizeof(equationEditorScrollPosition));
+    save(&alphaCursor,                        sizeof(alphaCursor));
     save(&numberOfUserMenus,                  sizeof(numberOfUserMenus));
     save(&currentUserMenu,                    sizeof(currentUserMenu));
     save(&userKeyLabelSize,                   sizeof(userKeyLabelSize));
@@ -591,6 +593,9 @@ static uint32_t restore(void *buffer, uint32_t size) {
       restore(&currentFormula,                     sizeof(currentFormula));
       restore(&equationEditorCursor,               sizeof(equationEditorCursor));
       restore(&equationEditorScrollPosition,       sizeof(equationEditorScrollPosition));
+      if(backupVersion >= 97) {  // cursor arrows
+        restore(&alphaCursor,                      sizeof(alphaCursor));
+      }
       restore(&numberOfUserMenus,                  sizeof(numberOfUserMenus));
       restore(&currentUserMenu,                    sizeof(currentUserMenu));
       restore(&userKeyLabelSize,                   sizeof(userKeyLabelSize));
@@ -697,6 +702,18 @@ static uint32_t restore(void *buffer, uint32_t size) {
         printf("MSG now followed by a value\n");
         printf("Loaded MSG in programs will be replaced by NOP\n");fflush(stdout);
         replaceInstruction(beginOfProgramMemory, 1, ITM_MSG, ITM_NOP_REGISTER);
+      }
+
+      if(backupVersion <= 96) { // Cursor arrows added to Mya
+        printf("**** Old version of Myalpha ****\n");
+        printf("Myalpha includes now cursor arrows\n");fflush(stdout);
+        sprintf(tmpString,"**** Old version of Myalpha ****\n"
+                          "Myalpha includes now cursor "
+                          "arrows. Use CLMyα to get the\n"
+                          "new default menu.\n");
+        #if !defined(TESTSUITE_BUILD)
+          show_warning(tmpString);
+        #endif // TESTSUITE_BUILD
       }
 
       scanLabelsAndPrograms();
@@ -2254,6 +2271,17 @@ void doLoad(uint16_t loadMode, uint16_t s, uint16_t n, uint16_t d, uint16_t load
       replaceInstruction(beginOfNewlyLoadedProgramMemory, 1, ITM_MSG, ITM_NOP_REGISTER);
     }
   }
+
+  if(loadedVersion <= 96) { // Cursor arrows added to Mya
+    sprintf(tmpString,"**** Old version of Myalpha ****\n"
+                      "Myalpha includes now cursor "
+                      "arrows. Use CLMyα to get the\n"
+                      "new default menu.\n");
+    #if !defined(TESTSUITE_BUILD)
+      show_warning(tmpString);
+    #endif // TESTSUITE_BUILD
+  }
+
 
   scanLabelsAndPrograms();
 
