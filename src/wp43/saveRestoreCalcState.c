@@ -2273,10 +2273,10 @@ void doLoad(uint16_t loadMode, uint16_t s, uint16_t n, uint16_t d, uint16_t load
   }
 
   if(loadedVersion <= 96) { // Cursor arrows added to Mya
-    sprintf(tmpString,"**** Old version of Myalpha ****\n"
-                      "Myalpha includes now cursor "
-                      "arrows. Use CLMyα to get the\n"
-                      "new default menu.\n");
+    sprintf(tmpString,"***** Old version of Myalpha *****\n"
+                      "Myalpha includes now cursor arrows.\n"
+                      "Use CLMya to get the new default\n"
+                      "menu with the cursor arrows.\n");
     #if !defined(TESTSUITE_BUILD)
       show_warning(tmpString);
     #endif // TESTSUITE_BUILD
