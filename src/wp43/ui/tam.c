@@ -219,10 +219,13 @@ void tamReset(void) {
       if(tam.alpha) {
         tbPtr = stringAppend(tbPtr, STD_LEFT_SINGLE_QUOTE);
         if(aimBuffer[0] == 0) {
-          tbPtr = stringAppend(tbPtr, "_");
+          *(tbPtr++) = STD_CURSOR[0];
+          *(tbPtr++) = STD_CURSOR[1];
+          *(tbPtr) = 0;
         }
         else {
-          tbPtr = stringAppend(tbPtr, aimBuffer);
+          insertAlphaCursor(0);
+          tbPtr = stringAppend(tbPtr, tmpString);
           tbPtr = stringAppend(tbPtr, STD_RIGHT_SINGLE_QUOTE);
         }
       }
@@ -320,9 +323,10 @@ void tamReset(void) {
     else if(item == ITM_BACKSPACE) {
       if(tam.alpha) {
         if(stringByteLength(aimBuffer) != 0) {
-          // Delete the last character
-          int16_t lg = stringLastGlyph(aimBuffer);
-          aimBuffer[lg] = 0;
+          // Delete the character before the cursor
+          if(alphaCursor > 0) {
+            deleteAlphaCharacter(&alphaCursor);
+          }
         }
         else if(tam.mode == tmNewMenu) {
           tamLeaveMode();
@@ -431,6 +435,7 @@ void tamReset(void) {
         tam.alpha = true;
         setSystemFlag(FLAG_ALPHA);
         aimBuffer[0] = 0;
+        alphaCursor = 0;
         calcModeEnter(cmAim);
         if(beginWithLowercase) {
           alphaCase = AC_LOWER;
@@ -672,7 +677,7 @@ void tamReset(void) {
         return;
       }
       else if(!tam.alpha && !tam.digitsSoFar && !tam.dot && !valueParameter) {
-        if(tam.function == ITM_GTO) {
+        if(tam.function == ITM_GTO || tam.function == ITM_XEQ) {
           tam.function = ITM_GTOP;
           tam.min = 0;
           tam.max = max(getNumberOfSteps(), 99);
@@ -1028,6 +1033,7 @@ void tamReset(void) {
     }
 
     tam.alpha = (func == ITM_ASSIGN);
+    alphaCursor = 0;
     tam.currentOperation = tam.function;
     tam.digitsSoFar = 0;
     tam.dot = false;
@@ -1095,6 +1101,8 @@ void tamReset(void) {
       }
 
       case tmNewMenu: {
+        calcModeEnter(cmAim);
+        numberOfTamMenusToPop = 0;
         break;
       }
 

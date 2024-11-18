@@ -438,7 +438,6 @@ void fnPem(uint16_t unusedButMandatoryParameter) {
     bool     inTamMode = tamIsActive() && programList[currentProgramNumber - 1].step > 0;
     uint16_t numberOfSteps = getNumberOfSteps();
     uint16_t linesOfCurrentStep = 1;
-    bool     cursorAppeared = false;
 
     if(calcMode != cmPem && !(calcMode == cmConfirmation && previousCalcMode == cmPem)) {
       calcMode = cmPem;
@@ -526,9 +525,8 @@ void fnPem(uint16_t unusedButMandatoryParameter) {
       decodeOneStep(step);
       if(firstDisplayedStepNumber + line - lineOffset == currentStepNumber && !tamIsActive()) {
         if(getSystemFlag(FLAG_ALPHA)) {
-          char *tstr = tmpString + stringByteLength(tmpString) - 2;
-          *(tstr++) = STD_CURSOR[0];
-          *(tstr++) = STD_CURSOR[1];
+          insertAlphaCursor(tam.function == ITM_REM ? 6 : 2);
+          char *tstr = tmpString + stringByteLength(tmpString);
           *(tstr++) = STD_RIGHT_SINGLE_QUOTE[0];
           *(tstr++) = STD_RIGHT_SINGLE_QUOTE[1];
           *(tstr++) = 0;
@@ -557,29 +555,13 @@ void fnPem(uint16_t unusedButMandatoryParameter) {
         linesOfCurrentStep += numberOfExtraLines;
       }
 
-      char *cursorPos = strstr(tmpString, STD_CURSOR);
       showString(tmpString, &standardFont, lblOrEnd ? 42 : 62, Y_POSITION_OF_REGISTER_T_LINE + 21 * line, vmNormal,  false, false);
-      if(cursorPos) {
-        *cursorPos = 0;
-        cursorShow(true, 62 + stringWidth(tmpString, &standardFont, false, true), Y_POSITION_OF_REGISTER_T_LINE + 21 * line);
-        cursorAppeared = true;
-      }
       offset = 300;
       while(numberOfExtraLines && line <= 5) {
-        cursorPos = strstr(tmpString + offset, STD_CURSOR);
         showString(tmpString + offset, &standardFont, 62, Y_POSITION_OF_REGISTER_T_LINE + 21 * (++line), vmNormal,  false, false);
-        if(cursorPos) {
-          *cursorPos = 0;
-          cursorShow(true, 62 + stringWidth(tmpString, &standardFont, false, true), Y_POSITION_OF_REGISTER_T_LINE + 21 * line);
-          cursorAppeared = true;
-        }
         numberOfExtraLines--;
         offset += 300;
         lineOffset++;
-      }
-
-      if(!cursorAppeared) {
-        cursorHide();
       }
 
       if(isAtEndOfProgram(step)) {
@@ -677,11 +659,12 @@ void pemAlpha(int16_t item) {
       shiftF = false;
       shiftG = false;
       aimBuffer[0] = 0;
+      alphaCursor = 0;
       alphaCase = AC_UPPER;
       nextChar = NC_NORMAL;
 
       #if defined(PC_BUILD)
-        setAlphaCaseToCapsLockState();  // Reflect caps lock key status
+        //setAlphaCaseToCapsLockState();  // Reflect caps lock key status
       #endif
 
       pushSmStackMode(smAim);  // Select AIM softmenu stack with MyAlpha default menu
@@ -719,7 +702,7 @@ void pemAlpha(int16_t item) {
       if ((nextChar == NC_NORMAL) || ((item != ITM_DOWN_ARROW) && (item != ITM_UP_ARROW))) {
         item = convertItemToSubOrSup(item, nextChar);
         if(len < (256 - stringByteLength(indexOfItems[item].itemSoftmenuName)) && stringGlyphLength(aimBuffer) < 196) {
-          xcopy(aimBuffer + len, indexOfItems[item].itemSoftmenuName, stringByteLength(indexOfItems[item].itemSoftmenuName) + 1);
+          insertAlphaCharacter(item, &alphaCursor);
         }
       }
     }
@@ -731,8 +714,8 @@ void pemAlpha(int16_t item) {
         _closeAlphaMenus();
         return;
       }
-      else {
-        aimBuffer[stringLastGlyph(aimBuffer)] = 0;
+      else if(alphaCursor > 0) {
+          deleteAlphaCharacter(&alphaCursor);
       }
     }
     else if(item == ITM_EXITALLNP) {
@@ -1127,7 +1110,7 @@ static void _pemCloseDmsInput(void) {
 void insertStepInProgram(int16_t func) {
   uint32_t opBytes = (func >= 128) ? 2 : 1;
 
-  if(func == ITM_AIM || (!tamIsActive() && getSystemFlag(FLAG_ALPHA))) {
+  if(func == ITM_AIM || ((tam.function == ITM_LITERAL) && (!tamIsActive() && getSystemFlag(FLAG_ALPHA)))) {
     if(aimBuffer[0] != 0 && !getSystemFlag(FLAG_ALPHA)) {
       pemCloseNumberInput();
       aimBuffer[0] = 0;
@@ -1137,7 +1120,7 @@ void insertStepInProgram(int16_t func) {
     pemCursorIsZerothStep = false;
     return;
   }
-  else if(func == ITM_REM || (!tamIsActive() && getSystemFlag(FLAG_ALPHA))) {
+  else if(func == ITM_REM || ((tam.function == ITM_REM) && (!tamIsActive() && getSystemFlag(FLAG_ALPHA)))) {
     if(aimBuffer[0] != 0 && !getSystemFlag(FLAG_ALPHA)) {
       pemCloseNumberInput();
       aimBuffer[0] = 0;

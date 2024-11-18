@@ -262,10 +262,13 @@ void updateAssignTamBuffer(void) {
     if(tam.alpha) {
       tbPtr = stringAppend(tbPtr, STD_LEFT_SINGLE_QUOTE);
       if(aimBuffer[0] == 0) {
-        tbPtr = stringAppend(tbPtr, "_");
+        *(tbPtr++) = STD_CURSOR[0];
+        *(tbPtr++) = STD_CURSOR[1];
+        *(tbPtr) = 0;
       }
       else {
-        tbPtr = stringAppend(tbPtr, aimBuffer);
+        insertAlphaCursor(0);
+        tbPtr = stringAppend(tbPtr, tmpString);
         tbPtr = stringAppend(tbPtr, STD_RIGHT_SINGLE_QUOTE);
       }
     }
@@ -306,10 +309,13 @@ void updateAssignTamBuffer(void) {
   if(itemToBeAssigned != 0 && tam.alpha) {
     tbPtr = stringAppend(tbPtr, STD_LEFT_SINGLE_QUOTE);
     if(aimBuffer[0] == 0) {
-      tbPtr = stringAppend(tbPtr, "_");
+      *(tbPtr++) = STD_CURSOR[0];
+      *(tbPtr++) = STD_CURSOR[1];
+      *(tbPtr) = 0;
     }
     else {
-      tbPtr = stringAppend(tbPtr, aimBuffer);
+      insertAlphaCursor(0);
+      tbPtr = stringAppend(tbPtr, tmpString);
       tbPtr = stringAppend(tbPtr, STD_RIGHT_SINGLE_QUOTE);
     }
 
@@ -767,6 +773,7 @@ void assignEnterAlpha(void) {
   tam.alpha = true;
   setSystemFlag(FLAG_ALPHA);
   aimBuffer[0] = 0;
+  alphaCursor = 0;
   calcModeEnter(cmAim);
   numberOfTamMenusToPop = 0;
 #endif // !TESTSUITE_BUILD
@@ -780,8 +787,10 @@ void assignLeaveAlpha(void) {
     popSoftmenu();
   }
   numberOfTamMenusToPop = 0;
+  if(getSoftmenuId(0) != 1) { // Pop current menu if not MyAlpha 
+    popSoftmenu();
+  }
   if(getSoftmenuId(0) == 1) { // MyAlpha
-    //setSoftmenuId(0,0); // MyMenu
     popSmStackMode();
   }
   calcModeUpdateGui();
@@ -796,10 +805,10 @@ void assignGetName1(void) {
   else if(compareString(aimBuffer, "EXIT", CMP_NAME) == 0) {
     itemToBeAssigned = ITM_EXIT;
   }
-  /*else if(compareString(aimBuffer, "USER", CMP_NAME) == 0) {
+  else if(compareString(aimBuffer, "USER", CMP_NAME) == 0) {
     itemToBeAssigned = ITM_USERMODE;
   }
-  else if(compareString(aimBuffer, STD_alpha, CMP_NAME) == 0) {
+  /*else if(compareString(aimBuffer, STD_alpha, CMP_NAME) == 0) {
     itemToBeAssigned = ITM_AIM;
   }
   else if(compareString(aimBuffer, "f", CMP_NAME) == 0) {
@@ -856,6 +865,7 @@ void assignGetName1(void) {
       }
     }
   }
+  aimBuffer[0] = 0;    // Clear aimBuffer when done
 }
 
 static bool _assignToKey(int16_t keyFunc) {
@@ -939,4 +949,5 @@ void assignGetName2(void) {
     displayCalcErrorMessage(ERROR_CANNOT_ASSIGN_HERE, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
     errorMoreInfo("'%s' is an invalid name", aimBuffer);
   }
+  aimBuffer[0] = 0;    // Clear aimBuffer when done
 }

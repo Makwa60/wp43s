@@ -1945,8 +1945,13 @@
 
   #define MNU_TAMFLAG_WRITE             1873
   #define MNU_SYSFL_WRITABLE            1874
+  
+  
+  #define MNU_CURSOR                    1875
+  #define ITM_AIM_LEFT                  1876
+  #define ITM_AIM_RIGHT                 1877
 
-  #define LAST_ITEM                     1875
+  #define LAST_ITEM                     1878
 
   #define NOPARAM                       9876 // Item for function who don't need an item
   #define CONFIRMED                     9877 // Confirmation for RESET, CLPALL, CLALL

@@ -215,6 +215,7 @@
   extern uint16_t               currentMvarLabel;
   extern uint16_t               equationEditorCursor;
   extern uint16_t               equationEditorScrollPosition;
+  extern uint16_t               alphaCursor;
   #if (REAL34_WIDTH_TEST == 1)
     extern uint16_t               largeur;
   #endif // (REAL34_WIDTH_TEST == 1)

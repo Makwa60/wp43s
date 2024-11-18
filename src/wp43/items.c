@@ -942,6 +942,8 @@ void fnNop(uint16_t unusedButMandatoryParameter) {
   void fnClearAllVariables         (uint16_t unusedButMandatoryParameter) {}   //DL
   void fnConfirmationYes           (uint16_t unusedButMandatoryParameter) {}   //DL
   void fnConfirmationNo            (uint16_t unusedButMandatoryParameter) {}   //DL
+  void fnAimCursorLeft             (uint16_t unusedButMandatoryParameter) {}   //DL
+  void fnAimCursorRight            (uint16_t unusedButMandatoryParameter) {}   //DL
 #endif // GENERATE_CATALOGS
 
 
@@ -2934,5 +2936,9 @@ TO_QSPI const item_t indexOfItems[] = {
 /* 1873 */  { itemToBeCoded,                NOPARAM,                     "",                                            "TamFlgW",                                     (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
 /* 1874 */  { itemToBeCoded,                NOPARAM,                     "",                                            "SYS.FL",                                      (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
 
-/* 1875 */  { itemToBeCoded,                NOPARAM,                     "",                                            "Last item",                                   (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_ENABLED   | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     }
+/* 1875 */  { itemToBeCoded,                NOPARAM,                     "CURSOR",                                      "CURSOR",                                      (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
+/* 1876 */  { fnAimCursorLeft,              NOPARAM,                     "",                                            STD_LEFT_ARROW,                                (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
+/* 1877 */  { fnAimCursorRight,             NOPARAM,                     "",                                            STD_RIGHT_ARROW,                               (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
+
+/* 1878 */  { itemToBeCoded,                NOPARAM,                     "",                                            "Last item",                                   (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_ENABLED   | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     }
 };

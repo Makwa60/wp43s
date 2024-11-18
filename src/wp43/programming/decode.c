@@ -722,7 +722,7 @@ static void decodeRem(uint8_t *literalAddress) {
 
   #if !defined(DMCP_BUILD)
     else {
-      printf("\nERROR: %u is not an acceptable parameter for ITM_LITERAL!\n", *(uint8_t *)(literalAddress - 1));
+      printf("\nERROR: %u is not an acceptable parameter for ITM_REM!\n", *(uint8_t *)(literalAddress - 1));
     }
   #endif // !DMCP_BUILD
 }

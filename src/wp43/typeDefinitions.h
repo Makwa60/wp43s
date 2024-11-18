@@ -508,7 +508,10 @@
     TI_VARIABLES_RESTORED  = 61,
     TI_DMCP_ONLY           = 62,
     TI_CONFIRM_COMPLETED   = 63,
-    TI_MEMORY_TO_LOAD_PGMS = 64
+    TI_MEMORY_TO_LOAD_PGMS = 64,
+    TI_MY_MENU_CLEARED     = 65,
+    TI_MY_PFN_CLEARED      = 66,
+    TI_MY_ALPHA_CLEARED    = 67
   } temporaryInformation_t;
 
 
