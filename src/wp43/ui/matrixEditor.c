@@ -874,26 +874,27 @@ smallFont:
     mtxWidth = abs(mtxWidth);
     totalWidth = baseWidth + mtxWidth;
 
-
-    bool_t allElementAreIntegers = true;                   //allElementAreIntegers will remain true if ALL elements are integer 
-    for(int i = 0; i < maxRows; i++) {
-      for(int j = 0; j < maxCols; j++) {
-        allElementAreIntegers &= real34IsAnInteger(&matrix->matrixElements[i*cols+j]);
+    #if USE_FIX_FOR_ALL_INTEGER_MATRIX != 0
+      bool allElementAreIntegers = true;                   //allElementAreIntegers will remain true if ALL elements are integer 
+      for(int i = 0; i < maxRows; i++) {
+        for(int j = 0; j < maxCols; j++) {
+          allElementAreIntegers &= real34IsAnInteger(&matrix->matrixElements[i*cols+j]);
+        }
       }
-    }
-    if(allElementAreIntegers) {                            //allElementAreIntegers will remain true if ALL elements are integer 
-      displayFormat = dfFix;
-      displayFormatDigits = 0;
-      mtxWidth = getRealMatrixColumnWidths(matrix, prefixWidth, font, colWidth, rPadWidth, &digits, maxCols);
-      noFix = (mtxWidth < 0);
-      mtxWidth = abs(mtxWidth);
-      totalWidth = baseWidth + mtxWidth;
-      if(totalWidth > maxWidth) {
-        maxCols--;
-        goto smallFont;
-      }
-    } else {
-      if(displayFormat == DF_ALL && noFix) {
+      if(allElementAreIntegers) {                            //allElementAreIntegers will remain true if ALL elements are integer 
+        displayFormat = dfFix;
+        displayFormatDigits = 0;
+        mtxWidth = getRealMatrixColumnWidths(matrix, prefixWidth, font, colWidth, rPadWidth, &digits, maxCols);
+        noFix = (mtxWidth < 0);
+        mtxWidth = abs(mtxWidth);
+        totalWidth = baseWidth + mtxWidth;
+        if(totalWidth > maxWidth) {
+          maxCols--;
+          goto smallFont;
+        }
+      } else {
+    #endif // USE_FIX_FOR_ALL_INTEGER_MATRIX
+      if(displayFormat == dfAll && noFix) {
         displayFormat = getSystemFlag(FLAG_ALLENG) ? dfEng : dfSci;
         displayFormatDigits = digits;
       }
@@ -916,7 +917,9 @@ smallFont:
           }
         }
       }
-    }
+    #if USE_FIX_FOR_ALL_INTEGER_MATRIX != 0
+      }
+    #endif // USE_FIX_FOR_ALL_INTEGER_MATRIX
 
     if(forEditor) {
       if((matSelCol < sCol) && leftEllipsis) {
