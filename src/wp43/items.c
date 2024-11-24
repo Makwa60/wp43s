@@ -2944,8 +2944,8 @@ TO_QSPI const item_t indexOfItems[] = {
 /* 1877 */  { fnAimCursorRight,             NOPARAM,                     "",                                            STD_RIGHT_ARROW,                               (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
 
 /* 1878 */  { fnPrimeFactors,               NOPARAM,                     "FACTORS",                                     "FACTORS",                                     (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
-/* 1879 */  { fnRecallElement,              tmMDim,                      "RCLVEL",                                      "RCLVEL",                                      (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_REGISTER     },
-/* 1880 */  { fnStoreElement,               tmMDim,                      "STOVEL",                                      "STOVEL",                                      (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_REGISTER     },
+/* 1879 */  { fnRecallVElement,             tmMDim,                      "RCLVEL",                                      "RCLVEL",                                      (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_REGISTER     },
+/* 1880 */  { fnStoreVElement,              tmMDim,                      "STOVEL",                                      "STOVEL",                                      (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_REGISTER     },
 
 /* 1881 */  { itemToBeCoded,                NOPARAM,                     "",                                            "Last item",                                   (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_ENABLED   | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     }
 };

@@ -332,9 +332,9 @@ void fnRecallVElement(uint16_t ix) {
 }
 
 
-//void fnRecallElementPlus(uint16_t unusedButMandatoryParameter) {
-//  _fnRecallElement(true);
-//}
+void fnRecallElementPlus(uint16_t unusedButMandatoryParameter) {
+  _fnRecallElement(true);
+}
 
 void fnRecallElement(uint16_t unusedButMandatoryParameter) {
   _fnRecallElement(false);
