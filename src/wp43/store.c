@@ -386,8 +386,61 @@ void fnStoreStack(uint16_t regist) {
 }
 
 
+static void _fnStoreElement(bool stepForward);
+
+
+void fnStoreVElement(uint16_t ix) {
+  #if !defined(TESTSUITE_BUILD)
+  const int16_t iBak = getIRegisterAsInt(true);
+  const int16_t jBak = getJRegisterAsInt(true);
+  
+  if((getRegisterDataType(REGISTER_Y) == dtReal34Matrix) || (getRegisterDataType(REGISTER_Y) == dtComplex34Matrix)) {
+    if (getRegisterDataType(REGISTER_X) != dtComplex34 && getRegisterDataType(REGISTER_X) != dtReal34 && getRegisterDataType(REGISTER_X) != dtLongInteger && getRegisterDataType(REGISTER_X) != dtShortInteger) {
+      displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
+      #if defined(PC_BUILD)
+        sprintf(errorMessage, "DataType %" PRIu32, getRegisterDataType(REGISTER_X));
+        moreInfoOnError("In function fnStoreVElement:", errorMessage, "is not a Real/Integer/Complex.", "");
+      #endif
+      return;
+    }
+    if(getRegisterDataType(REGISTER_Y) == dtReal34Matrix) {
+      real34Matrix_t x;
+      linkToRealMatrixRegister(REGISTER_Y, &x);
+      setIRegisterAsInt(false, (ix-1) / x.header.matrixColumns+1);
+      setJRegisterAsInt(false, (ix-1) % x.header.matrixColumns+1);
+    }
+    else { //Complex Matrix
+      complex34Matrix_t x;
+      linkToComplexMatrixRegister(REGISTER_Y, &x);
+      setIRegisterAsInt(false, (ix-1) / x.header.matrixColumns+1);
+      setJRegisterAsInt(false, (ix-1) % x.header.matrixColumns+1);
+    }
+    uint16_t matrixIndexBak = matrixIndex;
+    matrixIndex = REGISTER_Y;
+    _fnStoreElement(false);
+    setIRegisterAsInt(false, iBak);
+    setJRegisterAsInt(false, jBak);
+    matrixIndex = matrixIndexBak;
+  }
+  else {
+    displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
+      #if defined(PC_BUILD)
+    sprintf(errorMessage, "DataType %" PRIu32, getRegisterDataType(REGISTER_Y));
+    moreInfoOnError("In function fnStoreVElement:", errorMessage, "is not a matrix.", "");
+    #endif
+  }
+  #endif // !TESTSUITE_BUILD
+}
+
+void fnStoreElementPlus(uint16_t unusedButMandatoryParameter) {
+  _fnStoreElement(true);
+}
 
 void fnStoreElement(uint16_t unusedButMandatoryParameter) {
+   _fnStoreElement(false);
+}
+
+void _fnStoreElement(bool stepForward) {
   #if !defined(TESTSUITE_BUILD)
     if(matrixIndex == INVALID_VARIABLE) {
       displayCalcErrorMessage(ERROR_NO_MATRIX_INDEXED, ERR_REGISTER_LINE, REGISTER_X);
@@ -399,6 +452,9 @@ void fnStoreElement(uint16_t unusedButMandatoryParameter) {
         convertReal34MatrixRegisterToComplex34MatrixRegister(matrixIndex, matrixIndex);
       }
       callByIndexedMatrix(storeElementReal, storeElementComplex);
+      if(stepForward) {
+        fnIncDecJ(INC_FLAG);
+      }
       if(matrixIndex >= FIRST_NAMED_VARIABLE && matrixIndex == findNamedVariable("STATS")) {
         calcSigma(0);
       }
