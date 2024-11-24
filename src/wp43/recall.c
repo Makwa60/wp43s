@@ -332,15 +332,15 @@ void fnRecallVElement(uint16_t ix) {
 }
 
 
-void fnRecallElementPlus(uint16_t unusedButMandatoryParameter) {
-  _fnRecallElement(true);
-}
+//void fnRecallElementPlus(uint16_t unusedButMandatoryParameter) {
+//  _fnRecallElement(true);
+//}
 
 void fnRecallElement(uint16_t unusedButMandatoryParameter) {
   _fnRecallElement(false);
 }
 
-void _fnRecallElement(bool stepForward) {
+static void _fnRecallElement(bool stepForward) {
   #if !defined(TESTSUITE_BUILD)
     if(matrixIndex == INVALID_VARIABLE) {
       displayCalcErrorMessage(ERROR_NO_MATRIX_INDEXED, ERR_REGISTER_LINE, REGISTER_X);
