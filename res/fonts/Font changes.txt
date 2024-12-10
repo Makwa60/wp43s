@@ -215,3 +215,5 @@
            Modified minimal zero U+220E in standard font.
  
 2023-12-17 Added two letters U+2147 and U+2148 for Euler's e and complex i to both fonts.
+
+2024-12-10 Added a letter U+2113 for the liter/litre in standard font
