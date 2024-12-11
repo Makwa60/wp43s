@@ -2666,7 +2666,7 @@ TO_QSPI const font_t standardFont = {
      .data="\x30\x00\x37\x00\x3f\x00\xfc\x00\xf0\x00\x37\x00\x3f\x80\x39\xc0\x30\xc0\x30\xc0\x30\xc0\x30\xc0\x30\xc0"},
 
     // uni2113
-    {.charCode=0xa113, .colsBeforeGlyph= 0, .colsGlyph= 6, .colsAfterGlyph= 2, .rowsAboveGlyph= 4, .rowsGlyph=13, .rowsBelowGlyph= 3, .rank1=205, .rank2=217,
+    {.charCode=0xa113, .colsBeforeGlyph= 0, .colsGlyph= 6, .colsAfterGlyph= 2, .rowsAboveGlyph= 3, .rowsGlyph=13, .rowsBelowGlyph= 4, .rank1=205, .rank2=217,
      .data="\x38\x7c\x6c\x68\x78\x70\x70\xe0\x60\x60\x60\x7c\x38"},
 
     // uni2115
