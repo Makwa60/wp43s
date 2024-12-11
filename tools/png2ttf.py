@@ -38,7 +38,7 @@ geometry = [
 ]
 
 def getcolor(pxdat):
-  if pxdat[3] == 0:
+  if len(pxdat) >= 4 and pxdat[3] == 0:
     return -1
   else:
     return (4 if pxdat[0] >= 128 else 0) + (2 if pxdat[1] >= 128 else 0) + (1 if pxdat[2] >= 128 else 0)
