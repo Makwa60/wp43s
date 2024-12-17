@@ -588,7 +588,8 @@ void fnNop(uint16_t unusedButMandatoryParameter) {
   void fnCvtJinKg                  (uint16_t unusedButMandatoryParameter) {}
   void fnCvtLiangKg                (uint16_t unusedButMandatoryParameter) {}
   void fnCvtQuartL                 (uint16_t unusedButMandatoryParameter) {}
-  void fnCvtQuartM3                (uint16_t unusedButMandatoryParameter) {}
+  void fnCvtQuartukM3              (uint16_t unusedButMandatoryParameter) {}
+  void fnCvtQuartusM3              (uint16_t unusedButMandatoryParameter) {}
   void fnCvtDmsToDeg               (uint16_t unusedButMandatoryParameter) {}
   void fnCvtDmsToCurrentAngularMode(uint16_t unusedButMandatoryParameter) {}
   void fnCvtFathomM                (uint16_t unusedButMandatoryParameter) {}
@@ -947,10 +948,51 @@ void fnNop(uint16_t unusedButMandatoryParameter) {
   void fnConfirmationNo            (uint16_t unusedButMandatoryParameter) {}   //DL
   void fnAimCursorLeft             (uint16_t unusedButMandatoryParameter) {}   //DL
   void fnAimCursorRight            (uint16_t unusedButMandatoryParameter) {}   //DL
+  void fnCvtTspukMl                (uint16_t unusedButMandatoryParameter) {}   //DL
+  void fnCvtTbspukMl               (uint16_t unusedButMandatoryParameter) {}   //DL
+  void fnCvtCupukMl                (uint16_t unusedButMandatoryParameter) {}   //DL
+  void fnCvtPintukMl               (uint16_t unusedButMandatoryParameter) {}   //DL
+  void fnCvtQuartukMl              (uint16_t unusedButMandatoryParameter) {}   //DL
+  void fnCvtGalukMl                (uint16_t unusedButMandatoryParameter) {}   //DL
+  void fnCvtTspusMl                (uint16_t unusedButMandatoryParameter) {}   //DL
+  void fnCvtTbspusMl               (uint16_t unusedButMandatoryParameter) {}   //DL
+  void fnCvtCupusMl                (uint16_t unusedButMandatoryParameter) {}   //DL
+  void fnCvtPintusMl               (uint16_t unusedButMandatoryParameter) {}   //DL
+  void fnCvtQuartusMl              (uint16_t unusedButMandatoryParameter) {}   //DL
+  void fnCvtGalusMl                (uint16_t unusedButMandatoryParameter) {}   //DL
+  void fnCvtQuartusL               (uint16_t unusedButMandatoryParameter) {}   //DL
+  void fnCvtTspmMl                 (uint16_t unusedButMandatoryParameter) {}   //DL
+  void fnCvtTbspmMl                (uint16_t unusedButMandatoryParameter) {}   //DL
+  void fnCvtCupmMl                 (uint16_t unusedButMandatoryParameter) {}   //DL
+  void fnCvtTbspauMl               (uint16_t unusedButMandatoryParameter) {}   //DL
+  void fnCvtPintdryL               (uint16_t unusedButMandatoryParameter) {}   //DL
+  void fnCvtQuartdryL              (uint16_t unusedButMandatoryParameter) {}   //DL
+  void fnCvtGaldryL                (uint16_t unusedButMandatoryParameter) {}   //DL
+  void fnCvtPeckusL                (uint16_t unusedButMandatoryParameter) {}   //DL
+  void fnCvtBushelusL              (uint16_t unusedButMandatoryParameter) {}   //DL
+  void fnCvtInch3Ml                (uint16_t unusedButMandatoryParameter) {}   //DL
+  void fnCvtFt3L                   (uint16_t unusedButMandatoryParameter) {}   //DL
+  void fnCvtFlozukInch3            (uint16_t unusedButMandatoryParameter) {}   //DL
+  void fnCvtFlozusInch3            (uint16_t unusedButMandatoryParameter) {}   //DL
+  void fnCvtFt3Galuk               (uint16_t unusedButMandatoryParameter) {}   //DL
+  void fnCvtFt3Galus               (uint16_t unusedButMandatoryParameter) {}   //DL
 #endif // GENERATE_CATALOGS
 
 
-#define RANGE_  STD_SUB_R STD_SUB_A STD_SUB_N STD_SUB_G STD_SUB_E    // Strings to maintain table columns below
+#define RANGE_    STD_SUB_R STD_SUB_A STD_SUB_N STD_SUB_G STD_SUB_E    // Strings to maintain table columns below
+#define STD_au_   STD_SUB_a STD_SUB_u                                  // For australian tablespoon
+#define STD_liq_  STD_SUB_l STD_SUB_i STD_SUB_q                        // For US liquid units
+#define STD_dry_  STD_SUB_d STD_SUB_r STD_SUB_y                        // For US dry units
+#define STD_LITRE STD_SCRIPT_SMALL_L                                   // For litre units
+#ifdef XPB
+ #define CAT_XFNT CAT_FNCT
+ #define DEF_QUART_US " qt" STD_US
+ #define DEF_PINT_US " pt" STD_US
+#else 
+ #define CAT_XFNT CAT_NONE
+ #define DEF_QUART_US "quart"
+ #define DEF_PINT_US "pint" STD_US
+#endif   // XPB
 
 TO_QSPI const item_t indexOfItems[] = {
 
@@ -1242,18 +1284,18 @@ TO_QSPI const item_t indexOfItems[] = {
 /*  263 */  { fnCvtSfeetM,                  divide,                      "m" STD_RIGHT_ARROW "ft" STD_US,               STD_RIGHT_ARROW "surv.",                       (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
 /*  264 */  { fnCvtSfeetM,                  divide,                      "m" STD_RIGHT_ARROW "ft" STD_US,               STD_SPACE_EM "foot" STD_US,                    (0 << TAM_MAX_BITS) |     0, CAT_DUPL | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
 /*  265 */  { itemToBeCoded,                NOPARAM,                     "0265",                                        "0265",                                        (0 << TAM_MAX_BITS) |     0, CAT_FREE | SLS_ENABLED   | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
-/*  266 */  { fnCvtFlozukMl,                multiply,                    "fz" STD_UK STD_RIGHT_ARROW "ml",              "ml " STD_LEFT_ARROW,                          (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
-/*  267 */  { fnCvtFlozukMl,                multiply,                    "fz" STD_UK STD_RIGHT_ARROW "ml",              STD_SPACE_HAIR,                                (0 << TAM_MAX_BITS) |     0, CAT_DUPL | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
-/*  268 */  { fnCvtFlozukMl,                divide,                      "ml" STD_RIGHT_ARROW "fz" STD_UK,              STD_RIGHT_ARROW " fluid",                      (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
-/*  269 */  { fnCvtFlozukMl,                divide,                      "ml" STD_RIGHT_ARROW "fz" STD_UK,              STD_SPACE_EM "oz" STD_UK,                      (0 << TAM_MAX_BITS) |     0, CAT_DUPL | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
-/*  270 */  { fnCvtFlozusMl,                multiply,                    "fz" STD_US STD_RIGHT_ARROW "ml",              "ml " STD_LEFT_ARROW,                          (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
-/*  271 */  { fnCvtFlozusMl,                multiply,                    "fz" STD_US STD_RIGHT_ARROW "ml",              STD_SPACE_HAIR,                                (0 << TAM_MAX_BITS) |     0, CAT_DUPL | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
-/*  272 */  { fnCvtFlozusMl,                divide,                      "ml" STD_RIGHT_ARROW "fz" STD_US,              STD_RIGHT_ARROW " fluid",                      (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
-/*  273 */  { fnCvtFlozusMl,                divide,                      "ml" STD_RIGHT_ARROW "fz" STD_US,              STD_SPACE_EM  "oz" STD_US,                     (0 << TAM_MAX_BITS) |     0, CAT_DUPL | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
-/*  274 */  { fnCvtGalukL,                  multiply,                    "gal" STD_UK STD_RIGHT_ARROW "l",              "l " STD_LEFT_ARROW,                           (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
-/*  275 */  { fnCvtGalukL,                  divide,                      "l" STD_RIGHT_ARROW "gal" STD_UK,              STD_RIGHT_ARROW " gal" STD_UK,                 (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
-/*  276 */  { fnCvtGalusL,                  multiply,                    "gal" STD_US STD_RIGHT_ARROW "l",              "l " STD_LEFT_ARROW,                           (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
-/*  277 */  { fnCvtGalusL,                  divide,                      "l" STD_RIGHT_ARROW "gal" STD_US,              STD_RIGHT_ARROW " gal" STD_US,                 (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/*  266 */  { fnCvtFlozukMl,                multiply,                    "fz" STD_UK STD_RIGHT_ARROW "m" STD_LITRE,     "m" STD_LITRE " " STD_LEFT_ARROW,              (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/*  267 */  { fnCvtFlozukMl,                multiply,                    "fz" STD_UK STD_RIGHT_ARROW "m" STD_LITRE,     STD_SPACE_HAIR,                                (0 << TAM_MAX_BITS) |     0, CAT_DUPL | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/*  268 */  { fnCvtFlozukMl,                divide,                      "m" STD_LITRE STD_RIGHT_ARROW "fz" STD_UK,     STD_RIGHT_ARROW "floz" STD_UK,                 (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/*  269 */  { fnCvtFlozukMl,                divide,                      "m" STD_LITRE STD_RIGHT_ARROW "fz" STD_UK,     STD_SPACE_EM "oz" STD_UK,                      (0 << TAM_MAX_BITS) |     0, CAT_DUPL | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/*  270 */  { fnCvtFlozusMl,                multiply,                    "fz" STD_US STD_RIGHT_ARROW "m" STD_LITRE,     "m" STD_LITRE " " STD_LEFT_ARROW,              (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/*  271 */  { fnCvtFlozusMl,                multiply,                    "fz" STD_US STD_RIGHT_ARROW "m" STD_LITRE,     STD_SPACE_HAIR,                                (0 << TAM_MAX_BITS) |     0, CAT_DUPL | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/*  272 */  { fnCvtFlozusMl,                divide,                      "m" STD_LITRE STD_RIGHT_ARROW "fz" STD_US,     STD_RIGHT_ARROW "floz" STD_US,                 (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/*  273 */  { fnCvtFlozusMl,                divide,                      "m" STD_LITRE STD_RIGHT_ARROW "fz" STD_US,     STD_SPACE_EM  "oz" STD_US,                     (0 << TAM_MAX_BITS) |     0, CAT_DUPL | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/*  274 */  { fnCvtGalukL,                  multiply,                    "gal" STD_UK STD_RIGHT_ARROW STD_LITRE,        STD_LITRE " " STD_LEFT_ARROW,                  (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/*  275 */  { fnCvtGalukL,                  divide,                      STD_LITRE STD_RIGHT_ARROW "gal" STD_UK,        STD_RIGHT_ARROW " gal" STD_UK,                 (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/*  276 */  { fnCvtGalusL,                  multiply,                    "gal" STD_US STD_RIGHT_ARROW STD_LITRE,        STD_LITRE " " STD_LEFT_ARROW,                  (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/*  277 */  { fnCvtGalusL,                  divide,                      STD_LITRE STD_RIGHT_ARROW "gal" STD_US,        STD_RIGHT_ARROW " gal" STD_US,                 (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
 /*  278 */  { fnCvtHpeW,                    multiply,                    "hp" STD_SUB_E STD_RIGHT_ARROW "W",            "W " STD_LEFT_ARROW,                           (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
 /*  279 */  { fnCvtHpeW,                    divide,                      "W" STD_RIGHT_ARROW "hp" STD_SUB_E,            STD_RIGHT_ARROW " hp" STD_SUB_E,               (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
 /*  280 */  { fnCvtHpmW,                    multiply,                    "hp" STD_SUB_M STD_RIGHT_ARROW "W",            "W " STD_LEFT_ARROW,                           (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
@@ -1332,8 +1374,8 @@ TO_QSPI const item_t indexOfItems[] = {
 /*  353 */  { fnCvtCaratG,                  divide,                      "g" STD_RIGHT_ARROW "crt",                     STD_RIGHT_ARROW "carat",                       (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
 /*  354 */  { itemToBeCoded,                NOPARAM,                     "0354",                                        "0354",                                        (0 << TAM_MAX_BITS) |     0, CAT_FREE | SLS_ENABLED   | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
 /*  355 */  { fnCvtJinKg,                   multiply,                    "kg" STD_RIGHT_ARROW "j" STD_i_MACRON "n",     STD_RIGHT_ARROW " j" STD_i_MACRON "n",         (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
-/*  356 */  { fnCvtQuartL,                  multiply,                    "qt." STD_RIGHT_ARROW "l",                     "l " STD_LEFT_ARROW,                           (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
-/*  357 */  { fnCvtQuartL,                  divide,                      "l" STD_RIGHT_ARROW "qt.",                     STD_RIGHT_ARROW "quart",                       (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/*  356 */  { fnCvtQuartL,                  multiply,                    "qt" STD_UK STD_RIGHT_ARROW STD_LITRE,         STD_LITRE " " STD_LEFT_ARROW,                  (0 << TAM_MAX_BITS) |     0, CAT_XFNT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/*  357 */  { fnCvtQuartL,                  divide,                      STD_LITRE STD_RIGHT_ARROW "qt" STD_UK,         STD_RIGHT_ARROW " qt" STD_UK,                  (0 << TAM_MAX_BITS) |     0, CAT_XFNT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
 /*  358 */  { fnCvtFathomM,                 multiply,                    "ftm." STD_RIGHT_ARROW "m",                    "m " STD_LEFT_ARROW,                           (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
 /*  359 */  { fnCvtInchM,                   multiply,                    "in." STD_RIGHT_ARROW "m",                     "m " STD_LEFT_ARROW,                           (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
 /*  360 */  { fnCvtNMiM,                    multiply,                    "nmi" STD_RIGHT_ARROW "m",                     "m " STD_LEFT_ARROW,                           (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
@@ -2889,18 +2931,18 @@ TO_QSPI const item_t indexOfItems[] = {
 /* 1831 */  { itemToBeCoded,                NOPARAM,                     "1831",                                        "1831",                                        (0 << TAM_MAX_BITS) |     0, CAT_FREE | SLS_ENABLED   | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
 /* 1832 */  { fnCvtFlozukM3,                multiply,                    "fz" STD_UK STD_RIGHT_ARROW "m" STD_SUP_3,     "m" STD_SUP_3 " " STD_LEFT_ARROW,              (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
 /* 1833 */  { fnCvtFlozukM3,                multiply,                    "fz" STD_UK STD_RIGHT_ARROW "m" STD_SUP_3,     STD_SPACE_HAIR,                                (0 << TAM_MAX_BITS) |     0, CAT_DUPL | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
-/* 1834 */  { fnCvtFlozukM3,                divide,                      "m" STD_SUP_3 STD_RIGHT_ARROW "fz" STD_UK,     STD_RIGHT_ARROW " fluid",                      (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/* 1834 */  { fnCvtFlozukM3,                divide,                      "m" STD_SUP_3 STD_RIGHT_ARROW "fz" STD_UK,     STD_RIGHT_ARROW "floz" STD_UK,                 (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
 /* 1835 */  { fnCvtFlozukM3,                divide,                      "m" STD_SUP_3 STD_RIGHT_ARROW "fz" STD_UK,     STD_SPACE_EM "oz" STD_UK,                      (0 << TAM_MAX_BITS) |     0, CAT_DUPL | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
 /* 1836 */  { fnCvtFlozusM3,                multiply,                    "fz" STD_US STD_RIGHT_ARROW "m" STD_SUP_3,     "m" STD_SUP_3 " " STD_LEFT_ARROW,              (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
 /* 1837 */  { fnCvtFlozusM3,                multiply,                    "fz" STD_US STD_RIGHT_ARROW "m" STD_SUP_3,     STD_SPACE_HAIR,                                (0 << TAM_MAX_BITS) |     0, CAT_DUPL | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
-/* 1838 */  { fnCvtFlozusM3,                divide,                      "m" STD_SUP_3 STD_RIGHT_ARROW "fz" STD_US,     STD_RIGHT_ARROW " fluid",                      (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/* 1838 */  { fnCvtFlozusM3,                divide,                      "m" STD_SUP_3 STD_RIGHT_ARROW "fz" STD_US,     STD_RIGHT_ARROW "floz" STD_US,                 (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
 /* 1839 */  { fnCvtFlozusM3,                divide,                      "m" STD_SUP_3 STD_RIGHT_ARROW "fz" STD_US,     STD_SPACE_EM "oz" STD_US,                      (0 << TAM_MAX_BITS) |     0, CAT_DUPL | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
-/* 1840 */  { fnCvtGalukM3,                 multiply,                    "gl" STD_UK STD_RIGHT_ARROW "m" STD_SUP_3,     "m" STD_SUP_3 " " STD_LEFT_ARROW,              (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
-/* 1841 */  { fnCvtGalukM3,                 divide,                      "m" STD_SUP_3 STD_RIGHT_ARROW "gl" STD_UK,     STD_RIGHT_ARROW " gal" STD_UK,                 (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
-/* 1842 */  { fnCvtGalusM3,                 multiply,                    "gl" STD_US STD_RIGHT_ARROW "m" STD_SUP_3,     "m" STD_SUP_3 " " STD_LEFT_ARROW,              (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
-/* 1843 */  { fnCvtGalusM3,                 divide,                      "m" STD_SUP_3 STD_RIGHT_ARROW "gl" STD_US,     STD_RIGHT_ARROW " gal" STD_US,                 (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
-/* 1844 */  { fnCvtQuartM3,                 multiply,                    "qt." STD_RIGHT_ARROW "m" STD_SUP_3,           "m" STD_SUP_3 " " STD_LEFT_ARROW,              (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
-/* 1845 */  { fnCvtQuartM3,                 divide,                      "m" STD_SUP_3 STD_RIGHT_ARROW "qt.",           STD_RIGHT_ARROW " qt.",                        (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/* 1840 */  { fnCvtGalukM3,                 multiply,                    "gal" STD_UK STD_RIGHT_ARROW "m" STD_SUP_3,    "m" STD_SUP_3 " " STD_LEFT_ARROW,              (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/* 1841 */  { fnCvtGalukM3,                 divide,                      "m" STD_SUP_3 STD_RIGHT_ARROW "gal" STD_UK,    STD_RIGHT_ARROW " gal" STD_UK,                 (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/* 1842 */  { fnCvtGalusM3,                 multiply,                    "gal" STD_US STD_RIGHT_ARROW "m" STD_SUP_3,    "m" STD_SUP_3 " " STD_LEFT_ARROW,              (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/* 1843 */  { fnCvtGalusM3,                 divide,                      "m" STD_SUP_3 STD_RIGHT_ARROW "gal" STD_US,    STD_RIGHT_ARROW " gal" STD_US,                 (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/* 1844 */  { fnCvtQuartusM3,               multiply,                    "qt" STD_US STD_RIGHT_ARROW "m" STD_SUP_3,     "m" STD_SUP_3 " " STD_LEFT_ARROW,              (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/* 1845 */  { fnCvtQuartusM3,               divide,                      "m" STD_SUP_3 STD_RIGHT_ARROW "qt" STD_US,     STD_RIGHT_ARROW " qt" STD_US,                  (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
 /* 1846 */  { fnExecutePlusSkip,            tmLabel,                     "XEQ.SKP",                                     "XEQ.SKP",                                     (0 << TAM_MAX_BITS) |    99, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_LABEL        },
 /* 1847 */  { fnClearKeyAssignments,        NOT_CONFIRMED,               "CLKEYS",                                      "CLKEYS",                                      (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABL_XEQ | EIM_DISABLED | PTP_DISABLED     },
 /* 1848 */  { fnClearAllVariables,          NOT_CONFIRMED,               "CLVall",                                      "CLVall",                                      (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABL_XEQ | EIM_DISABLED | PTP_NONE         },
@@ -2947,5 +2989,71 @@ TO_QSPI const item_t indexOfItems[] = {
 /* 1879 */  { fnRecallVElement,             tmMDim,                      "RCLVEL",                                      "RCLVEL",                                      (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_REGISTER     },
 /* 1880 */  { fnStoreVElement,              tmMDim,                      "STOVEL",                                      "STOVEL",                                      (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_REGISTER     },
 
-/* 1881 */  { itemToBeCoded,                NOPARAM,                     "",                                            "Last item",                                   (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_ENABLED   | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     }
+// Additional UK kitchen units
+/* 1881 */  { fnCvtTspukMl,                 multiply,                    "tsp" STD_UK STD_RIGHT_ARROW "m" STD_LITRE,    "m" STD_LITRE " " STD_LEFT_ARROW,              (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/* 1882 */  { fnCvtTspukMl,                 divide,                      "m" STD_LITRE STD_RIGHT_ARROW "tsp" STD_UK,    STD_RIGHT_ARROW "tsp" STD_UK,                  (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/* 1883 */  { fnCvtTbspukMl,                multiply,                    "tbsp" STD_UK STD_RIGHT_ARROW "m" STD_LITRE,   "m" STD_LITRE " " STD_LEFT_ARROW,              (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/* 1884 */  { fnCvtTbspukMl,                divide,                      "m" STD_LITRE STD_RIGHT_ARROW "tbsp" STD_UK,   STD_RIGHT_ARROW "tbsp" STD_UK,                 (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/* 1885 */  { fnCvtCupukMl,                 multiply,                    "cup" STD_UK STD_RIGHT_ARROW "m" STD_LITRE,    "m" STD_LITRE " " STD_LEFT_ARROW,              (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/* 1886 */  { fnCvtCupukMl,                 divide,                      "m" STD_LITRE STD_RIGHT_ARROW "cup" STD_UK,    STD_RIGHT_ARROW " cup" STD_UK,                 (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/* 1887 */  { fnCvtPintukMl,                multiply,                    "pt" STD_UK STD_RIGHT_ARROW "m" STD_LITRE,     "m" STD_LITRE " " STD_LEFT_ARROW,              (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/* 1888 */  { fnCvtPintukMl,                divide,                      "m" STD_LITRE STD_RIGHT_ARROW "pt" STD_UK,     STD_RIGHT_ARROW "pint" STD_UK,                 (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/* 1889 */  { fnCvtQuartukMl,               multiply,                    "qt" STD_UK STD_RIGHT_ARROW "m" STD_LITRE,     "m" STD_LITRE " " STD_LEFT_ARROW,              (0 << TAM_MAX_BITS) |     0, CAT_XFNT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/* 1890 */  { fnCvtQuartukMl,               divide,                      "m" STD_LITRE STD_RIGHT_ARROW "qt" STD_UK,     STD_RIGHT_ARROW " qt" STD_UK,                  (0 << TAM_MAX_BITS) |     0, CAT_XFNT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/* 1891 */  { fnCvtGalukMl,                 multiply,                    "gal" STD_UK STD_RIGHT_ARROW "m" STD_LITRE,    "m" STD_LITRE " " STD_LEFT_ARROW,              (0 << TAM_MAX_BITS) |     0, CAT_XFNT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/* 1892 */  { fnCvtGalukMl,                 divide,                      "m" STD_LITRE STD_RIGHT_ARROW "gal" STD_UK,    STD_RIGHT_ARROW " gal" STD_UK,                 (0 << TAM_MAX_BITS) |     0, CAT_XFNT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+
+// Additional US kitchen units
+/* 1893 */  { fnCvtTspusMl,                 multiply,                    "tsp" STD_US STD_RIGHT_ARROW "m" STD_LITRE,    "m" STD_LITRE " " STD_LEFT_ARROW,              (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/* 1894 */  { fnCvtTspusMl,                 divide,                      "m" STD_LITRE STD_RIGHT_ARROW "tsp" STD_US,    STD_RIGHT_ARROW "tsp" STD_US,                  (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/* 1895 */  { fnCvtTbspusMl,                multiply,                    "Tbsp" STD_US STD_RIGHT_ARROW "m" STD_LITRE,   "m" STD_LITRE " " STD_LEFT_ARROW,              (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/* 1896 */  { fnCvtTbspusMl,                divide,                      "m" STD_LITRE STD_RIGHT_ARROW "Tbsp" STD_US,   STD_RIGHT_ARROW "Tbsp" STD_US,                 (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/* 1897 */  { fnCvtCupusMl,                 multiply,                    "cup" STD_US STD_RIGHT_ARROW "m" STD_LITRE,    "m" STD_LITRE " " STD_LEFT_ARROW,              (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/* 1898 */  { fnCvtCupusMl,                 divide,                      "m" STD_LITRE STD_RIGHT_ARROW "cup" STD_US,    STD_RIGHT_ARROW " cup" STD_US,                 (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/* 1899 */  { fnCvtPintusMl,                multiply,                    "pt" STD_US STD_RIGHT_ARROW "m" STD_LITRE,     "m" STD_LITRE " " STD_LEFT_ARROW,              (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/* 1900 */  { fnCvtPintusMl,                divide,                      "m" STD_LITRE STD_RIGHT_ARROW "pt" STD_US,     STD_RIGHT_ARROW DEF_PINT_US,                   (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/* 1901 */  { fnCvtQuartusMl,               multiply,                    "qt" STD_US STD_RIGHT_ARROW "m" STD_LITRE,     "m" STD_LITRE " " STD_LEFT_ARROW,              (0 << TAM_MAX_BITS) |     0, CAT_XFNT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/* 1902 */  { fnCvtQuartusMl,               divide,                      "m" STD_LITRE STD_RIGHT_ARROW "qt" STD_US,     STD_RIGHT_ARROW " qt" STD_US,                  (0 << TAM_MAX_BITS) |     0, CAT_XFNT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/* 1903 */  { fnCvtGalusMl,                 multiply,                    "gal" STD_US STD_RIGHT_ARROW "m" STD_LITRE,    "m" STD_LITRE " " STD_LEFT_ARROW,              (0 << TAM_MAX_BITS) |     0, CAT_XFNT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/* 1904 */  { fnCvtGalusMl,                 divide,                      "m" STD_LITRE STD_RIGHT_ARROW "gal" STD_US,    STD_RIGHT_ARROW " gal" STD_US,                 (0 << TAM_MAX_BITS) |     0, CAT_XFNT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/* 1905 */  { fnCvtQuartusL,                multiply,                    "qt" STD_US STD_RIGHT_ARROW STD_LITRE,         STD_LITRE " " STD_LEFT_ARROW,                  (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/* 1906 */  { fnCvtQuartusL,                divide,                      STD_LITRE STD_RIGHT_ARROW "qt" STD_US,         STD_RIGHT_ARROW DEF_QUART_US,                  (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+
+// Additional METRIC kitchen units
+/* 1907 */  { fnCvtTspmMl,                  multiply,                    "tsp" STD_SUB_i STD_RIGHT_ARROW "m" STD_LITRE, "m" STD_LITRE " " STD_LEFT_ARROW,              (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/* 1908 */  { fnCvtTspmMl,                  divide,                      "m" STD_LITRE STD_RIGHT_ARROW "tsp" STD_SUB_i, STD_RIGHT_ARROW "tsp" STD_SUB_i,               (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/* 1909 */  { fnCvtTbspmMl,                 multiply,                    "tbsp" STD_SUB_i STD_RIGHT_ARROW "m" STD_LITRE,"m" STD_LITRE " " STD_LEFT_ARROW,              (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/* 1910 */  { fnCvtTbspmMl,                 divide,                      "m" STD_LITRE STD_RIGHT_ARROW "tbsp" STD_SUB_i,STD_RIGHT_ARROW "tbsp" STD_SUB_i,              (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/* 1911 */  { fnCvtCupmMl,                  multiply,                    "cup" STD_SUB_i STD_RIGHT_ARROW "m" STD_LITRE, "m" STD_LITRE " " STD_LEFT_ARROW,              (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/* 1912 */  { fnCvtCupmMl,                  divide,                      "m" STD_LITRE STD_RIGHT_ARROW "cup" STD_SUB_i, STD_RIGHT_ARROW " cup" STD_SUB_i,              (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/* 1913 */  { fnCvtTbspauMl,                multiply,                    "tbsp" STD_au_ STD_RIGHT_ARROW "m" STD_LITRE,  "m" STD_LITRE " " STD_LEFT_ARROW,              (0 << TAM_MAX_BITS) |     0, CAT_XFNT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/* 1914 */  { fnCvtTbspauMl,                divide,                      "m" STD_LITRE STD_RIGHT_ARROW "tbsp" STD_au_,  STD_RIGHT_ARROW "tbsp" STD_au_,                (0 << TAM_MAX_BITS) |     0, CAT_XFNT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+
+// Additional US dry units
+/* 1915 */  { fnCvtPintdryL,                multiply,                    "pt" STD_dry_ STD_RIGHT_ARROW STD_LITRE,       STD_LITRE " " STD_LEFT_ARROW,                  (0 << TAM_MAX_BITS) |     0, CAT_XFNT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/* 1916 */  { fnCvtPintdryL,                divide,                      STD_LITRE STD_RIGHT_ARROW "pt" STD_dry_,       STD_RIGHT_ARROW "pt" STD_dry_,                 (0 << TAM_MAX_BITS) |     0, CAT_XFNT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/* 1917 */  { fnCvtQuartdryL,               multiply,                    "qt" STD_dry_ STD_RIGHT_ARROW STD_LITRE,       STD_LITRE " " STD_LEFT_ARROW,                  (0 << TAM_MAX_BITS) |     0, CAT_XFNT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/* 1918 */  { fnCvtQuartdryL,               divide,                      STD_LITRE STD_RIGHT_ARROW "qt" STD_dry_,       STD_RIGHT_ARROW " qt" STD_dry_,                (0 << TAM_MAX_BITS) |     0, CAT_XFNT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/* 1919 */  { fnCvtGaldryL,                 multiply,                    "gal" STD_dry_ STD_RIGHT_ARROW STD_LITRE,      STD_LITRE " " STD_LEFT_ARROW,                  (0 << TAM_MAX_BITS) |     0, CAT_XFNT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/* 1920 */  { fnCvtGaldryL,                 divide,                      STD_LITRE STD_RIGHT_ARROW "gal" STD_dry_,      STD_RIGHT_ARROW "gal" STD_dry_,                (0 << TAM_MAX_BITS) |     0, CAT_XFNT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/* 1921 */  { fnCvtPeckusL,                 multiply,                    "pk" STD_US STD_RIGHT_ARROW STD_LITRE,         STD_LITRE " " STD_LEFT_ARROW,                  (0 << TAM_MAX_BITS) |     0, CAT_XFNT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/* 1922 */  { fnCvtPeckusL,                 divide,                      STD_LITRE  STD_RIGHT_ARROW "pk" STD_US,        STD_RIGHT_ARROW " pk" STD_US,                  (0 << TAM_MAX_BITS) |     0, CAT_XFNT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/* 1923 */  { fnCvtBushelusL,               multiply,                    "bu" STD_US STD_RIGHT_ARROW STD_LITRE,         STD_LITRE " " STD_LEFT_ARROW,                  (0 << TAM_MAX_BITS) |     0, CAT_XFNT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/* 1924 */  { fnCvtBushelusL,               divide,                      STD_LITRE STD_RIGHT_ARROW "bu" STD_US,         STD_RIGHT_ARROW " bu" STD_US,                  (0 << TAM_MAX_BITS) |     0, CAT_XFNT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+
+// Additional volume conversions
+/* 1925 */  { fnCvtInch3Ml,                 multiply,                    "in." STD_SUP_3 STD_RIGHT_ARROW "m" STD_LITRE, "m" STD_LITRE " " STD_LEFT_ARROW,              (0 << TAM_MAX_BITS) |     0, CAT_XFNT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/* 1926 */  { fnCvtInch3Ml,                 divide,                      "m" STD_LITRE STD_RIGHT_ARROW "in." STD_SUP_3, STD_RIGHT_ARROW " in." STD_SUP_3,              (0 << TAM_MAX_BITS) |     0, CAT_XFNT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/* 1927 */  { fnCvtFt3L,                    multiply,                    "ft." STD_SUP_3 STD_RIGHT_ARROW STD_LITRE,     STD_LITRE " " STD_LEFT_ARROW,                  (0 << TAM_MAX_BITS) |     0, CAT_XFNT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/* 1928 */  { fnCvtFt3L,                    divide,                      STD_LITRE STD_RIGHT_ARROW "ft." STD_SUP_3,     STD_RIGHT_ARROW " ft." STD_SUP_3,              (0 << TAM_MAX_BITS) |     0, CAT_XFNT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/* 1929 */  { fnCvtFlozukInch3,             multiply,                    "fz" STD_UK STD_RIGHT_ARROW "in." STD_SUP_3,   "in." STD_SUP_3 STD_LEFT_ARROW,                (0 << TAM_MAX_BITS) |     0, CAT_XFNT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/* 1930 */  { fnCvtFlozukInch3,             divide,                      "in." STD_SUP_3 STD_RIGHT_ARROW "fz" STD_UK,   STD_RIGHT_ARROW "floz" STD_UK,                 (0 << TAM_MAX_BITS) |     0, CAT_XFNT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/* 1931 */  { fnCvtFlozusInch3,             multiply,                    "fz" STD_US STD_RIGHT_ARROW "in." STD_SUP_3,   "in." STD_SUP_3 STD_LEFT_ARROW,                (0 << TAM_MAX_BITS) |     0, CAT_XFNT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/* 1932 */  { fnCvtFlozusInch3,             divide,                      "in." STD_SUP_3 STD_RIGHT_ARROW "fz" STD_US,   STD_RIGHT_ARROW "floz" STD_US,                 (0 << TAM_MAX_BITS) |     0, CAT_XFNT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/* 1933 */  { fnCvtFt3Galuk,                multiply,                    "ft." STD_SUP_3 STD_RIGHT_ARROW "gal" STD_UK,  STD_RIGHT_ARROW " gal" STD_UK,                 (0 << TAM_MAX_BITS) |     0, CAT_XFNT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/* 1934 */  { fnCvtFt3Galuk,                divide,                      "gal" STD_UK STD_RIGHT_ARROW "ft." STD_SUP_3,  "ft." STD_SUP_3 STD_LEFT_ARROW,                (0 << TAM_MAX_BITS) |     0, CAT_XFNT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/* 1935 */  { fnCvtFt3Galus,                multiply,                    "ft." STD_SUP_3 STD_RIGHT_ARROW "gal" STD_US,  STD_RIGHT_ARROW " gal" STD_US,                 (0 << TAM_MAX_BITS) |     0, CAT_XFNT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/* 1936 */  { fnCvtFt3Galus,                divide,                      "gal" STD_US STD_RIGHT_ARROW "ft." STD_SUP_3,  "ft." STD_SUP_3 STD_LEFT_ARROW,                (0 << TAM_MAX_BITS) |     0, CAT_XFNT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+
+/* 1927 */  { itemToBeCoded,                NOPARAM,                     "",                                            "Last item",                                   (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_ENABLED   | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     }
 };

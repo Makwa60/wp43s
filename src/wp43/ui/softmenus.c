@@ -266,9 +266,9 @@ TO_QSPI const int16_t menu_TEST[]        = { ITM_XLT,                       ITM_
                                              ITM_SPEC,                      ITM_NAN,                    ITM_NULL,                 ITM_M_SQR,             ITM_NULL,                    ITM_NULL                      };
 
 TO_QSPI const int16_t menu_XFN[]         = { ITM_AGM,                       ITM_BN,                     ITM_BNS,                  ITM_ERF,              -MNU_ELLIPT,                 -MNU_ORTHOG,
-                                             ITM_ERFC,                      ITM_FACTORS,                ITM_FIB,                  ITM_GD,                ITM_GDM1,                    ITM_IXYZ,                    
-                                             ITM_JYX,                       ITM_LNBETA,                 ITM_LNGAMMA,              ITM_MAX,               ITM_MIN,                     ITM_NEXTP,                   
-                                             ITM_WM,                        ITM_WP,                     ITM_WM1,                  ITM_YYX,               ITM_BETAXY,                  ITM_GAMMAP,                  
+                                             ITM_ERFC,                      ITM_FACTORS,                ITM_FIB,                  ITM_GD,                ITM_GDM1,                    ITM_IXYZ,
+                                             ITM_JYX,                       ITM_LNBETA,                 ITM_LNGAMMA,              ITM_MAX,               ITM_MIN,                     ITM_NEXTP,
+                                             ITM_WM,                        ITM_WP,                     ITM_WM1,                  ITM_YYX,               ITM_BETAXY,                  ITM_GAMMAP,
                                              ITM_GAMMAQ,                    ITM_gammaXY,                ITM_GAMMAXY,              ITM_zetaX,             ITM_M1X,                     ITM_NULL                      };
 
 TO_QSPI const int16_t menu_Orthog[]      = { ITM_HN,                        ITM_Lm,                     ITM_LmALPHA,              ITM_Pn,                ITM_Tn,                      ITM_Un,
@@ -361,12 +361,50 @@ TO_QSPI const int16_t menu_ConvA[]       = { ITM_ACtoM2,                    ITM_
 /*      Menu name                           <----------------------------------------------------------------------------- 6 functions ---------------------------------------------------------------------------->  */
 /*                                          <---------------------------------------------------------------------- 6 f shifted functions ------------------------------------------------------------------------->  */
 /*                                          <---------------------------------------------------------------------- 6 g shifted functions ------------------------------------------------------------------------->  */
-TO_QSPI const int16_t menu_ConvV[]       = { ITM_GLUKtoM3,                  ITM_M3toGLUK,               ITM_QTtoM3,               ITM_M3toQT,            ITM_GLUStoM3,                ITM_M3toGLUS,
+/* TO_QSPI const int16_t menu_ConvV[]       = { ITM_GLUKtoM3,                  ITM_M3toGLUK,               ITM_QTtoM3,               ITM_M3toQT,            ITM_GLUStoM3,                ITM_M3toGLUS,
                                              10000+ITM_FZUKtoM3b,           10000+ITM_M3toFZUKb,        ITM_BARRELtoM3,           ITM_M3toBARREL,        10000+ITM_FZUStoM3b,         10000+ITM_M3toFZUSb,
                                              20000+ITM_FZUKtoM3,            20000+ITM_M3toFZUK,         ITM_NULL,                 ITM_NULL,              20000+ITM_FZUStoM3,          20000+ITM_M3toFZUS,
                                              ITM_GLUKtoL,                   ITM_LtoGLUK,                ITM_QTtoL,                ITM_LtoQT,             ITM_GLUStoL,                 ITM_LtoGLUS,
                                              10000+ITM_FZUKtoMLb,           10000+ITM_MLtoFZUKb,        ITM_NULL,                 ITM_NULL,              10000+ITM_FZUStoMLb,         10000+ITM_MLtoFZUSb,
                                              20000+ITM_FZUKtoML,            20000+ITM_MLtoFZUK,         ITM_NULL,                 ITM_NULL,              20000+ITM_FZUStoML,          20000+ITM_MLtoFZUS            };
+*/
+#if defined(XPB)
+TO_QSPI const int16_t menu_ConvV[]       = { ITM_GLUKtoM3,                  ITM_M3toGLUK,               ITM_BARRELtoM3,           ITM_M3toBARREL,        ITM_GLUStoM3,                ITM_M3toGLUS,
+                                             ITM_GLUKtoFT3,                 ITM_FT3toGLUK,              ITM_FT3toL,               ITM_LtoFT3,            ITM_GLUStoFT3,               ITM_FT3toGLUS,
+                                             ITM_FZUKtoIN3,                 ITM_IN3toFZUK,              ITM_IN3toML,              ITM_MLtoIN3,           ITM_FZUStoIN3,               ITM_IN3toFZUS,
+
+                                             ITM_TSPUKtoML,                 ITM_MLtoTSPUK,              ITM_TBSPUKtoML,           ITM_MLtoTBSPUK,        ITM_CUPUKtoML,               ITM_MLtoCUPUK,
+                                             ITM_PINTUKtoML,                ITM_MLtoPINTUK,             ITM_QTUKtoML,             ITM_MLtoQTUK,          ITM_GLUKtoML,                ITM_MLtoGLUK,
+                                             ITM_FZUKtoML,                  ITM_MLtoFZUK,               ITM_QTtoL,                ITM_LtoQT,             ITM_GLUKtoL,                 ITM_LtoGLUK,
+
+                                             ITM_TSPUStoML,                 ITM_MLtoTSPUS,              ITM_TBSPUStoML,           ITM_MLtoTBSPUS,        ITM_CUPUStoML,               ITM_MLtoCUPUS,
+                                             ITM_PINTUStoML,                ITM_MLtoPINTUS,             ITM_QTUStoML,             ITM_MLtoQTUS,          ITM_GLUStoML,                ITM_MLtoGLUS,
+                                             ITM_FZUStoML,                  ITM_MLtoFZUS,               ITM_QTUStoL,              ITM_LtoQTUS,           ITM_GLUStoL,                 ITM_LtoGLUS,
+
+                                             ITM_PINTDRYtoL,                ITM_LtoPINTDRY,             ITM_QTDRYtoL,             ITM_LtoQTDRY,          ITM_GLDRYtoL,                ITM_LtoGLDRY,
+                                             ITM_NULL,                      ITM_NULL,                   ITM_PECKtoL,              ITM_LtoPECK,           ITM_BUSHELUStoL,             ITM_LtoBUSHELUS,
+                                             ITM_NULL,                      ITM_NULL,                   ITM_NULL,                 ITM_NULL,              ITM_NULL,                    ITM_NULL,
+
+                                             ITM_TSPMtoML,                  ITM_MLtoTSPM,               ITM_TBSPMtoML,            ITM_MLtoTBSPM,         ITM_CUPMtoML,                ITM_MLtoCUPM,
+                                             ITM_NULL,                      ITM_NULL,                   ITM_TBSPAUtoML,           ITM_MLtoTBSPAU,        ITM_NULL,                    ITM_NULL,
+                                             ITM_NULL,                      ITM_NULL,                   ITM_NULL,                 ITM_NULL,              ITM_NULL,                    ITM_NULL                      };
+#else
+TO_QSPI const int16_t menu_ConvV[]       = { ITM_GLUKtoM3,                  ITM_M3toGLUK,               ITM_BARRELtoM3,           ITM_M3toBARREL,        ITM_GLUStoM3,                ITM_M3toGLUS,
+                                             ITM_FZUKtoM3,                  ITM_M3toFZUK,               ITM_NULL,                 ITM_NULL,              ITM_FZUStoM3,                ITM_M3toFZUS,
+                                             ITM_NULL,                      ITM_NULL,                   ITM_NULL,                 ITM_NULL,              ITM_NULL,                    ITM_NULL,
+
+                                             ITM_TSPUKtoML,                 ITM_MLtoTSPUK,              ITM_TBSPUKtoML,           ITM_MLtoTBSPUK,        ITM_CUPUKtoML,               ITM_MLtoCUPUK,
+                                             ITM_FZUKtoML,                  ITM_MLtoFZUK,               ITM_PINTUKtoML,           ITM_MLtoPINTUK,        ITM_NULL,                    ITM_NULL,
+                                             ITM_NULL,                      ITM_NULL,                   ITM_NULL,                 ITM_NULL,              ITM_GLUKtoL,                 ITM_LtoGLUK,
+
+                                             ITM_TSPMtoML,                  ITM_MLtoTSPM,               ITM_TBSPMtoML,            ITM_MLtoTBSPM,         ITM_CUPMtoML,                ITM_MLtoCUPM,
+                                             ITM_NULL,                      ITM_NULL,                   ITM_NULL,                 ITM_NULL,              ITM_NULL,                    ITM_NULL,
+                                             ITM_NULL,                      ITM_NULL,                   ITM_NULL,                 ITM_NULL,              ITM_NULL,                    ITM_NULL,
+
+                                             ITM_TSPUStoML,                 ITM_MLtoTSPUS,              ITM_TBSPUStoML,           ITM_MLtoTBSPUS,        ITM_CUPUStoML,               ITM_MLtoCUPUS,
+                                             ITM_FZUStoML,                  ITM_MLtoFZUS,               ITM_PINTUStoML,           ITM_MLtoPINTUS,        ITM_NULL,                    ITM_NULL,
+                                             ITM_NULL,                      ITM_NULL,                   ITM_QTUStoL,              ITM_LtoQTUS,           ITM_GLUStoL,                 ITM_LtoGLUS                   };
+#endif // XPB
 
 TO_QSPI const int16_t menu_ConvTime[]    = { ITM_DAYtoS,                    ITM_StoDAY,                 ITM_NULL,                 ITM_NULL,              ITM_YEARtoS,                 ITM_StoYEAR                   };
 

@@ -406,6 +406,7 @@
   #define STD_COMPLEX_C                 "\xa1\x02"
   #define STD_PLANCK                    "\xa1\x0e"
   #define STD_PLANCK_2PI                "\xa1\x0f"
+  #define STD_SCRIPT_SMALL_L            "\xa1\x13"
   #define STD_NATURAL_N                 "\xa1\x15"
   #define STD_RATIONAL_Q                "\xa1\x1a"
   #define STD_REAL_R                    "\xa1\x1d"

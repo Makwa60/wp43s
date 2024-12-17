@@ -103,7 +103,41 @@
   void fnCvtGalusM3   (uint16_t multiplyDivide);
   void fnCvtFlozukM3  (uint16_t multiplyDivide);
   void fnCvtFlozusM3  (uint16_t multiplyDivide);
-  void fnCvtQuartM3   (uint16_t multiplyDivide);
+  void fnCvtQuartukM3 (uint16_t multiplyDivide);
+  void fnCvtQuartusM3 (uint16_t multiplyDivide);
+
+  void fnCvtTspukMl   (uint16_t multiplyDivide);
+  void fnCvtTbspukMl  (uint16_t multiplyDivide);
+  void fnCvtCupukMl   (uint16_t multiplyDivide);
+  void fnCvtPintukMl  (uint16_t multiplyDivide);
+  void fnCvtQuartukMl (uint16_t multiplyDivide);
+  void fnCvtGalukMl   (uint16_t multiplyDivide);
+
+  void fnCvtTspusMl   (uint16_t multiplyDivide);
+  void fnCvtTbspusMl  (uint16_t multiplyDivide);
+  void fnCvtCupusMl   (uint16_t multiplyDivide);
+  void fnCvtPintusMl  (uint16_t multiplyDivide);
+  void fnCvtQuartusMl (uint16_t multiplyDivide);
+  void fnCvtGalusMl   (uint16_t multiplyDivide);
+  void fnCvtQuartusL  (uint16_t multiplyDivide);
+
+  void fnCvtTspmMl    (uint16_t multiplyDivide);
+  void fnCvtTbspmMl   (uint16_t multiplyDivide);
+  void fnCvtCupmMl    (uint16_t multiplyDivide);
+  void fnCvtTbspauMl  (uint16_t multiplyDivide);
+
+  void fnCvtPintdryL  (uint16_t multiplyDivide);
+  void fnCvtQuartdryL (uint16_t multiplyDivide);
+  void fnCvtGaldryL   (uint16_t multiplyDivide);
+  void fnCvtPeckusL   (uint16_t multiplyDivide);
+  void fnCvtBushelusL (uint16_t multiplyDivide);
+
+  void fnCvtInch3Ml   (uint16_t multiplyDivide);
+  void fnCvtFt3L      (uint16_t multiplyDivide);
+  void fnCvtFlozukInch3 (uint16_t multiplyDivide);
+  void fnCvtFlozusInch3 (uint16_t multiplyDivide);
+  void fnCvtFt3Galuk (uint16_t multiplyDivide);
+  void fnCvtFt3Galus (uint16_t multiplyDivide);
 
   // Area
   void fnCvtAcreHa    (uint16_t multiplyDivide);

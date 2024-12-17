@@ -291,7 +291,7 @@ void clearScreen(void) {
   void showFunctionName(int16_t item, int16_t delayInMs) {
     uint32_t fcol, frow, gcol, grow;
     const char *functionName;
-
+    
     if(tmpString[0] != 0) {
       functionName = tmpString;
     }

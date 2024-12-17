@@ -1954,7 +1954,74 @@
   #define ITM_RCLVEL                    1879
   #define ITM_STOVEL                    1880
 
-  #define LAST_ITEM                     1881
+  // Additional UK kitchen units
+  #define ITM_TSPUKtoML                 1881
+  #define ITM_MLtoTSPUK                 1882
+  #define ITM_TBSPUKtoML                1883
+  #define ITM_MLtoTBSPUK                1884
+  #define ITM_CUPUKtoML                 1885
+  #define ITM_MLtoCUPUK                 1886
+  #define ITM_PINTUKtoML                1887
+  #define ITM_MLtoPINTUK                1888
+  #define ITM_QTUKtoML                  1889
+  #define ITM_MLtoQTUK                  1890
+  #define ITM_GLUKtoML                  1891
+  #define ITM_MLtoGLUK                  1892
+
+  // Additional US kitchen units
+  #define ITM_TSPUStoML                 1893
+  #define ITM_MLtoTSPUS                 1894
+  #define ITM_TBSPUStoML                1895
+  #define ITM_MLtoTBSPUS                1896
+  #define ITM_CUPUStoML                 1897
+  #define ITM_MLtoCUPUS                 1898
+  #define ITM_PINTUStoML                1899
+  #define ITM_MLtoPINTUS                1900
+  #define ITM_QTUStoML                  1901
+  #define ITM_MLtoQTUS                  1902
+  #define ITM_GLUStoML                  1903
+  #define ITM_MLtoGLUS                  1904
+  #define ITM_QTUStoL                   1905
+  #define ITM_LtoQTUS                   1906
+
+  // Additional metric kitchen units
+  #define ITM_TSPMtoML                  1907
+  #define ITM_MLtoTSPM                  1908
+  #define ITM_TBSPMtoML                 1909
+  #define ITM_MLtoTBSPM                 1910
+  #define ITM_CUPMtoML                  1911
+  #define ITM_MLtoCUPM                  1912
+  #define ITM_TBSPAUtoML                1913
+  #define ITM_MLtoTBSPAU                1914
+
+  // Additional US dry units
+  #define ITM_PINTDRYtoL                1915
+  #define ITM_LtoPINTDRY                1916
+  #define ITM_QTDRYtoL                  1917
+  #define ITM_LtoQTDRY                  1918
+  #define ITM_GLDRYtoL                  1919
+  #define ITM_LtoGLDRY                  1920
+  #define ITM_PECKtoL                   1921
+  #define ITM_LtoPECK                   1922
+  #define ITM_BUSHELUStoL               1923
+  #define ITM_LtoBUSHELUS               1924
+  
+  // Additional volume conversions
+  #define ITM_IN3toML                   1925
+  #define ITM_MLtoIN3                   1926
+  #define ITM_FT3toL                    1927
+  #define ITM_LtoFT3                    1928
+  #define ITM_FZUKtoIN3                 1929
+  #define ITM_IN3toFZUK                 1930
+  #define ITM_FZUStoIN3                 1931
+  #define ITM_IN3toFZUS                 1932
+  #define ITM_FT3toGLUK                 1933
+  #define ITM_GLUKtoFT3                 1934
+  #define ITM_FT3toGLUS                 1935
+  #define ITM_GLUStoFT3                 1936 
+
+
+  #define LAST_ITEM                     1937
 
   #define NOPARAM                       9876 // Item for function who don't need an item
   #define CONFIRMED                     9877 // Confirmation for RESET, CLPALL, CLALL
