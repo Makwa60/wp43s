@@ -505,9 +505,7 @@ void generateAllConstants(void) {
   generateConstantArray("Ft3ToL",        "+2.831684659200000000000000000000000000000000000000000000e+01"); // cnst259      l      = ft^3     × 28.316846592    (NIST)
   generateConstantArray("FlozukToInch3", "+1.733871454947634304717428332494460000000000000000000000e+00"); // cnst260      inch^3 = flozuk   × 28.4130625 / 2.54³
   generateConstantArray("FlozusToInch3", "+1.804687500000000000000000000000000000000000000000000000e+00"); // cnst261      inch^3 = flozus   × 1.8046875
-//  generateConstantArray("GalukToFt3",    "+1.605436532358900000000000000000000000000000000000000000e-01"); // cnst262      ft^3   = galuk    × 0.16054365323589
   generateConstantArray("Ft3ToGaluk",    "+6.228835459042825812951349401353691000000000000000000000e+00"); // cnst262      galuk  = ((ft × 12 × 2.54)^3 / 1000) / (4.54609e-3 × 1000, definition UK) x
-//  generateConstantArray("GalusToFt3",    "+1.336805555555555555555555555555555555555555555555555555e-01"); // cnst263      ft^3   = galus    × 0.13368055555555...
   generateConstantArray("Ft3ToGalUS",    "+7.480519480519480519480519480519480000000000000000000000e+00"); // cnst263      galus  = feet3 * (1/(231 × 0.0254³ × 1000)) * (12*0.254)³
   generateConstantArray("QuartusToM3",   "+9.463529460000000000000000000000000000000000000000000000e-04"); // cnst264      m³     = quartus  × 231 × 0.0254³ / 40.0254³
 //  if the number of constants changes: don't forget to update NUMBER_OF_CONSTANTS_* in defines.h
