@@ -861,7 +861,69 @@
           case ITM_GLUStoM3:
           case ITM_M3toGLUS:
           case ITM_QTtoM3:
-          case ITM_M3toQT: {
+          case ITM_M3toQT:
+          // Additional UK kitchen units
+          case ITM_TSPUKtoML:
+          case ITM_MLtoTSPUK:
+          case ITM_TBSPUKtoML:
+          case ITM_MLtoTBSPUK:
+          case ITM_CUPUKtoML:
+          case ITM_MLtoCUPUK:
+          case ITM_PINTUKtoML:
+          case ITM_MLtoPINTUK:
+          case ITM_QTUKtoML:
+          case ITM_MLtoQTUK:
+          case ITM_GLUKtoML:
+          case ITM_MLtoGLUK:
+          // Additional US kitchen units
+          case ITM_TSPUStoML:
+          case ITM_MLtoTSPUS:
+          case ITM_TBSPUStoML:
+          case ITM_MLtoTBSPUS:
+          case ITM_CUPUStoML:
+          case ITM_MLtoCUPUS:
+          case ITM_PINTUStoML:
+          case ITM_MLtoPINTUS:
+          case ITM_QTUStoML:
+          case ITM_MLtoQTUS:
+          case ITM_GLUStoML:
+          case ITM_MLtoGLUS:
+          case ITM_QTUStoL:
+          case ITM_LtoQTUS:
+          // Additional metric kitchen units
+          case ITM_TSPMtoML:
+          case ITM_MLtoTSPM:
+          case ITM_TBSPMtoML:
+          case ITM_MLtoTBSPM:
+          case ITM_CUPMtoML:
+          case ITM_MLtoCUPM:
+          case ITM_TBSPAUtoML:
+          case ITM_MLtoTBSPAU:
+          // Additional US dry units
+          case ITM_PINTDRYtoL:
+          case ITM_LtoPINTDRY:
+          case ITM_QTDRYtoL:
+          case ITM_LtoQTDRY:
+          case ITM_GLDRYtoL:
+          case ITM_LtoGLDRY:
+          case ITM_PECKtoL:
+          case ITM_LtoPECK:
+          case ITM_BUSHELUStoL:
+          case ITM_LtoBUSHELUS:  
+          // Additional volume conversions
+          case ITM_IN3toML:
+          case ITM_MLtoIN3:
+          case ITM_FT3toL:
+          case ITM_LtoFT3:
+          case ITM_FZUKtoIN3:
+          case ITM_IN3toFZUK:
+          case ITM_FZUStoIN3:
+          case ITM_IN3toFZUS:
+          case ITM_GLUKtoFT3:
+          case ITM_FT3toGLUK:
+          case ITM_GLUStoFT3:
+          case ITM_FT3toGLUS: 
+          {
             mimRunFunction(item, indexOfItems[item].param);
             break;
           }

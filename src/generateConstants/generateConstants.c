@@ -341,7 +341,7 @@ void generateAllConstants(void) {
   generateConstantArray("FlozusToM3",    "+2.957352956250000000000000000000000000000000000000000000e-05"); // cnst111      m³     = flozus × 231 × 0.0254³ / 128
   generateConstantArray("GalusToM3",     "+3.785411784000000000000000000000000000000000000000000000e-03"); // cnst112      m³     = galus × 231 × 0.0254³
   generateConstantArray("GalukToM3",     "+4.546090000000000000000000000000000000000000000000000000e-03"); // cnst113      m³     = galuk × 4.54609e-3
-  generateConstantArray("QuartToM3",     "+1.136522500000000000000000000000000000000000000000000000e-03"); // cnst114      m³     = quart × 4.54609e-3 / 4
+  generateConstantArray("QuartukToM3",   "+1.136522500000000000000000000000000000000000000000000000e-03"); // cnst114      m³     = quartuk × 4.54609e-3 / 4
 
   generateConstantArray("CaratToG",      "+2.000000000000000000000000000000000000000000000000000000e-01"); // cnst115      g      = carat × 0.0002 × 1000
   generateConstantArray("OzToG",         "+2.834952312500000000000000000000000000000000000000000000e+01"); // cnst116      g      = oz × (0.45359237 / 16) × 1000
@@ -478,7 +478,39 @@ void generateAllConstants(void) {
   generateConstantArray("1e_6143",       "+1.000000000000000000000000000000000000000000000000000000e-6143"); // cnst232
   generateConstantArray("1e_10000",      "+1.000000000000000000000000000000000000000000000000000000e-10000"); // cnst233
   generateConstantArray("995on1000",     "+9.950000000000000000000000000000000000000000000000000000e-01"); // cnst234
-  generateConstantArray("1e_32",         "+1.000000000000000000000000000000000000000000000000000000e-32"); // cnst235  if the number of constants changes: don't forget to update NUMBER_OF_CONSTANTS_* in defines.h
+  generateConstantArray("1e_32",         "+1.000000000000000000000000000000000000000000000000000000e-32"); // cnst235
+  generateConstantArray("TspukToMl",     "+5.919388020833333333333333333333333333333333333333333333e+00"); // cnst236      ml     = tspuk    × 5.9193880208333...
+  generateConstantArray("TbspukToMl",    "+1.775816406250000000000000000000000000000000000000000000e+01"); // cnst237      ml     = tbspuk   × 17.7581640625
+  generateConstantArray("CupukToMl",     "+2.841306250000000000000000000000000000000000000000000000e+02"); // cnst238      ml     = cupuk    × 284.130625
+  generateConstantArray("PintukToMl",    "+5.682612500000000000000000000000000000000000000000000000e+02"); // cnst239      ml     = pintuk   × 568.26125
+  generateConstantArray("QuartukToMl",   "+1.136522500000000000000000000000000000000000000000000000e+03"); // cnst240      ml     = quart    × 4.54609e-3 / 4 × 1000000
+  generateConstantArray("GalukToMl",     "+4.546090000000000000000000000000000000000000000000000000e+03"); // cnst241      ml     = galuk    × 4.54609e-3 × 1000000
+  generateConstantArray("TspusToMl",     "+4.928921593750000000000000000000000000000000000000000000e+00"); // cnst242      ml     = tspus    × 4.92892159375
+  generateConstantArray("TbspusToMl",    "+1.478676478125000000000000000000000000000000000000000000e+01"); // cnst243      ml     = tbspus   × 14.78676478125
+  generateConstantArray("CupusToMl",     "+2.365882365000000000000000000000000000000000000000000000e+02"); // cnst244      ml     = cupus    × 236.5882365
+  generateConstantArray("PintusToMl",    "+4.731764730000000000000000000000000000000000000000000000e+02"); // cnst245      ml     = pintus   × 473.176473
+  generateConstantArray("QuartusToMl",   "+9.463529460000000000000000000000000000000000000000000000e+02"); // cnst246      ml     = quartus  × 57.75 × 0.0254³ x 1000000
+  generateConstantArray("QuartusToL",    "+9.463529460000000000000000000000000000000000000000000000e-01"); // cnst247      l      = quartus  × 57.75 × 0.0254³ x 1000
+  generateConstantArray("GalusToMl",     "+3.785411784000000000000000000000000000000000000000000000e+03"); // cnst248      ml     = galus    × 231   × 0.0254³ x 1000000
+  generateConstantArray("TspmToMl",      "+5.000000000000000000000000000000000000000000000000000000e+00"); // cnst249      ml     = tspm     × 5.00000
+  generateConstantArray("TbspmToMl",     "+1.500000000000000000000000000000000000000000000000000000e+01"); // cnst250      ml     = tbspm    × 15.0000
+  generateConstantArray("CupmToMl",      "+2.500000000000000000000000000000000000000000000000000000e+02"); // cnst251      ml     = cupm     × 250.000
+  generateConstantArray("TbspauToMl",    "+2.000000000000000000000000000000000000000000000000000000e+01"); // cnst252      ml     = tbspau   × 20.0000
+  generateConstantArray("PintdryToL",    "+5.506104713575000000000000000000000000000000000000000000e-01"); // cnst253      l      = pintdry  × 0.5506104713575
+  generateConstantArray("QuartdryToL",   "+1.101220942715000000000000000000000000000000000000000000e+00"); // cnst254      l      = quartdry × 1.101220942715
+  generateConstantArray("GaldryToL",     "+4.404883770860000000000000000000000000000000000000000000e+00"); // cnst255      l      = galdry   × 4.40488377086
+  generateConstantArray("PeckusToL",     "+8.809767541720000000000000000000000000000000000000000000e+00"); // cnst257      l      = peckus   × 8.80976754172
+  generateConstantArray("BushelusToL",   "+3.523907016688000000000000000000000000000000000000000000e+01"); // cnst257      l      = bushelus × 35.23907016688  (NIST)
+  generateConstantArray("Inch3ToMl",     "+1.638706400000000000000000000000000000000000000000000000e+01"); // cnst258      ml     = inch^3   × 16.387064       (NIST)
+  generateConstantArray("Ft3ToL",        "+2.831684659200000000000000000000000000000000000000000000e+01"); // cnst259      l      = ft^3     × 28.316846592    (NIST)
+  generateConstantArray("FlozukToInch3", "+1.733871454947634304717428332494460000000000000000000000e+00"); // cnst260      inch^3 = flozuk   × 28.4130625 / 2.54³
+  generateConstantArray("FlozusToInch3", "+1.804687500000000000000000000000000000000000000000000000e+00"); // cnst261      inch^3 = flozus   × 1.8046875
+//  generateConstantArray("GalukToFt3",    "+1.605436532358900000000000000000000000000000000000000000e-01"); // cnst262      ft^3   = galuk    × 0.16054365323589
+  generateConstantArray("Ft3ToGaluk",    "+6.228835459042825812951349401353691000000000000000000000e+00"); // cnst262      galuk  = ((ft × 12 × 2.54)^3 / 1000) / (4.54609e-3 × 1000, definition UK) x
+//  generateConstantArray("GalusToFt3",    "+1.336805555555555555555555555555555555555555555555555555e-01"); // cnst263      ft^3   = galus    × 0.13368055555555...
+  generateConstantArray("Ft3ToGalUS",    "+7.480519480519480519480519480519480000000000000000000000e+00"); // cnst263      galus  = feet3 * (1/(231 × 0.0254³ × 1000)) * (12*0.254)³
+  generateConstantArray("QuartusToM3",   "+9.463529460000000000000000000000000000000000000000000000e-04"); // cnst264      m³     = quartus  × 231 × 0.0254³ / 40.0254³
+//  if the number of constants changes: don't forget to update NUMBER_OF_CONSTANTS_* in defines.h
 
   // Lanczos's coefficients calculated for N=22 and G=22.61891 using Toth's program: https://www.vttoth.com/CMS/projects/41
   // source: https://www.vttoth.com/FILES/lanczos.tgz

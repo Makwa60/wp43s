@@ -51,52 +51,59 @@
   }
 
   static bool getDimensionArg(uint32_t *rows, uint32_t *cols) {
-    longInteger_t tmp_lgInt;
+    longInteger_t tmp_lgInt1;
+    longInteger_t tmp_lgInt2;
 
     //Get Size from REGISTER_X and REGISTER_Y
     if(((getRegisterDataType(REGISTER_X) != dtLongInteger) && (getRegisterDataType(REGISTER_X) != dtReal34)) ||
       ((getRegisterDataType(REGISTER_Y) != dtLongInteger) && (getRegisterDataType(REGISTER_Y) != dtReal34))) {
         displayCalcErrorMessage(ERROR_INVALID_DATA_TYPE_FOR_OP, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
         errorMoreInfo("invalid data type %s and %s", getRegisterDataTypeName(REGISTER_Y, true, false), getRegisterDataTypeName(REGISTER_X, true, false));
-        return false;
+        goto returnDone;
     }
 
     if(getRegisterDataType(REGISTER_X) == dtLongInteger) {
-      convertLongIntegerRegisterToLongInteger(REGISTER_X, tmp_lgInt);
+      convertLongIntegerRegisterToLongInteger(REGISTER_X, tmp_lgInt1);
     }
     else { // dtReal34
-      convertReal34ToLongInteger(REGISTER_REAL34_DATA(REGISTER_X), tmp_lgInt, DEC_ROUND_DOWN);
+      convertReal34ToLongInteger(REGISTER_REAL34_DATA(REGISTER_X), tmp_lgInt1, DEC_ROUND_DOWN);
     }
-    if(longIntegerIsNegativeOrZero(tmp_lgInt)) {
+    if(longIntegerIsNegativeOrZero(tmp_lgInt1)) {
       displayCalcErrorMessage(ERROR_ARG_EXCEEDS_FUNCTION_DOMAIN, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
       #if (EXTRA_INFO_ON_CALC_ERROR == 1)
         char strbuf[32];
-        longIntegerToAllocatedString(tmp_lgInt, strbuf, 32);
+        longIntegerToAllocatedString(tmp_lgInt1, strbuf, 32);
         errorMoreInfo("invalid number of columns %s", strbuf);
       #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
-      return false;
+      goto returnDone;
     }
-    *cols = longIntegerToUInt(tmp_lgInt);
+    *cols = longIntegerToUInt(tmp_lgInt1);
 
     if(getRegisterDataType(REGISTER_Y) == dtLongInteger) {
-      convertLongIntegerRegisterToLongInteger(REGISTER_Y, tmp_lgInt);
+      convertLongIntegerRegisterToLongInteger(REGISTER_Y, tmp_lgInt2);
     }
     else { // dtReal34
-      convertReal34ToLongInteger(REGISTER_REAL34_DATA(REGISTER_Y), tmp_lgInt, DEC_ROUND_DOWN);
+      convertReal34ToLongInteger(REGISTER_REAL34_DATA(REGISTER_Y), tmp_lgInt2, DEC_ROUND_DOWN);
     }
-    if(longIntegerIsNegativeOrZero(tmp_lgInt)) {
+    if(longIntegerIsNegativeOrZero(tmp_lgInt2)) {
       displayCalcErrorMessage(ERROR_ARG_EXCEEDS_FUNCTION_DOMAIN, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
       #if (EXTRA_INFO_ON_CALC_ERROR == 1)
         char strbuf[32];
-        longIntegerToAllocatedString(tmp_lgInt, strbuf, 32);
+        longIntegerToAllocatedString(tmp_lgInt2, strbuf, 32);
         errorMoreInfo("invalid number of rows %s", strbuf);
       #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
-      return false;
+      goto returnDone;
     }
-    *rows = longIntegerToUInt(tmp_lgInt);
+    *rows = longIntegerToUInt(tmp_lgInt2);
 
-    longIntegerFree(tmp_lgInt);
+    longIntegerFree(tmp_lgInt1);
+    longIntegerFree(tmp_lgInt2);
     return true;
+
+  returnDone:
+    longIntegerFree(tmp_lgInt1);
+    longIntegerFree(tmp_lgInt2);
+    return false;
   }
 
 
@@ -4820,7 +4827,7 @@ void elementwiseRealCxma(void (*f)(void)) {
     const int16_t j = getJRegisterAsInt(true);
 
     if(matrixIndex == INVALID_VARIABLE || !regInRange(matrixIndex)) {
-      displayCalcErrorMessage(ERROR_OUT_OF_RANGE, ERR_REGISTER_LINE, REGISTER_X);                                                                                        
+      displayCalcErrorMessage(ERROR_OUT_OF_RANGE, ERR_REGISTER_LINE, REGISTER_X);
       #if(EXTRA_INFO_ON_CALC_ERROR == 1)
         sprintf(errorMessage, "Cannot execute, destination register is out of range: %d", matrixIndex);
         moreInfoOnError("In function callByIndexedMatrix:", errorMessage, NULL, NULL);

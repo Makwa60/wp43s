@@ -406,8 +406,13 @@ void fnCvtQuartL(uint16_t multiplyDivide) {
 }
 
 
-void fnCvtQuartM3(uint16_t multiplyDivide) {
-  unitConversion(const_QuartToM3, multiplyDivide);
+void fnCvtQuartukM3(uint16_t multiplyDivide) {
+  unitConversion(const_QuartukToM3, multiplyDivide);
+}
+
+
+void fnCvtQuartusM3(uint16_t multiplyDivide) {
+  unitConversion(const_QuartusToM3, multiplyDivide);
 }
 
 
@@ -443,6 +448,146 @@ void fnCvtMuM2(uint16_t multiplyDivide) {
 
 void fnCvtLbfftNm(uint16_t multiplyDivide) {
   unitConversion(const_LbfftToNm, multiplyDivide);
+}
+
+
+void fnCvtTspukMl(uint16_t multiplyDivide) {
+  unitConversion(const_TspukToMl, multiplyDivide);
+}
+
+
+void fnCvtTbspukMl(uint16_t multiplyDivide) {
+  unitConversion(const_TbspukToMl, multiplyDivide);
+}
+
+
+void fnCvtCupukMl(uint16_t multiplyDivide) {
+  unitConversion(const_CupukToMl, multiplyDivide);
+}
+
+
+void fnCvtPintukMl(uint16_t multiplyDivide) {
+  unitConversion(const_PintukToMl, multiplyDivide);
+}
+
+
+void fnCvtQuartukMl(uint16_t multiplyDivide) {
+  unitConversion(const_QuartukToMl, multiplyDivide);
+}
+
+
+void fnCvtGalukMl(uint16_t multiplyDivide) {
+  unitConversion(const_GalukToMl, multiplyDivide);
+}
+
+
+void fnCvtTspusMl(uint16_t multiplyDivide) {
+  unitConversion(const_TspusToMl, multiplyDivide);
+}
+
+
+void fnCvtTbspusMl(uint16_t multiplyDivide) {
+  unitConversion(const_TbspusToMl, multiplyDivide);
+}
+
+
+void fnCvtCupusMl(uint16_t multiplyDivide) {
+  unitConversion(const_CupusToMl, multiplyDivide);
+}
+
+
+void fnCvtPintusMl(uint16_t multiplyDivide) {
+  unitConversion(const_PintusToMl, multiplyDivide);
+}
+
+
+void fnCvtQuartusMl(uint16_t multiplyDivide) {
+  unitConversion(const_QuartusToMl, multiplyDivide);
+}
+
+
+void fnCvtGalusMl(uint16_t multiplyDivide) {
+  unitConversion(const_GalusToMl, multiplyDivide);
+}
+
+
+void fnCvtQuartusL(uint16_t multiplyDivide) {
+  unitConversion(const_QuartusToL, multiplyDivide);
+}
+
+
+void fnCvtTspmMl(uint16_t multiplyDivide) {
+  unitConversion(const_TspmToMl, multiplyDivide);
+}
+
+
+void fnCvtTbspmMl(uint16_t multiplyDivide) {
+  unitConversion(const_TbspmToMl, multiplyDivide);
+}
+
+
+void fnCvtCupmMl(uint16_t multiplyDivide) {
+  unitConversion(const_CupmToMl, multiplyDivide);
+}
+
+
+void fnCvtTbspauMl(uint16_t multiplyDivide) {
+  unitConversion(const_TbspauToMl, multiplyDivide);
+}
+
+
+void fnCvtPintdryL(uint16_t multiplyDivide) {
+  unitConversion(const_PintdryToL, multiplyDivide);
+}
+
+
+void fnCvtQuartdryL(uint16_t multiplyDivide) {
+  unitConversion(const_QuartdryToL, multiplyDivide);
+}
+
+
+void fnCvtGaldryL(uint16_t multiplyDivide) {
+  unitConversion(const_GaldryToL, multiplyDivide);
+}
+
+
+void fnCvtPeckusL(uint16_t multiplyDivide) {
+  unitConversion(const_PeckusToL, multiplyDivide);
+}
+
+
+void fnCvtBushelusL(uint16_t multiplyDivide) {
+  unitConversion(const_BushelusToL, multiplyDivide);
+}
+
+
+void fnCvtInch3Ml(uint16_t multiplyDivide) {
+  unitConversion(const_Inch3ToMl, multiplyDivide);
+}
+
+
+void fnCvtFt3L(uint16_t multiplyDivide) {
+  unitConversion(const_Ft3ToL, multiplyDivide);
+}
+
+
+void fnCvtFlozukInch3(uint16_t multiplyDivide) {
+  unitConversion(const_FlozukToInch3, multiplyDivide);
+}
+
+
+void fnCvtFlozusInch3(uint16_t multiplyDivide) {
+  unitConversion(const_FlozusToInch3, multiplyDivide);
+}
+
+
+void fnCvtFt3Galuk(uint16_t multiplyDivide) {
+  unitConversion(const_Ft3ToGaluk, multiplyDivide);
+}
+
+
+void fnCvtFt3Galus(uint16_t multiplyDivide) {
+  unitConversion(const_Ft3ToGalUS, multiplyDivide);
 }
 
 

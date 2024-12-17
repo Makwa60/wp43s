@@ -361,7 +361,7 @@ const funcTest_t funcTestCvt[] = {
   {"fnCvtPointMm",    fnCvtPointMm   },
   {"fnCvtPsiPa",      fnCvtPsiPa     },
   {"fnCvtQuartL",     fnCvtQuartL    },
-  {"fnCvtQuartM3",    fnCvtQuartM3   },
+  {"fnCvtQuartusM3",  fnCvtQuartusM3 },
   {"fnCvtSfeetM",     fnCvtSfeetM    },
   {"fnCvtShortcwtKg", fnCvtShortcwtKg},
   {"fnCvtShorttonKg", fnCvtShorttonKg},
