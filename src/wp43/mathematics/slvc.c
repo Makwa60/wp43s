@@ -305,49 +305,91 @@ void solveCubicEquation(const real_t *c2Real, const real_t *c2Imag, const real_t
   // x^3 + b x^2 + c x + d = 0
   // Abramowitz & Stegun §3.8.2
   real_t qr, qi, rr, ri, s1r, s1i, s2r, s2i, ar, ai;
+  const bool realIn = realIsZero(c2Imag) && realIsZero(c1Imag) && realIsZero(c0Imag);
+
+  // Compute q, r and the discriminant
+  // This is done by scaling things up so that divisions are avoided until the final step.
+  // This reduces rounding problems and gives an exact discriminant for integer (and other)
+  // coefficients.
+  // q has a denominator of 9, r has a denomination of 54.  q^3 therefore has a denominator
+  // of 729 and r^2 of 2916.  729 times 4 is 2916, so we upscale by 2916.
 
   // q = (c - b^2 / 3) / 3
+  // 9q = (3c - b^2)
+  realMultiply(c1Real, const_3, &rr, realContext); realMultiply(c1Imag, const_3, &ri, realContext);
   mulComplexComplex(c2Real, c2Imag, c2Real, c2Imag, &qr, &qi, realContext);
-  realMultiply(&qr, const_1on3, &qr, realContext), realMultiply(&qi, const_1on3, &qi, realContext);
-  realSubtract(c1Real, &qr, &qr, realContext), realSubtract(c1Imag, &qi, &qi, realContext);
-  realMultiply(&qr, const_1on3, &qr, realContext), realMultiply(&qi, const_1on3, &qi, realContext);
+  realSubtract(&rr, &qr, &qr, realContext); realSubtract(&ri, &qi, &qi, realContext);
 
   // r = (b c - 3 d) / 6 - b^3 / 27
+  // 54r = 9(b c - 3 d) - 2 b^3
   mulComplexComplex(c2Real, c2Imag, c1Real, c1Imag, &rr, &ri, realContext);
-  realMultiply(c0Real, const_3, &ar, realContext), realMultiply(c0Imag, const_3, &ai, realContext);
-  realSubtract(&rr, &ar, &rr, realContext), realSubtract(&ri, &ai, &ri, realContext);
-  realDivide(&rr, const_6, &rr, realContext), realDivide(&ri, const_6, &ri, realContext);
+  realMultiply(c0Real, const_3, &ar, realContext); realMultiply(c0Imag, const_3, &ai, realContext);
+  realSubtract(&rr, &ar, &rr, realContext); realSubtract(&ri, &ai, &ri, realContext);
+  realMultiply(&rr, const_9, &rr, realContext); realMultiply(&ri, const_9, &ri, realContext);
+
   mulComplexComplex(c2Real, c2Imag, c2Real, c2Imag, &ar, &ai, realContext);
   mulComplexComplex(&ar, &ai, c2Real, c2Imag, &ar, &ai, realContext);
-  realDivide(&ar, const_27, &ar, realContext), realDivide(&ai, const_27, &ai, realContext);
-  realSubtract(&rr, &ar, &rr, realContext), realSubtract(&ri, &ai, &ri, realContext);
+  realAdd(&ar, &ar, &ar, realContext); realAdd(&ai, &ai, &ai, realContext);
+  realSubtract(&rr, &ar, &rr, realContext); realSubtract(&ri, &ai, &ri, realContext);
 
-  // q^3 + r^2
+  // q^3 + r^2 = (4 (9q)^3 + r^2) / 2916
   mulComplexComplex(&qr, &qi, &qr, &qi, rReal, rImag, realContext);
   mulComplexComplex(rReal, rImag, &qr, &qi, rReal, rImag, realContext);
+  realMultiply(rReal, const_4, rReal, realContext); realMultiply(rImag, const_4, rImag, realContext);
   mulComplexComplex(&rr, &ri, &rr, &ri, &ar, &ai, realContext);
-  realAdd(rReal, &ar, rReal, realContext), realAdd(rImag, &ai, rImag, realContext);
+  realAdd(rReal, &ar, rReal, realContext); realAdd(rImag, &ai, rImag, realContext);
+  realDivide(rReal, const_2916, rReal, realContext); realDivide(rImag, const_2916, rImag, realContext);
+
+  // Scale r back to it's proper range, q isn't needed anymore so it's good.
+  realDivide(&rr, const_54, &rr, realContext); realDivide(&ri, const_54, &ri, realContext);
 
   // s1, s2 = cbrt(r ± sqrt(q^3 + r^2))
   sqrtComplex(rReal, rImag, &s1r, &s1i, realContext);
-  realSubtract(&rr, &s1r, &s2r, realContext), realSubtract(&ri, &s1i, &s2i, realContext);
-  realAdd(&rr, &s1r, &s1r, realContext), realAdd(&ri, &s1i, &s1i, realContext);
+  realSubtract(&rr, &s1r, &s2r, realContext); realSubtract(&ri, &s1i, &s2i, realContext);
+  realAdd(&rr, &s1r, &s1r, realContext); realAdd(&ri, &s1i, &s1i, realContext);
   curtComplex(&s1r, &s1i, &s1r, &s1i, realContext);
   curtComplex(&s2r, &s2i, &s2r, &s2i, realContext);
 
   // reusing q, r for (s1 ± s2)
-  realAdd(&s1r, &s2r, &qr, realContext), realAdd(&s1i, &s2i, &qi, realContext);
-  realSubtract(&s1r, &s2r, &rr, realContext), realSubtract(&s1i, &s2i, &ri, realContext);
+  realAdd(&s1r, &s2r, &qr, realContext); realAdd(&s1i, &s2i, &qi, realContext);
+  realSubtract(&s1r, &s2r, &rr, realContext); realSubtract(&s1i, &s2i, &ri, realContext);
   mulComplexComplex(&rr, &ri, const_0, const_root3on2, &rr, &ri, realContext);
 
   // roots
-  realMultiply(c2Real, const_1on3, x2Real, realContext),   realMultiply(c2Imag, const_1on3, x2Imag, realContext);
-  _realCheckedSubtract(&qr, x2Real, x1Real, realContext), _realCheckedSubtract(&qi, x2Imag, x1Imag, realContext);
-  realMultiply(&qr, const_1on2, x3Real, realContext),      realMultiply(&qi, const_1on2, x3Imag, realContext);
-  _realCheckedAdd(x3Real, x2Real, x3Real, realContext),   _realCheckedAdd(x3Imag, x2Imag, x3Imag, realContext);
+  realDivide(c2Real, const_3, x2Real, realContext);        realDivide(c2Imag, const_3, x2Imag, realContext);
+  _realCheckedSubtract(&qr, x2Real, x1Real, realContext); _realCheckedSubtract(&qi, x2Imag, x1Imag, realContext);
+  realMultiply(&qr, const_1on2, x3Real, realContext);      realMultiply(&qi, const_1on2, x3Imag, realContext);
+  _realCheckedAdd(x3Real, x2Real, x3Real, realContext);   _realCheckedAdd(x3Imag, x2Imag, x3Imag, realContext);
   realChangeSign(x3Real);                                  realChangeSign(x3Imag);
-  _realCheckedAdd(x3Real, &rr, x2Real, realContext),      _realCheckedAdd(x3Imag, &ri, x2Imag, realContext);
-  _realCheckedSubtract(x3Real, &rr, x3Real, realContext), _realCheckedSubtract(x3Imag, &ri, x3Imag, realContext);
+  _realCheckedAdd(x3Real, &rr, x2Real, realContext);      _realCheckedAdd(x3Imag, &ri, x2Imag, realContext);
+  _realCheckedSubtract(x3Real, &rr, x3Real, realContext); _realCheckedSubtract(x3Imag, &ri, x3Imag, realContext);
+
+  // Force real outputs when the roots are known to be real
+  if(realIn) {
+    if(realIsZero(rReal) || realIsNegative(rImag)) {
+      /* Three real roots */
+      realCopy(const_0, x1Imag);
+      realCopy(const_0, x2Imag);
+      realCopy(const_0, x3Imag);
+    } else {
+      /* One real, two complex roots */
+      if(realCompareAbsLessThan(x1Imag, x2Imag)) {
+        if(realCompareAbsLessThan(x1Imag, x3Imag)) {
+          realCopy(const_0, x1Imag);
+        }
+        else {
+          realCopy(const_0, x3Imag);
+        }
+      } else {
+        if(realCompareAbsLessThan(x2Imag, x3Imag)) {
+          realCopy(const_0, x2Imag);
+        }
+        else {
+          realCopy(const_0, x3Imag);
+        }
+      }
+    }
+  }
 
   // discriminant
   realMultiply(rReal, const__108, rReal, realContext);
