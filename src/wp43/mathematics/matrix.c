@@ -4239,6 +4239,8 @@ static void calculateEigenvectors(const any34Matrix_t *matrix, bool isComplex, r
           }
         }
       }
+      freeWp43(unknownsToFill, size * 2 * REAL_SIZE_IN_BYTES * 2);
+      unknownsToFill = NULL;
     }
     else {
       displayCalcErrorMessage(ERROR_RAM_FULL, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
