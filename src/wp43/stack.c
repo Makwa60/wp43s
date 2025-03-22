@@ -324,6 +324,10 @@ void undo(void) {
   #if defined(DEBUGUNDO)
     printf(">>> Undoing, calcMode = %i ...", calcMode);
   #endif // DEBUGUNDO
+
+  const bool wasSolving = getSystemFlag(FLAG_SOLVING);
+  const bool wasInting = getSystemFlag(FLAG_INTING);
+
   recallStatsMatrix();
 
   if(currentInputVariable != INVALID_VARIABLE) {
@@ -381,6 +385,14 @@ void undo(void) {
   SAVED_SIGMA_LAct = 0;
   thereIsSomethingToUndo = false;
   clearRegister(TEMP_REGISTER_2_SAVED_STATS);
+
+  if(wasSolving != getSystemFlag(FLAG_SOLVING)) {
+    flipSystemFlag(FLAG_SOLVING);
+  }
+  if(wasInting != getSystemFlag(FLAG_INTING)) {
+    flipSystemFlag(FLAG_INTING);
+  }
+
   #if defined(DEBUGUNDO)
     printf(">>> Undone, calcMode = %i\n", calcMode);
   #endif // DEBUGUNDO

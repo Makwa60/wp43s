@@ -665,6 +665,7 @@ int solver(calcRegister_t variable, const real34_t *y, const real34_t *x, real34
     real34Copy(&b, resX);
 
     if(result == SOLVER_RESULT_EXTREMUM) { // Check if the result is really an extremum
+      bool retainSolvingFlag = getSystemFlag(FLAG_SOLVING);
       setSystemFlag(FLAG_SOLVING);
       real34Copy(const34_1e_32, &tmp);
       while(true) {
@@ -689,8 +690,10 @@ int solver(calcRegister_t variable, const real34_t *y, const real34_t *x, real34
           break;
         }
       }
+      if(!retainSolvingFlag) {
+        clearSystemFlag(FLAG_SOLVING);
+      }
     }
-    clearSystemFlag(FLAG_SOLVING);
 
     if(result == SOLVER_RESULT_NORMAL && real34IsInfinite(REGISTER_REAL34_DATA(variable)) && extendRange && real34IsZero(resZ)) {
       result = SOLVER_RESULT_CONSTANT;
