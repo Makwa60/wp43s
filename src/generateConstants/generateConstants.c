@@ -223,7 +223,7 @@ void generateAllConstants(void) {
   generateConstantArray("G",             "+6.674300000000000000000000000000000000000000000000000000e-11"); c++; // cnst12
   generateConstantArray("G0",            "+7.748091729863650646680823323308763943587286047673370920e-05"); c++; // cnst13
   generateConstantArray("GC",            "+9.159655941772190150546035149323841107741493742816721343e-01"); c++; // cnst14 math constant Catalan
-  generateConstantArray("ge",            "−2.002319304360920000000000000000000000000000000000000000e+00"); c++; // cnst15
+  generateConstantArray("ge",            "-2.002319304360920000000000000000000000000000000000000000e+00"); c++; // cnst15
   generateConstantArray("GM",            "+3.986004418000000000000000000000000000000000000000000000e+14"); c++; // cnst16
   generateConstantArray("gEarth",        "+9.806650000000000000000000000000000000000000000000000000e+00"); c++; // cnst17 per definition
 
