@@ -387,6 +387,8 @@ power_complexMatrix
 power_real
 power_complex
 
+specialResults
+
 exp
 expMOne
 10pow
