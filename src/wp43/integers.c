@@ -89,7 +89,37 @@ void fnChangeBase(uint16_t base) {
 
 void longIntegerMultiply(longInteger_t opY, longInteger_t opX, longInteger_t result) {
   if(longIntegerBits(opY) + longIntegerBits(opX) <= MAX_LONG_INTEGER_SIZE_IN_BITS) {
-    mpz_mul(result, opY, opX);
+    #if DO_NOT_USE_MPZ_MUL == 1
+      longInteger_t y, x;
+      int sign = longIntegerSign(opY) * longIntegerSign(opX);
+
+      longIntegerInit(y);
+      longIntegerInit(x);
+      longIntegerCopy(opY, y);
+      longIntegerCopy(opX, x);
+      longIntegerSetPositiveSign(y);
+      longIntegerSetPositiveSign(x);
+      longIntegerSetZero(result);
+
+      if(!longIntegerIsZero(y)) {
+        while(!longIntegerIsZero(x)) {
+          if(longIntegerIsOdd(x)) {
+            longIntegerAdd(result, y, result);
+          }
+          longIntegerMultiply2(y, y);
+          longIntegerDivide2(x, x);
+        }
+      }
+
+      longIntegerFree(y);
+      longIntegerFree(x);
+
+      if(sign < 0) {
+        longIntegerSetNegativeSign(result);
+      }
+    #else // DO_NOT_USE_MPZ_MUL
+      mpz_mul(result, opY, opX);
+    #endif // DO_NOT_USE_MPZ_MUL
   }
   else {
     displayCalcErrorMessage(longIntegerSign(opY) == longIntegerSign(opX) ? ERROR_OVERFLOW_PLUS_INF : ERROR_OVERFLOW_MINUS_INF, ERR_REGISTER_LINE, REGISTER_X);
@@ -107,7 +137,32 @@ void longIntegerMultiply(longInteger_t opY, longInteger_t opX, longInteger_t res
 
 void longIntegerSquare(longInteger_t op, longInteger_t result) {
   if(longIntegerBits(op) * 2 <= MAX_LONG_INTEGER_SIZE_IN_BITS) {
-    mpz_mul(result, op, op);
+    #if DO_NOT_USE_MPZ_MUL == 1
+      longInteger_t y, x;
+
+      longIntegerInit(y);
+      longIntegerInit(x);
+      longIntegerCopy(op, y);
+      longIntegerCopy(op, x);
+      longIntegerSetPositiveSign(y);
+      longIntegerSetPositiveSign(x);
+      longIntegerSetZero(result);
+
+      if(!longIntegerIsZero(y)) {
+        while(!longIntegerIsZero(x)) {
+          if(longIntegerIsOdd(x)) {
+            longIntegerAdd(result, y, result);
+          }
+          longIntegerMultiply2(y, y);
+          longIntegerDivide2(x, x);
+        }
+      }
+
+      longIntegerFree(y);
+      longIntegerFree(x);
+    #else // DO_NOT_USE_MPZ_MUL
+      mpz_mul(result, op, op);
+    #endif // DO_NOT_USE_MPZ_MUL
   }
   else {
     displayCalcErrorMessage(ERROR_OVERFLOW_PLUS_INF, ERR_REGISTER_LINE, REGISTER_X);

@@ -63,7 +63,7 @@ void squareLonI(void) {
   longInteger_t lgInt;
 
   convertLongIntegerRegisterToLongInteger(REGISTER_X, lgInt);
-  longIntegerMultiply(lgInt, lgInt, lgInt);
+  longIntegerSquare(lgInt, lgInt);
   convertLongIntegerToLongIntegerRegister(lgInt, REGISTER_X);
   longIntegerFree(lgInt);
 }

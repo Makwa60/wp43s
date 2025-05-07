@@ -26,6 +26,7 @@
   #define ENABLE_DATE_TYPE_WITH_TIME       1 // Set to 1 to enable dtDate with time of the day
   #define USE_ITALIC_CONSTANT              1 // Set to 1 to use italic e and i for Euler's e and imaginary unit (disables CPXj)
   #define USE_FIX_FOR_ALL_INTEGER_MATRIX   0 // Set to 1 to hide fractional part of each element of all-integer matrices
+  #define DO_NOT_USE_MPZ_MUL               1 // Set to 1 to enable workaround avoiding mpz_mul
 
   #define DECNUMDIGITS                    75 // Default number of digits used in the decNumber library
 
