@@ -55,11 +55,62 @@ TO_QSPI void (* const power[NUMBER_OF_DATA_TYPES_FOR_CALCULATIONS][NUMBER_OF_DAT
 
 
 
+static bool realIsAnOddInteger(const real_t *x) {
+  if(realIsAnInteger(x)) {
+    real_t y;
+    realDivideRemainder(x, const_2, &y, &ctxtReal75);
+    return !realIsZero(&y);
+  }
+  else {
+    return false;
+  }
+}
 void PowerReal(const real_t *y, const real_t *x, real_t *res, realContext_t *realContext) {
   real_t lny;
-  if(realIsNegative(y) && realIsAnInteger(x) && realIsPositive(x)) {
-    realDivideRemainder(x, const_2, &lny, realContext);
-    bool isOdd = !realIsZero(&lny);
+  if((realIsNaN(y) || realIsNaN(x)) && !realCompareEqual(y, const_1) && !realIsZero(x)) {
+    realCopy(const_NaN, res);
+  }
+  else if(realIsZero(y)) {
+    const bool isOdd = realIsNegative(y) && !realIsSpecial(x) && !realIsZero(x) && realIsAnOddInteger(x);
+    if(realIsZero(x)) {
+      realCopy(const_NaN, res);
+    }
+    else if(realIsNegative(x)) {
+      realCopy(const_plusInfinity, res);
+    }
+    else {
+      realZero(res);
+    }
+    if(isOdd) {
+      realChangeSign(res);
+    }
+  }
+  else if(realIsZero(x)) {
+    realCopy(const_1, res);
+  }
+  else if(realCompareEqual(y, const_1)) {
+    realCopy(const_1, res);
+  }
+  else if(realIsInfinite(x) && realCompareEqual(y, const__1)) {
+    realCopy(const_1, res);
+  }
+  else if(realIsInfinite(x) && !realIsZero(y) && !realIsSpecial(y)) {
+    if(realCompareAbsLessThan(y, const_1)) {
+      realCopy(realIsNegative(x) ? const_plusInfinity : const_0, res);
+    }
+    else {
+      realCopy(realIsPositive(x) ? const_plusInfinity : const_0, res);
+    }
+  }
+  else if(realIsInfinite(y)) {
+    const bool isOdd = realIsNegative(y) && !realIsSpecial(x) && realIsAnOddInteger(x);
+    realCopy(realIsPositive(x) ? const_plusInfinity : const_0, res);
+    if(isOdd) {
+      realChangeSign(res);
+    }
+  }
+  else if(realIsNegative(y) && realIsAnInteger(x) && realIsPositive(x)) {
+    const bool isOdd = realIsAnOddInteger(x);
     realCopyAbs(y, &lny);
     realLn(&lny, &lny, realContext);
     realMultiply(x, &lny, res, realContext);
@@ -78,29 +129,67 @@ void PowerReal(const real_t *y, const real_t *x, real_t *res, realContext_t *rea
 
 
 
+static bool real34IsAnOddInteger(const real34_t *x) {
+  if(real34IsAnInteger(x)) {
+    real34_t y;
+    real34DivideRemainder(x, const34_2, &y);
+    return !real34IsZero(&y);
+  }
+  else {
+    return false;
+  }
+}
 void Power34Real(const real34_t *y, const real34_t *x, real34_t *res) {
   real34_t lny, yy, xx, x1;
   uint32_t exponent = 0;
   bool inv = real34IsNegative(x);
   bool neg = real34IsNegative(y) && real34IsAnInteger(x) && real34IsPositive(x);
-  if(real34IsZero(y)) {
+  if((real34IsNaN(y) || real34IsNaN(x)) && !real34CompareEqual(y, const34_1) && !real34IsZero(x)) {
+    realToReal34(const_NaN, res);
+    return;
+  }
+  else if(real34IsZero(y)) {
+    const bool isOdd = real34IsNegative(y) && !real34IsSpecial(x) && !real34IsZero(x) && real34IsAnOddInteger(x);
     if(real34IsZero(x)) {
       realToReal34(const_NaN, res);
     }
     else if(real34IsNegative(x)) {
-      realToReal34(const_minusInfinity, res);
+      realToReal34(const_plusInfinity, res);
     }
     else {
       real34Zero(res);
+    }
+    if(isOdd) {
+      real34ChangeSign(res);
     }
     return;
   }
-  else if(real34IsInfinite(x)) {
-    if(real34IsNegative(x)) {
-      real34Zero(res);
+  else if(real34IsZero(x)) {
+    real34Copy(const34_1, res);
+    return;
+  }
+  else if(real34CompareEqual(y, const34_1)) {
+    real34Copy(const34_1, res);
+    return;
+  }
+  else if(real34IsInfinite(x) && real34CompareEqual(y, const34__1)) {
+    real34Copy(const34_1, res);
+    return;
+  }
+  else if(real34IsInfinite(x) && !real34IsZero(y) && !real34IsSpecial(y)) {
+    if(real34CompareAbsLessThan(y, const34_1)) {
+      realToReal34(real34IsNegative(x) ? const_plusInfinity : const_0, res);
     }
     else {
-      realToReal34(const_plusInfinity, res);
+      realToReal34(real34IsPositive(x) ? const_plusInfinity : const_0, res);
+    }
+    return;
+  }
+  else if(real34IsInfinite(y)) {
+    const bool isOdd = real34IsNegative(y) && !real34IsSpecial(x) && real34IsAnOddInteger(x);
+    realToReal34(real34IsPositive(x) ? const_plusInfinity : const_0, res);
+    if(isOdd) {
+      real34ChangeSign(res);
     }
     return;
   }
@@ -570,27 +659,9 @@ void powCplxShoI(void) {
  * \return void
  ***********************************************/
 void powRealReal(void) {
-  if(real34IsInfinite(REGISTER_REAL34_DATA(REGISTER_Y))) {
-    if(real34IsZero(REGISTER_REAL34_DATA(REGISTER_X))) {
-      convertRealToReal34ResultRegister(const_NaN, REGISTER_X);
-    }
-    else {
-      if(real34IsPositive(REGISTER_REAL34_DATA(REGISTER_X)) && real34IsAnInteger(REGISTER_REAL34_DATA(REGISTER_X))) {
-        longInteger_t lgInt;
-        convertReal34ToLongInteger(REGISTER_REAL34_DATA(REGISTER_X), lgInt, DEC_ROUND_DOWN);
-        if(longIntegerIsEven(lgInt)) {
-          convertRealToReal34ResultRegister(const_plusInfinity, REGISTER_X);
-        }
-        else {
-          convertRealToReal34ResultRegister(const_minusInfinity, REGISTER_X);
-        }
-        longIntegerFree(lgInt);
-      }
-      else {
-        convertRealToReal34ResultRegister(const_plusInfinity, REGISTER_X);
-      }
-    }
-    setRegisterAngularMode(REGISTER_X, amNone);
+  if(!getSystemFlag(FLAG_SPCRES) && real34IsZero(REGISTER_REAL34_DATA(REGISTER_Y)) && real34IsZero(REGISTER_REAL34_DATA(REGISTER_X))) {
+    displayCalcErrorMessage(ERROR_ARG_EXCEEDS_FUNCTION_DOMAIN, ERR_REGISTER_LINE, REGISTER_X);
+    errorMoreInfo("zeroth power of zero is not defined");
     return;
   }
 
