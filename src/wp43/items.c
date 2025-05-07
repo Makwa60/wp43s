@@ -3021,9 +3021,9 @@ TO_QSPI const item_t indexOfItems[] = {
 
 // Additional METRIC kitchen units
 /* 1907 */  { fnCvtTspmMl,                  multiply,                    "tsp" STD_SUB_I STD_RIGHT_ARROW "m" STD_LITRE, "m" STD_LITRE " " STD_LEFT_ARROW,              (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
-/* 1908 */  { fnCvtTspmMl,                  divide,                      "m" STD_LITRE STD_RIGHT_ARROW "tsp" STD_SUB_I, STD_RIGHT_ARROW "tsp" STD_SUB_I,               (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/* 1908 */  { fnCvtTspmMl,                  divide,                      "m" STD_LITRE STD_RIGHT_ARROW "tsp" STD_SUB_I, STD_RIGHT_ARROW " tea",                        (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
 /* 1909 */  { fnCvtTbspmMl,                 multiply,                    "tbsp" STD_SUB_I STD_RIGHT_ARROW "m" STD_LITRE,"m" STD_LITRE " " STD_LEFT_ARROW,              (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
-/* 1910 */  { fnCvtTbspmMl,                 divide,                      "m" STD_LITRE STD_RIGHT_ARROW "tbsp" STD_SUB_I,STD_RIGHT_ARROW "tbsp" STD_SUB_I,              (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/* 1910 */  { fnCvtTbspmMl,                 divide,                      "m" STD_LITRE STD_RIGHT_ARROW "tbsp" STD_SUB_I,STD_RIGHT_ARROW "table",                       (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
 /* 1911 */  { fnCvtCupmMl,                  multiply,                    "cup" STD_SUB_I STD_RIGHT_ARROW "m" STD_LITRE, "m" STD_LITRE " " STD_LEFT_ARROW,              (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
 /* 1912 */  { fnCvtCupmMl,                  divide,                      "m" STD_LITRE STD_RIGHT_ARROW "cup" STD_SUB_I, STD_RIGHT_ARROW " cup" STD_SUB_I,              (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
 /* 1913 */  { fnCvtTbspauMl,                multiply,                    "tbsp" STD_au_ STD_RIGHT_ARROW "m" STD_LITRE,  "m" STD_LITRE " " STD_LEFT_ARROW,              (0 << TAM_MAX_BITS) |     0, CAT_XFNT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
@@ -3055,5 +3055,11 @@ TO_QSPI const item_t indexOfItems[] = {
 /* 1935 */  { fnCvtFt3Galus,                multiply,                    "ft." STD_SUP_3 STD_RIGHT_ARROW "gal" STD_US,  STD_RIGHT_ARROW " gal" STD_US,                 (0 << TAM_MAX_BITS) |     0, CAT_XFNT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
 /* 1936 */  { fnCvtFt3Galus,                divide,                      "gal" STD_US STD_RIGHT_ARROW "ft." STD_SUP_3,  "ft." STD_SUP_3 STD_LEFT_ARROW,                (0 << TAM_MAX_BITS) |     0, CAT_XFNT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
 
-/* 1927 */  { itemToBeCoded,                NOPARAM,                     "",                                            "Last item",                                   (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_ENABLED   | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     }
+// Additional METRIC kitchen units (duplicate)
+/* 1937 */  { fnCvtTspmMl,                  multiply,                    "tsp" STD_SUB_I STD_RIGHT_ARROW "m" STD_LITRE, STD_SPACE_HAIR,                                (0 << TAM_MAX_BITS) |     0, CAT_DUPL | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/* 1938 */  { fnCvtTspmMl,                  divide,                      "m" STD_LITRE STD_RIGHT_ARROW "tsp" STD_SUB_I, " spoon" STD_SUB_I,                            (0 << TAM_MAX_BITS) |     0, CAT_DUPL | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/* 1939 */  { fnCvtTbspmMl,                 multiply,                    "tbsp" STD_SUB_I STD_RIGHT_ARROW "m" STD_LITRE,STD_SPACE_HAIR,                                (0 << TAM_MAX_BITS) |     0, CAT_DUPL | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/* 1940 */  { fnCvtTbspmMl,                 divide,                      "m" STD_LITRE STD_RIGHT_ARROW "tbsp" STD_SUB_I," spoon" STD_SUB_I,                            (0 << TAM_MAX_BITS) |     0, CAT_DUPL | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+
+/* 1941 */  { itemToBeCoded,                NOPARAM,                     "",                                            "Last item",                                   (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_ENABLED   | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     }
 };

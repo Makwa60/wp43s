@@ -2018,10 +2018,16 @@
   #define ITM_FT3toGLUK                 1933
   #define ITM_GLUKtoFT3                 1934
   #define ITM_FT3toGLUS                 1935
-  #define ITM_GLUStoFT3                 1936 
+  #define ITM_GLUStoFT3                 1936
+
+  // Additional metric kitchen units (duplicate)
+  #define ITM_TSPMtoMLb                 1937
+  #define ITM_MLtoTSPMb                 1938
+  #define ITM_TBSPMtoMLb                1939
+  #define ITM_MLtoTBSPMb                1940
 
 
-  #define LAST_ITEM                     1937
+  #define LAST_ITEM                     1941
 
   #define NOPARAM                       9876 // Item for function who don't need an item
   #define CONFIRMED                     9877 // Confirmation for RESET, CLPALL, CLALL
