@@ -109,7 +109,7 @@ void PowerReal(const real_t *y, const real_t *x, real_t *res, realContext_t *rea
       realChangeSign(res);
     }
   }
-  else if(realIsNegative(y) && realIsAnInteger(x) && realIsPositive(x)) {
+  else if(realIsNegative(y) && realIsAnInteger(x)) {
     const bool isOdd = realIsAnOddInteger(x);
     realCopyAbs(y, &lny);
     realLn(&lny, &lny, realContext);
@@ -143,7 +143,7 @@ void Power34Real(const real34_t *y, const real34_t *x, real34_t *res) {
   real34_t lny, yy, xx, x1;
   uint32_t exponent = 0;
   bool inv = real34IsNegative(x);
-  bool neg = real34IsNegative(y) && real34IsAnInteger(x) && real34IsPositive(x);
+  bool neg = real34IsNegative(y) && real34IsAnInteger(x);
   if((real34IsNaN(y) || real34IsNaN(x)) && !real34CompareEqual(y, const34_1) && !real34IsZero(x)) {
     realToReal34(const_NaN, res);
     return;
