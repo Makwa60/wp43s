@@ -17,6 +17,7 @@
   #define EQUATION_PARSER_MVAR 0
   #define EQUATION_PARSER_XEQ  1
 
+  void   fnEqAdd        (uint16_t unusedButMandatoryParameter);
   void   fnEqNew        (uint16_t unusedButMandatoryParameter);
   void   fnEqEdit       (uint16_t unusedButMandatoryParameter);
   void   fnEqDelete     (uint16_t unusedButMandatoryParameter);

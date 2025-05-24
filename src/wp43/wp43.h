@@ -256,4 +256,7 @@
     extern bool                 backToDMCP;
   #endif // DMCP_BUILD
 
+  #if defined(MERGED_SAVE_LOAD)
+    extern uint16_t            saveLoadMode;
+  #endif // MERGED_SAVE_LOAD
 #endif // !WP43_H

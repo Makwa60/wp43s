@@ -976,6 +976,7 @@ void fnNop(uint16_t unusedButMandatoryParameter) {
   void fnCvtFlozusInch3            (uint16_t unusedButMandatoryParameter) {}   //DL
   void fnCvtFt3Galuk               (uint16_t unusedButMandatoryParameter) {}   //DL
   void fnCvtFt3Galus               (uint16_t unusedButMandatoryParameter) {}   //DL
+  void fnFileMode                  (uint16_t unusedButMandatoryParameter) {}   //DL
 #endif // GENERATE_CATALOGS
 
 
@@ -985,13 +986,17 @@ void fnNop(uint16_t unusedButMandatoryParameter) {
 #define STD_dry_  STD_SUB_d STD_SUB_r STD_SUB_y                        // For US dry units
 #define STD_LITRE STD_SCRIPT_SMALL_L                                   // For litre units
 #ifdef XPB
- #define CAT_XFNT CAT_FNCT
- #define DEF_QUART_US " qt" STD_US
- #define DEF_PINT_US " pt" STD_US
-#else 
- #define CAT_XFNT CAT_NONE
- #define DEF_QUART_US "quart"
- #define DEF_PINT_US "pint" STD_US
+ #define CAT_XFNT      CAT_FNCT
+ #define DEF_QUART_US  " qt" STD_US
+ #define DEF_PINT_US   " pt" STD_US
+ #define DEF_TSPI      "tsp" STD_SUB_I
+ #define DEF_TBSPI     "tbsp" STD_SUB_I
+#else
+ #define CAT_XFNT      CAT_NONE
+ #define DEF_QUART_US  "quart"
+ #define DEF_PINT_US   "pint" STD_US
+ #define DEF_TSPI      " tea"
+ #define DEF_TBSPI     "table"
 #endif   // XPB
 
 TO_QSPI const item_t indexOfItems[] = {
@@ -2576,7 +2581,7 @@ TO_QSPI const item_t indexOfItems[] = {
 /* 1507 */  { fnLnBeta,                     NOPARAM,                     "ln" STD_beta,                                 "ln" STD_beta,                                 (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
 /* 1508 */  { fnLnGamma,                    NOPARAM,                     "ln" STD_GAMMA,                                "ln" STD_GAMMA,                                (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_ENABLED  | PTP_NONE         },
 /* 1509 */  { fnLoad,                       LM_ALL,                      "LoadAll",                                     "LoadAll",                                     (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_CANCEL    | EIM_DISABLED | PTP_DISABLED     },
-/* 1510 */  { fnLoad,                       LM_PROGRAMS,                 "LoadPE",                                      "LoadPE",                                      (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_DISABLED     },
+/* 1510 */  { fnLoad,                       LM_PROGRAMS,                 "LoadPr",                                      "LoadPr",                                      (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_DISABLED     },
 /* 1511 */  { fnLoad,                       LM_REGISTERS,                "LoadR",                                       "LoadR",                                       (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_DISABLED     },
 /* 1512 */  { fnLoad,                       LM_SYSTEM_STATE,             "LoadSS",                                      "LoadSS",                                      (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_DISABLED     },
 /* 1513 */  { fnLoad,                       LM_SUMS,                     "Load" STD_SIGMA,                              "Load" STD_SIGMA,                              (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_DISABLED     },
@@ -3021,9 +3026,9 @@ TO_QSPI const item_t indexOfItems[] = {
 
 // Additional METRIC kitchen units
 /* 1907 */  { fnCvtTspmMl,                  multiply,                    "tsp" STD_SUB_I STD_RIGHT_ARROW "m" STD_LITRE, "m" STD_LITRE " " STD_LEFT_ARROW,              (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
-/* 1908 */  { fnCvtTspmMl,                  divide,                      "m" STD_LITRE STD_RIGHT_ARROW "tsp" STD_SUB_I, STD_RIGHT_ARROW " tea",                        (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/* 1908 */  { fnCvtTspmMl,                  divide,                      "m" STD_LITRE STD_RIGHT_ARROW "tsp" STD_SUB_I, STD_RIGHT_ARROW DEF_TSPI,                        (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
 /* 1909 */  { fnCvtTbspmMl,                 multiply,                    "tbsp" STD_SUB_I STD_RIGHT_ARROW "m" STD_LITRE,"m" STD_LITRE " " STD_LEFT_ARROW,              (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
-/* 1910 */  { fnCvtTbspmMl,                 divide,                      "m" STD_LITRE STD_RIGHT_ARROW "tbsp" STD_SUB_I,STD_RIGHT_ARROW "table",                       (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/* 1910 */  { fnCvtTbspmMl,                 divide,                      "m" STD_LITRE STD_RIGHT_ARROW "tbsp" STD_SUB_I,STD_RIGHT_ARROW DEF_TBSPI,                       (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
 /* 1911 */  { fnCvtCupmMl,                  multiply,                    "cup" STD_SUB_I STD_RIGHT_ARROW "m" STD_LITRE, "m" STD_LITRE " " STD_LEFT_ARROW,              (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
 /* 1912 */  { fnCvtCupmMl,                  divide,                      "m" STD_LITRE STD_RIGHT_ARROW "cup" STD_SUB_I, STD_RIGHT_ARROW " cup" STD_SUB_I,              (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
 /* 1913 */  { fnCvtTbspauMl,                multiply,                    "tbsp" STD_au_ STD_RIGHT_ARROW "m" STD_LITRE,  "m" STD_LITRE " " STD_LEFT_ARROW,              (0 << TAM_MAX_BITS) |     0, CAT_XFNT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
@@ -3061,5 +3066,13 @@ TO_QSPI const item_t indexOfItems[] = {
 /* 1939 */  { fnCvtTbspmMl,                 multiply,                    "tbsp" STD_SUB_I STD_RIGHT_ARROW "m" STD_LITRE,STD_SPACE_HAIR,                                (0 << TAM_MAX_BITS) |     0, CAT_DUPL | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
 /* 1940 */  { fnCvtTbspmMl,                 divide,                      "m" STD_LITRE STD_RIGHT_ARROW "tbsp" STD_SUB_I," spoon" STD_SUB_I,                            (0 << TAM_MAX_BITS) |     0, CAT_DUPL | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
 
-/* 1941 */  { itemToBeCoded,                NOPARAM,                     "",                                            "Last item",                                   (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_ENABLED   | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     }
+// Additional LOAD commands
+/* 1941 */  { fnLoad,                       LM_EQUATIONS,                "LoadEq",                                      "LoadEq",                                      (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_DISABLED     },
+
+// SAVE/LOAD merged file menu
+/* 1942 */  { itemToBeCoded,                NOPARAM,                     "BKUPSTF",                                     "BKUPSTF",                                     (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
+/* 1943 */  { fnFileMode,                   FILE_BACKUP,                 "BACKUP",                                      "BACKUP",                                      (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
+/* 1944 */  { fnFileMode,                   FILE_STATE,                  "STATE",                                       "STATE",                                       (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
+
+/* 1945 */  { itemToBeCoded,                NOPARAM,                     "",                                            "Last item",                                   (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_ENABLED   | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     }
 };

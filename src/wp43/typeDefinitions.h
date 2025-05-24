@@ -511,7 +511,10 @@
     TI_MEMORY_TO_LOAD_PGMS = 64,
     TI_MY_MENU_CLEARED     = 65,
     TI_MY_PFN_CLEARED      = 66,
-    TI_MY_ALPHA_CLEARED    = 67
+    TI_MY_ALPHA_CLEARED    = 67,
+    TI_EQUATIONS_RESTORED  = 68,
+    TI_SAVE_TO             = 69,
+    TI_LOAD_FROM           = 70
   } temporaryInformation_t;
 
 

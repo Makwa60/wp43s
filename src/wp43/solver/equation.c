@@ -72,7 +72,7 @@
   };
 #endif // !TESTSUITE_BUILD
 
-void fnEqNew(uint16_t unusedButMandatoryParameter) {
+void fnEqAdd(uint16_t unusedButMandatoryParameter) {
   if(numberOfFormulae == 0) {
     allFormulae = allocWp43(sizeof(formulaHeader_t));
     if(allFormulae) {
@@ -108,6 +108,10 @@ void fnEqNew(uint16_t unusedButMandatoryParameter) {
       return;
     }
   }
+}
+
+void fnEqNew(uint16_t unusedButMandatoryParameter) {
+  fnEqAdd(NOPARAM);
   fnEqEdit(NOPARAM);
 }
 

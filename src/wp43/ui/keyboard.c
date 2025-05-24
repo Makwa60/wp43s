@@ -851,8 +851,8 @@ bool      _kbSeenInterrupt     = false;
           _closeCatalog();
           fnKeyInCatalog = 0;
         }
-        else if((calcMode == cmConfirmation) && (item == ITM_YES || item == ITM_NO)) {
-          runFunction(item);
+        else if((calcMode == cmConfirmation) && (item == ITM_YES || item == ITM_NO || item == ITM_BACKUP_FILE || item == ITM_STATE_FILE)) {
+           runFunction(item);
         }
       }
       else if(calcMode == cmConfirmation) {

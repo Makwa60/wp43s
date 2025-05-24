@@ -2025,9 +2025,16 @@
   #define ITM_MLtoTSPMb                 1938
   #define ITM_TBSPMtoMLb                1939
   #define ITM_MLtoTBSPMb                1940
+  
+  // Additional LOAD commands
+  #define ITM_LOADE                     1941
 
+  // SAVE/LOAD merged file menu
+  #define MNU_BKUPSTF                   1942
+  #define ITM_BACKUP_FILE               1943
+  #define ITM_STATE_FILE                1944
 
-  #define LAST_ITEM                     1941
+  #define LAST_ITEM                     1945
 
   #define NOPARAM                       9876 // Item for function who don't need an item
   #define CONFIRMED                     9877 // Confirmation for RESET, CLPALL, CLALL
