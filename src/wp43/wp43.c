@@ -197,3 +197,7 @@ real34_t               nBins ;
 real34_t               hiBinR;
 char                   statMx[8];
 char                   plotStatMx[8];
+
+#if defined(MERGED_SAVE_LOAD)
+  uint16_t               saveLoadMode;
+#endif // MERGED_SAVE_LOAD

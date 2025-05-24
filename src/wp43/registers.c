@@ -2160,7 +2160,7 @@ void fnRegCopy(uint16_t unusedButMandatoryParameter) {
 
   if((lastErrorCode = getRegParam(&f, &s, &n, &d)) == ERROR_NONE) {
     if(f) {
-      doLoad(LM_REGISTERS_PARTIAL, s, n, d, manualLoad);
+      doLoad(LM_REGISTERS_PARTIAL, s, n, d, FILE_BACKUP);
     }
     else {
       if(s > d) {

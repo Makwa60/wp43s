@@ -943,6 +943,22 @@ void fnSave(uint16_t saveMode) {
   uint32_t i;
   char yy1[35], yy2[35];
 
+#if defined(MERGED_SAVE_LOAD)
+  if(saveMode >> 8 == FILE_NONE) {
+    saveLoadMode = saveMode;
+    temporaryInformation = TI_SAVE_TO;
+    setFileType(fnSave);
+    return;
+  }
+
+  if (saveMode >> 8 == FILE_BACKUP) {
+    saveMode = SM_BACKUP;
+  }
+  else {
+    saveMode = SM_STATE_FILE;
+  }
+#endif // MERGED_SAVE_LOAD
+
   if (saveMode == SM_BACKUP) {
     path = ioPathSaveFile;
   }
@@ -1599,7 +1615,7 @@ static bool restoreOneSection(uint16_t loadMode, uint16_t s, uint16_t n, uint16_
       regist = stringToInt16(tmpString + 1);
       read2Lines(aimBuffer,tmpString); // Register data type & Register value
 
-      if(loadMode == LM_ALL || (loadMode == LM_REGISTERS && regist < REGISTER_X) || (loadMode == LM_REGISTERS_PARTIAL && regist >= s && regist < (s + n))) {
+      if(loadMode == LM_ALL || (loadMode == LM_REGISTERS) || (loadMode == LM_REGISTERS_PARTIAL && regist >= s && regist < (s + n))) {
         restoreRegister(loadMode == LM_REGISTERS_PARTIAL ? (regist - s + d) : regist, aimBuffer, tmpString);
         restoreMatrixData(loadMode == LM_REGISTERS_PARTIAL ? (regist - s + d) : regist);
       }
@@ -2085,8 +2101,12 @@ static bool restoreOneSection(uint16_t loadMode, uint16_t s, uint16_t n, uint16_
 
   else if(strcmp(tmpString, "EQUATIONS") == 0) {
     uint16_t formulae;
+    uint16_t prevNumberOfFormulae;
 
-    if(loadMode == LM_ALL || loadMode == LM_PROGRAMS) {
+    prevNumberOfFormulae = numberOfFormulae;
+
+    //Delete current equations for Load All
+    if(loadMode == LM_ALL) {
       for(int16_t i = numberOfFormulae; i > 0; --i) {
         deleteEquation(i - 1);
       }
@@ -2094,7 +2114,9 @@ static bool restoreOneSection(uint16_t loadMode, uint16_t s, uint16_t n, uint16_
 
     readLine(tmpString); // Number of formulae
     formulae = stringToUint16(tmpString);
-    if(loadMode == LM_ALL || loadMode == LM_PROGRAMS) {
+
+    //Create headers table for Load All
+    if(loadMode == LM_ALL) {
       allFormulae = allocWp43(sizeof(formulaHeader_t) * formulae);
       numberOfFormulae = formulae;
       currentFormula = 0;
@@ -2106,9 +2128,27 @@ static bool restoreOneSection(uint16_t loadMode, uint16_t s, uint16_t n, uint16_
 
     for(int16_t i = 0; i < formulae; i++) {
       readLine(tmpString); // One formula
-      if(loadMode == LM_ALL || loadMode == LM_PROGRAMS) {
+      if(loadMode == LM_ALL || loadMode == LM_EQUATIONS) {
         utf8ToString((uint8_t *)tmpString, tmpString + TMP_STR_LENGTH / 2);
-        setEquation(i, tmpString + TMP_STR_LENGTH / 2);
+        bool newEquation = true;
+        if(loadMode == LM_EQUATIONS) { // Load Equations
+          for(int16_t j = 0; j < prevNumberOfFormulae; j++) {
+            const char *equationString = TO_PCMEMPTR(allFormulae[j].pointerToFormulaData);
+            if(strcmp(tmpString, equationString) == 0) {
+              newEquation = false;
+              break;
+            }
+          }
+          // if identical equation already exists in RAM don't duplicate it
+          if(newEquation) {
+            currentFormula = numberOfFormulae - 1;
+            fnEqAdd(NOPARAM);  // Add new equation after existing ones
+            setEquation(numberOfFormulae-1, tmpString + TMP_STR_LENGTH / 2);  // Copy equation string to the end of equations
+          }
+        }
+        else { // Load All
+          setEquation(i, tmpString + TMP_STR_LENGTH / 2);
+        }
       }
     }
   }
@@ -2199,7 +2239,7 @@ void doLoad(uint16_t loadMode, uint16_t s, uint16_t n, uint16_t d, uint16_t load
   ioFilePath_t path;
   int ret;
 
-  if (loadType == stateLoad) {
+  if (loadType == FILE_STATE) {
     path = ioPathLoadStateFile;
   }
   else {
@@ -2227,20 +2267,19 @@ void doLoad(uint16_t loadMode, uint16_t s, uint16_t n, uint16_t d, uint16_t load
 
   //Check save file version
   uint32_t loadedVersion = 0;
-  if(loadMode == LM_ALL) {
-    readLine(tmpString);
-    if(strcmp(tmpString, "SAVE_FILE_REVISION") == 0) {
-      readLine(aimBuffer); // internal rev number (ignore now)
-      readLine(aimBuffer); // param
-      readLine(tmpString); // value
-      if(strcmp(aimBuffer, "WP43_save_file_00") == 0) {
-        loadedVersion = stringToUint32(tmpString);
-        if (loadedVersion == 1) loadedVersion = BACKUP_VERSION; //don't check old files
-      }
+  readLine(tmpString);
+  if(strcmp(tmpString, "SAVE_FILE_REVISION") == 0) {
+    readLine(aimBuffer); // internal rev number (ignore now)
+    readLine(aimBuffer); // param
+    readLine(tmpString); // value
+    if(strcmp(aimBuffer, "WP43_save_file_00") == 0) {
+      loadedVersion = stringToUint32(tmpString);
+      if (loadedVersion == 1) loadedVersion = BACKUP_VERSION; //don't check old files
     }
   }
 
-  if(loadMode == LM_PROGRAMS) {
+
+  if((loadMode == LM_PROGRAMS) || (loadMode == LM_EQUATIONS))  {
     lastErrorCode = ERROR_NONE;
   }
 
@@ -2249,7 +2288,7 @@ void doLoad(uint16_t loadMode, uint16_t s, uint16_t n, uint16_t d, uint16_t load
     }
   //}
 
-  if(loadMode != LM_PROGRAMS) {
+  if((loadMode != LM_PROGRAMS) && (loadMode != LM_EQUATIONS)) {
     lastErrorCode = ERROR_NONE;
   }
 
@@ -2272,7 +2311,7 @@ void doLoad(uint16_t loadMode, uint16_t s, uint16_t n, uint16_t d, uint16_t load
     }
   }
 
-  if(loadedVersion <= 96) { // Cursor arrows added to Mya
+  if((loadedVersion <= 96) && (loadMode == LM_ALL)) { // Cursor arrows added to Mya
     sprintf(tmpString,"***** Old version of Myalpha *****\n"
                       "Myalpha includes now cursor arrows.\n"
                       "Use CLMya to get the new default\n"
@@ -2288,14 +2327,18 @@ void doLoad(uint16_t loadMode, uint16_t s, uint16_t n, uint16_t d, uint16_t load
 
   #if !defined(TESTSUITE_BUILD)
     if(loadMode == LM_ALL) {
-      if(loadType == manualLoad) {
+      if(loadType == FILE_BACKUP) {
         temporaryInformation = TI_BACKUP_RESTORED;
-      } else if(loadType == stateLoad) {
+      } else if(loadType == FILE_STATE) {
         temporaryInformation = TI_STATEFILE_RESTORED;
       }
     } else if (loadMode == LM_PROGRAMS && lastErrorCode == ERROR_NONE) {
       temporaryInformation = TI_PROGRAMS_RESTORED;
+    } else if (loadMode == LM_EQUATIONS && lastErrorCode == ERROR_NONE) {
+      temporaryInformation = TI_EQUATIONS_RESTORED;
     } else if (loadMode == LM_PROGRAMS && lastErrorCode == ERROR_NOT_ENOUGH_MEMORY_TO_LOAD_PGMS) {
+      temporaryInformation = TI_MEMORY_TO_LOAD_PGMS;
+    } else if (loadMode == LM_EQUATIONS && lastErrorCode == ERROR_NOT_ENOUGH_MEMORY_TO_LOAD_EQUS) {
       temporaryInformation = TI_MEMORY_TO_LOAD_PGMS;
     } else if (loadMode == LM_REGISTERS) {
        temporaryInformation = TI_REGISTERS_RESTORED;
@@ -2319,11 +2362,25 @@ void doLoad(uint16_t loadMode, uint16_t s, uint16_t n, uint16_t d, uint16_t load
 
 
 void fnLoad(uint16_t loadMode) {
-  if (loadMode == LM_STATE_FILE) {
-    doLoad(LM_ALL, 0, 0, 0, stateLoad);
-  } else {
-    doLoad(loadMode, 0, 0, 0, manualLoad);
+
+#if defined(MERGED_SAVE_LOAD)
+  if(loadMode >> 8 == FILE_NONE) {
+    saveLoadMode = loadMode;
+    temporaryInformation = TI_LOAD_FROM;
+    setFileType(fnLoad);
+    return;
   }
+  if (loadMode && 0xFF == LM_STATE_FILE) {
+    loadMode = (loadMode & 0xFF00) + LM_ALL;
+  }
+  doLoad(loadMode & 0xFF, 0, 0, 0, loadMode >> 8);
+#else
+  if (loadMode == LM_STATE_FILE) {
+    doLoad(LM_ALL, 0, 0, 0, FILE_STATE);
+  } else {
+    doLoad(loadMode, 0, 0, 0, FILE_BACKUP);
+  }
+#endif // MERGED_SAVE_LOAD
 }
 
 #undef BACKUP
@@ -2436,4 +2493,31 @@ void replaceInstruction(uint8_t *step, uint16_t programNumber, int16_t itemToRep
       show_warning(tmpString);
     #endif // TESTSUITE_BUILD
   }
+}
+
+
+void setFileType(void (*func)(uint16_t)) {
+#if defined(MERGED_SAVE_LOAD)
+    previousCalcMode = calcMode;
+    cursorHide();
+    calcMode = cmConfirmation;
+    clearSystemFlag(FLAG_ALPHA);
+    confirmedFunction = func;
+  #if !defined(TESTSUITE_BUILD)
+    showSoftmenu(-MNU_BKUPSTF);
+  #endif // !TESTSUITE_BUILD
+#endif // MERGED_SAVE_LOAD
+}
+
+void fnFileMode(uint16_t fileType) {
+#if defined(MERGED_SAVE_LOAD)
+  #if !defined(TESTSUITE_BUILD)
+    if(calcMode == cmConfirmation) {
+        calcMode = previousCalcMode;
+        popSoftmenu();                // Pop MNU_BKUPSTF
+        temporaryInformation = TI_NO_INFO;
+        confirmedFunction((fileType << 8) + saveLoadMode);
+    }
+  #endif // !TESTSUITE_BUILD
+#endif // MERGED_SAVE_LOAD
 }

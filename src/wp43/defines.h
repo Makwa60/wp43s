@@ -503,6 +503,12 @@
   #define PGM_RESUMING                               5
   #define PGM_SINGLE_STEP                            6
 
+  // Save/load file type
+  //#define MERGED_SAVE_LOAD
+  #define FILE_NONE                                  0
+  #define FILE_BACKUP                                1
+  #define FILE_STATE                                 2
+
   // Save mode
   #define SM_BACKUP                                  0
   #define SM_STATE_FILE                              1
@@ -516,6 +522,7 @@
   #define LM_SYSTEM_STATE                            5
   #define LM_REGISTERS_PARTIAL                       6
   #define LM_STATE_FILE                              7
+  #define LM_EQUATIONS                               8
 
   // Screen updating mode
   #define SCRUPD_AUTO                             0x00
@@ -725,6 +732,11 @@
     #define TO_QSPI                            __attribute__ ((section(".qspi")))
   #endif // !DMCP_BUILD
 
+  #if defined(XPB)
+    #if !defined(MERGED_SAVE_LOAD)
+      #define MERGED_SAVE_LOAD
+    #endif // !MERGED_SAVE_LOAD
+  #endif // XPB
 
   //******************************
   //* Macros replacing functions *

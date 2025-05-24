@@ -83,6 +83,7 @@ TO_QSPI const char *errorMessages[NUMBER_OF_ERROR_CODES] = {
 /* 54 */  "No program specified",
 /* 55 */  "Not enough memory to load the programs",
 /* 56 */  "Solver aborted",
+/* 57 */  "Not enough memory to load the equations",
 };
 
 

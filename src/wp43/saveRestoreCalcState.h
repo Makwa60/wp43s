@@ -8,9 +8,6 @@
   #define SAVERESTORECALCSTATE_H
 
   #include <stdint.h>
-  
-  #define manualLoad 1
-  #define stateLoad  2
 
   #if defined(PC_BUILD) || defined(DMCP_BUILD)
     void   saveCalc      (void);
@@ -25,7 +22,7 @@
   uint64_t stringToUint64    (const char *str);
   int16_t  stringToInt16     (const char *str);
   int32_t  stringToInt32     (const char *str);
-  
+
   void     readLine          (char *line);
   void     read2Lines        (char *line1, char *line2);
 
@@ -34,4 +31,6 @@
   void     fnDeleteBackup    (uint16_t confirmation);
   void     replaceInstruction(uint8_t *step, uint16_t programNumber, int16_t itemToReplace, int16_t itemNew);
 
+  void     setFileType       (void (*func)(uint16_t));
+  void     fnFileMode        (uint16_t fileMode);
 #endif // !SAVERESTORECALCSTATE_H

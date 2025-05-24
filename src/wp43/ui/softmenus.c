@@ -291,6 +291,8 @@ TO_QSPI const int16_t menu_DELITM[]      = {  ITM_NULL,                     ITM_
 
 TO_QSPI const int16_t menu_YESNO[]       = {  ITM_NULL,                     ITM_YES,                    ITM_NULL,                 ITM_NULL,              ITM_NO,                      ITM_NULL                     };
 
+TO_QSPI const int16_t menu_BKUPSTF[]     = {  ITM_NULL,                     ITM_BACKUP_FILE,            ITM_NULL,                 ITM_NULL,              ITM_STATE_FILE,              ITM_NULL                     };
+
 TO_QSPI const int16_t menu_CAT_AIM[]     = { -MNU_CURSOR,                   ITM_NULL,                  -MNU_CHARS,                ITM_NULL,              ITM_NULL,                   -MNU_MENUS_AIM                };
 
 TO_QSPI const int16_t menu_MENUS_AIM[]   = { -MNU_ALPHAINTL,               -MNU_ALPHAMATH,             -MNU_ALPHADOT,            -MNU_ALPHA_OMEGA,      -MNU_CURSOR,                  ITM_NULL                     };
@@ -385,9 +387,9 @@ TO_QSPI const int16_t menu_ConvV[]       = { ITM_GLUKtoM3,                  ITM_
                                              ITM_NULL,                      ITM_NULL,                   ITM_PECKtoL,              ITM_LtoPECK,           ITM_BUSHELUStoL,             ITM_LtoBUSHELUS,
                                              ITM_NULL,                      ITM_NULL,                   ITM_NULL,                 ITM_NULL,              ITM_NULL,                    ITM_NULL,
 
-                                             10000+ITM_TSPMtoMLb,           10000+ITM_MLtoTSPMb,        10000+ITM_TBSPMtoMLb,     10000+ITM_MLtoTBSPMb,  ITM_CUPMtoML,                ITM_MLtoCUPM,
-                                             20000+ITM_TSPMtoML,            20000+ITM_MLtoTSPM,         20000+ITM_TBSPMtoML,      20000+ITM_MLtoTBSPM,   ITM_NULL,                    ITM_NULL,
-                                             ITM_NULL,                      ITM_NULL,                   ITM_TBSPAUtoML,           ITM_MLtoTBSPAU,        ITM_NULL,                    ITM_NULL                      };
+                                             ITM_TSPMtoML,                  ITM_MLtoTSPM,               ITM_TBSPMtoML,            ITM_MLtoTBSPM,         ITM_CUPMtoML,                ITM_MLtoCUPM,
+                                             ITM_NULL,                      ITM_NULL,                   ITM_TBSPAUtoML,           ITM_MLtoTBSPAU,        ITM_NULL,                    ITM_NULL,
+                                             ITM_NULL,                      ITM_NULL,                   ITM_NULL,                 ITM_NULL,              ITM_NULL,                    ITM_NULL                      };
 #else
 TO_QSPI const int16_t menu_ConvV[]       = { ITM_GLUKtoM3,                  ITM_M3toGLUK,               ITM_BARRELtoM3,           ITM_M3toBARREL,        ITM_GLUStoM3,                ITM_M3toGLUS,
                                              ITM_FZUKtoM3,                  ITM_M3toFZUK,               ITM_NULL,                 ITM_NULL,              ITM_FZUStoM3,                ITM_M3toFZUS,
@@ -440,8 +442,13 @@ TO_QSPI const int16_t menu_1stDeriv[]    = { ITM_NULL,                      ITM_
 TO_QSPI const int16_t menu_2ndDeriv[]    = { ITM_NULL,                      ITM_NULL,                   ITM_NULL,                 ITM_NULL,              ITM_NULL,                    ITM_NULL                      };
 TO_QSPI const int16_t menu_Sf[]          = { ITM_NULL,                      ITM_NULL,                   ITM_NULL,                 ITM_NULL,              ITM_NULL,                    ITM_NULL                      };
 TO_QSPI const int16_t menu_Solver[]      = { ITM_NULL,                      ITM_NULL,                   ITM_NULL,                 ITM_NULL,              ITM_NULL,                    ITM_NULL                      };
-TO_QSPI const int16_t menu_IO[]          = { ITM_LOAD,                      ITM_LOADP,                  ITM_LOADR,                ITM_DUMP,              ITM_SAVEST,                  ITM_LOADST,
-                                             ITM_LOADSS,                    ITM_LOADV,                  ITM_LOADSIGMA,            ITM_NULL,              ITM_WRITEP,                  ITM_READP,
+#if defined(XPB)
+TO_QSPI const int16_t menu_IO[]          = { ITM_LOAD,                      ITM_LOADP,                  ITM_LOADE,                ITM_DUMP,              ITM_WRITEP,                  ITM_READP,
+                                             ITM_LOADSS,                    ITM_LOADV,                  ITM_LOADR,                ITM_LOADSIGMA,         ITM_NULL,                    ITM_NULL,
+#else // !XPB
+TO_QSPI const int16_t menu_IO[]          = { ITM_LOAD,                      ITM_LOADP,                  ITM_LOADE,                ITM_DUMP,              ITM_SAVEST,                  ITM_LOADST,
+                                             ITM_LOADSS,                    ITM_LOADV,                  ITM_LOADR,                ITM_LOADSIGMA,         ITM_WRITEP,                  ITM_READP,
+#endif // XPB
 #if DMCP_BUILD
                                              ITM_BEEP,                      ITM_TONE,                   ITM_BUZZ,                 ITM_PLAY,              ITM_VOLMINUS,                ITM_VOLPLUS                   };
 #else // !DMCP_BUILD
@@ -591,7 +598,8 @@ TO_QSPI const softmenu_t softmenu[] = {
 /* 114 */  {.menuItem = -MNU_TAMFLAG_WRITE,  .numItems = sizeof(menu_TamFlagWr     )/sizeof(int16_t), .softkeyItem = menu_TamFlagWr     },
 /* 115 */  {.menuItem = -MNU_SYSFL_WRITABLE, .numItems = sizeof(menu_SYSFL_writable)/sizeof(int16_t), .softkeyItem = menu_SYSFL_writable},
 /* 116 */  {.menuItem = -MNU_CURSOR,      .numItems = sizeof(menu_CURSOR     )/sizeof(int16_t), .softkeyItem = menu_CURSOR      },
-/* 117 */  {.menuItem =  0,               .numItems = 0,                                        .softkeyItem = NULL             }
+/* 117 */  {.menuItem = -MNU_BKUPSTF,     .numItems = sizeof(menu_BKUPSTF    )/sizeof(int16_t), .softkeyItem = menu_BKUPSTF     },
+/* 118 */  {.menuItem =  0,               .numItems = 0,                                        .softkeyItem = NULL             }
 };
 
 dynamicSoftmenu_t dynamicSoftmenu[NUMBER_OF_DYNAMIC_SOFTMENUS] = {
