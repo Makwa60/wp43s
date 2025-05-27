@@ -943,7 +943,7 @@ void fnSave(uint16_t saveMode) {
   uint32_t i;
   char yy1[35], yy2[35];
 
-#if defined(MERGED_SAVE_LOAD)
+#if defined(MERGED_SAVE_SAVEST)
   if(saveMode >> 8 == FILE_NONE) {
     saveLoadMode = saveMode;
     temporaryInformation = TI_SAVE_TO;
@@ -957,7 +957,7 @@ void fnSave(uint16_t saveMode) {
   else {
     saveMode = SM_STATE_FILE;
   }
-#endif // MERGED_SAVE_LOAD
+#endif // MERGED_SAVE_SAVEST
 
   if (saveMode == SM_BACKUP) {
     path = ioPathSaveFile;
@@ -2363,7 +2363,6 @@ void doLoad(uint16_t loadMode, uint16_t s, uint16_t n, uint16_t d, uint16_t load
 
 void fnLoad(uint16_t loadMode) {
 
-#if defined(MERGED_SAVE_LOAD)
   if(loadMode >> 8 == FILE_NONE) {
     saveLoadMode = loadMode;
     temporaryInformation = TI_LOAD_FROM;
@@ -2374,13 +2373,6 @@ void fnLoad(uint16_t loadMode) {
     loadMode = (loadMode & 0xFF00) + LM_ALL;
   }
   doLoad(loadMode & 0xFF, 0, 0, 0, loadMode >> 8);
-#else
-  if (loadMode == LM_STATE_FILE) {
-    doLoad(LM_ALL, 0, 0, 0, FILE_STATE);
-  } else {
-    doLoad(loadMode, 0, 0, 0, FILE_BACKUP);
-  }
-#endif // MERGED_SAVE_LOAD
 }
 
 #undef BACKUP
@@ -2497,7 +2489,6 @@ void replaceInstruction(uint8_t *step, uint16_t programNumber, int16_t itemToRep
 
 
 void setFileType(void (*func)(uint16_t)) {
-#if defined(MERGED_SAVE_LOAD)
     previousCalcMode = calcMode;
     cursorHide();
     calcMode = cmConfirmation;
@@ -2506,11 +2497,9 @@ void setFileType(void (*func)(uint16_t)) {
   #if !defined(TESTSUITE_BUILD)
     showSoftmenu(-MNU_BKUPSTF);
   #endif // !TESTSUITE_BUILD
-#endif // MERGED_SAVE_LOAD
 }
 
 void fnFileMode(uint16_t fileType) {
-#if defined(MERGED_SAVE_LOAD)
   #if !defined(TESTSUITE_BUILD)
     if(calcMode == cmConfirmation) {
         calcMode = previousCalcMode;
@@ -2519,5 +2508,4 @@ void fnFileMode(uint16_t fileType) {
         confirmedFunction((fileType << 8) + saveLoadMode);
     }
   #endif // !TESTSUITE_BUILD
-#endif // MERGED_SAVE_LOAD
 }

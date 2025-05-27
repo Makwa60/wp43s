@@ -2898,7 +2898,8 @@ TO_QSPI const item_t indexOfItems[] = {
 /* 1807 */  { fnChangeBase,                 16,                          STD_RIGHT_ARROW "HEX",                         STD_RIGHT_ARROW "HEX",                         (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
 
 /* 1808 */  { fnSave,                       SM_STATE_FILE,               "SAVEST",                                      "SAVEST",                                      (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_DISABLED     },
-/* 1809 */  { fnLoad,                       LM_STATE_FILE,               "LOADST",                                      "LOADST",                                      (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_CANCEL    | EIM_DISABLED | PTP_DISABLED     },
+/* 1809 */  { fnLoad,                       LM_STATE_FILE + (FILE_STATE << 8),
+                                                                         "LOADST",                                      "LOADST",                                      (0 << TAM_MAX_BITS) |     0, CAT_XFNT | SLS_ENABLED   | US_CANCEL    | EIM_DISABLED | PTP_DISABLED     },
 
 /* 1810 */  { itemToBeCoded,                NOPARAM,                     "EXITALL",                                     "EXITall",                                     (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
 

@@ -700,17 +700,17 @@ void clearScreen(void) {
       }
       #endif // PC_BUILD
 
-#if defined(MERGED_SAVE_LOAD)
+#if defined(MERGED_SAVE_SAVEST)
       else if(temporaryInformation == TI_SAVE_TO && regist == REGISTER_X) {
         sprintf(prefix, "Save to:");
         displayTemporaryInformationOnX(prefix);
       }
+#endif // MERGED_SAVE_SAVEST
 
       else if(temporaryInformation == TI_LOAD_FROM && regist == REGISTER_X) {
         sprintf(prefix, "Load from:");
         displayTemporaryInformationOnX(prefix);
       }
-#endif // MERGED_SAVE_LOAD
 
       else if(temporaryInformation == TI_SAVED && regist == REGISTER_X) {
         sprintf(prefix, "Saved");

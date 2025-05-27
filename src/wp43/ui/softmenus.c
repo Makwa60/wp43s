@@ -444,10 +444,14 @@ TO_QSPI const int16_t menu_Sf[]          = { ITM_NULL,                      ITM_
 TO_QSPI const int16_t menu_Solver[]      = { ITM_NULL,                      ITM_NULL,                   ITM_NULL,                 ITM_NULL,              ITM_NULL,                    ITM_NULL                      };
 #if defined(XPB)
 TO_QSPI const int16_t menu_IO[]          = { ITM_LOAD,                      ITM_LOADP,                  ITM_LOADE,                ITM_DUMP,              ITM_WRITEP,                  ITM_READP,
+ #if DMCP_BUILD
+                                             ITM_LOADSS,                    ITM_LOADV,                  ITM_LOADR,                ITM_LOADSIGMA,         ITM_VOLQ,                    ITM_VOL,
+ #else // !DMCP_BUILD
                                              ITM_LOADSS,                    ITM_LOADV,                  ITM_LOADR,                ITM_LOADSIGMA,         ITM_NULL,                    ITM_NULL,
+ #endif // !DMCP_BUILD
 #else // !XPB
-TO_QSPI const int16_t menu_IO[]          = { ITM_LOAD,                      ITM_LOADP,                  ITM_LOADE,                ITM_DUMP,              ITM_SAVEST,                  ITM_LOADST,
-                                             ITM_LOADSS,                    ITM_LOADV,                  ITM_LOADR,                ITM_LOADSIGMA,         ITM_WRITEP,                  ITM_READP,
+TO_QSPI const int16_t menu_IO[]          = { ITM_LOAD,                      ITM_LOADP,                  ITM_LOADE,                ITM_DUMP,              ITM_WRITEP,                  ITM_SAVEST,
+                                             ITM_LOADSS,                    ITM_LOADV,                  ITM_LOADR,                ITM_LOADSIGMA,         ITM_READP,                   ITM_NULL,
 #endif // XPB
 #if DMCP_BUILD
                                              ITM_BEEP,                      ITM_TONE,                   ITM_BUZZ,                 ITM_PLAY,              ITM_VOLMINUS,                ITM_VOLPLUS                   };
