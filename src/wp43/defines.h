@@ -504,7 +504,7 @@
   #define PGM_SINGLE_STEP                            6
 
   // Save/load file type
-  //#define MERGED_SAVE_LOAD
+  //#define MERGED_SAVE_SAVEST
   #define FILE_NONE                                  0
   #define FILE_BACKUP                                1
   #define FILE_STATE                                 2
@@ -733,9 +733,9 @@
   #endif // !DMCP_BUILD
 
   #if defined(XPB)
-    #if !defined(MERGED_SAVE_LOAD)
-      #define MERGED_SAVE_LOAD
-    #endif // !MERGED_SAVE_LOAD
+    #if !defined(MERGED_SAVE_SAVEST)
+      #define MERGED_SAVE_SAVEST
+    #endif // !MERGED_SAVE_SAVEST
   #endif // XPB
 
   //******************************

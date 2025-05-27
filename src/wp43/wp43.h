@@ -252,11 +252,10 @@
   extern char                   statMx[8];
   extern char                   plotStatMx[8];
 
+  extern uint16_t               saveLoadMode;
+
   #if defined(DMCP_BUILD)
     extern bool                 backToDMCP;
   #endif // DMCP_BUILD
 
-  #if defined(MERGED_SAVE_LOAD)
-    extern uint16_t            saveLoadMode;
-  #endif // MERGED_SAVE_LOAD
 #endif // !WP43_H
