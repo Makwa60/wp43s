@@ -15,7 +15,7 @@
 #include "registers.h"
 #include "stack.h"
 #include "programming/manage.h"
-#include "programming/nextstep.h"
+#include "programming/nextStep.h"
 #include "ui/cursor.h"
 #include "ui/matrixEditor.h"
 #include "ui/softmenus.h"
