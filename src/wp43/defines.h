@@ -736,6 +736,9 @@
     #if !defined(MERGED_SAVE_SAVEST)
       #define MERGED_SAVE_SAVEST
     #endif // !MERGED_SAVE_SAVEST
+    #if !defined(ENTER_AIM_NO_SLIFT)
+      #define ENTER_AIM_NO_SLIFT
+    #endif // !ENTER_AIM_NO_SLIFT
   #endif // XPB
 
   //******************************

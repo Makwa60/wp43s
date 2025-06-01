@@ -2247,7 +2247,7 @@ void insertAlphaCursor(uint16_t startAt) {
 
       /* Cursor */
       if(strLength == alphaCursor) {
-         *bufPtr       = STD_CURSOR[0];
+        *bufPtr       = STD_CURSOR[0];
         *(bufPtr + 1) = STD_CURSOR[1];
         *(bufPtr + 2) = 0;
         glyphWidth = stringWidth(bufPtr, &standardFont, true, true);

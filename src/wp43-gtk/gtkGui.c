@@ -1335,6 +1335,9 @@ static keyCode_t _keyCodeFromGdkKey(uint32_t gdkKey, bool Alpha) {
         else if(calcMode == cmEim) {
           fnEqCursorLeft(NOPARAM);
         }
+        else if((calcMode == cmMim)) {
+          addItemToBuffer(ITM_LEFT_ARROW);
+        }
         refreshScreen();
         lcd_refresh();
         return kcNoKey;
@@ -1527,6 +1530,12 @@ static keyCode_t _keyCodeFromGdkKey(uint32_t gdkKey, bool Alpha) {
         return kc6;
 
       case GDK_KEY_Up:
+        if((calcMode == cmMim)) {
+          addItemToBuffer(ITM_UP_ARROW);
+          refreshScreen();
+          lcd_refresh();
+          return kcNoKey;
+        }
         return kcUp;
 
       case GDK_KEY_minus:
@@ -1546,6 +1555,12 @@ static keyCode_t _keyCodeFromGdkKey(uint32_t gdkKey, bool Alpha) {
         return kc3;
 
       case GDK_KEY_Down:
+        if((calcMode == cmMim)) {
+          addItemToBuffer(ITM_DOWN_ARROW);
+          refreshScreen();
+          lcd_refresh();
+          return kcNoKey;
+        }
         return kcDown;
 
       case GDK_KEY_plus:
@@ -1569,6 +1584,22 @@ static keyCode_t _keyCodeFromGdkKey(uint32_t gdkKey, bool Alpha) {
 
       case GDK_KEY_Escape:
         return kcExit;
+
+      case GDK_KEY_Right:
+        if((calcMode == cmMim)) {
+          addItemToBuffer(ITM_RIGHT_ARROW);
+          refreshScreen();
+          lcd_refresh();
+        }
+        return kcNoKey;
+
+      case GDK_KEY_Left:
+        if((calcMode == cmMim)) {
+          addItemToBuffer(ITM_LEFT_ARROW);
+          refreshScreen();
+          lcd_refresh();
+        }
+        return kcNoKey;
 
       case GDK_KEY_twosuperior:      // Shortcut to x²
         if(!tamIsActive()) {

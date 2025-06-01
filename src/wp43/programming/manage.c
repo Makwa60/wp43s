@@ -24,6 +24,7 @@
 #include "sort.h"
 #include "ui/bufferize.h"
 #include "ui/cursor.h"
+#include "ui/genericEditor.h"
 #include "ui/keyboard.h"
 #include "ui/screen.h"
 #include "ui/softmenus.h"
@@ -655,11 +656,49 @@ static void _closeAlphaMenus(void) {
 
 void pemAlpha(int16_t item) {
   #if !defined(TESTSUITE_BUILD)
+
+    bool editCommand = false;
+    if(item == ITM_EDIT) {
+      int16_t aimFunc = currentStep[0];
+      if(aimFunc & 0x80) {
+        aimFunc &= 0x7f;
+        aimFunc <<= 8;
+        aimFunc |= currentStep[1];
+      }
+      tam.function = aimFunc;
+      decodeOneStep(currentStep);
+      uint16_t ll = stringByteLength(tmpString);
+      if(aimFunc == ITM_LITERAL)  { // literal
+        xcopy(aimBuffer, tmpString + 2, ll);        //purposely overshoot aimbuffer, as there is sufficient space
+        aimBuffer[ll - 2 - 2] = 0;
+        alphaCursor = stringGlyphLength(aimBuffer);
+        printf("**[DL]** aimBuffer %s alphaCursor %d\n",aimBuffer,alphaCursor);fflush(stdout);
+        deleteStepsFromTo(currentStep, findNextStep(currentStep));
+        editCommand = true;
+        item = 0;
+      }
+      else if(aimFunc == ITM_REM)  { // REM
+        xcopy(aimBuffer, tmpString + 6, ll);        //purposely overshoot aimbuffer, as there is sufficient space
+        aimBuffer[ll - 2 - 6] = 0;
+        alphaCursor = stringGlyphLength(aimBuffer);
+        deleteStepsFromTo(currentStep, findNextStep(currentStep));
+        tam.function = aimFunc;
+        editCommand = true;
+        item = aimFunc;
+      }
+      else {
+        aimBuffer[0] = 0;
+        return;
+      }
+    }
+
     if(!getSystemFlag(FLAG_ALPHA)) {
       shiftF = false;
       shiftG = false;
-      aimBuffer[0] = 0;
-      alphaCursor = 0;
+      if(!editCommand) {
+        aimBuffer[0] = 0;
+        alphaCursor = 0;
+      }
       alphaCase = AC_UPPER;
       nextChar = NC_NORMAL;
 
@@ -1177,6 +1216,11 @@ void insertStepInProgram(int16_t func) {
   switch(indexOfItems[func].status & PTP_STATUS) {
     case PTP_DISABLED: {
       switch(func) {
+        case ITM_EDIT: {         // 1948
+          fnEdit(NOPARAM);
+          break;
+        }
+
         case ITM_KEYG:           // 1498
         case ITM_KEYX: {         // 1499
           int opLen;
@@ -1369,7 +1413,9 @@ void insertStepInProgram(int16_t func) {
     }
   }
 
-  aimBuffer[0] = 0;
+  if(func != ITM_EDIT) {
+    aimBuffer[0] = 0;
+  }
 }
 
 

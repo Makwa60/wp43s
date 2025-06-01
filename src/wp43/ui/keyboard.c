@@ -1762,16 +1762,18 @@ void fnKeyEnter(uint16_t unusedButMandatoryParameter) {
           if(lastErrorCode == ERROR_RAM_FULL) {
             goto undo_disabled;
           }
-          liftStack();
-          if(lastErrorCode == ERROR_RAM_FULL) {
-            goto ram_full;
-          }
-          clearSystemFlag(FLAG_ASLIFT);
+          #if !defined(ENTER_AIM_NO_SLIFT)
+            liftStack();
+            if(lastErrorCode == ERROR_RAM_FULL) {
+              goto ram_full;
+            }
+            clearSystemFlag(FLAG_ASLIFT);
 
-          copySourceRegisterToDestRegister(REGISTER_Y, REGISTER_X);
-          if(lastErrorCode == ERROR_RAM_FULL) {
-            goto ram_full;
-          }
+            copySourceRegisterToDestRegister(REGISTER_Y, REGISTER_X);
+            if(lastErrorCode == ERROR_RAM_FULL) {
+              goto ram_full;
+            }
+          #endif  // !ENTER_AIM_NO_SLIFT
           aimBuffer[0] = 0;
         }
         break;
