@@ -615,6 +615,11 @@ void fnPem(uint16_t unusedButMandatoryParameter) {
 
 
 static void _insertInProgram(const uint8_t *dat, uint16_t sizeInBytes) {
+  //#define printarr(fmt, dat, len)	for (uint16_t i = 0; i < len; i++) printf(fmt, dat[i])
+      // call it with printarr("%.2f ", foo, (sizeof(foo) / sizeof(float)));
+  //printf("**[DL]** _insertInProgram: ");
+  //printarr("%d ", dat, sizeInBytes);
+  //printf("\n");fflush(stdout);
   int16_t _dynamicMenuItem = dynamicMenuItem;
   uint16_t globalStepNumber;
   if(freeProgramBytes < sizeInBytes) {
@@ -672,7 +677,6 @@ void pemAlpha(int16_t item) {
         xcopy(aimBuffer, tmpString + 2, ll);        //purposely overshoot aimbuffer, as there is sufficient space
         aimBuffer[ll - 2 - 2] = 0;
         alphaCursor = stringGlyphLength(aimBuffer);
-        printf("**[DL]** aimBuffer %s alphaCursor %d\n",aimBuffer,alphaCursor);fflush(stdout);
         deleteStepsFromTo(currentStep, findNextStep(currentStep));
         editCommand = true;
         item = 0;

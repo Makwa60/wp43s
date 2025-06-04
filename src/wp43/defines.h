@@ -82,6 +82,8 @@
 
   #define DEBUG_LINES                               68 // Used in for the debug panel
 
+  
+  #define LAST_GLOBAL_FLAG                         111
   #define NUMBER_OF_GLOBAL_FLAGS                   112
   #define FIRST_LOCAL_FLAG                         112 // There are 112 global flag from 0 to 111
   #define NUMBER_OF_LOCAL_FLAGS                     32

@@ -230,7 +230,7 @@ void tamReset(void) {
         }
       }
       else {
-        int16_t max = (tam.indirect ? (tam.dot ? (calcMode == cmPem ? 98 : currentNumberOfLocalRegisters) : 99)
+        int16_t max = (tam.indirect ? (tam.dot ? ((tam.mode == tmFlagR || tam.mode == tmFlagW) ? NUMBER_OF_LOCAL_FLAGS - 1 : (calcMode == cmPem ? 98 : currentNumberOfLocalRegisters-1)) : 99)
           : (tam.dot ? (calcMode == cmPem ? 98 : ((tam.mode == tmFlagR || tam.mode == tmFlagW) ? NUMBER_OF_LOCAL_FLAGS : currentNumberOfLocalRegisters)) : tam.max));
         uint8_t maxDigits = _tamMaxDigits(max);
         uint8_t underscores = maxDigits - tam.digitsSoFar;
@@ -313,7 +313,7 @@ void tamReset(void) {
     }
 
     min = (tam.dot ? 0 : tam.min);
-    max = (tam.dot ? (calcMode == cmPem ? 98 : ((tam.mode == tmFlagR || tam.mode == tmFlagW) ? NUMBER_OF_LOCAL_FLAGS : currentNumberOfLocalRegisters)) : tam.max);
+    max = (tam.dot ? ((tam.mode == tmFlagR || tam.mode == tmFlagW) ? NUMBER_OF_LOCAL_FLAGS - 1 : (calcMode == cmPem ? 98 : currentNumberOfLocalRegisters-1)) : tam.max);
     min2 = (tam.indirect ? 0 : min);
     max2 = (tam.indirect ? (tam.dot ? (calcMode == cmPem ? 98 : currentNumberOfLocalRegisters) : 99) : max);
     dupNum = 0;
@@ -778,7 +778,7 @@ void tamReset(void) {
           run = false;
           if(getSystemFlag(FLAG_IGN1ER)) {
             clearSystemFlag(FLAG_IGN1ER);
-            errorMoreInfo("sMVAR only accepts named variables\nignored since IGN1ER was set");
+            errorMoreInfo("MVAR only accepts named variables\nignored since IGN1ER was set");
           }
           else {
             displayCalcErrorMessage(ERROR_OUT_OF_RANGE, ERR_REGISTER_LINE, REGISTER_X);
@@ -950,7 +950,7 @@ void tamReset(void) {
         if(lastErrorCode == 0) {
           if(getSystemFlag(FLAG_IGN1ER)) {
             clearSystemFlag(FLAG_IGN1ER);
-            errorMoreInfo("sMVAR only accepts named variables\nignored since IGN1ER was set");
+            errorMoreInfo("MVAR only accepts named variables\nignored since IGN1ER was set");
           }
           else {
             displayCalcErrorMessage(ERROR_OUT_OF_RANGE, ERR_REGISTER_LINE, REGISTER_X);
