@@ -1371,9 +1371,23 @@ void insertStepInProgram(int16_t func) {
     }
 
     case PTP_NUMBER_16: {
+      if(tam.alpha && tam.indirect) {
+        uint16_t nameLength = stringByteLength(aimBuffer);
+        tmpString[opBytes    ] = (char)(INDIRECT_VARIABLE);
+        tmpString[opBytes + 1] = nameLength;
+        xcopy(tmpString + opBytes + 2, aimBuffer, nameLength);
+        _insertInProgram((uint8_t *)tmpString, nameLength + opBytes + 2);
+      }
+      else if(tam.indirect) {
+        tmpString[opBytes    ] = (char)INDIRECT_REGISTER;
+        tmpString[opBytes + 1] = tam.value + (tam.dot ? FIRST_LOCAL_REGISTER : 0);
+        _insertInProgram((uint8_t *)tmpString, opBytes + 2);
+      }
+      else {
       tmpString[2] = (char)(tam.value & 0xff); // little endian
       tmpString[3] = (char)(tam.value >> 8);
       _insertInProgram((uint8_t *)tmpString, 4);
+      }
       break;
     }
 

@@ -449,7 +449,15 @@ void fnStopProgram(uint16_t unusedButMandatoryParameter) {
       }
 
       case PARAM_NUMBER_16: {
-        reallyRunFunction(op, opParam + 256 * *(paramAddress));
+        if(opParam == INDIRECT_REGISTER) {
+          _executeWithIndirectRegister(paramAddress, op);
+        }
+        else if(opParam == INDIRECT_VARIABLE) {
+          _executeWithIndirectVariable(paramAddress, op);
+        }
+        else {
+          reallyRunFunction(op, opParam + 256 * *(paramAddress));
+        }
         break;
       }
 

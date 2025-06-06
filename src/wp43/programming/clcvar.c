@@ -205,7 +205,23 @@
         break;
       }
 
-      case PARAM_NUMBER_16:
+      case PARAM_NUMBER_16: {
+        uint16_t opParam16 = (*(uint8_t *)(paramAddress++) << 8) + opParam;
+        if(opParam == INDIRECT_REGISTER) {
+          _indirectRegister(paramAddress);
+        }
+        else if(opParam == INDIRECT_VARIABLE) {
+          _indirectVariable(paramAddress);
+        }
+        else if(opParam16 <= 511) { // Value from 0 to 511
+          // nothing to do
+        }
+        else{
+          sprintf(tmpString, "\nIn function _processOp: case PARAM_NUMBER, %s  %u is not a valid parameter!", indexOfItems[op].itemCatalogName, opParam);
+        }
+        break;
+      }
+
       case PARAM_SKIP_BACK:
       case PARAM_SHUFFLE: {
         // nothing to do

@@ -303,7 +303,7 @@ void tamReset(void) {
   static void _tamProcessInput(uint16_t item) {
     int16_t  min, max, min2, max2, dupNum;
     bool     forceTry = false, tryOoR = false;
-    bool     valueParameter = (tam.function == ITM_GTOP || tam.function == ITM_BESTF || tam.function == ITM_SKIP || tam.function == ITM_BACK);
+    bool     valueParameter = (tam.function == ITM_GTOP || tam.function == ITM_SKIP || tam.function == ITM_BACK);
     char    *forcedVar = NULL;
 
     // Shuffle is handled completely differently to everything else
@@ -562,7 +562,7 @@ void tamReset(void) {
       tryOoR = true;
     }
     else if(REGISTER_X <= indexOfItems[item].param && indexOfItems[item].param <= REGISTER_K && !tam.dot) {
-      if(!tam.digitsSoFar && tam.function != ITM_BESTF && (tam.indirect || (tam.mode != tmValue && tam.mode != tmValueChb))) {
+      if(!tam.digitsSoFar && (tam.indirect || (tam.mode != tmValue && tam.mode != tmValueChb))) {
         if((tam.mode == tmLabel || (tam.mode == tmKey && tam.keyInputFinished)) && !tam.indirect) {
           switch(indexOfItems[item].param) {
             case REGISTER_A: {
@@ -627,7 +627,7 @@ void tamReset(void) {
     else if(item == ITM_0P || item == ITM_1P) {
       reallocateRegister(TEMP_REGISTER_1, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
       real34Copy(item == ITM_1P ? const34_1 : const34_0, REGISTER_REAL34_DATA(TEMP_REGISTER_1));
-      if(!tam.digitsSoFar && tam.function != ITM_BESTF && tam.function != ITM_CNST && tam.mode != tmValue && tam.mode != tmValueChb) {
+      if(!tam.digitsSoFar && tam.mode != tmValue && tam.mode != tmValueChb) {
         tam.value = TEMP_REGISTER_1;
         forceTry = true;
         // Register letters access registers not accessible via number codes, so we shouldn't look at the tam.max value
@@ -695,7 +695,7 @@ void tamReset(void) {
     }
     else if(item == ITM_INDIRECTION) {
       if(!tam.alpha && !tam.digitsSoFar && !tam.dot && !valueParameter && (indexOfItems[tam.function].status & PTP_STATUS) != PTP_SKIP_BACK && (indexOfItems[tam.function].status & PTP_STATUS) != PTP_DECLARE_LABEL && (indexOfItems[tam.function].status & PTP_STATUS) != PTP_VARIABLE) {
-        if(!tam.indirect && (tam.mode == tmFlagR || tam.mode == tmFlagW || tam.mode == tmLabel)) {
+        if(!tam.indirect && (tam.mode == tmFlagR || tam.mode == tmFlagW || tam.mode == tmLabel || tam.mode == tmKey)) {
           popSoftmenu();
           showSoftmenu(-MNU_TAM);
           --numberOfTamMenusToPop;

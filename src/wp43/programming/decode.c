@@ -330,7 +330,15 @@ static void decodeOp(uint8_t *paramAddress, const char *op, uint16_t paramMode, 
     }
 
     case PARAM_NUMBER_16: {
-      sprintf(tmpString, "%s %u", op, opParam + 256 * *(paramAddress));
+      if(opParam == INDIRECT_REGISTER) {
+        getIndirectRegister(paramAddress, op);
+      }
+      else if(opParam == INDIRECT_VARIABLE) {
+        getIndirectVariable(paramAddress, op);
+      }
+      else {
+        sprintf(tmpString, "%s %u", op, opParam + 256 * *(paramAddress));
+      }
       break;
     }
 

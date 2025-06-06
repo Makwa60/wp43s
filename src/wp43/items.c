@@ -265,7 +265,6 @@ void fnNop(uint16_t unusedButMandatoryParameter) {
         }
       }
       if(!tamIsActive() && tmValue <= indexOfItems[func].param && indexOfItems[func].param <= tmCmp && (calcMode != cmPem || aimBuffer[0] == 0 || nimNumberPart != NP_INT_BASE)) {
-        printf("**[DL]** runFunction tamEnterMode func %d\n",func);fflush(stdout);
         tamEnterMode(func);
         return;
       }

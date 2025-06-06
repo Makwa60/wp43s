@@ -142,7 +142,15 @@ uint8_t *countOpBytes(uint8_t *step, uint16_t paramMode) {
     }
 
     case PARAM_NUMBER_16: {
-      return step + 1;
+      if(opParam == INDIRECT_REGISTER) {
+        return step + 1;
+      }
+      else if(opParam == INDIRECT_VARIABLE) {
+        return step + *step + 1;
+      }
+      else {
+        return step + 1;
+      }
     }
 
     case PARAM_COMPARE: {

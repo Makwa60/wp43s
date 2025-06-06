@@ -25,7 +25,7 @@
 #include "wp43.h"
 
 void fnEdit (uint16_t unusedParamButMandatory) {
-    
+
 #if !defined(TESTSUITE_BUILD)
   if(calcMode == cmNormal) {
     switch(getRegisterDataType(REGISTER_X)) {
@@ -57,12 +57,14 @@ void fnEdit (uint16_t unusedParamButMandatory) {
     int16_t func = currentStep[0];
     uint8_t opParam  = currentStep[1];
     uint8_t opParam2 = currentStep[2];
+    uint8_t opParam3 = currentStep[3];
     if(func & 0x80) {
       func &= 0x7f;
       func <<= 8;
       func |= currentStep[1];
       opParam  = currentStep[2];
       opParam2 = currentStep[3];
+      opParam3 = currentStep[4];
     }
     if((func == ITM_LITERAL || func == ITM_REM)) {
       pemAlpha(ITM_EDIT);
@@ -70,31 +72,17 @@ void fnEdit (uint16_t unusedParamButMandatory) {
     else {
       uint16_t paramMode = (indexOfItems[func].status & PTP_STATUS) >> 9;
       switch (paramMode) {
-        // OP parameter type
-        // PARAM_DECLARE_LABEL                        1  ***
-        // PARAM_LABEL                                2  ***
-        // PARAM_REGISTER                             3  ***
-        // PARAM_FLAG                                 4  ***
-        // PARAM_NUMBER_8                             5  ***
-        // PARAM_NUMBER_16                            6  ***   Used only for "BestF"
-        // PARAM_COMPARE                              7  ***
-        // PARAM_KEYG_KEYX                            8  *
-        // PARAM_SKIP_BACK                            9  ***
-        // PARAM_NUMBER_8_16                         10  ***   Used only for "CNST"
-        // PARAM_VARIABLE                            11  ***
-        // PARAM_SHUFFLE                             12  ***   Used only for "<>"
-
         case PARAM_DECLARE_LABEL:
         case PARAM_LABEL:
         case PARAM_REGISTER:
         case PARAM_FLAG:
         case PARAM_NUMBER_8:
-        case PARAM_NUMBER_16:
+        case PARAM_NUMBER_16:            // Used only for "BestF"
         case PARAM_COMPARE:
         case PARAM_SKIP_BACK:
-        case PARAM_NUMBER_8_16:
+        case PARAM_NUMBER_8_16:          // Used only for "CNST"
         case PARAM_VARIABLE:
-        case PARAM_SHUFFLE: {
+        case PARAM_SHUFFLE: {            // Used only for "<>"
           tamEnterMode(func);
 
           uint8_t maxDigits = tam.max < 10 ? 1 : (tam.max < 100 ? 2 : (tam.max < 1000 ? 3 : (tam.max < 10000 ? 4 : 5)));
@@ -172,6 +160,9 @@ void fnEdit (uint16_t unusedParamButMandatory) {
           runFunction(func);
           tamProcessInput(ITM_0 + opParam/10);
           tamProcessInput(ITM_0 + (opParam % 10));
+          if((opParam3 == INDIRECT_REGISTER) || (opParam3 == INDIRECT_VARIABLE)) {
+            tamProcessInput(ITM_INDIRECTION);
+          }
           scrollPemBackwards();
           break;
         }
