@@ -330,14 +330,21 @@ static void decodeOp(uint8_t *paramAddress, const char *op, uint16_t paramMode, 
     }
 
     case PARAM_NUMBER_16: {
-      if(opParam == INDIRECT_REGISTER) {
-        getIndirectRegister(paramAddress, op);
-      }
-      else if(opParam == INDIRECT_VARIABLE) {
-        getIndirectVariable(paramAddress, op);
-      }
-      else {
+      uint16_t func = (*(paramAddress-3)  << 8) + *(uint8_t *)(paramAddress -2);
+      func &= 0x7fff;
+      if(func == ITM_BESTF_NO_IND) {  // original BestF without indirection support (little endian parameter)
         sprintf(tmpString, "%s %u", op, opParam + 256 * *(paramAddress));
+      }
+      else {                        // new Bestf with indirection support (big endian parameter)
+        if(opParam == INDIRECT_REGISTER) {
+          getIndirectRegister(paramAddress, op);
+        }
+        else if(opParam == INDIRECT_VARIABLE) {
+          getIndirectVariable(paramAddress, op);
+        }
+        else {
+          sprintf(tmpString, "%s %u", op, (opParam * 256) + *(paramAddress));
+        }
       }
       break;
     }

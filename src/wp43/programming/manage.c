@@ -616,7 +616,6 @@ void fnPem(uint16_t unusedButMandatoryParameter) {
 
 static void _insertInProgram(const uint8_t *dat, uint16_t sizeInBytes) {
   //#define printarr(fmt, dat, len)	for (uint16_t i = 0; i < len; i++) printf(fmt, dat[i])
-      // call it with printarr("%.2f ", foo, (sizeof(foo) / sizeof(float)));
   //printf("**[DL]** _insertInProgram: ");
   //printarr("%d ", dat, sizeInBytes);
   //printf("\n");fflush(stdout);
@@ -1371,22 +1370,29 @@ void insertStepInProgram(int16_t func) {
     }
 
     case PTP_NUMBER_16: {
-      if(tam.alpha && tam.indirect) {
-        uint16_t nameLength = stringByteLength(aimBuffer);
-        tmpString[opBytes    ] = (char)(INDIRECT_VARIABLE);
-        tmpString[opBytes + 1] = nameLength;
-        xcopy(tmpString + opBytes + 2, aimBuffer, nameLength);
-        _insertInProgram((uint8_t *)tmpString, nameLength + opBytes + 2);
+      if(func == ITM_BESTF_NO_IND) {  // original BestF without indirection support (little endian parameter)
+        tmpString[2] = (char)(tam.value & 0xff); // little endian
+        tmpString[3] = (char)(tam.value >> 8);
+        _insertInProgram((uint8_t *)tmpString, 4);
       }
-      else if(tam.indirect) {
-        tmpString[opBytes    ] = (char)INDIRECT_REGISTER;
-        tmpString[opBytes + 1] = tam.value + (tam.dot ? FIRST_LOCAL_REGISTER : 0);
-        _insertInProgram((uint8_t *)tmpString, opBytes + 2);
-      }
-      else {
-      tmpString[2] = (char)(tam.value & 0xff); // little endian
-      tmpString[3] = (char)(tam.value >> 8);
-      _insertInProgram((uint8_t *)tmpString, 4);
+      else {                        // new Bestf with indirection support (big endian parameter)
+        if(tam.alpha && tam.indirect) {
+          uint16_t nameLength = stringByteLength(aimBuffer);
+          tmpString[opBytes    ] = (char)(INDIRECT_VARIABLE);
+          tmpString[opBytes + 1] = nameLength;
+          xcopy(tmpString + opBytes + 2, aimBuffer, nameLength);
+          _insertInProgram((uint8_t *)tmpString, nameLength + opBytes + 2);
+        }
+        else if(tam.indirect) {
+          tmpString[opBytes    ] = (char)INDIRECT_REGISTER;
+          tmpString[opBytes + 1] = tam.value + (tam.dot ? FIRST_LOCAL_REGISTER : 0);
+          _insertInProgram((uint8_t *)tmpString, opBytes + 2);
+        }
+        else {
+        tmpString[2] = (char)(tam.value >> 8);   // BIG endian
+        tmpString[3] = (char)(tam.value & 0xff);
+        _insertInProgram((uint8_t *)tmpString, 4);
+        }
       }
       break;
     }

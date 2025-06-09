@@ -87,7 +87,7 @@ void fnEdit (uint16_t unusedParamButMandatory) {
 
           uint8_t maxDigits = tam.max < 10 ? 1 : (tam.max < 100 ? 2 : (tam.max < 1000 ? 3 : (tam.max < 10000 ? 4 : 5)));
 
-          if(opParam == INDIRECT_REGISTER)  {
+          if((opParam == INDIRECT_REGISTER) && (func != ITM_BESTF_NO_IND))  {
             tam.indirect = true;
             tam.max = 99;
             maxDigits = 2;
@@ -96,7 +96,7 @@ void fnEdit (uint16_t unusedParamButMandatory) {
             showSoftmenu(-MNU_TAM);
             --numberOfTamMenusToPop;
           }
-          else if(opParam == INDIRECT_VARIABLE)  {
+          else if((opParam == INDIRECT_VARIABLE) && (func != ITM_BESTF_NO_IND))   {
             tam.indirect = true;
             opParam = STRING_LABEL_VARIABLE;
             popSoftmenu();
@@ -134,11 +134,20 @@ void fnEdit (uint16_t unusedParamButMandatory) {
             tam.digitsSoFar = 0;
             tam.value = 0;
           }
-           else if(paramMode == PARAM_SHUFFLE) {     // Stack registers shuffle
+           else if((paramMode == PARAM_NUMBER_16) && !tam.indirect) {     // BestF parameter
+            tam.digitsSoFar =  maxDigits - 1;
+            if(func == ITM_BESTF_NO_IND) {  // original BestF without indirection support (little endian parameter)
+              tam.value = ((opParam2 << 8) + opParam) / 10;
+            }
+            else {                        // new Bestf with indirection support (big endian parameter)
+              tam.value = ((opParam << 8) + opParam2) / 10;
+            }
+            //tam.value = (opParam & 0X3F) + 0X1500;     // remove last shuffled register
+          }
+          else if(paramMode == PARAM_SHUFFLE) {       // Stack registers shuffle
             tam.digitsSoFar = 3;
             tam.value = (opParam & 0X3F) + 0X1500;    // remove last shuffled register
           }
-
           else if ((paramMode == PARAM_NUMBER_8_16) && opParam == CNST_BEYOND_250) {         // Constant from 250 to 499
             tam.digitsSoFar = maxDigits - 1;
             tam.value = (opParam2 / 10) + 25;

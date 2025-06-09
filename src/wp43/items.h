@@ -1338,7 +1338,7 @@
 
 
   // Curve fitting
-  #define ITM_BESTF                     1297
+  #define ITM_BESTF_NO_IND              1297
   #define ITM_EXPF                      1298
   #define ITM_LINF                      1299
   #define ITM_LOGF                      1300
@@ -1349,7 +1349,7 @@
   #define ITM_PARABF                    1305
   #define ITM_HYPF                      1306
   #define ITM_ROOTF                     1307
-  #define ITM_1308                      1308
+  #define ITM_BESTF                     1308
   #define ITM_1309                      1309
   #define ITM_1310                      1310
   #define ITM_1311                      1311

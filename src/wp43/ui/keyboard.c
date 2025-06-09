@@ -664,7 +664,7 @@ bool      _kbSeenInterrupt     = false;
             screenUpdatingMode &= ~SCRUPD_ONE_TIME_FLAGS;
             return;
           }
-          if(tamIsActive() && catalog && (tam.digitsSoFar || (!tam.indirect && (tam.mode == tmValue || tam.mode == tmValueChb || tamIsWaitingKey())))) {
+          if(tamIsActive() && catalog && (tam.digitsSoFar || tam.function == ITM_BESTF_NO_IND || (!tam.indirect && (tam.mode == tmValue || tam.mode == tmValueChb || tamIsWaitingKey())))) {
             // disabled
           }
           else if(tam.function == ITM_GTOP && catalog == CATALOG_PROG) {
@@ -711,7 +711,7 @@ bool      _kbSeenInterrupt     = false;
           // an item from the catalog, but a function key press should put the item in the AIM (or TAM) buffer
           // Use this variable to distinguish between the two
           fnKeyInCatalog = 1;
-          if(tamIsActive() && catalog && (tam.digitsSoFar || (!tam.indirect && (tam.mode == tmValue || tam.mode == tmValueChb)))) {
+          if(tamIsActive() && catalog && (tam.digitsSoFar || tam.function == ITM_BESTF_NO_IND || (!tam.indirect && (tam.mode == tmValue || tam.mode == tmValueChb)))) {
             // disabled
           }
           else if((tamIsActive()  && (!tam.alpha || isAlphabeticSoftmenu())) || ((calcMode == cmAssign) && (previousCalcMode != cmAim) && isAlphabeticSoftmenu())) {
