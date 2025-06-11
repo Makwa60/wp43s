@@ -65,6 +65,7 @@ void fnEdit (uint16_t unusedParamButMandatory) {
           // liftStack();
           real34Zero(REGISTER_REAL34_DATA(REGISTER_X));
           hexDigits = 0;
+          nimNumberPart = NP_INT_10;
           clearRegisterLine(NIM_REGISTER_LINE, true, true);
           cursorShow(false, 1, Y_POSITION_OF_NIM_LINE);
         }
