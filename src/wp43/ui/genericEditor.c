@@ -10,15 +10,19 @@
 #include "calcMode.h"
 #include "charString.h"
 #include "defines.h"
+#include "display.h"
 #include "flags.h"
+#include "fonts.h"
 #include "items.h"
 #include "registers.h"
 #include "stack.h"
 #include "tam.h"
 #include "programming/manage.h"
 #include "programming/nextStep.h"
+#include "registerValueConversions.h"
 #include "ui/cursor.h"
 #include "ui/matrixEditor.h"
+#include "ui/screen.h"
 #include "ui/softmenus.h"
 #include <string.h>
 
@@ -29,6 +33,47 @@ void fnEdit (uint16_t unusedParamButMandatory) {
 #if !defined(TESTSUITE_BUILD)
   if(calcMode == cmNormal) {
     switch(getRegisterDataType(REGISTER_X)) {
+      case dtLongInteger: {
+        memset(nimBufferDisplay, 0, NIM_BUFFER_LENGTH);
+        longInteger_t lgInt;
+        convertLongIntegerRegisterToLongInteger(REGISTER_X, lgInt);
+        longIntegerToAllocatedString(lgInt, nimBufferDisplay, NIM_BUFFER_LENGTH);
+        if(longIntegerIsPositiveOrZero(lgInt)) {
+          aimBuffer[0] = '+';
+          strcpy(aimBuffer + 1, nimBufferDisplay);
+        }
+        else {
+          strcpy(aimBuffer, nimBufferDisplay);
+        }
+        longIntegerFree(lgInt);
+        if(groupingGap > 0) {
+          int16_t len = strlen(nimBufferDisplay);
+          for(int16_t i=len - groupingGap; i>0; i-=groupingGap) {
+            if(i != 1 || nimBufferDisplay[0] != '-') {
+              xcopy(nimBufferDisplay + i + 2, nimBufferDisplay + i, len - i + 1);
+              nimBufferDisplay[i] = *(STD_SPACE_PUNCTUATION);
+              nimBufferDisplay[i + 1] = *(STD_SPACE_PUNCTUATION + 1);
+              len += 2;
+            }
+          }
+        }
+
+        // Test if long inter number display string will fit on two lines in standard font, if not do nothing (cannot edit)
+        if(stringWidth(nimBufferDisplay, &standardFont, true, true) <= (SCREEN_WIDTH - 8) * 2) { // 8 is the standard font cursor width
+          clearSystemFlag(FLAG_ALPHA);
+          calcMode = cmNim;
+          // liftStack();
+          real34Zero(REGISTER_REAL34_DATA(REGISTER_X));
+          hexDigits = 0;
+          clearRegisterLine(NIM_REGISTER_LINE, true, true);
+          cursorShow(false, 1, Y_POSITION_OF_NIM_LINE);
+        }
+        else {
+          aimBuffer[0] = 0;
+          nimBufferDisplay[0] = 0;
+        }
+        break;
+      }
       case dtString: {
         setSystemFlag(FLAG_ASLIFT);
         if(stringByteLength(REGISTER_STRING_DATA(REGISTER_X)) < AIM_BUFFER_LENGTH) {
@@ -67,7 +112,13 @@ void fnEdit (uint16_t unusedParamButMandatory) {
       opParam3 = currentStep[4];
     }
     if((func == ITM_LITERAL || func == ITM_REM)) {
-      pemAlpha(ITM_EDIT);
+      if(opParam == STRING_LABEL_VARIABLE) {
+        pemAlpha(ITM_EDIT);
+      }
+      else {
+        currentLocalStepNumber++;
+        currentStep = findNextStep(currentStep);
+      }
     }
     else {
       uint16_t paramMode = (indexOfItems[func].status & PTP_STATUS) >> 9;
