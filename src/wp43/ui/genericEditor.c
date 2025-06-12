@@ -34,10 +34,11 @@ void fnEdit (uint16_t unusedParamButMandatory) {
   if(calcMode == cmNormal) {
     switch(getRegisterDataType(REGISTER_X)) {
       case dtLongInteger: {
-        memset(nimBufferDisplay, 0, NIM_BUFFER_LENGTH);
+        #define NIM_BUFFER_EXTENDED_LENGTH    1400      // provision for very long integers (up to 1000 digits + separators)
+        memset(nimBufferDisplay, 0, NIM_BUFFER_EXTENDED_LENGTH);
         longInteger_t lgInt;
         convertLongIntegerRegisterToLongInteger(REGISTER_X, lgInt);
-        longIntegerToAllocatedString(lgInt, nimBufferDisplay, NIM_BUFFER_LENGTH);
+        longIntegerToAllocatedString(lgInt, nimBufferDisplay, NIM_BUFFER_EXTENDED_LENGTH);
         if(longIntegerIsPositiveOrZero(lgInt)) {
           aimBuffer[0] = '+';
           strcpy(aimBuffer + 1, nimBufferDisplay);
@@ -70,6 +71,7 @@ void fnEdit (uint16_t unusedParamButMandatory) {
           cursorShow(false, 1, Y_POSITION_OF_NIM_LINE);
         }
         else {
+          memset(nimBufferDisplay, 0, NIM_BUFFER_EXTENDED_LENGTH);
           aimBuffer[0] = 0;
           nimBufferDisplay[0] = 0;
         }

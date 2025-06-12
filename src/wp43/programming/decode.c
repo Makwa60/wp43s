@@ -590,11 +590,17 @@ static void decodeLiteral(uint8_t *literalAddress) {
         *(dispStringPtr++) = '+';
         *(dispStringPtr++) = '+';
         *(dispStringPtr++) = COMPLEX_UNIT[0];
+        if(COMPLEX_UNIT[0] & 0x80) {
+          *(dispStringPtr++) = COMPLEX_UNIT[1];
+        }
         ++sourceStringPtr;
       }
       else if(*sourceStringPtr == '+' || *sourceStringPtr == '-') {
         *(dispStringPtr++) = *(sourceStringPtr++);
         *(dispStringPtr++) = COMPLEX_UNIT[0];
+        if(COMPLEX_UNIT[0] & 0x80) {
+          *(dispStringPtr++) = COMPLEX_UNIT[1];
+        }
         ++sourceStringPtr;
       }
       *(dispStringPtr++) = PRODUCT_SIGN[0];

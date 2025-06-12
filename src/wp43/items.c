@@ -3077,7 +3077,7 @@ TO_QSPI const item_t indexOfItems[] = {
 /* 1943 */  { fnFileMode,                   FILE_BACKUP,                 "BACKUP",                                      "BACKUP",                                      (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
 /* 1944 */  { fnFileMode,                   FILE_STATE,                  "STATE",                                       "STATE",                                       (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
 
-/* 1945 */  { fnEdit,                       NOPARAM,                     "EDIT",                                        "EDIT",                                        (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
+/* 1945 */  { fnEdit,                       NOPARAM,                     "EDIT",                                        "EDIT",                                        (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_DISABLED     },
 
 /* 1946 */  { itemToBeCoded,                NOPARAM,                     "",                                            "Last item",                                   (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_ENABLED   | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     }
 };
