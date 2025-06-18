@@ -2199,11 +2199,29 @@
 
           if(nimNumberPart == NP_INT_10) {
             longInteger_t lgInt;
+            angularMode_t xangularMode;
+            xangularMode = ((getRegisterDataType(REGISTER_X) == dtReal34) == dtReal34 ? getRegisterAngularMode(REGISTER_X) : amNone);
 
-            longIntegerInit(lgInt);
-            stringToLongInteger(aimBuffer + (aimBuffer[0] == '+' ? 1 : 0), 10, lgInt);
-            convertLongIntegerToLongIntegerRegister(lgInt, REGISTER_X);
-            longIntegerFree(lgInt);
+            if(xangularMode < amNone) {  // If editing with angular mode, then convert to real and preserve angular mode
+              reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, getRegisterAngularMode(REGISTER_X));
+              stringToReal34(aimBuffer, REGISTER_REAL34_DATA(REGISTER_X));
+              if(xangularMode ==  amMultPi) { 
+                real_t multPi;
+
+                real34ToReal(REGISTER_REAL34_DATA(REGISTER_X), &multPi);
+                realMultiply(&multPi, const_pi, &multPi, &ctxtReal39);
+                realToReal34(&multPi, REGISTER_REAL34_DATA(REGISTER_X));
+              }
+              else if(xangularMode == amDMS) {
+                real34FromDmsToDeg(REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X));
+              }
+            }
+            else {
+              longIntegerInit(lgInt);
+              stringToLongInteger(aimBuffer + (aimBuffer[0] == '+' ? 1 : 0), 10, lgInt);
+              convertLongIntegerToLongIntegerRegister(lgInt, REGISTER_X);
+              longIntegerFree(lgInt);
+            }
           }
           else if(nimNumberPart == NP_INT_BASE) {
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2342,11 +2360,24 @@
             longIntegerFree(value);
           }
           else if(nimNumberPart == NP_REAL_FLOAT_PART || nimNumberPart == NP_REAL_EXPONENT) {
-            reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
+            angularMode_t xangularMode;
+            xangularMode = ((getRegisterDataType(REGISTER_X) == dtReal34) == dtReal34 ? getRegisterAngularMode(REGISTER_X) : amNone);
+            
+            reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, xangularMode);
             stringToReal34(aimBuffer, REGISTER_REAL34_DATA(REGISTER_X));
+            if(xangularMode ==  amMultPi) { 
+              real_t multPi;
+
+              real34ToReal(REGISTER_REAL34_DATA(REGISTER_X), &multPi);
+              realMultiply(&multPi, const_pi, &multPi, &ctxtReal39);
+              realToReal34(&multPi, REGISTER_REAL34_DATA(REGISTER_X));
+            }
+            else if(xangularMode == amDMS) {
+              real34FromDmsToDeg(REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X));
+            }
           }
           else if(nimNumberPart == NP_FRACTION_DENOMINATOR) {
-            reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
+            reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, getRegisterAngularMode(REGISTER_X));
             closeNimWithFraction(REGISTER_REAL34_DATA(REGISTER_X));
           }
           else if(nimNumberPart == NP_COMPLEX_INT_PART || nimNumberPart == NP_COMPLEX_FLOAT_PART || nimNumberPart == NP_COMPLEX_EXPONENT) {
