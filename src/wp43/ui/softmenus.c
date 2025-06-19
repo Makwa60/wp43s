@@ -748,7 +748,8 @@ dynamicSoftmenu_t dynamicSoftmenu[NUMBER_OF_DYNAMIC_SOFTMENUS] = {
   /* 113 */    "FIT",
   /* 114 */    "TAMFLAG_WRITE",
   /* 115 */    "SYSFL_writable",
-  /* 116 */    "CURSOR"
+  /* 116 */    "CURSOR",
+  /* 117 */    "BKUPSTF"
   };
 #endif // PC_BUILD
 

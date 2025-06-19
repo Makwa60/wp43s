@@ -140,7 +140,9 @@ void fnEdit (uint16_t unusedParamButMandatory) {
           }
         }
         else {
+          groupingGap = 0;
           real34ToDisplayString(REGISTER_REAL34_DATA(REGISTER_X), amNone, tmpString, &standardFont, SCREEN_WIDTH, NUMBER_OF_DISPLAY_DIGITS, true, STD_SPACE_PUNCTUATION, true);
+          groupingGap = groupingGapOld;
           //printf("**[DL]** tmpString %s\n",tmpString);fflush(stdout);
 
           bool noDisplayExponent = true;
