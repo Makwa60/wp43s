@@ -7,6 +7,7 @@
 
 #include "ui/genericEditor.h"
 
+#include "apps/bugScreen.h"
 #include "bufferize.h"
 #include "calcMode.h"
 #include "charString.h"
@@ -14,6 +15,7 @@
 #include "conversionAngles.h"
 #include "defines.h"
 #include "display.h"
+#include "error.h"
 #include "flags.h"
 #include "fonts.h"
 #include "fractions.h"
@@ -50,12 +52,94 @@ void fractionToString(calcRegister_t regist, char *displayString) {
   }
 }
 
+void shortIntegerToString(calcRegister_t regist, char *displayString) {
+  int16_t i, j, k, unit, digit, base;
+  uint64_t number, sign;
+
+  base    = getRegisterTag(regist);
+  number  = *(REGISTER_SHORT_INTEGER_DATA(regist));
+
+  if(base <= 1 || base >= 17) {
+    sprintf(errorMessage, "In function shortIntegerToString: %d is an unexpected value for base!", base);
+    bugScreen(errorMessage);
+    base = 10;
+  }
+
+  //number &= shortIntegerMask;
+
+  if(shortIntegerMode == SIM_UNSIGN || base == 2 || base == 4 || base == 8 || base == 16) {
+    sign = 0;
+  }
+  else {
+    sign = number & shortIntegerSignBit;
+  }
+
+  if(sign) {
+    if(shortIntegerMode == SIM_2COMPL) {
+      number |= ~shortIntegerMask;
+      number = ~number + 1;
+    }
+    else if(shortIntegerMode == SIM_1COMPL) {
+      number = ~number;
+    }
+    else if(shortIntegerMode == SIM_SIGNMT) {
+      number &= ~shortIntegerSignBit;
+    }
+    else {
+      sprintf(errorMessage, "In function shortIntegerToString: %d is an unexpected value for shortIntegerMode!", shortIntegerMode);
+      bugScreen(errorMessage);
+    }
+
+    number &= shortIntegerMask;
+  }
+
+  i = ERROR_MESSAGE_LENGTH / 2;
+
+  if(number == 0) {
+    displayString[i++] = '0';
+    digit = 1;
+  }
+  else {
+    digit = 0;
+  }
+
+  while(number) {
+    digit++;
+
+    unit = number % base;
+    number /= base;
+    displayString[i++] = digits[unit];
+  }
+
+  if(sign) {
+    displayString[i++] = '-';
+  }
+  else {
+    displayString[i++] = '+';
+  }
+
+  for(k=i-1, j=0; k>=ERROR_MESSAGE_LENGTH / 2; k--, j++) {
+    if(displayString[k] == ' ') {
+      displayString[j++] = STD_SPACE_PUNCTUATION[0];
+      displayString[j]   = STD_SPACE_PUNCTUATION[1];
+    }
+    else {
+      displayString[j] = displayString[k];
+    }
+  }
+  displayString[j] = 0;
+
+  return;
+}
+
+
 
 void fnEdit (uint16_t unusedParamButMandatory) {
 #if !defined(TESTSUITE_BUILD)
   int16_t  index;
   if(calcMode == cmNormal) {
     switch(getRegisterDataType(REGISTER_X)) {
+
       case dtLongInteger: {
         #define NIM_BUFFER_EXTENDED_LENGTH    1400      // provision for very long integers (up to 1000 digits + separators)
         memset(nimBufferDisplay, 0, NIM_BUFFER_EXTENDED_LENGTH);
@@ -99,6 +183,7 @@ void fnEdit (uint16_t unusedParamButMandatory) {
         }
         break;
       }
+
       case dtReal34: {
         uint16_t i;
         uint8_t groupingGapOld = groupingGap;
@@ -106,7 +191,7 @@ void fnEdit (uint16_t unusedParamButMandatory) {
 
         memset(aimBuffer, 0, AIM_BUFFER_LENGTH);
         memset(nimBufferDisplay, 0, NIM_BUFFER_LENGTH);
-        
+
         if(xangularMode == amMultPi) {
           real_t multPi;
 
@@ -229,15 +314,19 @@ void fnEdit (uint16_t unusedParamButMandatory) {
         cursorShow(false, 1, Y_POSITION_OF_NIM_LINE);
         break;
       }
+
       case dtComplex34: {
         break;
       }
+
       case dtTime: {
         break;
       }
+
       case dtDate: {
         break;
       }
+
       case dtString: {
         setSystemFlag(FLAG_ASLIFT);
         if(stringByteLength(REGISTER_STRING_DATA(REGISTER_X)) < AIM_BUFFER_LENGTH) {
@@ -253,14 +342,47 @@ void fnEdit (uint16_t unusedParamButMandatory) {
         }
         break;
       }
+
       case dtReal34Matrix:
       case dtComplex34Matrix: {
         fnEditMatrix(NOPARAM);
         break;
       }
+
       case dtShortInteger: {
+        uint16_t i;
+        uint8_t groupingGapOld = groupingGap;
+
+        memset(aimBuffer, 0, AIM_BUFFER_LENGTH);
+        memset(nimBufferDisplay, 0, NIM_BUFFER_LENGTH);
+
+        lastIntegerBase  = getRegisterTag(REGISTER_X);
+        nimNumberPart = (lastIntegerBase <= 10 ? NP_INT_10 : NP_INT_16);
+
+        groupingGap = 0;
+        shortIntegerToString(REGISTER_X, aimBuffer);
+        groupingGap = groupingGapOld;
+
+        hexDigits   = 0;
+        for(i = 0; i < strlen(aimBuffer); i++) {
+          if((aimBuffer[i] >= 'A') && (aimBuffer[i] <= 'F')) {
+            hexDigits++;
+          }
+        }
+
+        strcpy(nimBufferDisplay, STD_SPACE_HAIR);
+        nimBufferToDisplayBuffer(aimBuffer, nimBufferDisplay + 2);
+
+        //printf("**[DL]** dtShortInteger aimBuffer %s nimBufferDisplay %s\n",aimBuffer,nimBufferDisplay);fflush(stdout);
+
+        clearSystemFlag(FLAG_ALPHA);
+        calcMode = cmNim;
+        real34Zero(REGISTER_REAL34_DATA(REGISTER_X));
+        clearRegisterLine(NIM_REGISTER_LINE, true, true);
+        cursorShow(false, 1, Y_POSITION_OF_NIM_LINE);
         break;
       }
+
       // case dtConfig: Not relevant for EDIT
       default : {
       }
