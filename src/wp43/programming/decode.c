@@ -495,6 +495,7 @@ static void _decodeNumeral(char *startPtr, const char *srcStartPtr, bool isLongI
 
 
 static void decodeLiteral(uint8_t *literalAddress) {
+  decodedIntegerBase = 0;
   switch(*(literalAddress++)) {
     case BINARY_SHORT_INTEGER: {
       reallocateRegister(TEMP_REGISTER_1, dtShortInteger, SHORT_INTEGER_SIZE_IN_BYTES, *(uint8_t *)(literalAddress++));
@@ -534,8 +535,10 @@ static void decodeLiteral(uint8_t *literalAddress) {
       char *dispStringPtr = tmpString;
       char *sourceStringPtr = tmpStringLabelOrVariableName;
       uint8_t base = (uint8_t)(*literalAddress);
+      decodedIntegerBase = base;
       getStringLabelOrVariableName(literalAddress + 1);
 
+      //printf("**[DL]** decodeLiteral base %d tmpStringLabelOrVariableName %s decodedIntegerBase %d\n",base,tmpStringLabelOrVariableName,decodedIntegerBase);fflush(stdout);
       if(groupingGap > 0) {
         if(base == 2) {
           gap = 4;
@@ -566,6 +569,7 @@ static void decodeLiteral(uint8_t *literalAddress) {
       *(dispStringPtr++) = baseChars[base * 2    ];
       *(dispStringPtr++) = baseChars[base * 2 + 1];
       *dispStringPtr = 0;
+      //printf("**[DL]** decodeLiteral tmpString %s\n",tmpString);fflush(stdout);
       break;
     }
 
@@ -727,6 +731,7 @@ static void decodeLiteral(uint8_t *literalAddress) {
       #endif // !DMCP_BUILD
     }
   }
+  //printf("**[DL]** decodeLiteral exit decodedIntegerBase %d\n",decodedIntegerBase);fflush(stdout);
 }
 
 

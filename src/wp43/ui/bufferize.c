@@ -1198,6 +1198,7 @@
           hexDigits++;
 
           nimNumberPart = NP_INT_16;
+          if(lastIntegerBase <= 10) lastIntegerBase = 16;       // [DL] auto set base to hex when entering A-F digit
           //debugNIM();
         }
         break;
@@ -1622,9 +1623,9 @@
           }
           return;
         }
-        if(calcMode != cmNim && lastErrorCode != 0) {
-          fnDrop(NOPARAM); // Drop temporary register X value if closeNim ends up in error 
-        }
+        //if(calcMode != cmNim && lastErrorCode != 0) {
+        //  fnDrop(NOPARAM); // Drop temporary register X value if closeNim ends up in error
+        //}
         if(item == ITM_EXIT) {
           #if defined(DEBUGUNDO)
             printf(">>> saveForUndo from bufferizeB:");
@@ -1635,6 +1636,9 @@
             temporaryInformation = TI_UNDO_DISABLED;
             errorMoreInfo("there is not enough memory to save for undo!");
           }
+        }
+        if(lastErrorCode != 0) {
+          fnUndo(NOPARAM);       // restore stack if error
         }
         break;
       }

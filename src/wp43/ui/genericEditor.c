@@ -23,6 +23,7 @@
 #include "registers.h"
 #include "stack.h"
 #include "tam.h"
+#include "programming/decode.h"
 #include "programming/manage.h"
 #include "programming/nextStep.h"
 #include "realType.h"
@@ -403,9 +404,52 @@ void fnEdit (uint16_t unusedParamButMandatory) {
       opParam2 = currentStep[3];
       opParam3 = currentStep[4];
     }
+    //printf("**[DL]** fnEdit cPem func %d opParam %d opParam2 %d\n",func,opParam,opParam2);fflush(stdout);
     if((func == ITM_LITERAL || func == ITM_REM)) {
+      memset(aimBuffer, 0, AIM_BUFFER_LENGTH);
       if(opParam == STRING_LABEL_VARIABLE) {
         pemAlpha(ITM_EDIT);
+      }
+      else if((opParam == BINARY_SHORT_INTEGER) || (opParam == STRING_SHORT_INTEGER) || (opParam == STRING_LONG_INTEGER)) {
+        char *tempBuffer = errorMessage + 1500;
+        bool chsNeeded = false;
+        decodeOneStep(currentStep);
+        lastIntegerBase = (opParam == BINARY_SHORT_INTEGER ? opParam2: opParam == STRING_SHORT_INTEGER ? opParam2: 0);
+        //printf("**[DL]** fnEdit decodeOneStep tmpString %s lastIntegerBase %d\n",tmpString,lastIntegerBase);fflush(stdout);
+        strcpy(tempBuffer, tmpString);
+        deleteStepsFromTo(currentStep, findNextStep(currentStep));
+
+        uint16_t i;
+        for(i = 0; i < strlen(tempBuffer); i++) {
+          switch (tempBuffer[i]) {
+            case '0':
+            case '1':
+            case '2':
+            case '3':
+            case '4':
+            case '5':
+            case '6':
+            case '7':
+            case '8':
+            case '9':
+              pemAddNumber(ITM_0 + tempBuffer[i] - '0');
+              break;
+            case 'A':
+            case 'B':
+            case 'C':
+            case 'D':
+            case 'E':
+            case 'F':
+              pemAddNumber(ITM_A + tempBuffer[i] - 'A');
+              break;
+            case '-':
+              chsNeeded = true;
+              break;
+          }
+          lastIntegerBase = (opParam == BINARY_SHORT_INTEGER ? opParam2: opParam == STRING_SHORT_INTEGER ? opParam2: 0);
+        }
+        if(chsNeeded) pemAddNumber(ITM_CHS);
+        //printf("**[DL]** aimBuffer %s lastIntegerBase %d\n",aimBuffer,lastIntegerBase);fflush(stdout);
       }
       else {
         currentLocalStepNumber++;

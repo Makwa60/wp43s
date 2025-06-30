@@ -533,9 +533,20 @@ void fnPem(uint16_t unusedButMandatoryParameter) {
           *(tstr++) = 0;
         }
         else if(aimBuffer[0] != 0) {
+          lastIntegerBase = decodedIntegerBase;
+          //printf("**[DL]** fnPem lastIntegerBase %d nimNumberPart %d\n",lastIntegerBase,nimNumberPart);fflush(stdout);
           char *tstr = tmpString + stringByteLength(tmpString);
-          *(tstr++) = STD_CURSOR[0];
-          *(tstr++) = STD_CURSOR[1];
+          if((lastIntegerBase != 0) && ((nimNumberPart == NP_INT_10) || (nimNumberPart == NP_INT_16))) {
+            tstr -= 2;
+            *(tstr++) = STD_CURSOR[0];
+            *(tstr++) = STD_CURSOR[1];
+            *(tstr++) = baseChars[lastIntegerBase * 2    ];
+            *(tstr++) = baseChars[lastIntegerBase * 2 + 1];
+          }
+          else {
+            *(tstr++) = STD_CURSOR[0];
+            *(tstr++) = STD_CURSOR[1];
+          }
           *(tstr++) = 0;
         }
       }
@@ -835,7 +846,9 @@ void pemCloseAlphaInput(void) {
 
 void pemAddNumber(int16_t item) {
   #if !defined(TESTSUITE_BUILD)
+    //printf("**[DL]** %d\n",item);fflush(stdout);
     if(aimBuffer[0] == 0) {
+      lastIntegerBase = 0;
       tmpString[0] = ITM_LITERAL;
       tmpString[1] = STRING_LONG_INTEGER;
       tmpString[2] = 0;
@@ -850,7 +863,6 @@ void pemAddNumber(int16_t item) {
           aimBuffer[2] = '.';
           aimBuffer[3] = 0;
           nimNumberPart = NP_REAL_FLOAT_PART;
-          lastIntegerBase = 0;
           break;
         }
 
@@ -899,34 +911,44 @@ void pemAddNumber(int16_t item) {
     if(aimBuffer[0] != '!') {
       deleteStepsFromTo(currentStep, findNextStep(currentStep));
       if(aimBuffer[0] != 0) {
+        char *tmpPtr = tmpString;
+        char offset = 3;
         const char *numBuffer = aimBuffer[0] == '+' ? aimBuffer + 1 : aimBuffer;
-        tmpString[0] = ITM_LITERAL;
+        *tmpPtr++ = ITM_LITERAL;
         switch(nimNumberPart) {
-          //case NP_INT_16:
+          case NP_INT_10:
+          case NP_INT_16: {
           //case NP_INT_BASE: {
-          //  tmpString[1] = STRING_SHORT_INTEGER;
-          //  break;
-          //}
+            if(lastIntegerBase != 0) {
+              *tmpPtr++ = STRING_SHORT_INTEGER;
+              *tmpPtr++ = lastIntegerBase;
+              offset++;
+            }
+            else {
+              *tmpPtr++ = STRING_LONG_INTEGER;
+            }
+            break;
+          }
           case NP_REAL_FLOAT_PART:
           case NP_REAL_EXPONENT:
           case NP_FRACTION_DENOMINATOR: {
-            tmpString[1] = STRING_REAL34;
+            *tmpPtr++ = STRING_REAL34;
             break;
           }
           case NP_COMPLEX_INT_PART:
           case NP_COMPLEX_FLOAT_PART:
           case NP_COMPLEX_EXPONENT: {
-            tmpString[1] = STRING_COMPLEX34;
+            *tmpPtr++ = STRING_COMPLEX34;
             break;
           }
           default: {
-            tmpString[1] = STRING_LONG_INTEGER;
+            *tmpPtr++ = STRING_LONG_INTEGER;
             break;
           }
         }
-        tmpString[2] = stringByteLength(numBuffer);
-        xcopy(tmpString + 3, numBuffer, stringByteLength(numBuffer));
-        _insertInProgram((uint8_t *)tmpString, stringByteLength(numBuffer) + 3);
+        *tmpPtr++ = stringByteLength(numBuffer);
+        xcopy(tmpPtr, numBuffer, stringByteLength(numBuffer));
+        _insertInProgram((uint8_t *)tmpString, stringByteLength(numBuffer) + offset);
         --currentLocalStepNumber;
         currentStep = findPreviousStep(currentStep);
         if(!programListEnd) {
@@ -946,13 +968,21 @@ void pemAddNumber(int16_t item) {
 
 void pemCloseNumberInput(void) {
   #if !defined(TESTSUITE_BUILD)
+    //printf("**[DL]** pemCloseNumberInput aimBuffer %s nimNumberPart %d\n",aimBuffer,nimNumberPart);fflush(stdout);
     deleteStepsFromTo(currentStep, findNextStep(currentStep));
     if(aimBuffer[0] != 0) {
       char *numBuffer = aimBuffer[0] == '+' ? aimBuffer + 1 : aimBuffer;
       char *tmpPtr = tmpString;
       uint32_t inputLength = stringByteLength(numBuffer);
       bool doneWithBinaryLiteral = false;
+
+      if((lastIntegerBase != 0) && (nimNumberPart == NP_INT_10 || nimNumberPart == NP_INT_16)) {
+          sprintf(aimBuffer + strlen(aimBuffer), "#%" PRIu16, (int) lastIntegerBase);
+          nimNumberPart = NP_INT_BASE;
+      }
+
       *(tmpPtr++) = ITM_LITERAL;
+      //printf("**[DL]** pemCloseNumberInput aimBuffer %s numBuffer %s nimNumberPart %d\n",aimBuffer,numBuffer,nimNumberPart);fflush(stdout);
       switch(nimNumberPart) {
         //case NP_INT_16:
         case NP_INT_BASE: {
@@ -1065,6 +1095,8 @@ void pemCloseNumberInput(void) {
 
     aimBuffer[0] = '!';
     nimNumberPart = NP_EMPTY;
+    lastIntegerBase = 0;
+    //printf("**[DL]** pemCloseNumberInput lastIntegerBase %d\n",lastIntegerBase);fflush(stdout);
   #endif // TESTSUITE_BUILD
 }
 
@@ -1196,7 +1228,7 @@ void insertStepInProgram(int16_t func) {
     aimBuffer[0] = 0;
     return;
   }
-  if(!tamIsActive() && !tam.alpha && aimBuffer[0] != 0 && func != ITM_toHMS) {
+  if(!tamIsActive() && !tam.alpha && aimBuffer[0] != 0 && func != ITM_toHMS && func != ITM_EXIT) {
     if(func == ITM_dotD) {
       _pemCloseDateInput();
       if(aimBuffer[0] == '!') {
@@ -1333,7 +1365,13 @@ void insertStepInProgram(int16_t func) {
         }
 
         case ITM_EXIT: {           // 1737
-          fnKeyExit(NOPARAM);
+          if(aimBuffer[0] != 0) {
+            pemCloseNumberInput();
+            aimBuffer[0] = 0;
+          }
+          else {
+            fnKeyExit(NOPARAM);
+          }
           break;
         }
 

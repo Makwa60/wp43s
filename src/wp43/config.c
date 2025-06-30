@@ -965,6 +965,7 @@ void fnReset(uint16_t confirmation) {
     exponentLimit = 999;       // default to 999 instead of 6145 max value to warrant 34 digit accuracy of trig functions within ±10^999
     exponentHideLimit = 0;
     lastIntegerBase = 0;
+    decodedIntegerBase = 0;
     lastDenominator = 4;
 
     currentInputVariable = INVALID_VARIABLE;
