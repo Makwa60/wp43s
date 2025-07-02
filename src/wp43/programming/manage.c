@@ -975,6 +975,7 @@ void pemCloseNumberInput(void) {
       char *tmpPtr = tmpString;
       uint32_t inputLength = stringByteLength(numBuffer);
       bool doneWithBinaryLiteral = false;
+      int16_t lastChar = strlen(aimBuffer) - 1;
 
       if((lastIntegerBase != 0) && (nimNumberPart == NP_INT_10 || nimNumberPart == NP_INT_16)) {
           sprintf(aimBuffer + strlen(aimBuffer), "#%" PRIu16, (int) lastIntegerBase);
@@ -982,7 +983,13 @@ void pemCloseNumberInput(void) {
       }
 
       *(tmpPtr++) = ITM_LITERAL;
-      //printf("**[DL]** pemCloseNumberInput aimBuffer %s numBuffer %s nimNumberPart %d\n",aimBuffer,numBuffer,nimNumberPart);fflush(stdout);
+      if((nimNumberPart == NP_COMPLEX_EXPONENT || nimNumberPart == NP_REAL_EXPONENT) && (aimBuffer[lastChar] == '+' || aimBuffer[lastChar] == '-') && aimBuffer[lastChar - 1] == 'e') {
+        aimBuffer[--lastChar] = 0;
+        lastChar--;
+      }
+      else if(nimNumberPart == NP_REAL_EXPONENT && aimBuffer[lastChar] == 'e') {
+        aimBuffer[lastChar--] = 0;
+      }
       switch(nimNumberPart) {
         //case NP_INT_16:
         case NP_INT_BASE: {

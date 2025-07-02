@@ -1623,9 +1623,6 @@
           }
           return;
         }
-        //if(calcMode != cmNim && lastErrorCode != 0) {
-        //  fnDrop(NOPARAM); // Drop temporary register X value if closeNim ends up in error
-        //}
         if(item == ITM_EXIT) {
           #if defined(DEBUGUNDO)
             printf(">>> saveForUndo from bufferizeB:");

@@ -37,6 +37,15 @@
 
 #include "wp43.h"
 
+
+#if !defined(TESTSUITE_BUILD)
+  static void getStringLabelOrVariableName(uint8_t *stringAddress) {
+    uint8_t stringLength = *(uint8_t *)(stringAddress++);
+    xcopy(tmpStringLabelOrVariableName, stringAddress, stringLength);
+    tmpStringLabelOrVariableName[stringLength] = 0;
+  }
+#endif // !TESTSUITE_BUILD
+
 void fractionToString(calcRegister_t regist, char *displayString) {
   int16_t  sign, lessEqualGreater;
   uint64_t intPart, numer, denom;
@@ -404,24 +413,35 @@ void fnEdit (uint16_t unusedParamButMandatory) {
       opParam2 = currentStep[3];
       opParam3 = currentStep[4];
     }
-    //printf("**[DL]** fnEdit cPem func %d opParam %d opParam2 %d\n",func,opParam,opParam2);fflush(stdout);
+    //printf("**[DL]** fnEdit cmPem func %d opParam %d opParam2 %d\n",func,opParam,opParam2);fflush(stdout);
     if((func == ITM_LITERAL || func == ITM_REM)) {
       memset(aimBuffer, 0, AIM_BUFFER_LENGTH);
+
       if(opParam == STRING_LABEL_VARIABLE) {
         pemAlpha(ITM_EDIT);
       }
-      else if((opParam == BINARY_SHORT_INTEGER) || (opParam == STRING_SHORT_INTEGER) || (opParam == STRING_LONG_INTEGER)) {
+      else if((opParam == BINARY_SHORT_INTEGER) || (opParam == STRING_SHORT_INTEGER) || (opParam == STRING_LONG_INTEGER) ||
+              (opParam == BINARY_REAL34)  ||(opParam == STRING_REAL34)) {
         char *tempBuffer = errorMessage + 1500;
         bool chsNeeded = false;
-        decodeOneStep(currentStep);
+
+        if(opParam == STRING_REAL34) {
+          getStringLabelOrVariableName(&currentStep[2]);
+          strcpy(tempBuffer, tmpStringLabelOrVariableName);
+        }
+        else {
+          uint8_t groupingGapOld = groupingGap;
+          groupingGap = 0;
+          decodeOneStep(currentStep);
+          groupingGap = groupingGapOld;
+          strcpy(tempBuffer, tmpString);
+        }
         lastIntegerBase = (opParam == BINARY_SHORT_INTEGER ? opParam2: opParam == STRING_SHORT_INTEGER ? opParam2: 0);
-        //printf("**[DL]** fnEdit decodeOneStep tmpString %s lastIntegerBase %d\n",tmpString,lastIntegerBase);fflush(stdout);
-        strcpy(tempBuffer, tmpString);
         deleteStepsFromTo(currentStep, findNextStep(currentStep));
 
         uint16_t i;
         for(i = 0; i < strlen(tempBuffer); i++) {
-          switch (tempBuffer[i]) {
+          switch ((uint8_t) tempBuffer[i]) {
             case '0':
             case '1':
             case '2':
@@ -442,14 +462,39 @@ void fnEdit (uint16_t unusedParamButMandatory) {
             case 'F':
               pemAddNumber(ITM_A + tempBuffer[i] - 'A');
               break;
+            case '.':
+              pemAddNumber(ITM_PERIOD);
+              break;
             case '-':
               chsNeeded = true;
+              break;
+            case 'e':
+              if(chsNeeded) pemAddNumber(ITM_CHS);           // change mantissa sign before entering exponent
+              chsNeeded = false;
+              pemAddNumber(ITM_EXPONENT);
+              break;
+            case 0x80:
+              i++;
+              if(tempBuffer[i] == STD_CROSS[1]) {
+                i += 2; // Skip next character (STD_BASE_10)
+                if(chsNeeded) pemAddNumber(ITM_CHS);         // change mantissa sign before entering exponent
+                chsNeeded = false;
+                pemAddNumber(ITM_EXPONENT);
+              }
+              break;
+            case 0xa1:
+              i++;
+              if((tempBuffer[i] >= STD_SUP_0[1]) && (tempBuffer[i] <= STD_SUP_9[1])) {
+                pemAddNumber(ITM_0 + tempBuffer[i] - STD_SUP_0[1] );
+              }
+              else if((tempBuffer[i] == STD_SUP_MINUS[1])) {
+                chsNeeded = true;
+              }
               break;
           }
           lastIntegerBase = (opParam == BINARY_SHORT_INTEGER ? opParam2: opParam == STRING_SHORT_INTEGER ? opParam2: 0);
         }
         if(chsNeeded) pemAddNumber(ITM_CHS);
-        //printf("**[DL]** aimBuffer %s lastIntegerBase %d\n",aimBuffer,lastIntegerBase);fflush(stdout);
       }
       else {
         currentLocalStepNumber++;
