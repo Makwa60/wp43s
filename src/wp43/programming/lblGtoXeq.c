@@ -565,10 +565,12 @@ void fnStopProgram(uint16_t unusedButMandatoryParameter) {
       //}
 
       case BINARY_REAL34: {
+        real34_t realLiteral;
+        xcopy(&realLiteral, literalAddress, REAL34_SIZE_IN_BYTES);
         liftStack();
         setSystemFlag(FLAG_ASLIFT);
         reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
-        real34Copy((real34_t *)literalAddress, REGISTER_REAL34_DATA(REGISTER_X));
+        real34Copy(&realLiteral, REGISTER_REAL34_DATA(REGISTER_X));
         break;
       }
 
