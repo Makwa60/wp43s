@@ -1490,7 +1490,7 @@ bool      _kbSeenInterrupt     = false;
                 refreshScreen();
               }
               else if(aimBuffer[0] != 0 && !getSystemFlag(FLAG_ALPHA) && (item == ITM_toINT || (nimNumberPart == NP_INT_BASE && item == ITM_RCL))) {
-                pemAddNumber(item);
+                pemAddNumber(item, true);
                 keyActionProcessed = true;
                 if(item == ITM_RCL) {
                   currentStep = findPreviousStep(currentStep);
@@ -2211,7 +2211,7 @@ void fnKeyCC(uint16_t unusedButMandatoryParameter) {
 
       case cmPem: {
         if(aimBuffer[0] != 0 && !getSystemFlag(FLAG_ALPHA)) {
-          pemAddNumber(ITM_CC);
+          pemAddNumber(ITM_CC, true);
         }
         break;
       }
@@ -2382,7 +2382,7 @@ void fnKeyBackspace(uint16_t unusedButMandatoryParameter) {
           }
         }
         else {
-          pemAddNumber(ITM_BACKSPACE);
+          pemAddNumber(ITM_BACKSPACE, true);
           if(aimBuffer[0] == 0 && currentLocalStepNumber > 1) {
             currentStep = findPreviousStep(currentStep);
             --currentLocalStepNumber;

@@ -23,7 +23,7 @@
   void scrollPemForwards                       (void);
   void pemAlpha                                (int16_t item);
   void pemCloseAlphaInput                      (void);
-  void pemAddNumber                            (int16_t item);
+  void pemAddNumber                            (int16_t item, bool doInsertInProgram);
   void pemCloseNumberInput                     (void);
   void insertStepInProgram                     (int16_t func);
   void insertUserItemInProgram                 (int16_t func, char *funcParam);

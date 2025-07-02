@@ -452,7 +452,7 @@ void fnEdit (uint16_t unusedParamButMandatory) {
             case '7':
             case '8':
             case '9':
-              pemAddNumber(ITM_0 + tempBuffer[i] - '0');
+              pemAddNumber(ITM_0 + tempBuffer[i] - '0', false);
               break;
             case 'A':
             case 'B':
@@ -460,32 +460,32 @@ void fnEdit (uint16_t unusedParamButMandatory) {
             case 'D':
             case 'E':
             case 'F':
-              pemAddNumber(ITM_A + tempBuffer[i] - 'A');
+              pemAddNumber(ITM_A + tempBuffer[i] - 'A', false);
               break;
             case '.':
-              pemAddNumber(ITM_PERIOD);
+              pemAddNumber(ITM_PERIOD, false);
               break;
             case '-':
               chsNeeded = true;
               break;
             case 'e':
-              if(chsNeeded) pemAddNumber(ITM_CHS);           // change mantissa sign before entering exponent
+              if(chsNeeded) pemAddNumber(ITM_CHS, false);           // change mantissa sign before entering exponent
               chsNeeded = false;
-              pemAddNumber(ITM_EXPONENT);
+              pemAddNumber(ITM_EXPONENT, false);
               break;
             case 0x80:
               i++;
               if(tempBuffer[i] == STD_CROSS[1]) {
                 i += 2; // Skip next character (STD_BASE_10)
-                if(chsNeeded) pemAddNumber(ITM_CHS);         // change mantissa sign before entering exponent
+                if(chsNeeded) pemAddNumber(ITM_CHS, false);         // change mantissa sign before entering exponent
                 chsNeeded = false;
-                pemAddNumber(ITM_EXPONENT);
+                pemAddNumber(ITM_EXPONENT, false);
               }
               break;
             case 0xa1:
               i++;
               if((tempBuffer[i] >= STD_SUP_0[1]) && (tempBuffer[i] <= STD_SUP_9[1])) {
-                pemAddNumber(ITM_0 + tempBuffer[i] - STD_SUP_0[1] );
+                pemAddNumber(ITM_0 + tempBuffer[i] - STD_SUP_0[1], false);
               }
               else if((tempBuffer[i] == STD_SUP_MINUS[1])) {
                 chsNeeded = true;
@@ -494,7 +494,8 @@ void fnEdit (uint16_t unusedParamButMandatory) {
           }
           lastIntegerBase = (opParam == BINARY_SHORT_INTEGER ? opParam2: opParam == STRING_SHORT_INTEGER ? opParam2: 0);
         }
-        if(chsNeeded) pemAddNumber(ITM_CHS);
+        if(chsNeeded) pemAddNumber(ITM_CHS, false);
+        pemAddNumber(ITM_NOP, true);    // to insert the resulting number in program
       }
       else {
         currentLocalStepNumber++;

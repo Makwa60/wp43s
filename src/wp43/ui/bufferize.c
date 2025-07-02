@@ -1743,6 +1743,10 @@
         break;
       }
 
+      case ITM_NOP: {   // NOP: do nothing in NIM
+        break;
+      }
+
       default: {
         keyActionProcessed = false;
       }
@@ -1899,7 +1903,7 @@
       }
     }
 
-    else {
+    else if(item != ITM_NOP) {
       screenUpdatingMode &= ~SCRUPD_SKIP_STACK_ONE_TIME;
       closeNim();
       if(calcMode != cmNim) {

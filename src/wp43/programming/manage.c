@@ -604,7 +604,7 @@ void fnPem(uint16_t unusedButMandatoryParameter) {
         pemAlpha(ITM_BACKSPACE);
       }
       else {
-        pemAddNumber(ITM_BACKSPACE);
+        pemAddNumber(ITM_BACKSPACE, true);
       }
       clearScreen();
       showSoftmenuCurrentPart();
@@ -844,7 +844,7 @@ void pemCloseAlphaInput(void) {
 
 
 
-void pemAddNumber(int16_t item) {
+void pemAddNumber(int16_t item, bool doInsertInProgram) {
   #if !defined(TESTSUITE_BUILD)
     //printf("**[DL]** %d\n",item);fflush(stdout);
     if(aimBuffer[0] == 0) {
@@ -909,7 +909,9 @@ void pemAddNumber(int16_t item) {
     clearSystemFlag(FLAG_ALPHA);
 
     if(aimBuffer[0] != '!') {
-      deleteStepsFromTo(currentStep, findNextStep(currentStep));
+      if(doInsertInProgram) {
+        deleteStepsFromTo(currentStep, findNextStep(currentStep));
+      }
       if(aimBuffer[0] != 0) {
         char *tmpPtr = tmpString;
         char offset = 3;
@@ -948,11 +950,13 @@ void pemAddNumber(int16_t item) {
         }
         *tmpPtr++ = stringByteLength(numBuffer);
         xcopy(tmpPtr, numBuffer, stringByteLength(numBuffer));
-        _insertInProgram((uint8_t *)tmpString, stringByteLength(numBuffer) + offset);
-        --currentLocalStepNumber;
-        currentStep = findPreviousStep(currentStep);
-        if(!programListEnd) {
-          scrollPemBackwards();
+        if(doInsertInProgram) {
+          _insertInProgram((uint8_t *)tmpString, stringByteLength(numBuffer) + offset);
+          --currentLocalStepNumber;
+          currentStep = findPreviousStep(currentStep);
+          if(!programListEnd) {
+            scrollPemBackwards();
+          }
         }
       }
       calcMode = cmPem;
@@ -1218,7 +1222,7 @@ void insertStepInProgram(int16_t func) {
     return;
   }
   if(indexOfItems[func].func == addItemToBuffer || (!tamIsActive() && aimBuffer[0] != 0 && (func == ITM_CHS || func == ITM_CC || func == ITM_toINT || (nimNumberPart == NP_INT_BASE && (func == ITM_YX || func == ITM_LN || func == ITM_RCL))))) {
-    pemAddNumber(func);
+    pemAddNumber(func, true);
     return;
   }
   else if(nimNumberPart == NP_INT_BASE) {
