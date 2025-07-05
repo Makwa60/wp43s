@@ -421,11 +421,12 @@ void fnEdit (uint16_t unusedParamButMandatory) {
         pemAlpha(ITM_EDIT);
       }
       else if((opParam == BINARY_SHORT_INTEGER) || (opParam == STRING_SHORT_INTEGER) || (opParam == STRING_LONG_INTEGER) ||
-              (opParam == BINARY_REAL34)  ||(opParam == STRING_REAL34)) {
+              (opParam == BINARY_REAL34)        || (opParam == STRING_REAL34) ||
+              (opParam == BINARY_COMPLEX34)     || (opParam == STRING_COMPLEX34)) {
         char *tempBuffer = errorMessage + 1500;
         bool chsNeeded = false;
 
-        if(opParam == STRING_REAL34) {
+        if((opParam == STRING_REAL34)|| (opParam == STRING_COMPLEX34))  {
           getStringLabelOrVariableName(&currentStep[2]);
           strcpy(tempBuffer, tmpStringLabelOrVariableName);
         }
@@ -436,11 +437,13 @@ void fnEdit (uint16_t unusedParamButMandatory) {
           groupingGap = groupingGapOld;
           strcpy(tempBuffer, tmpString);
         }
+        //printf("**[DL]** fnEdit tempBuffer %s\n",tempBuffer);fflush(stdout);
         lastIntegerBase = (opParam == BINARY_SHORT_INTEGER ? opParam2: opParam == STRING_SHORT_INTEGER ? opParam2: 0);
         deleteStepsFromTo(currentStep, findNextStep(currentStep));
 
         uint16_t i;
         for(i = 0; i < strlen(tempBuffer); i++) {
+          //printf("**[DL]** fnEdit tempBuffer[i] %02x aimBuffer %s\n",tempBuffer[i],aimBuffer);fflush(stdout);
           switch ((uint8_t) tempBuffer[i]) {
             case '0':
             case '1':
@@ -465,7 +468,12 @@ void fnEdit (uint16_t unusedParamButMandatory) {
             case '.':
               pemAddNumber(ITM_PERIOD, false);
               break;
+            case '+':
+              if(chsNeeded)  pemAddNumber(ITM_CHS, false);  // '-' was already encountered, let's first negate the real part
+              chsNeeded = false;
+              break;
             case '-':
+              if(chsNeeded) pemAddNumber(ITM_CHS, false);  // second time '-' is encountered, let's first negate the real part
               chsNeeded = true;
               break;
             case 'e':
@@ -473,9 +481,12 @@ void fnEdit (uint16_t unusedParamButMandatory) {
               chsNeeded = false;
               pemAddNumber(ITM_EXPONENT, false);
               break;
+            case 'i':
+              pemAddNumber(ITM_CC, false);
+              break;
             case 0x80:
               i++;
-              if(tempBuffer[i] == STD_CROSS[1]) {
+              if((tempBuffer[i] == STD_CROSS[1]) && (nimNumberPart != NP_COMPLEX_INT_PART)) {
                 i += 2; // Skip next character (STD_BASE_10)
                 if(chsNeeded) pemAddNumber(ITM_CHS, false);         // change mantissa sign before entering exponent
                 chsNeeded = false;
@@ -490,12 +501,21 @@ void fnEdit (uint16_t unusedParamButMandatory) {
               else if((tempBuffer[i] == STD_SUP_MINUS[1])) {
                 chsNeeded = true;
               }
+              else if((tempBuffer[i] == STD_IMAGINARY_i[1])) {
+                //printf("**[DL]** fnEdit pemAddNumber ITM_CC aimBuffer %s\n",aimBuffer);fflush(stdout);
+                pemAddNumber(ITM_CC, false);
+              }
+              //printf("**[DL]** fnEdit pemAddNumber %02x aimBuffer %s\n",tempBuffer[i],aimBuffer);fflush(stdout);
+              break;
+            default:
+              //printf("**[DL]** fnEdit tempBuffer[i] %02X\n",tempBuffer[i]);fflush(stdout);
               break;
           }
           lastIntegerBase = (opParam == BINARY_SHORT_INTEGER ? opParam2: opParam == STRING_SHORT_INTEGER ? opParam2: 0);
         }
         if(chsNeeded) pemAddNumber(ITM_CHS, false);
         pemAddNumber(ITM_NOP, true);    // to insert the resulting number in program
+        printf("**[DL]** fnEdit aimBuffer %s\n",aimBuffer);fflush(stdout);
       }
       else {
         currentLocalStepNumber++;
