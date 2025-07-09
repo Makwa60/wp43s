@@ -709,7 +709,7 @@ static void _integrate_mm(calcRegister_t regist, const real_t *llim, const real_
 
   realSubtract(&b, &a, &bma2, realContext); // interval half-length
   realMultiply(&bma2, const_1on2, &bma2, realContext);
-  realSubtract(&b, &a, &bpa2, realContext); // centre of interval
+  realAdd(&b, &a, &bpa2, realContext); // centre of interval
   realMultiply(&bpa2, const_1on2, &bpa2, realContext);
   k = 0; // level counter
   DEI_xeq_user(regist, &bpa2, &ss, realContext); // centre of interval
