@@ -68,9 +68,9 @@ TO_QSPI const char *errorMessages[NUMBER_OF_ERROR_CODES] = {
 /* 39 */  "Not enough memory for such a matrix",
 /* 40 */  "No errors for selected model",
 /* 41 */  "Large " STD_DELTA " and opposite signs, may be a pole",
-/* 42 */  "Solver reached local extremum, no root",
+/* 42 */  "Solver reached a local extremum, no root",
 /* 43 */  STD_GREATER_EQUAL "1 initial guess lies out of the domain",
-/* 44 */  "The function value look constant",
+/* 44 */  "The function values look constant",
 /* 45 */  "Syntax error in this equation",
 /* 46 */  "This equation formula is too complex",
 /* 47 */  "This item cannot be assigned here",
@@ -82,7 +82,7 @@ TO_QSPI const char *errorMessages[NUMBER_OF_ERROR_CODES] = {
 /* 53 */  "Cannot write file ",
 /* 54 */  "No program specified",
 /* 55 */  "Not enough memory to load the programs",
-/* 56 */  "Solver aborted",
+/* 56 */  "Operation aborted",
 /* 57 */  "Not enough memory to load the equations",
 };
 
