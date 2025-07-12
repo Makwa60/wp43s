@@ -36,7 +36,7 @@ TO_QSPI const char *errorMessages[NUMBER_OF_ERROR_CODES] = {
 /*  7 */  "No such function",
 /*  8 */  "Out of range",
 /*  9 */  "Illegal digit in integer input for this base",
-/* 10 */  "Input is too long",
+/* 10 */  "Input is too long", // obsolete
 /* 11 */  "RAM does not suffice",
 /* 12 */  "Stack clash",
 /* 13 */  "Operation is undefined in this mode",
@@ -45,7 +45,7 @@ TO_QSPI const char *errorMessages[NUMBER_OF_ERROR_CODES] = {
 /* 16 */  "Distribution parameter out of valid range",
 /* 17 */  "I/O error",
 /* 18 */  "Invalid or corrupted data",
-/* 19 */  "Flash memory is write protected",
+/* 19 */  "Flash memory is write protected", // obsolete
 /* 20 */  "No root found",
 /* 21 */  "Matrix mismatch",
 /* 22 */  "Singular matrix",
@@ -56,7 +56,7 @@ TO_QSPI const char *errorMessages[NUMBER_OF_ERROR_CODES] = {
 /* 27 */  "Cannot delete a predefined item",
 /* 28 */  "No statistic data present",
 /* 29 */  "Item to be coded",
-/* 30 */  "Function to be coded for that data type",
+/* 30 */  "Function to be coded for that data type", // obsolete
 /* 31 */  "Input data types do not match",
 /* 32 */  "This system flag is write protected",
 /* 33 */  "Output would exceed 196 characters",
