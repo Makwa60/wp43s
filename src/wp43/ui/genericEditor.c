@@ -63,7 +63,7 @@ void fractionToString(calcRegister_t regist, char *displayString) {
 }
 
 void shortIntegerToString(calcRegister_t regist, char *displayString) {
-  int16_t i, j, k, unit, digit, base;
+  int16_t i, j, k, unit, base;
   uint64_t number, sign;
 
   base    = getRegisterTag(regist);
@@ -107,15 +107,9 @@ void shortIntegerToString(calcRegister_t regist, char *displayString) {
 
   if(number == 0) {
     displayString[i++] = '0';
-    digit = 1;
-  }
-  else {
-    digit = 0;
   }
 
   while(number) {
-    digit++;
-
     unit = number % base;
     number /= base;
     displayString[i++] = digits[unit];
@@ -219,7 +213,7 @@ static void _real34ToNim(const real34_t *real34, char *nimInput, char *nimDispla
     }
     if(dotFound) {
       for(i = strlen(nimDisplay)-1; i > 0; i--) {
-        if((nimDisplay[i] == '0')) {
+        if(nimDisplay[i] == '0') {
           nimDisplay[i] = 0;              // remove trailing zeros
         }
         else {
@@ -275,6 +269,8 @@ static void _real34ToNim(const real34_t *real34, char *nimInput, char *nimDispla
 void fnEdit (uint16_t unusedParamButMandatory) {
 #if !defined(TESTSUITE_BUILD)
   int16_t  index;
+  uint8_t groupingGapOld;
+  
   if(calcMode == cmNormal) {
     switch(getRegisterDataType(REGISTER_X)) {
 
@@ -298,7 +294,7 @@ void fnEdit (uint16_t unusedParamButMandatory) {
             if(i != 1 || nimBufferDisplay[0] != '-') {
               xcopy(nimBufferDisplay + i + 2, nimBufferDisplay + i, len - i + 1);
               nimBufferDisplay[i] = *(STD_SPACE_PUNCTUATION);
-              nimBufferDisplay[i + 1] = *(STD_SPACE_PUNCTUATION + 1);
+              nimBufferDisplay[i + 1] = *(&STD_SPACE_PUNCTUATION[1]);
               len += 2;
             }
           }
@@ -324,8 +320,7 @@ void fnEdit (uint16_t unusedParamButMandatory) {
 
       case dtReal34: {
         edit_dtReal34:
-
-        uint8_t groupingGapOld = groupingGap;
+        groupingGapOld = groupingGap;
         angularMode_t xangularMode = getRegisterAngularMode(REGISTER_X);
 
         memset(aimBuffer, 0, AIM_BUFFER_LENGTH);
@@ -468,7 +463,7 @@ void fnEdit (uint16_t unusedParamButMandatory) {
 
       case dtShortInteger: {
         uint16_t i;
-        uint8_t groupingGapOld = groupingGap;
+        groupingGapOld = groupingGap;
 
         memset(aimBuffer, 0, AIM_BUFFER_LENGTH);
         memset(nimBufferDisplay, 0, NIM_BUFFER_LENGTH);
@@ -538,7 +533,7 @@ void fnEdit (uint16_t unusedParamButMandatory) {
           strcpy(tempBuffer, tmpStringLabelOrVariableName);
         }
         else {
-          uint8_t groupingGapOld = groupingGap;
+          groupingGapOld = groupingGap;
           groupingGap = 0;
           decodeOneStep(currentStep);
           groupingGap = groupingGapOld;
@@ -605,10 +600,10 @@ void fnEdit (uint16_t unusedParamButMandatory) {
               if((tempBuffer[i] >= STD_SUP_0[1]) && (tempBuffer[i] <= STD_SUP_9[1])) {
                 pemAddNumber(ITM_0 + tempBuffer[i] - STD_SUP_0[1], false);
               }
-              else if((tempBuffer[i] == STD_SUP_MINUS[1])) {
+              else if(tempBuffer[i] == STD_SUP_MINUS[1]) {
                 chsNeeded = true;
               }
-              else if((tempBuffer[i] == STD_IMAGINARY_i[1])) {
+              else if(tempBuffer[i] == STD_IMAGINARY_i[1]) {
                 //printf("**[DL]** fnEdit pemAddNumber ITM_CC aimBuffer %s\n",aimBuffer);fflush(stdout);
                 pemAddNumber(ITM_CC, false);
               }
