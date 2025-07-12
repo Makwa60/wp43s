@@ -142,6 +142,47 @@ void shortIntegerToString(calcRegister_t regist, char *displayString) {
   return;
 }
 
+static void _hmsTimeToReal() {
+  int16_t i = 0;
+  int16_t j = 0;
+  bool decimalflag = false;
+
+  timeToDisplayString(REGISTER_X, tmpString, true);
+
+  while(tmpString[i] != 0) {
+    switch((uint8_t)tmpString[i]) {
+      case '0' :
+      case '1' :
+      case '2' :
+      case '3' :
+      case '4' :
+      case '5' :
+      case '6' :
+      case '7' :
+      case '8' :
+      case '9' :
+      case '+' :
+      case '-' :
+        tmpString[j++] = (uint8_t)tmpString[i];
+        break;
+      case ':' :
+        if(!decimalflag) {
+          decimalflag = true;
+          tmpString[j++] = '.';
+        }
+        break;
+      default:
+        break;
+    }
+    i++;
+  }
+  tmpString[j] = 0;
+
+  if(tmpString[0] != 0) {
+    reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
+    stringToReal34(tmpString, REGISTER_REAL34_DATA(REGISTER_X));
+  }
+}
 
 #if !defined(TESTSUITE_BUILD)
 static void _real34ToNim(const real34_t *real34, char *nimInput, char *nimDisplay) {
@@ -282,6 +323,8 @@ void fnEdit (uint16_t unusedParamButMandatory) {
       }
 
       case dtReal34: {
+        edit_dtReal34:
+
         uint8_t groupingGapOld = groupingGap;
         angularMode_t xangularMode = getRegisterAngularMode(REGISTER_X);
 
@@ -390,10 +433,14 @@ void fnEdit (uint16_t unusedParamButMandatory) {
       }
 
       case dtTime: {
+        _hmsTimeToReal();
+        goto edit_dtReal34;
         break;
       }
 
       case dtDate: {
+        convertDateRegisterToReal34Register(REGISTER_X, REGISTER_X);
+        goto edit_dtReal34;
         break;
       }
 
