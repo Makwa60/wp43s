@@ -919,6 +919,7 @@ void complex34ToDisplayString2(const complex34_t *complex34, char *displayString
   }
 
   real34ToDisplayString2(&real34, displayString, displayHasNDigits, limitExponent, separator, false, frontSpace);
+  //printf("**[DL]** REAL PART:      displayString %s\n",displayString);fflush(stdout);
 
   if(updateDisplayValueX) {
     if(getSystemFlag(FLAG_POLAR)) {
@@ -930,6 +931,7 @@ void complex34ToDisplayString2(const complex34_t *complex34, char *displayString
   }
 
   real34ToDisplayString2(&imag34, displayString + i, displayHasNDigits, limitExponent, separator, false, false);
+  //printf("**[DL]** IMAGINARY PART: displayString %s\n",displayString + i);fflush(stdout);
 
   if(getSystemFlag(FLAG_POLAR)) { // polar mode
     strcat(displayString, STD_SPACE_4_PER_EM STD_MEASURED_ANGLE STD_SPACE_4_PER_EM);

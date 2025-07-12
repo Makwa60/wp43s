@@ -143,6 +143,93 @@ void shortIntegerToString(calcRegister_t regist, char *displayString) {
 }
 
 
+#if !defined(TESTSUITE_BUILD)
+static void _real34ToNim(const real34_t *real34, char *nimInput, char *nimDisplay) {
+// nimInput   : used to fill aimBuffer
+// nimDisplay : used to fill nimBufferDisplay
+  uint16_t i;
+  uint8_t groupingGapOld = groupingGap;
+
+  groupingGap = 0;
+  real34ToDisplayString(real34, amNone, tmpString, &standardFont, SCREEN_WIDTH, NUMBER_OF_DISPLAY_DIGITS, true, STD_SPACE_PUNCTUATION, true);
+  groupingGap = groupingGapOld;
+  //printf("**[DL]** tmpString %s\n",tmpString);fflush(stdout);
+
+  bool noDisplayExponent = true;
+  for(i = 0; i < strlen(tmpString); i++) {
+    if((tmpString[i] == STD_SUB_10[0]) && (tmpString[i+1] == STD_SUB_10[1])) {
+      noDisplayExponent = false;
+    }
+  }
+  groupingGap = 0;
+  real34ToString(real34, nimDisplay);
+  groupingGap = groupingGapOld;
+  //printf("**[DL]** nimBufferDisplay %s\n",nimBufferDisplay);fflush(stdout);
+  bool dotFound = false;
+  if(noDisplayExponent) {                                // if no exponent in display string but exponent in real34ToString, use the display string
+    for(i = 0; i < strlen(nimDisplay); i++) {
+      if((nimDisplay[i] == 'e') || (nimDisplay[i] == 'E')) {
+        strcpy(nimDisplay, tmpString + (tmpString[0] == '-'? 0 : 1));
+        break;
+      }
+      if(nimDisplay[i] == '.') {
+        dotFound = true;
+      }
+    }
+    if(dotFound) {
+      for(i = strlen(nimDisplay)-1; i > 0; i--) {
+        if((nimDisplay[i] == '0')) {
+          nimDisplay[i] = 0;              // remove trailing zeros
+        }
+        else {
+          break;
+        }
+      }
+    }
+  }
+  if(real34IsPositive(real34)) {
+    nimInput[0] = '+';
+    strcpy(nimInput + 1, nimDisplay);
+  }
+  else {
+    strcpy(nimInput, nimDisplay);
+  }
+  //printf("**[DL]** nimInput %s\n",nimInput);fflush(stdout);
+  bool exponentFound = false;
+  dotFound = false;
+  for(i = 0; i < strlen(nimInput); i++) {
+    if(nimInput[i] == 'E') {
+      nimInput[i] = 'e';
+      dotFound = true;
+      exponentFound = true;
+      exponentSignLocation = i + 1;
+      nimNumberPart = NP_REAL_EXPONENT;
+    }
+    if(nimInput[i] == '.') {
+      dotFound = true;
+      nimNumberPart = NP_REAL_FLOAT_PART;
+    }
+  }
+  if(!dotFound) {
+    nimInput[i] = '.';
+    nimNumberPart = NP_REAL_FLOAT_PART;
+  }
+  strcpy(nimDisplay, STD_SPACE_HAIR);
+  //printf("**[DL]** nimNumberPart %d\n",nimNumberPart);fflush(stdout);
+  nimBufferToDisplayBuffer(nimInput, nimDisplay + 2);
+  if(exponentFound) {
+    exponentToDisplayString(stringToInt32(nimInput + exponentSignLocation), nimDisplay + stringByteLength(nimDisplay), NULL, true, STD_SPACE_PUNCTUATION);
+    if(nimInput[exponentSignLocation + 1] == 0 && nimInput[exponentSignLocation] == '-') {
+      strcat(nimDisplay, STD_SUP_MINUS);
+    }
+    else if(nimInput[exponentSignLocation + 1] == '0' && nimInput[exponentSignLocation] == '+') {
+      strcat(nimDisplay, STD_SUP_0);
+    }
+  }
+}
+#endif // !TESTSUITE_BUILD
+
+
 
 void fnEdit (uint16_t unusedParamButMandatory) {
 #if !defined(TESTSUITE_BUILD)
@@ -195,7 +282,6 @@ void fnEdit (uint16_t unusedParamButMandatory) {
       }
 
       case dtReal34: {
-        uint16_t i;
         uint8_t groupingGapOld = groupingGap;
         angularMode_t xangularMode = getRegisterAngularMode(REGISTER_X);
 
@@ -235,84 +321,9 @@ void fnEdit (uint16_t unusedParamButMandatory) {
           }
         }
         else {
-          groupingGap = 0;
-          real34ToDisplayString(REGISTER_REAL34_DATA(REGISTER_X), amNone, tmpString, &standardFont, SCREEN_WIDTH, NUMBER_OF_DISPLAY_DIGITS, true, STD_SPACE_PUNCTUATION, true);
-          groupingGap = groupingGapOld;
-          //printf("**[DL]** tmpString %s\n",tmpString);fflush(stdout);
-
-          bool noDisplayExponent = true;
-          for(i = 0; i < strlen(tmpString); i++) {
-            if((tmpString[i] == STD_SUB_10[0]) && (tmpString[i+1] == STD_SUB_10[1])) {
-              noDisplayExponent = false;
-            }
-          }
-          groupingGap = 0;
-          real34ToString(REGISTER_REAL34_DATA(REGISTER_X), nimBufferDisplay);
-          groupingGap = groupingGapOld;
-          //printf("**[DL]** nimBufferDisplay %s\n",nimBufferDisplay);fflush(stdout);
-          bool dotFound = false;
-          if(noDisplayExponent) {                                // if no exponent in display string but exponent in real34ToString, use the display string
-            for(i = 0; i < strlen(nimBufferDisplay); i++) {
-              if((nimBufferDisplay[i] == 'e') || (nimBufferDisplay[i] == 'E')) {
-                strcpy(nimBufferDisplay, tmpString + (tmpString[0] == '-'? 0 : 1));
-                break;
-              }
-              if(nimBufferDisplay[i] == '.') {
-                dotFound = true;
-              }
-            }
-            if(dotFound) {
-              for(i = strlen(nimBufferDisplay)-1; i > 0; i--) {
-                if((nimBufferDisplay[i] == '0')) {
-                  nimBufferDisplay[i] = 0;              // remove trailing zeros
-                }
-                else {
-                  break;
-                }
-              }
-            }
-          }
-          //printf("**[DL]** tmpString %s nimBufferDisplay %s\n",tmpString,nimBufferDisplay);fflush(stdout);
-
-          if(real34IsPositive(REGISTER_REAL34_DATA(REGISTER_X))) {
-            aimBuffer[0] = '+';
-            strcpy(aimBuffer + 1, nimBufferDisplay);
-          }
-          else {
-            strcpy(aimBuffer, nimBufferDisplay);
-          }
-          bool exponentFound = false;
-          dotFound = false;
-          for(i = 0; i < strlen(aimBuffer); i++) {
-            if(aimBuffer[i] == 'E') {
-              aimBuffer[i] = 'e';
-              exponentFound = true;
-              exponentSignLocation = i + 1;
-              nimNumberPart = NP_REAL_EXPONENT;
-            }
-            if(aimBuffer[i] == '.') {
-             dotFound = true;
-             nimNumberPart = NP_REAL_FLOAT_PART;
-            }
-          }
-          if(!dotFound) {
-            aimBuffer[i] = '.';
-            nimNumberPart = NP_REAL_FLOAT_PART;
-          }
-          strcpy(nimBufferDisplay, STD_SPACE_HAIR);
-          //printf("**[DL]** nimNumberPart %d\n",nimNumberPart);fflush(stdout);
-          nimBufferToDisplayBuffer(aimBuffer, nimBufferDisplay + 2);
-          if(exponentFound) {
-            exponentToDisplayString(stringToInt32(aimBuffer + exponentSignLocation), nimBufferDisplay + stringByteLength(nimBufferDisplay), NULL, true, STD_SPACE_PUNCTUATION);
-            if(aimBuffer[exponentSignLocation + 1] == 0 && aimBuffer[exponentSignLocation] == '-') {
-              strcat(nimBufferDisplay, STD_SUP_MINUS);
-            }
-            else if(aimBuffer[exponentSignLocation + 1] == '0' && aimBuffer[exponentSignLocation] == '+') {
-              strcat(nimBufferDisplay, STD_SUP_0);
-            }
-          }
+          _real34ToNim(REGISTER_REAL34_DATA(REGISTER_X), aimBuffer, nimBufferDisplay);
         }
-        //printf("**[DL]** real34 aimBuffer %s nimBufferDisplay %s\n",aimBuffer,nimBufferDisplay);fflush(stdout);
+        //printf("**[DL]** dtReal34 aimBuffer %s nimBufferDisplay %s\n",aimBuffer,nimBufferDisplay);fflush(stdout);
 
         clearSystemFlag(FLAG_ALPHA);
         calcMode = cmNim;
@@ -326,6 +337,55 @@ void fnEdit (uint16_t unusedParamButMandatory) {
       }
 
       case dtComplex34: {
+        uint16_t i, j;
+        uint16_t imaginaryDisplayStart;
+        int16_t realExponentSignLocation;
+
+        memset(aimBuffer, 0, AIM_BUFFER_LENGTH);
+        memset(nimBufferDisplay, 0, NIM_BUFFER_LENGTH);
+
+        _real34ToNim(REGISTER_REAL34_DATA(REGISTER_X), aimBuffer, nimBufferDisplay);
+        realExponentSignLocation = exponentSignLocation;
+        imaginaryMantissaSignLocation = strlen(aimBuffer);
+
+        if(strncmp(nimBufferDisplay + stringByteLength(nimBufferDisplay) - 2, STD_SPACE_HAIR, 2) != 0) {
+          strcat(nimBufferDisplay, STD_SPACE_HAIR);
+        }
+        if(real34IsPositive(REGISTER_IMAG34_DATA(REGISTER_X))) {
+          strcat(aimBuffer, "+");
+          strcat(nimBufferDisplay, "+");
+        }
+        else {
+          strcat(aimBuffer, "-");
+          strcat(nimBufferDisplay, "-");
+        }
+        strcat(nimBufferDisplay, COMPLEX_UNIT);
+        strcat(nimBufferDisplay, PRODUCT_SIGN);
+        imaginaryDisplayStart = strlen(nimBufferDisplay);
+        _real34ToNim(REGISTER_IMAG34_DATA(REGISTER_X), aimBuffer + strlen(aimBuffer), nimBufferDisplay + strlen(nimBufferDisplay));
+        aimBuffer[imaginaryMantissaSignLocation + 1] = 'i';
+
+        // Remove SPACE HAIR and - sign in front of the imaginary part
+        j = (nimBufferDisplay[imaginaryDisplayStart + 2] == '-' ? 3 : 2);
+        for(i = imaginaryDisplayStart; i < strlen(nimBufferDisplay); i++) {
+          nimBufferDisplay[i] = nimBufferDisplay[i+j];
+        }
+
+        nimNumberPart = NP_COMPLEX_FLOAT_PART;
+        for(i = imaginaryMantissaSignLocation; i < strlen(aimBuffer); i++) {
+          if(aimBuffer[i] == 'e') {
+            imaginaryExponentSignLocation = i + 1;
+            nimNumberPart = NP_COMPLEX_EXPONENT;
+          }
+        }
+
+        exponentSignLocation = realExponentSignLocation;
+        clearSystemFlag(FLAG_ALPHA);
+        calcMode = cmNim;
+        //real34Zero(REGISTER_REAL34_DATA(REGISTER_X));
+        hexDigits = 0;
+        clearRegisterLine(NIM_REGISTER_LINE, true, true);
+        cursorShow(false, 1, Y_POSITION_OF_NIM_LINE);
         break;
       }
 
@@ -515,7 +575,7 @@ void fnEdit (uint16_t unusedParamButMandatory) {
         }
         if(chsNeeded) pemAddNumber(ITM_CHS, false);
         pemAddNumber(ITM_NOP, true);    // to insert the resulting number in program
-        printf("**[DL]** fnEdit aimBuffer %s\n",aimBuffer);fflush(stdout);
+        //printf("**[DL]** fnEdit aimBuffer %s\n",aimBuffer);fflush(stdout);
       }
       else {
         currentLocalStepNumber++;
