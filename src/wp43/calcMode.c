@@ -142,6 +142,7 @@ calcMode_t calcMode;
 
       liftStack();
       real34Zero(REGISTER_REAL34_DATA(REGISTER_X));
+      setRegisterAngularMode(REGISTER_X, amNone);
     }
 
     aimBuffer[0] = 0;

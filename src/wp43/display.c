@@ -919,6 +919,7 @@ void complex34ToDisplayString2(const complex34_t *complex34, char *displayString
   }
 
   real34ToDisplayString2(&real34, displayString, displayHasNDigits, limitExponent, separator, false, frontSpace);
+  //printf("**[DL]** REAL PART:      displayString %s\n",displayString);fflush(stdout);
 
   if(updateDisplayValueX) {
     if(getSystemFlag(FLAG_POLAR)) {
@@ -930,6 +931,7 @@ void complex34ToDisplayString2(const complex34_t *complex34, char *displayString
   }
 
   real34ToDisplayString2(&imag34, displayString + i, displayHasNDigits, limitExponent, separator, false, false);
+  //printf("**[DL]** IMAGINARY PART: displayString %s\n",displayString + i);fflush(stdout);
 
   if(getSystemFlag(FLAG_POLAR)) { // polar mode
     strcat(displayString, STD_SPACE_4_PER_EM STD_MEASURED_ANGLE STD_SPACE_4_PER_EM);
@@ -1880,7 +1882,7 @@ static void _timeToDisplayString(const real34_t *source, char *displayString, bo
 
 
 
-void dateToDisplayString(calcRegister_t regist, char *displayString, bool ignoreTDisp) {
+void dateToDisplayString(calcRegister_t regist, char *displayString, bool ignoreTime, bool ignoreTDisp) {
   real34_t j, y, yy, m, d;
   #if ENABLE_DATE_TYPE_WITH_TIME != 0
     real34_t t;
@@ -1920,7 +1922,9 @@ void dateToDisplayString(calcRegister_t regist, char *displayString, bool ignore
     if(timeDisplayFormatDigits == 0 || timeDisplayFormatDigits >= 3) {
       timeDisplayFormatDigits = 3;
     }
-    _timeToDisplayString(&t, displayString + stringByteLength(displayString), ignoreTDisp, false);
+    if(!ignoreTime) {
+      _timeToDisplayString(&t, displayString + stringByteLength(displayString), ignoreTDisp, false);
+    }
     timeDisplayFormatDigits = savedTimeDisplayFormatDigits;
   #endif // ENABLE_DATE_TYPE_WITH_TIME != 0
 }
@@ -2070,7 +2074,7 @@ void fnShow(uint16_t unusedButMandatoryParameter) {
     }
 
     case dtDate: {
-      dateToDisplayString(REGISTER_X, tmpString, true);
+      dateToDisplayString(REGISTER_X, tmpString, false, true);
       break;
     }
 

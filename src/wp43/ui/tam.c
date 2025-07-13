@@ -230,7 +230,7 @@ void tamReset(void) {
         }
       }
       else {
-        int16_t max = (tam.indirect ? (tam.dot ? (calcMode == cmPem ? 98 : currentNumberOfLocalRegisters) : 99)
+        int16_t max = (tam.indirect ? (tam.dot ? ((tam.mode == tmFlagR || tam.mode == tmFlagW) ? NUMBER_OF_LOCAL_FLAGS - 1 : (calcMode == cmPem ? 98 : currentNumberOfLocalRegisters-1)) : 99)
           : (tam.dot ? (calcMode == cmPem ? 98 : ((tam.mode == tmFlagR || tam.mode == tmFlagW) ? NUMBER_OF_LOCAL_FLAGS : currentNumberOfLocalRegisters)) : tam.max));
         uint8_t maxDigits = _tamMaxDigits(max);
         uint8_t underscores = maxDigits - tam.digitsSoFar;
@@ -303,7 +303,7 @@ void tamReset(void) {
   static void _tamProcessInput(uint16_t item) {
     int16_t  min, max, min2, max2, dupNum;
     bool     forceTry = false, tryOoR = false;
-    bool     valueParameter = (tam.function == ITM_GTOP || tam.function == ITM_BESTF || tam.function == ITM_SKIP || tam.function == ITM_BACK);
+    bool     valueParameter = (tam.function == ITM_GTOP || tam.function == ITM_BESTF_NO_IND || tam.function == ITM_SKIP || tam.function == ITM_BACK);
     char    *forcedVar = NULL;
 
     // Shuffle is handled completely differently to everything else
@@ -313,7 +313,7 @@ void tamReset(void) {
     }
 
     min = (tam.dot ? 0 : tam.min);
-    max = (tam.dot ? (calcMode == cmPem ? 98 : ((tam.mode == tmFlagR || tam.mode == tmFlagW) ? NUMBER_OF_LOCAL_FLAGS : currentNumberOfLocalRegisters)) : tam.max);
+    max = (tam.dot ? ((tam.mode == tmFlagR || tam.mode == tmFlagW) ? NUMBER_OF_LOCAL_FLAGS - 1 : (calcMode == cmPem ? 98 : currentNumberOfLocalRegisters-1)) : tam.max);
     min2 = (tam.indirect ? 0 : min);
     max2 = (tam.indirect ? (tam.dot ? (calcMode == cmPem ? 98 : currentNumberOfLocalRegisters) : 99) : max);
     dupNum = 0;
@@ -562,7 +562,7 @@ void tamReset(void) {
       tryOoR = true;
     }
     else if(REGISTER_X <= indexOfItems[item].param && indexOfItems[item].param <= REGISTER_K && !tam.dot) {
-      if(!tam.digitsSoFar && tam.function != ITM_BESTF && (tam.indirect || (tam.mode != tmValue && tam.mode != tmValueChb))) {
+      if(!tam.digitsSoFar && tam.function != ITM_BESTF_NO_IND && (tam.indirect || (tam.mode != tmValue && tam.mode != tmValueChb))) {
         if((tam.mode == tmLabel || (tam.mode == tmKey && tam.keyInputFinished)) && !tam.indirect) {
           switch(indexOfItems[item].param) {
             case REGISTER_A: {
@@ -627,7 +627,7 @@ void tamReset(void) {
     else if(item == ITM_0P || item == ITM_1P) {
       reallocateRegister(TEMP_REGISTER_1, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
       real34Copy(item == ITM_1P ? const34_1 : const34_0, REGISTER_REAL34_DATA(TEMP_REGISTER_1));
-      if(!tam.digitsSoFar && tam.function != ITM_BESTF && tam.function != ITM_CNST && tam.mode != tmValue && tam.mode != tmValueChb) {
+      if(!tam.digitsSoFar && tam.function != ITM_BESTF_NO_IND && tam.mode != tmValue && tam.mode != tmValueChb) {
         tam.value = TEMP_REGISTER_1;
         forceTry = true;
         // Register letters access registers not accessible via number codes, so we shouldn't look at the tam.max value
@@ -695,7 +695,7 @@ void tamReset(void) {
     }
     else if(item == ITM_INDIRECTION) {
       if(!tam.alpha && !tam.digitsSoFar && !tam.dot && !valueParameter && (indexOfItems[tam.function].status & PTP_STATUS) != PTP_SKIP_BACK && (indexOfItems[tam.function].status & PTP_STATUS) != PTP_DECLARE_LABEL && (indexOfItems[tam.function].status & PTP_STATUS) != PTP_VARIABLE) {
-        if(!tam.indirect && (tam.mode == tmFlagR || tam.mode == tmFlagW || tam.mode == tmLabel)) {
+        if(!tam.indirect && (tam.mode == tmFlagR || tam.mode == tmFlagW || tam.mode == tmLabel || tam.mode == tmKey)) {
           popSoftmenu();
           showSoftmenu(-MNU_TAM);
           --numberOfTamMenusToPop;
@@ -778,7 +778,7 @@ void tamReset(void) {
           run = false;
           if(getSystemFlag(FLAG_IGN1ER)) {
             clearSystemFlag(FLAG_IGN1ER);
-            errorMoreInfo("sMVAR only accepts named variables\nignored since IGN1ER was set");
+            errorMoreInfo("MVAR only accepts named variables\nignored since IGN1ER was set");
           }
           else {
             displayCalcErrorMessage(ERROR_OUT_OF_RANGE, ERR_REGISTER_LINE, REGISTER_X);
@@ -950,7 +950,7 @@ void tamReset(void) {
         if(lastErrorCode == 0) {
           if(getSystemFlag(FLAG_IGN1ER)) {
             clearSystemFlag(FLAG_IGN1ER);
-            errorMoreInfo("sMVAR only accepts named variables\nignored since IGN1ER was set");
+            errorMoreInfo("MVAR only accepts named variables\nignored since IGN1ER was set");
           }
           else {
             displayCalcErrorMessage(ERROR_OUT_OF_RANGE, ERR_REGISTER_LINE, REGISTER_X);

@@ -174,6 +174,7 @@ uint32_t               firstGregorianDay;
 uint32_t               denMax;
 uint32_t               lastDenominator = 4;
 uint32_t               lastIntegerBase;
+uint32_t               decodedIntegerBase;
 uint32_t               tamOverPemYPos;
 uint32_t               pointerOfFlashPgmLibrary;
 uint32_t               sizeOfFlashPgmLibrary;

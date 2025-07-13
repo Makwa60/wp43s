@@ -330,7 +330,22 @@ static void decodeOp(uint8_t *paramAddress, const char *op, uint16_t paramMode, 
     }
 
     case PARAM_NUMBER_16: {
-      sprintf(tmpString, "%s %u", op, opParam + 256 * *(paramAddress));
+      uint16_t func = (*(paramAddress-3)  << 8) + *(uint8_t *)(paramAddress -2);
+      func &= 0x7fff;
+      if(func == ITM_BESTF_NO_IND) {  // original BestF without indirection support (little endian parameter)
+        sprintf(tmpString, "%s %u", op, opParam + 256 * *(paramAddress));
+      }
+      else {                        // new Bestf with indirection support (big endian parameter)
+        if(opParam == INDIRECT_REGISTER) {
+          getIndirectRegister(paramAddress, op);
+        }
+        else if(opParam == INDIRECT_VARIABLE) {
+          getIndirectVariable(paramAddress, op);
+        }
+        else {
+          sprintf(tmpString, "%s %u", op, (opParam * 256) + *(paramAddress));
+        }
+      }
       break;
     }
 
@@ -480,6 +495,7 @@ static void _decodeNumeral(char *startPtr, const char *srcStartPtr, bool isLongI
 
 
 static void decodeLiteral(uint8_t *literalAddress) {
+  decodedIntegerBase = 0;
   switch(*(literalAddress++)) {
     case BINARY_SHORT_INTEGER: {
       reallocateRegister(TEMP_REGISTER_1, dtShortInteger, SHORT_INTEGER_SIZE_IN_BYTES, *(uint8_t *)(literalAddress++));
@@ -519,8 +535,10 @@ static void decodeLiteral(uint8_t *literalAddress) {
       char *dispStringPtr = tmpString;
       char *sourceStringPtr = tmpStringLabelOrVariableName;
       uint8_t base = (uint8_t)(*literalAddress);
+      decodedIntegerBase = base;
       getStringLabelOrVariableName(literalAddress + 1);
 
+      //printf("**[DL]** decodeLiteral base %d tmpStringLabelOrVariableName %s decodedIntegerBase %d\n",base,tmpStringLabelOrVariableName,decodedIntegerBase);fflush(stdout);
       if(groupingGap > 0) {
         if(base == 2) {
           gap = 4;
@@ -551,6 +569,7 @@ static void decodeLiteral(uint8_t *literalAddress) {
       *(dispStringPtr++) = baseChars[base * 2    ];
       *(dispStringPtr++) = baseChars[base * 2 + 1];
       *dispStringPtr = 0;
+      //printf("**[DL]** decodeLiteral tmpString %s\n",tmpString);fflush(stdout);
       break;
     }
 
@@ -575,11 +594,17 @@ static void decodeLiteral(uint8_t *literalAddress) {
         *(dispStringPtr++) = '+';
         *(dispStringPtr++) = '+';
         *(dispStringPtr++) = COMPLEX_UNIT[0];
+        if(COMPLEX_UNIT[0] & 0x80) {
+          *(dispStringPtr++) = COMPLEX_UNIT[1];
+        }
         ++sourceStringPtr;
       }
       else if(*sourceStringPtr == '+' || *sourceStringPtr == '-') {
         *(dispStringPtr++) = *(sourceStringPtr++);
         *(dispStringPtr++) = COMPLEX_UNIT[0];
+        if(COMPLEX_UNIT[0] & 0x80) {
+          *(dispStringPtr++) = COMPLEX_UNIT[1];
+        }
         ++sourceStringPtr;
       }
       *(dispStringPtr++) = PRODUCT_SIGN[0];
@@ -602,7 +627,7 @@ static void decodeLiteral(uint8_t *literalAddress) {
       reallocateRegister(TEMP_REGISTER_1, dtDate, REAL34_SIZE_IN_BYTES, amNone);
       stringToReal34(tmpStringLabelOrVariableName, REGISTER_REAL34_DATA(TEMP_REGISTER_1));
       julianDayToInternalDate(REGISTER_REAL34_DATA(TEMP_REGISTER_1), REGISTER_REAL34_DATA(TEMP_REGISTER_1));
-      dateToDisplayString(TEMP_REGISTER_1, tmpString, true);
+      dateToDisplayString(TEMP_REGISTER_1, tmpString, true, true);
       break;
     }
 
@@ -706,6 +731,7 @@ static void decodeLiteral(uint8_t *literalAddress) {
       #endif // !DMCP_BUILD
     }
   }
+  //printf("**[DL]** decodeLiteral exit decodedIntegerBase %d\n",decodedIntegerBase);fflush(stdout);
 }
 
 

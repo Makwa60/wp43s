@@ -87,7 +87,7 @@
       }
 
       case dtDate: {
-        dateToDisplayString(regist, string, false);
+        dateToDisplayString(regist, string, false, false);
         break;
       }
 

@@ -664,7 +664,7 @@ bool      _kbSeenInterrupt     = false;
             screenUpdatingMode &= ~SCRUPD_ONE_TIME_FLAGS;
             return;
           }
-          if(tamIsActive() && catalog && (tam.digitsSoFar || tam.function == ITM_BESTF || tam.function == ITM_CNST || (!tam.indirect && (tam.mode == tmValue || tam.mode == tmValueChb || tamIsWaitingKey())))) {
+          if(tamIsActive() && catalog && (tam.digitsSoFar || tam.function == ITM_BESTF_NO_IND || (!tam.indirect && (tam.mode == tmValue || tam.mode == tmValueChb || tamIsWaitingKey())))) {
             // disabled
           }
           else if(tam.function == ITM_GTOP && catalog == CATALOG_PROG) {
@@ -711,7 +711,7 @@ bool      _kbSeenInterrupt     = false;
           // an item from the catalog, but a function key press should put the item in the AIM (or TAM) buffer
           // Use this variable to distinguish between the two
           fnKeyInCatalog = 1;
-          if(tamIsActive() && catalog && (tam.digitsSoFar || tam.function == ITM_BESTF || tam.function == ITM_CNST || (!tam.indirect && (tam.mode == tmValue || tam.mode == tmValueChb)))) {
+          if(tamIsActive() && catalog && (tam.digitsSoFar || tam.function == ITM_BESTF_NO_IND || (!tam.indirect && (tam.mode == tmValue || tam.mode == tmValueChb)))) {
             // disabled
           }
           else if((tamIsActive()  && (!tam.alpha || isAlphabeticSoftmenu())) || ((calcMode == cmAssign) && (previousCalcMode != cmAim) && isAlphabeticSoftmenu())) {
@@ -1490,7 +1490,7 @@ bool      _kbSeenInterrupt     = false;
                 refreshScreen();
               }
               else if(aimBuffer[0] != 0 && !getSystemFlag(FLAG_ALPHA) && (item == ITM_toINT || (nimNumberPart == NP_INT_BASE && item == ITM_RCL))) {
-                pemAddNumber(item);
+                pemAddNumber(item, true);
                 keyActionProcessed = true;
                 if(item == ITM_RCL) {
                   currentStep = findPreviousStep(currentStep);
@@ -1762,16 +1762,18 @@ void fnKeyEnter(uint16_t unusedButMandatoryParameter) {
           if(lastErrorCode == ERROR_RAM_FULL) {
             goto undo_disabled;
           }
-          liftStack();
-          if(lastErrorCode == ERROR_RAM_FULL) {
-            goto ram_full;
-          }
-          clearSystemFlag(FLAG_ASLIFT);
+          #if !defined(ENTER_AIM_NO_SLIFT)
+            liftStack();
+            if(lastErrorCode == ERROR_RAM_FULL) {
+              goto ram_full;
+            }
+            clearSystemFlag(FLAG_ASLIFT);
 
-          copySourceRegisterToDestRegister(REGISTER_Y, REGISTER_X);
-          if(lastErrorCode == ERROR_RAM_FULL) {
-            goto ram_full;
-          }
+            copySourceRegisterToDestRegister(REGISTER_Y, REGISTER_X);
+            if(lastErrorCode == ERROR_RAM_FULL) {
+              goto ram_full;
+            }
+          #endif  // !ENTER_AIM_NO_SLIFT
           aimBuffer[0] = 0;
         }
         break;
@@ -2209,7 +2211,7 @@ void fnKeyCC(uint16_t unusedButMandatoryParameter) {
 
       case cmPem: {
         if(aimBuffer[0] != 0 && !getSystemFlag(FLAG_ALPHA)) {
-          pemAddNumber(ITM_CC);
+          pemAddNumber(ITM_CC, true);
         }
         break;
       }
@@ -2380,7 +2382,7 @@ void fnKeyBackspace(uint16_t unusedButMandatoryParameter) {
           }
         }
         else {
-          pemAddNumber(ITM_BACKSPACE);
+          pemAddNumber(ITM_BACKSPACE, true);
           if(aimBuffer[0] == 0 && currentLocalStepNumber > 1) {
             currentStep = findPreviousStep(currentStep);
             --currentLocalStepNumber;

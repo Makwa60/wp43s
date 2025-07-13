@@ -118,7 +118,7 @@ int16_t currentRegisterBrowserScreen;
 
       case dtDate: {
         if(showContent) {
-          dateToDisplayString(regist, tmpString, true);
+          dateToDisplayString(regist, tmpString, false, true);
         }
         else {
           sprintf(tmpString, "%d bytes", (int16_t)TO_BYTES(TO_BLOCKS(REAL34_SIZE_IN_BYTES)));

@@ -50,15 +50,19 @@ TO_QSPI const calcKey_t kbd_std[37] = {
  {45,   ITM_BACKSPACE,   ITM_UNDO,       -MNU_CLR,         ITM_BACKSPACE,   ITM_BACKSPACE,     ITM_NULL,              ITM_NULL,      ITM_BACKSPACE},
 
  {51,   ITM_DIV,         ITM_PARALLEL,    ITM_MOD,         ITM_SLASH,       ITM_N,             ITM_SLASH,             ITM_NU,        ITM_DIV      },
+ {52,   ITM_7,           ITM_EDIT,       -MNU_FIT,         ITM_7,           ITM_O,             ITM_7,                 ITM_OMEGA,     ITM_7        },
 #if DMCP_BUILD
- {52,   ITM_7,           ITM_ACTUSB,     -MNU_FIT,         ITM_7,           ITM_O,             ITM_7,                 ITM_OMEGA,     ITM_7        },
- {53,   ITM_8,           ITM_SYSTEM,     -MNU_MODE,        ITM_8,           ITM_P,             ITM_8,                 ITM_PI,        ITM_8        },
+  #if defined(XPB)
+    #define ITEM_f_8      ITM_SYSTEM
+  #else // !XPB
+    #define ITEM_f_8      ITM_ACTUSB
+  #endif // XPB
 #else // !DMCP_BUILD
- {52,   ITM_7,           ITM_NULL,       -MNU_FIT,         ITM_7,           ITM_O,             ITM_7,                 ITM_OMEGA,     ITM_7        },    
- {53,   ITM_8,           ITM_NULL,       -MNU_MODE,        ITM_8,           ITM_P,             ITM_8,                 ITM_PI,        ITM_8        },
+    #define ITEM_f_8      ITM_NULL
 #endif // DMCP_BUILD
+ {53,   ITM_8,           ITEM_f_8,       -MNU_MODE,        ITM_8,           ITM_P,             ITM_8,                 ITM_PI,        ITM_8        },
  {54,   ITM_9,           ITM_LBL,         ITM_RTN,         ITM_9,           ITM_Q,             ITM_9,                 ITM_OMICRON,   ITM_9        },
- {55,   ITM_XEQ,         ITM_GTO,        -MNU_FLAGS,       ITM_NULL,        ITM_COLON,         ITM_QU_DIGRAPH,        ITM_NULL,      ITM_COLON     },
+ {55,   ITM_XEQ,         ITM_GTO,        -MNU_FLAGS,       ITM_NULL,        ITM_COLON,         ITM_QU_DIGRAPH,        ITM_NULL,      ITM_COLON    },
 
  {61,   ITM_MULT,        ITM_XFACT,      -MNU_PROB,        ITM_CROSS,       ITM_R,             ITM_PROD_SIGN,         ITM_RHO,       ITM_MULT     },
  {62,   ITM_4,          -MNU_SUMS,       -MNU_STAT,        ITM_4,           ITM_S,             ITM_4,                 ITM_SIGMA,     ITM_4        },
@@ -206,7 +210,7 @@ void fnDeleteUserMenus(uint16_t confirmation) {
     freeWp43(userMenus, sizeof(userMenu_t) * numberOfUserMenus);
     userMenus = NULL;
     numberOfUserMenus = 0;
-    
+
     if(programRunStop != PGM_RUNNING) {
       temporaryInformation = TI_CONFIRM_COMPLETED;
     } else {
@@ -224,7 +228,7 @@ void fnClearUserMenus(uint16_t confirmation) {
     for(i=0; i<numberOfUserMenus; i++) {
       memset(userMenus[i].menuItem, 0, 18 * sizeof(userMenuItem_t));
     }
-    
+
     if(programRunStop != PGM_RUNNING) {
       temporaryInformation = TI_CONFIRM_COMPLETED;
     } else {
@@ -243,7 +247,7 @@ void fnClearKeyAssignments(uint16_t confirmation) {
     fnClearFlag(FLAG_USER);
     freeWp43(userKeyLabel, userKeyLabelSize);
     initUserKeyArgument();
-    
+
     if(programRunStop != PGM_RUNNING) {
       temporaryInformation = TI_CONFIRM_COMPLETED;
     } else {
@@ -787,7 +791,7 @@ void assignLeaveAlpha(void) {
     popSoftmenu();
   }
   numberOfTamMenusToPop = 0;
-  if(getSoftmenuId(0) != 1) { // Pop current menu if not MyAlpha 
+  if(getSoftmenuId(0) != 1) { // Pop current menu if not MyAlpha
     popSoftmenu();
   }
   if(getSoftmenuId(0) == 1) { // MyAlpha

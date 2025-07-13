@@ -449,7 +449,20 @@ void fnStopProgram(uint16_t unusedButMandatoryParameter) {
       }
 
       case PARAM_NUMBER_16: {
-        reallyRunFunction(op, opParam + 256 * *(paramAddress));
+        if(op == ITM_BESTF_NO_IND) {  // original BestF without indirection support (little endian parameter)
+          reallyRunFunction(op, opParam + 256 * *(paramAddress));
+        }
+        else {                        // new Bestf with indirection support (big endian parameter)
+          if(opParam == INDIRECT_REGISTER) {
+            _executeWithIndirectRegister(paramAddress, op);
+          }
+          else if(opParam == INDIRECT_VARIABLE) {
+            _executeWithIndirectVariable(paramAddress, op);
+          }
+          else {
+            reallyRunFunction(op, (opParam * 256) + *(paramAddress));
+          }
+        }
         break;
       }
 
@@ -552,10 +565,12 @@ void fnStopProgram(uint16_t unusedButMandatoryParameter) {
       //}
 
       case BINARY_REAL34: {
+        real34_t realLiteral;
+        xcopy(&realLiteral, literalAddress, REAL34_SIZE_IN_BYTES);
         liftStack();
         setSystemFlag(FLAG_ASLIFT);
         reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
-        real34Copy((real34_t *)literalAddress, REGISTER_REAL34_DATA(REGISTER_X));
+        real34Copy(&realLiteral, REGISTER_REAL34_DATA(REGISTER_X));
         break;
       }
 

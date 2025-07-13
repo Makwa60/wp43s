@@ -36,6 +36,7 @@
 
   #if !defined(TESTSUITE_BUILD)
     void fnOff                       (uint16_t unsuedParamButMandatory);
+    void calcModeAim                 (void);
 
     /**
      * Sets the calc mode.

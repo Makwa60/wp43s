@@ -909,7 +909,7 @@
           case ITM_PECKtoL:
           case ITM_LtoPECK:
           case ITM_BUSHELUStoL:
-          case ITM_LtoBUSHELUS:  
+          case ITM_LtoBUSHELUS:
           // Additional volume conversions
           case ITM_IN3toML:
           case ITM_MLtoIN3:
@@ -922,7 +922,7 @@
           case ITM_GLUKtoFT3:
           case ITM_FT3toGLUK:
           case ITM_GLUStoFT3:
-          case ITM_FT3toGLUS: 
+          case ITM_FT3toGLUS:
           {
             mimRunFunction(item, indexOfItems[item].param);
             break;
@@ -1198,6 +1198,7 @@
           hexDigits++;
 
           nimNumberPart = NP_INT_16;
+          if(lastIntegerBase <= 10) lastIntegerBase = 16;       // [DL] auto set base to hex when entering A-F digit
           //debugNIM();
         }
         break;
@@ -1633,6 +1634,9 @@
             errorMoreInfo("there is not enough memory to save for undo!");
           }
         }
+        if(lastErrorCode != 0) {
+          fnUndo(NOPARAM);       // restore stack if error
+        }
         break;
       }
 
@@ -1704,7 +1708,7 @@
             return;
           }
         }
-        else if(nimNumberPart == NP_INT_10) {   // Exit SI mode
+        else if((nimNumberPart == NP_INT_10) | (nimNumberPart == NP_INT_16)) {   // Exit SI mode
           done = true;
           lastIntegerBase = 0;
         }
@@ -1736,6 +1740,10 @@
             return;
           }
         }
+        break;
+      }
+
+      case ITM_NOP: {   // NOP: do nothing in NIM
         break;
       }
 
@@ -1895,7 +1903,7 @@
       }
     }
 
-    else {
+    else if(item != ITM_NOP) {
       screenUpdatingMode &= ~SCRUPD_SKIP_STACK_ONE_TIME;
       closeNim();
       if(calcMode != cmNim) {
@@ -2199,11 +2207,29 @@
 
           if(nimNumberPart == NP_INT_10) {
             longInteger_t lgInt;
+            angularMode_t xangularMode;
+            xangularMode = ((getRegisterDataType(REGISTER_X) == dtReal34) == dtReal34 ? getRegisterAngularMode(REGISTER_X) : amNone);
 
-            longIntegerInit(lgInt);
-            stringToLongInteger(aimBuffer + (aimBuffer[0] == '+' ? 1 : 0), 10, lgInt);
-            convertLongIntegerToLongIntegerRegister(lgInt, REGISTER_X);
-            longIntegerFree(lgInt);
+            if(xangularMode < amNone) {  // If editing with angular mode, then convert to real and preserve angular mode
+              reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, getRegisterAngularMode(REGISTER_X));
+              stringToReal34(aimBuffer, REGISTER_REAL34_DATA(REGISTER_X));
+              if(xangularMode ==  amMultPi) {
+                real_t multPi;
+
+                real34ToReal(REGISTER_REAL34_DATA(REGISTER_X), &multPi);
+                realMultiply(&multPi, const_pi, &multPi, &ctxtReal39);
+                realToReal34(&multPi, REGISTER_REAL34_DATA(REGISTER_X));
+              }
+              else if(xangularMode == amDMS) {
+                real34FromDmsToDeg(REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X));
+              }
+            }
+            else {
+              longIntegerInit(lgInt);
+              stringToLongInteger(aimBuffer + (aimBuffer[0] == '+' ? 1 : 0), 10, lgInt);
+              convertLongIntegerToLongIntegerRegister(lgInt, REGISTER_X);
+              longIntegerFree(lgInt);
+            }
           }
           else if(nimNumberPart == NP_INT_BASE) {
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2268,21 +2294,13 @@
               return;
             }
 
-            // minVal = -maxVal/2
+            // minVal = -maxVal
             longIntegerInit(minVal);
             longIntegerSetZero(minVal); // Mandatory! Else segmentation fault at next instruction
-            longIntegerDivideUInt(maxVal, 2, minVal); // minVal = maxVal / 2
+            longIntegerCopy(maxVal, minVal); // minVal = maxVal
             longIntegerSetNegativeSign(minVal); // minVal = -minVal
 
-            if((base != 2) && (base != 4) && (base != 8) && (base != 16) && (shortIntegerMode != SIM_UNSIGN)) {
-              longIntegerDivideUInt(maxVal, 2, maxVal); // maxVal /= 2
-            }
-
             longIntegerSubtractUInt(maxVal, 1, maxVal); // maxVal--
-
-            if(shortIntegerMode == SIM_UNSIGN) {
-              longIntegerSetZero(minVal); // minVal = 0
-            }
 
             if(shortIntegerMode == SIM_1COMPL || shortIntegerMode == SIM_SIGNMT) {
               longIntegerAddUInt(minVal, 1, minVal); // minVal++
@@ -2309,9 +2327,13 @@
             char strValue[22];
             longIntegerToAllocatedString(value, strValue, sizeof(strValue));
 
-            uint64_t val = strtoull(strValue + (longIntegerIsNegative(value) ? 1 : 0), NULL, 10); // when value is negative: discard the minus sign
+            uint64_t val = strtoull(strValue + (longIntegerIsNegative(value) ? 1 : 0), NULL, 10); // when value is negative: discard the minus sign*
 
             if(shortIntegerMode == SIM_UNSIGN) {
+              if(longIntegerIsNegative(value)) {
+                val = (~val + 1) & shortIntegerMask;
+                setSystemFlag(FLAG_OVERFLOW);
+              }
             }
             else if(shortIntegerMode == SIM_2COMPL) {
               if(longIntegerIsNegative(value)) {
@@ -2325,7 +2347,7 @@
             }
             else if(shortIntegerMode == SIM_SIGNMT) {
               if(longIntegerIsNegative(value)) {
-                val = (val & shortIntegerMask) | shortIntegerSignBit;
+                val = (val ^ shortIntegerSignBit) & shortIntegerMask;
               }
             }
             else {
@@ -2342,11 +2364,24 @@
             longIntegerFree(value);
           }
           else if(nimNumberPart == NP_REAL_FLOAT_PART || nimNumberPart == NP_REAL_EXPONENT) {
-            reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
+            angularMode_t xangularMode;
+            xangularMode = ((getRegisterDataType(REGISTER_X) == dtReal34) == dtReal34 ? getRegisterAngularMode(REGISTER_X) : amNone);
+
+            reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, xangularMode);
             stringToReal34(aimBuffer, REGISTER_REAL34_DATA(REGISTER_X));
+            if(xangularMode ==  amMultPi) {
+              real_t multPi;
+
+              real34ToReal(REGISTER_REAL34_DATA(REGISTER_X), &multPi);
+              realMultiply(&multPi, const_pi, &multPi, &ctxtReal39);
+              realToReal34(&multPi, REGISTER_REAL34_DATA(REGISTER_X));
+            }
+            else if(xangularMode == amDMS) {
+              real34FromDmsToDeg(REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X));
+            }
           }
           else if(nimNumberPart == NP_FRACTION_DENOMINATOR) {
-            reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
+            reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, getRegisterAngularMode(REGISTER_X));
             closeNimWithFraction(REGISTER_REAL34_DATA(REGISTER_X));
           }
           else if(nimNumberPart == NP_COMPLEX_INT_PART || nimNumberPart == NP_COMPLEX_FLOAT_PART || nimNumberPart == NP_COMPLEX_EXPONENT) {

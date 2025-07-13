@@ -202,6 +202,8 @@ wp43_src = files(
   'stringFuncs.c',
   'ui/bufferize.c',
   'ui/cursor.c',
+  'ui/genericEditor.c',
+  'ui/genericEditor.h',
   'ui/keyboard.c',
   'ui/matrixEditor.c',
   'ui/screen.c',

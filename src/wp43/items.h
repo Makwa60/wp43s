@@ -1338,7 +1338,7 @@
 
 
   // Curve fitting
-  #define ITM_BESTF                     1297
+  #define ITM_BESTF_NO_IND              1297
   #define ITM_EXPF                      1298
   #define ITM_LINF                      1299
   #define ITM_LOGF                      1300
@@ -1349,7 +1349,7 @@
   #define ITM_PARABF                    1305
   #define ITM_HYPF                      1306
   #define ITM_ROOTF                     1307
-  #define ITM_1308                      1308
+  #define ITM_BESTF                     1308
   #define ITM_1309                      1309
   #define ITM_1310                      1310
   #define ITM_1311                      1311
@@ -2005,7 +2005,7 @@
   #define ITM_LtoPECK                   1922
   #define ITM_BUSHELUStoL               1923
   #define ITM_LtoBUSHELUS               1924
-  
+
   // Additional volume conversions
   #define ITM_IN3toML                   1925
   #define ITM_MLtoIN3                   1926
@@ -2025,7 +2025,7 @@
   #define ITM_MLtoTSPMb                 1938
   #define ITM_TBSPMtoMLb                1939
   #define ITM_MLtoTBSPMb                1940
-  
+
   // Additional LOAD commands
   #define ITM_LOADE                     1941
 
@@ -2034,7 +2034,10 @@
   #define ITM_BACKUP_FILE               1943
   #define ITM_STATE_FILE                1944
 
-  #define LAST_ITEM                     1945
+  // Generic EDIT function
+  #define ITM_EDIT                      1945
+
+  #define LAST_ITEM                     1946
 
   #define NOPARAM                       9876 // Item for function who don't need an item
   #define CONFIRMED                     9877 // Confirmation for RESET, CLPALL, CLALL

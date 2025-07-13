@@ -142,7 +142,22 @@ uint8_t *countOpBytes(uint8_t *step, uint16_t paramMode) {
     }
 
     case PARAM_NUMBER_16: {
-      return step + 1;
+      uint16_t func = (*(step-3) << 8) + *(step -2);
+      func &= 0x7fff;
+      if(func == ITM_BESTF_NO_IND) {  // original BestF without indirection support (little endian parameter)
+        return step + 1;
+      }
+      else {                        // new Bestf with indirection support (big endian parameter)
+        if(opParam == INDIRECT_REGISTER) {
+          return step + 1;
+        }
+        else if(opParam == INDIRECT_VARIABLE) {
+          return step + *step + 1;
+        }
+        else {
+          return step + 1;
+        }
+      }
     }
 
     case PARAM_COMPARE: {

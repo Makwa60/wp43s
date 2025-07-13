@@ -24,6 +24,7 @@
 #include "sort.h"
 #include "ui/bufferize.h"
 #include "ui/cursor.h"
+#include "ui/genericEditor.h"
 #include "ui/keyboard.h"
 #include "ui/screen.h"
 #include "ui/softmenus.h"
@@ -532,9 +533,20 @@ void fnPem(uint16_t unusedButMandatoryParameter) {
           *(tstr++) = 0;
         }
         else if(aimBuffer[0] != 0) {
+          lastIntegerBase = decodedIntegerBase;
+          //printf("**[DL]** fnPem lastIntegerBase %d nimNumberPart %d\n",lastIntegerBase,nimNumberPart);fflush(stdout);
           char *tstr = tmpString + stringByteLength(tmpString);
-          *(tstr++) = STD_CURSOR[0];
-          *(tstr++) = STD_CURSOR[1];
+          if((lastIntegerBase != 0) && ((nimNumberPart == NP_INT_10) || (nimNumberPart == NP_INT_16))) {
+            tstr -= 2;
+            *(tstr++) = STD_CURSOR[0];
+            *(tstr++) = STD_CURSOR[1];
+            *(tstr++) = baseChars[lastIntegerBase * 2    ];
+            *(tstr++) = baseChars[lastIntegerBase * 2 + 1];
+          }
+          else {
+            *(tstr++) = STD_CURSOR[0];
+            *(tstr++) = STD_CURSOR[1];
+          }
           *(tstr++) = 0;
         }
       }
@@ -592,7 +604,7 @@ void fnPem(uint16_t unusedButMandatoryParameter) {
         pemAlpha(ITM_BACKSPACE);
       }
       else {
-        pemAddNumber(ITM_BACKSPACE);
+        pemAddNumber(ITM_BACKSPACE, true);
       }
       clearScreen();
       showSoftmenuCurrentPart();
@@ -614,6 +626,10 @@ void fnPem(uint16_t unusedButMandatoryParameter) {
 
 
 static void _insertInProgram(const uint8_t *dat, uint16_t sizeInBytes) {
+  //#define printarr(fmt, dat, len)	for (uint16_t i = 0; i < len; i++) printf(fmt, dat[i])
+  //printf("**[DL]** _insertInProgram: ");
+  //printarr("%d ", dat, sizeInBytes);
+  //printf("\n");fflush(stdout);
   int16_t _dynamicMenuItem = dynamicMenuItem;
   uint16_t globalStepNumber;
   if(freeProgramBytes < sizeInBytes) {
@@ -655,11 +671,48 @@ static void _closeAlphaMenus(void) {
 
 void pemAlpha(int16_t item) {
   #if !defined(TESTSUITE_BUILD)
+
+    bool editCommand = false;
+    if(item == ITM_EDIT) {
+      int16_t aimFunc = currentStep[0];
+      if(aimFunc & 0x80) {
+        aimFunc &= 0x7f;
+        aimFunc <<= 8;
+        aimFunc |= currentStep[1];
+      }
+      tam.function = aimFunc;
+      decodeOneStep(currentStep);
+      uint16_t ll = stringByteLength(tmpString);
+      if(aimFunc == ITM_LITERAL)  { // literal
+        xcopy(aimBuffer, tmpString + 2, ll);        //purposely overshoot aimbuffer, as there is sufficient space
+        aimBuffer[ll - 2 - 2] = 0;
+        alphaCursor = stringGlyphLength(aimBuffer);
+        deleteStepsFromTo(currentStep, findNextStep(currentStep));
+        editCommand = true;
+        item = 0;
+      }
+      else if(aimFunc == ITM_REM)  { // REM
+        xcopy(aimBuffer, tmpString + 6, ll);        //purposely overshoot aimbuffer, as there is sufficient space
+        aimBuffer[ll - 2 - 6] = 0;
+        alphaCursor = stringGlyphLength(aimBuffer);
+        deleteStepsFromTo(currentStep, findNextStep(currentStep));
+        tam.function = aimFunc;
+        editCommand = true;
+        item = aimFunc;
+      }
+      else {
+        aimBuffer[0] = 0;
+        return;
+      }
+    }
+
     if(!getSystemFlag(FLAG_ALPHA)) {
       shiftF = false;
       shiftG = false;
-      aimBuffer[0] = 0;
-      alphaCursor = 0;
+      if(!editCommand) {
+        aimBuffer[0] = 0;
+        alphaCursor = 0;
+      }
       alphaCase = AC_UPPER;
       nextChar = NC_NORMAL;
 
@@ -791,9 +844,11 @@ void pemCloseAlphaInput(void) {
 
 
 
-void pemAddNumber(int16_t item) {
+void pemAddNumber(int16_t item, bool doInsertInProgram) {
   #if !defined(TESTSUITE_BUILD)
+    //printf("**[DL]** %d\n",item);fflush(stdout);
     if(aimBuffer[0] == 0) {
+      lastIntegerBase = 0;
       tmpString[0] = ITM_LITERAL;
       tmpString[1] = STRING_LONG_INTEGER;
       tmpString[2] = 0;
@@ -808,7 +863,6 @@ void pemAddNumber(int16_t item) {
           aimBuffer[2] = '.';
           aimBuffer[3] = 0;
           nimNumberPart = NP_REAL_FLOAT_PART;
-          lastIntegerBase = 0;
           break;
         }
 
@@ -855,40 +909,54 @@ void pemAddNumber(int16_t item) {
     clearSystemFlag(FLAG_ALPHA);
 
     if(aimBuffer[0] != '!') {
-      deleteStepsFromTo(currentStep, findNextStep(currentStep));
+      if(doInsertInProgram) {
+        deleteStepsFromTo(currentStep, findNextStep(currentStep));
+      }
       if(aimBuffer[0] != 0) {
+        char *tmpPtr = tmpString;
+        char offset = 3;
         const char *numBuffer = aimBuffer[0] == '+' ? aimBuffer + 1 : aimBuffer;
-        tmpString[0] = ITM_LITERAL;
+        *tmpPtr++ = ITM_LITERAL;
         switch(nimNumberPart) {
-          //case NP_INT_16:
+          case NP_INT_10:
+          case NP_INT_16: {
           //case NP_INT_BASE: {
-          //  tmpString[1] = STRING_SHORT_INTEGER;
-          //  break;
-          //}
+            if(lastIntegerBase != 0) {
+              *tmpPtr++ = STRING_SHORT_INTEGER;
+              *tmpPtr++ = lastIntegerBase;
+              offset++;
+            }
+            else {
+              *tmpPtr++ = STRING_LONG_INTEGER;
+            }
+            break;
+          }
           case NP_REAL_FLOAT_PART:
           case NP_REAL_EXPONENT:
           case NP_FRACTION_DENOMINATOR: {
-            tmpString[1] = STRING_REAL34;
+            *tmpPtr++ = STRING_REAL34;
             break;
           }
           case NP_COMPLEX_INT_PART:
           case NP_COMPLEX_FLOAT_PART:
           case NP_COMPLEX_EXPONENT: {
-            tmpString[1] = STRING_COMPLEX34;
+            *tmpPtr++ = STRING_COMPLEX34;
             break;
           }
           default: {
-            tmpString[1] = STRING_LONG_INTEGER;
+            *tmpPtr++ = STRING_LONG_INTEGER;
             break;
           }
         }
-        tmpString[2] = stringByteLength(numBuffer);
-        xcopy(tmpString + 3, numBuffer, stringByteLength(numBuffer));
-        _insertInProgram((uint8_t *)tmpString, stringByteLength(numBuffer) + 3);
-        --currentLocalStepNumber;
-        currentStep = findPreviousStep(currentStep);
-        if(!programListEnd) {
-          scrollPemBackwards();
+        *tmpPtr++ = stringByteLength(numBuffer);
+        xcopy(tmpPtr, numBuffer, stringByteLength(numBuffer));
+        if(doInsertInProgram) {
+          _insertInProgram((uint8_t *)tmpString, stringByteLength(numBuffer) + offset);
+          --currentLocalStepNumber;
+          currentStep = findPreviousStep(currentStep);
+          if(!programListEnd) {
+            scrollPemBackwards();
+          }
         }
       }
       calcMode = cmPem;
@@ -904,13 +972,28 @@ void pemAddNumber(int16_t item) {
 
 void pemCloseNumberInput(void) {
   #if !defined(TESTSUITE_BUILD)
+    //printf("**[DL]** pemCloseNumberInput aimBuffer %s nimNumberPart %d\n",aimBuffer,nimNumberPart);fflush(stdout);
     deleteStepsFromTo(currentStep, findNextStep(currentStep));
     if(aimBuffer[0] != 0) {
       char *numBuffer = aimBuffer[0] == '+' ? aimBuffer + 1 : aimBuffer;
       char *tmpPtr = tmpString;
       uint32_t inputLength = stringByteLength(numBuffer);
       bool doneWithBinaryLiteral = false;
+      int16_t lastChar = strlen(aimBuffer) - 1;
+
+      if((lastIntegerBase != 0) && (nimNumberPart == NP_INT_10 || nimNumberPart == NP_INT_16)) {
+          sprintf(aimBuffer + strlen(aimBuffer), "#%" PRIu16, (int) lastIntegerBase);
+          nimNumberPart = NP_INT_BASE;
+      }
+
       *(tmpPtr++) = ITM_LITERAL;
+      if((nimNumberPart == NP_COMPLEX_EXPONENT || nimNumberPart == NP_REAL_EXPONENT) && (aimBuffer[lastChar] == '+' || aimBuffer[lastChar] == '-') && aimBuffer[lastChar - 1] == 'e') {
+        aimBuffer[--lastChar] = 0;
+        lastChar--;
+      }
+      else if(nimNumberPart == NP_REAL_EXPONENT && aimBuffer[lastChar] == 'e') {
+        aimBuffer[lastChar--] = 0;
+      }
       switch(nimNumberPart) {
         //case NP_INT_16:
         case NP_INT_BASE: {
@@ -1023,6 +1106,8 @@ void pemCloseNumberInput(void) {
 
     aimBuffer[0] = '!';
     nimNumberPart = NP_EMPTY;
+    lastIntegerBase = 0;
+    //printf("**[DL]** pemCloseNumberInput lastIntegerBase %d\n",lastIntegerBase);fflush(stdout);
   #endif // TESTSUITE_BUILD
 }
 
@@ -1056,7 +1141,6 @@ static void _pemCloseTimeInput(void) {
 static void _pemCloseDateInput(void) {
   #if !defined(TESTSUITE_BUILD)
     if(nimNumberPart == NP_REAL_FLOAT_PART) {
-      deleteStepsFromTo(currentStep, findNextStep(currentStep));
       if(aimBuffer[0] != 0) {
         char *numBuffer = aimBuffer[0] == '+' ? aimBuffer + 1 : aimBuffer;
         char *tmpPtr = tmpString;
@@ -1067,12 +1151,18 @@ static void _pemCloseDateInput(void) {
         stringToReal34(numBuffer, REGISTER_REAL34_DATA(TEMP_REGISTER_1));
         convertReal34RegisterToDateRegister(TEMP_REGISTER_1, TEMP_REGISTER_1);
         internalDateToJulianDay(REGISTER_REAL34_DATA(TEMP_REGISTER_1), REGISTER_REAL34_DATA(TEMP_REGISTER_1));
+        if(lastErrorCode == 0) {
+          real34ToString(REGISTER_REAL34_DATA(TEMP_REGISTER_1), tmpPtr + 1);
+          *tmpPtr = stringByteLength(tmpPtr + 1);
+          ++tmpPtr;
 
-        real34ToString(REGISTER_REAL34_DATA(TEMP_REGISTER_1), tmpPtr + 1);
-        *tmpPtr = stringByteLength(tmpPtr + 1);
-        ++tmpPtr;
-
-        _insertInProgram((uint8_t *)tmpString, stringByteLength(tmpPtr) + (int32_t)(tmpPtr - tmpString));
+          deleteStepsFromTo(currentStep, findNextStep(currentStep));
+          _insertInProgram((uint8_t *)tmpString, stringByteLength(tmpPtr) + (int32_t)(tmpPtr - tmpString));
+        }
+        else {
+          currentLocalStepNumber++;
+          currentStep = findNextStep(currentStep);
+        }
       }
 
       aimBuffer[0] = '!';
@@ -1137,7 +1227,7 @@ void insertStepInProgram(int16_t func) {
     return;
   }
   if(indexOfItems[func].func == addItemToBuffer || (!tamIsActive() && aimBuffer[0] != 0 && (func == ITM_CHS || func == ITM_CC || func == ITM_toINT || (nimNumberPart == NP_INT_BASE && (func == ITM_YX || func == ITM_LN || func == ITM_RCL))))) {
-    pemAddNumber(func);
+    pemAddNumber(func, true);
     return;
   }
   else if(nimNumberPart == NP_INT_BASE) {
@@ -1154,7 +1244,7 @@ void insertStepInProgram(int16_t func) {
     aimBuffer[0] = 0;
     return;
   }
-  if(!tamIsActive() && !tam.alpha && aimBuffer[0] != 0 && func != ITM_toHMS) {
+  if(!tamIsActive() && !tam.alpha && aimBuffer[0] != 0 && func != ITM_toHMS && func != ITM_EXIT) {
     if(func == ITM_dotD) {
       _pemCloseDateInput();
       if(aimBuffer[0] == '!') {
@@ -1177,6 +1267,11 @@ void insertStepInProgram(int16_t func) {
   switch(indexOfItems[func].status & PTP_STATUS) {
     case PTP_DISABLED: {
       switch(func) {
+        case ITM_EDIT: {         // 1948
+          fnEdit(NOPARAM);
+          break;
+        }
+
         case ITM_KEYG:           // 1498
         case ITM_KEYX: {         // 1499
           int opLen;
@@ -1286,7 +1381,13 @@ void insertStepInProgram(int16_t func) {
         }
 
         case ITM_EXIT: {           // 1737
-          fnKeyExit(NOPARAM);
+          if(aimBuffer[0] != 0) {
+            pemCloseNumberInput();
+            aimBuffer[0] = 0;
+          }
+          else {
+            fnKeyExit(NOPARAM);
+          }
           break;
         }
 
@@ -1323,9 +1424,30 @@ void insertStepInProgram(int16_t func) {
     }
 
     case PTP_NUMBER_16: {
-      tmpString[2] = (char)(tam.value & 0xff); // little endian
-      tmpString[3] = (char)(tam.value >> 8);
-      _insertInProgram((uint8_t *)tmpString, 4);
+      if(func == ITM_BESTF_NO_IND) {  // original BestF without indirection support (little endian parameter)
+        tmpString[2] = (char)(tam.value & 0xff); // little endian
+        tmpString[3] = (char)(tam.value >> 8);
+        _insertInProgram((uint8_t *)tmpString, 4);
+      }
+      else {                        // new Bestf with indirection support (big endian parameter)
+        if(tam.alpha && tam.indirect) {
+          uint16_t nameLength = stringByteLength(aimBuffer);
+          tmpString[opBytes    ] = (char)(INDIRECT_VARIABLE);
+          tmpString[opBytes + 1] = nameLength;
+          xcopy(tmpString + opBytes + 2, aimBuffer, nameLength);
+          _insertInProgram((uint8_t *)tmpString, nameLength + opBytes + 2);
+        }
+        else if(tam.indirect) {
+          tmpString[opBytes    ] = (char)INDIRECT_REGISTER;
+          tmpString[opBytes + 1] = tam.value + (tam.dot ? FIRST_LOCAL_REGISTER : 0);
+          _insertInProgram((uint8_t *)tmpString, opBytes + 2);
+        }
+        else {
+        tmpString[2] = (char)(tam.value >> 8);   // BIG endian
+        tmpString[3] = (char)(tam.value & 0xff);
+        _insertInProgram((uint8_t *)tmpString, 4);
+        }
+      }
       break;
     }
 
@@ -1369,7 +1491,9 @@ void insertStepInProgram(int16_t func) {
     }
   }
 
-  aimBuffer[0] = 0;
+  if(func != ITM_EDIT) {
+    aimBuffer[0] = 0;
+  }
 }
 
 

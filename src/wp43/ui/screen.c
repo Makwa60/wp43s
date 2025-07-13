@@ -1613,7 +1613,7 @@ void clearScreen(void) {
             viewRegName(prefix, &prefixWidth);
           }
 
-          dateToDisplayString(regist, tmpString, false);
+          dateToDisplayString(regist, tmpString, false, false);
           w = stringWidth(tmpString, &numericFont, false, true);
           if(prefixWidth > 0) {
             showString(prefix, &standardFont, 1, baseY + TEMPORARY_INFO_OFFSET, vmNormal, prefixPre, prefixPost);
@@ -1722,11 +1722,42 @@ void clearScreen(void) {
     }
   }
 
-
+  static void _showAngularModeGlyph(angularMode_t angularMode, const font_t *font, uint32_t x, uint32_t y) {
+    switch(angularMode) {
+      case amMultPi: {
+        showString(STD_pi, font, x, y, vmNormal, true, true);
+        break;
+      }
+      case amRadian: {
+        showString(STD_SUP_r, font, x, y, vmNormal, true, true);
+        break;
+      }
+      case amGrad: {
+        showString(STD_SUP_g, font, x, y, vmNormal, true, true);
+        break;
+      }
+      case amDegree: {
+        showString(STD_DEGREE, font, x, y, vmNormal, true, true);
+        break;
+      }
+      case amMil: {
+        showString(STD_SUP_MINUS, font, x, y, vmNormal, true, true);
+        break;
+      }
+      case amSecond: {
+        showString("s", font, x, y, vmNormal, true, true);
+        break;
+      }
+      default: {
+      }
+    }
+  }
 
   void displayNim(const char *nim, const char *lastBase, int16_t wLastBaseNumeric, int16_t wLastBaseStandard, const char *prefix, int16_t prefixWidth) {
     int16_t w;
     uint32_t xNim = (prefixWidth == 0 ? 0 : showString(prefix, &standardFont, 1, Y_POSITION_OF_NIM_LINE + TEMPORARY_INFO_OFFSET, vmNormal, true, true));
+    angularMode_t xangularMode = getRegisterAngularMode(REGISTER_X);
+        
     if(prefixWidth + stringWidth(nim, &numericFont, true, true) + wLastBaseNumeric <= SCREEN_WIDTH - 16) { // 16 is the numeric font cursor width
       uint32_t xCursor = showString(nim, &numericFont, xNim + 0, Y_POSITION_OF_NIM_LINE, vmNormal, true, true);
       uint32_t yCursor = Y_POSITION_OF_NIM_LINE;
@@ -1734,6 +1765,9 @@ void clearScreen(void) {
 
       if(lastIntegerBase != 0 || (aimBuffer[0] != 0 && aimBuffer[strlen(aimBuffer)-1]=='/')) {
         showString(lastBase, &numericFont, xCursor + 16, Y_POSITION_OF_NIM_LINE, vmNormal, true, true);
+      }
+      else if((getRegisterDataType(REGISTER_X) == dtReal34) && (xangularMode < amNone)) {
+        _showAngularModeGlyph(xangularMode, &numericFont, xCursor + 16, Y_POSITION_OF_NIM_LINE);
       }
     }
     else if(prefixWidth + stringWidth(nim, &standardFont, true, true) + wLastBaseStandard <= SCREEN_WIDTH - 8) { // 8 is the standard font cursor width
@@ -1743,6 +1777,9 @@ void clearScreen(void) {
 
       if(lastIntegerBase != 0 || (aimBuffer[0] != 0 && aimBuffer[strlen(aimBuffer)-1]=='/')) {
         showString(lastBase, &standardFont, xCursor + 8, Y_POSITION_OF_NIM_LINE + 6, vmNormal, true, true);
+      }
+      else if((getRegisterDataType(REGISTER_X) == dtReal34) && (xangularMode < amNone)) {
+        _showAngularModeGlyph(xangularMode, &standardFont, xCursor + 8, Y_POSITION_OF_NIM_LINE + 6);
       }
     }
     else {
@@ -1762,10 +1799,14 @@ void clearScreen(void) {
 
         uint32_t xCursor = showString(tmpString + 1500 + w, &standardFont, xNim + 0, Y_POSITION_OF_NIM_LINE + 18, vmNormal, true, true);
         uint32_t yCursor = Y_POSITION_OF_NIM_LINE + 18;
+        
         cursorShow(true, xCursor, yCursor);
 
         if(lastIntegerBase != 0 || (aimBuffer[0] != 0 && aimBuffer[strlen(aimBuffer)-1]=='/')) {
           showString(lastBase, &standardFont, xCursor + 8, Y_POSITION_OF_NIM_LINE + 18, vmNormal, true, true);
+        }
+        else if((getRegisterDataType(REGISTER_X) == dtReal34) && (xangularMode < amNone)) {
+          _showAngularModeGlyph(xangularMode, &standardFont, xCursor + 8, Y_POSITION_OF_NIM_LINE + 18);
         }
       }
     }
@@ -2247,7 +2288,7 @@ void insertAlphaCursor(uint16_t startAt) {
 
       /* Cursor */
       if(strLength == alphaCursor) {
-         *bufPtr       = STD_CURSOR[0];
+        *bufPtr       = STD_CURSOR[0];
         *(bufPtr + 1) = STD_CURSOR[1];
         *(bufPtr + 2) = 0;
         glyphWidth = stringWidth(bufPtr, &standardFont, true, true);

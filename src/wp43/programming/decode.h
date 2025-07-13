@@ -9,6 +9,8 @@
 
   #include "typeDefinitions.h"
   #include <stdint.h>
+  
+  extern const char           baseChars[];
 
   void decodeOneStep          (uint8_t *step);
   #if !defined(DMCP_BUILD)

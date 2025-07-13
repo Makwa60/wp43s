@@ -192,7 +192,7 @@
         }
 
         case dtDate: {
-          dateToDisplayString(REGISTER_X, tmpString, false);
+          dateToDisplayString(REGISTER_X, tmpString, false, false);
           break;
         }
 

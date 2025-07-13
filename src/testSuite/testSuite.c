@@ -451,20 +451,12 @@ void strToShortInteger(char *nimBuffer, calcRegister_t regist) {
     processError("error while initializing a short integer: shortIntegerWordSize must be fom 1 to 64");
   }
 
-  // minVal = -maxVal/2
+  // minVal = -maxVal
   longIntegerInit(minVal);
-  longIntegerDivideUInt(maxVal, 2, minVal); // minVal = maxVal / 2
+  longIntegerCopy(maxVal, minVal); // minVal = maxVal
   longIntegerSetNegativeSign(minVal); // minVal = -minVal
 
-  if((base != 2) && (base != 4) && (base != 8) && (base != 16) && (shortIntegerMode != SIM_UNSIGN)) {
-    longIntegerDivideUInt(maxVal, 2, maxVal); // maxVal /= 2
-  }
-
   longIntegerSubtractUInt(maxVal, 1, maxVal); // maxVal--
-
-  if(shortIntegerMode == SIM_UNSIGN) {
-    longIntegerSetZero(minVal); // minVal = 0
-  }
 
   if(shortIntegerMode == SIM_1COMPL || shortIntegerMode == SIM_SIGNMT) {
     longIntegerAddUInt(minVal, 1, minVal); // minVal++
@@ -486,6 +478,10 @@ void strToShortInteger(char *nimBuffer, calcRegister_t regist) {
   uint64_t val = strtoull(strValue + (longIntegerIsNegative(value) ? 1 : 0), NULL, 10); // when value is negative: discard the minus sign
 
   if(shortIntegerMode == SIM_UNSIGN) {
+    if(longIntegerIsNegative(value)) {
+      val = (~val + 1) & shortIntegerMask;
+      setSystemFlag(FLAG_OVERFLOW);
+    }
   }
   else if(shortIntegerMode == SIM_2COMPL) {
     if(longIntegerIsNegative(value)) {
@@ -499,7 +495,7 @@ void strToShortInteger(char *nimBuffer, calcRegister_t regist) {
   }
   else if(shortIntegerMode == SIM_SIGNMT) {
     if(longIntegerIsNegative(value)) {
-      val = (val & shortIntegerMask) | shortIntegerSignBit;
+      val = (val ^ shortIntegerSignBit) & shortIntegerMask;
     }
   }
   else {
