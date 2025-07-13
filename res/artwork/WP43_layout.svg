@@ -8152,9 +8152,9 @@
      showgrid="false"
      inkscape:current-layer="layer8"
      inkscape:document-units="mm"
-     inkscape:cy="156.68571"
-     inkscape:cx="511.64763"
-     inkscape:zoom="3.4198556"
+     inkscape:cy="192.91096"
+     inkscape:cx="499.62787"
+     inkscape:zoom="2.3793371"
      inkscape:pageshadow="2"
      inkscape:pageopacity="0.0"
      borderopacity="1.0"
@@ -9426,7 +9426,7 @@
        style="display:inline;fill:none;stroke:#ffffff;stroke-width:0.30003101;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
   </g>
   <g
-     style="display:inline"
+     style="display:none"
      inkscape:label="Bezel"
      id="layer17"
      inkscape:groupmode="layer"
@@ -13289,7 +13289,7 @@
        aria-label="⇩" />
   </g>
   <g
-     style="display:inline;opacity:1"
+     style="display:none;opacity:1"
      inkscape:label="Text"
      id="layer23"
      inkscape:groupmode="layer">
