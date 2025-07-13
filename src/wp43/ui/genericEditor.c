@@ -13,6 +13,7 @@
 #include "charString.h"
 #include "constantPointers.h"
 #include "conversionAngles.h"
+#include "dateTime.h"
 #include "defines.h"
 #include "display.h"
 #include "error.h"
@@ -270,7 +271,7 @@ void fnEdit (uint16_t unusedParamButMandatory) {
 #if !defined(TESTSUITE_BUILD)
   int16_t  index;
   uint8_t groupingGapOld;
-  
+
   if(calcMode == cmNormal) {
     switch(getRegisterDataType(REGISTER_X)) {
 
@@ -524,9 +525,11 @@ void fnEdit (uint16_t unusedParamButMandatory) {
       }
       else if((opParam == BINARY_SHORT_INTEGER) || (opParam == STRING_SHORT_INTEGER) || (opParam == STRING_LONG_INTEGER) ||
               (opParam == BINARY_REAL34)        || (opParam == STRING_REAL34) ||
-              (opParam == BINARY_COMPLEX34)     || (opParam == STRING_COMPLEX34)) {
+              (opParam == BINARY_COMPLEX34)     || (opParam == STRING_COMPLEX34) ||
+              (opParam == STRING_DATE)          || (opParam == STRING_TIME))    {
         char *tempBuffer = errorMessage + 1500;
         bool chsNeeded = false;
+        bool isDate = (opParam == STRING_DATE ? true : false);
 
         if((opParam == STRING_REAL34)|| (opParam == STRING_COMPLEX34))  {
           getStringLabelOrVariableName(&currentStep[2]);
@@ -544,6 +547,7 @@ void fnEdit (uint16_t unusedParamButMandatory) {
         deleteStepsFromTo(currentStep, findNextStep(currentStep));
 
         uint16_t i;
+        bool decimalflag = false;
         for(i = 0; i < strlen(tempBuffer); i++) {
           //printf("**[DL]** fnEdit tempBuffer[i] %02x aimBuffer %s\n",tempBuffer[i],aimBuffer);fflush(stdout);
           switch ((uint8_t) tempBuffer[i]) {
@@ -568,15 +572,40 @@ void fnEdit (uint16_t unusedParamButMandatory) {
               pemAddNumber(ITM_A + tempBuffer[i] - 'A', false);
               break;
             case '.':
-              pemAddNumber(ITM_PERIOD, false);
+              if(!decimalflag) {
+                decimalflag = true;
+                pemAddNumber(ITM_PERIOD, false);
+              }
+              break;
+            case ':' :
+              if(!decimalflag) {
+                decimalflag = true;
+                pemAddNumber(ITM_PERIOD, false);
+              }
               break;
             case '+':
               if(chsNeeded)  pemAddNumber(ITM_CHS, false);  // '-' was already encountered, let's first negate the real part
               chsNeeded = false;
               break;
             case '-':
-              if(chsNeeded) pemAddNumber(ITM_CHS, false);  // second time '-' is encountered, let's first negate the real part
-              chsNeeded = true;
+              if(isDate) {
+                if(!decimalflag) {
+                  decimalflag = true;
+                  pemAddNumber(ITM_PERIOD, false);
+                }
+              }
+              else {
+                if(chsNeeded) pemAddNumber(ITM_CHS, false);  // second time '-' is encountered, let's first negate the real part
+                chsNeeded = true;
+              }
+              break;
+            case '/':
+              if(isDate) {
+                if(!decimalflag) {
+                  decimalflag = true;
+                  pemAddNumber(ITM_PERIOD, false);
+                }
+              }
               break;
             case 'e':
               if(chsNeeded) pemAddNumber(ITM_CHS, false);           // change mantissa sign before entering exponent

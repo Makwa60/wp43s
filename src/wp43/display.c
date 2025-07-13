@@ -1882,7 +1882,7 @@ static void _timeToDisplayString(const real34_t *source, char *displayString, bo
 
 
 
-void dateToDisplayString(calcRegister_t regist, char *displayString, bool ignoreTDisp) {
+void dateToDisplayString(calcRegister_t regist, char *displayString, bool ignoreTime, bool ignoreTDisp) {
   real34_t j, y, yy, m, d;
   #if ENABLE_DATE_TYPE_WITH_TIME != 0
     real34_t t;
@@ -1922,7 +1922,9 @@ void dateToDisplayString(calcRegister_t regist, char *displayString, bool ignore
     if(timeDisplayFormatDigits == 0 || timeDisplayFormatDigits >= 3) {
       timeDisplayFormatDigits = 3;
     }
-    _timeToDisplayString(&t, displayString + stringByteLength(displayString), ignoreTDisp, false);
+    if(!ignoreTime) {
+      _timeToDisplayString(&t, displayString + stringByteLength(displayString), ignoreTDisp, false);
+    }
     timeDisplayFormatDigits = savedTimeDisplayFormatDigits;
   #endif // ENABLE_DATE_TYPE_WITH_TIME != 0
 }
@@ -2072,7 +2074,7 @@ void fnShow(uint16_t unusedButMandatoryParameter) {
     }
 
     case dtDate: {
-      dateToDisplayString(REGISTER_X, tmpString, true);
+      dateToDisplayString(REGISTER_X, tmpString, false, true);
       break;
     }
 

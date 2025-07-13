@@ -99,7 +99,7 @@ static void _readDestinationRegister(uint16_t regist) {
     }
 
     case dtDate: {
-      dateToDisplayString(regist, tmpString, false);
+      dateToDisplayString(regist, tmpString, false, false);
       break;
     }
 

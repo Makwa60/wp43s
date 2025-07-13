@@ -1141,7 +1141,6 @@ static void _pemCloseTimeInput(void) {
 static void _pemCloseDateInput(void) {
   #if !defined(TESTSUITE_BUILD)
     if(nimNumberPart == NP_REAL_FLOAT_PART) {
-      deleteStepsFromTo(currentStep, findNextStep(currentStep));
       if(aimBuffer[0] != 0) {
         char *numBuffer = aimBuffer[0] == '+' ? aimBuffer + 1 : aimBuffer;
         char *tmpPtr = tmpString;
@@ -1152,12 +1151,18 @@ static void _pemCloseDateInput(void) {
         stringToReal34(numBuffer, REGISTER_REAL34_DATA(TEMP_REGISTER_1));
         convertReal34RegisterToDateRegister(TEMP_REGISTER_1, TEMP_REGISTER_1);
         internalDateToJulianDay(REGISTER_REAL34_DATA(TEMP_REGISTER_1), REGISTER_REAL34_DATA(TEMP_REGISTER_1));
+        if(lastErrorCode == 0) {
+          real34ToString(REGISTER_REAL34_DATA(TEMP_REGISTER_1), tmpPtr + 1);
+          *tmpPtr = stringByteLength(tmpPtr + 1);
+          ++tmpPtr;
 
-        real34ToString(REGISTER_REAL34_DATA(TEMP_REGISTER_1), tmpPtr + 1);
-        *tmpPtr = stringByteLength(tmpPtr + 1);
-        ++tmpPtr;
-
-        _insertInProgram((uint8_t *)tmpString, stringByteLength(tmpPtr) + (int32_t)(tmpPtr - tmpString));
+          deleteStepsFromTo(currentStep, findNextStep(currentStep));
+          _insertInProgram((uint8_t *)tmpString, stringByteLength(tmpPtr) + (int32_t)(tmpPtr - tmpString));
+        }
+        else {
+          currentLocalStepNumber++;
+          currentStep = findNextStep(currentStep);
+        }
       }
 
       aimBuffer[0] = '!';

@@ -1613,7 +1613,7 @@ void clearScreen(void) {
             viewRegName(prefix, &prefixWidth);
           }
 
-          dateToDisplayString(regist, tmpString, false);
+          dateToDisplayString(regist, tmpString, false, false);
           w = stringWidth(tmpString, &numericFont, false, true);
           if(prefixWidth > 0) {
             showString(prefix, &standardFont, 1, baseY + TEMPORARY_INFO_OFFSET, vmNormal, prefixPre, prefixPost);
