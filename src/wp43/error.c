@@ -45,7 +45,7 @@ TO_QSPI const char *errorMessages[NUMBER_OF_ERROR_CODES] = {
 /* 16 */  "Distribution parameter out of valid range",
 /* 17 */  "I/O error",
 /* 18 */  "Invalid or corrupted data",
-/* 19 */  "Flash memory is write protected", // obsolete
+/* 19 */  "Reserved variable name",
 /* 20 */  "No root found",
 /* 21 */  "Matrix mismatch",
 /* 22 */  "Singular matrix",

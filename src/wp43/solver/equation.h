@@ -17,13 +17,13 @@
   #define EQUATION_PARSER_MVAR 0
   #define EQUATION_PARSER_XEQ  1
 
-  void   fnEqAdd        (uint16_t unusedButMandatoryParameter);
-  void   fnEqNew        (uint16_t unusedButMandatoryParameter);
-  void   fnEqEdit       (uint16_t unusedButMandatoryParameter);
-  void   fnEqDelete     (uint16_t unusedButMandatoryParameter);
-  void   fnEqCursorLeft (uint16_t unusedButMandatoryParameter);
-  void   fnEqCursorRight(uint16_t unusedButMandatoryParameter);
-  void   fnEqCalc       (uint16_t unusedButMandatoryParameter);
+  void   fnEqAdd          (uint16_t unusedButMandatoryParameter);
+  void   fnEqNew          (uint16_t unusedButMandatoryParameter);
+  void   fnEqEdit         (uint16_t unusedButMandatoryParameter);
+  void   fnEqDelete       (uint16_t unusedButMandatoryParameter);
+  void   fnEqCursorLeft   (uint16_t unusedButMandatoryParameter);
+  void   fnEqCursorRight  (uint16_t unusedButMandatoryParameter);
+  void   fnEqCalc         (uint16_t unusedButMandatoryParameter);
 
   /**
    * Stores a formula. This function reallocates memory for the formula.
@@ -31,14 +31,14 @@
    * \param[in]  equationId       Equation ID
    * \param[in]  equationString   Equation in null-terminated string
    */
-  void   setEquation    (uint16_t equationId, const char *equationString);
+  void   setEquation      (uint16_t equationId, const char *equationString);
 
   /**
    * Deletes a formula. This function frees memory for the formula and shifts equation ID.
    *
    * \param[in]  equationId       Equation ID
    */
-  void   deleteEquation (uint16_t equationId);
+  void   deleteEquation   (uint16_t equationId);
 
   /**
    * Shows a formula at the softmenu.
@@ -50,7 +50,7 @@
    * \param[out] cursorShown     Unless `NULL` is specified, returns whether the cursor has been (or would be) shown
    * \param[out] rightEllipsis   Unless `NULL` is specified, returns whether the right ellipsis has been (or would be) shown
    */
-  void   showEquation   (uint16_t equationId, uint16_t startAt, uint16_t cursorAt, bool dryRun, bool *cursorShown, bool *rightEllipsis);
+  void   showEquation     (uint16_t equationId, uint16_t startAt, uint16_t cursorAt, bool dryRun, bool *cursorShown, bool *rightEllipsis);
 
   /**
    * Parses a formula.
@@ -60,6 +60,15 @@
    * \param[out] buffer       Working buffer
    * \param[out] mvarBuffer   For `EQUATION_PARSER_MVAR`, resulting `MVAR` list. for `EQUATION_PARSER_XEQ`, operator buffer.
    */
-  void   parseEquation  (uint16_t equationId, uint16_t parseMode, char *buffer, char *mvarBuffer);
+  void   parseEquation    (uint16_t equationId, uint16_t parseMode, char *buffer, char *mvarBuffer);
+
+
+  /**
+   * Check the number of function parameters.
+   *
+   * \param[in]  item         Function item
+   * \param[out] true/false   True for dyadic functions, false for monadic functions.
+   */
+  bool   isDyadicFunction (uint16_t item);
 
 #endif // !EQUATION_H

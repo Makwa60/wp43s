@@ -638,6 +638,30 @@ bool isUniqueName(const char *name) {
   return true;
 }
 
+#if defined(RELAX_NAMING_RULES)
+  bool isUniqueMenuName(const char *name) {
+
+    // Built-in menu items
+    for(uint32_t i = 0; i < LAST_ITEM; ++i) {
+      switch(indexOfItems[i].status & CAT_STATUS) {
+        case CAT_MENU: {
+          if(compareString(name, indexOfItems[i].itemCatalogName, CMP_NAME) == 0) {
+            return false;
+          }
+        }
+      }
+    }
+
+    // User menus
+    for(uint32_t i = 0; i < numberOfUserMenus; ++i) {
+      if(compareString(name, userMenus[i].menuName, CMP_NAME) == 0) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+#endif // RELAX_NAMING_RULES
 
 
 static calcRegister_t _findReservedVariable(const char *variableName) {
@@ -647,7 +671,12 @@ static calcRegister_t _findReservedVariable(const char *variableName) {
     return INVALID_VARIABLE;
   }
 
-  for(int i = 0; i < NUMBER_OF_RESERVED_VARIABLES; i++) {
+  #if !defined(RELAX_NAMING_RULES)
+    int iStart = 0;
+  #else
+    int iStart = FIRST_NON_REG_RESERVED_VARIABLE - FIRST_RESERVED_VARIABLE;
+  #endif // !RELAX_NAMING_RULES
+  for(int i = iStart; i < NUMBER_OF_RESERVED_VARIABLES; i++) {
     if(compareString((char *)(allReservedVariables[i].reservedVariableName + 1), variableName, CMP_NAME) == 0) {
       return i + FIRST_RESERVED_VARIABLE;
     }
@@ -753,11 +782,13 @@ calcRegister_t findOrAllocateNamedVariable(const char *variableName) {
   }
   regist = findNamedVariable(variableName);
   if(regist == INVALID_VARIABLE && numberOfNamedVariables <= (LAST_NAMED_VARIABLE - FIRST_NAMED_VARIABLE)) {
-    if(!isUniqueName(variableName)) {
-      displayCalcErrorMessage(ERROR_ENTER_NEW_NAME, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
-      errorMoreInfo("the name '%s' is already in use!", variableName);
-      return regist;
-    }
+    #if !defined(RELAX_NAMING_RULES)
+      if(!isUniqueName(variableName)) {
+        displayCalcErrorMessage(ERROR_ENTER_NEW_NAME, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
+        errorMoreInfo("the name '%s' is already in use!", variableName);
+        return regist;
+      }
+    #endif // !RELAX_NAMING_RULES
     allocateNamedVariable(variableName, dtReal34, REAL34_SIZE_IN_BYTES);
     if(lastErrorCode == ERROR_NONE) {
       // New variables are zero by default - although this might be immediately overridden, it might require an
@@ -997,7 +1028,7 @@ void fnClearRegisters(uint16_t confirmation) {
     for(regist=REGISTER_I; regist<=REGISTER_K; regist++) {
       clearRegister(regist);
     }
-    
+
     if(programRunStop != PGM_RUNNING) {
       temporaryInformation = TI_CONFIRM_COMPLETED;
     } else {
@@ -1015,7 +1046,7 @@ void fnDeleteAllVariables(uint16_t confirmation) {
       fnDeleteVariable(FIRST_NAMED_VARIABLE + var -1);
     }
     initSimEqMatABX();
-    
+
     if(programRunStop != PGM_RUNNING) {
       temporaryInformation = TI_CONFIRM_COMPLETED;
     } else {
@@ -1052,7 +1083,7 @@ void fnClearAllVariables(uint16_t confirmation) {
     if(regist != INVALID_VARIABLE) {
       initMatrixRegister(regist, 1, 1, false);
     }
-    
+
     if(programRunStop != PGM_RUNNING) {
       temporaryInformation = TI_CONFIRM_COMPLETED;
     } else {

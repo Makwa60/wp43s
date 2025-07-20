@@ -37,6 +37,30 @@
   #endif // !RASPBERRY
 
 
+  //=====================================================================================
+  // Experimental build defines section
+  // The features listed below are experimental and may not work correctly
+  // Uncomment the corresponding line below to enable the related compilation option
+
+  //#define MERGED_SAVE_SAVEST
+  //#define ENTER_AIM_NO_SLIFT
+  //#define RELAX_NAMING_RULES
+
+  #if defined(XPB)
+    #if !defined(MERGED_SAVE_SAVEST)
+      #define MERGED_SAVE_SAVEST
+    #endif // !MERGED_SAVE_SAVEST
+    #if !defined(ENTER_AIM_NO_SLIFT)
+      #define ENTER_AIM_NO_SLIFT
+    #endif // !ENTER_AIM_NO_SLIFT
+    #if !defined(RELAX_NAMING_RULES)
+      #define RELAX_NAMING_RULES
+    #endif // !RELAX_NAMING_RULES
+  #endif // XPB
+
+  // End of Experimental build defines section
+  //=====================================================================================
+
   #if defined(LINUX)
     #define _XOPEN_SOURCE                700 // see: https://stackoverflow.com/questions/5378778/what-does-d-xopen-source-do-mean
   #endif // LINUX
@@ -82,7 +106,7 @@
 
   #define DEBUG_LINES                               68 // Used in for the debug panel
 
-  
+
   #define LAST_GLOBAL_FLAG                         111
   #define NUMBER_OF_GLOBAL_FLAGS                   112
   #define FIRST_LOCAL_FLAG                         112 // There are 112 global flag from 0 to 111
@@ -272,6 +296,7 @@
   #define RESERVED_VARIABLE_I                     2009
   #define RESERVED_VARIABLE_J                     2010
   #define RESERVED_VARIABLE_K                     2011
+  #define FIRST_NON_REG_RESERVED_VARIABLE         2012
   #define RESERVED_VARIABLE_ADM                   2012
   #define RESERVED_VARIABLE_DENMAX                2013
   #define RESERVED_VARIABLE_ISM                   2014
@@ -474,7 +499,8 @@
   #define CATALOG_ALLVAR                            19
   #define CATALOG_MVAR                              20
   #define CATALOG_SYFL_WRITABLE                     21
-  #define NUMBER_OF_CATALOGS                        22
+  #define CATALOG_FCNS_EIM                          22
+  #define NUMBER_OF_CATALOGS                        23
 
   // String comparison type
   #define CMP_BINARY                                 0
@@ -734,14 +760,6 @@
     #define TO_QSPI                            __attribute__ ((section(".qspi")))
   #endif // !DMCP_BUILD
 
-  #if defined(XPB)
-    #if !defined(MERGED_SAVE_SAVEST)
-      #define MERGED_SAVE_SAVEST
-    #endif // !MERGED_SAVE_SAVEST
-    #if !defined(ENTER_AIM_NO_SLIFT)
-      #define ENTER_AIM_NO_SLIFT
-    #endif // !ENTER_AIM_NO_SLIFT
-  #endif // XPB
 
   //******************************
   //* Macros replacing functions *

@@ -291,7 +291,7 @@ void clearScreen(void) {
   void showFunctionName(int16_t item, int16_t delayInMs) {
     uint32_t fcol, frow, gcol, grow;
     const char *functionName;
-    
+
     if(tmpString[0] != 0) {
       functionName = tmpString;
     }
@@ -677,7 +677,7 @@ void clearScreen(void) {
         w = stringWidth(tmpString, &standardFont, true, true);
         showString(tmpString, &standardFont, SCREEN_WIDTH - w, Y_POSITION_OF_REGISTER_X_LINE - REGISTER_LINE_HEIGHT*(regist - REGISTER_X) + 6, vmNormal, true, true);
       }
-      
+
       else if(temporaryInformation == TI_MY_MENU_CLEARED && regist == REGISTER_X) {
         sprintf(prefix, "MyMenu cleared.");
         displayTemporaryInformationOnX(prefix);
@@ -1757,7 +1757,7 @@ void clearScreen(void) {
     int16_t w;
     uint32_t xNim = (prefixWidth == 0 ? 0 : showString(prefix, &standardFont, 1, Y_POSITION_OF_NIM_LINE + TEMPORARY_INFO_OFFSET, vmNormal, true, true));
     angularMode_t xangularMode = getRegisterAngularMode(REGISTER_X);
-        
+
     if(prefixWidth + stringWidth(nim, &numericFont, true, true) + wLastBaseNumeric <= SCREEN_WIDTH - 16) { // 16 is the numeric font cursor width
       uint32_t xCursor = showString(nim, &numericFont, xNim + 0, Y_POSITION_OF_NIM_LINE, vmNormal, true, true);
       uint32_t yCursor = Y_POSITION_OF_NIM_LINE;
@@ -1799,7 +1799,7 @@ void clearScreen(void) {
 
         uint32_t xCursor = showString(tmpString + 1500 + w, &standardFont, xNim + 0, Y_POSITION_OF_NIM_LINE + 18, vmNormal, true, true);
         uint32_t yCursor = Y_POSITION_OF_NIM_LINE + 18;
-        
+
         cursorShow(true, xCursor, yCursor);
 
         if(lastIntegerBase != 0 || (aimBuffer[0] != 0 && aimBuffer[strlen(aimBuffer)-1]=='/')) {
@@ -1900,6 +1900,7 @@ void clearScreen(void) {
         lcd_fill_rect(0, 240 - SOFTMENU_HEIGHT * 3, SCREEN_WIDTH, SOFTMENU_HEIGHT * 3, LCD_SET_VALUE);
       }
     }
+
     if(!(calcMode == cmAssign && previousCalcMode == cmPem)) {
       // The ordering of the 4 lines below is important for SHOW (temporaryInformation == TI_SHOW_REGISTER)
       if(!(screenUpdatingMode & (SCRUPD_MANUAL_STACK | SCRUPD_SKIP_STACK_ONE_TIME))) {
@@ -1920,7 +1921,6 @@ void clearScreen(void) {
     } else {
       displayShiftAndTamBuffer();
     }
-
 
     if(calcMode == cmMim) {
       showMatrixEditor();

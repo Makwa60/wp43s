@@ -470,8 +470,10 @@ void fnPem(uint16_t unusedButMandatoryParameter) {
 
     if(firstDisplayedLocalStepNumber == 0) {
       showString("0000:" STD_SPACE_4_PER_EM, &standardFont, 1, Y_POSITION_OF_REGISTER_T_LINE, (pemCursorIsZerothStep && !tamIsActive() && aimBuffer[0] == 0) ? vmReverse : vmNormal, false, true);
-      sprintf(tmpString, "{ Prgm #%d: %" PRIu32 " bytes / %" PRIu16 " step%s }", currentProgramNumber, _getProgramSize(),
-                                                                               numberOfSteps, numberOfSteps == 1 ? "" : "s");
+      //sprintf(tmpString, "{ Prgm #%d: %" PRIu32 " bytes / %" PRIu16 " step%s }", currentProgramNumber, _getProgramSize(),
+      //                                                                         numberOfSteps, numberOfSteps == 1 ? "" : "s");
+      sprintf(tmpString, "{Prgm #%" PRIu16 "/%" PRIu16 ": %" PRIu32 " bytes / %" PRIu16 " step%s}", 
+              currentProgramNumber, numberOfPrograms, _getProgramSize(), numberOfSteps, numberOfSteps == 1 ? "" : "s");
       showString(tmpString, &standardFont, 42, Y_POSITION_OF_REGISTER_T_LINE, vmNormal, false, false);
       firstLine = 1;
     }

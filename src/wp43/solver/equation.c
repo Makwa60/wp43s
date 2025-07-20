@@ -68,6 +68,8 @@
     { STD_GAMMA,                             ITM_GAMMAX,      0}, // Gamma function
     { STD_zeta,                              ITM_zetaX,       0}, // Riemann zeta function
     { STD_SQUARE_ROOT,                       ITM_SQUAREROOTX, 0}, // Square root (available through f SQRT in EIM)
+    { STD_CUBE_ROOT,                         ITM_CUBEROOT,    0}, // Cube root (available through f CATALOG>FNCS in EIM)
+    { STD_xTH_ROOT,                          ITM_XTHROOT,     0}, // Xth root (available through f CATALOG>FNCS in EIM)
     { "",                                    0,               0}  // Sentinel
   };
 #endif // !TESTSUITE_BUILD
@@ -818,7 +820,7 @@ void showEquation(uint16_t equationId, uint16_t startAt, uint16_t cursorAt, bool
 
 
 
-  static void _runEqFunction(char *mvarBuffer, uint16_t item) {
+  bool isDyadicFunction(uint16_t item) {
     switch(item) {
       case PARSER_OPERATOR_ITM_YX: // dyadic functions
       case ITM_COMB:
@@ -841,13 +843,22 @@ void showEquation(uint16_t equationId, uint16_t startAt, uint16_t cursorAt, bool
       case ITM_Pn:
       case ITM_Tn:
       case ITM_Un:
-      case ITM_atan2: {
+      case ITM_atan2:
+      case ITM_XTHROOT:
+        return true;
+      default:                     // monadic functions
+        return false;
+    }
+  }
+
+
+
+  static void _runEqFunction(char *mvarBuffer, uint16_t item) {
+    if(isDyadicFunction(item)) {    // dyadic functions
         _runDyadicFunction(mvarBuffer, item);
-        break;
-      }
-      default: { // monadic functions
+    }
+    else {                           // monadic functions
         _runMonadicFunction(mvarBuffer, item);
-      }
     }
   }
 
@@ -1040,18 +1051,34 @@ void showEquation(uint16_t equationId, uint16_t startAt, uint16_t cursorAt, bool
               return;
             }
           #endif /* USE_ITALIC_CONSTANT != 0 */
-          for(uint32_t i = CST_01; i <= CST_79; ++i) { // check for constants
-            if(compareString(indexOfItems[i].itemCatalogName, strPtr, CMP_NAME) == 0) {
-              return;
+
+          #if defined(RELAX_NAMING_RULES)
+            if(strPtr[0] == '#') {  // check for constants
+              for(uint32_t i = CST_01; i <= CST_79; ++i) {
+                if(compareString(indexOfItems[i].itemCatalogName, strPtr + 1, CMP_NAME) == 0) {
+                  return;
+                }
+              }
             }
-          }
+          #else /* !RELAX_NAMING_RULES */
+              for(uint32_t i = CST_01; i <= CST_79; ++i) {  // check for constants
+                if(compareString(indexOfItems[i].itemCatalogName, strPtr, CMP_NAME) == 0) {
+                  return;
+                }
+              }
+          #endif // RELAX_NAMING_RULES
+
           if(validateName(strPtr)) {
             calcRegister_t var = findOrAllocateNamedVariable(strPtr);
             xcopy(bufPtr, strPtr, stringByteLength(strPtr) + 1);
             bufPtr += stringByteLength(strPtr) + 1;
             bufPtr[0] = 0;
             if((currentSolverStatus & SOLVER_STATUS_EQUATION_MODE) == SOLVER_STATUS_EQUATION_SOLVER && var >= FIRST_RESERVED_VARIABLE) {
-              displayCalcErrorMessage(ERROR_INVALID_NAME, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
+              #if !defined(RELAX_NAMING_RULES)
+                displayCalcErrorMessage(ERROR_INVALID_NAME, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
+              #else
+                displayCalcErrorMessage(ERROR_RESERVED_VARIABLE_NAME, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
+              #endif // !RELAX_NAMING_RULES
               errorMoreInfo("'%s' names a register or a reserved variable!", strPtr);
             }
             else {
@@ -1105,14 +1132,29 @@ void showEquation(uint16_t equationId, uint16_t startAt, uint16_t cursorAt, bool
               return;
             }
           #endif /* USE_ITALIC_CONSTANT != 0 */
-          for(uint32_t i = CST_01; i <= CST_79; ++i) { // check for constants
-            if(compareString(indexOfItems[i].itemCatalogName, strPtr, CMP_NAME) == 0) {
-              runFunction(i);
-              _pushNumericStack(mvarBuffer, REGISTER_REAL34_DATA(REGISTER_X), const34_0);
-              fnDrop(NOPARAM);
-              return;
+
+          #if defined(RELAX_NAMING_RULES)
+            if(strPtr[0] == '#') {  // check for constants
+              for(uint32_t i = CST_01; i <= CST_79; ++i) {
+                if(compareString(indexOfItems[i].itemCatalogName, strPtr + 1, CMP_NAME) == 0) {
+                  runFunction(i);
+                  _pushNumericStack(mvarBuffer, REGISTER_REAL34_DATA(REGISTER_X), const34_0);
+                  fnDrop(NOPARAM);
+                  return;
+                }
+              }
             }
-          }
+          #else /* !RELAX_NAMING_RULES */
+            for(uint32_t i = CST_01; i <= CST_79; ++i) {  // check for constants
+              if(compareString(indexOfItems[i].itemCatalogName, strPtr, CMP_NAME) == 0) {
+                runFunction(i);
+                _pushNumericStack(mvarBuffer, REGISTER_REAL34_DATA(REGISTER_X), const34_0);
+                fnDrop(NOPARAM);
+                return;
+              }
+            }
+          #endif // RELAX_NAMING_RULES
+
           if(validateName(strPtr)) {
             reallyRunFunction(ITM_RCL, findNamedVariable(strPtr));
             if(getRegisterDataType(REGISTER_X) == dtComplex34) {
@@ -1256,8 +1298,8 @@ void parseEquation(uint16_t equationId, uint16_t parseMode, char *buffer, char *
       #pragma GCC diagnostic push
       #pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
       switch(*strPtr) {
-        case ';':
-        case ',': {
+        // case ',':
+        case ';': {
           displayCalcErrorMessage(ERROR_SYNTAX_ERROR_IN_EQUATION, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
           errorMoreInfo("%c cannot appear in equations", *strPtr);
           return;
@@ -1441,7 +1483,7 @@ void parseEquation(uint16_t equationId, uint16_t parseMode, char *buffer, char *
             ++numericCount;
             exponentSignCanOccur = false;
           }
-          else if((!inExponent) && *strPtr == 'E' && ((*bufPtr = 0), numericCount == stringGlyphLength(buffer))) {
+          else if((!inExponent) && *strPtr == 'E' && (numericCount != 0) && ((*bufPtr = 0), numericCount == stringGlyphLength(buffer))) {
             ++numericCount;
             inExponent = true;
             exponentSignCanOccur = true;

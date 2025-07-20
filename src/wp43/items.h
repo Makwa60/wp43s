@@ -2037,7 +2037,10 @@
   // Generic EDIT function
   #define ITM_EDIT                      1945
 
-  #define LAST_ITEM                     1946
+  #define MNU_CAT_EIM                   1946
+  #define MNU_FCNS_EIM                  1947
+
+  #define LAST_ITEM                     1948
 
   #define NOPARAM                       9876 // Item for function who don't need an item
   #define CONFIRMED                     9877 // Confirmation for RESET, CLPALL, CLALL

@@ -441,7 +441,7 @@ int16_t currentRegisterBrowserScreen;
         else { // Reserved variables
           if(regist < FIRST_RESERVED_VARIABLE) {
             regist -= FIRST_NAMED_VARIABLE + numberOfNamedVariables;
-            regist += FIRST_RESERVED_VARIABLE + 12;
+            regist += FIRST_NON_REG_RESERVED_VARIABLE;
           }
 
           if(regist <= LAST_RESERVED_VARIABLE) { // Named variables
