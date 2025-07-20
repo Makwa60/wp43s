@@ -717,7 +717,8 @@ bool      _kbSeenInterrupt     = false;
           else if((tamIsActive()  && (!tam.alpha || isAlphabeticSoftmenu())) || ((calcMode == cmAssign) && (previousCalcMode != cmAim) && isAlphabeticSoftmenu())) {
             addItemToBuffer(item);
           }
-          else if((calcMode == cmNormal || calcMode == cmAim ) && isAlphabeticSoftmenu()) {
+          else if((calcMode == cmNormal &&  isAlphabeticSoftmenu()) ||
+                  (calcMode == cmAim    && (isAlphabeticSoftmenu()  || softmenu[getSoftmenuId(0)].menuItem == -MNU_CONST))) {
             if(calcMode == cmNormal) {
               fnAim(NOPARAM);
             }
@@ -738,6 +739,11 @@ bool      _kbSeenInterrupt     = false;
             fnAimCursorRight(NOPARAM);
           }
           else if(calcMode == cmEim && catalog && catalog != CATALOG_MVAR) {
+            #if defined(RELAX_NAMING_RULES)
+              if((softmenu[getSoftmenuId(0)].menuItem == -MNU_CONST) && (item != ITM_CONSTi)) {  // Add # prefi for constants in equations
+                addItemToBuffer(ITM_NUMBER_SIGN);
+              }
+            #endif // RELAX_NAMING_RULES
             addItemToBuffer(item);
             while(softmenu[getSoftmenuId(0)].menuItem != -MNU_EQ_EDIT) {
               popSoftmenu();
@@ -761,7 +767,7 @@ bool      _kbSeenInterrupt     = false;
                 }
               }
             }
-            if(calcMode == cmAim && !isAlphabeticSoftmenu()) {
+            if(calcMode == cmAim && !isAlphabeticSoftmenu() && (softmenu[getSoftmenuId(0)].menuItem != -MNU_CONST)) {
               closeAim();
             }
             if(tam.alpha && calcMode != cmAssign && tam.mode != tmNewMenu) {
@@ -929,6 +935,9 @@ bool      _kbSeenInterrupt     = false;
         else if(result == ITM_UP_ARROW) {
           nextChar = NC_SUPERSCRIPT;
         }
+      }
+      if ((calcMode == cmEim) && (result == -MNU_CAT_AIM)) {
+        result = -MNU_CAT_EIM;
       }
     }
     else if(tamIsActive()) {

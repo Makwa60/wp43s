@@ -31,7 +31,7 @@
     ERROR_INVALID_DISTRIBUTION_PARAM       = 16,
     ERROR_IO                               = 17,
     ERROR_INVALID_CORRUPTED_DATA           = 18,
-    ERROR_FLASH_MEMORY_WRITE_PROTECTED     = 19,
+    ERROR_RESERVED_VARIABLE_NAME           = 19,
     ERROR_NO_ROOT_FOUND                    = 20,
     ERROR_MATRIX_MISMATCH                  = 21,
     ERROR_SINGULAR_MATRIX                  = 22,
@@ -69,7 +69,7 @@
     ERROR_NO_PROGRAM_SPECIFIED             = 54,
     ERROR_NOT_ENOUGH_MEMORY_TO_LOAD_PGMS   = 55,
     ERROR_SOLVER_ABORT                     = 56,
-    ERROR_NOT_ENOUGH_MEMORY_TO_LOAD_EQUS   = 57
+    ERROR_NOT_ENOUGH_MEMORY_TO_LOAD_EQUS   = 57,
   } errorCode_t;
   #define NUMBER_OF_ERROR_CODES              58
 

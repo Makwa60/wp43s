@@ -52,8 +52,9 @@
 // 95 Updated softmenuStack_t structure for user menu id
 // 96 Changed 'MSG r' to 'MSG n'
 // 97 Added cursor arrows to Mya
+// 98 Added FNCS_EIM catalog
 //
-#define BACKUP_VERSION                     97  // Added cursor arrows to Mya
+#define BACKUP_VERSION                     98  // Added FNCS_EIM catalog
 #define OLDEST_COMPATIBLE_BACKUP_VERSION   87  // save running app
 #define START_REGISTER_VALUE             1000  // was 1522, why?
 
@@ -363,6 +364,7 @@ static uint32_t restore(void *buffer, uint32_t size) {
     }
     else {
       printf("Begin of calc's restoration\n");
+      printf("*** backupVersion %d\n",backupVersion);fflush(stdout);
 
       restore(ram,                                 TO_BYTES(RAM_SIZE_IN_BLOCKS));
       restore(freeMemoryRegions,                   sizeof(freeMemoryRegions));
@@ -503,6 +505,10 @@ static uint32_t restore(void *buffer, uint32_t size) {
         }
         lastCatalogPosition[15 /* MNU_ALLVAR */] = lastCatalogPosition[14 /* MNU_MVAR */] = 0;
       }
+      else if(backupVersion < 98) { // add FNCS_EIM catalog
+        restore(&lastCatalogPosition,              44);
+        lastCatalogPosition[22 /* MNU_FNCS_EIM */]  = 0;
+      }
       else {
         restore(&lastCatalogPosition,              sizeof(lastCatalogPosition));
       }
@@ -620,7 +626,7 @@ static uint32_t restore(void *buffer, uint32_t size) {
       restore(loadedScreen,                        SCREEN_WIDTH * SCREEN_HEIGHT / 8);
 
       ioFileClose();
-      printf("End of calc's restoration\n");
+      printf("End of calc's restoration\n");fflush(stdout);
 
       if(calcMode == cmApp) {
         calcModeLeave();

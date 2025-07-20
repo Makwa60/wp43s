@@ -28,6 +28,7 @@
 #include "saveRestoreCalcState.h"
 #include "screen.h"
 #include "softmenus.h"
+#include "solver/equation.h"
 #include "sort.h"
 #include "stack.h"
 #include "statusBar.h"
@@ -2424,15 +2425,47 @@
   }
 
   void insertAlphaCharacter(uint16_t item, uint16_t *currentCursor) {
-    const char *addChar = item == ITM_PAIR_OF_PARENTHESES ? "()" :
-                          item == ITM_VERTICAL_BAR        ? "||" :
-                          item == ITM_ROOT_SIGN           ? STD_SQUARE_ROOT "()" :
+    const char *addChar0 = item == ITM_PAIR_OF_PARENTHESES ? "()" :
+                           item == ITM_VERTICAL_BAR        ? "||" :
+                           item == ITM_MAGNITUDE           ? "||" :
+                           item == ITM_ROOT_SIGN           ? STD_SQUARE_ROOT "()" :
+                           item == ITM_SQUAREROOTX         ? STD_SQUARE_ROOT "()" :
+                           item == ITM_CUBEROOT            ? STD_CUBE_ROOT "()" :
+                           item == ITM_XTHROOT             ? STD_xTH_ROOT "(:)" :
+                           item == ITM_EXP                 ? STD_EULER_e "^()" :
       #if USE_ITALIC_CONSTANT != 0
-                          item == ITM_ALOG_SYMBOL         ? STD_EULER_e "^()" :
+                           item == ITM_ALOG_SYMBOL         ? STD_EULER_e "^()" :
       #else /* USE_ITALIC_CONSTANT != 0 */
-                          item == ITM_ALOG_SYMBOL         ? "e" STD_SUB_E "^()" :
+                           item == ITM_ALOG_SYMBOL         ? "e" STD_SUB_E "^()" :
       #endif /* USE_ITALIC_CONSTANT != 0 */
-                          indexOfItems[item].itemSoftmenuName;
+                           item == ITM_LOG2                ? "lb()" :
+                           item == ITM_XFACT               ? "!" :
+                           item == ITM_GAMMAX              ? STD_GAMMA "()" :
+                           item == ITM_zetaX               ? STD_zeta "()" :
+                           item == ITM_M1X                 ? "(-1)^()" :
+                           item == ITM_COMB                ? "COMB(:)" :
+                           item == ITM_PERM                ? "PERM(:)" :
+                           "";
+
+    char addChar[100];
+    int16_t jj = 0;
+    addChar[0] = 0;
+    if(addChar0[0] == 0) {
+      strcpy(addChar, indexOfItems[item].itemSoftmenuName);
+      if((indexOfItems[item].itemSoftmenuName[0]!=0) && (indexOfItems[item].status & EIM_STATUS) == EIM_ENABLED) {
+        if(isDyadicFunction(item)) {
+          strcpy(addChar + stringByteLength(addChar), "(:)");
+        }
+        else {
+          strcpy(addChar + stringByteLength(addChar), "()");
+        }
+        jj = 1;
+      }
+    }
+    else {
+      strcpy(addChar, addChar0);
+    }
+
     char *aimCursorPos = aimBuffer;
     char *aimBottomPos = aimBuffer + stringByteLength(aimBuffer);
     uint32_t itemLen = stringByteLength(addChar);
@@ -2444,6 +2477,15 @@
     }
     xcopy(aimCursorPos, addChar, itemLen);
     switch(item) {
+      case ITM_M1X: {
+        *currentCursor += 6;
+        break;
+      }
+      case ITM_COMB:
+      case ITM_PERM: {
+        *currentCursor += 5;
+        break;
+      }
       case ITM_ALOG_SYMBOL: {
         #if USE_ITALIC_CONSTANT != 0
           *currentCursor += 3;
@@ -2452,17 +2494,31 @@
         #endif /* USE_ITALIC_CONSTANT != 0 */
         break;
       }
-      case ITM_ROOT_SIGN: {
+      case ITM_LOG2:
+      case ITM_EXP: {
+        *currentCursor += 3;
+        break;
+      }
+      case ITM_ROOT_SIGN:
+      case ITM_SQUAREROOTX:
+      case ITM_CUBEROOT:
+      case ITM_XTHROOT:
+      case ITM_GAMMAX:
+      case ITM_zetaX: {
         *currentCursor += 2;
         break;
       }
       case ITM_PAIR_OF_PARENTHESES:
-      case ITM_VERTICAL_BAR: {
+      case ITM_VERTICAL_BAR:
+      case ITM_MAGNITUDE: {
         *currentCursor += 1;
         break;
       }
+      case ITM_XFACT: {
+        break;
+      }
       default: {
-        *currentCursor += stringGlyphLength(indexOfItems[item].itemSoftmenuName);
+        *currentCursor += stringGlyphLength(indexOfItems[item].itemSoftmenuName) + jj;
       }
     }
   }

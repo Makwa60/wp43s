@@ -134,6 +134,14 @@
   bool           isUniqueName                    (const char *name);
 
   /**
+   * Check if the given name is not yet in use as a user menu
+   *
+   * \param[in] name                 Name of menu
+   * \return `true` if given name is unique, `false` if duplicate
+   */
+  bool           isUniqueMenuName                    (const char *name);
+
+  /**
    * Allocates one named variable.
    *
    * \param[in] variableName        Variable name
@@ -212,7 +220,7 @@
    * \param[in] confirmation Current status of the confirmation of dleting user variables
    */
   void           fnClearAllVariables            (uint16_t confirmation);
-  
+
   /**
    * Sets X to the number of local registers.
    *

@@ -280,7 +280,7 @@ TO_QSPI const int16_t menu_Ellipt[]      = { ITM_sn,                        ITM_
 /*      Menu name                           <----------------------------------------------------------------------------- 6 functions ---------------------------------------------------------------------------->  */
 /*                                          <---------------------------------------------------------------------- 6 f shifted functions ------------------------------------------------------------------------->  */
 /*                                          <---------------------------------------------------------------------- 6 g shifted functions ------------------------------------------------------------------------->  */
-TO_QSPI const int16_t menu_CATALOG[]     = { -MNU_FCNS,                     ITM_NULL,                  -MNU_CHARS,               -MNU_PROGS,            -MNU_VARS,                   -MNU_MENUS                    };
+TO_QSPI const int16_t menu_CATALOG[]     = { -MNU_FCNS,                    -MNU_CONST,                 -MNU_CHARS,               -MNU_PROGS,            -MNU_VARS,                   -MNU_MENUS                    };
 
 TO_QSPI const int16_t menu_CHARS[]       = { -MNU_ALPHAINTL,               -MNU_ALPHA_OMEGA,            ITM_NULL,                -MNU_ALPHAMATH,        -MNU_MyAlpha,                -MNU_ALPHADOT                 };
 
@@ -293,7 +293,9 @@ TO_QSPI const int16_t menu_YESNO[]       = {  ITM_NULL,                     ITM_
 
 TO_QSPI const int16_t menu_BKUPSTF[]     = {  ITM_NULL,                     ITM_BACKUP_FILE,            ITM_NULL,                 ITM_NULL,              ITM_STATE_FILE,              ITM_NULL                     };
 
-TO_QSPI const int16_t menu_CAT_AIM[]     = { -MNU_CURSOR,                   ITM_NULL,                  -MNU_CHARS,                ITM_NULL,              ITM_NULL,                   -MNU_MENUS_AIM                };
+TO_QSPI const int16_t menu_CAT_AIM[]     = { -MNU_CURSOR,                  -MNU_CONST,                 -MNU_CHARS,                ITM_NULL,              ITM_NULL,                   -MNU_MENUS_AIM                };
+
+TO_QSPI const int16_t menu_CAT_EIM[]     = { -MNU_FCNS_EIM,                -MNU_CONST,                 -MNU_CHARS,                ITM_NULL,              ITM_NULL,                    ITM_NULL                     };
 
 TO_QSPI const int16_t menu_MENUS_AIM[]   = { -MNU_ALPHAINTL,               -MNU_ALPHAMATH,             -MNU_ALPHADOT,            -MNU_ALPHA_OMEGA,      -MNU_CURSOR,                  ITM_NULL                     };
 
@@ -603,7 +605,9 @@ TO_QSPI const softmenu_t softmenu[] = {
 /* 115 */  {.menuItem = -MNU_SYSFL_WRITABLE, .numItems = sizeof(menu_SYSFL_writable)/sizeof(int16_t), .softkeyItem = menu_SYSFL_writable},
 /* 116 */  {.menuItem = -MNU_CURSOR,      .numItems = sizeof(menu_CURSOR     )/sizeof(int16_t), .softkeyItem = menu_CURSOR      },
 /* 117 */  {.menuItem = -MNU_BKUPSTF,     .numItems = sizeof(menu_BKUPSTF    )/sizeof(int16_t), .softkeyItem = menu_BKUPSTF     },
-/* 118 */  {.menuItem =  0,               .numItems = 0,                                        .softkeyItem = NULL             }
+/* 118 */  {.menuItem = -MNU_CAT_EIM,     .numItems = sizeof(menu_CAT_EIM    )/sizeof(int16_t), .softkeyItem = menu_CAT_EIM     },
+/* 119 */  {.menuItem = -MNU_FCNS_EIM,    .numItems = sizeof(menu_FCNS_EIM   )/sizeof(int16_t), .softkeyItem = menu_FCNS_EIM    },
+/* 120 */  {.menuItem =  0,               .numItems = 0,                                        .softkeyItem = NULL             }
 };
 
 dynamicSoftmenu_t dynamicSoftmenu[NUMBER_OF_DYNAMIC_SOFTMENUS] = {
@@ -749,7 +753,10 @@ dynamicSoftmenu_t dynamicSoftmenu[NUMBER_OF_DYNAMIC_SOFTMENUS] = {
   /* 114 */    "TAMFLAG_WRITE",
   /* 115 */    "SYSFL_writable",
   /* 116 */    "CURSOR",
-  /* 117 */    "BKUPSTF"
+  /* 117 */    "BKUPSTF",
+  /* 118 */    "CAT_EIM",
+  /* 119 */    "FCNS_EIM",
+  /* 120 */    "null"
   };
 #endif // PC_BUILD
 
@@ -940,8 +947,9 @@ void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
         }      }
     }
     if (softmenu[getSoftmenuId(2)].menuItem != -ITM_DELITM) {     // Don't include reserved variables for DELITM
-      for(int i=12; i<NUMBER_OF_RESERVED_VARIABLES; i++) {
+      for(int i=FIRST_NON_REG_RESERVED_VARIABLE-FIRST_RESERVED_VARIABLE; i<NUMBER_OF_RESERVED_VARIABLES; i++) {
         calcRegister_t regist = i+FIRST_RESERVED_VARIABLE;
+        printf("**[DL]** regist %d\n",regist);fflush(stdout);
         if((!applyFilter || _filterDataType(regist, typeFilter, isAngular)) && (!onlyWritable || _registerIsWritable(regist))) {
           xcopy(tmpString + 15 * numberOfVars, allReservedVariables[i].reservedVariableName + 1, allReservedVariables[i].reservedVariableName[0]);
           numberOfVars++;
@@ -1507,7 +1515,7 @@ void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
             // item : +10000 -> no top line
             //        +20000 -> no bottom line
             //        +30000 -> neither top nor bottom line
-            if(softmenu[m].menuItem == -MNU_FCNS) {
+            if((softmenu[m].menuItem == -MNU_FCNS) || (softmenu[m].menuItem == -MNU_FCNS_EIM)) {
               showSoftkey(indexOfItems[item%10000].itemCatalogName,  x, y-currentFirstItem/6, vmNormal, (item/10000)==0 || (item/10000)==2, (item/10000)==0 || (item/10000)==1);
             }
             else if(item == ITM_PLOT || item == ITM_PLOT_LR || item == ITM_HPLOT  || item == ITM_DRAW) {       //colour PLOT in reverse font to appear to be menus
@@ -1539,7 +1547,8 @@ void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
         dottedTopLine = (numberOfFormulae >= 2);
         yDotted = 2;
       }
-      if(softmenu[m].menuItem == -MNU_EQ_EDIT) {
+      int16_t currentMenu = softmenu[m].menuItem;
+      if((currentMenu == -MNU_EQ_EDIT) || ((calcMode == cmEim) && ((currentMenu == -MNU_CAT_EIM) || (currentMenu == -MNU_CHARS)))){
         bool cursorShown;
         bool rightEllipsis;
         while(1) {
@@ -1973,7 +1982,7 @@ void fnDynamicMenu(uint16_t unusedButMandatoryParameter) {
       case -MNU_ALPHAMATH:
       case -MNU_MyAlpha:
       case -MNU_ALPHADOT:
-      case -MNU_CURSOR: {
+      case -MNU_CURSOR:{
         return true;
       }
       default: {

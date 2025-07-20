@@ -749,7 +749,11 @@ void setUserKeyArgument(uint16_t position, const char *name) {
 
 void createMenu(const char *name) {
   if(validateName(name)) {
+  #if !defined(RELAX_NAMING_RULES)
     if(isUniqueName(name)) {
+  #else
+    if(isUniqueMenuName(name)) {
+  #endif // !RELAX_NAMING_RULES
       if(numberOfUserMenus == 0) {
         userMenus = allocWp43(sizeof(userMenu_t));
       }
