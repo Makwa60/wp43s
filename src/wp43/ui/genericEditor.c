@@ -21,6 +21,7 @@
 #include "fonts.h"
 #include "fractions.h"
 #include "items.h"
+#include "keyboard.h"
 #include "registers.h"
 #include "stack.h"
 #include "tam.h"
@@ -137,6 +138,8 @@ void shortIntegerToString(calcRegister_t regist, char *displayString) {
   return;
 }
 
+
+#if !defined(TESTSUITE_BUILD)
 static void _hmsTimeToReal() {
   int16_t i = 0;
   int16_t j = 0;
@@ -179,7 +182,7 @@ static void _hmsTimeToReal() {
   }
 }
 
-#if !defined(TESTSUITE_BUILD)
+
 static void _real34ToNim(const real34_t *real34, char *nimInput, char *nimDisplay) {
 // nimInput   : used to fill aimBuffer
 // nimDisplay : used to fill nimBufferDisplay
@@ -269,8 +272,9 @@ static void _real34ToNim(const real34_t *real34, char *nimInput, char *nimDispla
 
 void fnEdit (uint16_t unusedParamButMandatory) {
 #if !defined(TESTSUITE_BUILD)
-  int16_t  index;
+  int16_t index;
   uint8_t groupingGapOld;
+  char    varOrLblName[8];
 
   if(calcMode == cmNormal) {
     switch(getRegisterDataType(REGISTER_X)) {
@@ -502,21 +506,29 @@ void fnEdit (uint16_t unusedParamButMandatory) {
     }
   }
   else if(calcMode == cmPem) {
-    --currentLocalStepNumber;
     currentStep = findPreviousStep(currentStep);
-    int16_t func = currentStep[0];
-    uint8_t opParam  = currentStep[1];
-    uint8_t opParam2 = currentStep[2];
-    uint8_t opParam3 = currentStep[3];
+    if(currentLocalStepNumber > 1) {
+      --currentLocalStepNumber;
+    }
+    int16_t i = 0;
+    int16_t func = currentStep[i++];
     if(func & 0x80) {
       func &= 0x7f;
       func <<= 8;
-      func |= currentStep[1];
-      opParam  = currentStep[2];
-      opParam2 = currentStep[3];
-      opParam3 = currentStep[4];
+      func |= currentStep[i++];
+    }    
+    uint8_t opParam  = currentStep[i++];
+    uint8_t opParam2 = currentStep[i++];
+    uint8_t opParam3 = currentStep[i];
+    
+    if((opParam == STRING_LABEL_VARIABLE) || (opParam == INDIRECT_VARIABLE)) {
+      for(index = 0;  index < opParam2; index++) {
+        varOrLblName[index] = currentStep[i++];
+      }
+      varOrLblName[index] = 0;
     }
     //printf("**[DL]** fnEdit cmPem func %d opParam %d opParam2 %d\n",func,opParam,opParam2);fflush(stdout);
+    
     if((func == ITM_LITERAL || func == ITM_REM)) {
       memset(aimBuffer, 0, AIM_BUFFER_LENGTH);
 
@@ -667,6 +679,11 @@ void fnEdit (uint16_t unusedParamButMandatory) {
         case PARAM_NUMBER_8_16:          // Used only for "CNST"
         case PARAM_VARIABLE:
         case PARAM_SHUFFLE: {            // Used only for "<>"
+          if(currentLocalStepNumber == 1) {
+            pemCursorIsZerothStep = true;
+          }
+          deleteStepsFromTo(currentStep, findNextStep(currentStep));
+          if(pemCursorIsZerothStep) currentLocalStepNumber--;
           tamEnterMode(func);
 
           uint8_t maxDigits = tam.max < 10 ? 1 : (tam.max < 100 ? 2 : (tam.max < 1000 ? 3 : (tam.max < 10000 ? 4 : 5)));
@@ -676,6 +693,7 @@ void fnEdit (uint16_t unusedParamButMandatory) {
             tam.max = 99;
             maxDigits = 2;
             opParam = opParam2;
+            opParam2 = opParam3;
             popSoftmenu();
             showSoftmenu(-MNU_TAM);
             --numberOfTamMenusToPop;
@@ -714,7 +732,7 @@ void fnEdit (uint16_t unusedParamButMandatory) {
             tam.digitsSoFar = 0;
             tam.value = 0;
           }
-          else if(((paramMode == PARAM_DECLARE_LABEL) ||(paramMode == PARAM_LABEL)) && opParam >= 100) {    // Local label from A to E or Label name
+          else if(((paramMode == PARAM_DECLARE_LABEL) || (paramMode == PARAM_LABEL)) && opParam >= 100) {    // Local label from A to E or Label name
             tam.digitsSoFar = 0;
             tam.value = 0;
           }
@@ -740,9 +758,16 @@ void fnEdit (uint16_t unusedParamButMandatory) {
             tam.digitsSoFar =  maxDigits - 1;
             tam.value = opParam / 10;
           }
-          deleteStepsFromTo(currentStep, findNextStep(currentStep));
-          scrollPemBackwards();
           tamProcessInput(func);
+          scrollPemBackwards();
+          if(opParam == STRING_LABEL_VARIABLE) {      // Variable name : Label or  edit name string
+            tamProcessInput(ITM_alpha);
+            varOrLblName[6] = 0;  // Ensure name is 6 characters maximum
+            strcpy(aimBuffer, varOrLblName);
+            alphaCursor = strlen(varOrLblName);
+            tamProcessInput(ITM_NOP);
+          }
+
           break;
         }
 
