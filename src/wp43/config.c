@@ -955,8 +955,8 @@ void fnReset(uint16_t confirmation) {
       deadKey = 0;
     #endif // PC_BUILD || TESTSUITE_BUILD
 
-    // RNG initialisation
-    pcg32_srandom(0x1963073019931121ULL, 0x1995062319981019ULL);
+    // RNG initialisation with PCG32_INITIALIZER values
+    pcg32_srandom(0x853c49e6748fea9bULL, 0xda3e39cb94b95bdbULL);
 
     tamReset();
     catalog = CATALOG_NONE;
@@ -1032,7 +1032,7 @@ void fnReset(uint16_t confirmation) {
       //Check and update current power status (USB / LOWBAT)
       dmcpCheckPowerStatus();
     #endif // DMCP_BUILD
- 
+
     temporaryInformation = TI_RESET;
   }
 }
