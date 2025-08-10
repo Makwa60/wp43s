@@ -455,6 +455,7 @@ bool      _kbSeenInterrupt     = false;
               pemAlpha(item);
             }
             else {
+              printf("**[DL]** addStepInProgram keyboard_2\n");fflush(stdout);
               addStepInProgram(item);
             }
             hourGlassIconEnabled = false;
@@ -685,6 +686,7 @@ bool      _kbSeenInterrupt     = false;
             if(indexOfItems[item].func == fnGetSystemFlag && (tam.mode == tmFlagR || tam.mode == tmFlagW) && !tam.indirect) {
               tam.value = (indexOfItems[item].param & 0xff);
               tam.alpha = true;
+              printf("**[DL]** addStepInProgram item %d tamOperation %d\n",item,tamOperation());fflush(stdout);
               addStepInProgram(tamOperation());
               tamLeaveMode();
             }
@@ -693,6 +695,7 @@ bool      _kbSeenInterrupt     = false;
               uint16_t nameLength = stringByteLength(itmLabel);
               xcopy(aimBuffer, itmLabel, nameLength + 1);
               tam.alpha = true;
+              printf("**[DL]** addStepInProgram keyboard_1\n");fflush(stdout);
               addStepInProgram(tamOperation());
               tamLeaveMode();
             }
