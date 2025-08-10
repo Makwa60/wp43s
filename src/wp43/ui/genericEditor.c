@@ -49,18 +49,18 @@
   }
 #endif // !TESTSUITE_BUILD
 
-void fractionToString(calcRegister_t regist, char *displayString) {
-  int16_t  sign, lessEqualGreater;
+void fractionToString(calcRegister_t regist, char *displayString, int16_t *lessEqualGreater) {
+  int16_t  sign;
   uint64_t intPart, numer, denom;
 
-  fraction(regist, &sign, &intPart, &numer, &denom, &lessEqualGreater);
+  fraction(regist, &sign, &intPart, &numer, &denom, lessEqualGreater);
 
   if(getSystemFlag(FLAG_PROPFR)) { // a b/c
     sprintf(displayString, "%s%" PRIu64 " %" PRIu64 "/%" PRIu64, (sign == -1 ? "-" : "+"), intPart, numer, denom);
   }
 
   else { // FT_IMPROPER d/
-    sprintf(displayString, "%s%" PRIu64 "/%" PRIu64, (sign == -1 ? "-" : "+"), numer, denom);
+    sprintf(displayString, "%s0 %" PRIu64 "/%" PRIu64, (sign == -1 ? "-" : "+"), numer, denom);
 
   }
 }
@@ -346,42 +346,44 @@ void fnEdit (uint16_t unusedParamButMandatory) {
           real34FromDegToDms(REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X));
         }
 
+        uint16_t lessEqualGreater = 0;
         if (getSystemFlag(FLAG_FRACT)) {
           groupingGap = 0;
-          fractionToString(REGISTER_X, aimBuffer);
+          fractionToString(REGISTER_X, aimBuffer, (int16_t *)&lessEqualGreater);
           groupingGap = groupingGapOld;
-          nimNumberPart = NP_FRACTION_DENOMINATOR;
-          strcpy(nimBufferDisplay, STD_SPACE_HAIR);
 
-          if(getSystemFlag(FLAG_PROPFR)) {
+          if(lessEqualGreater == 0) {         // display fraction
+            nimNumberPart = NP_FRACTION_DENOMINATOR;
+            strcpy(nimBufferDisplay, STD_SPACE_HAIR);
             nimBufferToDisplayBuffer(aimBuffer, nimBufferDisplay + 2);
             strcat(nimBufferDisplay, STD_SPACE_4_PER_EM);
             for(index=2; aimBuffer[index]!=' '; index++) {
             }
-          }
-          else {
-            index = 0;
-          }
-          supNumberToDisplayString(stringToInt32(aimBuffer + index + 1), nimBufferDisplay + stringByteLength(nimBufferDisplay), NULL, true, STD_SPACE_PUNCTUATION);
+            supNumberToDisplayString(stringToInt32(aimBuffer + index + 1), nimBufferDisplay + stringByteLength(nimBufferDisplay), NULL, true, STD_SPACE_PUNCTUATION);
 
-          strcat(nimBufferDisplay, "/");
+            strcat(nimBufferDisplay, "/");
 
-          for(; aimBuffer[index]!='/'; index++) {
+            for(; aimBuffer[index]!='/'; index++) {
+            }
+            if(aimBuffer[++index] != 0) {
+              subNumberToDisplayString(stringToInt32(aimBuffer + index), nimBufferDisplay + stringByteLength(nimBufferDisplay), NULL);
+            }
           }
-          if(aimBuffer[++index] != 0) {
-            subNumberToDisplayString(stringToInt32(aimBuffer + index), nimBufferDisplay + stringByteLength(nimBufferDisplay), NULL);
+          else {    // display real34
+            _real34ToNim(REGISTER_REAL34_DATA(REGISTER_X), aimBuffer, nimBufferDisplay);
           }
         }
-        else {
+        else {      // display real34
           _real34ToNim(REGISTER_REAL34_DATA(REGISTER_X), aimBuffer, nimBufferDisplay);
         }
         //printf("**[DL]** dtReal34 aimBuffer %s nimBufferDisplay %s\n",aimBuffer,nimBufferDisplay);fflush(stdout);
 
-        clearSystemFlag(FLAG_ALPHA);
         calcMode = cmNim;
-        //printf("**[DL]** AngularMode %d\n",getRegisterAngularMode(REGISTER_X));fflush(stdout);
+        clearSystemFlag(FLAG_ALPHA);
+        freeRegisterData(REGISTER_X);
+        setRegisterDataPointer(REGISTER_X, allocWp43(REAL34_SIZE_IN_BYTES));
+        setRegisterDataType(REGISTER_X, dtReal34, amNone);
         real34Zero(REGISTER_REAL34_DATA(REGISTER_X));
-        //printf("**[DL]** AngularMode %d\n",getRegisterAngularMode(REGISTER_X));fflush(stdout);
         hexDigits = 0;
         clearRegisterLine(NIM_REGISTER_LINE, true, true);
         cursorShow(false, 1, Y_POSITION_OF_NIM_LINE);
