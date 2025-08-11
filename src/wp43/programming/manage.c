@@ -92,6 +92,7 @@
 //  freeProgramBytes = 1
 
 
+static void _pemCloseAngleInput(int item);
 
 bool isAtEndOfPrograms(const uint8_t *step) {
   return (step == NULL) || (*step == 255 && *(step + 1) == 255);
@@ -472,7 +473,7 @@ void fnPem(uint16_t unusedButMandatoryParameter) {
       showString("0000:" STD_SPACE_4_PER_EM, &standardFont, 1, Y_POSITION_OF_REGISTER_T_LINE, (pemCursorIsZerothStep && !tamIsActive() && aimBuffer[0] == 0) ? vmReverse : vmNormal, false, true);
       //sprintf(tmpString, "{ Prgm #%d: %" PRIu32 " bytes / %" PRIu16 " step%s }", currentProgramNumber, _getProgramSize(),
       //                                                                         numberOfSteps, numberOfSteps == 1 ? "" : "s");
-      sprintf(tmpString, "{Prgm #%" PRIu16 "/%" PRIu16 ": %" PRIu32 " bytes / %" PRIu16 " step%s}", 
+      sprintf(tmpString, "{Prgm #%" PRIu16 "/%" PRIu16 ": %" PRIu32 " bytes / %" PRIu16 " step%s}",
               currentProgramNumber, numberOfPrograms, _getProgramSize(), numberOfSteps, numberOfSteps == 1 ? "" : "s");
       showString(tmpString, &standardFont, 42, Y_POSITION_OF_REGISTER_T_LINE, vmNormal, false, false);
       firstLine = 1;
@@ -544,6 +545,13 @@ void fnPem(uint16_t unusedButMandatoryParameter) {
             *(tstr++) = STD_CURSOR[1];
             *(tstr++) = baseChars[lastIntegerBase * 2    ];
             *(tstr++) = baseChars[lastIntegerBase * 2 + 1];
+          }
+          else if(lastAngleSymbol > 0) {
+            tstr -= 2;                    // to overwrite angle symbol with cursor
+            *(tstr++) = STD_CURSOR[0];
+            *(tstr++) = STD_CURSOR[1];
+            *(tstr++) = angleChars[(lastAngleSymbol - 1) * 2    ];
+            *(tstr++) = angleChars[(lastAngleSymbol - 1) * 2 + 1];
           }
           else {
             *(tstr++) = STD_CURSOR[0];
@@ -851,6 +859,7 @@ void pemAddNumber(int16_t item, bool doInsertInProgram) {
     //printf("**[DL]** %d\n",item);fflush(stdout);
     if(aimBuffer[0] == 0) {
       lastIntegerBase = 0;
+      lastAngleSymbol = 0;
       tmpString[0] = ITM_LITERAL;
       tmpString[1] = STRING_LONG_INTEGER;
       tmpString[2] = 0;
@@ -950,6 +959,9 @@ void pemAddNumber(int16_t item, bool doInsertInProgram) {
             break;
           }
         }
+        if(lastAngleSymbol > 0) {
+          *(tmpPtr - 1) = STRING_ANGLE_RADIAN + lastAngleSymbol -1;  // [DL] force literal type when editing angles
+        }
         *tmpPtr++ = stringByteLength(numBuffer);
         xcopy(tmpPtr, numBuffer, stringByteLength(numBuffer));
         if(doInsertInProgram) {
@@ -975,6 +987,18 @@ void pemAddNumber(int16_t item, bool doInsertInProgram) {
 void pemCloseNumberInput(void) {
   #if !defined(TESTSUITE_BUILD)
     //printf("**[DL]** pemCloseNumberInput aimBuffer %s nimNumberPart %d\n",aimBuffer,nimNumberPart);fflush(stdout);
+    if(lastAngleSymbol > 0) {  // For EDIT: close number input with the right angle type
+      switch(STRING_ANGLE_RADIAN + lastAngleSymbol -1) {
+        case STRING_ANGLE_RADIAN : _pemCloseAngleInput(ITM_toRAD);   break;
+        case STRING_ANGLE_GRAD   : _pemCloseAngleInput(ITM_toGRAD);  break;
+        case STRING_ANGLE_DEGREE : _pemCloseAngleInput(ITM_toDEG);   break;
+        //case STRING_ANGLE_DMS  : _pemCloseAngleInput(ITM_toDMS);   break;
+        case STRING_ANGLE_MULTPI : _pemCloseAngleInput(ITM_toMULpi); break;
+        case STRING_ANGLE_MIL    : _pemCloseAngleInput(ITM_toMIL); break;
+        default:     ;
+      }
+      return;
+    }
     deleteStepsFromTo(currentStep, findNextStep(currentStep));
     if(aimBuffer[0] != 0) {
       char *numBuffer = aimBuffer[0] == '+' ? aimBuffer + 1 : aimBuffer;
@@ -1174,22 +1198,37 @@ static void _pemCloseDateInput(void) {
 
 
 
-static void _pemCloseDmsInput(void) {
+static void _pemCloseAngleInput(int item) {
   #if !defined(TESTSUITE_BUILD)
     switch(nimNumberPart) {
       case NP_INT_10:
-      case NP_REAL_FLOAT_PART: {
+      case NP_REAL_FLOAT_PART:
+      case NP_REAL_EXPONENT: {
         deleteStepsFromTo(currentStep, findNextStep(currentStep));
         if(aimBuffer[0] != 0) {
           char *numBuffer = aimBuffer[0] == '+' ? aimBuffer + 1 : aimBuffer;
           char *tmpPtr = tmpString;
           *(tmpPtr++) = ITM_LITERAL;
-          *(tmpPtr++) = STRING_ANGLE_DMS;
+          static const int angle_ids[] = {
+            [ITM_toDEG]   = STRING_ANGLE_DEGREE,
+            [ITM_toDMS]   = STRING_ANGLE_DMS,
+            [ITM_toGRAD]  = STRING_ANGLE_GRAD,
+            [ITM_toMULpi] = STRING_ANGLE_MULTPI,
+            [ITM_toRAD]   = STRING_ANGLE_RADIAN,
+            [ITM_toMIL]   = STRING_ANGLE_MIL
+          };
+          int id = -1;
+          if (item >= 0 && item < (int)(sizeof(angle_ids)/sizeof(angle_ids[0]))) {
+              id = angle_ids[item];
+          }
+          if (id != -1) {
+              *(tmpPtr++) = id;
+          }
           *(tmpPtr++) = stringByteLength(numBuffer);
           xcopy(tmpPtr, numBuffer, stringByteLength(numBuffer));
           _insertInProgram((uint8_t *)tmpString, stringByteLength(numBuffer) + (int32_t)(tmpPtr - tmpString));
         }
-
+        lastAngleSymbol = 0;
         aimBuffer[0] = '!';
         break;
       }
@@ -1241,11 +1280,23 @@ void insertStepInProgram(int16_t func) {
     aimBuffer[0] = 0;
     return;
   }
-  else if(func == ITM_DMS && aimBuffer[0] != 0 && !getSystemFlag(FLAG_ALPHA) && (nimNumberPart == NP_INT_10 || nimNumberPart == NP_REAL_FLOAT_PART)) {
-    _pemCloseDmsInput();
+  else if((func == ITM_DMS || func == ITM_toDMS ) && 
+          aimBuffer[0] != 0 && !getSystemFlag(FLAG_ALPHA) && (nimNumberPart == NP_INT_10 || nimNumberPart == NP_REAL_FLOAT_PART)) {
+    _pemCloseAngleInput(func);
     aimBuffer[0] = 0;
     return;
   }
+  else if((func == ITM_toDEG || func == ITM_toGRAD || func == ITM_toRAD || func == ITM_toMULpi || func == ITM_toMIL) &&
+          aimBuffer[0] != 0 && !getSystemFlag(FLAG_ALPHA) && (nimNumberPart == NP_INT_10 || nimNumberPart == NP_REAL_FLOAT_PART /*|| nimNumberPart == NP_REAL_EXPONENT*/)) {
+    _pemCloseAngleInput(func);
+    aimBuffer[0] = 0;
+    return;
+  }
+  else if ((func == ITM_dotD) && lastAngleSymbol != 0 && aimBuffer[0] != 0 && !getSystemFlag(FLAG_ALPHA)) {
+    lastAngleSymbol = 0;
+    pemCloseNumberInput();
+    aimBuffer[0] = '!';
+  } 
   if(!tamIsActive() && !tam.alpha && aimBuffer[0] != 0 && func != ITM_toHMS && func != ITM_EXIT) {
     if(func == ITM_dotD) {
       _pemCloseDateInput();

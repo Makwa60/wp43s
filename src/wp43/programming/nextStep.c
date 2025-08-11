@@ -230,7 +230,13 @@ uint8_t *countLiteralBytes(uint8_t *step) {
     case STRING_COMPLEX34:
     case STRING_DATE:
     case STRING_TIME:
-    case STRING_ANGLE_DMS: {
+    case STRING_ANGLE_DMS:
+    case STRING_ANGLE_RADIAN:
+    case STRING_ANGLE_GRAD:
+    case STRING_ANGLE_DEGREE:
+    case STRING_ANGLE_MULTPI:
+    case STRING_ANGLE_MIL:
+    {
       return step + *step + 1;
     }
 

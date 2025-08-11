@@ -966,6 +966,7 @@ void fnReset(uint16_t confirmation) {
     exponentHideLimit = 0;
     lastIntegerBase = 0;
     decodedIntegerBase = 0;
+    lastAngleSymbol = 0;
     lastDenominator = 4;
 
     currentInputVariable = INVALID_VARIABLE;

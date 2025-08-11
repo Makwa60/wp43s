@@ -112,6 +112,7 @@ uint8_t                currentKeyCode;
 uint8_t                keyStateCode;
 uint8_t                entryStatus;
 uint8_t                screenUpdatingMode;
+uint8_t                lastAngleSymbol;
 uint8_t               *beginOfProgramMemory;
 uint8_t               *firstFreeProgramByte;
 uint8_t               *beginOfNewlyLoadedProgramMemory;

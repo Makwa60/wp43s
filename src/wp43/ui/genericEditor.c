@@ -382,7 +382,7 @@ void fnEdit (uint16_t unusedParamButMandatory) {
         clearSystemFlag(FLAG_ALPHA);
         freeRegisterData(REGISTER_X);
         setRegisterDataPointer(REGISTER_X, allocWp43(REAL34_SIZE_IN_BYTES));
-        setRegisterDataType(REGISTER_X, dtReal34, amNone);
+        setRegisterDataType(REGISTER_X, dtReal34, xangularMode);
         real34Zero(REGISTER_REAL34_DATA(REGISTER_X));
         hexDigits = 0;
         clearRegisterLine(NIM_REGISTER_LINE, true, true);
@@ -550,7 +550,9 @@ void fnEdit (uint16_t unusedParamButMandatory) {
       else if((opParam == BINARY_SHORT_INTEGER) || (opParam == STRING_SHORT_INTEGER) || (opParam == STRING_LONG_INTEGER) ||
               (opParam == BINARY_REAL34)        || (opParam == STRING_REAL34)        ||
               (opParam == BINARY_COMPLEX34)     || (opParam == STRING_COMPLEX34)     ||
-              (opParam == STRING_DATE)          || (opParam == STRING_TIME)          || (opParam == STRING_ANGLE_DMS))    {
+              (opParam == STRING_DATE)          || (opParam == STRING_TIME)          || 
+              (opParam == STRING_ANGLE_DMS)     || (opParam == STRING_ANGLE_RADIAN)  || (opParam == STRING_ANGLE_GRAD)   ||
+              (opParam == STRING_ANGLE_DEGREE)  || (opParam == STRING_ANGLE_MULTPI)  || (opParam == STRING_ANGLE_MIL)) {
         char *tempBuffer = errorMessage + 1500;
         bool chsNeeded = false;
         bool isDate = (opParam == STRING_DATE ? true : false);
@@ -652,7 +654,7 @@ void fnEdit (uint16_t unusedParamButMandatory) {
                 chsNeeded = false;
                 pemAddNumber(ITM_EXPONENT, false);
               }
-              else if(tempBuffer[i] == STD_DEGREE[1]) {
+              else if((tempBuffer[i] == STD_DEGREE[1]) && (opParam == STRING_ANGLE_DMS)) {
                 pemAddNumber(ITM_PERIOD, false);
               }
               break;
@@ -661,7 +663,7 @@ void fnEdit (uint16_t unusedParamButMandatory) {
               if((tempBuffer[i] >= STD_SUP_0[1]) && (tempBuffer[i] <= STD_SUP_9[1])) {
                 pemAddNumber(ITM_0 + tempBuffer[i] - STD_SUP_0[1], false);
               }
-              else if(tempBuffer[i] == STD_SUP_MINUS[1]) {
+              else if((tempBuffer[i] == STD_SUP_MINUS[1]) && (tempBuffer[i+1] != 0)) {
                 chsNeeded = true;
               }
               else if(tempBuffer[i] == STD_IMAGINARY_i[1]) {
@@ -696,6 +698,13 @@ void fnEdit (uint16_t unusedParamButMandatory) {
           lastIntegerBase = (opParam == BINARY_SHORT_INTEGER ? opParam2: opParam == STRING_SHORT_INTEGER ? opParam2: 0);
         }
         if(chsNeeded) pemAddNumber(ITM_CHS, false);
+        if((opParam == STRING_ANGLE_RADIAN) || (opParam == STRING_ANGLE_GRAD) || (opParam == STRING_ANGLE_DEGREE) || 
+           (opParam == STRING_ANGLE_MULTPI) || (opParam == STRING_ANGLE_MIL)) {
+          lastAngleSymbol = opParam - STRING_ANGLE_RADIAN + 1;
+        }
+        else {
+          lastAngleSymbol = 0;
+        }
         pemAddNumber(ITM_NOP, true);    // to insert the resulting number in program
         //printf("**[DL]** fnEdit aimBuffer %s\n",aimBuffer);fflush(stdout);
       }

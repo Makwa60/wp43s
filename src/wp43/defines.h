@@ -657,11 +657,12 @@
   //#define BINARY_ANGLE_DEGREE                       15
   //#define BINARY_ANGLE_DMS                          16
   //#define BINARY_ANGLE_MULTPI                       17
-  //#define STRING_ANGLE_RADIAN                       18
-  //#define STRING_ANGLE_GRAD                         19
-  //#define STRING_ANGLE_DEGREE                       20
+  #define STRING_ANGLE_RADIAN                       18
+  #define STRING_ANGLE_GRAD                         19
+  #define STRING_ANGLE_DEGREE                       20
   #define STRING_ANGLE_DMS                          21
-  //#define STRING_ANGLE_MULTPI                       22
+  #define STRING_ANGLE_MULTPI                       22
+  #define STRING_ANGLE_MIL                          23
 
   // OP parameter special values
   #define CNST_BEYOND_250                          250
