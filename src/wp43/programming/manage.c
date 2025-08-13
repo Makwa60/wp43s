@@ -1292,7 +1292,7 @@ void insertStepInProgram(int16_t func) {
     aimBuffer[0] = 0;
     return;
   }
-  else if ((func == ITM_dotD) && lastAngleSymbol != 0 && aimBuffer[0] != 0 && !getSystemFlag(FLAG_ALPHA)) {
+  else if ((func == ITM_dotD) && lastAngleSymbol != 0 && aimBuffer[0] != 0 && !getSystemFlag(FLAG_ALPHA)) {  // cancel angle type and close number input
     lastAngleSymbol = 0;
     pemCloseNumberInput();
     aimBuffer[0] = '!';
