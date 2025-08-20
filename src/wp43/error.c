@@ -40,7 +40,7 @@ TO_QSPI const char *errorMessages[NUMBER_OF_ERROR_CODES] = {
 /* 11 */  "RAM does not suffice",
 /* 12 */  "Stack clash",
 /* 13 */  "Operation is undefined in this mode",
-/* 14 */  "Word size is too small",
+/* 14 */  "Word size is too small to take this",
 /* 15 */  "Too few data points for this statistic",
 /* 16 */  "Distribution parameter out of valid range",
 /* 17 */  "I/O error",
