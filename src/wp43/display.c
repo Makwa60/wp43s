@@ -1418,7 +1418,7 @@ void shortIntegerToDisplayString(calcRegister_t regist, char *displayString, boo
 
     errorMoreInfo("the integer data representation is too wide (1)!\n%s", displayString);
 
-    strcpy(displayString, "Integer data representation to wide!");
+    strcpy(displayString, "Integer data representation too wide!");
   }
 
   else { // the font is already determined (standard font)
@@ -1472,7 +1472,7 @@ void shortIntegerToDisplayString(calcRegister_t regist, char *displayString, boo
 
     errorMoreInfo("the integer data representation is too wide (2)!\n%s", displayString);
 
-    strcpy(displayString, "Integer data representation to wide!");
+    strcpy(displayString, "Integer data representation too wide!");
   }
 }
 
