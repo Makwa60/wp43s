@@ -23,9 +23,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="8.2727241"
-     inkscape:cx="235.69894"
-     inkscape:cy="253.32969"
+     inkscape:zoom="2.9247185"
+     inkscape:cx="198.4252"
+     inkscape:cy="348.65089"
      inkscape:document-units="mm"
      inkscape:current-layer="layer2"
      showgrid="false"
@@ -54,14 +54,15 @@
      inkscape:groupmode="layer"
      id="layer2"
      inkscape:label="Background"
-     style="display:inline">
+     style="display:inline"
+     sodipodi:insensitive="true">
     <rect
        style="opacity:1;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:2.76995993;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect886"
        width="104.9467"
        height="147.99336"
-       x="9.8886604"
-       y="6.9765062" />
+       x="0.11848928"
+       y="0.4630588" />
   </g>
   <g
      inkscape:groupmode="layer"
@@ -81,7 +82,8 @@
      inkscape:groupmode="layer"
      id="layer1"
      transform="translate(0,-149)"
-     style="display:inline">
+     style="display:inline"
+     sodipodi:insensitive="true">
     <g
        aria-label="www.wp43.com"
        id="text1426"
@@ -1069,7 +1071,8 @@
      inkscape:groupmode="layer"
      id="layer4"
      inkscape:label="Correction"
-     style="display:inline">
+     style="display:inline"
+     sodipodi:insensitive="true">
     <path
        inkscape:connector-curvature="0"
        d="m 26.603385,22.50065 c 0.05626,-0.0329 0.121981,-0.0839 0.146033,-0.11323 0.115678,-0.14082 0.160718,-0.46631 0.08639,-0.62316 -0.04638,-0.0978 -0.165216,-0.21939 -0.237988,-0.24359 -0.05476,-0.0182 -0.05347,-0.022 0.03571,-0.1084 0.203564,-0.19694 0.212951,-0.49321 0.02224,-0.69882 -0.134522,-0.14494 -0.207505,-0.16178 -0.710657,-0.16416 l -0.453803,-0.003 v 1.01677 1.01682 l 0.504938,-0.009 c 0.45553,-0.008 0.514954,-0.0159 0.607219,-0.07 z m -0.86502,-0.16919 c -0.0089,-0.009 -0.01706,-0.16881 -0.01706,-0.35217 v -0.33338 h 0.320407 c 0.460836,0 0.574428,0.068 0.574428,0.3439 0,0.19565 -0.08908,0.29649 -0.294012,0.33287 -0.175243,0.0312 -0.558287,0.0368 -0.583785,0.008 z m -0.01167,-1.24198 0.008,-0.30287 0.166174,-0.008 c 0.09138,-0.005 0.240124,-6e-4 0.330473,0.009 0.212392,0.0245 0.308716,0.11635 0.308716,0.29475 0,0.2531 -0.09656,0.31021 -0.52417,0.31021 H 25.72019 Z"
