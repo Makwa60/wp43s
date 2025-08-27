@@ -30,7 +30,7 @@
 #include "wp43.h"
 
 /******************************************************
- * This functions are borrowed from the WP34S project
+ * These functions are borrowed from the WP34S project
  ******************************************************/
 
 // Have to be careful here to ensure that every function we call can handle
@@ -83,7 +83,8 @@ void WP34S_Cvt2RadSinCosTan(const real_t *an, angularMode_t angularMode, real_t 
 
     case amGrad: {
       WP34S_Mod(&angle, const_400,     &angle, realContext); // mod(angle, 400g) --> angle
-      break;
+      angularMode = amGrad;
+   break;
     }
 
     case amDegree:
