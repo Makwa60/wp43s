@@ -1699,7 +1699,7 @@
 
           screenUpdatingMode &= ~SCRUPD_SKIP_STACK_ONE_TIME;
           closeNim();
-          if(calcMode != cmNim && lastErrorCode == 0) {
+          if(calcMode != cmNim && lastErrorCode == 0 && getRegisterDataType(REGISTER_X) != dtDate) {
             convertReal34RegisterToDateRegister(REGISTER_X, REGISTER_X);
             checkDateRange(REGISTER_REAL34_DATA(REGISTER_X));
 
@@ -1729,7 +1729,7 @@
 
           screenUpdatingMode &= ~SCRUPD_SKIP_STACK_ONE_TIME;
           closeNim();
-          if(calcMode != cmNim && lastErrorCode == 0) {
+          if(calcMode != cmNim && lastErrorCode == 0 && getRegisterDataType(REGISTER_X) != dtTime) {
             if(getRegisterDataType(REGISTER_X) == dtLongInteger) {
               convertLongIntegerRegisterToReal34Register(REGISTER_X, REGISTER_X);
             }
@@ -2371,20 +2371,66 @@
             longIntegerFree(value);
           }
           else if(nimNumberPart == NP_REAL_FLOAT_PART || nimNumberPart == NP_REAL_EXPONENT) {
-            angularMode_t xangularMode;
-            xangularMode = ((getRegisterDataType(REGISTER_X) == dtReal34) == dtReal34 ? getRegisterAngularMode(REGISTER_X) : amNone);
 
-            reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, xangularMode);
-            stringToReal34(aimBuffer, REGISTER_REAL34_DATA(REGISTER_X));
-            if(xangularMode ==  amMultPi) {
-              real_t multPi;
+            uint16_t dataType = getRegisterDataType(REGISTER_X);
+            if(dataType == dtTime) {
+              reallocateRegister(REGISTER_X, dtReal34, 0, amNone);
+              stringToReal34(aimBuffer, REGISTER_REAL34_DATA(REGISTER_X));
 
-              real34ToReal(REGISTER_REAL34_DATA(REGISTER_X), &multPi);
-              realMultiply(&multPi, const_pi, &multPi, &ctxtReal39);
-              realToReal34(&multPi, REGISTER_REAL34_DATA(REGISTER_X));
+              if(calcMode != cmNim && lastErrorCode == 0) {
+                if(getRegisterDataType(REGISTER_X) == dtLongInteger) {
+                  convertLongIntegerRegisterToReal34Register(REGISTER_X, REGISTER_X);
+                }
+
+                hmmssInRegisterToSeconds(REGISTER_X);
+                if(lastErrorCode == 0) {
+                  setSystemFlag(FLAG_ASLIFT);
+                }
+                else {
+                  #if defined(DEBUGUNDO)
+                    printf(">>> undo from addItemToNimBufferC\n");
+                  #endif // DEBUGUNDO
+                  undo();
+                }
+              }
             }
-            else if(xangularMode == amDMS) {
-              real34FromDmsToDeg(REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X));
+            else if(dataType == dtDate) {
+              reallocateRegister(REGISTER_X, dtReal34, 0, amNone);
+              stringToReal34(aimBuffer, REGISTER_REAL34_DATA(REGISTER_X));
+
+              if(calcMode != cmNim && lastErrorCode == 0) {
+                convertReal34RegisterToDateRegister(REGISTER_X, REGISTER_X);
+                checkDateRange(REGISTER_REAL34_DATA(REGISTER_X));
+                temporaryInformation = TI_DAY_OF_WEEK;
+
+                if(lastErrorCode == 0) {
+                  setSystemFlag(FLAG_ASLIFT);
+                }
+                else {
+                  #if defined(DEBUGUNDO)
+                    printf(">>> undo from addItemToNimBufferB\n");
+                  #endif // DEBUGUNDO
+                  undo();
+                }
+                //return;
+              }
+            }
+            else {
+              angularMode_t xangularMode;
+              xangularMode = ((getRegisterDataType(REGISTER_X) == dtReal34) == dtReal34 ? getRegisterAngularMode(REGISTER_X) : amNone);
+
+              reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, xangularMode);
+              stringToReal34(aimBuffer, REGISTER_REAL34_DATA(REGISTER_X));
+              if(xangularMode ==  amMultPi) {
+                real_t multPi;
+
+                real34ToReal(REGISTER_REAL34_DATA(REGISTER_X), &multPi);
+                realMultiply(&multPi, const_pi, &multPi, &ctxtReal39);
+                realToReal34(&multPi, REGISTER_REAL34_DATA(REGISTER_X));
+              }
+              else if(xangularMode == amDMS) {
+                real34FromDmsToDeg(REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X));
+              }
             }
           }
           else if(nimNumberPart == NP_FRACTION_DENOMINATOR) {

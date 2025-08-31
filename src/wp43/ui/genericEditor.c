@@ -380,9 +380,15 @@ void fnEdit (uint16_t unusedParamButMandatory) {
 
         calcMode = cmNim;
         clearSystemFlag(FLAG_ALPHA);
+        uint16_t dataType = getRegisterDataType(REGISTER_X);
         freeRegisterData(REGISTER_X);
         setRegisterDataPointer(REGISTER_X, allocWp43(REAL34_SIZE_IN_BYTES));
-        setRegisterDataType(REGISTER_X, dtReal34, xangularMode);
+        if((dataType == dtTime) || (dataType == dtDate)) {
+          setRegisterDataType(REGISTER_X, dataType, xangularMode);   // Keep time and date datatypes
+        }
+        else {
+          setRegisterDataType(REGISTER_X, dtReal34, xangularMode);
+        }
         real34Zero(REGISTER_REAL34_DATA(REGISTER_X));
         hexDigits = 0;
         clearRegisterLine(NIM_REGISTER_LINE, true, true);
@@ -445,12 +451,14 @@ void fnEdit (uint16_t unusedParamButMandatory) {
 
       case dtTime: {
         _hmsTimeToReal();
+        setRegisterDataType(REGISTER_X, dtTime, amNone);  // Force time data type to preserve it when closing NIM
         goto edit_dtReal34;
         break;
       }
 
       case dtDate: {
         convertDateRegisterToReal34Register(REGISTER_X, REGISTER_X);
+        setRegisterDataType(REGISTER_X, dtDate, amNone);  // Force date data type to preserve it when closing NIM
         goto edit_dtReal34;
         break;
       }
@@ -550,7 +558,7 @@ void fnEdit (uint16_t unusedParamButMandatory) {
       else if((opParam == BINARY_SHORT_INTEGER) || (opParam == STRING_SHORT_INTEGER) || (opParam == STRING_LONG_INTEGER) ||
               (opParam == BINARY_REAL34)        || (opParam == STRING_REAL34)        ||
               (opParam == BINARY_COMPLEX34)     || (opParam == STRING_COMPLEX34)     ||
-              (opParam == STRING_DATE)          || (opParam == STRING_TIME)          || 
+              (opParam == STRING_DATE)          || (opParam == STRING_TIME)          ||
               (opParam == STRING_ANGLE_DMS)     || (opParam == STRING_ANGLE_RADIAN)  || (opParam == STRING_ANGLE_GRAD)   ||
               (opParam == STRING_ANGLE_DEGREE)  || (opParam == STRING_ANGLE_MULTPI)  || (opParam == STRING_ANGLE_MIL)) {
         char *tempBuffer = errorMessage + 1500;
@@ -698,12 +706,20 @@ void fnEdit (uint16_t unusedParamButMandatory) {
           lastIntegerBase = (opParam == BINARY_SHORT_INTEGER ? opParam2: opParam == STRING_SHORT_INTEGER ? opParam2: 0);
         }
         if(chsNeeded) pemAddNumber(ITM_CHS, false);
-        if((opParam == STRING_ANGLE_RADIAN) || (opParam == STRING_ANGLE_GRAD) || (opParam == STRING_ANGLE_DEGREE) || 
-           (opParam == STRING_ANGLE_MULTPI) || (opParam == STRING_ANGLE_MIL)) {
-          lastAngleSymbol = opParam - STRING_ANGLE_RADIAN + 1;
-        }
-        else {
-          lastAngleSymbol = 0;
+        switch (opParam) {
+          case STRING_DATE:
+          case STRING_TIME:
+          case STRING_ANGLE_RADIAN:
+          case STRING_ANGLE_GRAD:
+          case STRING_ANGLE_DEGREE:
+          case STRING_ANGLE_DMS:
+          case STRING_ANGLE_MULTPI:
+          case STRING_ANGLE_MIL: {
+            editingLiteralType = opParam;
+            break;
+          }
+          default:
+            editingLiteralType = 0;
         }
         pemAddNumber(ITM_NOP, true);    // to insert the resulting number in program
         //printf("**[DL]** fnEdit aimBuffer %s\n",aimBuffer);fflush(stdout);

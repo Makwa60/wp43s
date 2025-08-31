@@ -987,20 +987,31 @@ void fnNop(uint16_t unusedButMandatoryParameter) {
 #define STD_liq_  STD_SUB_l STD_SUB_i STD_SUB_q                        // For US liquid units
 #define STD_dry_  STD_SUB_d STD_SUB_r STD_SUB_y                        // For US dry units
 #define STD_LITRE STD_SCRIPT_SMALL_L                                   // For litre units
+
+#ifdef ENTER_AIM_NO_SLIFT
+ #define SLS_ENTER     SLS_UNCHANGED
+#else
+ #define SLS_ENTER     SLS_DISABLED
+#endif   // ENTER_AIM_NO_SLIFT
+
+#ifdef ENTRY_RPN
+ #define CAT_XSFL      CAT_SYFL
+#else
+ #define CAT_XSFL      CAT_NONE
+#endif   // ENTRY_RPN
+
 #ifdef XPB
  #define CAT_XFNT      CAT_FNCT
  #define DEF_QUART_US  " qt" STD_US
  #define DEF_PINT_US   " pt" STD_US
  #define DEF_TSPI      "tsp" STD_SUB_I
  #define DEF_TBSPI     "tbsp" STD_SUB_I
- #define SLS_ENTER     SLS_UNCHANGED
 #else
  #define CAT_XFNT      CAT_NONE
  #define DEF_QUART_US  "quart"
  #define DEF_PINT_US   "pint" STD_US
  #define DEF_TSPI      " tea"
  #define DEF_TBSPI     "table"
- #define SLS_ENTER     SLS_DISABLED
 #endif   // XPB
 
 TO_QSPI const item_t indexOfItems[] = {
@@ -1551,9 +1562,9 @@ TO_QSPI const item_t indexOfItems[] = {
 #else // USE_REAL34_FUNCTIONS == 1
 /*  506 */  { itemToBeCoded,                NOPARAM,                     "0506",                                        "0506",                                        (0 << TAM_MAX_BITS) |     0, CAT_FREE | SLS_ENABLED   | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
 #endif // USE_REAL34_FUNCTIONS == 1
-/*  507 */  { itemToBeCoded,                NOPARAM,                     "0507",                                        "0507",                                        (0 << TAM_MAX_BITS) |     0, CAT_FREE | SLS_ENABLED   | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
-/*  508 */  { itemToBeCoded,                NOPARAM,                     "0508",                                        "0508",                                        (0 << TAM_MAX_BITS) |     0, CAT_FREE | SLS_ENABLED   | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
-/*  509 */  { itemToBeCoded,                NOPARAM,                     "0509",                                        "0509",                                        (0 << TAM_MAX_BITS) |     0, CAT_FREE | SLS_ENABLED   | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
+/*  507 */  { itemToBeCoded,                FLAG_VIEW,                   "0507",                                        "0507",                                        (0 << TAM_MAX_BITS) |     0, CAT_FREE | SLS_ENABLED   | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
+/*  508 */  { itemToBeCoded,                FLAG_AVIEW_PROMPT,           "0508",                                        "0508",                                        (0 << TAM_MAX_BITS) |     0, CAT_FREE | SLS_ENABLED   | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
+/*  509 */  { fnGetSystemFlag,              FLAG_ERPN,                   "eRPN",                                        "eRPN",                                        (0 << TAM_MAX_BITS) |     0, CAT_XSFL | SLS_ENABLED   | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
 /*  510 */  { itemToBeCoded,                NOPARAM,                     "0510",                                        "0510",                                        (0 << TAM_MAX_BITS) |     0, CAT_FREE | SLS_ENABLED   | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
 /*  511 */  { itemToBeCoded,                NOPARAM,                     "0511",                                        "0511",                                        (0 << TAM_MAX_BITS) |     0, CAT_FREE | SLS_ENABLED   | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
 /*  512 */  { itemToBeCoded,                NOPARAM,                     "0512",                                        "0512",                                        (0 << TAM_MAX_BITS) |     0, CAT_FREE | SLS_ENABLED   | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
