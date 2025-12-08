@@ -11,6 +11,7 @@
   #include <stdint.h>
   
   extern const char           baseChars[];
+  extern const char           angleChars[];
 
   void decodeOneStep          (uint8_t *step);
   #if !defined(DMCP_BUILD)

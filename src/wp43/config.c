@@ -904,6 +904,10 @@ void fnReset(uint16_t confirmation) {
     #if !defined(XPB)
       setSystemFlag(FLAG_SSIZE8);
     #endif // Not XPB
+    #if defined(ENTRY_RPN)
+      setSystemFlag(FLAG_ERPN);
+    #endif // Not ENTRY_RPN
+    
 
     hourGlassIconEnabled = false;
     watchIconEnabled = false;
@@ -966,6 +970,7 @@ void fnReset(uint16_t confirmation) {
     exponentHideLimit = 0;
     lastIntegerBase = 0;
     decodedIntegerBase = 0;
+    editingLiteralType  = 0;
     lastDenominator = 4;
 
     currentInputVariable = INVALID_VARIABLE;

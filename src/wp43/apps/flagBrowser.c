@@ -275,6 +275,9 @@ flagScreen_t flagScreen;
     oneSystemFlag(FLAG_DENFIX,   "DENFIX",  &line, &firstFlag);
     oneSystemFlag(FLAG_DMY,      "DMY",     &line, &firstFlag);
     oneSystemFlag(FLAG_ENDPMT,   "ENDPMT",  &line, &firstFlag);
+    #ifdef ENTRY_RPN
+      oneSystemFlag(FLAG_ERPN,     "eRPN",    &line, &firstFlag);
+    #endif   // ENTRY_RPN
     #if USE_REAL34_FUNCTIONS == 1
       oneSystemFlag(FLAG_FASTFN,   "FASTFN",  &line, &firstFlag);
     #endif // USE_REAL34_FUNCTIONS == 1

@@ -686,7 +686,32 @@ void fnStopProgram(uint16_t unusedButMandatoryParameter) {
         break;
       }
 
-      case STRING_ANGLE_DMS: {
+      case STRING_ANGLE_DMS:
+      case STRING_ANGLE_RADIAN:
+      case STRING_ANGLE_GRAD:
+      case STRING_ANGLE_DEGREE:
+      case STRING_ANGLE_MULTPI:
+      case STRING_ANGLE_MIL: {
+        _getStringLabelOrVariableName(literalAddress);
+        liftStack();
+        setSystemFlag(FLAG_ASLIFT);
+        reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, amNone);
+        stringToReal34(tmpStringLabelOrVariableName, REGISTER_REAL34_DATA(REGISTER_X));
+        int tmpAngle;
+        switch(*(literalAddress - 1)) {
+          case STRING_ANGLE_DMS:    tmpAngle = amDMS;    break;
+          case STRING_ANGLE_RADIAN: tmpAngle = amRadian; break;
+          case STRING_ANGLE_GRAD:   tmpAngle = amGrad;   break;
+          case STRING_ANGLE_DEGREE: tmpAngle = amDegree; break;
+          case STRING_ANGLE_MULTPI: tmpAngle = amMultPi; break;
+          default: tmpAngle = amNone; break;
+        }
+        setRegisterAngularMode(REGISTER_X, tmpAngle);
+        break;
+      }
+
+
+/*      case STRING_ANGLE_DMS: {
         _getStringLabelOrVariableName(literalAddress);
         liftStack();
         setSystemFlag(FLAG_ASLIFT);
@@ -694,7 +719,7 @@ void fnStopProgram(uint16_t unusedButMandatoryParameter) {
         stringToReal34(tmpStringLabelOrVariableName, REGISTER_REAL34_DATA(REGISTER_X));
         real34FromDmsToDeg(REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X));
         break;
-      }
+      } */
 
       default: {
         #if !defined(DMCP_BUILD)

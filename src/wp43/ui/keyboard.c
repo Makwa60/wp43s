@@ -455,6 +455,7 @@ bool      _kbSeenInterrupt     = false;
               pemAlpha(item);
             }
             else {
+              printf("**[DL]** addStepInProgram keyboard_2\n");fflush(stdout);
               addStepInProgram(item);
             }
             hourGlassIconEnabled = false;
@@ -685,6 +686,7 @@ bool      _kbSeenInterrupt     = false;
             if(indexOfItems[item].func == fnGetSystemFlag && (tam.mode == tmFlagR || tam.mode == tmFlagW) && !tam.indirect) {
               tam.value = (indexOfItems[item].param & 0xff);
               tam.alpha = true;
+              printf("**[DL]** addStepInProgram item %d tamOperation %d\n",item,tamOperation());fflush(stdout);
               addStepInProgram(tamOperation());
               tamLeaveMode();
             }
@@ -693,6 +695,7 @@ bool      _kbSeenInterrupt     = false;
               uint16_t nameLength = stringByteLength(itmLabel);
               xcopy(aimBuffer, itmLabel, nameLength + 1);
               tam.alpha = true;
+              printf("**[DL]** addStepInProgram keyboard_1\n");fflush(stdout);
               addStepInProgram(tamOperation());
               tamLeaveMode();
             }
@@ -978,7 +981,6 @@ bool      _kbSeenInterrupt     = false;
     btnPressed(keyCode);
     btnReleased(keyCode);
   }
-
 
 
   void btnPressed(keyCode_t keyCode) {
@@ -1726,26 +1728,41 @@ void fnKeyEnter(uint16_t unusedButMandatoryParameter) {
   #if !defined(TESTSUITE_BUILD)
     switch(calcMode) {
       case cmNormal: {
-        setSystemFlag(FLAG_ASLIFT);
-        #if defined(DEBUGUNDO)
-          printf(">>> saveForUndo from fnKeyEnterA\n");
-        #endif // DEBUGUNDO
-        saveForUndo();
-        if(lastErrorCode == ERROR_RAM_FULL) {
-          goto undo_disabled;
-        }
+       #ifdef ENTRY_RPN
+        if(!getSystemFlag(FLAG_ERPN) || (getSystemFlag(FLAG_ERPN) && programRunStop == PGM_RUNNING )) {     //DL eRPN 2025-08
+       #endif   // ENTRY_RPN
+          setSystemFlag(FLAG_ASLIFT);
+          #if defined(DEBUGUNDO)
+            printf(">>> saveForUndo from fnKeyEnterA\n");
+          #endif // DEBUGUNDO
+          saveForUndo();
+          if(lastErrorCode == ERROR_RAM_FULL) {
+            goto undo_disabled;
+          }
 
-        liftStack();
-        if(lastErrorCode == ERROR_RAM_FULL) {
-          goto ram_full;
+          liftStack();
+          if(lastErrorCode == ERROR_RAM_FULL) {
+            goto ram_full;
+          }
+          copySourceRegisterToDestRegister(REGISTER_Y, REGISTER_X);
+          if(lastErrorCode == ERROR_RAM_FULL) {
+            goto ram_full;
+          }
+       #ifdef ENTRY_RPN
         }
-        copySourceRegisterToDestRegister(REGISTER_Y, REGISTER_X);
-        if(lastErrorCode == ERROR_RAM_FULL) {
-          goto ram_full;
-        }
+       #endif   // ENTRY_RPN
 
-        clearSystemFlag(FLAG_ASLIFT);
-        break;
+       #ifdef ENTRY_RPN
+        if(getSystemFlag(FLAG_ERPN)) {            //DL eRPN 2025-08
+          setSystemFlag(FLAG_ASLIFT);
+        }
+        else {
+          clearSystemFlag(FLAG_ASLIFT);
+        }
+       #else
+          clearSystemFlag(FLAG_ASLIFT);
+       #endif   // ENTRY_RPN
+          break;
       }
 
       case cmAim: {
@@ -1763,27 +1780,37 @@ void fnKeyEnter(uint16_t unusedButMandatoryParameter) {
           reallocateRegister(REGISTER_X, dtString, lenInBytes, amNone);
           xcopy(REGISTER_STRING_DATA(REGISTER_X), aimBuffer, lenInBytes);
 
-          setSystemFlag(FLAG_ASLIFT);
-          #if defined(DEBUGUNDO)
-            printf(">>> saveForUndo from fnKeyEnterB\n");
-          #endif // DEBUGUNDO
-          saveForUndo();
-          if(lastErrorCode == ERROR_RAM_FULL) {
-            goto undo_disabled;
-          }
-          #if !defined(ENTER_AIM_NO_SLIFT)
-            liftStack();
+          #ifdef ENTRY_RPN
+           if(!getSystemFlag(FLAG_ERPN)) {                                       //DL eRPN 2025-08
+          #endif   // ENTRY_RPN
+            setSystemFlag(FLAG_ASLIFT);
+            #if defined(DEBUGUNDO)
+              printf(">>> saveForUndo from fnKeyEnterB\n");
+            #endif // DEBUGUNDO
+            saveForUndo();
             if(lastErrorCode == ERROR_RAM_FULL) {
-              goto ram_full;
+              goto undo_disabled;
             }
-            clearSystemFlag(FLAG_ASLIFT);
+            #if !defined(ENTER_AIM_NO_SLIFT)
+              liftStack();
+              if(lastErrorCode == ERROR_RAM_FULL) {
+                goto ram_full;
+              }
+              clearSystemFlag(FLAG_ASLIFT);
 
-            copySourceRegisterToDestRegister(REGISTER_Y, REGISTER_X);
-            if(lastErrorCode == ERROR_RAM_FULL) {
-              goto ram_full;
-            }
-          #endif  // !ENTER_AIM_NO_SLIFT
-          aimBuffer[0] = 0;
+              copySourceRegisterToDestRegister(REGISTER_Y, REGISTER_X);
+              if(lastErrorCode == ERROR_RAM_FULL) {
+                goto ram_full;
+              }
+            #endif  // !ENTER_AIM_NO_SLIFT
+            aimBuffer[0] = 0;
+          #ifdef ENTRY_RPN
+           }
+           else {
+             setSystemFlag(FLAG_ASLIFT);
+             aimBuffer[0] = 0;
+           }
+          #endif   // ENTRY_RPN
         }
         break;
       }
@@ -1797,23 +1824,32 @@ void fnKeyEnter(uint16_t unusedButMandatoryParameter) {
         closeNim();
 
         if(calcMode != cmNim && lastErrorCode == 0) {
-          setSystemFlag(FLAG_ASLIFT);
-          #if defined(DEBUGUNDO)
-            printf(">>> saveForUndo from fnKeyEnterC\n");
-          #endif // DEBUGUNDO
-          saveForUndo();
-          if(lastErrorCode == ERROR_RAM_FULL) {
-            goto undo_disabled;
-          }
-          liftStack();
-          if(lastErrorCode == ERROR_RAM_FULL) {
-            goto ram_full;
-          }
-          clearSystemFlag(FLAG_ASLIFT);
-          copySourceRegisterToDestRegister(REGISTER_Y, REGISTER_X);
-          if(lastErrorCode == ERROR_RAM_FULL) {
-            goto ram_full;
-          }
+          #ifdef ENTRY_RPN
+            if(!getSystemFlag(FLAG_ERPN)) {                                  //DL eRPN 2025-08
+          #endif   // ENTRY_RPN
+              setSystemFlag(FLAG_ASLIFT);
+              #if defined(DEBUGUNDO)
+                printf(">>> saveForUndo from fnKeyEnterC\n");
+              #endif // DEBUGUNDO
+              saveForUndo();
+              if(lastErrorCode == ERROR_RAM_FULL) {
+              goto undo_disabled;
+              }
+              liftStack();
+              if(lastErrorCode == ERROR_RAM_FULL) {
+                goto ram_full;
+              }
+              clearSystemFlag(FLAG_ASLIFT);
+              copySourceRegisterToDestRegister(REGISTER_Y, REGISTER_X);
+              if(lastErrorCode == ERROR_RAM_FULL) {
+                goto ram_full;
+              }
+          #ifdef ENTRY_RPN
+            }
+            else {
+              setSystemFlag(FLAG_ASLIFT);
+            }
+          #endif   // ENTRY_RPN
         }
         break;
       }
