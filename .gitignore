@@ -19,6 +19,7 @@
 /LOGFILES
 /PROGRAMS
 /SAVFILES
+/STATE
 backup.bin
 wp43.sav
 wp43.dat
