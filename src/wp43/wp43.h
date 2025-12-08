@@ -166,6 +166,7 @@
   extern uint8_t                keyStateCode;
   extern uint8_t                entryStatus; // 0x01 for the entry flag, backed up to 0x02 for undo
   extern uint8_t                screenUpdatingMode;
+  extern uint8_t                editingLiteralType;
   extern uint8_t               *beginOfProgramMemory;
   extern uint8_t               *firstFreeProgramByte;
   extern uint8_t               *beginOfNewlyLoadedProgramMemory;

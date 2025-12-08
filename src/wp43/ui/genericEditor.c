@@ -10,6 +10,7 @@
 #include "apps/bugScreen.h"
 #include "bufferize.h"
 #include "calcMode.h"
+#include "core/memory.h"
 #include "charString.h"
 #include "constantPointers.h"
 #include "conversionAngles.h"
@@ -48,18 +49,18 @@
   }
 #endif // !TESTSUITE_BUILD
 
-void fractionToString(calcRegister_t regist, char *displayString) {
-  int16_t  sign, lessEqualGreater;
+void fractionToString(calcRegister_t regist, char *displayString, int16_t *lessEqualGreater) {
+  int16_t  sign;
   uint64_t intPart, numer, denom;
 
-  fraction(regist, &sign, &intPart, &numer, &denom, &lessEqualGreater);
+  fraction(regist, &sign, &intPart, &numer, &denom, lessEqualGreater);
 
   if(getSystemFlag(FLAG_PROPFR)) { // a b/c
     sprintf(displayString, "%s%" PRIu64 " %" PRIu64 "/%" PRIu64, (sign == -1 ? "-" : "+"), intPart, numer, denom);
   }
 
   else { // FT_IMPROPER d/
-    sprintf(displayString, "%s%" PRIu64 "/%" PRIu64, (sign == -1 ? "-" : "+"), numer, denom);
+    sprintf(displayString, "%s0 %" PRIu64 "/%" PRIu64, (sign == -1 ? "-" : "+"), numer, denom);
 
   }
 }
@@ -306,9 +307,12 @@ void fnEdit (uint16_t unusedParamButMandatory) {
         }
 
         // Test if long inter number display string will fit on two lines in standard font, if not do nothing (cannot edit)
-        if(stringWidth(nimBufferDisplay, &standardFont, true, true) <= (SCREEN_WIDTH - 8) * 2) { // 8 is the standard font cursor width
-          clearSystemFlag(FLAG_ALPHA);
+        if(stringWidth(nimBufferDisplay, &standardFont, true, true) < (SCREEN_WIDTH * 2) - 8) { // 8 is the standard font cursor width
           calcMode = cmNim;
+          clearSystemFlag(FLAG_ALPHA);
+          freeRegisterData(REGISTER_X);
+          setRegisterDataPointer(REGISTER_X, allocWp43(REAL34_SIZE_IN_BYTES));
+          setRegisterDataType(REGISTER_X, dtReal34, amNone);
           real34Zero(REGISTER_REAL34_DATA(REGISTER_X));
           hexDigits = 0;
           nimNumberPart = NP_INT_10;
@@ -342,37 +346,50 @@ void fnEdit (uint16_t unusedParamButMandatory) {
           real34FromDegToDms(REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X));
         }
 
+        uint16_t lessEqualGreater = 0;
         if (getSystemFlag(FLAG_FRACT)) {
           groupingGap = 0;
-          fractionToString(REGISTER_X, aimBuffer);
+          fractionToString(REGISTER_X, aimBuffer, (int16_t *)&lessEqualGreater);
           groupingGap = groupingGapOld;
-          nimNumberPart = NP_FRACTION_DENOMINATOR;
-          strcpy(nimBufferDisplay, STD_SPACE_HAIR);
-          nimBufferToDisplayBuffer(aimBuffer, nimBufferDisplay + 2);
-          strcat(nimBufferDisplay, STD_SPACE_4_PER_EM);
 
-          for(index=2; aimBuffer[index]!=' '; index++) {
+          if(lessEqualGreater == 0) {         // display fraction
+            nimNumberPart = NP_FRACTION_DENOMINATOR;
+            strcpy(nimBufferDisplay, STD_SPACE_HAIR);
+            nimBufferToDisplayBuffer(aimBuffer, nimBufferDisplay + 2);
+            strcat(nimBufferDisplay, STD_SPACE_4_PER_EM);
+            for(index=2; aimBuffer[index]!=' '; index++) {
+            }
+            supNumberToDisplayString(stringToInt32(aimBuffer + index + 1), nimBufferDisplay + stringByteLength(nimBufferDisplay), NULL, true, STD_SPACE_PUNCTUATION);
+
+            strcat(nimBufferDisplay, "/");
+
+            for(; aimBuffer[index]!='/'; index++) {
+            }
+            if(aimBuffer[++index] != 0) {
+              subNumberToDisplayString(stringToInt32(aimBuffer + index), nimBufferDisplay + stringByteLength(nimBufferDisplay), NULL);
+            }
           }
-          supNumberToDisplayString(stringToInt32(aimBuffer + index + 1), nimBufferDisplay + stringByteLength(nimBufferDisplay), NULL, true, STD_SPACE_PUNCTUATION);
-
-          strcat(nimBufferDisplay, "/");
-
-          for(; aimBuffer[index]!='/'; index++) {
-          }
-          if(aimBuffer[++index] != 0) {
-            subNumberToDisplayString(stringToInt32(aimBuffer + index), nimBufferDisplay + stringByteLength(nimBufferDisplay), NULL);
+          else {    // display real34
+            _real34ToNim(REGISTER_REAL34_DATA(REGISTER_X), aimBuffer, nimBufferDisplay);
           }
         }
-        else {
+        else {      // display real34
           _real34ToNim(REGISTER_REAL34_DATA(REGISTER_X), aimBuffer, nimBufferDisplay);
         }
         //printf("**[DL]** dtReal34 aimBuffer %s nimBufferDisplay %s\n",aimBuffer,nimBufferDisplay);fflush(stdout);
 
-        clearSystemFlag(FLAG_ALPHA);
         calcMode = cmNim;
-        //printf("**[DL]** AngularMode %d\n",getRegisterAngularMode(REGISTER_X));fflush(stdout);
+        clearSystemFlag(FLAG_ALPHA);
+        uint16_t dataType = getRegisterDataType(REGISTER_X);
+        freeRegisterData(REGISTER_X);
+        setRegisterDataPointer(REGISTER_X, allocWp43(REAL34_SIZE_IN_BYTES));
+        if((dataType == dtTime) || (dataType == dtDate)) {
+          setRegisterDataType(REGISTER_X, dataType, xangularMode);   // Keep time and date datatypes
+        }
+        else {
+          setRegisterDataType(REGISTER_X, dtReal34, xangularMode);
+        }
         real34Zero(REGISTER_REAL34_DATA(REGISTER_X));
-        //printf("**[DL]** AngularMode %d\n",getRegisterAngularMode(REGISTER_X));fflush(stdout);
         hexDigits = 0;
         clearRegisterLine(NIM_REGISTER_LINE, true, true);
         cursorShow(false, 1, Y_POSITION_OF_NIM_LINE);
@@ -434,12 +451,14 @@ void fnEdit (uint16_t unusedParamButMandatory) {
 
       case dtTime: {
         _hmsTimeToReal();
+        setRegisterDataType(REGISTER_X, dtTime, amNone);  // Force time data type to preserve it when closing NIM
         goto edit_dtReal34;
         break;
       }
 
       case dtDate: {
         convertDateRegisterToReal34Register(REGISTER_X, REGISTER_X);
+        setRegisterDataType(REGISTER_X, dtDate, amNone);  // Force date data type to preserve it when closing NIM
         goto edit_dtReal34;
         break;
       }
@@ -506,6 +525,7 @@ void fnEdit (uint16_t unusedParamButMandatory) {
     }
   }
   else if(calcMode == cmPem) {
+    //printf("**[DL]** currentLocalStepNumber %d\n",currentLocalStepNumber);fflush(stdout);
     currentStep = findPreviousStep(currentStep);
     if(currentLocalStepNumber > 1) {
       --currentLocalStepNumber;
@@ -516,11 +536,11 @@ void fnEdit (uint16_t unusedParamButMandatory) {
       func &= 0x7f;
       func <<= 8;
       func |= currentStep[i++];
-    }    
+    }
     uint8_t opParam  = currentStep[i++];
     uint8_t opParam2 = currentStep[i++];
     uint8_t opParam3 = currentStep[i];
-    
+
     if((opParam == STRING_LABEL_VARIABLE) || (opParam == INDIRECT_VARIABLE)) {
       for(index = 0;  index < opParam2; index++) {
         varOrLblName[index] = currentStep[i++];
@@ -528,7 +548,7 @@ void fnEdit (uint16_t unusedParamButMandatory) {
       varOrLblName[index] = 0;
     }
     //printf("**[DL]** fnEdit cmPem func %d opParam %d opParam2 %d\n",func,opParam,opParam2);fflush(stdout);
-    
+
     if((func == ITM_LITERAL || func == ITM_REM)) {
       memset(aimBuffer, 0, AIM_BUFFER_LENGTH);
 
@@ -536,9 +556,11 @@ void fnEdit (uint16_t unusedParamButMandatory) {
         pemAlpha(ITM_EDIT);
       }
       else if((opParam == BINARY_SHORT_INTEGER) || (opParam == STRING_SHORT_INTEGER) || (opParam == STRING_LONG_INTEGER) ||
-              (opParam == BINARY_REAL34)        || (opParam == STRING_REAL34) ||
-              (opParam == BINARY_COMPLEX34)     || (opParam == STRING_COMPLEX34) ||
-              (opParam == STRING_DATE)          || (opParam == STRING_TIME))    {
+              (opParam == BINARY_REAL34)        || (opParam == STRING_REAL34)        ||
+              (opParam == BINARY_COMPLEX34)     || (opParam == STRING_COMPLEX34)     ||
+              (opParam == STRING_DATE)          || (opParam == STRING_TIME)          ||
+              (opParam == STRING_ANGLE_DMS)     || (opParam == STRING_ANGLE_RADIAN)  || (opParam == STRING_ANGLE_GRAD)   ||
+              (opParam == STRING_ANGLE_DEGREE)  || (opParam == STRING_ANGLE_MULTPI)  || (opParam == STRING_ANGLE_MIL)) {
         char *tempBuffer = errorMessage + 1500;
         bool chsNeeded = false;
         bool isDate = (opParam == STRING_DATE ? true : false);
@@ -598,6 +620,11 @@ void fnEdit (uint16_t unusedParamButMandatory) {
             case '+':
               if(chsNeeded)  pemAddNumber(ITM_CHS, false);  // '-' was already encountered, let's first negate the real part
               chsNeeded = false;
+              if(opParam == BINARY_COMPLEX34) {
+                //printf("**[DL]** fnEdit pemAddNumber ITM_CC aimBuffer %s\n",aimBuffer);fflush(stdout);
+                pemAddNumber(ITM_CC, false);
+                decimalflag = false;
+              }
               break;
             case '-':
               if(isDate) {
@@ -635,20 +662,42 @@ void fnEdit (uint16_t unusedParamButMandatory) {
                 chsNeeded = false;
                 pemAddNumber(ITM_EXPONENT, false);
               }
+              else if((tempBuffer[i] == STD_DEGREE[1]) && (opParam == STRING_ANGLE_DMS)) {
+                pemAddNumber(ITM_PERIOD, false);
+              }
               break;
             case 0xa1:
               i++;
               if((tempBuffer[i] >= STD_SUP_0[1]) && (tempBuffer[i] <= STD_SUP_9[1])) {
                 pemAddNumber(ITM_0 + tempBuffer[i] - STD_SUP_0[1], false);
               }
-              else if(tempBuffer[i] == STD_SUP_MINUS[1]) {
+              else if((tempBuffer[i] == STD_SUP_MINUS[1]) && (tempBuffer[i+1] != 0)) {
                 chsNeeded = true;
               }
               else if(tempBuffer[i] == STD_IMAGINARY_i[1]) {
                 //printf("**[DL]** fnEdit pemAddNumber ITM_CC aimBuffer %s\n",aimBuffer);fflush(stdout);
                 pemAddNumber(ITM_CC, false);
+                decimalflag = false;
               }
               //printf("**[DL]** fnEdit pemAddNumber %02x aimBuffer %s\n",tempBuffer[i],aimBuffer);fflush(stdout);
+              break;
+            case 0x81:
+            case 0x82:
+            case 0x83:
+            case 0x9d:
+            case 0x9e:
+            case 0xa0:
+            case 0xa2:
+            case 0xa3:
+            case 0xa4:
+            case 0xa5:
+            case 0xa6:
+            case 0xa7:
+            case 0xa9:
+            case 0xab:
+            case 0xac:
+              i++;   // Ignore non supported unicode characters, including base subscripts
+              //printf("**[DL]**        tempBuffer[%2d] %02x\n",i,tempBuffer[i]&0xff);fflush(stdout);
               break;
             default:
               //printf("**[DL]** fnEdit tempBuffer[i] %02X\n",tempBuffer[i]);fflush(stdout);
@@ -657,6 +706,21 @@ void fnEdit (uint16_t unusedParamButMandatory) {
           lastIntegerBase = (opParam == BINARY_SHORT_INTEGER ? opParam2: opParam == STRING_SHORT_INTEGER ? opParam2: 0);
         }
         if(chsNeeded) pemAddNumber(ITM_CHS, false);
+        switch (opParam) {
+          case STRING_DATE:
+          case STRING_TIME:
+          case STRING_ANGLE_RADIAN:
+          case STRING_ANGLE_GRAD:
+          case STRING_ANGLE_DEGREE:
+          case STRING_ANGLE_DMS:
+          case STRING_ANGLE_MULTPI:
+          case STRING_ANGLE_MIL: {
+            editingLiteralType = opParam;
+            break;
+          }
+          default:
+            editingLiteralType = 0;
+        }
         pemAddNumber(ITM_NOP, true);    // to insert the resulting number in program
         //printf("**[DL]** fnEdit aimBuffer %s\n",aimBuffer);fflush(stdout);
       }

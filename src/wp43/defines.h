@@ -45,6 +45,7 @@
   //#define MERGED_SAVE_SAVEST
   //#define ENTER_AIM_NO_SLIFT
   //#define RELAX_NAMING_RULES
+  //#define ENTRY_RPN
 
   #if defined(XPB)
     #if !defined(MERGED_SAVE_SAVEST)
@@ -56,6 +57,9 @@
     #if !defined(RELAX_NAMING_RULES)
       #define RELAX_NAMING_RULES
     #endif // !RELAX_NAMING_RULES
+    #if !defined(ENTRY_RPN)
+      #define ENTRY_RPN
+    #endif // !ENTRY_RPN
   #endif // XPB
 
   // End of Experimental build defines section
@@ -176,7 +180,8 @@
   #define FLAG_FASTFN                           0x802b
   #define FLAG_VIEW                             0x802c
   #define FLAG_AVIEW_PROMPT                     0x802d
-  #define NUMBER_OF_SYSTEM_FLAGS                    46
+  #define FLAG_ERPN                             0x802e
+  #define NUMBER_OF_SYSTEM_FLAGS                    47
 
   #define TAM_MAX_BITS                              14
   #define TAM_MAX_MASK                          0x3fff
@@ -657,11 +662,12 @@
   //#define BINARY_ANGLE_DEGREE                       15
   //#define BINARY_ANGLE_DMS                          16
   //#define BINARY_ANGLE_MULTPI                       17
-  //#define STRING_ANGLE_RADIAN                       18
-  //#define STRING_ANGLE_GRAD                         19
-  //#define STRING_ANGLE_DEGREE                       20
+  #define STRING_ANGLE_RADIAN                       18
+  #define STRING_ANGLE_GRAD                         19
+  #define STRING_ANGLE_DEGREE                       20
   #define STRING_ANGLE_DMS                          21
-  //#define STRING_ANGLE_MULTPI                       22
+  #define STRING_ANGLE_MULTPI                       22
+  #define STRING_ANGLE_MIL                          23
 
   // OP parameter special values
   #define CNST_BEYOND_250                          250

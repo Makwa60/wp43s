@@ -533,12 +533,12 @@
   #define SFL_SOLVING                    501
   #define SFL_VMDISP                     502
   #define SFL_USB                        503
-  #define SFL_TVMBGN                     504
-  #define ITM_0505                       505
-  #define ITM_0506                       506
-  #define ITM_0507                       507
-  #define ITM_0508                       508
-  #define ITM_0509                       509
+  #define SFL_ENDPMT                     504
+  #define SFL_FRCSRN                     505
+  #define SFL_FASTFN                     506
+  #define SFL_VIEW                       507
+  #define SFL_AVIEW_PROMPT               508
+  #define SFL_ERPN                       509
   #define ITM_0510                       510
   #define ITM_0511                       511
   #define ITM_0512                       512
