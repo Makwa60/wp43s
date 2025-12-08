@@ -4,15 +4,13 @@
 dmcp_cargs = [
   '-D__weak="__attribute__((weak))"',
   '-D__packed="__attribute__((__packed__))"',
-  '-Wno-unused-parameter',
-  '-IC:/msys64/home/didie/wp43/build.dmcp/subprojects/gmp-6.2.1/dist/msys64/mingw64/include']
+  '-Wno-unused-parameter']
 dmcp_linkargs = [
   '--specs=nosys.specs',
   '-Wl,--gc-sections',
   '-Wl,--wrap=_malloc_r',
   '-Wl,-Map=' + meson.current_build_dir() + '/WP43.map,--cref',
-  '-T' + meson.current_source_dir() + '/stm32l4.ld',
-  '-LC:/msys64/home/didie/wp43/build.dmcp/subprojects/gmp-6.2.1/dist/msys64/mingw64/lib']
+  '-T' + meson.current_source_dir() + '/stm32l4.ld']
 
 wp43_dmcp_src = files(
   'hal/audio.c',
