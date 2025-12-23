@@ -404,6 +404,9 @@
   extern const real_t * const const_50;
   extern const real_t * const const_45;
   extern const real_t * const const_800;
+  extern const real_t * const const_1_51;
+  extern const real_t * const const_1on2_51;
+  extern const real_t * const const_1on4_51;
   extern const real_t * const const1071_2pi;
   extern const real34_t * const const34__4712;
   extern const real34_t * const const34__1;

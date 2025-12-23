@@ -205,9 +205,6 @@ void subLonIReal(void) {
     convertRealToReal34ResultRegister(&x, REGISTER_X);
   }
   else {
-    if(currentAngularMode == amMultPi) {
-      realMultiply(&y, const_pi, &y, &ctxtReal39);
-    }
     convertAngleFromTo(&x, xAngularMode, currentAngularMode, &ctxtReal39);
     realSubtract(&y, &x, &x, &ctxtReal39);
     convertRealToReal34ResultRegister(&x, REGISTER_X);
@@ -237,9 +234,6 @@ void subRealLonI(void) {
     convertRealToReal34ResultRegister(&x, REGISTER_X);
   }
   else {
-    if(currentAngularMode == amMultPi) {
-      realMultiply(&x, const_pi, &x, &ctxtReal39);
-    }
     convertAngleFromTo(&y, yAngularMode, currentAngularMode, &ctxtReal39);
     realSubtract(&y, &x, &x, &ctxtReal39);
     convertRealToReal34ResultRegister(&x, REGISTER_X);
@@ -966,9 +960,6 @@ void subShoIReal(void) {
     convertRealToReal34ResultRegister(&x, REGISTER_X);
   }
   else {
-    if(currentAngularMode == amMultPi) {
-      realMultiply(&y, const_pi, &y, &ctxtReal39);
-    }
     convertAngleFromTo(&x, xAngularMode, currentAngularMode, &ctxtReal39);
     realSubtract(&y, &x, &x, &ctxtReal39);
     convertRealToReal34ResultRegister(&x, REGISTER_X);
@@ -997,9 +988,6 @@ void subRealShoI(void) {
     convertRealToReal34ResultRegister(&x, REGISTER_X);
   }
   else {
-    if(currentAngularMode == amMultPi) {
-      realMultiply(&x, const_pi, &x, &ctxtReal39);
-    }
     convertAngleFromTo(&y, yAngularMode, currentAngularMode, &ctxtReal39);
     realSubtract(&y, &x, &x, &ctxtReal39);
     convertRealToReal34ResultRegister(&x, REGISTER_X);
@@ -1064,15 +1052,9 @@ void subRealReal(void) {
 
     if(yAngularMode == amNone) {
       yAngularMode = currentAngularMode;
-      if(currentAngularMode == amMultPi) {
-        realMultiply(&y, const_pi, &y, &ctxtReal39);
-      }
     }
     else if(xAngularMode == amNone) {
       xAngularMode = currentAngularMode;
-      if(currentAngularMode == amMultPi) {
-        realMultiply(&x, const_pi, &x, &ctxtReal39);
-      }
     }
 
     convertAngleFromTo(&y, yAngularMode, currentAngularMode, &ctxtReal39);

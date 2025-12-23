@@ -2220,14 +2220,7 @@
             if(xangularMode < amNone) {  // If editing with angular mode, then convert to real and preserve angular mode
               reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, getRegisterAngularMode(REGISTER_X));
               stringToReal34(aimBuffer, REGISTER_REAL34_DATA(REGISTER_X));
-              if(xangularMode ==  amMultPi) {
-                real_t multPi;
-
-                real34ToReal(REGISTER_REAL34_DATA(REGISTER_X), &multPi);
-                realMultiply(&multPi, const_pi, &multPi, &ctxtReal39);
-                realToReal34(&multPi, REGISTER_REAL34_DATA(REGISTER_X));
-              }
-              else if(xangularMode == amDMS) {
+              if(xangularMode == amDMS) {
                 real34FromDmsToDeg(REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X));
               }
             }
@@ -2421,14 +2414,7 @@
 
               reallocateRegister(REGISTER_X, dtReal34, REAL34_SIZE_IN_BYTES, xangularMode);
               stringToReal34(aimBuffer, REGISTER_REAL34_DATA(REGISTER_X));
-              if(xangularMode ==  amMultPi) {
-                real_t multPi;
-
-                real34ToReal(REGISTER_REAL34_DATA(REGISTER_X), &multPi);
-                realMultiply(&multPi, const_pi, &multPi, &ctxtReal39);
-                realToReal34(&multPi, REGISTER_REAL34_DATA(REGISTER_X));
-              }
-              else if(xangularMode == amDMS) {
+              if(xangularMode == amDMS) {
                 real34FromDmsToDeg(REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X));
               }
             }

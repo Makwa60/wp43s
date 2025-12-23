@@ -319,10 +319,19 @@ TO_QSPI const int16_t menu_alpha_omega[] = { ITM_alpha,                     ITM_
                                              ITM_omega,                     ITM_alpha_TONOS,            ITM_epsilon_TONOS,        ITM_eta_TONOS,         ITM_iotaTON,                 ITM_iota_DIALYTIKA_TONOS,
                                              ITM_iota_DIALYTIKA,            ITM_omicron_TONOS,          ITM_upsilon_TONOS,        ITM_upsilon_DIALYTIKA, ITM_upsilon_DIALYTIKA_TONOS, ITM_omega_TONOS               };
 
+#if defined(XPB)
+TO_QSPI const int16_t menu_AngleConv[]   = { ITM_toDEG,                     ITM_toRAD,                  ITM_toGRAD,               ITM_toDMS,             ITM_toMULpi,                 ITM_toMIL,
+                                             ITM_DEG,                       ITM_RAD,                    ITM_GRAD,                 ITM_DMS,               ITM_MULPI,                   ITM_MIL,
+                                             ITM_sin,                       ITM_arcsin,                 ITM_cos,                  ITM_arccos,            ITM_tan,                     ITM_arctan,
+                                             ITM_DEGto,                     ITM_RADto,                  ITM_GRADto,               ITM_DMSto,             ITM_MULPIto,                 ITM_MILto,
+                                             ITM_DtoR,                      ITM_RtoD,                   ITM_DtoDMS,               ITM_DMStoD,            ITM_MPItoR,                  ITM_RtoMPI,            
+                                             ITM_DtoMIL,                    ITM_MILtoD,                 ITM_MILtoR,               ITM_RtoMIL,            ITM_NULL,                    ITM_NULL                      };
+#else
 TO_QSPI const int16_t menu_AngleConv[]   = { ITM_toDEG,                     ITM_toRAD,                  ITM_toMULpi,              ITM_toMIL,             ITM_toGRAD,                  ITM_toDMS,
                                              ITM_DEGto,                     ITM_RADto,                  ITM_MULPIto,              ITM_MILto,             ITM_GRADto,                  ITM_DMSto,
                                              ITM_DtoR,                      ITM_RtoD,                   ITM_MPItoR,               ITM_RtoMPI,            ITM_DtoDMS,                  ITM_DMStoD,
                                              ITM_DtoMIL,                    ITM_MILtoD,                 ITM_MILtoR,               ITM_RtoMIL,            ITM_NULL,                    ITM_NULL                      };
+#endif // XPB
 
 /*      Menu name                           <----------------------------------------------------------------------------- 6 functions ---------------------------------------------------------------------------->  */
 /*                                          <---------------------------------------------------------------------- 6 f shifted functions ------------------------------------------------------------------------->  */

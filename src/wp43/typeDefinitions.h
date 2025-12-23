@@ -120,7 +120,8 @@
     amMultPi =  5,
     amNone   =  6,
     amSecond =  7, // not an angular but a time unit: for the routine unified with the real type
-    amTmItvl =  8  // not an angular unit: flag for time intervals (only affects if TDM24 is off)
+    amTmItvl =  8, // not an angular unit: flag for time intervals (only affects if TDM24 is off)
+    TM_HMS   =  9  // not an angular but a time unit
   } angularMode_t;
 
 

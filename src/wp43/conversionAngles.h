@@ -29,6 +29,7 @@
   void     checkDms34                  (real34_t *angle34Dms);
   uint32_t getInfiniteComplexAngle     (real_t *x, real_t *y);
   void     setInfiniteComplexAngle     (uint32_t angle, real_t *x, real_t *y);
+  void     fnAngularModeJM             (uint16_t AMODE);
 
   /**
    * Converts a real34 from DMS to DEG
