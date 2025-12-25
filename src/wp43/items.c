@@ -979,6 +979,7 @@ void fnNop(uint16_t unusedButMandatoryParameter) {
   void fnCvtFt3Galus               (uint16_t unusedButMandatoryParameter) {}   //DL
   void fnFileMode                  (uint16_t unusedButMandatoryParameter) {}   //DL
   void fnEdit                      (uint16_t unusedButMandatoryParameter) {}   //DL
+  void fnAngularModeJM             (uint16_t unusedButMandatoryParameter) {}   //DL
 #endif // GENERATE_CATALOGS
 
 
@@ -1006,12 +1007,14 @@ void fnNop(uint16_t unusedButMandatoryParameter) {
  #define DEF_PINT_US   " pt" STD_US
  #define DEF_TSPI      "tsp" STD_SUB_I
  #define DEF_TBSPI     "tbsp" STD_SUB_I
+ #define fnCvtToAngle  fnAngularModeJM
 #else
  #define CAT_XFNT      CAT_NONE
  #define DEF_QUART_US  "quart"
  #define DEF_PINT_US   "pint" STD_US
  #define DEF_TSPI      " tea"
  #define DEF_TBSPI     "table"
+ #define fnCvtToAngle  fnCvtFromCurrentAngularMode
 #endif   // XPB
 
 TO_QSPI const item_t indexOfItems[] = {
@@ -1138,11 +1141,11 @@ TO_QSPI const item_t indexOfItems[] = {
 /*  112 */  { fnFlipFlag,                   tmFlagW,                     "FF",                                          "FF",                                          (0 << TAM_MAX_BITS) |    99, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_FLAG         },
 /*  113 */  { fnCheckValue,                 CHECK_VALUE_MATRIX_SQUARE,   "M.SQR?",                                      "M.SQR?",                                      (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_UNCHANGED | EIM_DISABLED | PTP_NONE         },
 /*  114 */  { itemToBeCoded,                NOPARAM,                     "LITE",                                        "LITE",                                        (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_ENABLED   | US_UNCHANGED | EIM_DISABLED | PTP_LITERAL      }, // Literal in a PGM
-/*  115 */  { fnCvtFromCurrentAngularMode,  amDegree,                    STD_RIGHT_ARROW "DEG",                         STD_RIGHT_ARROW "DEG",                         (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
-/*  116 */  { fnCvtFromCurrentAngularMode,  amDMS,                       STD_RIGHT_ARROW "D.MS",                        STD_RIGHT_ARROW "D.MS",                        (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
-/*  117 */  { fnCvtFromCurrentAngularMode,  amGrad,                      STD_RIGHT_ARROW "GRAD",                        STD_RIGHT_ARROW "GRAD",                        (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
-/*  118 */  { fnCvtFromCurrentAngularMode,  amMultPi,                    STD_RIGHT_ARROW "MUL" STD_pi,                  STD_RIGHT_ARROW "MUL" STD_pi,                  (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
-/*  119 */  { fnCvtFromCurrentAngularMode,  amRadian,                    STD_RIGHT_ARROW "RAD",                         STD_RIGHT_ARROW "RAD",                         (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/*  115 */  { fnCvtToAngle,                 amDegree,                    STD_RIGHT_ARROW "DEG",                         STD_RIGHT_ARROW "DEG",                         (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/*  116 */  { fnCvtToAngle,                 amDMS,                       STD_RIGHT_ARROW "D.MS",                        STD_RIGHT_ARROW "D.MS",                        (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/*  117 */  { fnCvtToAngle,                 amGrad,                      STD_RIGHT_ARROW "GRAD",                        STD_RIGHT_ARROW "GRAD",                        (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/*  118 */  { fnCvtToAngle,                 amMultPi,                    STD_RIGHT_ARROW "MUL" STD_pi,                  STD_RIGHT_ARROW "MUL" STD_pi,                  (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/*  119 */  { fnCvtToAngle,                 amRadian,                    STD_RIGHT_ARROW "RAD",                         STD_RIGHT_ARROW "RAD",                         (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
 /*  120 */  { fnCvtDegToRad,                NOPARAM,                     "D" STD_RIGHT_ARROW "R",                       "D" STD_RIGHT_ARROW "R",                       (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
 /*  121 */  { fnCvtRadToDeg,                NOPARAM,                     "R" STD_RIGHT_ARROW "D",                       "R" STD_RIGHT_ARROW "D",                       (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
 /*  122 */  { fnRmd,                        NOPARAM,                     "RMD",                                         "RMD",                                         (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_ENABLED  | PTP_NONE         },
@@ -2900,7 +2903,7 @@ TO_QSPI const item_t indexOfItems[] = {
 /* 1796 */  { fnDumpRegXToFile,             NOPARAM,                     "DUMP",                                        "DUMP",                                        (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
 
 /* 1797 */  { fnAngularMode,                amMil,                       "MIL",                                         "MIL",                                         (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
-/* 1798 */  { fnCvtFromCurrentAngularMode,  amMil,                       STD_RIGHT_ARROW "MIL",                         STD_RIGHT_ARROW "MIL",                         (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
+/* 1798 */  { fnCvtToAngle,                 amMil,                       STD_RIGHT_ARROW "MIL",                         STD_RIGHT_ARROW "MIL",                         (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
 /* 1799 */  { fnCvtToCurrentAngularMode,    amMil,                       "MIL" STD_RIGHT_ARROW,                         "MIL" STD_RIGHT_ARROW,                         (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
 /* 1800 */  { fnCvtDegToMil,                NOPARAM,                     "D" STD_RIGHT_ARROW "MIL",                     "D" STD_RIGHT_ARROW "MIL",                     (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
 /* 1801 */  { fnCvtMilToDeg,                NOPARAM,                     "MIL" STD_RIGHT_ARROW "D",                     "MIL" STD_RIGHT_ARROW "D",                     (0 << TAM_MAX_BITS) |     0, CAT_FNCT | SLS_ENABLED   | US_ENABLED   | EIM_DISABLED | PTP_NONE         },
@@ -3094,5 +3097,5 @@ TO_QSPI const item_t indexOfItems[] = {
 /* 1946 */  { itemToBeCoded,                NOPARAM,                     "CAT_EIM",                                     "CAT_EIM",                                     (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
 /* 1947 */  { itemToBeCoded,                NOPARAM,                     "FCNS",                                        "FCNS",                                        (0 << TAM_MAX_BITS) |     0, CAT_MENU | SLS_UNCHANGED | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     },
 
-/* 194_ */  { itemToBeCoded,                NOPARAM,                     "",                                            "Last item",                                   (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_ENABLED   | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     }
+/* 1948 */  { itemToBeCoded,                NOPARAM,                     "",                                            "Last item",                                   (0 << TAM_MAX_BITS) |     0, CAT_NONE | SLS_ENABLED   | US_UNCHANGED | EIM_DISABLED | PTP_DISABLED     }
 };

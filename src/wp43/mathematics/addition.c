@@ -224,9 +224,6 @@ void addLonIReal(void) {
     convertRealToReal34ResultRegister(&x, REGISTER_X);
   }
   else {
-    if(currentAngularMode == amMultPi) {
-      realMultiply(&y, const_pi, &y, &ctxtReal39);
-    }
     convertAngleFromTo(&x, xAngularMode, currentAngularMode, &ctxtReal39);
     realAdd(&y, &x, &x, &ctxtReal39);
     convertRealToReal34ResultRegister(&x, REGISTER_X);
@@ -250,9 +247,6 @@ void addRealLonI(void) {
     convertRealToReal34ResultRegister(&x, REGISTER_X);
   }
   else {
-    if(currentAngularMode == amMultPi) {
-      realMultiply(&x, const_pi, &x, &ctxtReal39);
-    }
     convertAngleFromTo(&y, yAngularMode, currentAngularMode, &ctxtReal39);
     realAdd(&y, &x, &x, &ctxtReal39);
     convertRealToReal34ResultRegister(&x, REGISTER_X);
@@ -955,9 +949,6 @@ void addShoIReal(void) {
     convertRealToReal34ResultRegister(&x, REGISTER_X);
   }
   else {
-    if(currentAngularMode == amMultPi) {
-      realMultiply(&y, const_pi, &y, &ctxtReal39);
-    }
     convertAngleFromTo(&x, xAngularMode, currentAngularMode, &ctxtReal39);
     realAdd(&y, &x, &x, &ctxtReal39);
     convertRealToReal34ResultRegister(&x, REGISTER_X);
@@ -981,9 +972,6 @@ void addRealShoI(void) {
     convertRealToReal34ResultRegister(&x, REGISTER_X);
   }
   else {
-    if(currentAngularMode == amMultPi) {
-      realMultiply(&x, const_pi, &x, &ctxtReal39);
-    }
     convertAngleFromTo(&y, yAngularMode, currentAngularMode, &ctxtReal39);
     realAdd(&y, &x, &x, &ctxtReal39);
     convertRealToReal34ResultRegister(&x, REGISTER_X);
@@ -1026,15 +1014,9 @@ void addRealReal(void) {
 
     if(yAngularMode == amNone) {
       yAngularMode = currentAngularMode;
-      if(currentAngularMode == amMultPi) {
-        realMultiply(&y, const_pi, &y, &ctxtReal39);
-      }
     }
     else if(xAngularMode == amNone) {
       xAngularMode = currentAngularMode;
-      if(currentAngularMode == amMultPi) {
-        realMultiply(&x, const_pi, &x, &ctxtReal39);
-      }
     }
 
     convertAngleFromTo(&y, yAngularMode, currentAngularMode, &ctxtReal39);

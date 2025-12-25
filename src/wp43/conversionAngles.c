@@ -3,13 +3,18 @@
 
 #include "conversionAngles.h"
 
+#include "calcMode.h"
+#include "config.h"
 #include "constantPointers.h"
+#include "dateTime.h"
 #include "debug.h"
 #include "error.h"
 #include "fonts.h"
+#include "items.h"
 #include "mathematics/comparisonReals.h"
 #include "registers.h"
 #include "registerValueConversions.h"
+#include "ui/bufferize.h"
 
 #include "wp43.h"
 
@@ -50,16 +55,6 @@ void fnCvtFromCurrentAngularMode(uint16_t toAngularMode) {
   switch(getRegisterDataType(REGISTER_X)) {
     case dtLongInteger: {
       convertLongIntegerRegisterToReal34Register(REGISTER_X, REGISTER_X);
-
-      if(currentAngularMode == amMultPi && getRegisterAngularMode(REGISTER_X) == amNone) {
-        real_t x;
-        real34ToReal(REGISTER_REAL34_DATA(REGISTER_X), &x);
-        realMultiply(&x, const_pi, &x, &ctxtReal39);
-        convertRealToReal34ResultRegister(&x, REGISTER_X);
-        //setRegisterAngularMode(REGISTER_X, toAngularMode);
-        //break;
-      }
-
       convertAngle34FromTo(REGISTER_REAL34_DATA(REGISTER_X), currentAngularMode, toAngularMode);
       setRegisterAngularMode(REGISTER_X, toAngularMode);
       break;
@@ -70,16 +65,6 @@ void fnCvtFromCurrentAngularMode(uint16_t toAngularMode) {
         real34FromDmsToDeg(REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X));
         setRegisterAngularMode(REGISTER_X, amDegree);
       }
-
-      if(currentAngularMode == amMultPi && getRegisterAngularMode(REGISTER_X) == amNone) {
-        real_t x;
-        real34ToReal(REGISTER_REAL34_DATA(REGISTER_X), &x);
-        realMultiply(&x, const_pi, &x, &ctxtReal39);
-        convertRealToReal34ResultRegister(&x, REGISTER_X);
-        //setRegisterAngularMode(REGISTER_X, toAngularMode);
-        //break;
-      }
-
       convertAngle34FromTo(REGISTER_REAL34_DATA(REGISTER_X), getRegisterAngularMode(REGISTER_X) == amNone ? currentAngularMode : getRegisterAngularMode(REGISTER_X), toAngularMode);
       setRegisterAngularMode(REGISTER_X, toAngularMode);
       break;
@@ -175,16 +160,14 @@ void fnCvtMultPiToRad(uint16_t unusedButMandatoryParameter) {
   switch(getRegisterDataType(REGISTER_X)) {
     case dtLongInteger: {
       convertLongIntegerRegisterToReal34Register(REGISTER_X, REGISTER_X);
+      convertAngle34FromTo(REGISTER_REAL34_DATA(REGISTER_X), amMultPi, amRadian);
       setRegisterAngularMode(REGISTER_X, amRadian);
       break;
     }
 
     case dtReal34: {
-      if(getRegisterAngularMode(REGISTER_X) == amNone) {
-        real34FromDmsToDeg(REGISTER_REAL34_DATA(REGISTER_X), REGISTER_REAL34_DATA(REGISTER_X));
-        setRegisterAngularMode(REGISTER_X, amRadian);
-      }
-      else if(getRegisterAngularMode(REGISTER_X) == amMultPi) {
+      if(getRegisterAngularMode(REGISTER_X) == amMultPi  || getRegisterAngularMode(REGISTER_X) == amNone) {
+        convertAngle34FromTo(REGISTER_REAL34_DATA(REGISTER_X), amMultPi, amRadian);
         setRegisterAngularMode(REGISTER_X, amRadian);
       }
       else {
@@ -211,12 +194,14 @@ void fnCvtRadToMultPi(uint16_t unusedButMandatoryParameter) {
   switch(getRegisterDataType(REGISTER_X)) {
     case dtLongInteger: {
       convertLongIntegerRegisterToReal34Register(REGISTER_X, REGISTER_X);
+      convertAngle34FromTo(REGISTER_REAL34_DATA(REGISTER_X), amRadian, amMultPi);
       setRegisterAngularMode(REGISTER_X, amMultPi);
       break;
     }
 
     case dtReal34: {
       if(getRegisterAngularMode(REGISTER_X) == amRadian || getRegisterAngularMode(REGISTER_X) == amNone) {
+        convertAngle34FromTo(REGISTER_REAL34_DATA(REGISTER_X), amRadian, amMultPi);
         setRegisterAngularMode(REGISTER_X, amMultPi);
       }
       else {
@@ -502,9 +487,12 @@ void convertAngle34FromTo(real34_t *angle34, angularMode_t fromAngularMode, angu
 
 void convertAngleFromTo(real_t *angle, angularMode_t fromAngularMode, angularMode_t toAngularMode, realContext_t *realContext) {
   switch(fromAngularMode) {
-    case amRadian:
-    case amMultPi: {
+    case amRadian: {
       switch(toAngularMode) {
+        case amMultPi: {
+          realDivide(angle, const_pi, angle, realContext);
+          break;
+        }
         case amGrad: {
           realMultiply(angle, const_200onPi,  angle, realContext);
           break;
@@ -524,11 +512,38 @@ void convertAngleFromTo(real_t *angle, angularMode_t fromAngularMode, angularMod
       break;
     }
 
+    case amMultPi: {
+      switch(toAngularMode) {
+        case amRadian: {
+          realMultiply(angle, const_pi, angle, realContext);
+          break;
+        }
+        case amGrad: {
+          realMultiply(angle, const_200, angle, realContext);
+          break;
+        }
+        case amDegree:
+        case amDMS: {
+          realMultiply(angle, const_180, angle, realContext);
+          break;
+        }
+        case amMil: {
+          realMultiply(angle, const_3200,      angle, realContext);
+          break;
+        }
+        default: ;
+      }
+      break;
+    }
+
     case amGrad: {
       switch(toAngularMode) {
-        case amRadian:
-        case amMultPi: {
+        case amRadian: {
           realDivide(  angle, const_200onPi, angle, realContext);
+          break;
+        }
+        case amMultPi: {
+          realDivide(  angle, const_200, angle, realContext);
           break;
         }
         case amDegree:
@@ -549,9 +564,12 @@ void convertAngleFromTo(real_t *angle, angularMode_t fromAngularMode, angularMod
     case amDegree:
     case amDMS: {
       switch(toAngularMode) {
-        case amRadian:
-        case amMultPi: {
+        case amRadian: {
           realDivide(  angle, const_180onPi, angle, realContext);
+          break;
+        }
+        case amMultPi: {
+          realDivide(  angle, const_180, angle, realContext);
           break;
         }
         case amGrad: {
@@ -570,9 +588,12 @@ void convertAngleFromTo(real_t *angle, angularMode_t fromAngularMode, angularMod
 
     case amMil: {
       switch(toAngularMode) {
-        case amRadian:
-        case amMultPi: {
+        case amRadian: {
           realDivide(  angle, const_3200onPi, angle, realContext);
+          break;
+        }
+        case amMultPi: {
+          realDivide(  angle, const_3200, angle, realContext);
           break;
         }
         case amGrad: {
@@ -793,3 +814,79 @@ void real34FromDegToDms(const real34_t *angleDec, real34_t *angleDms) {
 
   checkDms34(angleDms);
 }
+
+
+
+/********************************************//**
+ * \brief C47 style conversions (for the experimental build)
+ *
+ * \param[in]  angleDec real34_t* Real to be conveted to DMS, 23.456789°
+ * \param[out] angleDms real34_t* Converted real, from the example above the result 23.27244404 = 23°27'24.4404"
+ * \return void
+ ***********************************************/
+void fnAngularModeJM(uint16_t AMODE) { //Setting to HMS does not change AM
+ #if !defined(TESTSUITE_BUILD)
+  #if defined(XPB)
+  copySourceRegisterToDestRegister(REGISTER_X, TEMP_REGISTER_1);
+  if(AMODE == TM_HMS) {
+/*
+    if(getRegisterDataType(REGISTER_X) == dtTime) {
+      goto to_return;
+    }
+    if(getRegisterDataType(REGISTER_X) == dtReal34 && getRegisterAngularMode(REGISTER_X) != amNone) {
+      fnCvtFromCurrentAngularMode(amDegree);
+    }
+
+    if(calcMode == cmNormal) {
+      fnToReal(0);
+    }
+    else if(calcMode == cmNim) {
+      addItemToNimBuffer(ITM_dotD);
+    }
+
+    fnHRtoTM(0); //covers longint & real
+*/
+  }
+  else {
+    if(getRegisterDataType(REGISTER_X) == dtTime) {
+      fnToHr(0); //covers time
+      setRegisterAngularMode(REGISTER_X, amDegree);
+      fnCvtFromCurrentAngularMode(AMODE);
+      //fnAngularMode(AMODE);                             Remove updating of ADM to the same mode
+    }
+
+    if(getRegisterDataType(REGISTER_X) == dtComplex34 || getRegisterDataType(REGISTER_X) == dtComplex34Matrix) {
+      //printf("###AA fnAngularModeJM (%i)<= %i\n",REGISTER_X, AMODE);
+      //printf("###BB fnAngularModeJM (%i)=> %i\n",REGISTER_X, getRegisterTag(REGISTER_X));
+
+      //setComplexRegisterAngularMode(REGISTER_X, AMODE);
+      //setComplexRegisterPolarMode(REGISTER_X, amPolar);
+      //printf("###CC fnAngularModeJM (%i)=> %i\n",REGISTER_X, getRegisterTag(REGISTER_X));
+    }
+    else {
+      if((getRegisterDataType(REGISTER_X) != dtReal34) || ((getRegisterDataType(REGISTER_X) == dtReal34) && getRegisterAngularMode(REGISTER_X) == amNone)) {
+
+        if(calcMode == cmNormal) {         //convert longint, and strip all angles to real.
+          fnToReal(0);
+        }
+        else if(calcMode == cmNim) {
+          addItemToNimBuffer(ITM_dotD);
+        }
+
+        uint16_t currentAngularModeOld = currentAngularMode;
+        fnAngularMode(AMODE);
+        fnCvtFromCurrentAngularMode(currentAngularMode);
+        currentAngularMode = currentAngularModeOld;       //Remove updating of ADM to the same mode (set in fnCvtFromCurrentAngularMode())
+      }
+      else { //convert existing tagged angle
+        fnCvtFromCurrentAngularMode(AMODE);
+      }
+    }
+  }
+
+  //to_return:
+  copySourceRegisterToDestRegister(TEMP_REGISTER_1, REGISTER_L);
+  #endif // XPB
+ #endif //TESTSUITE_BUILD
+}
+
