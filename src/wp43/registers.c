@@ -2268,3 +2268,24 @@ bool isFunctionAllowingNewVariable(uint16_t op) {
       return false;
   }
 }
+
+
+bool isValidGlobalOrLocalRegister(calcRegister_t regist) {
+  if(regist <= LAST_GLOBAL_REGISTER) { // Global register
+    return true;
+  }
+  else if((regist > LAST_GLOBAL_REGISTER) && (regist <= LAST_LOCAL_REGISTER)) { // Local register
+    if(currentLocalRegisters != NULL) {
+      regist -= FIRST_LOCAL_REGISTER;
+      if(regist < currentNumberOfLocalRegisters) {
+        return true;
+      }
+    }
+    displayCalcErrorMessage(ERROR_NOT_SUCH_LOCAL_REGISTER_ALLOCATED, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
+    errorMoreInfo("local register %" PRId16 " is not defined\nMust be from 0 to %" PRIu8, regist, (uint8_t)(currentNumberOfLocalRegisters -1));
+    return false;
+  }
+  displayCalcErrorMessage(ERROR_OUT_OF_RANGE, ERR_REGISTER_LINE, NIM_REGISTER_LINE);
+  errorMoreInfo("register %" PRId16 " is not a valid\nglobal or local register", regist);
+  return false;
+}

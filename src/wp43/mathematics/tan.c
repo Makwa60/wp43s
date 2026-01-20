@@ -52,6 +52,10 @@ void longIntegerAngleReduction(calcRegister_t regist, angularMode_t angularMode,
       oneTurn = 6400;
       break;
     }
+    case amMultPi: {
+      oneTurn = 2;
+      break;
+    }
     default: {
       oneTurn = 0;
     }

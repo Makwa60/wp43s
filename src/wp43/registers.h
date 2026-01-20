@@ -118,6 +118,15 @@
   void           popAllLocalRegistersAndFlags    (uint16_t unusedButMandatoryParameter);
 
   /**
+   * Check if the given register number is valid
+   *
+   * \param[in] regist                 Register number
+   * \return `true` if given register exists, `false` if not
+   */
+  bool           isValidGlobalOrLocalRegister    (calcRegister_t regist);
+
+
+  /**
    * Check if the given name follows the naming convention
    *
    * \param[in] name                 Name of variable/label/menu
