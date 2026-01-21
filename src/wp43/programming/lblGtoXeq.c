@@ -494,7 +494,9 @@ void fnStopProgram(uint16_t unusedButMandatoryParameter) {
       case PARAM_REGISTER:
       case PARAM_COMPARE: {
         if(opParam <= LAST_LOCAL_REGISTER) { // Global register from 00 to 99, Lettered register from X to K, or Local register from .00 to .98
-          reallyRunFunction(op, opParam);
+          if(isValidGlobalOrLocalRegister(opParam)) {
+            reallyRunFunction(op, opParam);
+          }
         }
         else if(opParam == STRING_LABEL_VARIABLE) {
           _getStringLabelOrVariableName(paramAddress);

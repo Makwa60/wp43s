@@ -906,6 +906,7 @@ void fnReset(uint16_t confirmation) {
     #endif // Not XPB
     #if defined(ENTRY_RPN)
       setSystemFlag(FLAG_ERPN);
+      nimWhenButtonPressed = false;
     #endif // Not ENTRY_RPN
     
 

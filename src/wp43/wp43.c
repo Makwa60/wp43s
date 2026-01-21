@@ -201,3 +201,8 @@ char                   statMx[8];
 char                   plotStatMx[8];
 
 uint16_t               saveLoadMode;
+
+
+#ifdef ENTRY_RPN
+  bool                 nimWhenButtonPressed = false;
+#endif   // ENTRY_RPN

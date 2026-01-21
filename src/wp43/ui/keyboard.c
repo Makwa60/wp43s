@@ -984,6 +984,9 @@ bool      _kbSeenInterrupt     = false;
 
 
   void btnPressed(keyCode_t keyCode) {
+    #ifdef ENTRY_RPN
+      nimWhenButtonPressed = (calcMode == cmNim);
+    #endif   // ENTRY_RPN
     if(_kbCheckForInterrupt) {
       if(keyCode == kcExit) {
         _kbSeenInterrupt = true;
@@ -1729,7 +1732,7 @@ void fnKeyEnter(uint16_t unusedButMandatoryParameter) {
     switch(calcMode) {
       case cmNormal: {
        #ifdef ENTRY_RPN
-        if(!getSystemFlag(FLAG_ERPN) || (getSystemFlag(FLAG_ERPN) && programRunStop == PGM_RUNNING )) {     //DL eRPN 2025-08
+        if(!getSystemFlag(FLAG_ERPN) || (!nimWhenButtonPressed && programRunStop != PGM_RUNNING) || (getSystemFlag(FLAG_ERPN) && programRunStop == PGM_RUNNING )) {     //DL eRPN 2025-08
        #endif   // ENTRY_RPN
           setSystemFlag(FLAG_ASLIFT);
           #if defined(DEBUGUNDO)

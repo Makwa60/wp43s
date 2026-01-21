@@ -260,4 +260,8 @@
     extern bool                 backToDMCP;
   #endif // DMCP_BUILD
 
+  #ifdef ENTRY_RPN
+    extern bool                 nimWhenButtonPressed;
+  #endif   // ENTRY_RPN
+
 #endif // !WP43_H
