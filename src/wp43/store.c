@@ -25,23 +25,25 @@ bool regInRange(uint16_t regist) {
     (regist < FIRST_LOCAL_REGISTER + currentNumberOfLocalRegisters) ||
     (regist >= FIRST_NAMED_VARIABLE && regist - FIRST_NAMED_VARIABLE < numberOfNamedVariables) ||
     (regist >= FIRST_RESERVED_VARIABLE && regist <= LAST_RESERVED_VARIABLE));
-  #if (EXTRA_INFO_ON_CALC_ERROR == 1)
     if(!inRange) {
       if(regist >= FIRST_LOCAL_REGISTER && regist <= LAST_LOCAL_REGISTER) {
         displayCalcErrorMessage(ERROR_OUT_OF_RANGE, ERR_REGISTER_LINE, REGISTER_X);
-        errorMoreInfo("local register .%02d is not defined!", regist - FIRST_LOCAL_REGISTER);
+        #if (EXTRA_INFO_ON_CALC_ERROR == 1)
+          errorMoreInfo("local register .%02d is not defined!", regist - FIRST_LOCAL_REGISTER);
+        #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
       }
       else if(regist >= FIRST_NAMED_VARIABLE && regist <= LAST_NAMED_VARIABLE) {
         displayCalcErrorMessage(ERROR_UNDEF_SOURCE_VAR, ERR_REGISTER_LINE, REGISTER_X);
         // This error message is not massively useful because it doesn't have the original name
         // But it shouldn't have even got this far if the name doesn't exist
-        errorMoreInfo("named register .%02d is not defined!", regist - FIRST_NAMED_VARIABLE);
+        #if (EXTRA_INFO_ON_CALC_ERROR == 1)
+          errorMoreInfo("named register .%02d is not defined!", regist - FIRST_NAMED_VARIABLE);
+        #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
       }
       else {
         displayCalcErrorMessage(ERROR_OUT_OF_RANGE, ERR_REGISTER_LINE, REGISTER_X);
       }
     }
-  #endif // (EXTRA_INFO_ON_CALC_ERROR == 1)
   return inRange;
 }
 
