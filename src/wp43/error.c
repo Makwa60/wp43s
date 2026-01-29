@@ -85,7 +85,6 @@ TO_QSPI const char *errorMessages[NUMBER_OF_ERROR_CODES] = {
 /* 56 */  "Operation aborted",
 /* 57 */  "Not enough memory to load the equations",
 /* 58 */  "No such local register allocated",
-/* 59 */  "May be calculatory correct but meaningless",
 };
 
 

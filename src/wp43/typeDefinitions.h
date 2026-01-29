@@ -515,7 +515,8 @@
     TI_MY_ALPHA_CLEARED    = 67,
     TI_EQUATIONS_RESTORED  = 68,
     TI_SAVE_TO             = 69,
-    TI_LOAD_FROM           = 70
+    TI_LOAD_FROM           = 70,
+    TI_MEANINGLESS_RESULT  = 71
   } temporaryInformation_t;
 
 

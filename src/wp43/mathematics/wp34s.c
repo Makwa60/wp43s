@@ -53,6 +53,13 @@ void WP34S_Cvt2RadSinCosTan(const real_t *an, angularMode_t angularMode, real_t 
   }
 
   realCopy(an, &angle);
+  
+  #if !defined(XPB)
+    int32_t exponent = (realIsZero(&angle) ? 0 : angle.exponent + angle.digits - 1);
+    if(exponent >= 33) {
+      temporaryInformation = TI_MEANINGLESS_RESULT;
+    }
+  #endif // !XPB
 
   // sin(-x) = -sin(x), cos(-x) = cos(x)
   if(realIsNegative(&angle)) {
