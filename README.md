@@ -3,7 +3,7 @@
 
 The *WP43* pocket calculator is a new fast, compact, reliable, and solid problem solver like you never owned before – instant on, fully programmable, incorporating a state-of-the-art high-resolution display, customizable by you, connecting to your computer, and RPN – a serious scientific instrument supporting you in your studies and professional activities. It readily provides advanced capabilities never before combined so conveniently in a true pocket-size calculator.
 
-## Getting involved
+## Getting involved in this community project
 - Regular announcements about the project are made on the [SwissMicros "WP43, WP34S" forum](https://forum.swissmicros.com/viewforum.php?f=44).
 - A free simulator is available for download on the [Releases page](https://gitlab.com/rpncalculators/wp43/-/releases).
 - Bugs and improvement wishes can be reported on the [Issues page](https://gitlab.com/rpncalculators/wp43/-/issues).
@@ -19,4 +19,4 @@ The *WP43* pocket calculator is a new fast, compact, reliable, and solid problem
 - Please see the [**_WP43 Owner's Manual_**](https://gitlab.com/rpncalculators/wp43/-/blob/master/docs/OwnersManual.pdf).
 
 ## Donations
-If you want to support our work by donating some money to this project, please use this [link](https://www.paypal.com/cgi-bin/webscr?item_name=Donation+to+WP43&cmd=_donations&business=walter.bonin%40web.de&lc=us). Thankyou, hartstikke bedankt, mange tak(k), merci bien, mille grazie, muchas gracias, muito obrigado, suurkiitokset, tack så mycket, vielen Dank!
+If you want to support our work by donating some money to this project, please use this [link](https://www.paypal.com/cgi-bin/webscr?item_name=Donation+to+WP43&cmd=_donations&business=walter.bonin%40web.de&lc=us). **Thankyou, hartstikke bedankt, mange tak(k), merci bien, mille grazie, muchas gracias, muito obrigado, suurkiitokset, tack så mycket, vielen Dank!**
