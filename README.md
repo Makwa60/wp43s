@@ -4,7 +4,7 @@
 The *WP43* pocket calculator is a new fast, compact, reliable, and solid problem solver like you never owned before – instant on, fully programmable, incorporating a state-of-the-art high-resolution display, customizable by you, connecting to your computer, and RPN – a serious scientific instrument supporting you in your studies and professional activities. It readily provides advanced capabilities never before combined so conveniently in a true pocket-size calculator.
 
 ## Getting involved
-- Regular announcements about the project are made on the [SwissMicros "C47/C43, WP43, WP34S" forum](https://forum.swissmicros.com/viewforum.php?f=44).
+- Regular announcements about the project are made on the [SwissMicros "WP43, WP34S" forum](https://forum.swissmicros.com/viewforum.php?f=44).
 - A free simulator is available for download on the [Releases page](https://gitlab.com/rpncalculators/wp43/-/releases).
 - Bugs and improvement wishes can be reported on the [Issues page](https://gitlab.com/rpncalculators/wp43/-/issues).
 - Read more about how to be involved in development on the [project Wiki](https://gitlab.com/rpncalculators/wp43/-/wikis/home).
