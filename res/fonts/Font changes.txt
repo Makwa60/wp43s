@@ -217,3 +217,22 @@
 2023-12-17 Added two letters U+2147 and U+2148 for Euler's e and complex i to both fonts.
 
 2024-12-10 Added a letter U+2113 for the liter/litre in standard font
+
+2026-03-07 Removed in both fonts:
+           U+2428 and 9 'double' point and comma
+           Moved in both fonts:
+           from U+247d to U+23e8 decimal exponent symbol (10)
+           Removed in standard font:
+           U+2421, 22, 25, and 26 obsolete graph symbols
+           Moved in standard font:
+           from U+21c9 to U+21c8 triangle upwards
+           from U+21cb to U+21ca triangle downwards
+           from U+21cc to U+2263 strictly equal (hamburger)
+           from U+21cd to U+21b6 undo
+           Modified in standard font:
+           the undo U+21b6 to greater width
+           the USB symbol U+2434
+           Modified in numeric font:
+           U+0069 i
+           U+006a j
+           U+2148 complex i
