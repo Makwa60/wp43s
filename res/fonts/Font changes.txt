@@ -236,3 +236,9 @@
            U+0069 i
            U+006a j
            U+2148 complex i
+
+2026-03-17 Modified in numeric font:
+           A, G, K, M, V, W, w, gamma, theta, rho, sigma, and Phi.
+           Modified in standard font:
+           eta, rho, and sigma.
+            
