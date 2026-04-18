@@ -253,3 +253,6 @@
            U+03b7 eta
            U+03c1 rho
            U+03c3 sigma
+
+2026-04-18 Modified in standard font
+            Returned U+2421, U+2422, U+2425, U+2426, U+2428 and U+2429          
