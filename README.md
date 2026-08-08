@@ -20,3 +20,19 @@ The *WP43* pocket calculator is a new fast, compact, reliable, and solid problem
 
 ## Donations
 If you want to support our work by donating some money to this project, please use this [link](https://www.paypal.com/cgi-bin/webscr?item_name=Donation+to+WP43&cmd=_donations&business=walter.bonin%40web.de&lc=us). **Thankyou, hartstikke bedankt, mange tak(k), merci bien, mille grazie, muchas gracias, muito obrigado, suurkiitokset, tack så mycket, vielen Dank!**
+
+## Linux build and run
+This fork includes updates for building and running the GTK frontend on Linux.
+
+### Build
+```bash
+meson setup builddir --buildtype=debug
+meson compile -C builddir
+```
+
+### Run
+```bash
+./builddir/src/wp43-gtk/wp43
+```
+
+If the application cannot find theme, font, or resource files, ensure the build directory is used as the runtime prefix or install the project into a prefix that contains the bundled assets.
