@@ -681,7 +681,9 @@ static void _insertInProgram(const uint8_t *dat, uint16_t sizeInBytes) {
   }
   firstFreeProgramByte    += sizeInBytes;
   freeProgramBytes        -= sizeInBytes;
-  currentLocalStepNumber  += 1;
+  if(!pemCursorIsZerothStep) {
+    currentLocalStepNumber += 1;
+  }
   endOfCurrentProgram     += sizeInBytes;
   globalStepNumber = currentLocalStepNumber + programList[currentProgramNumber - 1].step - 1;
   scanLabelsAndPrograms();
@@ -845,8 +847,6 @@ void pemAlpha(int16_t item) {
       xcopy(tmpString + 4, aimBuffer, stringByteLength(aimBuffer));
       _insertInProgram((uint8_t *)tmpString, stringByteLength(aimBuffer) + 4);
     }
-    --currentLocalStepNumber;
-    currentStep = findPreviousStep(currentStep);
     if(!programListEnd) {
       scrollPemBackwards();
     }
@@ -885,8 +885,6 @@ void pemAddNumber(int16_t item, bool doInsertInProgram) {
       tmpString[2] = 0;
       _insertInProgram((uint8_t *)tmpString, 3);
       memset(nimBufferDisplay, 0, NIM_BUFFER_LENGTH);
-      --currentLocalStepNumber;
-      currentStep = findPreviousStep(currentStep);
       switch(item) {
         case ITM_EXPONENT : {
           aimBuffer[0] = '+';
@@ -1290,6 +1288,17 @@ void insertStepInProgram(int16_t func) {
     pemCursorIsZerothStep = false;
     return;
   }
+  if(func == ITM_LBL && tam.alpha) {
+    uint16_t nameLength = stringByteLength(aimBuffer);
+    tmpString[0] = ITM_LBL;
+    tmpString[1] = (char)STRING_LABEL_VARIABLE;
+    tmpString[2] = nameLength;
+    xcopy(tmpString + 3, aimBuffer, nameLength);
+    _insertInProgram((uint8_t *)tmpString, nameLength + 3);
+    aimBuffer[0] = 0;
+    return;
+  }
+
   if(indexOfItems[func].func == addItemToBuffer || (!tamIsActive() && aimBuffer[0] != 0 && (func == ITM_CHS || func == ITM_CC || func == ITM_toINT || (nimNumberPart == NP_INT_BASE && (func == ITM_YX || func == ITM_LN || func == ITM_RCL))))) {
     pemAddNumber(func, true);
     return;
@@ -1600,7 +1609,6 @@ void insertUserItemInProgram(int16_t func, char *funcParam) {
 
   if((!pemCursorIsZerothStep) && ((aimBuffer[0] == 0 && !getSystemFlag(FLAG_ALPHA)) || tam.mode) && !isAtEndOfProgram(currentStep) && !isAtEndOfPrograms(currentStep)) {
     currentStep = findNextStep(currentStep);
-    ++currentLocalStepNumber;
   }
   if(func < 128) {
     tmpString[opBytes++] = func;
@@ -1615,10 +1623,6 @@ void insertUserItemInProgram(int16_t func, char *funcParam) {
   xcopy(tmpString + opBytes + 2, funcParam, nameLength);
   _insertInProgram((uint8_t *)tmpString, nameLength + opBytes + 2);
 
-  currentStep = findPreviousStep(currentStep);
-  if(currentLocalStepNumber > 1) {
-    --currentLocalStepNumber;
-  }
   pemCursorIsZerothStep = false;
   if(!programListEnd) {
     scrollPemBackwards();
@@ -1630,14 +1634,9 @@ void insertUserItemInProgram(int16_t func, char *funcParam) {
 void addStepInProgram(int16_t func) {
   if((!pemCursorIsZerothStep) && ((aimBuffer[0] == 0 && !getSystemFlag(FLAG_ALPHA)) || tamIsActive()) && !isAtEndOfProgram(currentStep) && !isAtEndOfPrograms(currentStep)) {
     currentStep = findNextStep(currentStep);
-    ++currentLocalStepNumber;
   }
   insertStepInProgram(func);
   if((aimBuffer[0] == 0 && !getSystemFlag(FLAG_ALPHA)) || tamIsActive()) {
-    currentStep = findPreviousStep(currentStep);
-    if(currentLocalStepNumber > 1) {
-      --currentLocalStepNumber;
-    }
     pemCursorIsZerothStep = false;
     if((indexOfItems[func].status & PTP_STATUS) == PTP_DISABLED) {
       switch(func) {

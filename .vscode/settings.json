@@ -25,5 +25,6 @@
         "string_view": "c",
         "initializer_list": "c",
         "valarray": "c"
-    }
+    },
+    "C_Cpp.default.compileCommands": "/home/odin/wp43s/build.sim/compile_commands.json"
 }

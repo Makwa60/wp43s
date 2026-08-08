@@ -46,7 +46,9 @@ sim = executable(
   dependencies        : [gtk_dep, gmp_dep, m_dep, pulse_dep],
   native              : true,
   override_options    : override_opts,
-  win_subsystem       : 'windows')
+  win_subsystem       : 'windows',
+  install             : true,
+  install_dir         : get_option('bindir'))
 alias_target('sim', sim)
   
 #
@@ -64,5 +66,9 @@ simX = executable(
   dependencies        : [gtk_dep, gmp_dep, m_dep, pulse_dep],
   native              : true,
   override_options    : override_opts,
-  win_subsystem       : 'windows')
+  win_subsystem       : 'windows',
+  install             : true,
+  install_dir         : get_option('bindir'))
 alias_target('simX', simX)
+
+install_subdir('../../res', install_dir : get_option('datadir') / 'wp43', strip_directory : false)

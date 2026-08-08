@@ -14,6 +14,12 @@
 
 #include "wp43.h"
 
+static size_t _alignedSizeInBlocks(size_t sizeInBytes) {
+  const size_t alignmentInBlocks = TO_BLOCKS(sizeof(void *));
+  const size_t roundedSizeInBlocks = TO_BLOCKS(sizeInBytes);
+  return roundedSizeInBlocks == 0 ? alignmentInBlocks : ((roundedSizeInBlocks + alignmentInBlocks - 1) / alignmentInBlocks) * alignmentInBlocks;
+}
+
 int32_t getFreeRamMemory(void) {
   int32_t freeMem, i;
 
@@ -56,7 +62,7 @@ bool isMemoryBlockAvailable(const size_t sizeInBytes) {
 
 
 void *allocWp43(size_t sizeInBytes) {
-  const size_t sizeInBlocks = TO_BLOCKS(sizeInBytes);
+  const size_t sizeInBlocks = _alignedSizeInBlocks(sizeInBytes);
   #if !defined(DMCP_BUILD)
     //if(debugMemAllocation) {
     //  printf("allocWp43\n");
@@ -85,8 +91,8 @@ void *allocWp43(size_t sizeInBytes) {
 
 
 void *reallocWp43(void *pcMemPtr, size_t oldSizeInBytes, size_t newSizeInBytes) {
-  const size_t oldSizeInBlocks = TO_BLOCKS(oldSizeInBytes);
-  const size_t newSizeInBlocks = TO_BLOCKS(newSizeInBytes);
+  const size_t oldSizeInBlocks = _alignedSizeInBlocks(oldSizeInBytes);
+  const size_t newSizeInBlocks = _alignedSizeInBlocks(newSizeInBytes);
   #if !defined(DMCP_BUILD)
     //if(debugMemAllocation) {
     //  printf("reallocWp43\n");
@@ -115,7 +121,7 @@ void *reallocWp43(void *pcMemPtr, size_t oldSizeInBytes, size_t newSizeInBytes) 
 
 
 void freeWp43(void *pcMemPtr, size_t sizeInBytes) {
-  const size_t sizeInBlocks = TO_BLOCKS(sizeInBytes);
+  const size_t sizeInBlocks = _alignedSizeInBlocks(sizeInBytes);
   if(pcMemPtr == NULL) {
     return;
   }

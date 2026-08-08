@@ -199,10 +199,19 @@ void frmCalcMouseButtonReleased(GtkWidget *notUsed, GdkEvent *event, gpointer da
     FILE *skin;
     int calcKey;
     char textLine[1000], skinDirectory[222]="", fileName[421], parameter[100], value[200];
+    const char *skinPaths[] = {"res/artwork/skin.cfg", "../../../res/artwork/skin.cfg", "/usr/local/share/wp43/res/artwork/skin.cfg", "/usr/share/wp43/res/artwork/skin.cfg", "/home/odin/.local/share/wp43/res/artwork/skin.cfg", NULL};
+    int skinPathIndex = 0;
 
-    skin = fopen(BASEPATH "res/artwork/skin.cfg", "rb");
+    while(skinPaths[skinPathIndex] != NULL) {
+      skin = fopen(skinPaths[skinPathIndex], "rb");
+      if(skin != NULL) {
+        break;
+      }
+      skinPathIndex++;
+    }
+
     if(skin == NULL) {
-      errorMoreInfo("error opening file " BASEPATH "res/artwork/skin.cfg!");
+      errorMoreInfo("error opening file res/artwork/skin.cfg!");
       exit(1);
     }
 
@@ -211,7 +220,14 @@ void frmCalcMouseButtonReleased(GtkWidget *notUsed, GdkEvent *event, gpointer da
       getParameter(textLine, parameter, value);
 
       if(!strcmp(parameter, "skinDirectory") && value[0] != 0) {
-        sprintf(skinDirectory, BASEPATH "res/artwork/%s/", value);
+        if(skinPathIndex == 0 || skinPathIndex == 1) {
+          snprintf(skinDirectory, sizeof(skinDirectory), "res/artwork/%s/", value);
+        }
+        else {
+          char fullPath[512];
+          snprintf(fullPath, sizeof(fullPath), "%s/%s/", skinPaths[skinPathIndex], value);
+          snprintf(skinDirectory, sizeof(skinDirectory), "%s", fullPath);
+        }
       }
 
       fgets(textLine, 1000, skin);
@@ -431,9 +447,12 @@ void frmCalcMouseButtonReleased(GtkWidget *notUsed, GdkEvent *event, gpointer da
     int  fileLg;
 
     // Convert the pre-CSS data to CSS data
-    cssFile = fopen(CSSFILE, "rb");
+    cssFile = fopen("res/wp43_pre.css", "rb");
     if(cssFile == NULL) {
-      errorMoreInfo("error opening file " CSSFILE "!");
+      cssFile = fopen(CSSFILE, "rb");
+    }
+    if(cssFile == NULL) {
+      errorMoreInfo("error opening file res/wp43_pre.css!");
       exit(1);
     }
 

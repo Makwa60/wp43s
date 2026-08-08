@@ -15,6 +15,12 @@
   #else
     #define BASEPATH "../../../"
   #endif
+
+  #ifdef __linux__
+    #define BASEPATH_LINUX "../../../../"
+  #else
+    #define BASEPATH_LINUX BASEPATH
+  #endif
   #define CSSFILE    BASEPATH "res/wp43_pre.css"
 
   extern bool       calcLandscape;

@@ -47,6 +47,21 @@
     xcopy(tmpStringLabelOrVariableName, stringAddress, stringLength);
     tmpStringLabelOrVariableName[stringLength] = 0;
   }
+
+  static bool hasDisplayExponentMarker(const char *text) {
+    size_t len = strlen(text);
+    for(size_t i = 0; i + 1 < len; i++) {
+      if(text[i] == STD_SUB_10[0] && text[i + 1] == STD_SUB_10[1]) {
+        return true;
+      }
+      if(i + 3 < len
+         && text[i] == STD_SUB_1[0] && text[i + 1] == STD_SUB_1[1]
+         && text[i + 2] == STD_SUB_0[0] && text[i + 3] == STD_SUB_0[1]) {
+        return true;
+      }
+    }
+    return false;
+  }
 #endif // !TESTSUITE_BUILD
 
 void fractionToString(calcRegister_t regist, char *displayString, int16_t *lessEqualGreater) {
@@ -195,12 +210,7 @@ static void _real34ToNim(const real34_t *real34, char *nimInput, char *nimDispla
   groupingGap = groupingGapOld;
   //printf("**[DL]** tmpString %s\n",tmpString);fflush(stdout);
 
-  bool noDisplayExponent = true;
-  for(i = 0; i < strlen(tmpString); i++) {
-    if((tmpString[i] == STD_SUB_10[0]) && (tmpString[i+1] == STD_SUB_10[1])) {
-      noDisplayExponent = false;
-    }
-  }
+  bool noDisplayExponent = !hasDisplayExponentMarker(tmpString);
   groupingGap = 0;
   real34ToString(real34, nimDisplay);
   groupingGap = groupingGapOld;

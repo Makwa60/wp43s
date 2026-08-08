@@ -15,6 +15,8 @@
 #include "ui/screen.h"
 #include <assert.h>
 #include <stdbool.h>
+#include <stdlib.h>
+#include <unistd.h>
 
 #include "wp43.h"
 
@@ -54,6 +56,28 @@ int main(int argc, char* argv[]) {
         strncpy(curdir, argv[0], s-argv[0]);
         chdir(curdir);
         free(curdir);
+      }
+    }
+  #elif defined(__linux__)
+    if(access("res/artwork/skin.cfg", F_OK) != 0) {
+      if(access("../../../res/artwork/skin.cfg", F_OK) == 0) {
+        chdir("../../../");
+      }
+      else {
+        const char *home = getenv("HOME");
+        if(home != NULL) {
+          char localSharePath[1024];
+          snprintf(localSharePath, sizeof(localSharePath), "%s/.local/share/wp43", home);
+          if(access("/usr/local/share/wp43/res/artwork/skin.cfg", F_OK) == 0) {
+            chdir("/usr/local/share/wp43");
+          }
+          else if(access("/usr/share/wp43/res/artwork/skin.cfg", F_OK) == 0) {
+            chdir("/usr/share/wp43");
+          }
+          else if(access(localSharePath, F_OK) == 0) {
+            chdir(localSharePath);
+          }
+        }
       }
     }
   #endif // __APPLE__

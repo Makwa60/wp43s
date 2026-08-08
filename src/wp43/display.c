@@ -86,7 +86,10 @@ void fnDisplayFormatTime(uint16_t displayFormatN) {
 void exponentToDisplayString(int32_t exponent, char *displayString, char *displayValueString, bool nimMode, const char *separator) {
   strcpy(displayString, PRODUCT_SIGN);
   displayString += 2;
-  strcpy(displayString, STD_SUB_10);
+  // Use explicit subscript 1 and 0 to avoid ambiguous rendering of U+23E8.
+  strcpy(displayString, STD_SUB_1);
+  displayString += 2;
+  strcpy(displayString, STD_SUB_0);
   displayString += 2;
   displayString[0] = 0;
 

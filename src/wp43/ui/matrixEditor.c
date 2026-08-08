@@ -35,6 +35,21 @@
   uint16_t              tmpRow;
   uint16_t              matrixIndex = INVALID_VARIABLE;
 
+  static bool hasDisplayExponentMarker(const char *text) {
+    size_t len = strlen(text);
+    for(size_t i = 0; i + 1 < len; i++) {
+      if(text[i] == STD_SUB_10[0] && text[i + 1] == STD_SUB_10[1]) {
+        return true;
+      }
+      if(i + 3 < len
+         && text[i] == STD_SUB_1[0] && text[i + 1] == STD_SUB_1[1]
+         && text[i + 2] == STD_SUB_0[0] && text[i + 3] == STD_SUB_0[1]) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   static bool incIReal(real34Matrix_t *matrix) {
     setIRegisterAsInt(true, getIRegisterAsInt(true) + 1);
     wrapIJ(matrix->header.matrixRows, matrix->header.matrixColumns);
@@ -1050,7 +1065,7 @@ smallFont:
           real34Copy(&matrix->matrixElements[(i+sRow)*cols+j+sCol], &r34Val);
           real34SetPositiveSign(&r34Val);
           real34ToDisplayString(&r34Val, amNone, tmpString, font, maxWidth, displayFormat == dfAll ? k : 15, true, STD_SPACE_4_PER_EM, true);
-          if(displayFormat == dfAll && !noFix && (strstr(tmpString, STD_SUB_10) || (strcmp(tmpString + 1, "0.") == 0 && !real34IsZero(&r34Val)))) { // something like SCI
+          if(displayFormat == dfAll && !noFix && (hasDisplayExponentMarker(tmpString) || (strcmp(tmpString + 1, "0.") == 0 && !real34IsZero(&r34Val)))) { // something like SCI
             noFix = true;
             goto begin; // redo
           }
@@ -1458,7 +1473,7 @@ smallFont:
           rPadWidth_r[i * MATRIX_MAX_COLUMNS + j] = 0;
           real34SetPositiveSign(VARIABLE_REAL34_DATA(&c34Val));
           real34ToDisplayString(VARIABLE_REAL34_DATA(&c34Val), amNone, tmpString, font, maxWidth, displayFormat == dfAll ? k : 15, true, STD_SPACE_4_PER_EM, true);
-          if(displayFormat == dfAll && !noFix && (strstr(tmpString, STD_SUB_10) || (strcmp(tmpString + 1, "0.") == 0 && !real34IsZero(VARIABLE_REAL34_DATA(&c34Val))))) { // something like SCI            noFix = true;
+          if(displayFormat == dfAll && !noFix && (hasDisplayExponentMarker(tmpString) || (strcmp(tmpString + 1, "0.") == 0 && !real34IsZero(VARIABLE_REAL34_DATA(&c34Val))))) { // something like SCI            noFix = true;
             noFix = true;
             goto begin; // redo
           }
@@ -1487,7 +1502,7 @@ smallFont:
             real34SetPositiveSign(VARIABLE_IMAG34_DATA(&c34Val));
           }
           real34ToDisplayString(VARIABLE_IMAG34_DATA(&c34Val), getSystemFlag(FLAG_POLAR) ? currentAngularMode : amNone, tmpString, font, maxWidth, displayFormat == dfAll ? k : 15, true, STD_SPACE_4_PER_EM, false);
-          if(displayFormat == dfAll && !noFix && (strstr(tmpString, STD_SUB_10) || (strcmp(tmpString + 1, "0.") == 0 && !real34IsZero(VARIABLE_IMAG34_DATA(&c34Val))))) { // something like SCI            noFix = true;
+          if(displayFormat == dfAll && !noFix && (hasDisplayExponentMarker(tmpString) || (strcmp(tmpString + 1, "0.") == 0 && !real34IsZero(VARIABLE_IMAG34_DATA(&c34Val))))) { // something like SCI            noFix = true;
             noFix = true;
             goto begin; // redo
           }

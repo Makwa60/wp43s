@@ -13,14 +13,50 @@
 
 #include "wp43.h"
 
+static void normalizeFreeMemoryRegions(void) {
+  int32_t readIndex = 0;
+  int32_t writeIndex = 0;
+
+  while(readIndex < numberOfFreeMemoryRegions) {
+    freeMemoryRegion_t current = freeMemoryRegions[readIndex++];
+
+    if(current.sizeInBlocks == 0) {
+      continue;
+    }
+
+    if(writeIndex > 0) {
+      freeMemoryRegion_t *previous = &freeMemoryRegions[writeIndex - 1];
+      const uint16_t previousEnd = previous->address + previous->sizeInBlocks;
+      const uint16_t currentEnd = current.address + current.sizeInBlocks;
+
+      if(current.address <= previousEnd) {
+        if(currentEnd > previousEnd) {
+          previous->sizeInBlocks = (uint16_t)(currentEnd - previous->address);
+        }
+        continue;
+      }
+    }
+
+    if(writeIndex != readIndex - 1) {
+      freeMemoryRegions[writeIndex] = current;
+    }
+    writeIndex++;
+  }
+
+  numberOfFreeMemoryRegions = writeIndex;
+}
+
 void *freeListAlloc(size_t sizeInBlocks) {
   uint16_t minSizeInBlocks = 65535u, minBlock = WP43_NULL;
   int i;
   void *pcMemPtr;
+  const size_t alignmentInBlocks = TO_BLOCKS(sizeof(void *));
 
   if(sizeInBlocks == 0) {
     sizeInBlocks = 1;
   }
+
+  normalizeFreeMemoryRegions();
 
   #if !defined(DMCP_BUILD)
     //if(debugMemAllocation) {
@@ -31,7 +67,12 @@ void *freeListAlloc(size_t sizeInBlocks) {
   // Search the smalest hole where the claimed block fits
   //debugMemory();
   for(i=0; i<numberOfFreeMemoryRegions; i++) {
-    if(freeMemoryRegions[i].sizeInBlocks == sizeInBlocks) {
+    const uint16_t regionAddress = freeMemoryRegions[i].address;
+    const uint16_t regionSizeInBlocks = freeMemoryRegions[i].sizeInBlocks;
+    const uint16_t paddingInBlocks = (uint16_t)((alignmentInBlocks - (regionAddress % alignmentInBlocks)) % alignmentInBlocks);
+    const uint16_t totalNeededInBlocks = (uint16_t)(sizeInBlocks + paddingInBlocks);
+
+    if(regionSizeInBlocks == sizeInBlocks && regionAddress % alignmentInBlocks == 0) {
       #if !defined(DMCP_BUILD)
         //if(debugMemAllocation) {
         //  printf("The block found is the size of the one claimed at address %u\n", freeMemoryRegions[i].address);
@@ -43,8 +84,8 @@ void *freeListAlloc(size_t sizeInBlocks) {
       //debugMemory("freeListAlloc: found a memory region with the exact requested size!");
       return pcMemPtr;
     }
-    else if(freeMemoryRegions[i].sizeInBlocks > sizeInBlocks && freeMemoryRegions[i].sizeInBlocks < minSizeInBlocks) {
-      minSizeInBlocks = freeMemoryRegions[i].sizeInBlocks;
+    else if(regionSizeInBlocks >= totalNeededInBlocks && regionSizeInBlocks < minSizeInBlocks) {
+      minSizeInBlocks = regionSizeInBlocks;
       minBlock = i;
     }
   }
@@ -68,9 +109,49 @@ void *freeListAlloc(size_t sizeInBlocks) {
     //  printf("The block found is larger than the one claimed\n");
     //}
   #endif // !DMCP_BUILD
-  pcMemPtr = TO_PCMEMPTR(freeMemoryRegions[minBlock].address);
-  freeMemoryRegions[minBlock].address += sizeInBlocks;
-  freeMemoryRegions[minBlock].sizeInBlocks -= sizeInBlocks;
+  {
+    const uint16_t regionAddress = freeMemoryRegions[minBlock].address;
+    const uint16_t paddingInBlocks = (uint16_t)((alignmentInBlocks - (regionAddress % alignmentInBlocks)) % alignmentInBlocks);
+
+    if(paddingInBlocks > 0) {
+      {
+        const uint16_t originalRegionSizeInBlocks = freeMemoryRegions[minBlock].sizeInBlocks;
+        const uint16_t remainderInBlocks = (uint16_t)(originalRegionSizeInBlocks - sizeInBlocks - paddingInBlocks);
+
+        freeMemoryRegions[minBlock].address = regionAddress;
+        freeMemoryRegions[minBlock].sizeInBlocks = paddingInBlocks;
+
+        if(remainderInBlocks > 0) {
+          if(numberOfFreeMemoryRegions == MAX_FREE_REGION) {
+            #if defined(DMCP_BUILD)
+              backToSystem(NOPARAM);
+            #else // !DMCP_BUILD
+              printf("\n**********************************************************************\n");
+              printf("* The maximum number of free memory blocks has been exceeded!        *\n");
+              printf("* This number must be increased or the compaction function improved. *\n");
+              printf("**********************************************************************\n");
+              exit(-2);
+            #endif // DMCP_BUILD
+          }
+
+          if(minBlock + 1 < numberOfFreeMemoryRegions) {
+            xcopy(freeMemoryRegions + minBlock + 1, freeMemoryRegions + minBlock + 2, (numberOfFreeMemoryRegions - minBlock - 1) * sizeof(freeMemoryRegion_t));
+          }
+          freeMemoryRegions[minBlock + 1].address = regionAddress + paddingInBlocks + sizeInBlocks;
+          freeMemoryRegions[minBlock + 1].sizeInBlocks = remainderInBlocks;
+          numberOfFreeMemoryRegions++;
+        }
+      }
+    }
+    else {
+      freeMemoryRegions[minBlock].address += sizeInBlocks;
+      freeMemoryRegions[minBlock].sizeInBlocks -= sizeInBlocks;
+    }
+
+    pcMemPtr = TO_PCMEMPTR(regionAddress + paddingInBlocks);
+  }
+
+  normalizeFreeMemoryRegions();
 
   //debugMemory("freeListAlloc: allocated within the smalest memory region found that is large enough.");
   return pcMemPtr;
@@ -120,12 +201,24 @@ void freeListFree(void *pcMemPtr, size_t sizeInBlocks) {
   if(sizeInBlocks == 0) {
     sizeInBlocks = 1;
   }
+
+  normalizeFreeMemoryRegions();
   ramPtr = TO_WP43MEMPTR(pcMemPtr);
   #if !defined(DMCP_BUILD)
     //printf("Freeing %zd bytes\n", TO_BYTES(sizeInBlocks));
   #endif // !DMCP_BUILD
 
   done = false;
+
+  for(i=0; i<numberOfFreeMemoryRegions; i++) {
+    const uint32_t regionStart = freeMemoryRegions[i].address;
+    const uint32_t regionEnd = regionStart + freeMemoryRegions[i].sizeInBlocks;
+    const uint32_t blockStart = ramPtr;
+    const uint32_t blockEnd = blockStart + sizeInBlocks;
+    if(blockStart < regionEnd && regionStart < blockEnd) {
+      return;
+    }
+  }
 
   // is the freed block just before an other free block?
   addr = ramPtr + sizeInBlocks;
@@ -197,6 +290,8 @@ void freeListFree(void *pcMemPtr, size_t sizeInBlocks) {
     freeMemoryRegions[i].sizeInBlocks = sizeInBlocks;
     numberOfFreeMemoryRegions++;
   }
+
+  normalizeFreeMemoryRegions();
 
   //debugMemory("freeListFree : end");
 }

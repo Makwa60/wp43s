@@ -105,7 +105,31 @@ int _ioFileNameFromFilePath(ioFilePath_t path, char * filename) {
       strcpy(filename, LIB_DIR "/" LIB_FILE);
       return FILE_OK;
     case ioPathTestPgms:
-      strcpy(filename, BASEPATH "res/dmcp/testPgms.bin");
+      if (access("res/dmcp/testPgms.bin", F_OK) == 0) {
+        strcpy(filename, "res/dmcp/testPgms.bin");
+      }
+      else if (access("/usr/local/share/wp43/res/dmcp/testPgms.bin", F_OK) == 0) {
+        strcpy(filename, "/usr/local/share/wp43/res/dmcp/testPgms.bin");
+      }
+      else if (access("/usr/share/wp43/res/dmcp/testPgms.bin", F_OK) == 0) {
+        strcpy(filename, "/usr/share/wp43/res/dmcp/testPgms.bin");
+      }
+      else {
+        const char *home = getenv("HOME");
+        if (home != NULL) {
+          char localPath[1024];
+          snprintf(localPath, sizeof(localPath), "%s/.local/share/wp43/res/dmcp/testPgms.bin", home);
+          if (access(localPath, F_OK) == 0) {
+            strcpy(filename, localPath);
+          }
+          else {
+            strcpy(filename, "testPgms.bin");
+          }
+        }
+        else {
+          strcpy(filename, "testPgms.bin");
+        }
+      }
       return FILE_OK;
     case ioPathBackup:
       #if !defined(XPB)
